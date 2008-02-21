@@ -39,7 +39,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- <p>A class to manage complicated user cookies on a WhirledGameControl.  Using this class, user 
+ <p>A class to manage complicated user cookies on a GameControl.  Using this class, user 
  cookies can contain a list of various different data types, which are read from the server and
  saved back to the server automatically.  The data structure is compressed into a ByteArray to 
  save space (user cookies are only allowed to go up to 4k).  Data is saved to the server as it is
@@ -116,7 +116,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_control">_control</a> : <a href="../../whirled/WhirledGameControl.html">WhirledGameControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_control">_control</a> : <a href="../game/GameControl.html">GameControl</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">UserCookie</td>
 </tr>
@@ -181,9 +181,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
+<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:<a href="../game/GameControl.html">GameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
 <div class="summaryTableDescription">[static]
-     Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
+     Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.</div>
 </td><td class="summaryTableOwnerCol">UserCookie</td>
 </tr>
@@ -306,7 +306,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _control:<a href="../../whirled/WhirledGameControl.html">WhirledGameControl</a></code>
+<code>protected var _control:<a href="../game/GameControl.html">GameControl</a></code>
 </div>
 <a name="_cookieDef"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -496,14 +496,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getCookie(wgc:<a href="../WhirledGameControl.html">WhirledGameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
-     Get a player's user cookie via WhirledGameControl.getUserCookie, wrapped in a UserCookie
+<code>public static function getCookie(wgc:<a href="../game/GameControl.html">GameControl</a>, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
+     Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.
      
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">wgc</span>:<a href="../WhirledGameControl.html">WhirledGameControl</a></code> &mdash; The WhirledGameControl of the current instance
+<td width="20px"></td><td><code><span class="label">wgc</span>:<a href="../game/GameControl.html">GameControl</a></code> &mdash; The GameControl of the current instance
      </td>
 </tr>
 <tr>

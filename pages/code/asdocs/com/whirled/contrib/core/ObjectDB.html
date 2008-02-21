@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="ObjectDB,com.whirled.contrib.core.ObjectDB,_objectCount,_objects,_freeIndexes,_serialNumberCounter,_objectsPendingDestroy,_namedObjects,_groupedObjects,objectCount,addObject,destroyObjectNamed,destroyObject,finalizeObjectDestruction,getObject,getObjectNamed,getObjectIdsInGroup,getObjectsInGroup,update,broadcastMessage,sendMessageTo,sendMessageToNamedObject,sendMessageToGroup,createObjectId,idToIndex,idToSerialNumber" name="keywords">
+<meta content="ObjectDB,com.whirled.contrib.core.ObjectDB,_listHead,_objectCount,_objectsPendingDestroy,_namedObjects,_groupedObjects,objectCount,addObject,destroyObjectNamed,destroyObject,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,update,beginUpdate,endUpdate,finalizeObjectDestruction,broadcastMessage,sendMessageTo,sendMessageToNamedObject,sendMessageToGroup" name="keywords">
 <title>com.whirled.contrib.core.ObjectDB</title>
 </head>
 <body>
@@ -67,12 +67,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_freeIndexes">_freeIndexes</a> : Array<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_groupedObjects">_groupedObjects</a> : <a href="../../../threerings/util/HashMap.html">HashMap</a>
+<div class="summaryTableDescription"> stores a mapping from String to Array </div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_groupedObjects">_groupedObjects</a> : <a href="../../../threerings/util/HashMap.html">HashMap</a>
-<div class="summaryTableDescription"> stores a mapping from String to Array </div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_listHead">_listHead</a> : <a href="../core/SimObjectRef.html">SimObjectRef</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
@@ -85,15 +86,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_objects">_objects</a> : Array<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_objectsPendingDestroy">_objectsPendingDestroy</a> : Array<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_serialNumberCounter">_serialNumberCounter</a> : uint = 1<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_objectsPendingDestroy">_objectsPendingDestroy</a> : Array<div class="summaryTableDescription"> An array of SimObjects </div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 </table>
@@ -115,9 +108,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addObject()">addObject</a>(obj:<a href="AppObject.html">AppObject</a>, displayParent:DisplayObjectContainer = null):uint</div>
+<a class="signatureLink" href="#addObject()">addObject</a>(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../core/SimObjectRef.html">SimObjectRef</a>
+</div>
 <div class="summaryTableDescription">
-     Adds an AppObject to the database.</div>
+     Adds a SimObject to the database.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
@@ -130,44 +124,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createObjectId()">createObjectId</a>(index:uint):uint</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#destroyObject()">destroyObject</a>(id:uint):void</div>
-<div class="summaryTableDescription"> Removes an AppObject from the mode.</div>
+<a class="signatureLink" href="#destroyObject()">destroyObject</a>(ref:<a href="SimObjectRef.html">SimObjectRef</a>):void</div>
+<div class="summaryTableDescription"> Removes a SimObject from the mode.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#destroyObjectNamed()">destroyObjectNamed</a>(name:String):void</div>
-<div class="summaryTableDescription"> Removes an AppObject from the mode.</div>
+<div class="summaryTableDescription"> Removes a SimObject from the mode.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getObject()">getObject</a>(id:uint):<a href="../core/AppObject.html">AppObject</a>
-</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getObjectIdsInGroup()">getObjectIdsInGroup</a>(groupName:String):Array</div>
-<div class="summaryTableDescription"> 
-     Returns an Array containing the object IDs of all the objects in the given group.</div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getObjectNamed()">getObjectNamed</a>(name:String):<a href="../core/AppObject.html">AppObject</a>
+<a class="signatureLink" href="#getObjectNamed()">getObjectNamed</a>(name:String):<a href="../core/SimObject.html">SimObject</a>
 </div>
 <div class="summaryTableDescription"> Returns the object in this mode with the given name, or null if no such object exists.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
@@ -175,29 +146,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getObjectRefsInGroup()">getObjectRefsInGroup</a>(groupName:String):Array</div>
+<div class="summaryTableDescription"> 
+     Returns an Array containing the object refs of all the objects in the given group.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getObjectsInGroup()">getObjectsInGroup</a>(groupName:String):Array</div>
 <div class="summaryTableDescription">
-     Returns an Array containing the AppObjects in the given group.</div>
+     Returns an Array containing the SimObjects in the given group.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#idToIndex()">idToIndex</a>(id:uint):uint</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#idToSerialNumber()">idToSerialNumber</a>(id:uint):uint</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ObjectDB</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#sendMessageTo()">sendMessageTo</a>(msg:<a href="ObjectMessage.html">ObjectMessage</a>, targetId:uint):void</div>
+<a class="signatureLink" href="#sendMessageTo()">sendMessageTo</a>(msg:<a href="ObjectMessage.html">ObjectMessage</a>, targetRef:<a href="SimObjectRef.html">SimObjectRef</a>):void</div>
 <div class="summaryTableDescription"> Sends a message to a specific object.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
@@ -234,8 +199,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#finalizeObjectDestruction()">finalizeObjectDestruction</a>(obj:<a href="AppObject.html">AppObject</a>):void</div>
-<div class="summaryTableDescription"></div>
+<a class="signatureLink" href="#beginUpdate()">beginUpdate</a>(dt:Number):void</div>
+<div class="summaryTableDescription"> Updates all objects in the mode.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#endUpdate()">endUpdate</a>(dt:Number):void</div>
+<div class="summaryTableDescription"> Removes dead objects from the object list at the end of an update.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#finalizeObjectDestruction()">finalizeObjectDestruction</a>(obj:<a href="SimObject.html">SimObject</a>):void</div>
+<div class="summaryTableDescription"> Removes a single dead object from the object list.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 </table>
@@ -247,23 +226,23 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_freeIndexes"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_freeIndexes</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _freeIndexes:Array</code>
-</div>
 <a name="_groupedObjects"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_groupedObjects</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_groupedObjects</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
 <code>protected var _groupedObjects:<a href="../../../threerings/util/HashMap.html">HashMap</a></code><p> stores a mapping from String to Array </p></div>
+<a name="_listHead"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_listHead</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _listHead:<a href="../core/SimObjectRef.html">SimObjectRef</a></code>
+</div>
 <a name="_namedObjects"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -293,15 +272,6 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get objectCount():uint</code>
 <br>
 </div>
-<a name="_objects"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_objects</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _objects:Array</code>
-</div>
 <a name="_objectsPendingDestroy"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -309,17 +279,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _objectsPendingDestroy:Array</code>
-</div>
-<a name="_serialNumberCounter"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_serialNumberCounter</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _serialNumberCounter:uint = 1</code>
-</div>
+<code>protected var _objectsPendingDestroy:Array</code><p> An array of SimObjects </p></div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="ObjectDB()"></a>
@@ -340,14 +300,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function addObject(obj:<a href="AppObject.html">AppObject</a>, displayParent:DisplayObjectContainer = null):uint</code><p>
-     Adds an AppObject to the database. The AppObject must not be owned by another database.
+<code>public function addObject(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../core/SimObjectRef.html">SimObjectRef</a></code><p>
+     Adds a SimObject to the database. The SimObject must not be owned by another database.
      If displayParent is not null, obj's attached DisplayObject will be added as a child
      of displayParent.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">obj</span>:<a href="AppObject.html">AppObject</a></code></td>
+<td width="20px"></td><td><code><span class="label">obj</span>:<a href="SimObject.html">SimObject</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -360,7 +320,21 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>uint</code></td>
+<td width="20"></td><td><code><a href="../core/SimObjectRef.html">SimObjectRef</a></code></td>
+</tr>
+</table>
+</div>
+<a name="beginUpdate()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">beginUpdate</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function beginUpdate(dt:Number):void</code><p> Updates all objects in the mode. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dt</span>:Number</code></td>
 </tr>
 </table>
 </div>
@@ -378,27 +352,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="createObjectId()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createObjectId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function createObjectId(index:uint):uint</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">index</span>:uint</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>uint</code></td>
-</tr>
-</table>
-</div>
 <a name="destroyObject()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -406,10 +359,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function destroyObject(id:uint):void</code><p> Removes an AppObject from the mode. </p><span class="label">Parameters</span>
+<code>public function destroyObject(ref:<a href="SimObjectRef.html">SimObjectRef</a>):void</code><p> Removes a SimObject from the mode. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">id</span>:uint</code></td>
+<td width="20px"></td><td><code><span class="label">ref</span>:<a href="SimObjectRef.html">SimObjectRef</a></code></td>
 </tr>
 </table>
 </div>
@@ -420,10 +373,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function destroyObjectNamed(name:String):void</code><p> Removes an AppObject from the mode. </p><span class="label">Parameters</span>
+<code>public function destroyObjectNamed(name:String):void</code><p> Removes a SimObject from the mode. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="endUpdate()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">endUpdate</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function endUpdate(dt:Number):void</code><p> Removes dead objects from the object list at the end of an update. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dt</span>:Number</code></td>
 </tr>
 </table>
 </div>
@@ -434,47 +401,47 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function finalizeObjectDestruction(obj:<a href="AppObject.html">AppObject</a>):void</code><span class="label">Parameters</span>
+<code>protected function finalizeObjectDestruction(obj:<a href="SimObject.html">SimObject</a>):void</code><p> Removes a single dead object from the object list. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">obj</span>:<a href="AppObject.html">AppObject</a></code></td>
+<td width="20px"></td><td><code><span class="label">obj</span>:<a href="SimObject.html">SimObject</a></code></td>
 </tr>
 </table>
 </div>
-<a name="getObject()"></a>
+<a name="getObjectNamed()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getObjectNamed</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getObject(id:uint):<a href="../core/AppObject.html">AppObject</a></code><span class="label">Parameters</span>
+<code>public function getObjectNamed(name:String):<a href="../core/SimObject.html">SimObject</a></code><p> Returns the object in this mode with the given name, or null if no such object exists. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">id</span>:uint</code></td>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code><a href="../core/AppObject.html">AppObject</a></code></td>
+<td width="20"></td><td><code><a href="../core/SimObject.html">SimObject</a></code></td>
 </tr>
 </table>
 </div>
-<a name="getObjectIdsInGroup()"></a>
+<a name="getObjectRefsInGroup()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getObjectIdsInGroup</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getObjectRefsInGroup</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getObjectIdsInGroup(groupName:String):Array</code><p> 
-     Returns an Array containing the object IDs of all the objects in the given group. 
+<code>public function getObjectRefsInGroup(groupName:String):Array</code><p> 
+     Returns an Array containing the object refs of all the objects in the given group. 
      This Array must not be modified by client code.
      
      Note: because of the method that object destruction is implemented with,
-     the returned Array may contain invalid object IDs.
+     the returned Array may contain null object refs.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -486,27 +453,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
-</tr>
-</table>
-</div>
-<a name="getObjectNamed()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getObjectNamed</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getObjectNamed(name:String):<a href="../core/AppObject.html">AppObject</a></code><p> Returns the object in this mode with the given name, or null if no such object exists. </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../core/AppObject.html">AppObject</a></code></td>
 </tr>
 </table>
 </div>
@@ -518,11 +464,11 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getObjectsInGroup(groupName:String):Array</code><p>
-     Returns an Array containing the AppObjects in the given group.
+     Returns an Array containing the SimObjects in the given group.
      The returned Array is instantiated by the function, and so can be
      safely modified by client code.
      
-     This function is not as performant as getObjectIdsInGroup().
+     This function is not as performant as getObjectRefsInGroup().
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -537,48 +483,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="idToIndex()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">idToIndex</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function idToIndex(id:uint):uint</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">id</span>:uint</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>uint</code></td>
-</tr>
-</table>
-</div>
-<a name="idToSerialNumber()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">idToSerialNumber</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function idToSerialNumber(id:uint):uint</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">id</span>:uint</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>uint</code></td>
-</tr>
-</table>
-</div>
 <a name="sendMessageTo()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -586,7 +490,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendMessageTo(msg:<a href="ObjectMessage.html">ObjectMessage</a>, targetId:uint):void</code><p> Sends a message to a specific object. </p><span class="label">Parameters</span>
+<code>public function sendMessageTo(msg:<a href="ObjectMessage.html">ObjectMessage</a>, targetRef:<a href="SimObjectRef.html">SimObjectRef</a>):void</code><p> Sends a message to a specific object. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="ObjectMessage.html">ObjectMessage</a></code></td>
@@ -595,7 +499,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">targetId</span>:uint</code></td>
+<td width="20px"></td><td><code><span class="label">targetRef</span>:<a href="SimObjectRef.html">SimObjectRef</a></code></td>
 </tr>
 </table>
 </div>

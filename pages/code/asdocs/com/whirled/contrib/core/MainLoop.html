@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="MainLoop,com.whirled.contrib.core.MainLoop,g_instance,_hostSprite,_hasSetup,_running,_lastTime,_modeStack,_pendingModeTransitionQueue,_updatables,TRANSITION_PUSH,TRANSITION_POP,TRANSITION_CHANGE,TRANSITION_UNWIND,instance,topMode,elapsedSeconds,addUpdatable,removeUpdatable,setup,run,shutdown,pushMode,popMode,changeMode,popAllModes,unwindToMode,createModeTransition,handleModeTransitions,update" name="keywords">
+<meta content="MainLoop,com.whirled.contrib.core.MainLoop,g_instance,_hostSprite,_hasSetup,_running,_lastTime,_modeStack,_pendingModeTransitionQueue,_updatables,_fps,TRANSITION_PUSH,TRANSITION_POP,TRANSITION_CHANGE,TRANSITION_UNWIND,instance,topMode,elapsedSeconds,fps,addUpdatable,removeUpdatable,setup,run,shutdown,pushMode,popMode,changeMode,popAllModes,unwindToMode,createModeTransition,handleModeTransitions,update" name="keywords">
 <title>com.whirled.contrib.core.MainLoop</title>
 </head>
 <body>
@@ -35,7 +35,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.core</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class MainLoop</td>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public final  class MainLoop</td>
 </tr>
 </table>
 <p></p>
@@ -52,6 +52,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#elapsedSeconds">elapsedSeconds</a> : Number<div class="summaryTableDescription">[read-only] Returns the number of seconds that have elapsed since the application started.</div>
+</td><td class="summaryTableOwnerCol">MainLoop</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#fps">fps</a> : Number<div class="summaryTableDescription">[read-only] 
+     Returns the approximate frames-per-second that the application
+     is running at.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
@@ -72,6 +78,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_fps">_fps</a> : Number = 0<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#g_instance">g_instance</a> : <a href="../core/MainLoop.html">MainLoop</a>
@@ -266,6 +276,30 @@ showHideInherited();
 <code>elapsedSeconds:Number</code>&nbsp;&nbsp;[read-only]<p> Returns the number of seconds that have elapsed since the application started. </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get elapsedSeconds():Number</code>
+<br>
+</div>
+<a name="_fps"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_fps</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _fps:Number = 0</code>
+</div>
+<a name="fps"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">fps</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>fps:Number</code>&nbsp;&nbsp;[read-only]<p> 
+     Returns the approximate frames-per-second that the application
+     is running at.
+     </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get fps():Number</code>
 <br>
 </div>
 <a name="g_instance"></a>

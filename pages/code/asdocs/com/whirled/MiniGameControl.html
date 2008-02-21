@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="MiniGameControl,com.whirled.MiniGameControl,reportPerformance,isAbstract" name="keywords">
+<meta content="MiniGameControl,com.whirled.MiniGameControl,reportPerformance" name="keywords">
 <title>com.whirled.MiniGameControl</title>
 </head>
 <body>
@@ -38,7 +38,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class MiniGameControl</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">MiniGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="WhirledControl.html">WhirledControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">MiniGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 </table>
 <p></p>
@@ -74,12 +74,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="WhirledControl.html#isConnected()">isConnected</a>():Boolean</div>
+<a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
 <div class="summaryTableDescription">
-     Are we connected and running inside the whirled, or are we
-     merely being displayed standalone?
+     Execute the specified function as a batch of commands that will be sent to the server
+     together.</div>
+</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="AbstractControl.html#isConnected()">isConnected</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Are we connected and running inside the whirled environment, or has someone just
+     loaded up our SWF by itself?
      </div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -87,22 +96,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#reportPerformance()">reportPerformance</a>(score:Number, style:Number = 0):void</div>
 <div class="summaryTableDescription">
      Report our performance to the server.</div>
-</td><td class="summaryTableOwnerCol">MiniGameControl</td>
-</tr>
-</table>
-</div>
-<a name="protectedMethodSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#isAbstract()">isAbstract</a>():Boolean</div>
-<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MiniGameControl</td>
 </tr>
 </table>
@@ -125,11 +118,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="WhirledControl.html#event:unload">unload</a>
+<a class="signatureLink" href="AbstractControl.html#event:unload">unload</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Event.UNLOAD
- Dispatched when the SWF using this control has been unloaded.</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
+ Dispatched when the SWF using this control has been unloaded.</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
 </tr>
 </table>
 </div>
@@ -157,26 +150,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="isAbstract()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">isAbstract</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected override function isAbstract():Boolean</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
 <a name="reportPerformance()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">reportPerformance</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">reportPerformance</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">

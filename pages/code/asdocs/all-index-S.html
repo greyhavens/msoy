@@ -133,11 +133,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#seating">seating</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#seating">seating</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Access the 'seating' subcontrol.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SeatingSubControl.html">SeatingSubControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Access seating information for a seated game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeUtil.html#SECOND">SECOND</a> &mdash; Constant static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeUtil.html">TimeUtil</a></td>
@@ -183,13 +190,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Send a chat message to the entire room.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html#sendMessage()">sendMessage</a>(messageName, value, playerId) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html">EZNetSubControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Send a "message" to other clients subscribed to the game.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#sendMessage()">sendMessage</a>(name, arg) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
@@ -209,13 +209,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html#sendMessage()">sendMessage</a>(messageName, value, playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html">NetSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Send a "message" to other clients subscribed to the game.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/net/class-list.html');" href="com/whirled/contrib/core/net/TickedMessageManager.html#sendMessageNow()">sendMessageNow</a>(msg:<a href="com/whirled/contrib/core/net/Message.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/core/net./class-list.html');">com.whirled.contrib.core.net:Message</a>) &mdash; Method in class com.whirled.contrib.core.net.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/net/class-list.html');" href="com/whirled/contrib/core/net/TickedMessageManager.html">TickedMessageManager</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html#sendMessageTo()">sendMessageTo</a>(msg:<a href="com/whirled/contrib/core/ObjectMessage.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/core./class-list.html');">com.whirled.contrib.core:ObjectMessage</a>, targetId) &mdash; Method in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html">ObjectDB</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html#sendMessageTo()">sendMessageTo</a>(msg:<a href="com/whirled/contrib/core/ObjectMessage.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/core./class-list.html');">com.whirled.contrib.core:ObjectMessage</a>, targetRef:<a href="com/whirled/contrib/core/SimObjectRef.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/core./class-list.html');">com.whirled.contrib.core:SimObjectRef</a>) &mdash; Method in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html">ObjectDB</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> Sends a message to a specific object.</td>
@@ -265,12 +272,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html#_serialNumberCounter">_serialNumberCounter</a> &mdash; Property in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/ObjectDB.html">ObjectDB</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/tasks/class-list.html');" href="com/whirled/contrib/core/tasks/SerialTask.html">SerialTask</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/tasks/class-list.html');" href="com/whirled/contrib/core/tasks/package-detail.html">com.whirled.contrib.core.tasks</a></td>
 </tr>
 <tr>
@@ -283,25 +284,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#services">services</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html#services">services</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html">GameControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Access the 'services' services.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#services">services</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Access the 'services' services.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html#set()">set</a>(propName, value, index) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html">EZNetSubControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Set a property that will be distributed.</td>
+ Provides access to 'services' game services.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#set()">set</a>(x, y) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
@@ -328,6 +322,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <tr>
 <td width="20"></td><td>
      Set the value of the cookie parameter identified by name.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html#set()">set</a>(propName, value, index) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html">NetSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Set a property that will be distributed.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html"><i>Set</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
@@ -422,7 +423,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      coordinate.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html#setImmediate()">setImmediate</a>(propName, value, index) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZNetSubControl.html">EZNetSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html#setImmediate()">setImmediate</a>(propName, value, index) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html">NetSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -443,7 +444,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Requests that our location be updated.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html#setMappedScores()">setMappedScores</a>(scores) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html">LocalSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#setMappedScores()">setMappedScores</a>(scores) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -484,7 +485,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Set this actor's movement speed, in pixels per second.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html#setOccupantsLabel()">setOccupantsLabel</a>(label) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html">LocalSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#setOccupantsLabel()">setOccupantsLabel</a>(label) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -525,7 +526,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html#setPlayerScores()">setPlayerScores</a>(scores, sortValues) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html">LocalSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#setPlayerScores()">setPlayerScores</a>(scores, sortValues) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -574,7 +575,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Sets the seed of the generator.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html#setShowButtons()">setShowButtons</a>(rematch, backButtons) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/LocalSubControl.html">LocalSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#setShowButtons()">setShowButtons</a>(rematch, backButtons) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -691,7 +692,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Configure this sprite to show a video.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZPlayerSubControl.html#setUserCookie()">setUserCookie</a>(cookie) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZPlayerSubControl.html">EZPlayerSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#setUserCookie()">setUserCookie</a>(cookie) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -820,6 +821,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      within the given epsilon.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/SimObject.html">SimObject</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/package-detail.html">com.whirled.contrib.core</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/SimObjectRef.html">SimObjectRef</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/package-detail.html">com.whirled.contrib.core</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/SimObjectRef.html#SimObjectRef()">SimObjectRef</a>() &mdash; Constructor in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/SimObjectRef.html">SimObjectRef</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#_simpleData">_simpleData</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
 </tr>
 <tr>
@@ -892,14 +911,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html#size">size</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html">SizeChangedEvent</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Get the size of the game area, expressed as a Point
-     (The width is the x value, the height is the y value).</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#size()">size</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
 </tr>
 <tr>
@@ -950,18 +961,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZLocalSubControl.html#event:SizeChanged">SizeChanged</a> &mdash; Event in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZLocalSubControl.html">EZLocalSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html#size">size</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html">SizeChangedEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the size of the game area, expressed as a Point
+     (The width is the x value, the height is the y value).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#event:SizeChanged">SizeChanged</a> &mdash; Event in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
  Dispatched when the size of the game area changes.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html#SIZE_CHANGED">SIZE_CHANGED</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html">SizeChangedEvent</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     The type of this event.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControlEvent.html#SIZE_CHANGED">SIZE_CHANGED</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
@@ -970,7 +982,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td> An event type dispatched when the control has been resized.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html">SizeChangedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html#SIZE_CHANGED">SIZE_CHANGED</a> &mdash; Constant static property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html">SizeChangedEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     The type of this event.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html">SizeChangedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -978,7 +997,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
  resizing their browser window.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html#SizeChangedEvent()">SizeChangedEvent</a>(size) &mdash; Constructor in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/SizeChangedEvent.html">SizeChangedEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html#SizeChangedEvent()">SizeChangedEvent</a>(size) &mdash; Constructor in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SizeChangedEvent.html">SizeChangedEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -1016,6 +1035,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td>
      Sort the specified array according to natural order- all elements
      must implement Comparable or be null.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html#sortDisplayChildren()">sortDisplayChildren</a>(container, comp) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html">DisplayUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Quicksorts container's children.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/SortedHashMap.html">SortedHashMap</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
@@ -1056,7 +1082,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/UserChatEvent.html#speaker">speaker</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/UserChatEvent.html">UserChatEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/UserChatEvent.html#speaker">speaker</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/UserChatEvent.html">UserChatEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -1145,7 +1171,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Called when we've started loading new media.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#startNextTurn()">startNextTurn</a>(nextPlayerId) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#startNextTurn()">startNextTurn</a>(nextPlayerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -1177,7 +1203,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Does the specified string start with the specified substring.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html#startTicker()">startTicker</a>(tickerName, msOfDelay) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html">EZServicesSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html#startTicker()">startTicker</a>(tickerName, msOfDelay) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -1208,24 +1234,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#_state">_state</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#state">state</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Get the StateControl, which contains methods for getting and setting properties
      on AVRG's, both game-global and player-centric.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/PropControl.html#_state">_state</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/PropControl.html">PropControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/PropControl.html#state">state</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/PropControl.html">PropControl</a></td>
@@ -1262,24 +1276,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      be in the specified state.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/StateChangedEvent.html">StateChangedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/StateChangedEvent.html">StateChangedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
  Dispatched when the state of the game has changed.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/StateChangedEvent.html#StateChangedEvent()">StateChangedEvent</a>(type) &mdash; Constructor in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/StateChangedEvent.html">StateChangedEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/StateChangedEvent.html#StateChangedEvent()">StateChangedEvent</a>(type) &mdash; Constructor in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/StateChangedEvent.html">StateChangedEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html#stateChanged_v1()">stateChanged_v1</a>(key, value) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html">StateControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Called when a game-global state property has changed.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html">StateControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/package-detail.html">com.whirled</a></td>
@@ -1288,37 +1295,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html#StateControl()">StateControl</a>(ctrl:<a href="com/whirled/WhirledControl.html" onclick="javascript:loadClassListFrame('com/whirled./class-list.html');">com.whirled:WhirledControl</a>) &mdash; Constructor in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html">StateControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html#STATE_DESTROYED">STATE_DESTROYED</a> &mdash; Constant static property in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html">AppObject</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/ForkingToyState.html#STATE_KEY">STATE_KEY</a> &mdash; Constant static property in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/ForkingToyState.html">ForkingToyState</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html#STATE_LIVE">STATE_LIVE</a> &mdash; Constant static property in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html">AppObject</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html#STATE_NEW">STATE_NEW</a> &mdash; Constant static property in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html">AppObject</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html#STATE_PENDING_DESTROY">STATE_PENDING_DESTROY</a> &mdash; Constant static property in class com.whirled.contrib.core.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/core/class-list.html');" href="com/whirled/contrib/core/AppObject.html">AppObject</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -1383,7 +1360,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      completion, an error while loading, or early termination.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html#stopTicker()">stopTicker</a>(tickerName) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZServicesSubControl.html">EZServicesSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html#stopTicker()">stopTicker</a>(tickerName) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -1509,7 +1486,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html#systemMessage()">systemMessage</a>(msg) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameSubControl.html">EZGameSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#systemMessage()">systemMessage</a>(msg) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> 

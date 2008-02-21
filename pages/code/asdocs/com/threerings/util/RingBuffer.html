@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="RingBuffer,com.threerings.util.RingBuffer,_array,_capacity,_length,_firstIndex,capacity,length,empty,unshift,push,shift,pop,clear,at" name="keywords">
+<meta content="RingBuffer,com.threerings.util.RingBuffer,_array,_capacity,_length,_firstIndex,capacity,length,empty,unshift,push,shift,pop,clear,at,every,forEach,indexOf" name="keywords">
 <title>com.threerings.util.RingBuffer</title>
 </head>
 <body>
@@ -116,6 +116,34 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#clear()">clear</a>():void</div>
 <div class="summaryTableDescription"> Removes all elements from the RingBuffer.</div>
+</td><td class="summaryTableOwnerCol">RingBuffer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#every()">every</a>(callback:Function, thisObject:* = null):Boolean</div>
+<div class="summaryTableDescription">
+     Executes a test function on each item in the ring buffer
+     until an item is reached that returns false for the specified
+     function.</div>
+</td><td class="summaryTableOwnerCol">RingBuffer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#forEach()">forEach</a>(callback:Function, thisObject:* = null):void</div>
+<div class="summaryTableDescription">
+     Executes a function on each item in the ring buffer.</div>
+</td><td class="summaryTableOwnerCol">RingBuffer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#indexOf()">indexOf</a>(searchElement:*, fromIndex:int = 0):int</div>
+<div class="summaryTableDescription">
+     Searches for an item in the ring buffer by using strict equality
+     (===) and returns the index position of the item, or -1
+     if the item is not found.</div>
 </td><td class="summaryTableOwnerCol">RingBuffer</td>
 </tr>
 <tr class="">
@@ -283,6 +311,93 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function clear():void</code><p> Removes all elements from the RingBuffer. </p></div>
+<a name="every()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">every</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function every(callback:Function, thisObject:* = null):Boolean</code><p>
+     Executes a test function on each item in the ring buffer
+     until an item is reached that returns false for the specified
+     function.
+     
+     Returns a Boolean value of true if all items in the buffer return
+     true for the specified function; otherwise, false.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">thisObject</span>:*</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="forEach()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">forEach</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function forEach(callback:Function, thisObject:* = null):void</code><p>
+     Executes a function on each item in the ring buffer.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">thisObject</span>:*</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="indexOf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">indexOf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function indexOf(searchElement:*, fromIndex:int = 0):int</code><p>
+     Searches for an item in the ring buffer by using strict equality
+     (===) and returns the index position of the item, or -1
+     if the item is not found.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">searchElement</span>:*</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">fromIndex</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="pop()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

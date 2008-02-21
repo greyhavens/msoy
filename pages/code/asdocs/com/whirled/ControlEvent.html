@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="ControlEvent,com.whirled.ControlEvent,APPEARANCE_CHANGED,MESSAGE_RECEIVED,SIGNAL_RECEIVED,ACTION_TRIGGERED,STATE_CHANGED,AVATAR_SPOKE,GOT_CONTROL,MEMORY_CHANGED,ROOM_PROPERTY_CHANGED,RECEIVED_CHAT,HOVER_OVER,HOVER_OUT,_name,_value,target,name,value,toString,clone" name="keywords">
+<meta content="ControlEvent,com.whirled.ControlEvent,APPEARANCE_CHANGED,MESSAGE_RECEIVED,SIGNAL_RECEIVED,ACTION_TRIGGERED,STATE_CHANGED,AVATAR_SPOKE,GOT_CONTROL,MEMORY_CHANGED,ROOM_PROPERTY_CHANGED,RECEIVED_CHAT,HOVER_OVER,HOVER_OUT,target,name,value,toString,clone" name="keywords">
 <title>com.whirled.ControlEvent</title>
 </head>
 <body>
@@ -67,7 +67,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#target">target</a> : Object<div class="summaryTableDescription">[read-only]
-     Retrieve the event target, which will be the WhirledControl instance that
+     Retrieve the event target, which will be the Control instance that
      dispatched this event.</div>
 </td><td class="summaryTableOwnerCol">ControlEvent</td>
 </tr>
@@ -75,23 +75,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#value">value</a> : Object<div class="summaryTableDescription">[read-only]
      Retrieve the object 'value' for this event, which is a value
      whose meaning is determined by the event type.</div>
-</td><td class="summaryTableOwnerCol">ControlEvent</td>
-</tr>
-</table>
-</div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_name">_name</a> : String<div class="summaryTableDescription"> Internal storage for our name property.</div>
-</td><td class="summaryTableOwnerCol">ControlEvent</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_value">_value</a> : Object<div class="summaryTableDescription"> Internal storage for our value property.</div>
 </td><td class="summaryTableOwnerCol">ControlEvent</td>
 </tr>
 </table>
@@ -194,18 +177,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_name"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_name</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _name:String</code><p> Internal storage for our name property. </p></div>
 <a name="name"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">name</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">name</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -225,21 +200,13 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>target:Object</code>&nbsp;&nbsp;[read-only]<p>
-     Retrieve the event target, which will be the WhirledControl instance that
+     Retrieve the event target, which will be the Control instance that
      dispatched this event.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get target():Object</code>
 <br>
 </div>
-<a name="_value"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_value</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _value:Object</code><p> Internal storage for our value property. </p></div>
 <a name="value"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
