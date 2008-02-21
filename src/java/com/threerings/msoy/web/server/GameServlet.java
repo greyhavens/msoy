@@ -393,28 +393,28 @@ public class GameServlet extends MsoyServiceServlet
             GameRepository grepo = MsoyServer.itemMan.getGameRepository();
             PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
 
-            // determine the "featured" game
-            List<GameRecord> games = grepo.loadGenre((byte)-1, 5);
-            if (games.size() > 0) {
-                GameRecord frec = RandomUtil.pickRandom(games);
-                GameDetailRecord gdr = grepo.loadGameDetail(frec.gameId);
-                data.featuredGame = (FeaturedGameInfo)frec.toGameInfo(new FeaturedGameInfo());
-                data.featuredGame.avgDuration = gdr.toGameDetail().getAverageDuration();
-                int[] players = getMinMaxPlayers((Game)frec.toItem());
-                data.featuredGame.minPlayers = players[0];
-                data.featuredGame.maxPlayers = players[1];
-                PlaceCard ppg = pps.getGame(frec.gameId);
-                if (ppg != null) {
-                    data.featuredGame.playersOnline = ppg.population;
+            // determine the "featured" games
+            List<FeaturedGameInfo> featured = Lists.newArrayList();
+            for (PlaceCard card : pps.getTopGames()) {
+                GameDetailRecord detail = grepo.loadGameDetail(card.placeId);
+                GameRecord game = grepo.loadGameRecord(card.placeId, detail);
+                if (game != null) {
+                    featured.add(toFeaturedGameInfo(game, detail, card.population));
                 }
             }
+            int need = ArcadeData.FEATURED_GAME_COUNT - featured.size();
+            for (GameRecord game : grepo.loadGenre((byte)-1, need)) {
+                GameDetailRecord detail = grepo.loadGameDetail(game.gameId);
+                featured.add(toFeaturedGameInfo(game, detail, 0));
+            }
+            data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
             // load information about the genres
             List<ArcadeData.Genre> genres = Lists.newArrayList();
             for (byte gcode : Game.GENRES) {
                 ArcadeData.Genre genre = new ArcadeData.Genre();
                 genre.genre = gcode;
-                games = grepo.loadGenre(gcode, -1);
+                List<GameRecord> games = grepo.loadGenre(gcode, -1);
                 genre.gameCount = games.size();
                 if (genre.gameCount == 0) {
                     continue;
@@ -469,7 +469,6 @@ public class GameServlet extends MsoyServiceServlet
                 int[] players = getMinMaxPlayers((Game)frec.toItem());
                 data.featuredGame.minPlayers = players[0];
                 data.featuredGame.maxPlayers = players[1];
-                // TODO: load creator name
             }
 
             return data;
@@ -515,6 +514,17 @@ public class GameServlet extends MsoyServiceServlet
             result[ii].rating = record.rating;
         }
         return result;
+    }
+
+    protected FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
+    {
+        FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
+        info.avgDuration = detail.toGameDetail().getAverageDuration();
+        int[] players = getMinMaxPlayers((Game)game.toItem());
+        info.minPlayers = players[0];
+        info.maxPlayers = players[1];
+        info.playersOnline = pop;
+        return info;
     }
 
     protected void requireIsGameOwner (int gameId, MemberRecord mrec)

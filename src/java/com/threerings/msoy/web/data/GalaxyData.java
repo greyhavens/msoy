@@ -18,8 +18,8 @@ public class GalaxyData
     /** The number of popular tags we show on the Galaxy page. */
     public static final int POPULAR_TAG_COUNT = 9;
 
-    /** The number of popular Whirleds we show on the Galaxy page. */
-    public static final int POPULAR_WHIRLED_COUNT = 5;
+    /** The number of featured Whirleds we show on the Galaxy page. */
+    public static final int FEATURED_WHIRLED_COUNT = 5;
 
     /** The featured Whirleds for display at the top of the page. */
     public GroupCard[] featuredWhirleds;

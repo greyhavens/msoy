@@ -72,14 +72,14 @@ public class GroupServlet extends MsoyServiceServlet
                     GroupCard gcard = group.toGroupCard();
                     gcard.population = card.population;
                     popWhirleds.add(gcard);
-                    if (popWhirleds.size() == GalaxyData.POPULAR_WHIRLED_COUNT) {
+                    if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
                         break;
                     }
                 }
             }
             // if we don't have enough people online, supplement with other groups
-            if (popWhirleds.size() < GalaxyData.POPULAR_WHIRLED_COUNT) {
-                int count = GalaxyData.POPULAR_WHIRLED_COUNT - popWhirleds.size();
+            if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
+                int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
                 for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
                     popWhirleds.add(group.toGroupCard());
                 }

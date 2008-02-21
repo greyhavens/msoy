@@ -30,8 +30,11 @@ public class ArcadeData
         public GameInfo[] games;
     }
 
-    /** Info on the featured game. */
-    public FeaturedGameInfo featuredGame;
+    /** The number of featured games we show on the Arcade page. */
+    public static int FEATURED_GAME_COUNT = 5;
+
+    /** Info on the featured games. */
+    public FeaturedGameInfo[] featuredGames;
 
     /** 
      * Information about each game genre.
