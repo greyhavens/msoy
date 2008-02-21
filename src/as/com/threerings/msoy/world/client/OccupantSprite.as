@@ -10,15 +10,9 @@ import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
-import flash.filters.GlowFilter;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.TextFieldUtil;
@@ -67,18 +61,6 @@ public class OccupantSprite extends MsoySprite
         // _label.cacheAsBitmap = true;
 
         addChild(_extras);
-
-        _label.selectable = false;
-        _label.autoSize = TextFieldAutoSize.CENTER;
-        _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
-
-        var labelFormat :TextFormat = new TextFormat();
-        // there be magic here. Arial isn't even available on Linux, but it works it out. The
-        // documentation for TextFormat does not indicate this. Bastards.
-        labelFormat.font = "Arial";
-        labelFormat.size = 12;
-        labelFormat.bold = true;
-        _label.defaultTextFormat = labelFormat;
         _extras.addChild(_label);
 
         if (occInfo != null) {
@@ -320,7 +302,7 @@ public class OccupantSprite extends MsoySprite
         // we care about here; MemberName compares as the same if the memberId is the same...
         if (oldInfo == null || (oldInfo.status != newInfo.status) ||
             (oldInfo.username.toString() !== newName)) {
-            _label.textColor = getStatusColor(newInfo.status);
+            _label.setStatus(newInfo.status);
             _label.text = newName;
             _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
             _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
@@ -687,28 +669,17 @@ public class OccupantSprite extends MsoySprite
     }
 
     /**
-     * Returns the color we should use when drawing our name label.
-     */
-    protected function getStatusColor (status :int) :uint
-    {
-        switch (status) {
-        case OccupantInfo.IDLE:
-            return 0x777777;
-        case OccupantInfo.DISCONNECTED:
-            return 0xFF0000;
-        case MsoyBodyObject.AWAY:
-            return 0xFFFF77;
-        default:
-            return 0x99BFFF;
-        }
-    }
-
-    /**
      * Called when this occupant changes orientation or transitions between poses.
      */
     protected function appearanceChanged () :void
     {
         // nada
+    }
+
+    protected function createNameField () :NameField
+    {
+        // use the default implementation here.
+        return new NameField();
     }
 
     /** Contains extra children (nameLabel, decorations) that should not be scaled. */
@@ -719,7 +690,7 @@ public class OccupantSprite extends MsoySprite
      * sprite. Also, the label was not working correctly with the "general purpose" layout code for
      * decorations, which I believe to be the fault of the label (it was returning a negative X
      * coordinate for its bounding rectangle, when in fact it should have started at 0). */
-    protected var _label :TextField = new TextField();
+    protected var _label :NameField = createNameField();
 
     /** Our most recent occupant information. */
     protected var _occInfo :OccupantInfo;

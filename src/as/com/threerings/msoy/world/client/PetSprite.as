@@ -61,13 +61,6 @@ public class PetSprite extends ActorSprite
         return "PetSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
-    // from OccupantSprite
-    override protected function getStatusColor (status :int) :uint
-    {
-        // all pets are white-named
-        return 0xFFFFFF;
-    }
-
     // from MsoySprite
     override protected function postClickAction () :void
     {
@@ -78,6 +71,12 @@ public class PetSprite extends ActorSprite
     override protected function createBackend () :EntityBackend
     {
         return new PetBackend();
+    }
+
+    // from OccupantSprite
+    override protected function createNameField () :NameField
+    {
+        return new NameField(true);
     }
 }
 }
