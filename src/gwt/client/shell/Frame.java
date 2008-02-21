@@ -522,8 +522,8 @@ public class Frame
             super("pageTitle", 0, 0);
             addStyleName("pageTitle" + pageId.toUpperCase().substring(0, 1) + pageId.substring(1));
 
-            setWidget(0, 0, subnavi, 1, "SubNavi");
-            setText(0, 1, _deftitle = title, 1, "Title");
+            setText(0, 0, _deftitle = title, 1, "Title");
+            setWidget(0, 1, subnavi, 1, "SubNavi");
 
             _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
@@ -535,7 +535,7 @@ public class Frame
         }
 
         public void setTitle (String title) {
-            setText(0, 1, title == null ? _deftitle : title);
+            setText(0, 0, title == null ? _deftitle : title);
         }
 
         public void setCloseVisible (boolean visible) {

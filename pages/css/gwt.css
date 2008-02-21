@@ -270,11 +270,12 @@ img, embed, applet, object {
 
 .pageTitle .SubNavi {
   width: 400px;
-  font-size: 14px;
+  font-size: 12px;
   color: white;
   white-space: nowrap;
   vertical-align: bottom;
-  padding: 0px 0px 5px 15px;
+  text-align: right;
+  padding: 0px 15px 5px 0px;
 }
 
 .pageTitle .SubNavi a {
@@ -288,13 +289,15 @@ img, embed, applet, object {
 
 .pageTitle .Title {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
   width: 282px;
   color: white;
-  padding-top: 3px;
+  padding: 3px 0px 0px 15px;
   opacity: 0.6;
 }
 
-.pageTitle .Title, .pageDialog .DialogTitle {
+.pageDialog .DialogTitle {
   font-size: 24px;
   font-weight: bold;
   text-align: center;
@@ -393,7 +396,8 @@ img, embed, applet, object {
 .tongueBox .Header .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: bold;
   white-space: nowrap;
   color: white;
   padding-left: 10px;
