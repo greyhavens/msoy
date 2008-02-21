@@ -626,10 +626,10 @@ public class Frame
         public NaviButton (String page, String text, AbstractImagePrototype up,
                            AbstractImagePrototype over, AbstractImagePrototype down) {
             setStyleName("Button");
-            addStyleName("actionLabel");
             pageId = page;
 
             _upImage = up.createImage();
+            _upImage.addStyleName("actionLabel");
             _upImage.addMouseListener(new MouseListenerAdapter() {
                 public void onMouseEnter (Widget sender) {
                     setWidget(_overImage);
@@ -637,6 +637,7 @@ public class Frame
             });
 
             _overImage = over.createImage();
+            _overImage.addStyleName("actionLabel");
             _overImage.addMouseListener(new MouseListenerAdapter() {
                 public void onMouseLeave (Widget sender) {
                     setWidget(_upImage);
@@ -650,6 +651,7 @@ public class Frame
             _overImage.addClickListener(go);
 
             _downImage = down.createImage();
+            _downImage.addStyleName("actionLabel");
             _downImage.addClickListener(go);
 
             setWidget(_upImage);
