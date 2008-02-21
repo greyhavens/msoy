@@ -92,6 +92,7 @@ public class HeaderBar extends HBox
             for each (var comp :UIComponent in _extras) {
                 comp.includeInLayout = comp.visible = false;
             }
+            stretchSpacer(false);
         } else {
             for each (comp in _extras) {
                 if (comp == _embedLinkButton) {
@@ -100,6 +101,7 @@ public class HeaderBar extends HBox
                     comp.includeInLayout = comp.visible = true;
                 }
             }
+            stretchSpacer(true);
         }
     }
 
@@ -139,15 +141,10 @@ public class HeaderBar extends HBox
         var stretchTabs :Boolean = !(stretch && ownTabs && !mini);
         var stretchSpacer :Boolean = (stretch || !ownTabs) && !mini;
         if (stretchTabs == isNaN(_tabsContainer.percentWidth)) {
-            callLater(function () :void { 
-                _tabsContainer.percentWidth = stretchTabs ? 100 : NaN;
-            });
+            _tabsContainer.percentWidth = stretchTabs ? 100 : NaN;
         }
-
         if (stretchSpacer == isNaN(_spacer.percentWidth)) {
-            callLater(function () :void {
-                _spacer.percentWidth = stretchSpacer ? 100 : NaN;
-            });
+            _spacer.percentWidth = stretchSpacer ? 100 : NaN;
         }
     }
 

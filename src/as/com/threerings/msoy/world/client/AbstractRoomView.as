@@ -422,7 +422,6 @@ public class AbstractRoomView extends Sprite
             if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
                 _ctx.getTopPanel().getControlBar().enableZoomControl(false);
             }
-            // no zooming TODO: disable zoom control
             return maxScale;
         }
     }
