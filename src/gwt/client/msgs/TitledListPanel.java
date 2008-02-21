@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.Frame;
 import client.util.MsoyUI;
 
 /**
@@ -45,14 +46,15 @@ public class TitledListPanel extends FlexTable
                 _bheader.setText(0, 2, "");
             }
         }
-        updateTitle(title);
+        Frame.ensureVisible(updateTitle(title));
         setWidget(1, 0, contents);
     }
 
-    public void setContents (Widget header, Widget contents)
+    public void setContents (final Widget header, Widget contents)
     {
         setWidget(0, 0, header);
         setWidget(1, 0, contents);
+        Frame.ensureVisible(header);
     }
 
     protected void setRightBits (Widget rightBox)
@@ -61,12 +63,15 @@ public class TitledListPanel extends FlexTable
         _bheader.getFlexCellFormatter().setStyleName(0, 2, "RightBits");
     }
 
-    protected void updateTitle (String title)
+    protected Widget updateTitle (String title)
     {
         if (_bheader.getParent() != null) {
             _bheader.setText(0, 1, title);
+            return _bheader;
         } else {
-            setWidget(0, 0, MsoyUI.createLabel(title, "Title"));
+            Widget header = MsoyUI.createLabel(title, "Title");
+            setWidget(0, 0, header);
+            return header;
         }
     }
 
