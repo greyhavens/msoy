@@ -368,12 +368,10 @@ public class Frame
 
     protected static TitleBar createTitleBar (String pageId)
     {
-        String title = "";
         SubNaviPanel subnavi = new SubNaviPanel();
         int myId = CShell.getMemberId();
 
         if (pageId.equals(Page.ME)) {
-            title = "Me";
             subnavi.addLink(null, "Me", Page.ME, "");
             if (CShell.roomCount > 1) {
                 subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
@@ -389,30 +387,25 @@ public class Frame
 
         } else if (pageId.equals(Page.PEOPLE)) {
             if (CShell.getMemberId() == 0) {
-                title = "People";
                 subnavi.addLink(null, "Search", Page.PEOPLE, "");
             } else {
-                title = "Friends";
                 subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
                 subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
             }
 
         } else if (pageId.equals(Page.GAMES)) {
-            title = "Games";
             subnavi.addLink(null, "Games", Page.GAMES, "");
             if (CShell.getMemberId() != 0) {
                 subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", myId));
             }
 
         } else if (pageId.equals(Page.WHIRLEDS)) {
-            title = "Whirleds";
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
             if (CShell.getMemberId() != 0) {
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
             }
 
         } else if (pageId.equals(Page.SHOP)) {
-            title = "Shop";
             subnavi.addLink(null, "Shop", Page.SHOP, "");
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 byte type = Item.TYPES[ii];
@@ -424,11 +417,10 @@ public class Frame
             }
 
         } else if (pageId.equals(Page.HELP)) {
-            title = "Help";
             subnavi.addLink(null, "Help", Page.HELP, "");
         }
 
-        return new TitleBar(pageId, title, subnavi);
+        return new TitleBar(pageId, Page.getDefaultTitle(pageId), subnavi);
     }
 
     /**

@@ -60,6 +60,12 @@ public class index extends Page
     }
 
     // @Override // from Page
+    protected String getTabPageId ()
+    {
+        return ME;
+    }
+
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();

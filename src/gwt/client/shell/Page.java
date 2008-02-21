@@ -43,6 +43,14 @@ public abstract class Page
     public static final String WORLD = "world";
 
     /**
+     * Returns the default title for the specified page.
+     */
+    public static String getDefaultTitle (String pageId)
+    {
+        return CShell.dmsgs.getString(pageId + "Title");
+    }
+
+    /**
      * Called when the page is first resolved to initialize its bits.
      */
     public void init ()
@@ -143,7 +151,7 @@ public abstract class Page
     {
         Frame.setHeaderVisible(withHeader);
         Frame.showContent(withHeader ? getTabPageId() : null, _content = content);
-        Frame.setTitle(title);
+        Frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
     }
 
     /**

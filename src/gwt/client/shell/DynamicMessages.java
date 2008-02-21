@@ -133,4 +133,11 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String genre6 ();
     public String genre7 ();
     public String genre8 ();
+
+    public String meTitle ();
+    public String peopleTitle ();
+    public String gamesTitle ();
+    public String whirledsTitle ();
+    public String shopTitle ();
+    public String helpTitle ();
 }
