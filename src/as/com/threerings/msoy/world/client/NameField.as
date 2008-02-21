@@ -38,6 +38,9 @@ public class NameField extends TextField
         format.size = 12;
         format.bold = true;
         defaultTextFormat = format;
+
+        // make sure we get initialized to the default color first
+        setStatus(-1);
     }
 
     /**

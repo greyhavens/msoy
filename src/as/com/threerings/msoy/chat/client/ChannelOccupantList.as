@@ -101,6 +101,8 @@ import flash.display.DisplayObject;
 
 import flash.geom.Rectangle;
 
+import flash.text.TextFieldAutoSize;
+
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
@@ -112,9 +114,13 @@ import mx.controls.VScrollBar;
 
 import mx.events.ScrollEvent;
 
+import com.threerings.flex.FlexWrapper;
+
 import com.threerings.util.Log;
 
 import com.threerings.msoy.data.VizMemberName;
+
+import com.threerings.msoy.world.client.NameField;
 
 class ListBox extends VBox 
 {
@@ -185,8 +191,8 @@ class ChatterRenderer extends HBox
         _headshot.setStyle("verticalAlign", "middle");
         _headshot.setStyle("horizontalAlign", "center");
 
-        addChild(_nameLabel = new Label());
-        _nameLabel.width = 208;
+        addChild(new FlexWrapper(_nameField = new NameField()));
+        _nameField.autoSize = TextFieldAutoSize.LEFT;
 
         configureUI();
     }
@@ -198,11 +204,16 @@ class ChatterRenderer extends HBox
     {
         var chatter :VizMemberName = this.data as VizMemberName;
         if (chatter != null) {
-            _nameLabel.text = chatter.toString();
+            _nameField.text = chatter.toString();
+            callLater(function () :void {
+                // setting y = -_nameField.textHeight / 2 immediately doesn't seem to properly 
+                // account for the boldness/glowfilter
+                _nameField.y = -_nameField.height / 2;
+            });
             _headshot.source = chatter.getPhoto().getMediaPath();
 
         } else {
-            _nameLabel.text = "";
+            _nameField.text = "";
             _headshot.source = null;
         }
     }
@@ -210,5 +221,5 @@ class ChatterRenderer extends HBox
     private static const log :Log = Log.getLog(ChatterRenderer);
 
     protected var _headshot :Image;
-    protected var _nameLabel :Label;
+    protected var _nameField :NameField;
 }
