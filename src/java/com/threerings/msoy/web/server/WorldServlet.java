@@ -152,7 +152,10 @@ public class WorldServlet extends MsoyServiceServlet
             data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
 
             IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
-            data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
+            data.friendCount = friendIds.size();
+            if (data.friendCount > 0) {
+                data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
+            }
 
             IntSet groupMemberships = new ArrayIntSet();
             for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {

@@ -182,8 +182,9 @@ public class ItemPanel extends VerticalPanel
 
     protected boolean shouldShowCreate (byte type)
     {
-        // if this is photos, music or videos, always show create
-        if (type == Item.PHOTO || type == Item.AUDIO || type == Item.VIDEO) {
+        // if this is photos, music, videos, or furni always show create
+        if (type == Item.PHOTO || type == Item.AUDIO || type == Item.VIDEO ||
+            type == Item.FURNITURE) {
             return true;
         }
 

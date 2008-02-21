@@ -31,6 +31,7 @@ public abstract class Page
     // constants for our various pages
     public static final String ACCOUNT = "account";
     public static final String ADMIN = "admin";
+    public static final String CREATE = "create";
     public static final String GAMES = "games";
     public static final String HELP = "help";
     public static final String MAIL = "mail";

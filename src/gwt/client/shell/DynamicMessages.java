@@ -139,5 +139,6 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String gamesTitle ();
     public String whirledsTitle ();
     public String shopTitle ();
+    public String createTitle ();
     public String helpTitle ();
 }

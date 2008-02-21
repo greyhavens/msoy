@@ -247,6 +247,7 @@ img, embed, applet, object {
 .pageTitle {
   width: 700px;
   height: 37px;
+  background: url(/images/header/blank_bar.png) #222222 no-repeat;
 }
 .pageTitleMe {
   background: url(/images/header/me_bar.png) #222222 no-repeat;

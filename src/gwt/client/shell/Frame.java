@@ -369,7 +369,6 @@ public class Frame
     protected static TitleBar createTitleBar (String pageId)
     {
         SubNaviPanel subnavi = new SubNaviPanel();
-        int myId = CShell.getMemberId();
 
         if (pageId.equals(Page.ME)) {
             subnavi.addLink(null, "Me", Page.ME, "");
@@ -378,7 +377,7 @@ public class Frame
             } else {
                 subnavi.addLink(null, "My Home", Page.WORLD, "h");
             }
-            subnavi.addLink(null, "My Profile", Page.PEOPLE, ""+myId);
+            subnavi.addLink(null, "My Profile", Page.PEOPLE, "me");
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Account", Page.ME, "account");
             if (CShell.isSupport()) {
@@ -396,7 +395,8 @@ public class Frame
         } else if (pageId.equals(Page.GAMES)) {
             subnavi.addLink(null, "Games", Page.GAMES, "");
             if (CShell.getMemberId() != 0) {
-                subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", myId));
+                subnavi.addLink(null, "My Trophies", Page.GAMES,
+                                Args.compose("t", CShell.getMemberId()));
             }
 
         } else if (pageId.equals(Page.WHIRLEDS)) {

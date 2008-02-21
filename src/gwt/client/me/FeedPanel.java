@@ -42,10 +42,11 @@ import client.util.TongueBox;
 
 public class FeedPanel extends TongueBox
 {
-    public FeedPanel ()
+    public FeedPanel (String emptyMessage)
     {
         setHeader(CMe.msgs.headerFeed());
         setContent(_feeds = new FeedList());
+        _emptyMessage = emptyMessage;
         _moreLabel = setFooterLabel("", new ClickListener() {
             public void onClick (Widget sender) {
                 loadFeed(!_fullPage);
@@ -57,7 +58,7 @@ public class FeedPanel extends TongueBox
     {
         _fullPage = fullPage;
         _feeds.clear();
-        _feeds.populate(feed, _fullPage);
+        _feeds.populate(feed, _emptyMessage, _fullPage);
         _moreLabel.setText(_fullPage ? CMe.msgs.shortFeed() : CMe.msgs.fullFeed());
     }
 
@@ -118,10 +119,10 @@ public class FeedPanel extends TongueBox
             setStyleName("FeedList");
         }
 
-        public void populate (List messages, boolean fullPage)
+        public void populate (List messages, String emptyMessage, boolean fullPage)
         {
             if (messages.size() == 0) {
-                add(new BasicWidget(CMe.msgs.emptyFeed()));
+                add(new BasicWidget(emptyMessage));
                 return;
             }
 
@@ -632,7 +633,7 @@ public class FeedPanel extends TongueBox
 
     protected FeedList _feeds;
     protected Label _moreLabel;
-
+    protected String _emptyMessage;
     protected boolean _fullPage;
 
     /** The default number of days of feed information to show. */

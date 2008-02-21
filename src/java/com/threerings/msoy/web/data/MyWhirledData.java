@@ -16,6 +16,9 @@ public class MyWhirledData
     /** The total number of people online. */
     public int whirledPopulation;
 
+    /** This member's total friend count (on and offline). */
+    public int friendCount;
+
     /** 
      * This member's online friends.
      *

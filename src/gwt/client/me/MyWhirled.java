@@ -50,7 +50,7 @@ public class MyWhirled extends VerticalPanel
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
 
         // display our online friends if we have any
-        if (data.friends.size() > 0) {
+        if (data.friends != null && data.friends.size() > 0) {
             // sort our friends list alphabetically (hopefully this sort is stable...)
             Collections.sort(data.friends, new Comparator() {
                 public int compare (Object o1, Object o2) {
@@ -90,7 +90,8 @@ public class MyWhirled extends VerticalPanel
         add(new TongueBox(CMe.msgs.headerStuff(), stuff));
 
         // add our news feed
-        FeedPanel feed = new FeedPanel();
+        FeedPanel feed = new FeedPanel(
+            data.friendCount > 0 ? CMe.msgs.emptyFeed() : CMe.msgs.emptyFeedNoFriends());
         feed.setFeed(data.feed, false);
         add(feed);
     }
