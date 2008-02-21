@@ -140,6 +140,10 @@ public class MemberRepository extends DepotRepository
             }
         });
         // END TEMP
+
+        // TEMP added 2008.2.21
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(13, "avrGameId"));
+        // END TEMP
     }
 
     /**
@@ -447,15 +451,6 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
-    }
-
-    /**
-     * Set the player's currently active AVR game by supplying its id, or zero to clear it.
-     */
-    public boolean setAVRGameId (int memberId, int gameId)
-        throws PersistenceException
-    {
-        return updatePartial(MemberRecord.class, memberId, MemberRecord.AVR_GAME_ID, gameId) > 0;
     }
 
     /**

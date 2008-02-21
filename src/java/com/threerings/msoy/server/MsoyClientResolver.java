@@ -135,8 +135,6 @@ public class MsoyClientResolver extends CrowdClientResolver
                 userObj.avatar = (Avatar)avatar.toItem();
             }
         }
-
-        userObj.avrGameId = member.avrGameId;
     }
 
     /**

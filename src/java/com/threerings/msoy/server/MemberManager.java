@@ -617,37 +617,6 @@ public class MemberManager
     }
 
     /**
-     * Update a member's persistent AVR membership in the database, and in dobj-land
-     * as well.
-     */
-    public void updateAVRGameId (final MemberObject member, final int gameId)
-    {
-        // immediately let the room manager relieve us of control, if needed
-        if (gameId == 0) {
-            PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(member.getPlaceOid());
-            if (pmgr instanceof RoomManager) {
-                ((RoomManager) pmgr).occupantLeftAVRGame(member.getOid());
-            }
-        }
-        // assumes member != null i.e. we're on the right world server
-        MsoyServer.invoker.postUnit(new Invoker.Unit("updateAVRGameId") {
-            public boolean invoke () {
-                try {
-                    MsoyServer.memberRepo.setAVRGameId(member.getMemberId(), gameId);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to update member's AVR game id [member=" +
-                            member + ", gameId=" + gameId + "]", pe);
-                    return false;
-                }
-                return true;
-            }
-            public void handleResult () {
-                member.setAvrGameId(gameId);
-            }
-        });
-    }
-
-    /**
      * Convenience method to ensure that the specified caller is not a guest.
      */
     protected void ensureNotGuest (MemberObject caller)

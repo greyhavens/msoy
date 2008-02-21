@@ -13,6 +13,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.peer.data.NodeObject;
@@ -29,6 +30,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.person.data.GameAwardPayload;
 
@@ -301,10 +303,11 @@ public class MsoyGameRegistry
             }
             return;
         }
-        // set or clear their pending game
+
+        // note that they're now playing an AVRG
         memobj.setGame(game);
         if (game != null && game.avrGame) {
-            MsoyServer.memberMan.updateAVRGameId(memobj, game.gameId);
+            memobj.setAvrGameId(game.gameId);
         }
 
         // update their occupant info if they're in a scene
@@ -328,8 +331,14 @@ public class MsoyGameRegistry
             return;
         }
 
-        // clear their persistent AVRG affiliation
-        MsoyServer.memberMan.updateAVRGameId(memobj, 0);
+        // clear their AVRG affiliation
+        memobj.setAvrGameId(0);
+
+        // immediately let the room manager relieve us of control, if needed
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
+        if (pmgr instanceof RoomManager) {
+            ((RoomManager) pmgr).occupantLeftAVRGame(memobj.getOid());
+        }
     }
 
     // from interface PeerGameProvider
