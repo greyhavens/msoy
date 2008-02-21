@@ -1069,10 +1069,12 @@ public class ChatOverlay
                 }
             } else {
                 var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
-                var newGlyph :SubtitleGlyph = 
-                    createSubtitle(timed.msg, getType(timed.msg, true), true);
-                timed.showingNow();
-                addSubtitle(newGlyph);
+                if (timed != null) {
+                    var newGlyph :SubtitleGlyph = 
+                        createSubtitle(timed.msg, getType(timed.msg, true), true);
+                    timed.showingNow();
+                    addSubtitle(newGlyph);
+                }
             }
         }
     }
