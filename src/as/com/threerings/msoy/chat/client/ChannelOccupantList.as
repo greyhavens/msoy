@@ -182,6 +182,8 @@ class ChatterRenderer extends HBox
         _headshot.height = 20; // 1/3 of headshot size
         _headshot.width = 20;
         _headshot.maintainAspectRatio = true;
+        _headshot.setStyle("verticalAlign", "middle");
+        _headshot.setStyle("horizontalAlign", "center");
 
         addChild(_nameLabel = new Label());
         _nameLabel.width = 208;
@@ -204,7 +206,7 @@ class ChatterRenderer extends HBox
             _headshot.source = null;
         }
     }
-    
+
     private static const log :Log = Log.getLog(ChatterRenderer);
 
     protected var _headshot :Image;
