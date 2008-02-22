@@ -90,7 +90,7 @@ public class ItemRemixer extends FlexTable
             "auth=" + URL.encodeComponent(CShell.ident.token);
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
-            1000, 550, flashVars);
+            665, 550, flashVars);
     }
 
     protected void setHash (
