@@ -1,5 +1,0 @@
-<flex-config>
-   <compiler>
-      <allow-source-path-overlap>true</allow-source-path-overlap>
-   </compiler>
-</flex-config>
