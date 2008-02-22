@@ -127,7 +127,7 @@ public class Base64Sender
         // string object that Flash chokes on
         String arg = (s == null) ? "null" : ("'" + s + "'");
         Object resultValue = doc.eval("getElementById('" + _targetName + "')." +
-                                      "setMediaBytes(" + arg + ")");
+                                      _funcName + "(" + arg + ")");
         boolean result = Boolean.TRUE.equals(resultValue);
         if (result) {
             if (s == null) {
