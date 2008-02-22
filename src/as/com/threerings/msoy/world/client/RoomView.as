@@ -297,17 +297,21 @@ public class RoomView extends AbstractRoomView
     }
 
     // from LoadingWatcher
-    public function setLoading (loading :Boolean) :void
+    public function setLoading (loading :Boolean, loadingDecor :Boolean) :void
     {
-        if (loading == (_loadingSpinner.parent != null)) {
-            return;
+        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+        if (loading != (_loadingSpinner.parent != null)) {
+            if (loading) {
+                box.addOverlay(_loadingSpinner, PlaceBox.LAYER_ROOM_SPINNER);
+            } else {
+                box.removeOverlay(_loadingSpinner);
+            }
         }
 
-        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
         if (loading) {
-            box.addOverlay(_loadingSpinner, PlaceBox.LAYER_ROOM_SPINNER);
-        } else {
-            box.removeOverlay(_loadingSpinner);
+            var scale :Number = loadingDecor ? 4 : 1;
+            _loadingSpinner.scaleX = scale;
+            _loadingSpinner.scaleY = scale;
         }
     }
 
@@ -578,7 +582,7 @@ public class RoomView extends AbstractRoomView
 
         recheckChatOverlay();
 
-        setLoading(false);
+        setLoading(false, false);
     }
 
     // from AbstractRoomView

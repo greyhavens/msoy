@@ -37,7 +37,7 @@ public class FurniSprite extends MsoySprite
     public static function setLoadingWatcher (watcher :LoadingWatcher) :void
     {
         _loadingWatcher = watcher;
-        updateLoadingCount(0);
+        notifyLoadingWatcher();
     }
 
     /**
@@ -455,10 +455,18 @@ public class FurniSprite extends MsoySprite
     /**
      * Update the number of FurniSprites that are currently loading.
      */
-    protected static function updateLoadingCount (delta :int) :void
+    protected function updateLoadingCount (delta :int) :void
     {
-        _loadingCount += delta;
-        _loadingWatcher.setLoading(_loadingCount > 0);
+        _loadingFurni += delta;
+        if (this is DecorSprite) {
+            _loadingDecor += delta;
+        }
+        notifyLoadingWatcher();
+    }
+
+    protected static function notifyLoadingWatcher () :void
+    {
+        _loadingWatcher.setLoading(_loadingFurni > 0, _loadingDecor > 0);
     }
 
     /** The furniture data for this piece of furni. */
@@ -468,7 +476,10 @@ public class FurniSprite extends MsoySprite
     protected var _loadedCallback :Function;
 
     /** The number of furni items currently loading. */
-    protected static var _loadingCount :int = 0;
+    protected static var _loadingFurni :int = 0;
+
+    /** The number of decor items currently loading (should be 0 or 1). */
+    protected static var _loadingDecor :int = 0;
 
     /** The watcher for loading progress. */
     protected static var _loadingWatcher :LoadingWatcher;
