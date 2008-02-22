@@ -870,7 +870,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,tutorial,avatarviewer,
-                                    videoviewer,decorviewer,remixer,neighborhood">
+                                    videoviewer,decorviewer,remixer">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
   </target>
