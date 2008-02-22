@@ -507,16 +507,6 @@ public class MsoySprite extends DataPackMediaContainer
         return loader;
     }
 
-    override protected function getMaskRectangle () :Rectangle
-    {
-        if (_desc != null && _desc.mimeType == MediaDesc.VIDEO_YOUTUBE) {
-            // do not mask!
-            return null;
-        }
-
-        return super.getMaskRectangle();
-    }
-
     /**
      * Post a command event when we're clicked.
      */

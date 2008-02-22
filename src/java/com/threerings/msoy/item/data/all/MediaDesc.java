@@ -51,10 +51,7 @@ public class MediaDesc implements Streamable, IsSerializable
     public static final byte VIDEO_MSVIDEO = 33;
 
     /** The MIME type for a youtube video. */
-    public static final byte VIDEO_YOUTUBE = 34;
-
-    /** The MIME type for a google video. */
-    public static final byte VIDEO_GOOGLE = 35; // NOTE: does not actually work in-whirled
+    public static final byte VIDEO_YOUTUBE_DEPRECATED = 34;
 
     /** The MIME type for Flash SWF files. */
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
@@ -126,11 +123,8 @@ public class MediaDesc implements Streamable, IsSerializable
     public static String getMediaPath (byte[] mediaHash, byte mimeType, boolean proxy)
     {
         switch (mimeType) {
-        case VIDEO_YOUTUBE:
+        case VIDEO_YOUTUBE_DEPRECATED:
             return "http://www.youtube.com/v/" + bytesToString(mediaHash);
-
-        case VIDEO_GOOGLE:
-            return "http://video.google.com/googleplayer.swf?docId=" + bytesToString(mediaHash);
 
         default:
             String prefix = proxy ? DeploymentConfig.PROXY_PREFIX : DeploymentConfig.mediaURL;
@@ -210,21 +204,6 @@ public class MediaDesc implements Streamable, IsSerializable
         }
 
         return data;
-    }
-
-    /**
-     * Is the specified mimetype 'external'?
-     */
-    public static boolean isExternalMimeType (byte mimeType)
-    {
-        switch (mimeType) {
-        case VIDEO_YOUTUBE:
-        case VIDEO_GOOGLE:
-            return true;
-
-        default:
-            return false;
-        }
     }
 
     /**
@@ -474,8 +453,7 @@ public class MediaDesc implements Streamable, IsSerializable
         this.constraint = constraint;
 
         switch (mimeType) {
-        case VIDEO_YOUTUBE:
-        case VIDEO_GOOGLE:
+        case VIDEO_YOUTUBE_DEPRECATED:
             this.hash = stringToBytes(s);
             break;
 
@@ -523,8 +501,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case IMAGE_JPEG:
         case IMAGE_GIF:
         case VIDEO_FLASH:
-        case VIDEO_YOUTUBE:
-        case VIDEO_GOOGLE:
+        case VIDEO_YOUTUBE_DEPRECATED:
         case APPLICATION_SHOCKWAVE_FLASH:
 //        case APPLICATION_ZIP: // because we support zipped content..
             return true;
@@ -577,11 +554,11 @@ public class MediaDesc implements Streamable, IsSerializable
     /**
      * Is this video hosted externally?
      */
+    // TODO: remove this
     public boolean isExternalVideo ()
     {
         switch (mimeType) {
-        case VIDEO_YOUTUBE:
-        case VIDEO_GOOGLE:
+        case VIDEO_YOUTUBE_DEPRECATED:
             return true;
 
         default:
