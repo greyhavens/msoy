@@ -783,8 +783,7 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (itemType != Item.DECOR && itemType != Item.AUDIO &&
-            !_wdctx.getGameDirector().isPlayingTutorial()) {
+        if (itemType != Item.DECOR && itemType != Item.AUDIO) {
             _openEditor = true;
         }
 
