@@ -500,7 +500,8 @@ public class AbstractRoomView extends Sprite
         _ctx.getMediaDirector().returnSprite(sprite);
     }
 
-    private static const log :Log = Log.getLog(AbstractRoomView);
+    /** For logging. */
+    protected const log :Log = Log.getLog(this);
 
     /** The msoy context. */
     protected var _ctx :WorldContext;

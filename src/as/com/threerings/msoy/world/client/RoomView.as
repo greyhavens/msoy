@@ -1148,9 +1148,6 @@ public class RoomView extends AbstractRoomView
     /** True if autoscroll should be supressed for the current frame. */
     protected var _suppressAutoScroll :Boolean = false;
 
-    /** Log this! */
-    private const log :Log = Log.getLog(RoomView);
-
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
 
