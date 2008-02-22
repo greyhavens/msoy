@@ -569,7 +569,7 @@ public class FeedPanel extends TongueBox
         }
     }
 
-    protected static class DateWidget extends HorizontalPanel
+    protected static class DateWidget extends Label
     {
         public DateWidget (Date date)
         {
@@ -579,9 +579,7 @@ public class FeedPanel extends TongueBox
         {
             setStyleName("FeedWidget");
             addStyleName("FeedDate");
-            setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-            add(new Label(label));
+            setText(label);
         }
     }
 
