@@ -1,0 +1,19 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {continue = id; dismissAll = id; }; 
+            CLASS = FlashExceptionDialogController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                continueBtn = NSButton; 
+                dismissAllBtn = NSButton; 
+                label = NSTextField; 
+                textView = NSTextView; 
+                window = NSPanel; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

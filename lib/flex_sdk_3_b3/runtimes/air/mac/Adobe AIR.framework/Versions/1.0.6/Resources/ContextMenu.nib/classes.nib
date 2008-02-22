@@ -1,0 +1,35 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                about = id; 
+                back = id; 
+                debugger = id; 
+                forward = id; 
+                highQuality = id; 
+                loop = id; 
+                lowQuality = id; 
+                mediumQuality = id; 
+                rewind = id; 
+                showAll = id; 
+                showSettingsUI = id; 
+                toggleShowRedrawRegions = id; 
+                zoom100 = id; 
+                zoomIn = id; 
+                zoomOut = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = NSView; LANGUAGE = ObjC; SUPERCLASS = NSResponder; }, 
+        {
+            ACTIONS = {showSettingsUI = id; toggleShowRedrawRegions = id; }; 
+            CLASS = PlayerContentView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {contextMenu = NSMenu; editMenu = NSMenu; linkMenu = NSMenu; }; 
+            SUPERCLASS = NSView; 
+        }
+    ); 
+    IBVersion = 1; 
+}

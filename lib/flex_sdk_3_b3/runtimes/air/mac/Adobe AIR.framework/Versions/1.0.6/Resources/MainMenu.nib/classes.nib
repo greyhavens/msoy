@@ -1,0 +1,20 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                applicationCopy = id; 
+                applicationCut = id; 
+                applicationPaste = id; 
+                applicationSelectAll = id; 
+            }; 
+            CLASS = AIRAppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {aboutMenuItem = id; hideMenuItem = id; quitMenuItem = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = PlayerContentMenu; LANGUAGE = ObjC; SUPERCLASS = NSMenu; }, 
+        {CLASS = PlayerContentMenuItem; LANGUAGE = ObjC; SUPERCLASS = NSMenuItem; }
+    ); 
+    IBVersion = 1; 
+}
