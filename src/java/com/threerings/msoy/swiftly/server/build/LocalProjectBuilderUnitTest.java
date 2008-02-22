@@ -69,7 +69,9 @@ public class LocalProjectBuilderUnitTest extends TestCase
         BuildArtifact artifact = builder.build(_tempDir);
         for (CompilerOutput output : artifact.getOutput()) {
             // no output should be displayed if the build worked
-            assertEquals("", output);
+            // XXX TODO: remove this when flex 3 is final
+            assertEquals("This beta will expire on Sat Mar 15 00:00:00 PDT 2008.", output.getMessage());
+            // normally: assertEquals("", output);
         }
         assertTrue(artifact.buildSuccessful());
         // TODO: test broken build output
