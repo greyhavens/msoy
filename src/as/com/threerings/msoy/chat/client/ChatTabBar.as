@@ -7,6 +7,12 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+
+import flash.geom.Rectangle;
+
+import flash.utils.Timer;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
@@ -50,6 +56,7 @@ public class ChatTabBar extends HBox
         rawChildren.setChildIndex(_scrollLayer, rawChildren.numChildren - 1);
         _scrollLayer.setActualSize(w, h);
         displayScrollTabs(w < getExplicitOrMeasuredWidth());
+        horizontalScrollPosition = _scrollPercent * maxHorizontalScrollPosition;
     }
 
     override public function addChildAt (dispObj :DisplayObject, index :int) :DisplayObject
@@ -161,7 +168,13 @@ public class ChatTabBar extends HBox
             controller.addMessage(msg);
             var index :int = getControllerIndex(channel);
             if (index != _selectedIndex && channel != null) {
-                (_tabs[index] as ChatTab).setVisualState(ChatTab.ATTENTION);
+                var tab :ChatTab = _tabs[index] as ChatTab;
+                tab.setVisualState(ChatTab.ATTENTION);
+                if (_rightScroll.visible && tab.x > (horizontalScrollPosition + width)) {
+                    _rightScroll.play();
+                } else if (_leftScroll.visible && (tab.x + tab.width) < horizontalScrollPosition) {
+                    _leftScroll.play();
+                }
             }
             return;
         }
@@ -314,6 +327,11 @@ public class ChatTabBar extends HBox
         wrapper.setStyle("left", 0);
         wrapper.includeInLayout = false;
         _scrollLayer.addChild(wrapper);
+        _leftScroll.addEventListener(MouseEvent.MOUSE_DOWN, genScrollListener(LEFT_SCROLL, true));
+        var offListener :Function = genScrollListener(LEFT_SCROLL, false);
+        _leftScroll.addEventListener(MouseEvent.MOUSE_UP, offListener);
+        _leftScroll.addEventListener(MouseEvent.MOUSE_OUT, offListener);
+        _leftScroll.buttonMode = true;
 
         _rightScroll = new SCROLL_ARROW() as MovieClip;
         _rightScroll.scaleX = -1;
@@ -325,13 +343,57 @@ public class ChatTabBar extends HBox
         wrapper.setStyle("right", 0);
         wrapper.includeInLayout = false;
         _scrollLayer.addChild(wrapper);
+        _rightScroll.addEventListener(MouseEvent.MOUSE_DOWN, genScrollListener(RIGHT_SCROLL, true));
+        offListener = genScrollListener(RIGHT_SCROLL, false);
+        _rightScroll.addEventListener(MouseEvent.MOUSE_UP, offListener);
+        _rightScroll.addEventListener(MouseEvent.MOUSE_OUT, offListener);
+        _rightScroll.buttonMode = true;
+
+        _scrollRepeater = new Timer(SCROLL_REPEAT_DELAY, 0);
+        _scrollRepeater.addEventListener(TimerEvent.TIMER, scrollRepeat);
     }
 
     protected function displayScrollTabs (display :Boolean) :void
     {
-        // temporarily disabled.
-//        _leftScroll.visible = display;
-//        _rightScroll.visible = display;
+        callLater(function () :void {
+            _leftScroll.visible = display && horizontalScrollPosition > 0;
+            _rightScroll.visible = 
+                display && horizontalScrollPosition < maxHorizontalScrollPosition;
+        });
+        if (!display) {
+            _scrollPercent = 0;
+            horizontalScrollPosition = 0;
+            _rightScroll.gotoAndStop(1);
+            _leftScroll.gotoAndStop(1);
+        }
+    }
+
+    protected function genScrollListener (direction :int, on :Boolean) :Function
+    {
+        return function (event :MouseEvent) :void {
+            if (on) {
+                _scrollDirection = direction;
+                scrollRepeat();
+                _scrollRepeater.start();
+            } else {
+                _scrollDirection = 0;
+                _scrollPercent = horizontalScrollPosition / maxHorizontalScrollPosition;
+                _scrollRepeater.stop();
+            }
+        };
+    }
+
+    protected function scrollRepeat (...ignored) :void
+    {
+        _scrollPercent = horizontalScrollPosition / maxHorizontalScrollPosition;
+        horizontalScrollPosition += _scrollDirection;
+        if (_scrollDirection == RIGHT_SCROLL) {
+            _rightScroll.gotoAndStop(1);
+        } else if (_scrollDirection == LEFT_SCROLL) {
+            _leftScroll.gotoAndStop(1);
+        }
+        _leftScroll.visible = horizontalScrollPosition > 0;
+        _rightScroll.visible = horizontalScrollPosition < maxHorizontalScrollPosition;
     }
 
     protected function addTab (tab :ChatTab, index :int = -1) :void
@@ -443,6 +505,10 @@ public class ChatTabBar extends HBox
     [Embed(source="../../../../../../../rsrc/media/skins/tab/tab_scroll_arrow.swf#arrow")]
     protected static const SCROLL_ARROW :Class;
 
+    protected static const LEFT_SCROLL :int = -15;
+    protected static const RIGHT_SCROLL :int = 15;
+    protected static const SCROLL_REPEAT_DELAY :int = 50;
+
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
     protected var _ctx :MsoyContext;
@@ -450,5 +516,8 @@ public class ChatTabBar extends HBox
     protected var _scrollLayer :Canvas;
     protected var _leftScroll :MovieClip;
     protected var _rightScroll :MovieClip;
+    protected var _scrollDirection :int = 0;
+    protected var _scrollRepeater :Timer;
+    protected var _scrollPercent :Number = 0;
 }
 }
