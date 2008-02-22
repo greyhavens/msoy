@@ -32,6 +32,7 @@ public class FieldEditor extends GridRow
 
         var lbl :Label = new Label();
         lbl.toolTip = entry.info;
+        lbl.setStyle("fontWeight", "bold");
         lbl.text = name;
         addComp(lbl);
     }

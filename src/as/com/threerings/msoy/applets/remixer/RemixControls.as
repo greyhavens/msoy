@@ -49,9 +49,9 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class RemixControls extends HBox
 {
-    public static const CONTROLS_WIDTH :int = 400;
+    public static const CONTROLS_WIDTH :int = 325;
 
-    public static const PREVIEW_WIDTH :int = 600;
+    public static const PREVIEW_WIDTH :int = 340;
 
     public function RemixControls (app :Application)
     {
@@ -88,7 +88,7 @@ public class RemixControls extends HBox
         vbox.addChild(createPreviewHeader());
 
         _previewer = new SWFLoader();
-        _previewer.width = 600;
+        _previewer.width = PREVIEW_WIDTH;
         _previewer.height = 488;
         _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
         _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
@@ -177,10 +177,11 @@ public class RemixControls extends HBox
     protected function addDescription (entry :Object) :GridRow
     {
         var lbl :Text = new Text();
-        lbl.width = 300;
+        lbl.width = CONTROLS_WIDTH;
+        lbl.setStyle("paddingLeft", 20);
         lbl.text = entry.info;
 
-        return GridUtil.addRow(_controls, "", lbl, [3, 1]);
+        return GridUtil.addRow(_controls, lbl, [4, 1]);
     }
 
     protected function addSpacer () :GridRow
