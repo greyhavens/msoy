@@ -36,25 +36,8 @@ public class Tutorial extends Sprite
 
     public function viewIsReady () :void
     {
-        _view.gotoSwirlState(_activeQuest == null ? View.SWIRL_INTRO : View.SWIRL_DEMURE);
-
-        // if we have a pending tutorial completion, do it now that we're ready to display
-        if (_pendingCompletion) {
-            _pendingCompletion = false;
-            displayQuestCompletion();
-        }
-    }
-
-    public function swirlClicked (swirlState :int) :void
-    {
-        log.debug("swirlClicked [state=" + swirlState + "]");
-
-        if (_view.isBoxShowing()) {
-            _view.displayNothing();
-
-        } else if (_activeQuest == null) {
+        if (_activeQuest == null) {
             displayIntro();
-
         } else {
             _view.displayQuest(_activeQuest);
         }
@@ -63,7 +46,7 @@ public class Tutorial extends Sprite
     public function skipQuest () :void
     {
         if (_activeQuest == null) {
-            log.warning("Eek, no active quest in skipQuest");
+            _view.displayMessage("Eek, no active quest in skipQuest.", null, null);
             return;
         }
         _control.quests.cancelQuest(_activeQuest.questId);
@@ -74,6 +57,12 @@ public class Tutorial extends Sprite
         } else {
             displayTutorialComplete();
         }
+    }
+
+    public function stopTutorial () :void
+    {
+        // TODO: display chat message encouraging them to restart later
+        _control.deactivateGame();
     }
 
     protected function complete (event :Event) :void
@@ -102,17 +91,9 @@ public class Tutorial extends Sprite
         }
         log.debug("Tutorial event [name=" + event.value + ", active=" + _activeQuest + "]");
 
-        // if we have no active quest or this isn't our trigger action, ignore it
-        if (_activeQuest == null || event.value != _activeQuest.trigger) {
-            return;
-        }
-
-        // we may end up here before our view is ready because when we finish playing a game the
-        // tutorial is started back up and immediately sent a gamePlayed event
-        if (_view.isReady()) {
+        // if this event completes our quest, make that happen
+        if (_activeQuest != null && event.value == _activeQuest.trigger) {
             displayQuestCompletion();
-        } else {
-            _pendingCompletion = true;
         }
     }
 
@@ -122,73 +103,57 @@ public class Tutorial extends Sprite
 
         // if we've acquired a new quest...
         if (event.value) {
-            // ...note the quest; display it's summary and smallen our swirl
             _activeQuest = Quest.getQuest(event.name);
             if (_activeQuest == null) {
                 log.warning("Unknown quest started? [id=" + event.name + "].");
             } else {
-                _view.displayQuest(_activeQuest);
-                _view.gotoSwirlState(View.SWIRL_NONE);
+                _view.displayQuest(_activeQuest); // ...display it
             }
         }
     }
 
     protected function displayIntro () :void
     {
-        _view.gotoSwirlState(View.SWIRL_NONE);
         _view.displayMessage(
-            "Let's Go!",
-            "<p class='title'>Whirled Tour</p><br>" +
-            "<p class='message'>This tour will help you get a feel for [[Whirled]] in just a " +
+            "<p class='title'>Decorate Your Room!</p>" +
+            "<p class='message'>We're going to show you how to decorate your room in just a " +
             "few simple steps.</p><br>" +
-            "<p class='message'>You'll learn how to [[customize]] your room, [[buy]] a new " +
-            "avatar, [[play]] games, and [[connect]] with friends.</p><br>" +
-            "<p class='message'>It's also a quick way to earn some easy <i>flow</i>, the " +
-            "local currency.</p>",
+            "<p class='message'>You'll learn about [[Decor]] and [[Furniture]] in " +
+            "this quick intro and personalize your room in the process!</p>",
+            "Let's Go!",
             function () :void {
                 _view.displayNothing();
                 startQuest(Quest.getFirstQuest());
-            });
+            },
+            "No thanks!");
     }
 
     protected function startQuest (quest :Quest) :void
     {
-        log.info("Starting quest [id=" + quest + "].");
-        _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, quest.questId, true);
-        _control.quests.offerQuest(quest.questId, null, quest.status);
+        // if this step has an entry page, don't save it as our current step; if we stop the
+        // tutorial now, we'll start back at the previous step
+        if (quest.enterPage == null) {
+            _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, quest.questId, true);
+            _control.quests.offerQuest(quest.questId, null, quest.status);
+        } else {
+            _view.displayQuest(_activeQuest = quest);
+        }
     }
 
     protected function displayQuestCompletion () :void
     {
         log.info("Marking step complete " + _activeQuest + ".");
         _view.displayNothing();
-        _control.quests.completeQuest(_activeQuest.questId, null, _activeQuest.payout);
+        _control.quests.completeQuest(_activeQuest.questId, null, 0);
         var nquest :Quest = Quest.getNextQuest(_activeQuest.questId);
 
         // now move on to the next quest...
         if (nquest != null) {
-            // some quest steps move right into the next step, others have a confirmation step
-            if (_activeQuest.outro == null) {
-                startQuest(nquest);
-            } else {
-                // note that they're on the next quest now so that we don't give them this same
-                // quest if they quit their browser now and come back
-                _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, nquest.questId, true);
-                _view.displayMessage("Onward", "<p class='message'>" + _activeQuest.outro + "</p>",
-                                     function () :void {
-                                         startQuest(nquest);
-                                     });
-            }
+            startQuest(nquest);
 
         // ...or the end of the tutorial if we have no more quests
-        } else if (_activeQuest.outro == null) {
-            displayTutorialComplete();
-
         } else {
-            _view.displayMessage("Onward", "<p class='message'>" + _activeQuest.outro + "</p>",
-                                 function () :void {
-                                     displayTutorialComplete();
-                                 });
+            displayTutorialComplete();
         }
 
         // clear out our active quest so that we don't retrigger its completion
@@ -197,25 +162,21 @@ public class Tutorial extends Sprite
 
     protected function displayTutorialComplete () :void
     {
+        _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, "done", true);
         _view.displayMessage(
-            "Bye Bye",
-            "<p class='title'>That's All Folks!</p><br>" +
-            "<p class='message'>You made it to the end of the tutorial. You're a " +
-            "[[champ]]!<br><br>" +
-            "You are now fully prepared to [[decorate your room]], [[play games]] and " +
-            "[[chat with your friends]].<br><br>" +
-            "Keep an eye on [[Places -> Whirledwide]] for fun new games and activities and " +
-            "check [[Me -> My Whirled]] to see what your friends are up to.<br><br>" +
-            "So long and thanks for all the clicks!</p>",
+            "<p class='message'>That's all there is to it! You're now an expert in " +
+            "interior decoration.<br><br>" +
+            "Click the [[Shop]] button above to take a look at all the great stuff " +
+            "you can get for your room.</p>",
+            "Close",
             function () :void {
                 _control.deactivateGame();
-            });
+            }, null);
     }
 
     protected var _activeQuest :Quest;
     protected var _control :AVRGameControl;
     protected var _view :View;
-    protected var _pendingCompletion :Boolean;
 
     protected static const PROP_TUTORIAL_STEP :String = "tutorialStep";
 }

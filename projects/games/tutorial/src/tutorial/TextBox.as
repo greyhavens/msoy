@@ -43,17 +43,6 @@ public class TextBox extends Sprite
             ".title {" +
             "  font-family: SunnySide;" +
             "  font-size: 20;" +
-            "  text-decoration: underline;" +
-            "  text-align: left;" +
-            "  margin-left: 20;" +
-            "}" +
-            ".shim {" +
-            "  font-size: 8;" +
-            "}" +
-            ".summary {" +
-            "  font-family: Goudy;" +
-            "  font-weight: bold;" +
-            "  font-size: 16;" +
             "  text-align: left;" +
             "}" +
             ".message {" +
@@ -75,8 +64,8 @@ public class TextBox extends Sprite
         _textField.multiline = true;
         _textField.embedFonts = true;
         _textField.antiAliasType = AntiAliasType.ADVANCED;
-        _textField.autoSize = TextFieldAutoSize.CENTER;
-        _textField.width = 400;
+        _textField.autoSize = TextFieldAutoSize.LEFT;
+        _textField.width = 300;
 
         // we start off invisible
         this.visible = false;
@@ -105,14 +94,11 @@ public class TextBox extends Sprite
         if (stage == null) {
             return; // god knows
         }
-
-        var scale :Number = Math.max(300, Math.min(400, stage.stageWidth)) / 400;
-        this.scaleX = this.scaleY = scale;
-        this.x = Math.max(0, Math.min(25, stage.stageWidth - figureWidth()*scale));
-        this.y = Content.BOX_HAT + 5; // Math.max(Content.BOX_HAT * this.scaleY, offset);
+        this.x = Math.max(-40, Math.min(10, stage.stageWidth - _backdrop.width));
+        this.y = Content.BOX_HAT + 5;
     }
 
-    public function showBox (text :String, titled :Boolean) :void
+    public function showBox (text :String) :void
     {
         clearTimer();
         if (_fadeOut.isPlaying()) {
@@ -124,7 +110,7 @@ public class TextBox extends Sprite
         }
 
         _boxHandler.gotoScene(SCN_TEXTBOX_GROW, function () :void {
-                _boxClip.stop();
+           _boxClip.stop();
         });
 
         replaceTimer(function () :void {
@@ -133,18 +119,14 @@ public class TextBox extends Sprite
         }, 400);
 
         _textField.htmlText = em(text);
-        _titled = titled;
 
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
 
         scaleBackdrop(figureWidth(), figureHeight());
 
-        _textField.y = _backdrop.y + Content.BOX_PADDING;
-        if (!_titled) {
-            _textField.y += NO_TITLE_PADDING;
-        }
-        _buttons.y = _textField.y + _textField.height + Content.BOX_PADDING/2;
+        _textField.y = _backdrop.y + Content.BOX_TOP_PADDING;
+        _buttons.y = _textField.y + _textField.height + 5;
 
         _foreground.visible = false;
         _backdrop.visible = this.visible = true;
@@ -222,9 +204,7 @@ public class TextBox extends Sprite
         _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
         _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
             _foreground.visible = false;
-            _boxHandler.gotoScene(SCN_TEXTBOX_SHRINK, function () :void {
-                    _boxClip.stop();
-            });
+            _boxHandler.gotoScene(SCN_TEXTBOX_SHRINK, _boxClip.stop);
         });
 
         _done();
@@ -237,8 +217,8 @@ public class TextBox extends Sprite
 
     protected function figureHeight () :Number
     {
-        return _textField.height + _buttons.height + 2.5*Content.BOX_PADDING +
-            (_titled ? 0 : NO_TITLE_PADDING);
+        return _textField.height + _buttons.height + Content.BOX_TOP_PADDING +
+            Content.BOX_PADDING;
     }
 
     protected function scaleBackdrop (x :Number, y :Number) :void
@@ -276,7 +256,6 @@ public class TextBox extends Sprite
     protected var _backdrop :Sprite;
     protected var _foreground :Sprite;
     protected var _textField :TextField;
-    protected var _titled :Boolean;
 
     protected var _buttons :Sprite;
     protected var _leftButtonEdge :int;
@@ -290,7 +269,5 @@ public class TextBox extends Sprite
 
     protected static const SCN_TEXTBOX_GROW :String = "textbox_grow";
     protected static const SCN_TEXTBOX_SHRINK :String = "textbox_shrink";
-
-    protected static const NO_TITLE_PADDING :int = 20;
 }
 }

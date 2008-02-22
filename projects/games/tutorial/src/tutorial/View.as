@@ -7,22 +7,16 @@ import flash.display.Sprite;
 import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
+import com.threerings.util.NetUtil;
 
 public class View extends Sprite
 {
-    public static const SWIRL_NONE :int = 1;
-    public static const SWIRL_DEMURE :int = 2;
-    public static const SWIRL_INTRO :int = 3;
-    public static const SWIRL_BOUNCY :int = 4;
-
     public function View (tutorial :Tutorial)
     {
         _tutorial = tutorial;
 
         var swirlBytes :ByteArray = ByteArray(new Content.SWIRL());
-
         _textBox = new TextBox(swirlBytes, maybeFinishUI);
-        _swirl = new Swirl(this, swirlBytes, maybeFinishUI);
     }
 
     public function init () :void
@@ -32,18 +26,12 @@ public class View extends Sprite
 
     public function isReady () :Boolean
     {
-        return (this.parent && _swirl.isReady() && _textBox.isReady());
+        return (this.parent && _textBox.isReady());
     }
 
     public function unload () :void
     {
-        _swirl.unload();
         _textBox.unload();
-    }
-
-    public function gotoSwirlState (state :int) :void
-    {
-        _swirl.gotoState(state);
     }
 
     public function isBoxShowing () :Boolean
@@ -65,32 +53,37 @@ public class View extends Sprite
             return;
         }
 
-        _textBox.showBox(quest.summary, true);
+        if (quest.enterPage != null) {
+            NetUtil.navigateToURL(quest.enterPage);
+        }
+        _textBox.showBox(quest.summary);
         _boxShowing = true;
 
-        _textBox.addButton("Hide", true, function () :void {
-            displayNothing();
+        _textBox.addButton("Stop Tutorial", false, function () :void {
+            _tutorial.stopTutorial();
         });
 
-        if (quest.skippable) {
-            _textBox.addButton("Skip", false, function () :void {
-                    displayNothing();
-                    _tutorial.skipQuest();
-                });
+        // this quest has no trigger, so add a button that skips to the next step
+        if (quest.trigger == Quest.NOOP_TRIGGER) {
+            _textBox.addButton("Onward", true, function () :void {
+                _tutorial.skipQuest();
+            });
         }
     }
 
-    public function displayMessage (button :String, message :String, pressed :Function) :void
+    public function displayMessage (message :String, nextButton :String, pressed :Function,
+                                    stopButton :String = "Stop Tutorial") :void
     {
-        _textBox.showBox(message, false);
-        _textBox.addButton(button, true, pressed);
+        _textBox.showBox(message);
+        if (nextButton != null) {
+            _textBox.addButton(nextButton, true, pressed);
+        }
+        if (stopButton != null) {
+            _textBox.addButton(stopButton, false, function () :void {
+               _tutorial.stopTutorial();
+            });
+        }
         _boxShowing = true;
-    }
-
-    public function swirlClicked (state :int) :void
-    {
-        // when the swirly is big, clicking it offers the first quest
-        _tutorial.swirlClicked(state);
     }
 
     public function sizeChanged () :void
@@ -102,14 +95,12 @@ public class View extends Sprite
     {
         // if all initializations are complete, actually add the bits
         if (isReady()) {
-            this.addChild(_swirl);
             this.addChild(_textBox);
             _tutorial.viewIsReady();
         }
     }
 
     protected var _tutorial :Tutorial;
-    protected var _swirl :Swirl;
     protected var _textBox :TextBox;
     protected var _boxShowing :Boolean;
 
