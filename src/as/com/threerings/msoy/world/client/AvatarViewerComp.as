@@ -115,6 +115,7 @@ public class AvatarViewerComp extends VBox
         bgsprite.graphics.drawRect(0, 0, 1000, 1000);
         bgsprite.graphics.endFill();
         _holder.rawChildren.addChildAt(bgsprite, 0);
+        bgsprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
 
         // bind actions to the user interface elements
         BindingUtils.bindSetter(setMode, mode, "selectedIndex");
@@ -302,6 +303,10 @@ public class AvatarViewerComp extends VBox
      */
     public function handleMouseClick (event :MouseEvent) :void
     {
+        if (_avatars.length == 0) {
+            return;
+        }
+
         var sprite :ViewerAvatarSprite = ViewerAvatarSprite(_avatars[0]);
 
         var actions :Array = sprite.getAvatarActions();
