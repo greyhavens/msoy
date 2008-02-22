@@ -17,6 +17,7 @@ grant {
     // Read access to a few built in JVM properties.
     permission java.util.PropertyPermission "application.home", "read";
     permission java.util.PropertyPermission "user.dir", "read";
+    permission java.util.PropertyPermission "user.home", "read";
 
     // Read access to the entire public Whirled SDK
     permission java.io.FilePermission "@PREFIX@/data/swiftly/whirled_sdk", "read";
