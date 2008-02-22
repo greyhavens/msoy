@@ -24,26 +24,28 @@ import com.threerings.msoy.data.MsoyCodes;
 public class OccupantReporter
     implements SetListener
 {
-    public function willEnterPlace (ctx :CrowdContext, plobj :PlaceObject) :void
+    public function willEnterPlace (
+        ctx :CrowdContext, plobj :PlaceObject, reportInitialOccupants :Boolean = true) :void
     {
         _ctx = ctx;
 
-        // report the current room occupants
-        var occs :String = "";
-        for (var iter :Iterator = plobj.occupantInfo.iterator(); iter.hasNext(); ) {
-            var info :OccupantInfo = (iter.next() as OccupantInfo);
-            if (isSelf(info)) {
-                continue;
+        if (reportInitialOccupants) {
+            // report the current room occupants
+            var occs :String = "";
+            for (var iter :Iterator = plobj.occupantInfo.iterator(); iter.hasNext(); ) {
+                var info :OccupantInfo = (iter.next() as OccupantInfo);
+                if (isSelf(info)) {
+                    continue;
+                }
+                if (occs.length > 0) {
+                    occs += ", ";
+                }
+                occs += info.username;
             }
             if (occs.length > 0) {
-                occs += ", ";
+                _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+                    MessageBundle.tcompose("m.in_room", occs));
             }
-            occs += info.username;
-        }
-        if (occs.length > 0) {
-            trace("Reporting " + occs + "(" + occs.length + ")");
-            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-                MessageBundle.tcompose("m.in_room", occs));
         }
 
         // listen for and report enter/exit
