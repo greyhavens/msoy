@@ -126,9 +126,7 @@ public class Application
     public static void go (String page, String args)
     {
         String token = createLinkToken(page, args);
-        if (token.equals(History.getToken())) {
-            Frame.setContentMinimized(false);
-        } else {
+        if (!token.equals(History.getToken())) { // TODO: necessary?
             History.newItem(token);
         }
     }
@@ -234,7 +232,6 @@ public class Application
             _page.onHistoryChanged(args);
 
         } else {
-            Frame.setContentMinimized(false);
             _page.onHistoryChanged(args);
         }
     }

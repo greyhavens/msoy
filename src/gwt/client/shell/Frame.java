@@ -34,6 +34,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.gwt.util.Predicate;
 
 import client.shell.images.NaviImages;
+import client.util.FlashClients;
 import client.util.MsoyUI;
 
 /**
@@ -51,9 +52,6 @@ public class Frame
     /** The maximum width of our content UI, the remainder is used by the world client. */
     public static final int CONTENT_WIDTH = 700;
 
-    /** The width of the separator bar displayed between the client and the content. */
-    public static final int SEPARATOR_WIDTH = 8;
-
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
@@ -62,17 +60,6 @@ public class Frame
      */
     public static void init ()
     {
-        _minimizeContent = MsoyUI.createActionLabel("", "Minimize", new ClickListener() {
-            public void onClick (Widget sender) {
-                setContentMinimized(true);
-            }
-        });
-        _maximizeContent = MsoyUI.createActionLabel("", "Maximize", new ClickListener() {
-            public void onClick (Widget sender) {
-                setContentMinimized(false);
-            }
-        });
-
         // create our default headers
         _mheader = new MemberHeader();
         _gheader = new GuestHeader();
@@ -112,23 +99,6 @@ public class Frame
     }
 
     /**
-     * Minimizes or maximizes the page content. NOOP if the content min/max interface is not being
-     * displayed.
-     */
-    public static void setContentMinimized (boolean minimized)
-    {
-        if (minimized && _minimizeContent.isAttached()) {
-            RootPanel.get(SEPARATOR).remove(_minimizeContent);
-            RootPanel.get(SEPARATOR).add(_maximizeContent);
-            slideContentOff();
-        } else if (!minimized && _maximizeContent.isAttached()) {
-            RootPanel.get(SEPARATOR).remove(_maximizeContent);
-            RootPanel.get(SEPARATOR).add(_minimizeContent);
-            slideContentOn();
-        }
-    }
-
-    /**
      * Switches the frame into client display mode (clearing out any content) and notes the history
      * token for the current page so that it can be restored in the event that we open a normal
      * page and then later close it.
@@ -141,10 +111,6 @@ public class Frame
         // clear out our content and the expand/close controls
         RootPanel.get(CONTENT).clear();
         RootPanel.get(CONTENT).setWidth("0px");
-
-        // clear out the divider
-        RootPanel.get(SEPARATOR).clear();
-        RootPanel.get(SEPARATOR).setWidth("0px");
 
         // have the client take up all the space
         RootPanel.get(CLIENT).setWidth("100%");
@@ -172,7 +138,6 @@ public class Frame
 
         WorldClient.clientWillClose();
         _closeToken = null;
-        RootPanel.get(SEPARATOR).clear();
         RootPanel.get(CLIENT).clear();
         RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
@@ -197,19 +162,22 @@ public class Frame
             return false;
         }
 
-        if (_maximizeContent.isAttached()) {
-            RootPanel.get(SEPARATOR).remove(_maximizeContent);
-            History.newItem(_closeToken);
+        // let the Flash client know that it's being unminimized
+        WorldClient.setMinimized(false);
 
-        } else {
-            slideContentOff();
-            RootPanel.get(SEPARATOR).remove(_minimizeContent);
-            History.newItem(_closeToken);
-        }
+        // restore the client to the full glorious browser width
+        RootPanel.get(CONTENT).clear();
+        RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CLIENT).setWidth("100%");
 
+        // clear out our bits
         _contlist = null;
         _scroller = null;
         _bar = null;
+
+        // restore the client's URL
+        History.newItem(_closeToken);
+
         return true;
     }
 
@@ -303,9 +271,14 @@ public class Frame
             _bar = createTitleBar(pageId);
         }
 
-        Widget content;
+        // let the client know it about to be minimized
+        WorldClient.setMinimized(true);
+        int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
+        RootPanel.get(CLIENT).setWidth(clientWidth + "px");
+
         // if we're not showing a Page.Content page or the browser is too short; don't try to do
         // our own custom scrolling, just let everything scroll
+        Widget content;
         if (windowTooShort() || pageId == null) {
             content = _contlist;
             Window.enableScrolling(true);
@@ -315,39 +288,27 @@ public class Frame
             Window.enableScrolling(false);
         }
 
-        // if we're displaying the client or we have a minimized page, unminimize things first
-        if (_maximizeContent.isAttached() ||
-            (_closeToken != null && !_minimizeContent.isAttached())) {
-            RootPanel.get(SEPARATOR).clear();
-            RootPanel.get(SEPARATOR).add(_minimizeContent);
-            slideContentOn();
-
-        } else {
-            if (_bar != null) {
-                RootPanel.get(CONTENT).add(_bar);
-            }
-            RootPanel.get(CONTENT).add(content);
-            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+        // add our title bard if we've got one
+        if (_bar != null) {
+            RootPanel.get(CONTENT).add(_bar);
         }
+
+        // stuff the content into the page and size it properly
+        RootPanel.get(CONTENT).add(content);
+        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
 
         int ccount = RootPanel.get(CLIENT).getWidgetCount();
         if (ccount == 0) {
             RootPanel.get(CLIENT).add(new HTML("&nbsp;"));
         }
-
         if (_bar != null) {
-            _bar.setCloseVisible(ccount > 0);
+            _bar.setCloseVisible(FlashClients.clientExists());
         }
     }
 
     protected static boolean windowTooShort ()
     {
         return Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT);
-    }
-
-    protected static void restoreClient ()
-    {
-        setContentMinimized(true);
     }
 
     protected static int clearDialog (ComplexPanel panel, Predicate pred)
@@ -428,7 +389,7 @@ public class Frame
      */
     protected static native void configureCallbacks () /*-{
        $wnd.restoreClient = function () {
-            @client.shell.Frame::restoreClient()();
+            @client.shell.Frame::closeContent()();
        };
        $wnd.clearClient = function () {
             @client.shell.Frame::closeClient(Z)(true);
@@ -438,33 +399,6 @@ public class Frame
     protected static native boolean isLinux () /*-{
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
-
-    protected static void slideContentOff ()
-    {
-        RootPanel.get(CONTENT).clear();
-        WorldClient.setMinimized(false);
-        _bar.setCloseVisible(false);
-        RootPanel.get(CONTENT).setWidth("0px");
-        RootPanel.get(CLIENT).setWidth((Window.getClientWidth() - SEPARATOR_WIDTH) + "px");
-    }
-
-    protected static void slideContentOn ()
-    {
-        // the flash client needs to be notified that the size change it is about to receive is a 
-        // minimization, not a browser size change before it actually gets resized.
-        WorldClient.setMinimized(true);
-        RootPanel.get(CONTENT).clear();
-        RootPanel.get(CONTENT).add(_bar);
-        if (_scroller == null) {
-            RootPanel.get(CONTENT).add(_contlist);
-        } else {
-            RootPanel.get(CONTENT).add(_scroller);
-        }
-        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-        int availWidth = Window.getClientWidth() - SEPARATOR_WIDTH;
-        RootPanel.get(CLIENT).setWidth(Math.max(availWidth - CONTENT_WIDTH, 0) + "px");
-        _bar.setCloseVisible(true);
-    }
 
     protected static class Dialog extends SmartTable
     {
@@ -681,7 +615,6 @@ public class Frame
 
     protected static FlowPanel _contlist;
     protected static ScrollPanel _scroller;
-    protected static Label _minimizeContent, _maximizeContent;
 
     /** Our navigation menu images. */
     protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
@@ -689,6 +622,5 @@ public class Frame
     // constants for our top-level elements
     protected static final String HEADER = "header";
     protected static final String CONTENT = "content";
-    protected static final String SEPARATOR = "seppy";
     protected static final String CLIENT = "client";
 }
