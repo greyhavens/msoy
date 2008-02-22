@@ -115,7 +115,9 @@ public class AvatarViewerComp extends VBox
         bgsprite.graphics.drawRect(0, 0, 1000, 1000);
         bgsprite.graphics.endFill();
         _holder.rawChildren.addChildAt(bgsprite, 0);
-        bgsprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
+        // Disabled, because it confused the "usability testers" to have the menu always
+        // popping up.
+        //bgsprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
 
         // bind actions to the user interface elements
         BindingUtils.bindSetter(setMode, mode, "selectedIndex");
