@@ -395,12 +395,6 @@ Window {
 }  
 
 .roomEditPanel {  
-  borderStyle: "solid";
-  borderThickness: 1;
-  borderThicknessLeft: 0;
-  borderThicknessRight: 0;
-  borderThicknessTop: 0;
-  borderThicknessBottom: 0;
   paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 0;
