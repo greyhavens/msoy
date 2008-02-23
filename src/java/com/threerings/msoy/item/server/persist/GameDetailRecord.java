@@ -83,27 +83,27 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp MULTI_PLAYER_MINUTES_C =
         new ColumnExp(GameDetailRecord.class, MULTI_PLAYER_MINUTES);
 
-    /** The column identifier for the {@link #abuseFactor} field. */
-    public static final String ABUSE_FACTOR = "abuseFactor";
+    /** The column identifier for the {@link #payoutFactor} field. */
+    public static final String PAYOUT_FACTOR = "payoutFactor";
 
-    /** The qualified column identifier for the {@link #abuseFactor} field. */
-    public static final ColumnExp ABUSE_FACTOR_C =
-        new ColumnExp(GameDetailRecord.class, ABUSE_FACTOR);
+    /** The qualified column identifier for the {@link #payoutFactor} field. */
+    public static final ColumnExp PAYOUT_FACTOR_C =
+        new ColumnExp(GameDetailRecord.class, PAYOUT_FACTOR);
 
-    /** The column identifier for the {@link #lastAbuseRecalc} field. */
-    public static final String LAST_ABUSE_RECALC = "lastAbuseRecalc";
+    /** The column identifier for the {@link #lastPayoutRecalc} field. */
+    public static final String LAST_PAYOUT_RECALC = "lastPayoutRecalc";
 
-    /** The qualified column identifier for the {@link #lastAbuseRecalc} field. */
-    public static final ColumnExp LAST_ABUSE_RECALC_C =
-        new ColumnExp(GameDetailRecord.class, LAST_ABUSE_RECALC);
+    /** The qualified column identifier for the {@link #lastPayoutRecalc} field. */
+    public static final ColumnExp LAST_PAYOUT_RECALC_C =
+        new ColumnExp(GameDetailRecord.class, LAST_PAYOUT_RECALC);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
 
-    /** The default abuse factor for newly added games. */
-    public static final int DEFAULT_ABUSE_FACTOR = 100;
+    /** The default payout factor for newly added games. */
+    public static final int DEFAULT_PAYOUT_FACTOR = 128;
 
     /** The unique identifier for this game. */
     @Id @GeneratedValue(strategy=GenerationType.TABLE, generator="gameId")
@@ -135,30 +135,30 @@ public class GameDetailRecord extends PersistentRecord
     /** The total number of multiplayer minutes spent playing this game. */
     public int multiPlayerMinutes;
 
-    /** The current abuse factor, from 0 to 255. */
-    @Column(defaultValue=(""+DEFAULT_ABUSE_FACTOR))
-    public int abuseFactor;
+    /** The current payout factor, from 0 to 255. */
+    @Column(defaultValue=(""+DEFAULT_PAYOUT_FACTOR))
+    public int payoutFactor;
 
     /** The value of {@link #singlePlayerMinutes} + {@link #multiPlayerMinutes} when we last
-     * recalculated the abuse factor. */
-    public int lastAbuseRecalc;
+     * recalculated the payout factor. */
+    public int lastPayoutRecalc;
 
     /**
-     * Return the current anti-abuse factor for this game, in [0, 1).
+     * Returns the current payout factor for this game, in [0, 1).
      */
-    public float getAntiAbuseFactor ()
+    public float getPayoutFactor ()
     {
-        return abuseFactor / 256f;
+        return payoutFactor / 256f;
     }
 
     /**
-     * Returns true if we should recaculate our abuse factor based on the supplied additional
+     * Returns true if we should recaculate our payout factor based on the supplied additional
      * player minutes and the specified recalculation interval.
      */
-    public boolean shouldRecalcAbuse (int playerMins, int recalcMinutes)
+    public boolean shouldRecalcPayout (int playerMins, int recalcMinutes)
     {
         int playerMinutes = multiPlayerMinutes + singlePlayerMinutes;
-        return (playerMinutes - lastAbuseRecalc) + playerMins > recalcMinutes;
+        return (playerMinutes - lastPayoutRecalc) + playerMins > recalcMinutes;
     }
 
     /**

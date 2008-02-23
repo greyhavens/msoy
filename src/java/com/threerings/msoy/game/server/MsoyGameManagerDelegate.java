@@ -337,7 +337,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // compute our flow per minute
         float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
-        _flowPerMinute = Math.round(minuteRate * _content.detail.getAntiAbuseFactor());
+        _flowPerMinute = Math.round(minuteRate * _content.detail.getPayoutFactor());
 
         // wire up our WhirledGameService
         if (plobj instanceof WhirledGameObject) {
@@ -421,23 +421,23 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // record this game's playtime to the repository
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
-        final boolean recalc = (RuntimeConfig.server.abuseFactorReassessment == 0) ? false :
-            _content.detail.shouldRecalcAbuse(
-                playerMins, RuntimeConfig.server.abuseFactorReassessment);
+        final boolean recalc = (RuntimeConfig.server.payoutFactorReassessment == 0) ? false :
+            _content.detail.shouldRecalcPayout(
+                playerMins, RuntimeConfig.server.payoutFactorReassessment);
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
             public void invokePersist () throws Exception {
-                _newAbuse = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                _newPayout = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
                     _content.game.gameId, playerGames, playerMins, recalc);
             }
             public void handleSuccess () {
-                if (_newAbuse != null) {
-                    _content.detail.abuseFactor = _newAbuse;
+                if (_newPayout != null) {
+                    _content.detail.payoutFactor = _newPayout;
                 }
             }
             protected String getFailureMessage() {
                 return "Failed to note end of game [in=" + where() + "]";
             }
-            protected Integer _newAbuse;
+            protected Integer _newPayout;
         });
 
         // also update our in-memory game detail record
@@ -934,8 +934,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** The number of samples used to compute {@link #_averageDuration}. */
     protected int _averageSamples;
 
-    /** Used to track whether or not we should recalculate our abuse factor. */
-    protected int _minsSinceLastAbuseRecalc;
+    /** Used to track whether or not we should recalculate our payout factor. */
+    protected int _minsSinceLastPayoutRecalc;
 
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;

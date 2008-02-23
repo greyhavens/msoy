@@ -64,11 +64,11 @@ public class GameRepository extends ItemRepository<
     {
         super(ctx);
 
-        // TEMP
+        // TEMP 02-22-2008
         _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
-                                   6, "playerGames", "singlePlayerGames"));
+                                   7, "abuseFactor", "payoutFactor"));
         _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
-                                   6, "playerMinutes", "singlePlayerMinutes"));
+                                   7, "lastAbuseRecalc", "lastPayoutRecalc"));
         // END TEMP
     }
 
@@ -149,12 +149,12 @@ public class GameRepository extends ItemRepository<
      * Updates the specified {@link GameDetailRecord}, recording an increase in games played and
      * total player minutes.
      *
-     * @return null or the recalculated abuse factor if one was recalculated.
+     * @return null or the recalculated payout factor if one was recalculated.
      */
     public Integer noteGamePlayed (int gameId, int playerGames, int playerMins, boolean recalc)
         throws PersistenceException
     {
-        Integer newAbuse = null;
+        Integer newPayout = null;
         gameId = Math.abs(gameId); // how to handle playing the original?
 
         String gcname, mcname;
@@ -175,7 +175,7 @@ public class GameRepository extends ItemRepository<
         fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
         fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
 
-        // if game abuse reassessment is enabled, potentially recalculate that
+        // if game payout reassessment is enabled, potentially recalculate that
         if (recalc) {
             // load all actions logged since our last assessment
 //            List<GameFlowSummaryRecord> records =
@@ -189,8 +189,8 @@ public class GameRepository extends ItemRepository<
 //                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
 
             // TODO: write an algorithm that actually does something with 'records' here
-            newAbuse = 123;
-            fieldMap.put(GameDetailRecord.ABUSE_FACTOR, new LiteralExp("" + newAbuse));
+            newPayout = 128;
+            fieldMap.put(GameDetailRecord.PAYOUT_FACTOR, new LiteralExp("" + newPayout));
 
             // then delete the records
             deleteAll(GameFlowGrantLogRecord.class,
@@ -204,7 +204,7 @@ public class GameRepository extends ItemRepository<
                           new Conditionals.LessThan(mcol, overflow)));
 
         updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
-        return newAbuse;
+        return newPayout;
     }
 
     /**
@@ -231,7 +231,7 @@ public class GameRepository extends ItemRepository<
         if (item.gameId == 0) {
             GameDetailRecord gdr = new GameDetailRecord();
             gdr.sourceItemId = item.itemId;
-            gdr.abuseFactor = GameDetailRecord.DEFAULT_ABUSE_FACTOR;
+            gdr.payoutFactor = GameDetailRecord.DEFAULT_PAYOUT_FACTOR;
             insert(gdr);
             // source games use -gameId to differentiate themselves from all non-source games
             updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, -gdr.gameId);

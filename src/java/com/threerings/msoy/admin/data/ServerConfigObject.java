@@ -33,8 +33,8 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>hourlyGameFlowRate</code> field. */
     public static final String HOURLY_GAME_FLOW_RATE = "hourlyGameFlowRate";
 
-    /** The field name of the <code>abuseFactorReassessment</code> field. */
-    public static final String ABUSE_FACTOR_REASSESSMENT = "abuseFactorReassessment";
+    /** The field name of the <code>payoutFactorReassessment</code> field. */
+    public static final String PAYOUT_FACTOR_REASSESSMENT = "payoutFactorReassessment";
 
     /** The field name of the <code>humanityReassessment</code> field. */
     public static final String HUMANITY_REASSESSMENT = "humanityReassessment";
@@ -61,8 +61,8 @@ public class ServerConfigObject extends ConfigObject
     /** The amount of flow per hour that a game can award a player. */
     public int hourlyGameFlowRate = 6000;
 
-    /** The number of player minutes between reassessments of a game's anti-abuse factor. */
-    public int abuseFactorReassessment = 1000;
+    /** The number of player minutes between reassessments of a game's payout factor. */
+    public int payoutFactorReassessment = 1000;
 
     /** The number of seconds between reassessments of a member's humanity factor. */
     public int humanityReassessment = 24 * 3600;
@@ -173,19 +173,19 @@ public class ServerConfigObject extends ConfigObject
     }
 
     /**
-     * Requests that the <code>abuseFactorReassessment</code> field be set to the
+     * Requests that the <code>payoutFactorReassessment</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setAbuseFactorReassessment (int value)
+    public void setPayoutFactorReassessment (int value)
     {
-        int ovalue = this.abuseFactorReassessment;
+        int ovalue = this.payoutFactorReassessment;
         requestAttributeChange(
-            ABUSE_FACTOR_REASSESSMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.abuseFactorReassessment = value;
+            PAYOUT_FACTOR_REASSESSMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.payoutFactorReassessment = value;
     }
 
     /**
