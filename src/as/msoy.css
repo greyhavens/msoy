@@ -14,8 +14,9 @@ Panel {
   backgroundColor: #ffffff;
   borderAlpha: 1;
   borderColor: #000000;
-  borderStyle: undefined;
-  borderThickness: 0;
+  borderThicknessLeft: 0;
+  borderThicknessRight: 0;
+  borderThicknessBottom: 0;
   cornerRadius: 0;
   dropShadowColor: #443522;
   dropShadowEnabled: true;
