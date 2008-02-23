@@ -504,6 +504,7 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+      <arg value="-use-network=false"/>
       <arg value="-default-size"/>
       <arg value="600"/> <!-- see note in AvatarViewer.mxml about the size -->
       <arg value="488"/>
