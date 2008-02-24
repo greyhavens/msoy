@@ -22,8 +22,6 @@ import com.threerings.msoy.item.data.all.LevelPack;
 
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 
-import mx.resources.ResourceBundle;
-
 /**
  * A simple client that displays a lobby and plays games.
  */
@@ -53,13 +51,6 @@ public class GameClient extends MsoyClient
         c = ItemPack;
         c = LevelPack;
         c = ParlorMarshaller;
-
-        // these cause bundles to be compiled in.
-        [ResourceBundle("general")]
-        [ResourceBundle("chat")]
-        [ResourceBundle("game")]
-        [ResourceBundle("whirledgame")]
-        var rb :ResourceBundle;
     }
 
     // from MsoyClient

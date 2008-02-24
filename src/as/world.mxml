@@ -5,6 +5,17 @@
     width="100%" height="100%"
     applicationComplete="new WorldClient(stage);">
 <mx:Style source="msoy.css"/>
+<mx:Metadata>
+    [ResourceBundle("global")]
+    [ResourceBundle("general")]
+    [ResourceBundle("chat")]
+    [ResourceBundle("game")]
+    [ResourceBundle("whirledgame")]
+    [ResourceBundle("editing")]
+    [ResourceBundle("item")]
+    [ResourceBundle("notify")]
+    [ResourceBundle("prefs")]
+</mx:Metadata>
 <mx:Script>
     <![CDATA[
         import com.threerings.msoy.world.client.WorldClient;

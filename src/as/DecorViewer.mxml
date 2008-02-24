@@ -11,6 +11,10 @@
 <!-- Note: viewer width and height are also duplicated in
      FlashClients.createDecorViewer(), for GWT embedding. -->   
 <mx:Style source="msoy.css"/>
+<mx:Metadata>
+    [ResourceBundle("global")]
+    [ResourceBundle("editing")]
+</mx:Metadata>
 <mx:Script>
     <![CDATA[
         import com.threerings.msoy.world.client.DecorViewerComp;

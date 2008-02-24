@@ -16,7 +16,6 @@ import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import mx.core.Application;
-import mx.resources.ResourceBundle;
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
@@ -149,9 +148,6 @@ public /*abstract*/ class MsoyClient extends Client
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;
-
-        [ResourceBundle("global")]
-        var rb :ResourceBundle;
     }
 
     /**

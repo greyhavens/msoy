@@ -26,7 +26,6 @@ import mx.core.Container;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
-import mx.resources.ResourceBundle;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flex.CommandCheckBox;
@@ -41,9 +40,6 @@ import mx.utils.ObjectUtil;
  
 public class DecorViewerComp extends Canvas
 {
-    [ResourceBundle("global")]
-    [ResourceBundle("editing")]
-
     public static const log :Log = Log.getLog(DecorViewerComp);
 
     public function DecorViewerComp ()

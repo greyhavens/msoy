@@ -10,7 +10,6 @@ import flash.external.ExternalInterface;
 import flash.geom.Point;
 
 import mx.core.Application;
-import mx.resources.ResourceBundle;
 
 import com.adobe.crypto.MD5;
 
@@ -142,17 +141,6 @@ public class WorldClient extends MsoyClient
         c = SpotMarshaller;
         c = SpotSceneObject;
         c = ToyBoxMarshaller;
-
-        // these cause bundles to be compiled in.
-        [ResourceBundle("general")]
-        [ResourceBundle("chat")]
-        [ResourceBundle("game")]
-        [ResourceBundle("whirledgame")]
-        [ResourceBundle("editing")]
-        [ResourceBundle("item")]
-        [ResourceBundle("notify")]
-        [ResourceBundle("prefs")]
-        var rb :ResourceBundle;
     }
 
     // from Client
