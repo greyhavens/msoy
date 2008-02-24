@@ -926,7 +926,7 @@ public abstract class ItemRepository<
 
     protected void addOrderByRating (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-        exprs.add(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)));
+        exprs.add(getItemColumn(ItemRecord.RATING));
         orders.add(OrderBy.Order.DESC);
     }
 
