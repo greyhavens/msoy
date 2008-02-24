@@ -371,13 +371,17 @@ public class MsoySprite extends DataPackMediaContainer
 
     /**
      * Turn on or off the glow surrounding this sprite.
+     *
+     * @return a String, null, or true. A String or null is returned if the tooltip should
+     * be changed, true is returned if nothing has changed since the last hover.
      */
-    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
+    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :Object
     {
         if (hovered == (_glow == null)) {
             setGlow(hovered);
+            return hovered ? getToolTipText() : null;
         }
-        return hovered ? getToolTipText() : null;
+        return true;
     }
 
     protected function setGlow (glow :Boolean) :void

@@ -446,10 +446,10 @@ public class OccupantSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
+    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :Object
     {
         // see if we're hovering over a new decoration..
-        var decorTip :String = null;
+        var decorTip :Object;
         var hoverCons :Object = hovered ? getDecorationAt(stageX, stageY) : null;
         var hoverDec :DisplayObject = (hoverCons == null) ? null : DisplayObject(hoverCons.dec);
         if (hoverDec != _hoverDecoration) {
@@ -460,13 +460,13 @@ public class OccupantSprite extends MsoySprite
             if (_hoverDecoration != null) {
                 _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER));
             }
-        }
-        if (hoverDec != null) {
-            decorTip = hoverCons["toolTip"];
+            decorTip = (hoverDec != null) ? hoverCons["toolTip"] : null;
+        } else {
+            decorTip = true;
         }
 
         // always call super, but hover is only true if we hit no decorations
-        var superTip :String = super.setHovered((_hoverDecoration == null) && hovered);
+        var superTip :Object = super.setHovered((_hoverDecoration == null) && hovered);
         return (_hoverDecoration == null) ? superTip : decorTip;
     }
 

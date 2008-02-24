@@ -951,10 +951,12 @@ public class RoomController extends SceneController
                 if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
                     continue;
                 }
-                var tipText :String = sprite.setHovered(true);
-                var p :Point = sprite.getLayoutHotSpot();
-                p = sprite.localToGlobal(p);
-                addHoverTip(sprite, tipText, p.x, p.y);
+                var tipText :Object = sprite.setHovered(true);
+                if (tipText is String) {
+                    var p :Point = sprite.getLayoutHotSpot();
+                    p = sprite.localToGlobal(p);
+                    addHoverTip(sprite, String(tipText), p.x, p.y);
+                }
             }
         } else {
             for each (sprite in _roomView.getFurniSprites().values()) {
@@ -1347,14 +1349,17 @@ public class RoomController extends SceneController
             return;
         }
 
-        var text :String = _hoverSprite.setHovered(true, stageX, stageY);
+        var text :Object = _hoverSprite.setHovered(true, stageX, stageY);
+        if (text === true) {
+            return;
+        }
         var tip :IToolTip = (_hoverTips.length == 1) ? IToolTip(_hoverTips[0]) : null;
         if (tip != null && tip.text != text) {
             removeHoverTips();
             tip = null;
         }
         if (tip == null && text != null) {
-            addHoverTip(_hoverSprite, text, stageX, stageY);
+            addHoverTip(_hoverSprite, String(text), stageX, stageY);
         }
     }
 
