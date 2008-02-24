@@ -829,12 +829,10 @@ public class WorldController extends MsoyController
      */
     protected function displayChatTip (... ignored) :void
     {
-        // TODO: ideally, we use MessageBundle.getAll(), but we can't currently
-        // get all the keys from a resource bundle...
         try {
-            var numTips :int = StringUtil.parseInteger(Msgs.GENERAL.get("n.tip_count"));
-            _wctx.displayInfo(MsoyCodes.GENERAL_MSGS,
-                              "m.tip_" + int(1 + (Math.random() * numTips)));
+            var tips :Array = [];
+            Msgs.GENERAL.getAll("m.tip", tips);
+            _wctx.displayInfo(null, MessageBundle.taint(tips[int(Math.random() * tips.length)]));
         } catch (err :Error) {
             // just omit the tip
         }
