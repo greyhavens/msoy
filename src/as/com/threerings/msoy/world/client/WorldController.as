@@ -830,8 +830,7 @@ public class WorldController extends MsoyController
     protected function displayChatTip (... ignored) :void
     {
         try {
-            var tips :Array = [];
-            Msgs.GENERAL.getAll("m.tip", tips);
+            var tips :Array = Msgs.GENERAL.getAll("m.tip_");
             _wctx.displayInfo(null, MessageBundle.taint(tips[int(Math.random() * tips.length)]));
         } catch (err :Error) {
             // just omit the tip
