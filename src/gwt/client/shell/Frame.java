@@ -30,7 +30,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.gwt.util.Predicate;
 
 import client.shell.images.NaviImages;
@@ -260,6 +259,7 @@ public class Frame
         // note that this is our current content
         _contlist = new FlowPanel();
         _contlist.setWidth("100%");
+        _contlist.setHeight("100%");
         _contlist.add(pageContent);
 
         if (pageId != null) {
@@ -368,14 +368,6 @@ public class Frame
 
         } else if (pageId.equals(Page.SHOP)) {
             subnavi.addLink(null, "Shop", Page.SHOP, "");
-            for (int ii = 0; ii < Item.TYPES.length; ii++) {
-                byte type = Item.TYPES[ii];
-                String tpath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
-                String tname = CShell.dmsgs.getString("pItemType" + type);
-                Image icon = subnavi.addImageLink(tpath, tname, Page.SHOP, ""+type);
-                icon.setWidth("15px"); // shrinky!
-                icon.setHeight("15px"); // shrinky!
-            }
 
         } else if (pageId.equals(Page.HELP)) {
             subnavi.addLink(null, "Help", Page.HELP, "");

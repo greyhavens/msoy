@@ -5,23 +5,15 @@
  */
 
 .tagCloud {
-  background-image: url(/images/item/top_tags_bg.png);
-  background-repeat: no-repeat;
-  padding-left: 48px; 
-  padding-right: 10px;
-  width: 241px;
-  height: 59px;
-  font-size: 9pt;
+  background: #BCDAF2;
+  padding-bottom: 5px;
+  font-size: 12px;
+  width: 85px;
 }
 
-.tagCloudRow { 
-  padding-left: 48px; 
-  padding-right: 10px;
-}
-
-.tagCloudElt { 
-  width: 60px;
-  background-image: none;
+.tagCloud .Link { 
+  padding-left: 5px; 
+  padding-right: 5px;
 }
 
 .itemDetailPanel { 
@@ -110,18 +102,6 @@
 .itemSearchBox {
   width: 160px;
   margin-right: 5px;
-}
-
-.itemSortLabel {
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 14px;
-  padding: 2px 5px 0px 15px;
-  width: 50px;
-  vertical-align: middle;
-}
-
-.itemSortBox {
-  width: 116px;
 }
 
 .itemRating img {

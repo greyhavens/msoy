@@ -10,16 +10,25 @@ import java.util.Map;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -30,7 +39,6 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
 
-import client.item.ItemSearchSortPanel;
 import client.item.TagCloud;
 import client.shell.Application;
 import client.shell.Args;
@@ -44,11 +52,11 @@ import client.util.RowPanel;
 /**
  * Displays a tabbed panel containing the catalog.
  */
-public class CatalogPanel extends VerticalPanel
-    implements ItemSearchSortPanel.Listener, TagCloud.TagListener
+public class CatalogPanel extends SimplePanel
+    implements TagCloud.TagListener
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 3;
+    public static final int COLUMNS = 4;
 
     /** An action constant passed to this page. */
     public static final String LISTING_PAGE = "l";
@@ -60,6 +68,42 @@ public class CatalogPanel extends VerticalPanel
     {
         setStyleName("catalogPanel");
         setWidth("100%");
+
+        // create our listings interface
+        _listings = new SmartTable("Listings", 0, 0);
+        // the blurb and type will be set into (0, 0) and (0, 1) later
+        _listings.getFlexCellFormatter().setRowSpan(0, 0, 2);
+
+        _searchBox = new TextBox();
+        _searchBox.setVisibleLength(20);
+        _searchBox.addStyleName("itemSearchBox");
+        ClickListener clickListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                String query = _searchBox.getText().trim();
+                Application.go(Page.SHOP, composeArgs(_query, null, query, 0));
+            }
+        };
+        _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
+
+        Button searchGo = new Button(CShop.msgs.catalogSearch());
+        searchGo.addClickListener(clickListener);
+
+        HorizontalPanel search = new HorizontalPanel();
+        search.add(_searchBox);
+        search.add(WidgetUtil.makeShim(5, 5));
+        search.add(searchGo);
+        _listings.setWidget(1, 0, search);
+
+        _sortBox = new ListBox();
+        for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
+            _sortBox.addItem(SORT_LABELS[ii]);
+        }
+        _sortBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget widget) {
+                _query.sortBy = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
+                Application.go(Page.SHOP, composeArgs(_query, 0));
+            }
+        });
 
         int rows = Math.max(1, (Window.getClientHeight() - Frame.HEADER_HEIGHT -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
@@ -80,30 +124,20 @@ public class CatalogPanel extends VerticalPanel
                     return CShop.msgs.catalogNoList(name);
                 }
             }
+            protected void addCustomControls (FlexTable controls) {
+                controls.setCellSpacing(5);
+                controls.setText(0, 0, CShop.msgs.catalogSortBy());
+                controls.getFlexCellFormatter().setStyleName(0, 0, "nowrapLabel");
+                controls.setWidget(0, 1, _sortBox);
+            }
+            protected boolean displayNavi (int items) {
+                return true;
+            }
         };
-        _items.addStyleName("catalogContents");
-
-        _header = new FlexTable();
-        _header.setCellPadding(0);
-        _header.setCellSpacing(10);
-        _header.getFlexCellFormatter().setRowSpan(0, 0, 2);
-
-        _searchSortPanel = new ItemSearchSortPanel(
-            this,
-            new String[] {
-                CShop.msgs.sortByRating(),
-                CShop.msgs.sortByListDate(),
-                CShop.msgs.sortByPriceAsc(),
-                CShop.msgs.sortByPriceDesc(),
-                CShop.msgs.sortByPurchases(), },
-            new byte[] {
-                CatalogListing.SORT_BY_RATING,
-                CatalogListing.SORT_BY_LIST_DATE,
-                CatalogListing.SORT_BY_PRICE_ASC,
-                CatalogListing.SORT_BY_PRICE_DESC,
-                CatalogListing.SORT_BY_PURCHASES, });
-        _header.setWidget(0, 1, _searchSortPanel);
-        _header.setHTML(1, 0, "&nbsp;");
+        _items.addStyleName("ListingGrid");
+        _listings.setWidget(2, 0, _items, 2, null);
+        _listings.getFlexCellFormatter().setHeight(2, 0, "100%");
+        _listings.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
     }
 
     public void display (Args args)
@@ -133,17 +167,16 @@ public class CatalogPanel extends VerticalPanel
                 }
             };
             if (listing == null) {
-                CShop.catalogsvc.loadListing(
-                    CShop.ident, argQuery.itemType, catalogId, gotListing);
+                CShop.catalogsvc.loadListing(CShop.ident, argQuery.itemType, catalogId, gotListing);
             } else {
                 gotListing.onSuccess(listing);
             }
 
         } else if (argQuery.itemType == Item.NOT_A_TYPE) {
             // display a grid of the selectable item types
-            clear();
-            add(MsoyUI.createLabel(CShop.msgs.catalogIntro(), "Intro"));
-            SmartTable types = new SmartTable(0, 10);
+            VerticalPanel intro = new VerticalPanel();
+            intro.add(MsoyUI.createLabel(CShop.msgs.catalogIntro(), "Intro"));
+            SmartTable types = new SmartTable("Types", 0, 10);
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 final byte type = Item.TYPES[ii];
                 ClickListener onClick = new ClickListener() {
@@ -161,14 +194,27 @@ public class CatalogPanel extends VerticalPanel
                 ttable.setText(1, 0, tblurb, 1, "Blurb");
                 types.setWidget(ii / 2, ii % 2, ttable);
             }
-            add(types);
+            intro.add(types);
+            setWidget(createCategorizedPage(Item.NOT_A_TYPE, intro, null));
+            Frame.setTitle(CShop.msgs.catalogTitle());
 
         } else /* mode.equals(LISTING_PAGE) */ {
             _query = argQuery;
 
+            String blurb = CShop.dmsgs.getString("catIntro" + _query.itemType);
+            _listings.setText(0, 0, blurb, 1, "Blurb");
+            // TODO: add logo image
+            String tname = CShop.dmsgs.getString("pItemType" + _query.itemType);
+            _listings.setText(0, 1, tname, 1, "Type");
+
             // configure our filter interface
-            _searchSortPanel.setSearch(_query.search == null ? "" : _query.search);
-            _searchSortPanel.setSelectedSort(_query.sortBy);
+            _searchBox.setText(_query.search == null ? "" : _query.search);
+            for (int ii = 0; ii < SORT_VALUES.length; ii++) {
+                if (SORT_VALUES[ii] == _query.sortBy) {
+                    _sortBox.setSelectedIndex(ii);
+                }
+            }
+
             if (_query.search != null) {
                 setFilteredBy(CShop.msgs.catalogSearchFilter(_query.search));
             } else if (_query.tag != null) {
@@ -185,11 +231,6 @@ public class CatalogPanel extends VerticalPanel
                 _models.put(_query, model = new CatalogDataModel(_query));
             }
             _items.setModel(model, args.get(4, 0)); // args 4 is page
-            if (!_items.isAttached()) {
-                clear();
-                add(_header);
-                add(_items);
-            }
 
             // set up our page title
             Frame.setTitle(CShop.dmsgs.getString("pItemType" + _query.itemType));
@@ -198,9 +239,10 @@ public class CatalogPanel extends VerticalPanel
             Byte tabKey = new Byte(_query.itemType);
             TagCloud cloud = (TagCloud) _clouds.get(tabKey);
             if (cloud == null) {
-                _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, this));
+                _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
             }
-            _header.setWidget(0, 0, cloud);
+
+            setWidget(createCategorizedPage(_query.itemType, _listings, cloud));
         }
     }
 
@@ -231,23 +273,28 @@ public class CatalogPanel extends VerticalPanel
         Application.go(Page.SHOP, composeArgs(query, 0));
     }
 
-    // from ItemSearchSortPanel.Listener
-    public void search (String query)
-    {
-        Application.go(Page.SHOP, composeArgs(_query, null, query, 0));
-    }
-
-    // from ItemSearchSortPanel.Listener
-    public void sort (byte sortBy)
-    {
-        _query.sortBy = sortBy;
-        Application.go(Page.SHOP, composeArgs(_query, 0));
-    }
-
     // from interface TagCloud.TagListener
     public void tagClicked (String tag)
     {
         Application.go(Page.SHOP, composeArgs(_query, tag, null, 0));
+    }
+
+    protected Widget createCategorizedPage (byte type, Widget contents, Widget sideExtra)
+    {
+        HorizontalPanel page = new HorizontalPanel();
+        page.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+
+        VerticalPanel sidebar = new VerticalPanel();
+        sidebar.setStyleName("SideBar");
+        sidebar.add(_navibar = new NaviBar(type));
+        if (sideExtra != null) {
+            sidebar.add(sideExtra);
+        }
+        page.add(sidebar);
+
+        page.add(WidgetUtil.makeShim(10, 10));
+        page.add(contents);
+        return page;
     }
 
     protected void showListing (final CatalogListing listing)
@@ -255,8 +302,7 @@ public class CatalogPanel extends VerticalPanel
         // load up the item details
         CShop.itemsvc.loadItemDetail(CShop.ident, listing.item.getIdent(), new MsoyCallback() {
             public void onSuccess (Object result) {
-                clear();
-                add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
+                setWidget(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
             }
         });
     }
@@ -273,14 +319,13 @@ public class CatalogPanel extends VerticalPanel
         }
 
         // display the "you bought an item" UI
-        clear();
-        add(new BoughtItemPanel(item));
+        setWidget(new BoughtItemPanel(item));
     }
 
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-            _header.setHTML(1, 0, "&nbsp;");
+//             _header.setHTML(1, 0, "&nbsp;");
             return;
         }
 
@@ -292,7 +337,7 @@ public class CatalogPanel extends VerticalPanel
                 clearFilters();
             }
         }));
-        _header.setWidget(1, 0, filter);
+//         _header.setWidget(1, 0, filter);
     }
 
     protected CatalogQuery parseArgs (Args args)
@@ -344,6 +389,23 @@ public class CatalogPanel extends VerticalPanel
         return Args.compose(args);
     }
 
+    protected static class NaviBar extends SmartTable
+    {
+        public NaviBar (byte seltype) {
+            super("NaviBar", 0, 0);
+            setText(0, 0, "Categories", 1, "Title");
+            for (int ii = 0; ii < Item.TYPES.length; ii++) {
+                byte type = Item.TYPES[ii];
+                String name = CShop.dmsgs.getString("pItemType" + type);
+                if (seltype == type) {
+                    setText(ii+1, 0, name, 1, "Selected");
+                } else {
+                    setWidget(ii+1, 0, Application.createLink(name, Page.SHOP, ""+type), 1, "Link");
+                }
+            }
+        }
+    }
+
     protected static class CatalogDataModel implements DataModel
     {
         public CatalogDataModel (CatalogQuery query) {
@@ -391,11 +453,31 @@ public class CatalogPanel extends VerticalPanel
     protected Map _models = new HashMap(); /* Filter, CatalogDataModel */
     protected Map _clouds = new HashMap(); /* Byte, TagCloud */
 
-    protected FlexTable _header;
-    protected ItemSearchSortPanel _searchSortPanel;
+    protected NaviBar _navibar;
+    protected SmartTable _listings;
+    protected TextBox _searchBox;
+    protected ListBox _sortBox;
     protected PagedGrid _items;
+
+    protected static final int TAG_COUNT = 10;
 
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 15 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 20 /* border */ +
+        15 /* name */ + 20 /* creator */ + 20 /* rating/price */;
+
+    protected static final String[] SORT_LABELS = new String[] {
+        CShop.msgs.sortByRating(),
+        CShop.msgs.sortByListDate(),
+        CShop.msgs.sortByPriceAsc(),
+        CShop.msgs.sortByPriceDesc(),
+        CShop.msgs.sortByPurchases(),
+    };
+    protected static final byte[] SORT_VALUES = new byte[] {
+        CatalogListing.SORT_BY_RATING,
+        CatalogListing.SORT_BY_LIST_DATE,
+        CatalogListing.SORT_BY_PRICE_ASC,
+        CatalogListing.SORT_BY_PRICE_DESC,
+        CatalogListing.SORT_BY_PURCHASES,
+    };
 }

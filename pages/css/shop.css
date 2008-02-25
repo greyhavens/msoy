@@ -4,45 +4,121 @@
  * CSS styles for the Catalog interfaces.
  */
 
-.catalogContents {
-  width: 680px;
-  border: white solid 10px;
+.catalogPanel {
+  background: #1D5884;
+  height: 100%;
 }
 
-.listingContainer {
-  padding-right: 15px;
-  padding-bottom: 10px;
+.catalogPanel .Intro {
+  font-size: 16px;
+  padding: 10px 10px 10px 85px;
 }
 
-.listingContainer .Preview {
-  width: 80px;
-  height: 60px;
-  vertical-align: middle;
-  padding-right: 5px;
+.catalogPanel .SideBar {
+  background: #5DA6DB;
+  margin-top: 5px;
+  padding: 10px 5px 10px 0px
 }
 
-.listingContainer .Preview img {
-  margin-left: auto;
-  margin-right: auto;
+.catalogPanel .NaviBar {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-.listingContainer .Name {
+.catalogPanel .NaviBar .Title {
+  color: #FFFFFF;
+}
+
+.catalogPanel .NaviBar .Selected {
+  background: #BCDAF2;
+  color: #E78917;
+}
+
+.catalogPanel .NaviBar .Link {
+  background: #BCDAF2;
+}
+
+.catalogPanel .NaviBar .Link a {
+  color: #27628E;
+  text-decoration: none;
+}
+
+.catalogPanel .Types .Type {
+}
+
+.catalogPanel .Types .Type .Icon {
+  width: 60px;
+  padding-right: 10px;
+}
+
+.catalogPanel .Types .Type .Name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.catalogPanel .Types .Type .Blurb {
+  font-size: 12px;
+  color: #A9A8AD;
+  padding: 0px 15px;
+}
+
+.catalogPanel .Listings {
+  background: #1D5884;
+}
+
+.catalogPanel .Listings .Blurb {
+  text-align: center;
+  font-size: 14px;
+  color: #9FB2C0;
+}
+
+.catalogPanel .Listings .Type {
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  background: #F6B348;
+  color: white;
+  width: 260px;
+  height: 50px;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+.catalogPanel .ListingGrid {
+  width: 100%;
+  background: white;
+  margin: 5px 10px 0px 0px;
+}
+
+.catalogPanel .Listing {
+  border: 1px solid #CCCCCC;
+  margin: 5px;
+  padding: 5px; /* TODO: IE won't like */
+  width: 120px;
+}
+
+.catalogPanel .Listing .Name {
   text-decoration: underline;
   cursor: pointer;
   cursor: hand;
   font-size: 14px;
+  padding-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.listingContainer .Creator {
+.catalogPanel .Listing .Creator {
   font-size: 12px;
   color: #AABDC8;
+  padding-top: 2px;
 }
 
-.listingContainer .Rating {
+.catalogPanel .Listing .Rating {
   width: 60px;
 }
 
-.listingContainer .Cost {
+.catalogPanel .Listing .Cost {
   font-size: 12px;
 }
 
@@ -69,28 +145,4 @@
 .boughtItem .ThumbText {
   vertical-align: top;
   font-size: 14px;
-}
-
-.catalogPanel .Intro {
-  font-size: 16px;
-  padding: 10px 10px 10px 85px;
-}
-
-.catalogPanel .Type {
-  width: 325px;
-}
-
-.catalogPanel .Type .Icon {
-  width: 60px;
-  padding-right: 10px;
-}
-
-.catalogPanel .Type .Name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.catalogPanel .Type .Blurb {
-  font-size: 12px;
-  color: #A9A8AD;
 }

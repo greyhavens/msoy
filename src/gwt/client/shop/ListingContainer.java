@@ -4,12 +4,11 @@
 package client.shop;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.item.ItemRating;
@@ -17,20 +16,18 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemUtil;
-import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.Stars;
+import client.util.ThumbBox;
 
 /**
  * Displays a catalog listing.
  */
-public class ListingContainer extends FlexTable
+public class ListingContainer extends SmartTable
 {
     public ListingContainer (final CatalogListing listing)
     {
-        setCellPadding(0);
-        setCellSpacing(0);
-        setStyleName("listingContainer");
+        super("Listing", 0, 0);
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
@@ -39,34 +36,31 @@ public class ListingContainer extends FlexTable
                 }));
             }
         };
-        setWidget(0, 0, MediaUtil.createMediaView(
-                      listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, clicker));
-        getFlexCellFormatter().setStyleName(0, 0, "Preview");
-        getFlexCellFormatter().setRowSpan(0, 0, 4);
+        addWidget(new ThumbBox(listing.item.getThumbnailMedia(), clicker), 2, null);
+        getFlexCellFormatter().setHorizontalAlignment(getRowCount()-1, 0, HasAlignment.ALIGN_CENTER);
 
-        setWidget(0, 1, MsoyUI.createActionLabel(
-                      ItemUtil.getName(listing.item, true), "Name", clicker));
-        getFlexCellFormatter().setColSpan(0, 1, 3);
+        String name = ItemUtil.getName(listing.item, true);
+        addWidget(MsoyUI.createActionLabel(name, "Name", clicker), 2, null);
 
-        setText(1, 0, CShop.msgs.itemBy(listing.creator.toString()));
-        getFlexCellFormatter().setStyleName(1, 0, "Creator");
-        getFlexCellFormatter().setColSpan(1, 0, 3);
+        addText(CShop.msgs.itemBy(listing.creator.toString()), 2, "Creator");
 
-        setWidget(2, 0, new ItemRating(listing.item, Stars.NO_RATING, Stars.MODE_READ, true, false));
-        getFlexCellFormatter().setStyleName(2, 0, "Rating");
+        int row = getRowCount();
+        setWidget(row, 0, new ItemRating(listing.item, Stars.NO_RATING,
+                                         Stars.MODE_READ, true, false), 1, "Rating");
 
-        setWidget(2, 1, new Image("/images/header/symbol_flow.png"));
-        getFlexCellFormatter().setWidth(2, 1, "15px");
-        getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
-        setText(2, 2, String.valueOf(listing.flowCost));
-        getFlexCellFormatter().setStyleName(2, 2, "Cost");
+        SmartTable cost = new SmartTable(0, 0);
+        setWidget(row, 1, cost);
+
+        cost.setWidget(0, 0, new Image("/images/header/symbol_flow.png"));
+        cost.getFlexCellFormatter().setWidth(0, 0, "15px");
+        cost.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        cost.setText(0, 1, String.valueOf(listing.flowCost), 1, "Cost");
 
         if (listing.goldCost > 0) {
-            setWidget(3, 1, new Image("/images/header/symbol_gold.png"));
-            getFlexCellFormatter().setWidth(3, 1, "15px");
-            getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
-            setText(3, 2, String.valueOf(listing.goldCost));
-            getFlexCellFormatter().setStyleName(3, 2, "Cost");
+            cost.setWidget(1, 0, new Image("/images/header/symbol_gold.png"));
+            cost.getFlexCellFormatter().setWidth(1, 0, "15px");
+            cost.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
+            cost.setText(1, 1, String.valueOf(listing.goldCost), 1, "Cost");
         }
     }
 }
