@@ -289,9 +289,8 @@ public class ActionPanel extends BasePanel
      */
     protected function editPortalTarget () :void
     {
-        var data :FurniData = _furniData;  // keep a reference to the furni data
-        applyChanges();                    // save changes so far
-        _controller.actionEditDoor(data);  // close editing window, open door editor
+        applyChanges();                  // save changes so far
+        _controller.actionTargetDoor();  // close editing window, open door editor
     }
 
     // @Override from BasePanel

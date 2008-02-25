@@ -22,6 +22,7 @@ import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Spacer;
+import mx.core.Container;
 import mx.core.UIComponent;
 import mx.events.ListEvent;
 
@@ -97,17 +98,34 @@ public class RoomEditorPanel extends FloatingPanel
     /** Updates the enabled status of any buttons that require a target furni to be selected. */
     public function updateTargetSelected (target :FurniSprite) :void
     {
+        var selected :Boolean = (target != null);
+        
         for each (var button :CommandButton in _deleteButtons) {
-            button.enabled = (target != null && target.isRemovable());
+            button.enabled = (selected && target.isRemovable());
         }
 
         for each (button in _actionButtons) {
-            button.enabled = (target != null && target.isActionModifiable());
+            button.enabled = (selected && target.isActionModifiable());
         }
 
         for each (button in _targetButtons) {
-            button.enabled = (target != null);
+            button.enabled = (selected);
         }
+
+        if (_middle != null) {
+            // display the correct link button
+            if (selected && target.getFurniData().actionType == FurniData.ACTION_URL) {
+                swapButtons(_middle, _makeLinkButton, _removeLinkButton);
+            } else {
+                swapButtons(_middle, _removeLinkButton, _makeLinkButton);
+            }
+            // same for the door button
+            if (selected && target.getFurniData().actionType == FurniData.ACTION_PORTAL) {
+                swapButtons(_middle, _makeDoorButton, _removeDoorButton);
+            } else {
+                swapButtons(_middle, _removeDoorButton, _makeDoorButton);
+            }
+        } 
     }
 
     /** Updates the name drop-down box with the selected item definitions. */
@@ -146,6 +164,54 @@ public class RoomEditorPanel extends FloatingPanel
         }
     }
 
+    /**
+     * Displays a modal box to enter the url. When the user clicks OK,
+     * it will set the currently selected item to link at the given url.
+     */
+    protected function makeUrl () :void
+    {
+        var dialog :UrlDialog = new UrlDialog(_controller.ctx, function (url :String) :void {
+                _controller.actionTargetLink(url);
+                swapButtons(_middle, _makeLinkButton, _removeLinkButton);
+            });
+    }
+
+    /** Removes a link action from the currently selected furni. */
+    protected function removeUrl () :void
+    {
+        _controller.actionTargetClear();
+        swapButtons(_middle, _removeLinkButton, _makeLinkButton);
+    }
+
+    /** Starts the door creation wizard. */
+    protected function makeDoor () :void
+    {
+        swapButtons(_middle, _makeDoorButton, _removeDoorButton);
+        _controller.actionTargetDoor();
+    }
+
+    /** Removes a door action from the currently selected furni. */
+    protected function removeDoor () :void
+    {        
+        _controller.actionTargetClear();
+        swapButtons(_middle, _removeDoorButton, _makeDoorButton);
+    }
+
+    /** Swaps two UI components in a container. */
+    protected function swapButtons (
+        container :Container, oldButton :UIComponent, newButton :UIComponent) :void
+    {
+        try {
+            var index :int = _middle.getChildIndex(oldButton);
+            if (index >= 0) {
+                _middle.removeChildAt(index);
+                _middle.addChildAt(newButton, index);
+            }
+        } catch (ae :ArgumentError) {
+            // the old button hasn't been added - ignore...
+        }
+    }
+    
     /** Displays the furniture inventory. */
     protected function displayFurnitureInventory () :void
     {
@@ -300,17 +366,21 @@ public class RoomEditorPanel extends FloatingPanel
         _defaultPanel.addChild(div);
         
         // item actions
-        var middle :VBox = new VBox();
-        middle.styleName = "roomEditRight";
-        _defaultPanel.addChild(middle);
+        _middle = new VBox();
+        _middle.styleName = "roomEditRight";
+        _defaultPanel.addChild(_middle);
 
-        middle.addChild(makeActionButton(_controller.actionDelete, "roomEditTrash",
+        _middle.addChild(makeActionButton(_controller.actionDelete, "roomEditTrash",
                                          "b.put_away", _deleteButtons));
-        middle.addChild(makeActionButton(noop, "roomEditDoor",
-                                         "b.make_door", _actionButtons));
-        middle.addChild(makeActionButton(noop, "roomEditLink",
-                                         "b.make_link", _actionButtons));
-        
+        _middle.addChild(_makeDoorButton = makeActionButton(makeDoor, "roomEditDoor",
+                                                           "b.make_door", _actionButtons));
+        _middle.addChild(_makeLinkButton = makeActionButton(makeUrl, "roomEditLink",
+                                                           "b.make_link", _actionButtons));
+
+        _removeDoorButton = makeActionButton(
+            removeDoor, "roomRemoveDoor", "b.remove_door", _actionButtons);
+        _removeLinkButton = makeActionButton(
+            removeUrl, "roomRemoveLink", "b.remove_link", _actionButtons);
 
         right.addChild(makeActionButton(displayFurnitureInventory, "roomEditAdd",
                                         "b.add_item", null));
@@ -374,11 +444,17 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _deleteButtons :Array; // of CommandButton
     protected var _actionButtons :Array; // of CommandButton
     protected var _targetButtons :Array; // of CommandButton
+
+    protected var _makeDoorButton :UIComponent;
+    protected var _removeDoorButton :UIComponent;
+    protected var _makeLinkButton :UIComponent;
+    protected var _removeLinkButton :UIComponent;
     
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
     protected var _custom :CustomPanel;
-
+    protected var _middle :VBox;
+    
     protected var _defaultPanel :Box;
     protected var _advancedPanels :Box;
     protected var _genericIcons :Box;

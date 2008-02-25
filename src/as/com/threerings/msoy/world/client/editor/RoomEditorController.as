@@ -340,12 +340,37 @@ public class RoomEditorController
     }
 
 
-    /** Tells the room controller to start editing the specified door. */
-    public function actionEditDoor (data :FurniData) :void
+    /** Tells the room controller to start editing the target as a door. */
+    public function actionTargetDoor () :void
     {
+        if (_edit.target == null || ! _edit.target.isActionModifiable()) {
+            return;
+        }
+
+        var data :FurniData = _edit.target.getFurniData();
+
+        // make the furni's type to a portal, and save on the server
+        withFurniUpdate(function () :void {
+                data.actionType = FurniData.ACTION_PORTAL;
+            });
+
+        // now open up the door creation wizard. note: we're not wrapping this
+        // in a furni update, because the room controller code will do that for us.
         _view.getRoomController().handleEditDoor(data);
     }
 
+    /** Starts editing the URL. */
+    public function actionTargetLink (url :String) :void
+    {
+        setTargetAction(FurniData.ACTION_URL, url);
+    }
+
+    /** Makes the target into a regular furni. */
+    public function actionTargetClear () :void
+    {
+        setTargetAction(FurniData.ACTION_NONE, null);
+    }
+    
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close
@@ -568,6 +593,20 @@ public class RoomEditorController
         selectTargetName();
     }
 
+    /** Sets the currently edited target's action (if applicable). */
+    protected function setTargetAction (actionType :int, actionData :String) :void
+    {
+        withFurniUpdate(function () :void {   
+                if (_edit.target == null || ! _edit.target.isActionModifiable()) {
+                    return;
+                }
+                
+                var data :FurniData = _edit.target.getFurniData();
+                data.actionType = actionType;
+                data.actionData = actionData;
+            });
+    }
+    
     /** Forces the target sprite to be re-read from the room. */
     protected function refreshTarget () :void
     {
