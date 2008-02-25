@@ -33,6 +33,7 @@
 .catalogPanel .NaviBar .Selected {
   background: #BCDAF2;
   color: #E78917;
+  padding-left: 5px;
 }
 
 .catalogPanel .NaviBar .Link {
@@ -42,6 +43,7 @@
 .catalogPanel .NaviBar .Link a {
   color: #27628E;
   text-decoration: none;
+  padding-left: 5px;
 }
 
 .catalogPanel .Types .Type {
@@ -65,11 +67,15 @@
 
 .catalogPanel .Listings {
   background: #1D5884;
+  width: 100%;
 }
 
 .catalogPanel .Listings .Blurb {
   text-align: center;
   font-size: 14px;
+}
+
+.catalogPanel .Listings .Blurb, .catalogPanel .Listings .Blurb a {
   color: #9FB2C0;
 }
 

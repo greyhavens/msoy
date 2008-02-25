@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -201,8 +202,6 @@ public class CatalogPanel extends SimplePanel
         } else /* mode.equals(LISTING_PAGE) */ {
             _query = argQuery;
 
-            String blurb = CShop.dmsgs.getString("catIntro" + _query.itemType);
-            _listings.setText(0, 0, blurb, 1, "Blurb");
             // TODO: add logo image
             String tname = CShop.dmsgs.getString("pItemType" + _query.itemType);
             _listings.setText(0, 1, tname, 1, "Type");
@@ -268,9 +267,6 @@ public class CatalogPanel extends SimplePanel
      */
     public void clearFilters ()
     {
-        CatalogQuery query = new CatalogQuery();
-        query.itemType = _query.itemType;
-        Application.go(Page.SHOP, composeArgs(query, 0));
     }
 
     // from interface TagCloud.TagListener
@@ -282,6 +278,7 @@ public class CatalogPanel extends SimplePanel
     protected Widget createCategorizedPage (byte type, Widget contents, Widget sideExtra)
     {
         HorizontalPanel page = new HorizontalPanel();
+        page.setWidth("100%");
         page.setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         VerticalPanel sidebar = new VerticalPanel();
@@ -294,6 +291,7 @@ public class CatalogPanel extends SimplePanel
 
         page.add(WidgetUtil.makeShim(10, 10));
         page.add(contents);
+        page.setCellWidth(contents, "100%");
         return page;
     }
 
@@ -325,19 +323,18 @@ public class CatalogPanel extends SimplePanel
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-//             _header.setHTML(1, 0, "&nbsp;");
-            return;
-        }
+            String blurb = CShop.dmsgs.getString("catIntro" + _query.itemType);
+            _listings.setText(0, 0, blurb, 1, "Blurb");
 
-        RowPanel filter = new RowPanel();
-        filter.add(new Label(text));
-        String clear = CShop.msgs.catalogClearFilter();
-        filter.add(MsoyUI.createActionLabel(clear, new ClickListener() {
-            public void onClick (Widget widget) {
-                clearFilters();
-            }
-        }));
-//         _header.setWidget(1, 0, filter);
+        } else {
+            FlowPanel filter = new FlowPanel();
+            filter.add(new InlineLabel(text, false, false, true));
+            CatalogQuery query = new CatalogQuery();
+            query.itemType = _query.itemType;
+            filter.add(Application.createLink(CShop.msgs.catalogClearFilter(),
+                                              Page.SHOP, composeArgs(query, 0)));
+            _listings.setWidget(0, 0, filter, 1, "Blurb");
+        }
     }
 
     protected CatalogQuery parseArgs (Args args)
