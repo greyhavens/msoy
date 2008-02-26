@@ -86,6 +86,7 @@
 
 .itemPanel .itemBox .Ident {
   font-size: 10px;
+  padding-bottom: 3px;
 }
 
 .subInventoryContents {

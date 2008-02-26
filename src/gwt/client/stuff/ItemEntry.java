@@ -4,6 +4,7 @@
 package client.stuff;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.SubItem;
 
 import client.item.ItemActivator;
 import client.shell.Args;
@@ -26,7 +27,7 @@ public class ItemEntry extends ItemBox
             getFlexCellFormatter().addStyleName(1, 0, "Original");
         }
 
-        if (FlashClients.clientExists()) {
+        if (!(item instanceof SubItem) && FlashClients.clientExists()) {
             addWidget(new ItemActivator(item), getColumns(), "Activator");
         }
     }
