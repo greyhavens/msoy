@@ -222,10 +222,9 @@ public class GalaxyPanel extends SmartTable
         public GroupWidget (GroupCard group) {
             super(group.logo, group.name.toString(), Page.WHIRLEDS,
                   Args.compose("d", group.name.getGroupId()));
-
-//             if (group.population > 0) {
+            if (group.population > 0) {
                 addText(CWhirleds.msgs.galaxyMemberCount("" + group.population), 1, "Population");
-//             }
+            }
         }
     }
 
