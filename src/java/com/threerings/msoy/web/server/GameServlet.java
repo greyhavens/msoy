@@ -44,9 +44,9 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 
@@ -362,9 +362,9 @@ public class GameServlet extends MsoyServiceServlet
 
             // resolve the member's names
             Set<Integer> memIds = players.keySet();
-            for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(memIds)) {
-                PlayerRating pr = players.get(name.memberId);
-                pr.name = name.toMemberName();
+            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(memIds)) {
+                PlayerRating pr = players.get(name.getMemberId());
+                pr.name = name;
             }
 
             // resolve their profile photos

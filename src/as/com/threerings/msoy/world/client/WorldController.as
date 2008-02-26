@@ -369,6 +369,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_ROOM command.
+     */
+    public function handleViewRoom (sceneId :int) :void
+    {
+        displayPage("world", "room_" + sceneId);
+    }
+
+    /**
      * Handles the VIEW_GAME command.
      */
     public function handleViewGame (gameId :int) :void
@@ -924,7 +932,7 @@ public class WorldController extends MsoyController
                         },
                         function (res :Object) :void {
                             headerBar.setOwnerLink(res as String, function () :void {
-                                handleViewMember(model.ownerId);
+                                handleViewRoom(model.sceneId);
                             });
                         }));
 
@@ -936,7 +944,7 @@ public class WorldController extends MsoyController
                         },
                         function (res :Object) :void {
                             headerBar.setOwnerLink(res as String, function () :void {
-                                handleViewGroup(model.ownerId);
+                                handleViewRoom(model.sceneId);
                             });
                         }));
 

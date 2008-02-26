@@ -64,6 +64,9 @@ public class index extends Page
                 // display a game lobby or enter a game (action_gameId_gameOid)
                 displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1));
 
+            } else if (action.equals("room")) {
+                setContent(new RoomPanel(args.get(1, 0)));
+
             } else if (action.startsWith("g")) {
                 // go to a specific group's scene group
                 WorldClient.displayFlash("groupHome=" + action.substring(1));

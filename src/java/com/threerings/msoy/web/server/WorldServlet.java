@@ -76,7 +76,6 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.WorldService;
@@ -84,6 +83,7 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.PlaceCard;
+import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
@@ -96,6 +96,27 @@ import static com.threerings.msoy.Log.log;
 public class WorldServlet extends MsoyServiceServlet
     implements WorldService
 {
+    // from interface WorldService
+    public WhatIsWhirledData getWhatIsWhirled ()
+        throws ServiceException
+    {
+        try {
+            WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
+            if (data == null) {
+                data = new WhatIsWhirledData();
+                data.players = MsoyServer.memberRepo.getPopulationCount();
+                data.places = MsoyServer.sceneRepo.getSceneCount();
+                data.games = MsoyServer.itemMan.getGameRepository().getGameCount();
+                _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
+            }
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load WhatIsWhirled data.", pe);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // from WorldService
     public String serializePopularPlaces (WebIdent ident, final int n)
         throws ServiceException
@@ -167,27 +188,6 @@ public class WorldServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getMyWhirled failed [for=" + mrec.memberId + "]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-    }
-
-    // from interface WorldService
-    public WhatIsWhirledData getWhatIsWhirled ()
-        throws ServiceException
-    {
-        try {
-            WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
-            if (data == null) {
-                data = new WhatIsWhirledData();
-                data.players = MsoyServer.memberRepo.getPopulationCount();
-                data.places = MsoyServer.sceneRepo.getSceneCount();
-                data.games = MsoyServer.itemMan.getGameRepository().getGameCount();
-                _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
-            }
-            return data;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load WhatIsWhirled data.", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -333,6 +333,35 @@ public class WorldServlet extends MsoyServiceServlet
         return config;
     }
 
+    // from interface WorldService
+    public RoomInfo loadRoomInfo (int sceneId)
+        throws ServiceException
+    {
+        try {
+            SceneRecord screc = MsoyServer.sceneRepo.loadScene(sceneId);
+            if (screc == null) {
+                return null;
+            }
+
+            RoomInfo info = new RoomInfo();
+            info.sceneId = screc.sceneId;
+            info.name = screc.name;
+            switch (screc.ownerType) {
+            case MsoySceneModel.OWNER_TYPE_MEMBER:
+                info.owner = MsoyServer.memberRepo.loadMemberName(screc.ownerId);
+                break;
+            case MsoySceneModel.OWNER_TYPE_GROUP:
+                info.owner = MsoyServer.groupRepo.loadGroupName(screc.ownerId);
+                break;
+            }
+            return info;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load room info failed [sceneId=" + sceneId + "]", pe);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     /**
      * Helper function for {@link #loadFeed} and {@link #getMyWhirled}.
      */
@@ -360,8 +389,8 @@ public class WorldServlet extends MsoyServiceServlet
         IntMap<MemberName> memberLookup = null;
         if (!feedFriendIds.isEmpty()) {
             memberLookup = IntMaps.newHashIntMap();
-            for (MemberNameRecord name : MsoyServer.memberRepo.loadMemberNames(feedFriendIds)) {
-                memberLookup.put(name.memberId, name.toMemberName());
+            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(feedFriendIds)) {
+                memberLookup.put(name.getMemberId(), name);
             }
         }
 

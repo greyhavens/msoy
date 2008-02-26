@@ -22,7 +22,6 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
@@ -95,8 +94,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // now look up the names and build a map of memberId -> MemberName
             IntMap<MemberName> map = new HashIntMap<MemberName>();
-            for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(members)) {
-                map.put(record.memberId, record.toMemberName());
+            for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
+                map.put(record.getMemberId(), record);
             }
 
             // finally fill in the listings using the map

@@ -25,7 +25,6 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -128,19 +127,19 @@ public class WebUserServlet extends MsoyServiceServlet
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            MemberNameRecord invname;
+            MemberName inviter;
             try {
-                invname = MsoyServer.memberRepo.loadMemberName(invite.inviterId);
+                inviter = MsoyServer.memberRepo.loadMemberName(invite.inviterId);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to lookup inviter name [inviteId=" + inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            if (invname != null) {
+            if (inviter != null) {
                 // send a notification email to the inviter that the friend has accepted
                 final InvitationRecord finvite = invite;
-                final MemberName inviter = invname.toMemberName();
+                final MemberName finviter = inviter;
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         // send them a whirled mail informing them of the acceptance
@@ -162,7 +161,7 @@ public class WebUserServlet extends MsoyServiceServlet
                         // TODO: We'd like to bring this down to one or possibly two lines, and
                         // TODO: will tackle this problem when notification has been peerified.
                         MsoyServer.friendMan.friendshipEstablished(
-                            new MemberName(displayName, newAccount.memberId), inviter);
+                            new MemberName(displayName, newAccount.memberId), finviter);
 
                         // and possibly send a runtime notification as well
                         MsoyServer.notifyMan.notifyInvitationAccepted(

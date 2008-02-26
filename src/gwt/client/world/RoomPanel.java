@@ -1,0 +1,63 @@
+//
+// $Id$
+
+package client.world;
+
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.SmartTable;
+
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.web.data.RoomInfo;
+
+import client.shell.Application;
+import client.shell.CommentsPanel;
+import client.shell.Frame;
+import client.util.MsoyCallback;
+import client.util.StyledTabPanel;
+
+/**
+ * Displays information about a room, allows commenting.
+ */
+public class RoomPanel extends SmartTable
+{
+    public RoomPanel (int sceneId)
+    {
+        super("roomPanel", 0, 5);
+
+        CWorld.worldsvc.loadRoomInfo(sceneId, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                init((RoomInfo)result);
+            }
+        });
+    }
+
+    protected void init (RoomInfo info)
+    {
+        if (info == null) {
+            setText(0, 0, "That room does not exist.");
+            return;
+        }
+        Frame.setTitle(info.name);
+
+        FlowPanel obits = new FlowPanel();
+        obits.add(new InlineLabel("Owner:", false, false, true));
+        if (info.owner instanceof MemberName) {
+            MemberName name = (MemberName)info.owner;
+            obits.add(Application.memberViewLink(name.toString(), name.getMemberId()));
+        } else if (info.owner instanceof GroupName) {
+            GroupName name = (GroupName)info.owner;
+            obits.add(Application.groupViewLink(name.toString(), name.getGroupId()));
+        }
+        addWidget(obits, 1, null);
+
+        StyledTabPanel tabs = new StyledTabPanel();
+        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, info.sceneId), "Comments");
+        addWidget(tabs, 1, null);
+        tabs.selectTab(0);
+    }
+}

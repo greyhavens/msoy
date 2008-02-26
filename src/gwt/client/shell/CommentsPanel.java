@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -32,6 +33,7 @@ public class CommentsPanel extends PagedGrid
     {
         super(Comment.COMMENTS_PER_PAGE, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
+        setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
         _entityType = entityType;
         _entityId = entityId;
@@ -96,6 +98,7 @@ public class CommentsPanel extends PagedGrid
     protected void postedComment (Comment comment)
     {
         if (_page == 0) {
+            ((CommentModel)_model).prependItem(comment);
             _commentCount = -1;
             displayPage(0, true);
         } else {

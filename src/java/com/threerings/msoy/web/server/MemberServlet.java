@@ -18,7 +18,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -214,8 +213,7 @@ public class MemberServlet extends MsoyServiceServlet
 
             MemberName inviter = null;
             if (invRec.inviterId > 0) {
-                MemberNameRecord mnr = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
-                inviter = mnr.toMemberName();
+                inviter = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
             }
             return invRec.toInvitation(inviter);
 

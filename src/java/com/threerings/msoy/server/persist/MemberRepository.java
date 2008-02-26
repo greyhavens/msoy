@@ -211,10 +211,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member's name by id. Returns null if no member exists with the specified id.
      */
-    public MemberNameRecord loadMemberName (int memberId)
+    public MemberName loadMemberName (int memberId)
         throws PersistenceException
     {
-        List<MemberNameRecord> result = loadMemberNames(Collections.singleton(memberId));
+        List<MemberName> result = loadMemberNames(Collections.singleton(memberId));
         return result.isEmpty() ? null : result.get(0);
     }
 
@@ -224,15 +224,16 @@ public class MemberRepository extends DepotRepository
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
-    public List<MemberNameRecord> loadMemberNames (Set<Integer> memberIds)
+    public List<MemberName> loadMemberNames (Set<Integer> memberIds)
         throws PersistenceException
     {
-        if (memberIds.size() == 0) {
-            return Collections.emptyList();
+        List<MemberName> names = Lists.newArrayList();
+        for (MemberNameRecord name : findAll(
+                 MemberNameRecord.class, new FromOverride(MemberRecord.class),
+                 new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
+            names.add(name.toMemberName());
         }
-        return findAll(MemberNameRecord.class,
-                       new FromOverride(MemberRecord.class),
-                       new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
+        return names;
     }
 
     /**

@@ -943,6 +943,10 @@ img, embed, applet, object {
   background: url(/images/ui/tabs/tab_selected_right.png) no-repeat;
 }
 
+.StyledTabs .gwt-TabPanelBottom {
+  padding: 0px;
+}
+
 .promptPopup .Header {
   padding: 4px 0px 0px 0px;
   background-image: url(/images/ui/popup/header_text_tile.png);

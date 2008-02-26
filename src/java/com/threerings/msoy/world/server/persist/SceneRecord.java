@@ -168,7 +168,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Access control information. See {@link MsoySceneModel}. */
     public byte accessControl;
-    
+
     /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */
     public byte ownerType;
 

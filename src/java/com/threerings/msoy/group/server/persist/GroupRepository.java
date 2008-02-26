@@ -162,6 +162,31 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Looks up a group's name by id. Returns null if no group exists with the specified id.
+     */
+    public GroupName loadGroupName (int groupId)
+        throws PersistenceException
+    {
+        List<GroupName> result = loadGroupNames(Collections.singleton(groupId));
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    /**
+     * Looks up groups' names by id.
+     */
+    public List<GroupName> loadGroupNames (Set<Integer> groupIds)
+        throws PersistenceException
+    {
+        List<GroupName> names = Lists.newArrayList();
+        for (GroupNameRecord gnr : findAll(GroupNameRecord.class,
+                                           // new FromOverride(GroupRecord.class),
+                                           new Where(new In(GroupRecord.GROUP_ID_C, groupIds)))) {
+            names.add(gnr.toGroupName());
+        }
+        return names;
+    }
+
+    /**
      * Creates a new group, defined by a {@link GroupRecord}. The key of the record must be null --
      * it will be filled in through the insertion, and returned.  A blank room is also created that
      * is owned by the group.

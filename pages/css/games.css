@@ -61,10 +61,6 @@
   padding-bottom: 10px;
 }
 
-.gameDetail .gwt-TabPanelBottom {
-  padding: 0px; /* override default */
-}
-
 .gameBits .Title {
   padding-top: 10px;
   font-weight: bold;

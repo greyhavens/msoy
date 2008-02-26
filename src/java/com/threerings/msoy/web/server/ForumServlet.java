@@ -22,10 +22,9 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.util.HTMLSanitizer;
 import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -500,8 +499,8 @@ public class ForumServlet extends MsoyServiceServlet
         }
         IntMap<MemberName> names = IntMaps.newHashIntMap();
         if (posters.size() > 0) {
-            for (MemberNameRecord mnrec : MsoyServer.memberRepo.loadMemberNames(posters)) {
-                names.put(mnrec.memberId, mnrec.toMemberName());
+            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(posters)) {
+                names.put(name.getMemberId(), name);
             }
         }
         return names;

@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
+import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
@@ -35,6 +36,12 @@ public interface WorldService extends RemoteService
     }
 
     /**
+     * Loads the data for the WhatIsWhirled page.
+     */
+    public WhatIsWhirledData getWhatIsWhirled ()
+        throws ServiceException;
+
+    /**
      * Fetch the n most Popular Places data in JSON-serialized form.
      */
     public String serializePopularPlaces (WebIdent ident, int n)
@@ -44,12 +51,6 @@ public interface WorldService extends RemoteService
      * Loads the data for the MyWhirled view for the calling user.
      */
     public MyWhirledData getMyWhirled (WebIdent ident)
-        throws ServiceException;
-
-    /**
-     * Loads the data for the WhatIsWhirled page.
-     */
-    public WhatIsWhirledData getWhatIsWhirled ()
         throws ServiceException;
 
     /**
@@ -79,5 +80,11 @@ public interface WorldService extends RemoteService
      * Loads the configuration needed to play (launch) the specified game.
      */
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads information on a particular room.
+     */
+    public RoomInfo loadRoomInfo (int sceneId)
         throws ServiceException;
 }

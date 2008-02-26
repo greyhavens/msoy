@@ -51,7 +51,6 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.RoomManager;
@@ -385,8 +384,7 @@ public class MemberManager
         String uname = "getDisplayName(" + memberId + ")";
         MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
-                MemberNameRecord rec = _memberRepo.loadMemberName(memberId);
-                _displayName = (rec == null) ? "" : rec.name;
+                _displayName = String.valueOf(_memberRepo.loadMemberName(memberId));
             }
             public void handleSuccess () {
                 reportRequestProcessed(_displayName);
