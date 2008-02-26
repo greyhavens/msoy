@@ -111,6 +111,10 @@
   padding: 5px;
 }
 
+.instructionsPanel img {
+  display: inline;
+}
+
 .gameTrophyPanel .Grid {
   height: 340px;
 }
