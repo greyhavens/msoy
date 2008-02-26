@@ -452,20 +452,22 @@ public class Frame
             super("pageTitle", 0, 0);
             addStyleName("pageTitle" + pageId.toUpperCase().substring(0, 1) + pageId.substring(1));
 
-            setText(0, 0, _deftitle = title, 1, "Title");
-            setWidget(0, 1, subnavi, 1, "SubNavi");
+            setWidget(0, 0, new Image("/images/header/" + pageId + "_bar.png"), 3, null);
+            setText(1, 0, _deftitle = title, 1, "Title");
+            setWidget(1, 1, subnavi, 1, "SubNavi");
+            getRowFormatter().setStyleName(1, "Backed");
 
             _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
             });
-            setWidget(0, 2, _closeBox, 1, "Close");
+            setWidget(1, 2, _closeBox, 1, "Close");
             setCloseVisible(false);
         }
 
         public void setTitle (String title) {
-            setText(0, 0, title == null ? _deftitle : title);
+            setText(1, 0, title == null ? _deftitle : title);
         }
 
         public void setCloseVisible (boolean visible) {

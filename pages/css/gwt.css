@@ -5,7 +5,7 @@
  */
 
 body {
-  background: #222222;
+  background: #000000;
 }
 
 img, embed, applet, object { 
@@ -140,27 +140,12 @@ img, embed, applet, object {
 /** Header styles. */
 .frameHeader {
   color: #EAEFF1;
-  background: url(/images/header/header_tile.png);
+  background: #000000;
   height: 50px;
-}
-
-.frameHeader .Logo {
-  width: 124px;
-  vertical-align: top;
-  background: #222222;
-}
-
-.frameHeader .Logo img {
-  display: block;
 }
 
 .frameHeader .Navi {
   width: 195px;
-}
-
-.frameHeader .Shim {
-  background: url(/images/header/header_shim.png) no-repeat;
-  width: 156px;
 }
 
 .frameHeader .Right {
@@ -172,7 +157,7 @@ img, embed, applet, object {
 .frameHeader .Signup {
   width: 300px;
   text-align: center;
-  background: #222222;
+  background: #000000;
 }
 
 .frameHeader .Signup table {
@@ -186,7 +171,7 @@ img, embed, applet, object {
 }
 
 .frameHeader .Logon {
-  background: #222222;
+  background: #000000;
 }
 
 .frameHeader .Logon table {
@@ -194,9 +179,8 @@ img, embed, applet, object {
 }
 
 .frameHeader .Button {
-  width: 78px;
   height: 32px;
-  margin-left: 1px;
+  margin-left: 0px;
   margin-right: 4px;
   padding-top: 18px;
 }
@@ -247,25 +231,10 @@ img, embed, applet, object {
 .pageTitle {
   width: 700px;
   height: 37px;
-  background: url(/images/header/blank_bar.png) #222222 no-repeat;
+  background: #000000;
 }
-.pageTitleMe {
-  background: url(/images/header/me_bar.png) #222222 no-repeat;
-}
-.pageTitlePeople {
-  background: url(/images/header/people_bar.png) #222222 no-repeat;
-}
-.pageTitleWhirleds {
-  background: url(/images/header/whirleds_bar.png) #222222 no-repeat;
-}
-.pageTitleGames {
-  background: url(/images/header/games_bar.png) #222222 no-repeat;
-}
-.pageTitleShop {
-  background: url(/images/header/shop_bar.png) #222222 no-repeat;
-}
-.pageTitleHelp {
-  background: url(/images/header/help_bar.png) #222222 no-repeat;
+.pageTitle .Backed {
+  background: url(/images/header/blank_bar.png) #000000 no-repeat;
 }
 
 .pageTitle .SubNavi {
@@ -294,6 +263,7 @@ img, embed, applet, object {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
+  height: 34px;
   color: white;
   padding: 3px 0px 0px 15px;
   white-space: nowrap;
@@ -308,7 +278,7 @@ img, embed, applet, object {
 
 .pageTitle .Close, .pageDialog .Close {
   width: 13px;
-  padding: 5px 5px 0px 0px;
+  padding: 3px 5px 0px 0px;
   vertical-align: top;
 }
 
@@ -316,26 +286,6 @@ img, embed, applet, object {
   background-image: url(/images/ui/close.png);
   width: 13px;
   height: 13px;
-}
-
-.pageSeparator {
-  vertical-align: top;
-}
-
-.pageSeparator .Minimize {
-  background-image: url(/images/ui/minimize_content.png);
-  background-repeat: no-repeat;
-  border-top: #222222 solid 19px;
-  width: 8px;
-  height: 525px;
-}
-
-.pageSeparator .Maximize {
-  background-image: url(/images/ui/maximize_content.png);
-  background-repeat: no-repeat;
-  border-top: #222222 solid 19px;
-  width: 8px;
-  height: 525px;
 }
 
 /** Starry boxes */
