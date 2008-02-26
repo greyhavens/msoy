@@ -84,7 +84,6 @@ public class ImageChooserPopup extends VerticalPanel
         public PhotoGrid (List images) {
             super(2, 7, NAV_ON_BOTTOM);
             setWidth("100%");
-            setCellAlignment(HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
             setModel(new SimpleDataModel(images), 0);
         }
 
