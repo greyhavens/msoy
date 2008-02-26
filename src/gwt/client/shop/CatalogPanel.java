@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -68,7 +69,6 @@ public class CatalogPanel extends SimplePanel
     public CatalogPanel ()
     {
         setStyleName("catalogPanel");
-        setWidth("100%");
 
         // create our listings interface
         _listings = new SmartTable("Listings", 0, 0);
@@ -202,7 +202,8 @@ public class CatalogPanel extends SimplePanel
                 types.setWidget(ii / 2, ii % 2, ttable);
             }
             intro.add(types);
-            setWidget(createCategorizedPage(Item.NOT_A_TYPE, intro, null));
+
+            setWidget(createCategorizedPage(Item.NOT_A_TYPE, intro, null, null));
             Frame.setTitle(CShop.msgs.catalogTitle());
 
         } else /* mode.equals(LISTING_PAGE) */ {
@@ -235,6 +236,7 @@ public class CatalogPanel extends SimplePanel
             if (model == null) {
                 _models.put(_query, model = new CatalogDataModel(_query));
             }
+            _items.clear();
             _items.setModel(model, args.get(4, 0)); // args 4 is page
 
             // set up our page title
@@ -247,7 +249,7 @@ public class CatalogPanel extends SimplePanel
                 _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
             }
 
-            setWidget(createCategorizedPage(_query.itemType, _listings, cloud));
+            setWidget(createCategorizedPage(_query.itemType, _listings, cloud, "#FFFFFF"));
         }
     }
 
@@ -281,10 +283,11 @@ public class CatalogPanel extends SimplePanel
         Application.go(Page.SHOP, composeArgs(_query, tag, null, 0));
     }
 
-    protected Widget createCategorizedPage (byte type, Widget contents, Widget sideExtra)
+    protected Widget createCategorizedPage (
+        byte type, Widget contents, Widget sideExtra, String bgcolor)
     {
         HorizontalPanel page = new HorizontalPanel();
-        page.setWidth("100%");
+        page.setStyleName("WithCatNav");
         page.setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         VerticalPanel sidebar = new VerticalPanel();
@@ -298,6 +301,11 @@ public class CatalogPanel extends SimplePanel
         page.add(WidgetUtil.makeShim(10, 10));
         page.add(contents);
         page.setCellWidth(contents, "100%");
+        if (bgcolor != null) {
+            DOM.setStyleAttribute(DOM.getParent(contents.getElement()), "background", bgcolor);
+        }
+        page.add(WidgetUtil.makeShim(10, 10));
+
         return page;
     }
 

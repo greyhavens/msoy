@@ -5,7 +5,13 @@
  */
 
 .catalogPanel {
+  width: 100%;
+  height: 100%;
+}
+
+.catalogPanel .WithCatNav {
   background: #1D5884;
+  width: 100%;
   height: 100%;
 }
 
@@ -91,10 +97,10 @@
   padding-bottom: 5px;
 }
 
-.catalogPanel .ListingGrid {
+.catalogPanel .Listings .ListingGrid {
   width: 100%;
   background: white;
-  margin: 5px 10px 0px 0px;
+  margin-top: 5px;
 }
 
 .catalogPanel .Listing {
