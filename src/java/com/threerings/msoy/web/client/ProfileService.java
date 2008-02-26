@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.data.ProfileLayout;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;

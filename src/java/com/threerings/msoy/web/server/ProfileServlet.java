@@ -35,9 +35,7 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
-import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.data.ProfileLayout;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.group.data.Group;

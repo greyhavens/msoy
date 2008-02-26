@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.person.data.BlurbData;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Frame;
