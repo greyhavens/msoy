@@ -125,6 +125,12 @@ public class CatalogPanel extends SimplePanel
                     return CShop.msgs.catalogNoList(name);
                 }
             }
+            protected void configureNavi (FlexTable controls, int row, int col,
+                                          int start, int limit, int total) {
+                super.configureNavi(controls, row, col, start, limit, total);
+                controls.getFlexCellFormatter().setHorizontalAlignment(
+                    row, col, HasAlignment.ALIGN_RIGHT);
+            }
             protected void addCustomControls (FlexTable controls) {
                 controls.setCellSpacing(5);
                 controls.setText(0, 0, CShop.msgs.catalogSortBy());
