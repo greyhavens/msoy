@@ -334,9 +334,10 @@ public class Frame
         if (pageId.equals(Page.ME)) {
             subnavi.addLink(null, "Me", Page.ME, "");
             if (CShell.roomCount > 1) {
+                subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
                 subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
             } else {
-                subnavi.addLink(null, "My Home", Page.WORLD, "h");
+                subnavi.addLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
             }
             subnavi.addLink(null, "My Profile", Page.PEOPLE, "me");
             subnavi.addLink(null, "Mail", Page.MAIL, "");
@@ -413,10 +414,15 @@ public class Frame
 
     protected static class SubNaviPanel extends FlowPanel
     {
-        public void addLink (Image icon, String label, String page, String args) {
+        public void addLink (String iconPath, String label, final String page, final String args) {
             addSeparator();
-            if (icon != null) {
-                add(icon);
+            if (iconPath != null) {
+                add(MsoyUI.createActionImage(iconPath, new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Application.go(page, args);
+                    }
+                }));
+                add(new HTML("&nbsp;"));
             }
             add(Application.createLink(label, page, args));
         }
@@ -435,9 +441,7 @@ public class Frame
 
         protected void addSeparator () {
             if (getWidgetCount() > 0) {
-                HTML seppy = new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
-                seppy.addStyleName("inline");
-                add(seppy);
+                add(new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"));
             }
         }
     }

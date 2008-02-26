@@ -286,6 +286,10 @@ img, embed, applet, object {
   vertical-align: bottom;
 }
 
+.pageTitle .SubNavi .gwt-HTML {
+  display: inline;
+}
+
 .pageTitle .Title {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 24px;
