@@ -3,44 +3,30 @@
 
 package client.shop;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.item.ItemRating;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ItemBox;
 import client.util.ItemUtil;
-import client.util.MsoyUI;
 import client.util.Stars;
-import client.util.ThumbBox;
 
 /**
  * Displays a catalog listing.
  */
-public class ListingContainer extends SmartTable
+public class ListingContainer extends ItemBox
 {
-    public ListingContainer (final CatalogListing listing)
+    public ListingContainer (CatalogListing listing)
     {
-        super("Listing", 0, 0);
-
-        ClickListener clicker = new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.SHOP, Args.compose(new String[] {
-                    "" + listing.item.getType(), CatalogPanel.ONE_LISTING, "" + listing.catalogId
-                }));
-            }
-        };
-        addWidget(new ThumbBox(listing.item.getThumbnailMedia(), clicker), 2, null);
-        getFlexCellFormatter().setHorizontalAlignment(getRowCount()-1, 0, HasAlignment.ALIGN_CENTER);
-
-        String name = ItemUtil.getName(listing.item, true);
-        addWidget(MsoyUI.createActionLabel(name, "Name", clicker), 2, null);
+        super(listing.item.getThumbnailMedia(), ItemUtil.getName(listing.item, true), Page.SHOP,
+              Args.compose(new String[] {
+                  "" + listing.item.getType(), CatalogPanel.ONE_LISTING, "" + listing.catalogId
+              }));
 
         addText(CShop.msgs.itemBy(listing.creator.toString()), 2, "Creator");
 
@@ -62,5 +48,11 @@ public class ListingContainer extends SmartTable
             cost.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
             cost.setText(1, 1, String.valueOf(listing.goldCost), 1, "Cost");
         }
+    }
+
+    // @Override // from ItemBox
+    protected int getColumns ()
+    {
+        return 2;
     }
 }

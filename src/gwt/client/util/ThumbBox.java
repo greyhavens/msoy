@@ -8,8 +8,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.util.MediaUtil;
-
 /**
  * Displays an optionally clickable thumbnail image.
  */

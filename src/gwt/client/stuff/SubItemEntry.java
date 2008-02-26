@@ -10,58 +10,53 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
-import client.util.RowPanel;
-
 /**
  * Displays information on a sub-item.
  */
 public class SubItemEntry extends ItemEntry
     implements DoListItemPopup.ListedListener
 {
-    public SubItemEntry (Item item)
+    public SubItemEntry (final Item item)
     {
         super(item);
-    }
-
-    // @Override // from ItemEntry
-    public void setItem (Item item)
-    {
-        super.setItem(item);
 
         SubItem sitem = (SubItem)item;
-        getFlexCellFormatter().setRowSpan(0, 0, 3);
-        setText(1, 0, sitem.ident);
-        getFlexCellFormatter().setStyleName(1, 0, "Ident");
+        addText(sitem.ident, getColumns(), "Ident");
 
-        RowPanel buttons = new RowPanel();
+        int row = getRowCount();
         String btitle = (item.catalogId == 0) ?
             CStuff.msgs.detailList() : CStuff.msgs.detailUplist();
-        Button button = new Button(btitle, new ClickListener() {
+        _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
-                new DoListItemPopup(_item, null, SubItemEntry.this).show();
+                new DoListItemPopup(item, null, SubItemEntry.this).show();
+            }
+        });
+        _list.addStyleName("tinyButton");
+        setWidget(row, 0, _list);
+
+        Button button = new Button(CStuff.msgs.detailEdit(), new ClickListener() {
+            public void onClick (Widget sender) {
+                CStuff.editItem(item.getType(), item.itemId);
             }
         });
         button.addStyleName("tinyButton");
-        buttons.add(button);
-
-        button = new Button(CStuff.msgs.detailEdit(), new ClickListener() {
-            public void onClick (Widget sender) {
-                CStuff.editItem(_item.getType(), _item.itemId);
-            }
-        });
-        button.addStyleName("tinyButton");
-        buttons.add(button);
-
-        setWidget(2, 0, buttons);
+        setWidget(row, 1, button);
     }
 
     // from DoListItemPopup.ListedListener
     public void itemListed (Item item, boolean updated)
     {
-        // if this was a first time listing, reset our item so that our "List..." button becomes
-        // "Update listing..."
-        if (!updated) {
-            setItem(item);
+        // if this was a first time listing, change "List..." to "Update listing..."
+        if (!updated && item.catalogId != 0) {
+            _list.setText(CStuff.msgs.detailUplist());
         }
     }
+
+    // @Override // from ItemBox
+    protected int getColumns ()
+    {
+        return 2;
+    }
+
+    protected Button _list;
 }

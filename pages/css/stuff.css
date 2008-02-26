@@ -76,40 +76,21 @@
   padding-right: 20px;
 }
 
-.subInventoryContents {
-  width: 650px;
-  margin-top: 5px;
-}
-
-.itemEntry {
-  width: 210px;
-  padding-right: 5px;
-  padding-bottom: 5px;
-}
-
-.itemEntry .Preview {
-  padding-right: 5px;
-  width: 80px;
-  height: 60px;
-  vertical-align: middle;
-}
-
-.itemEntry .Preview img {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.itemEntry .ThumbText {
-  vertical-align: top;
-  font-size: 14px;
-}
-
-.itemEntry .OriginalThumbText {
+.itemPanel .itemBox .Original {
   font-style: italic;
 }
 
-.itemEntry .Ident {
+.itemPanel .itemBox .Activator {
+  padding-top: 3px;
+}
+
+.itemPanel .itemBox .Ident {
   font-size: 10px;
+}
+
+.subInventoryContents {
+  width: 650px;
+  margin-top: 5px;
 }
 
 .mediaUploader {

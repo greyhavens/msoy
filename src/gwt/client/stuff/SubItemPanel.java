@@ -85,5 +85,5 @@ public class SubItemPanel extends PagedGrid
     protected Item _parent;
     protected Button _create;
 
-    protected static final int ROWS = 5;
+    protected static final int ROWS = 2;
 }

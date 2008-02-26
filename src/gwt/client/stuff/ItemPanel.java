@@ -39,7 +39,7 @@ public class ItemPanel extends VerticalPanel
     implements EditorHost
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 3;
+    public static final int COLUMNS = 5;
 
     public ItemPanel (InventoryModels models, byte type)
     {

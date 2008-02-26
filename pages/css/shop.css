@@ -68,7 +68,6 @@
 .catalogPanel .Types .Type .Blurb {
   font-size: 12px;
   color: #A9A8AD;
-  padding: 0px 15px;
 }
 
 .catalogPanel .Listings {
@@ -79,6 +78,7 @@
 .catalogPanel .Listings .Blurb {
   text-align: center;
   font-size: 14px;
+  padding: 0px 15px;
 }
 
 .catalogPanel .Listings .Blurb, .catalogPanel .Listings .Blurb a {
@@ -103,34 +103,17 @@
   margin-top: 5px;
 }
 
-.catalogPanel .Listing {
-  border: 1px solid #CCCCCC;
-  margin: 5px;
-  padding: 5px; /* TODO: IE won't like */
-  width: 120px;
-}
-
-.catalogPanel .Listing .Name {
-  text-decoration: underline;
-  cursor: pointer;
-  cursor: hand;
-  font-size: 14px;
-  padding-top: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.catalogPanel .Listing .Creator {
+.catalogPanel .itemBox .Creator {
   font-size: 12px;
   color: #AABDC8;
   padding-top: 2px;
 }
 
-.catalogPanel .Listing .Rating {
+.catalogPanel .itemBox .Rating {
   width: 60px;
 }
 
-.catalogPanel .Listing .Cost {
+.catalogPanel .itemBox .Cost {
   font-size: 12px;
 }
 
