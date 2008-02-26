@@ -22,6 +22,7 @@ import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Spacer;
+import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;
 import mx.events.ListEvent;
@@ -234,7 +235,7 @@ public class RoomEditorPanel extends FloatingPanel
 
         var makeActionButton :Function = function (
             fn :Function, style :String, tooltip :String,
-            buttonlist :Array, enabled :Boolean = true) :UIComponent
+            buttonlist :Array, makeLabel :Boolean = false) :UIComponent
         {
             var c :VBox = new VBox();
             c.setStyle("horizontalAlign", "center");
@@ -242,15 +243,17 @@ public class RoomEditorPanel extends FloatingPanel
             var b :CommandButton = new CommandButton(null, fn);
             b.styleName = style;
             b.toolTip = Msgs.EDITING.get(tooltip);
-            b.enabled = enabled;
             if (buttonlist != null) {
                 buttonlist.push(b);
             }
             c.addChild(b);
 
-            var img :SkinnableImage = new SkinnableImage();
-            img.styleName = style + "Text";
-            c.addChild(img);
+            if (makeLabel) {
+                var l :Text = new Text();
+                l.styleName = "roomEditButtonLabel";
+                l.text = Msgs.EDITING.get(tooltip + "_label");
+                c.addChild(l);
+            }
             
             return c;
         }
@@ -370,25 +373,34 @@ public class RoomEditorPanel extends FloatingPanel
         _middle.styleName = "roomEditRight";
         _defaultPanel.addChild(_middle);
 
-        _middle.addChild(makeActionButton(_controller.actionDelete, "roomEditTrash",
-                                         "b.put_away", _deleteButtons));
-        _middle.addChild(_makeDoorButton = makeActionButton(makeDoor, "roomEditDoor",
-                                                           "b.make_door", _actionButtons));
-        _middle.addChild(_makeLinkButton = makeActionButton(makeUrl, "roomEditLink",
-                                                           "b.make_link", _actionButtons));
+        _middle.addChild(
+            makeActionButton(_controller.actionDelete, "roomEditTrash",
+                             "b.put_away", _deleteButtons, true));
+        _middle.addChild(
+            _makeDoorButton = makeActionButton(makeDoor, "roomEditDoor",
+                                               "b.make_door", _actionButtons, true));
+        _middle.addChild(
+            _makeLinkButton = makeActionButton(makeUrl, "roomEditLink",
+                                               "b.make_link", _actionButtons, true));
 
         _removeDoorButton = makeActionButton(
-            removeDoor, "roomRemoveDoor", "b.remove_door", _actionButtons);
+            removeDoor, "roomRemoveDoor", "b.remove_door", _actionButtons, true);
         _removeLinkButton = makeActionButton(
-            removeUrl, "roomRemoveLink", "b.remove_link", _actionButtons);
+            removeUrl, "roomRemoveLink", "b.remove_link", _actionButtons, true);
 
+
+        // generic actions
         right.addChild(makeActionButton(displayFurnitureInventory, "roomEditAdd",
-                                        "b.add_item", null));
+                                        "b.add_item", null, true));
         right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndo",
-                                        "b.undo", _undoButtons));
-        right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndoAll",
-                                        "b.undo_all", null, false));
+                                        "b.undo", _undoButtons, true));
+        
+        var undoall :UIComponent = makeActionButton(
+            _controller.actionUndo, "roomEditUndoAll", "b.undo_all", null, true);
+        undoall.enabled = false;
+        right.addChild(undoall);
 
+        
         updateTargetSelected(null); // disable most buttons
 
         
