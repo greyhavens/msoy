@@ -178,10 +178,12 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         List<GroupName> names = Lists.newArrayList();
-        for (GroupNameRecord gnr : findAll(GroupNameRecord.class,
-                                           // new FromOverride(GroupRecord.class),
-                                           new Where(new In(GroupRecord.GROUP_ID_C, groupIds)))) {
-            names.add(gnr.toGroupName());
+        if (groupIds.size() > 0) {
+            for (GroupNameRecord gnr : findAll(
+                     GroupNameRecord.class,
+                     new Where(new In(GroupRecord.GROUP_ID_C, groupIds)))) {
+                names.add(gnr.toGroupName());
+            }
         }
         return names;
     }

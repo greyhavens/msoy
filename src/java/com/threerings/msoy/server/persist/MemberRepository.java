@@ -228,10 +228,12 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         List<MemberName> names = Lists.newArrayList();
-        for (MemberNameRecord name : findAll(
-                 MemberNameRecord.class, new FromOverride(MemberRecord.class),
-                 new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
-            names.add(name.toMemberName());
+        if (memberIds.size() > 0) {
+            for (MemberNameRecord name : findAll(
+                     MemberNameRecord.class,
+                     new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
+                names.add(name.toMemberName());
+            }
         }
         return names;
     }
