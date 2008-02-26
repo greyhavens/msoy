@@ -1333,10 +1333,11 @@ public class ChatOverlay
                 ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
                   _occupantList.height + _occupantList.y : 0);
             if (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null) {
-                _historyBar.move(_targetBounds.x, getMinHistY());
+                _historyBar.move(_targetBounds.x + (ScrollBar.THICKNESS / 2), getMinHistY());
             } else {
                 _historyBar.move(
-                    _targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS + 1, getMinHistY());
+                    _targetBounds.x + _targetBounds.width - (ScrollBar.THICKNESS / 2) + 1, 
+                    getMinHistY());
             }
         }
     }
