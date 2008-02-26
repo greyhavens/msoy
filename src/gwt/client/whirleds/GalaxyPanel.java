@@ -27,6 +27,7 @@ import com.threerings.msoy.web.data.GroupCard;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ItemBox;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -216,24 +217,15 @@ public class GalaxyPanel extends SmartTable
         public void loadModel (MsoyCallback callback);
     }
 
-    protected class GroupWidget extends SmartTable
+    protected class GroupWidget extends ItemBox
     {
         public GroupWidget (GroupCard group) {
-            super("GroupWidget", 2, 2);
+            super(group.logo, group.name.toString(), Page.WHIRLEDS,
+                  Args.compose("d", group.name.getGroupId()));
 
-            final int groupId = group.name.getGroupId();
-            setWidget(0, 0, new ThumbBox(group.logo, new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, Args.compose("d", groupId));
-                }
-            }), 1, "Logo");
-            getFlexCellFormatter().setRowSpan(0, 0, 3);
-
-            setWidget(0, 1, Application.createLink(group.name.toString(), Page.WHIRLEDS,
-                                                   Args.compose("d", groupId)));
-
-            setText(1, 0, group.blurb);
-            setText(2, 0, CWhirleds.msgs.galaxyMemberCount("" + group.population));
+//             if (group.population > 0) {
+                addText(CWhirleds.msgs.galaxyMemberCount("" + group.population), 1, "Population");
+//             }
         }
     }
 
@@ -244,8 +236,8 @@ public class GalaxyPanel extends SmartTable
     protected PagedGrid _groupGrid;
 
     protected static final int POP_TAG_COUNT = 9;
-    protected static final int GRID_ROWS = 4;
-    protected static final int GRID_COLUMNS = 2;
+    protected static final int GRID_ROWS = 2;
+    protected static final int GRID_COLUMNS = 5;
 
     protected static final int MIN_WHIRLED_CREATE_LEVEL = 10;
 }

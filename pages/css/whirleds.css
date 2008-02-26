@@ -112,20 +112,8 @@
     color: #CD853F;
 }
 
-.galaxy .GroupWidget {
-    font-size: 13px;
-}
-
-.galaxy .GroupWidget .Logo {
-    width: 80px;
-    height: 60px;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-.galaxy .GroupWidget .EstablishedDate {
-    font-style: italic;
+.galaxy .itemBox .Population {
+    font-size: 12px;
 }
 
 .featuredWhirled {
