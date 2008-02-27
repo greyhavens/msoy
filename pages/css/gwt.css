@@ -57,13 +57,13 @@ img, embed, applet, object {
 
 /** Form element styles. */
 .gwt-Button {
-    border: 1px solid #000000;
     background-image: url(/images/ui/button_middle.png);
     background-repeat: repeat-x;
+    border: 1px solid #404040;
     font-size: 12px;
     vertical-align: top;
     cursor: pointer;
-    height: 18px;
+    height: 19px;
     margin: 0px;
     padding-bottom: 1px;
     white-space: nowrap;
@@ -81,6 +81,16 @@ img, embed, applet, object {
   height: 48px;
   background-image: url(/images/ui/big_button.png);
   font-size: 21px;
+}
+
+.closeButton {
+  background-image: url(/images/ui/close.png);
+  width: 13px;
+  height: 13px;
+}
+
+.closeButton-hovering {
+  background-image: url(/images/ui/close_over.png);
 }
 
 .gwt-PushButton {
@@ -470,8 +480,8 @@ img, embed, applet, object {
 
 .pagedGrid .Button {
   font-size: 12px;
-  width: 56px;
-  height: 20px;
+  width: 51px;
+  height: 19px;
   vertical-align: top;
   padding-top: 0px;
   padding-bottom: 1px;
@@ -479,22 +489,23 @@ img, embed, applet, object {
   border: 0px none;
 }
 
+.pagedGrid .PrevButton {
+  text-align: right;
+}
 .pagedGrid .Footer .PrevButton {
-  padding-left: 10px;
   background: url(/images/ui/button_prev.png) #FFFFFF;
 }
-
-.pagedGrid .Footer .NextButton {
-  padding-right: 10px;
-  background: url(/images/ui/button_next.png) #FFFFFF;
-}
-
 .pagedGrid .Header .PrevButton {
   background: url(/images/ui/button_prev.png) #9DCAE9;
 }
 
+.pagedGrid .NextButton {
+  text-align: left;
+}
+.pagedGrid .Footer .NextButton {
+  background: url(/images/ui/button_next.png) #FFFFFF;
+}
 .pagedGrid .Header .NextButton {
-  padding-right: 10px;
   background: url(/images/ui/button_next.png) #9DCAE9;
 }
 

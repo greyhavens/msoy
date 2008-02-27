@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -398,7 +397,7 @@ public class Frame
         public Dialog (String title, Widget content) {
             super("pageDialog", 0, 0);
             setText(0, 0, title, 1, "DialogTitle");
-            setWidget(0, 1, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+            setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
                     Frame.clearDialog(getContent());
                 }
@@ -457,7 +456,7 @@ public class Frame
             setWidget(1, 1, subnavi, 1, "SubNavi");
             getRowFormatter().setStyleName(1, "Backed");
 
-            _closeBox = MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+            _closeBox = MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
@@ -475,7 +474,7 @@ public class Frame
         }
 
         protected String _deftitle;
-        protected Label _closeBox;
+        protected Widget _closeBox;
     }
 
     protected static abstract class Header extends SmartTable

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -118,6 +119,23 @@ public class MsoyUI
         Button button = new Button(label, listener);
         button.addStyleName("bigButton");
         return button;
+    }
+
+    /**
+     * Creates a button for closing things (a square with an x in it).
+     */
+    public static Widget createCloseButton (ClickListener listener)
+    {
+        final Label close = createActionLabel("", "closeButton", listener);
+        close.addMouseListener(new MouseListenerAdapter() {
+            public void onMouseEnter (Widget sender) {
+                close.addStyleDependentName("hovering");
+            }
+            public void onMouseLeave (Widget sender) {
+                close.removeStyleDependentName("hovering");
+            }
+        });
+        return close;
     }
 
     /**
