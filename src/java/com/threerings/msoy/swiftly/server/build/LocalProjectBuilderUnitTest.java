@@ -69,8 +69,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
         BuildArtifact artifact = builder.build(_tempDir);
         for (CompilerOutput output : artifact.getOutput()) {
             // no output should be displayed if the build worked
-            // XXX TODO: re-enable this when flex 3 is final
-            // assertEquals("", output);
+            assertEquals("", output);
         }
         assertTrue(artifact.buildSuccessful());
         // TODO: test broken build output
