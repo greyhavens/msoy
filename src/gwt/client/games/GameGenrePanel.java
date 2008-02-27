@@ -11,6 +11,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 
@@ -39,7 +40,7 @@ public class GameGenrePanel extends VerticalPanel
         HorizontalPanel row = new HorizontalPanel();
         row.add(new WhyPlayPanel());
         row.add(WidgetUtil.makeShim(5, 5));
-        row.add(new FeaturedGamePanel(data.featuredGame));
+        row.add(new FeaturedGamePanel(new FeaturedGameInfo[] { data.featuredGame }));
         add(row);
 
         PagedGrid games = new PagedGrid(5, 3, PagedGrid.NAV_ON_TOP) {

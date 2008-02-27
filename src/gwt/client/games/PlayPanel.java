@@ -3,7 +3,7 @@
 
 package client.games;
 
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,9 +42,9 @@ public class PlayPanel extends SmartTable
         getFlexCellFormatter().setColSpan(0, 0, col);
     }
 
-    protected Button makePlayButton (String styleName, ClickListener onClick)
+    protected PushButton makePlayButton (String styleName, ClickListener onClick)
     {
-        Button play = new Button("", onClick);
+        PushButton play = new PushButton("", onClick);
         play.setStyleName(styleName);
         play.addStyleName("Button");
         return play;

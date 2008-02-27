@@ -46,7 +46,7 @@ public class ArcadePanel extends VerticalPanel
         HorizontalPanel row = new HorizontalPanel();
         row.add(new WhyPlayPanel());
         row.add(WidgetUtil.makeShim(5, 5));
-        row.add(new FeaturedGamePanel(data.featuredGames[0])); // TODO: next/prev
+        row.add(new FeaturedGamePanel(data.featuredGames)); // TODO: next/prev
         add(row);
 
         for (int ii = 0; ii < data.genres.size(); ii++) {

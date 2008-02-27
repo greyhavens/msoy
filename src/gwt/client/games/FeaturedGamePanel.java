@@ -26,13 +26,26 @@ import client.util.MsoyUI;
  */
 public class FeaturedGamePanel extends SmartTable
 {
-    public FeaturedGamePanel (FeaturedGameInfo game)
+    public FeaturedGamePanel (FeaturedGameInfo[] games)
     {
         super("featuredGame", 0, 10);
 
+        // TODO: allow next/prev
+        final FeaturedGameInfo game = games[0];
+
         VerticalPanel left = new VerticalPanel();
-        left.add(MediaUtil.createMediaView(
-                     game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null)); // TODO: link
+        left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        left.add(MediaUtil.createMediaView(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT,
+                                           new ClickListener() {
+            public void onClick (Widget sender) {
+                Application.go(Page.GAMES, Args.compose("d", game.gameId));
+            }
+        }));
+        left.add(WidgetUtil.makeShim(5, 5));
+        // TODO: add by Foozle
+        left.add(new GameBitsPanel(null, game.genre, game.minPlayers, game.maxPlayers,
+                                   game.avgDuration, 0));
+        // TODO: add next, prev
         setWidget(0, 0, left);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
@@ -46,28 +59,6 @@ public class FeaturedGamePanel extends SmartTable
         right.add(new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers));
         setWidget(0, 1, right);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-
-//         // display our screenshot in column 1
-//         contents.setText(0, 0, game.name, 1, "Name");
-//         Widget link = Application.createLink(
-//             CGames.msgs.featuredMoreInfo(), Page.GAMES, Args.compose("d", game.gameId));
-//         contents.setWidget(2, 0, link, 1, "MoreInfo");
-
-//         // display the game info in column 2
-//         contents.setText(0, 1, 
-//         SmartTable info = new SmartTable(0, 0);
-//         info.addText(truncate(game.description), 1, "Descrip");
-//         info.addWidget(WidgetUtil.makeShim(5, 5), 1, null);
-//         info.addWidget(new GameBitsPanel(null, game.genre, game.minPlayers,
-//                                          game.maxPlayers, game.avgDuration, 0), 1, null);
-//         contents.setWidget(1, 1, info, 1, "Info");
-//         contents.getFlexCellFormatter().setRowSpan(1, 1, 2);
-
-//         // display play now buttons in column 3
-//         contents.setText(0, 2, CGames.msgs.gdpPlay(), 1, "Play");
-//         PlayPanel play = new PlayPanel(false, game.gameId, game.minPlayers, game.maxPlayers);
-//         contents.setWidget(1, 2, play, 1, "Buttons");
-//         contents.getFlexCellFormatter().setRowSpan(1, 2, 2);
     }
 
     protected static String truncate (String descrip)

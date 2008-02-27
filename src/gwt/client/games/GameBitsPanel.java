@@ -21,8 +21,8 @@ public class GameBitsPanel extends SmartTable
             setText(row++, 0, title, 1, "Title");
         }
 
-        setText(row, 0, CGames.msgs.bitsGenre(), 1, "Label");
-        setText(row++, 1, CGames.dmsgs.getString("genre" + genre));
+//         setText(row, 0, CGames.msgs.bitsGenre(), 1, "Label");
+//         setText(row++, 1, CGames.dmsgs.getString("genre" + genre));
 
         if (maxPlayers == Integer.MAX_VALUE) {
             setText(row, 1, CGames.msgs.bitsPlayersParty("" + minPlayers));
