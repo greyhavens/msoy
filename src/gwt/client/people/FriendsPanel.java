@@ -49,7 +49,7 @@ public class FriendsPanel extends SmartTable
             _friends = new MemberList(
                 self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
             String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());
-            setWidget(1, 0, MsoyUI.createBox("people", title, _friends));
+            setWidget(1, 0, MsoyUI.createBox(null, title, _friends));
             _friends.setModel(new SimpleDataModel(data.friends), 0);
         }
     }

@@ -65,7 +65,7 @@ public class SearchPanel extends VerticalPanel
     {
         _searchString = search;
         _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));
-        add(MsoyUI.createBox("people", CPeople.msgs.searchResultsTitle(search), _members));
+        add(MsoyUI.createBox(null, CPeople.msgs.searchResultsTitle(search), _members));
         _members.setModel(new SimpleDataModel(cards), page);
     }
 

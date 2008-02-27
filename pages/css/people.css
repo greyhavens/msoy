@@ -130,12 +130,6 @@
   font-size: 14px;
 }
 
-.friendsPanel .Title {
-  padding-top: 5px;
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .friendsPanel .Grid {
   border-bottom: 1px solid #DADADA;
 }

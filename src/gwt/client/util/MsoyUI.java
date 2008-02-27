@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
@@ -180,13 +181,16 @@ public class MsoyUI
     }
 
     /**
-     * Creates a box with a starry header.
+     * Creates a box with a rounded header and footer.
      */
-    public static Widget createBox (String styleName, String title, Widget contents)
+    public static Widget createBox (String icon, String title, Widget contents)
     {
-        VerticalPanel box = new VerticalPanel();
-        makeBox(box, styleName, title);
-        box.add(contents);
+        SmartTable box = new SmartTable("roundBox", 0, 0);
+        box.setWidget(0, 0, new Image("/images/ui/box/header_left.png"));
+        box.setText(0, 1, title, 1, "Title"); // TODO: icon + title in flowpanel
+        box.setWidget(0, 2, new Image("/images/ui/box/header_right.png"));
+        box.setWidget(1, 0, contents, 3, "Contents");
+        // TODO: footer with rounded edges
         return box;
     }
 
