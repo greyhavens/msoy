@@ -17,6 +17,18 @@ import client.shell.CShell;
  */
 public class CreatorLabel extends FlowPanel
 {
+    public CreatorLabel ()
+    {
+        this(null);
+    }
+
+    public CreatorLabel (MemberName name)
+    {
+        if (name != null) {
+            setMember(name);
+        }
+    }
+
     public void setMember (MemberName name)
     {
         setMember(name, null);

@@ -517,6 +517,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     protected FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
+        throws PersistenceException
     {
         FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
         info.avgDuration = detail.toGameDetail().getAverageDuration();
@@ -524,6 +525,7 @@ public class GameServlet extends MsoyServiceServlet
         info.minPlayers = players[0];
         info.maxPlayers = players[1];
         info.playersOnline = pop;
+        info.creator = MsoyServer.memberRepo.loadMemberName(game.creatorId);
         return info;
     }
 

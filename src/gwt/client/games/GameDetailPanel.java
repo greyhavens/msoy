@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -23,6 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GameDetail;
 
@@ -34,13 +34,15 @@ import client.shell.Frame;
 import client.shell.Page;
 import client.util.CreatorLabel;
 import client.util.ItemUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.StyledTabPanel;
+import client.util.ThumbBox;
 
 /**
  * Displays detail information on a particular game.
  */
-public class GameDetailPanel extends VerticalPanel
+public class GameDetailPanel extends SmartTable
     implements TabListener
 {
     public static final String INSTRUCTIONS_TAB = "i";
@@ -52,97 +54,61 @@ public class GameDetailPanel extends VerticalPanel
 
     public GameDetailPanel ()
     {
-        setStyleName("gameDetail");
+        super("gameDetail", 0, 5);
     }
 
     public void setGame (final int gameId, final String tab)
     {
         if (_gameId == gameId) {
             selectTab(tab);
-            return;
+        } else {
+            CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    setGameDetail(gameId, (GameDetail)result);
+                    selectTab(tab);
+                }
+            });
         }
-
-        add(new Label(CGames.msgs.gdpLoading()));
-        CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                setGameDetail(gameId, (GameDetail)result);
-                selectTab(tab);
-            }
-            public void onFailure (Throwable cause) {
-                CGames.log("Failed to load detail [id=" +  _gameId + "]", cause);
-                clear();
-                add(new Label(CGames.serverError(cause)));
-            }
-        });
     }
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
-        clear();
-
         _gameId = gameId;
         Frame.setTitle(detail.getGame().name);
 
-        int row = 0;
-        SmartTable top = new SmartTable(0, 0);
-        top.setWidget(row, 0, MsoyUI.createBackArrow(), 1, "Up");
-
-        SmartTable box = new SmartTable("Box", 0, 0);
-        box.setText(0, 0, detail.getGame().name, 1, "Name");
-        MediaDesc shot = detail.getGame().shotMedia;
-        if (shot == null) {
-            shot = detail.getGame().getThumbnailMedia();
-            CGames.log("No shot media, using " + shot + ".");
-        } else {
-            CGames.log("Using " + shot + ".");
+        Game game = detail.getGame();
+        VerticalPanel shot = new VerticalPanel();
+        shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        shot.add(new ThumbBox(game.getPreviewMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
+        int online = 0; // TODO
+        if (online > 0) {
+            shot.add(WidgetUtil.makeShim(5, 5));
+            shot.add(MsoyUI.createLabel(CGames.msgs.featuredOnline(""+online), "Online"));
         }
-        box.setWidget(1, 0, new Image(shot.getMediaPath()), 1, "Screenshot");
         if (detail.listedItem != null) {
-            box.setWidget(2, 0, WidgetUtil.makeShim(1, 5));
-            box.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasAlignment.ALIGN_CENTER);
-            box.setWidget(3, 0, new ItemRating(detail.listedItem, CGames.getMemberId(),
-                                               detail.memberRating, false));
+            shot.add(WidgetUtil.makeShim(5, 5));
+            shot.add(new ItemRating(detail.listedItem, CGames.getMemberId(),
+                                    detail.memberRating, false));
         }
-        top.setWidget(row, 1, box);
+        setWidget(0, 0, shot);
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
-        VerticalPanel details = new VerticalPanel();
-        top.setWidget(row, 2, details, 1, "Details");
-
-        top.setWidget(row, 3, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
-        for (int ii = 0; ii < top.getCellCount(0); ii++) {
-            top.getFlexCellFormatter().setVerticalAlignment(row, ii, HasAlignment.ALIGN_TOP);
-        }
-        row++;
-        add(top);
-
-        SimplePanel cbox = new SimplePanel();
-        cbox.setStyleName("Creator");
-        if (detail.creator != null) {
-            CreatorLabel creator = new CreatorLabel();
-            creator.setMember(detail.creator);
-            cbox.add(creator);
-        }
-        details.add(cbox);
-
-        details.add(new Label(ItemUtil.getDescription(detail.getGame())));
-        details.add(WidgetUtil.makeShim(1, 5));
-
-        // set up the game info table
-        details.add(new GameBitsPanel(CGames.msgs.gdpInfoTitle(), detail.getGame().genre,
-                                      detail.minPlayers, detail.maxPlayers,
-                                      detail.getAverageDuration(),
-                                      detail.singlePlayerGames + detail.multiPlayerGames));
+        setWidget(0, 1, new GameNamePanel(
+                      game.name, game.genre, detail.creator, game.description), 2, null);
+        setWidget(1, 0, new GameBitsPanel(
+                      detail.minPlayers, detail.maxPlayers, detail.getAverageDuration(),
+                      detail.singlePlayerGames + detail.multiPlayerGames));
+        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers), 1, "Play");
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {
-            top.getFlexCellFormatter().setRowSpan(0, 0, 2);
-            top.getFlexCellFormatter().setRowSpan(0, 1, 2);
-            top.setText(row++, 0, CGames.msgs.gdpDevVersion(), top.getCellCount(0)-2, "InDevTip");
+            addText(CGames.msgs.gdpDevVersion(), 3, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();
         _tabs.addTabListener(this);
-        add(_tabs);
+        addWidget(_tabs, 3, null);
 
         // add the about/instructions tab
         addTab(INSTRUCTIONS_TAB, CGames.msgs.tabInstructions(), new InstructionsPanel(detail));

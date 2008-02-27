@@ -31,7 +31,7 @@
   background: #5CA5DA;
 }
 
-.catalogPanel .NaviBar {
+.catalogPanel .NaviPanel {
   background: url(/images/shop/navi_bg.png) no-repeat top;
   font-size: 16px;
   font-weight: bold;
@@ -41,20 +41,18 @@
   padding-top: 3px;
 }
 
-.catalogPanel .NaviBar .Selected {
+.catalogPanel .NaviPanel div {
+  padding: 3px 0px 0px 5px;
+  height: 21px;
+}
+
+.catalogPanel .NaviPanel .Selected {
   color: #E78917;
-  padding-left: 5px;
-  height: 24px;
 }
 
-.catalogPanel .NaviBar .Link {
-  height: 24px;
-}
-
-.catalogPanel .NaviBar .Link a {
+.catalogPanel .NaviPanel a {
   color: #27628E;
   text-decoration: none;
-  padding-left: 5px;
 }
 
 .catalogPanel .SideBar .tagCloud {

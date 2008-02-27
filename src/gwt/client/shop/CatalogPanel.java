@@ -295,7 +295,7 @@ public class CatalogPanel extends SimplePanel
         SmartTable sidebar = new SmartTable("SideBar", 0, 0);
         sidebar.addWidget(new Image("/images/shop/sidebar_top.png"), 1, null);
         sidebar.addText(CShop.msgs.catalogCats(), 1, "Title");
-        sidebar.addWidget(_navibar = new NaviBar(type), 1, "Middle");
+        sidebar.addWidget(_navibar = new NaviPanel(type), 1, "Middle");
         if (sideExtra != null) {
             sidebar.addWidget(sideExtra, 1, "Middle");
         }
@@ -404,17 +404,19 @@ public class CatalogPanel extends SimplePanel
         return Args.compose(args);
     }
 
-    protected static class NaviBar extends SmartTable
+    protected static class NaviPanel extends FlowPanel
     {
-        public NaviBar (byte seltype) {
-            super("NaviBar", 0, 0);
+        public NaviPanel (byte seltype) {
+            setStyleName("NaviPanel");
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 byte type = Item.TYPES[ii];
                 String name = CShop.dmsgs.getString("pItemType" + type);
                 if (seltype == type) {
-                    setText(ii, 0, name, 1, "Selected");
+                    add(MsoyUI.createLabel(name, "Selected"));
                 } else {
-                    setWidget(ii, 0, Application.createLink(name, Page.SHOP, ""+type), 1, "Link");
+                    Widget link = Application.createLink(name, Page.SHOP, ""+type);
+                    link.removeStyleName("inline");
+                    add(link);
                 }
             }
         }
@@ -467,7 +469,7 @@ public class CatalogPanel extends SimplePanel
     protected Map _models = new HashMap(); /* Filter, CatalogDataModel */
     protected Map _clouds = new HashMap(); /* Byte, TagCloud */
 
-    protected NaviBar _navibar;
+    protected NaviPanel _navibar;
     protected SmartTable _listings;
     protected TextBox _searchBox;
     protected ListBox _sortBox;

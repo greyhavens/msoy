@@ -17,8 +17,8 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 
 import client.shell.Application;
-import client.shell.Page;
 import client.shell.Args;
+import client.shell.Page;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -53,10 +53,13 @@ public class FeaturedGamePanel extends SmartTable
         sashBox.add(sash);
         sashBox.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
         left.add(sashBox);
+        if (game.playersOnline > 0) {
+            left.add(WidgetUtil.makeShim(5, 5));
+            left.add(MsoyUI.createLabel(
+                         CGames.msgs.featuredOnline(""+game.playersOnline), "Online"));
+        }
         left.add(WidgetUtil.makeShim(5, 5));
-        // TODO: add by Foozle
-        left.add(new GameBitsPanel(null, game.genre, game.minPlayers, game.maxPlayers,
-                                   game.avgDuration, 0));
+        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0));
 
         if (_games.length > 1) {
             left.add(WidgetUtil.makeShim(10, 10));
@@ -74,25 +77,13 @@ public class FeaturedGamePanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         getFlexCellFormatter().setWidth(0, 0, Game.SHOT_WIDTH + "px");
 
-        VerticalPanel right = new VerticalPanel();
-        right.add(MsoyUI.createLabel(game.name, "Name"));
-        right.add(MsoyUI.createLabel(CGames.dmsgs.getString("genre" + game.genre), "Genre"));
-        right.add(WidgetUtil.makeShim(5, 5));
-        right.add(MsoyUI.createLabel(truncate(game.description), "Descrip"));
-        right.add(MsoyUI.createLabel(CGames.msgs.featuredOnline(""+game.playersOnline), "Online"));
+        VerticalPanel right = new GameNamePanel(
+            game.name, game.genre, game.creator, game.description);
         right.add(WidgetUtil.makeShim(5, 10));
         right.add(new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers));
         setWidget(0, 1, right);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
     }
 
-    protected static String truncate (String descrip)
-    {
-        return (descrip.length() <= MAX_DESCRIP_LENGTH) ? descrip :
-            descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
-    }
-
     protected FeaturedGameInfo[] _games;
-
-    protected static final int MAX_DESCRIP_LENGTH = 150;
 }

@@ -11,19 +11,11 @@ import com.threerings.gwt.ui.SmartTable;
  */
 public class GameBitsPanel extends SmartTable
 {
-    public GameBitsPanel (String title, byte genre, int minPlayers, int maxPlayers,
-                          int avgTime, int gamesPlayed)
+    public GameBitsPanel (int minPlayers, int maxPlayers, int avgTime, int gamesPlayed)
     {
         super("gameBits", 0, 0);
 
         int row = 0;
-        if (title != null) {
-            setText(row++, 0, title, 1, "Title");
-        }
-
-//         setText(row, 0, CGames.msgs.bitsGenre(), 1, "Label");
-//         setText(row++, 1, CGames.dmsgs.getString("genre" + genre));
-
         if (maxPlayers == Integer.MAX_VALUE) {
             setText(row, 1, CGames.msgs.bitsPlayersParty("" + minPlayers));
         } else if (minPlayers == maxPlayers) {

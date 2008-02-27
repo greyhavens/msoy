@@ -11,58 +11,18 @@
   font-size: 24px;
 }
 
-.gameDetail {
-  padding: 5px;
-  width: 670px;
-}
-
-.gameDetail .Up { 
-  padding-right: 5px;
-}
-
-.gameDetail .Box { 
-  text-align: center;
-  border-right: white solid 15px;
-  border-bottom: white solid 10px;
-  width: 190px;
-}
-
-.gameDetail .Box .Name { 
-  height: 25px;
-  font-size: 18px;
+.gameName .Name {
   font-weight: bold;
-  color: #FFFFFF;
-  background-image: url(/images/ui/popup/header_tile.png);
-  padding: 2px;
+  font-size: 18px;
 }
 
-.gameDetail .Box .Screenshot { 
-  background-image: url(/images/item/detail_preview_bg.png);
-  height: 125px;
-  padding: 10px;
-}
-
-.gameDetail .Details {
-  padding-bottom: 10px;
-  padding-right: 15px;
-}
-
-.gameDetail .Details td {
-  font-size: 14px;
-}
-
-.gameDetail .Details .Creator {
-  padding-top: 3px;
-  height: 22px;
-}
-
-.gameDetail .InDevTip {
+.gameName .Genre {
   font-size: 12px;
-  padding-bottom: 10px;
+  font-weight: bold;
 }
 
-.gameBits {
-  font-size: 12px;
+.gameName .Descrip {
+  overflow: hidden;
 }
 
 .gameBits .Title {
@@ -112,6 +72,23 @@
   vertical-align: top;
   white-space: nowrap;
   padding-bottom: 5px;
+}
+
+.gameDetail {
+  width: 100%;
+}
+
+.gameDetail .gameBits {
+  font-size: 14px;
+}
+
+.gameDetail .Play {
+  width: 255px;
+}
+
+.gameDetail .InDevTip {
+  font-size: 12px;
+  padding-bottom: 10px;
 }
 
 .instructionsPanel {
@@ -268,6 +245,7 @@
 
 .featuredGame {
   height: 242px;
+  font-size: 14px;
 }
 
 .featuredGame .SashBox {
@@ -280,28 +258,15 @@
   top: -10px;
 }
 
-.featuredGame .Name {
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.featuredGame .Genre {
+.featuredGame .gameBits {
   font-size: 12px;
-  font-weight: bold;
 }
 
-.featuredGame .Descrip {
-  font-size: 14px;
-  height: 70px;
-  overflow: hidden;
+.featuredGame .playPanel {
+  margin-left: 15px;
 }
 
-.featuredGame .Shot {
-  width: 185px;
-  padding-right: 10px;
-}
-
-.featuredGame .Online {
+.featuredGame .Online, .gameDetail .Online {
   background: url(/images/game/players_bg.png) no-repeat;
   color: #FFFFFF;
   width: 134px;
