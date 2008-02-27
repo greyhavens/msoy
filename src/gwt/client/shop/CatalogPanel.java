@@ -293,13 +293,13 @@ public class CatalogPanel extends SimplePanel
         page.setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         SmartTable sidebar = new SmartTable("SideBar", 0, 0);
-        sidebar.addWidget(WidgetUtil.makeShim(95, 8), 1, "Top");
+        sidebar.addWidget(new Image("/images/shop/sidebar_top.png"), 1, null);
         sidebar.addText(CShop.msgs.catalogCats(), 1, "Title");
         sidebar.addWidget(_navibar = new NaviBar(type), 1, "Middle");
         if (sideExtra != null) {
             sidebar.addWidget(sideExtra, 1, "Middle");
         }
-        sidebar.addWidget(WidgetUtil.makeShim(95, 8), 1, "Bottom");
+        sidebar.addWidget(new Image("/images/shop/sidebar_bottom.png"), 1, null);
         page.add(sidebar);
 
         page.add(WidgetUtil.makeShim(10, 10));

@@ -20,10 +20,6 @@
   padding: 10px 5px 10px 0px
 }
 
-.catalogPanel .SideBar .Top {
-  background: url(/images/shop/sidebar_top.png) no-repeat top;
-}
-
 .catalogPanel .SideBar .Title {
   background: #5CA5DA;
   color: #FFFFFF;
@@ -34,10 +30,6 @@
 
 .catalogPanel .SideBar .Middle {
   background: #5CA5DA;
-}
-
-.catalogPanel .SideBar .Bottom {
-  background: url(/images/shop/sidebar_bottom.png) no-repeat bottom;
 }
 
 .catalogPanel .NaviBar {
