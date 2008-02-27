@@ -437,7 +437,6 @@ public class Frame
     {
         public TitleBar (String pageId, String title, Widget subnavi) {
             super("pageTitle", 0, 0);
-            addStyleName("pageTitle" + pageId.toUpperCase().substring(0, 1) + pageId.substring(1));
 
             setWidget(0, 0, new Image("/images/header/" + pageId + "_bar.png"), 3, null);
             setText(1, 0, _deftitle = title, 1, "Title");
