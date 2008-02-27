@@ -24,7 +24,6 @@ public class SearchPanel extends VerticalPanel
     public SearchPanel ()
     {
         setStyleName("searchPanel");
-        setWidth("100%");
         setSpacing(5);
         add(_ctrls = new SearchControls());
     }
