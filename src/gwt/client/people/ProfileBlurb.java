@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -28,6 +27,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
 
+import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
@@ -52,6 +52,7 @@ public class ProfileBlurb extends Blurb
         if (pdata.profile == null) {
             setText(0, 0, CPeople.msgs.profileLoadFailed());
         } else {
+            _pdata = pdata;
             _profile = pdata.profile;
             displayProfile();
         }
@@ -75,33 +76,37 @@ public class ProfileBlurb extends Blurb
             buttons.add(homepage);
         }
         if (CPeople.getMemberId() != 0 && _name.getMemberId() != CPeople.getMemberId()) {
-            buttons.add(newControl(CPeople.msgs.sendMail(), "SendMail", new ClickListener() {
+            buttons.add(MsoyUI.createActionImage("/images/profile/sendmail.png",
+                                                 CPeople.msgs.sendMail(), new ClickListener() {
                 public void onClick (Widget widget) {
                     new MailComposition(_name, null, null, null).show();
                 }
             }));
         }
-        buttons.add(newControl(CPeople.msgs.visitHome(), "VisitHome", new ClickListener() {
+        buttons.add(MsoyUI.createActionImage("/images/profile/visithome.png",
+                                             CPeople.msgs.visitHome(), new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WORLD, "m" + _name.getMemberId());
             }
         }));
         if (CPeople.isAdmin()) {
-            buttons.add(newControl(CPeople.msgs.adminBrowse(), "AdminInfo", new ClickListener() {
+            buttons.add(MsoyUI.createActionImage("/images/profile/admininfo.png",
+                                                 CPeople.msgs.adminBrowse(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.ADMIN, Args.compose("browser", _name.getMemberId()));
                 }
             }));
         }
-
-// TODO: add "invite to be friend" button if they're not our friend
-//         footer.setWidget(0, 1, new Button(CPeople.msgs.inviteFriend(), new ClickListener() {
-//             public void onClick (Widget sender) {
-//                 new MailComposition(_name, CPeople.msgs.inviteTitle(),
-//                                     new FriendInvite.Composer(),
-//                                     CPeople.msgs.inviteBody()).show();
-//             }
-//         }));
+        if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend) {
+            buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
+                                                 CPeople.msgs.inviteFriend(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    new MailComposition(_name, CPeople.msgs.inviteTitle(),
+                                        new FriendInvite.Composer(),
+                                        CPeople.msgs.inviteBody()).show();
+                }
+            }));
+        }
 
         // create the info table with their name, a/s/l, etc.
         SmartTable info = new SmartTable(0, 5);
@@ -297,14 +302,6 @@ public class ProfileBlurb extends Blurb
         });
     }
 
-    protected Label newControl (String title, String style, ClickListener listener)
-    {
-        Label button = MsoyUI.createActionLabel("", style, listener);
-        button.addStyleName("ControlButton");
-        button.setTitle(title);
-        return button;
-    }
-
     protected boolean isBlank (String text)
     {
         return (text == null) || (text.length() == 0);
@@ -315,6 +312,7 @@ public class ProfileBlurb extends Blurb
         return (text == null) ? "" : text;
     }
 
+    protected ProfileService.ProfileResult _pdata;
     protected Profile _profile;
 
     protected SimplePanel _ephoto;

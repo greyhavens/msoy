@@ -29,24 +29,6 @@
   font-size: 14px;
 }
 
-.profile .Profile .ControlButton {
-  width: 21px;
-  height: 15px;
-  border: none;
-}
-
-.profile .Profile .VisitHome {
-  background-image: url(/images/profile/visithome.png);
-}
-
-.profile .Profile .SendMail {
-  background-image: url(/images/profile/sendmail.png);
-}
-
-.profile .Profile .AdminInfo {
-  background-image: url(/images/profile/admininfo.png);
-}
-
 .profile .Friend, .profile .Group {
   text-align: center;
   font-size: 12px;
