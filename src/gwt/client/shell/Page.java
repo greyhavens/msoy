@@ -48,7 +48,11 @@ public abstract class Page
      */
     public static String getDefaultTitle (String pageId)
     {
-        return CShell.dmsgs.getString(pageId + "Title");
+        try {
+            return CShell.dmsgs.getString(pageId + "Title");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

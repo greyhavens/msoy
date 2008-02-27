@@ -270,6 +270,7 @@ public class Application
         CShell.creds = null;
         CShell.ident = null;
         _status.didLogoff();
+        Frame.didLogoff();
 
         if (_page == null) {
             // we can now load our starting page

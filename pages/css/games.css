@@ -75,28 +75,29 @@
 .playPanel .Title {
   text-align: center;
   vertical-align: top;
-  font-weight: bold;
-  font-size: 16px;
-  color: #AABDC8;
+  font-size: 18px;
+  padding-bottom: 5px;
 }
 
 .playPanel .Button {
-  border: 1px none #000000;
-  width: 103px;
-  height: 48px;
+  width: 120px;
+  height: 44px;
+  border: none;
   cursor: pointer;
 }
+
 .playPanel .SinglePlay {
-  background-image: url(/images/game/play_alone.png);
+  background: transparent url(/images/game/play_alone.png);
+  margin-right: 15px;
 }
 .playPanel .FriendPlay {
-  background-image: url(/images/game/play_friends.png);
+  background: transparent url(/images/game/play_friends.png);
 }
-.playPanel .AnyonePlay {
-  background-image: url(/images/game/play_anyone.png);
+.playPanel .SinglePlay-up-hovering {
+  background: transparent url(/images/game/play_alone_over.png);
 }
-.playPanel .CustomPlay {
-  background-image: url(/images/game/play_custom.png);
+.playPanel .FriendPlay-up-hovering {
+  background: transparent url(/images/game/play_friends_over.png);
 }
 
 .playPanel .Label {
@@ -218,17 +219,13 @@
   width: 100%;
 }
 
-.arcade .Genre {
-  width: 220px;
+.arcade {
+  background: url(/images/game/featured_bg.png) no-repeat top left;
+  width: 686px;
 }
 
-.arcade .Genre .Title {
-  background-image: url(/images/whirled/places_tile.png);
-  height: 20px;
-  text-align: center;
-  color: #FFFFFF;
-  font-size: 12px;
-  font-weight: bold;
+.arcade .Genre {
+  width: 220px;
 }
 
 .arcade .Genre .More {
@@ -259,12 +256,23 @@
 
 .featuredGame {
   width: 475px;
+  height: 242px;
 }
 
 .featuredGame .Name {
-  text-align: center;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.featuredGame .Genre {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.featuredGame .Descrip {
+  font-size: 14px;
+  height: 70px;
+  overflow: hidden;
 }
 
 .featuredGame .Shot {
@@ -272,32 +280,15 @@
   padding-right: 10px;
 }
 
-.featuredGame .MoreInfo {
-  font-size: 12px;
-  text-align: center;
-}
-
-.featuredGame .Info {
-  vertical-align: top;
-  padding-right: 10px;
-  font-size: 12px;
-}
-
 .featuredGame .Online {
+  background: url(/images/game/players_bg.png) no-repeat;
+  color: #FFFFFF;
+  width: 134px;
+  height: 21px;
+  font-size: 14px;
   font-weight: bold;
-  color: #5F96AC;
-  font-size: 16px;
-}
-
-.featuredGame .Play {
   text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  color: #AABDC8;
-}
-
-.featuredGame .Buttons {
-  vertical-align: top;
+  padding-top: 2px;
 }
 
 .gameEntry {

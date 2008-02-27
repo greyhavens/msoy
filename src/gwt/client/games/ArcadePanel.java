@@ -3,11 +3,11 @@
 
 package client.games;
 
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -54,14 +54,16 @@ public class ArcadePanel extends VerticalPanel
                 row = new HorizontalPanel();
                 add(row);
             }
-            row.add(new GenreSummaryPanel((ArcadeData.Genre)data.genres.get(ii)));
+            ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
+            row.add(MsoyUI.createBox(null, CGames.dmsgs.getString("genre" + genre.genre),
+                                     new GenreSummaryPanel(genre)));
             if (ii % 3 != 2) {
                 row.add(WidgetUtil.makeShim(5, 5));
             }
         }
     }
 
-    protected static class MyGamesPanel extends FlexTable
+    protected static class MyGamesPanel extends SmartTable
     {
         public MyGamesPanel ()
         {
@@ -69,17 +71,12 @@ public class ArcadePanel extends VerticalPanel
         }
     }
 
-    protected static class GenreSummaryPanel extends FlexTable
+    protected static class GenreSummaryPanel extends SmartTable
     {
         public GenreSummaryPanel (ArcadeData.Genre genre) {
-            setStyleName("Genre");
-            setCellPadding(0);
-            setCellSpacing(0);
+            super("Genre", 0, 0);
 
             int row = 0;
-            setText(row, 0, CGames.dmsgs.getString("genre" + genre.genre));
-            getFlexCellFormatter().setStyleName(row++, 0, "Title");
-
             for (int ii = 0; ii < genre.games.length; ii++) {
                 setWidget(row++, 0, new GameEntry(genre.games[ii]));
             }

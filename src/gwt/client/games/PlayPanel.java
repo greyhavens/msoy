@@ -18,55 +18,35 @@ import client.shell.Page;
  */
 public class PlayPanel extends SmartTable
 {
-    public PlayPanel (boolean title, final int gameId, int minPlayers, int maxPlayers)
+    public PlayPanel (final int gameId, int minPlayers, int maxPlayers)
     {
         super("playPanel", 0, 0);
 
-        int row = 0;
-        if (title) {
-            setText(row++, 0, CGames.msgs.gdpPlay(), 1, "Title");
-        }
+        setText(0, 0, CGames.msgs.gdpPlay(), 1, "Title");
 
-        // if the game supports single-player play, it gets a "Quick Single" button
+        int col = 0;
         if (minPlayers == 1 && maxPlayers != Integer.MAX_VALUE) {
-            addPlayButton(row, 0, "SinglePlay", CGames.msgs.gdpJustMe(), new ClickListener() {
+            setWidget(1, col++, makePlayButton("SinglePlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", ""+gameId));
                 }
-            });
-            row += 2;
+            }));
         }
-
-        // if the game supports multiplayer play, it gets "Quick Multi" buttons
         if (maxPlayers > 1) {
-            addPlayButton(row, 0, "FriendPlay", CGames.msgs.gdpMyFriends(), new ClickListener() {
+            setWidget(1, col++, makePlayButton("FriendPlay", new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "f", ""+gameId));
+                    Application.go(Page.WORLD, Args.compose("game", "l", ""+gameId));
                 }
-            });
-            row += 2;
-
-//             addPlayButton(pbbox, 3, 0, "AnyonePlay", CGames.msgs.gdpAnyone(), new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     Application.go(Page.WORLD, Args.compose("game", "m", ""+gameId));
-//                 }
-//             });
-
-//             addPlayButton(pbbox, 3, 1, "CustomPlay", CGames.msgs.gdpCustom(), new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     Application.go(Page.WORLD, Args.compose("game", "l", ""+gameId));
-//                 }
-//             });
+            }));
         }
+        getFlexCellFormatter().setColSpan(0, 0, col);
     }
 
-    protected void addPlayButton (
-        int row, int column, String styleName, String tip, ClickListener onClick)
+    protected Button makePlayButton (String styleName, ClickListener onClick)
     {
         Button play = new Button("", onClick);
-        play.setStyleName("Button");
-        play.addStyleName(styleName);
-        setWidget(row, column, play);
-        setText(row+1, column, tip, 1, "Label");
+        play.setStyleName(styleName);
+        play.addStyleName("Button");
+        return play;
     }
 }

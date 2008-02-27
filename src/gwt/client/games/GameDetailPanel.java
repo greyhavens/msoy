@@ -108,7 +108,7 @@ public class GameDetailPanel extends VerticalPanel
         VerticalPanel details = new VerticalPanel();
         top.setWidget(row, 2, details, 1, "Details");
 
-        top.setWidget(row, 3, new PlayPanel(true, _gameId, detail.minPlayers, detail.maxPlayers));
+        top.setWidget(row, 3, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers));
         for (int ii = 0; ii < top.getCellCount(0); ii++) {
             top.getFlexCellFormatter().setVerticalAlignment(row, ii, HasAlignment.ALIGN_TOP);
         }

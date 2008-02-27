@@ -58,10 +58,6 @@ public class Frame
      */
     public static void init ()
     {
-        // create our default headers
-        _mheader = new MemberHeader();
-        _gheader = new GuestHeader();
-
         // if we're tall enough, handle scrolling ourselves
         Window.enableScrolling(windowTooShort());
         Window.addWindowResizeListener(_resizer);
@@ -75,14 +71,15 @@ public class Frame
      */
     public static void didLogon ()
     {
-        // create a new member header as it contains member specific stuff
-        _mheader = new MemberHeader();
+        _header.didLogon();
+    }
 
-        // make sure the correct header is showing
-        if (_gheader.isAttached()) {
-            // this will remove the guest header and replace it with the member header
-            setHeaderVisible(true);
-        }
+    /**
+     * Called when the user logs off.
+     */
+    public static void didLogoff ()
+    {
+        _header.didLogoff();
     }
 
     /**
@@ -90,10 +87,10 @@ public class Frame
      */
     public static void setTitle (String title)
     {
-        if (_bar != null) {
+        if (_bar != null && title != null) {
             _bar.setTitle(title);
         }
-        Window.setTitle(CShell.cmsgs.windowTitle(title));
+        Window.setTitle(title == null ? CShell.cmsgs.bareTitle() : CShell.cmsgs.windowTitle(title));
     }
 
     /**
@@ -115,9 +112,7 @@ public class Frame
 
         // make sure the header is showing as we always want the header above the client
         setHeaderVisible(true);
-        if (_mheader != null) {
-            _mheader.selectTab(null);
-        }
+        _header.selectTab(null);
     }
 
     /**
@@ -184,14 +179,9 @@ public class Frame
      */
     public static void setHeaderVisible (boolean visible)
     {
-        RootPanel.get(HEADER).remove(_gheader);
-        RootPanel.get(HEADER).remove(_mheader);
+        RootPanel.get(HEADER).remove(_header);
         if (visible) {
-            if (CShell.getMemberId() == 0) {
-                RootPanel.get(HEADER).add(_gheader);
-            } else {
-                RootPanel.get(HEADER).add(_mheader);
-            }
+            RootPanel.get(HEADER).add(_header);
         }
     }
 
@@ -263,9 +253,7 @@ public class Frame
 
         if (pageId != null) {
             // select the appropriate header tab
-            if (_mheader != null) {
-                _mheader.selectTab(pageId);
-            }
+            _header.selectTab(pageId);
             // create our page title bar
             _bar = createTitleBar(pageId);
         }
@@ -477,37 +465,16 @@ public class Frame
         protected Widget _closeBox;
     }
 
-    protected static abstract class Header extends SmartTable
+    protected static class Header extends SmartTable
         implements ClickListener
     {
         public Header () {
             super("frameHeader", 0, 0);
             setWidth("100%");
+            int col = 0;
+
             String lpath = "/images/header/header_logo.png";
-            setWidget(0, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
-        }
-    }
-
-    protected static class GuestHeader extends Header
-    {
-        public GuestHeader () {
-            SmartTable signup = new SmartTable();
-            signup.setWidget(0, 0, MsoyUI.createLabel("New to Whirled?", "New"));
-            signup.setWidget(1, 0, Application.createLink("Sign up!", Page.ACCOUNT, "create"));
-            setWidget(0, 1, signup, 1, "Signup");
-            setWidget(0, 2, new LogonPanel(true), 1, "Logon");
-        }
-
-        // from Header
-        public void onClick (Widget sender) {
-            History.newItem(""); // go to the main page
-        }
-    }
-
-    protected static class MemberHeader extends Header
-    {
-        public MemberHeader () {
-            int col = 1;
+            setWidget(col++, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
             addButton(col++, Page.ME, CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
                       _images.sme());
             addButton(col++, Page.PEOPLE, CShell.cmsgs.menuFriends(), _images.friends(),
@@ -520,9 +487,17 @@ public class Frame
                       _images.sshop());
             addButton(col++, Page.HELP, CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(),
                       _images.shelp());
+            _statusCol = col;
+        }
 
-            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
-            setWidget(0, col++, CShell.app.getStatusPanel(), 1, "Right");
+        public void didLogon () {
+            getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
+            setWidget(0, _statusCol, CShell.app.getStatusPanel(), 1, "Right");
+        }
+
+        public void didLogoff () {
+            getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_CENTER);
+            setWidget(0, _statusCol, new LogonPanel(true), 1, "Right");
         }
 
         public void selectTab (String pageId) {
@@ -534,9 +509,10 @@ public class Frame
 
         // from Header
         public void onClick (Widget sender) {
-            // if the world is open, close the content, otherwise go home
-            if (!Frame.closeContent()) {
+            if (CShell.getMemberId() != 0) {
                 Application.go(Page.WORLD, "h");
+            } else {
+                Application.go(Page.ME, "");
             }
         }
 
@@ -547,6 +523,7 @@ public class Frame
             _buttons.add(button);
         }
 
+        protected int _statusCol;
         protected ArrayList _buttons = new ArrayList();
     }
 
@@ -604,8 +581,7 @@ public class Frame
         }
     };
 
-    protected static MemberHeader _mheader;
-    protected static GuestHeader _gheader;
+    protected static Header _header = new Header();
     protected static String _closeToken;
 
     protected static TitleBar _bar;
