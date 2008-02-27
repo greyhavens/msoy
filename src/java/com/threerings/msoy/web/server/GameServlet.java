@@ -460,16 +460,16 @@ public class GameServlet extends MsoyServiceServlet
             }
             data.games = infos;
 
-            // determine the "featured" game
-            if (games.size() > 0) {
-                GameRecord frec = RandomUtil.pickRandom(games.iterator(), Math.min(5, games.size()));
-                GameDetailRecord gdr = grepo.loadGameDetail(frec.gameId);
-                data.featuredGame = (FeaturedGameInfo)frec.toGameInfo(new FeaturedGameInfo());
-                data.featuredGame.avgDuration = gdr.toGameDetail().getAverageDuration();
-                int[] players = getMinMaxPlayers((Game)frec.toItem());
-                data.featuredGame.minPlayers = players[0];
-                data.featuredGame.maxPlayers = players[1];
+            // determine the "featured" games
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            List<FeaturedGameInfo> featured = Lists.newArrayList();
+            for (int ii = 0; ii < Math.min(games.size(), ArcadeData.FEATURED_GAME_COUNT); ii++) {
+                GameRecord game = games.get(ii);
+                GameDetailRecord detail = grepo.loadGameDetail(game.gameId);
+                PlaceCard card = pps.getGame(game.gameId);
+                featured.add(toFeaturedGameInfo(game, detail, card == null ? 0 : card.population));
             }
+            data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
             return data;
 

@@ -26,7 +26,6 @@ public class GameGenrePanel extends VerticalPanel
     public GameGenrePanel (byte genre)
     {
         setStyleName("gameGenre");
-        setSpacing(5);
 
         CGames.gamesvc.loadGameGenre(CGames.ident, genre, new MsoyCallback() {
             public void onSuccess (Object result) {
@@ -39,8 +38,7 @@ public class GameGenrePanel extends VerticalPanel
     {
         HorizontalPanel row = new HorizontalPanel();
         row.add(new WhyPlayPanel());
-        row.add(WidgetUtil.makeShim(5, 5));
-        row.add(new FeaturedGamePanel(new FeaturedGameInfo[] { data.featuredGame }));
+        row.add(new FeaturedGamePanel(data.featuredGames));
         add(row);
 
         PagedGrid games = new PagedGrid(5, 3, PagedGrid.NAV_ON_TOP) {

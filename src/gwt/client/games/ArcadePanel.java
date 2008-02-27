@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,19 +44,20 @@ public class ArcadePanel extends VerticalPanel
     {
         HorizontalPanel row = new HorizontalPanel();
         row.add(new WhyPlayPanel());
-        row.add(new FeaturedGamePanel(data.featuredGames)); // TODO: next/prev
+        row.add(new FeaturedGamePanel(data.featuredGames));
         add(row);
 
+        Grid grid = new Grid(3, 3);
+        grid.setCellSpacing(5);
+        grid.setCellPadding(0);
+        add(grid);
+
         for (int ii = 0; ii < data.genres.size(); ii++) {
-            if (ii % 3 == 0) {
-                row = new HorizontalPanel();
-                row.setSpacing(5);
-                add(row);
-            }
             ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
-            row.add(MsoyUI.createBox("/images/game/genre/" + genre.genre + ".png",
-                                     CGames.dmsgs.getString("genre" + genre.genre),
-                                     new GenreSummaryPanel(genre)));
+            Widget gbox = MsoyUI.createBox("/images/game/genre/" + genre.genre + ".png",
+                                          CGames.dmsgs.getString("genre" + genre.genre),
+                                          new GenreSummaryPanel(genre));
+            grid.setWidget(ii/3, ii%3, gbox);
         }
     }
 

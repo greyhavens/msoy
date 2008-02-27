@@ -58,16 +58,18 @@ public class FeaturedGamePanel extends SmartTable
         left.add(new GameBitsPanel(null, game.genre, game.minPlayers, game.maxPlayers,
                                    game.avgDuration, 0));
 
-        left.add(WidgetUtil.makeShim(10, 10));
-        left.add(MsoyUI.createPrevNextButtons(new ClickListener() {
-            public void onClick (Widget sender) {
-                selectGame((index+_games.length-1)%_games.length);
-            }
-        }, new ClickListener() {
-            public void onClick (Widget sender) {
-                selectGame((index+1)%_games.length);
-            }
-        }));
+        if (_games.length > 1) {
+            left.add(WidgetUtil.makeShim(10, 10));
+            left.add(MsoyUI.createPrevNextButtons(new ClickListener() {
+                public void onClick (Widget sender) {
+                    selectGame((index+_games.length-1)%_games.length);
+                }
+            }, new ClickListener() {
+                public void onClick (Widget sender) {
+                    selectGame((index+1)%_games.length);
+                }
+            }));
+        }
         setWidget(0, 0, left);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         getFlexCellFormatter().setWidth(0, 0, Game.SHOT_WIDTH + "px");

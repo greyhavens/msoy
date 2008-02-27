@@ -13,8 +13,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class GameGenreData
     implements IsSerializable
 {
-    /** Info on the featured game for this genre. */
-    public FeaturedGameInfo featuredGame;
+    /** Info on the featured games for this genre. */
+    public FeaturedGameInfo[] featuredGames;
 
     /** 
      * Information about each game in this genre.

@@ -225,7 +225,7 @@
   width: 100%;
 }
 
-.arcade {
+.arcade, .gameGenre {
   background: url(/images/game/featured_bg.png) no-repeat top left;
   width: 100%;
 }
@@ -337,6 +337,13 @@
 
 .gameEntry .Players {
   font-size: 10px;
+}
+
+.gameGenre .Games {
+  border-top: 5px solid white;
+  border-left: 5px solid white;
+  width: 681px;
+  margin-top: 5px;
 }
 
 .gameGenre .gameEntry {
