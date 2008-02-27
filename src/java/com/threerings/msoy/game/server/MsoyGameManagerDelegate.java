@@ -146,6 +146,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             return;
         }
 
+        // if the player is a guest, just report the award directly and don't persist it
+        if (plobj.isGuest()) {
+            plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
+            return;
+        }
+
         // otherwise, award them the trophy, then add it to their runtime collection
         MsoyGameServer.gameReg.awardTrophy(
             _content.game.name, trophy, source.description, new InvocationService.ResultListener() {
