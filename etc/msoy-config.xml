@@ -348,9 +348,9 @@
    -->
    <runtime-shared-library-path>
       <path-element>../lib/flex_sdk/frameworks/libs/framework.swc</path-element>
-      <rsl-url>framework_3.0.189825.swz</rsl-url>
+      <rsl-url>framework_3.0.0.477.swz</rsl-url>
       <policy-file-url></policy-file-url>
-      <rsl-url>framework_3.0.189825.swf</rsl-url>
+      <rsl-url>framework_3.0.0.477.swf</rsl-url>
       <policy-file-url></policy-file-url>
    </runtime-shared-library-path>
    <!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
