@@ -80,6 +80,9 @@ public class ArcadePanel extends VerticalPanel
             for (int ii = 0; ii < genre.games.length; ii++) {
                 setWidget(row++, 0, new GameEntry(genre.games[ii]));
             }
+            for (int ii = genre.games.length; ii < 2; ii++) {
+                setWidget(row++, 0, new SmartTable("gameEntry", 0, 0));
+            }
 
             setWidget(row, 0, Application.createLink(CGames.msgs.genreMore(""+genre.gameCount),
                                                      Page.GAMES, Args.compose("g", genre.genre)));

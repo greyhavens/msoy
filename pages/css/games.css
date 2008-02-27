@@ -234,7 +234,6 @@
 .arcade .Genre .More {
   width: 100%;
   text-align: right;
-  height: 20px;
   border-bottom: 1px solid #DADADA;
   border-left: 1px dotted;
   border-right: 1px dotted;
@@ -302,10 +301,11 @@
 }
 
 .gameEntry {
-  width: 100%;
   border-bottom: 1px solid #DADADA;
   border-left: 1px dotted;
   border-right: 1px dotted;
+  width: 100%;
+  height: 68px;
 }
 
 .gameEntry .Thumb {
