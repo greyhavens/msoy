@@ -435,7 +435,6 @@
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
