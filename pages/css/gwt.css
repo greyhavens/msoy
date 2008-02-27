@@ -858,7 +858,7 @@ img, embed, applet, object {
 }
 
 .StyledTabs .gwt-TabBar {
-  background: url(/images/ui/tabs/tab_anchor_tile.png) repeat-x bottom;
+  background: url(/images/ui/tabs/anchor_tile.png) repeat-x bottom;
 }
 
 .StyledTabs .gwt-TabBar .inline {
@@ -880,18 +880,18 @@ img, embed, applet, object {
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
-  background: url(/images/ui/tabs/tab_left.png) no-repeat;
+  background: url(/images/ui/tabs/left.png) no-repeat;
   width: 3px;
   height: 20px;
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem .TabCenter {
-  background: url(/images/ui/tabs/tab_tile.png);
+  background: url(/images/ui/tabs/tile.png);
   height: 20px;
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem .TabRight {
-  background: url(/images/ui/tabs/tab_right.png) no-repeat;
+  background: url(/images/ui/tabs/right.png) no-repeat;
   width: 3px;
   height: 20px;
 }
@@ -901,7 +901,7 @@ img, embed, applet, object {
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabLeft {
-  background: url(/images/ui/tabs/tab_selected_left.png) no-repeat;
+  background: url(/images/ui/tabs/selected_left.png) no-repeat;
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabCenter {
@@ -910,7 +910,7 @@ img, embed, applet, object {
 }
 
 .StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabRight {
-  background: url(/images/ui/tabs/tab_selected_right.png) no-repeat;
+  background: url(/images/ui/tabs/selected_right.png) no-repeat;
 }
 
 .StyledTabs .gwt-TabPanelBottom {
