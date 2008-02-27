@@ -241,10 +241,7 @@ img, embed, applet, object {
 .pageTitle {
   width: 700px;
   height: 37px;
-  background: #000000;
-}
-.pageTitle .Backed {
-  background: url(/images/header/blank_bar.png) #000000 no-repeat;
+  background: #000000 url(/images/header/blank_bar.png) no-repeat bottom;
 }
 
 .pageTitle .SubNavi {

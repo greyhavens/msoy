@@ -441,7 +441,6 @@ public class Frame
             setWidget(0, 0, new Image("/images/header/" + pageId + "_bar.png"), 3, null);
             setText(1, 0, _deftitle = title, 1, "Title");
             setWidget(1, 1, subnavi, 1, "SubNavi");
-            getRowFormatter().setStyleName(1, "Backed");
 
             _closeBox = MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
