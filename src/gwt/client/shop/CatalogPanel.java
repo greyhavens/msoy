@@ -132,9 +132,8 @@ public class CatalogPanel extends SimplePanel
                     row, col, HasAlignment.ALIGN_RIGHT);
             }
             protected void addCustomControls (FlexTable controls) {
-                controls.setCellSpacing(5);
                 controls.setText(0, 0, CShop.msgs.catalogSortBy());
-                controls.getFlexCellFormatter().setStyleName(0, 0, "nowrapLabel");
+                controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
                 controls.setWidget(0, 1, _sortBox);
             }
             protected boolean displayNavi (int items) {
@@ -293,12 +292,14 @@ public class CatalogPanel extends SimplePanel
         page.setStyleName("WithCatNav");
         page.setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
-        VerticalPanel sidebar = new VerticalPanel();
-        sidebar.setStyleName("SideBar");
-        sidebar.add(_navibar = new NaviBar(type));
+        SmartTable sidebar = new SmartTable("SideBar", 0, 0);
+        sidebar.addWidget(WidgetUtil.makeShim(95, 8), 1, "Top");
+        sidebar.addText(CShop.msgs.catalogCats(), 1, "Title");
+        sidebar.addWidget(_navibar = new NaviBar(type), 1, "Middle");
         if (sideExtra != null) {
-            sidebar.add(sideExtra);
+            sidebar.addWidget(sideExtra, 1, "Middle");
         }
+        sidebar.addWidget(WidgetUtil.makeShim(95, 8), 1, "Bottom");
         page.add(sidebar);
 
         page.add(WidgetUtil.makeShim(10, 10));
@@ -407,14 +408,13 @@ public class CatalogPanel extends SimplePanel
     {
         public NaviBar (byte seltype) {
             super("NaviBar", 0, 0);
-            setText(0, 0, "Categories", 1, "Title");
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 byte type = Item.TYPES[ii];
                 String name = CShop.dmsgs.getString("pItemType" + type);
                 if (seltype == type) {
-                    setText(ii+1, 0, name, 1, "Selected");
+                    setText(ii, 0, name, 1, "Selected");
                 } else {
-                    setWidget(ii+1, 0, Application.createLink(name, Page.SHOP, ""+type), 1, "Link");
+                    setWidget(ii, 0, Application.createLink(name, Page.SHOP, ""+type), 1, "Link");
                 }
             }
         }

@@ -34,8 +34,6 @@ public class TagCloud extends FlowPanel
         setStyleName("tagCloud");
         _type = type;
         _listener = listener;
-        add(new Image("/images/item/top_tags.png"));
-        add(WidgetUtil.makeShim(5, 5));
         CShell.catalogsvc.getPopularTags(_type, count, this);
     }
 

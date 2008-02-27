@@ -447,8 +447,19 @@ img, embed, applet, object {
 
 /** Standard paged grid configuration. */
 .pagedGrid .Header {
-  background: #9DCAE9;
+  background: url(/images/ui/grid_header_tile.png) repeat-x left;
   color: #487999;
+  height: 29px;
+}
+
+.pagedGrid .Header .TopLeft {
+  background: white url(/images/ui/grid_header_left.png) no-repeat left;
+  width: 26px;
+}
+
+.pagedGrid .Header .TopRight {
+  background: white url(/images/ui/grid_header_right.png) no-repeat right;
+  width: 26px;
 }
 
 .pagedGrid .Footer {
@@ -457,10 +468,14 @@ img, embed, applet, object {
 }
 
 .pagedGrid .Info {
-  width: 100%;
+  /*width: 100%;*/
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
+}
+
+.pagedGrid .Prev, .pagedGrid .Next {
+  width: 55px;
 }
 
 .pagedGrid .Info .Page {
@@ -491,22 +506,12 @@ img, embed, applet, object {
 
 .pagedGrid .PrevButton {
   text-align: right;
-}
-.pagedGrid .Footer .PrevButton {
-  background: url(/images/ui/button_prev.png) #FFFFFF;
-}
-.pagedGrid .Header .PrevButton {
-  background: url(/images/ui/button_prev.png) #9DCAE9;
+  background: url(/images/ui/button_prev.png) transparent;
 }
 
 .pagedGrid .NextButton {
   text-align: left;
-}
-.pagedGrid .Footer .NextButton {
-  background: url(/images/ui/button_next.png) #FFFFFF;
-}
-.pagedGrid .Header .NextButton {
-  background: url(/images/ui/button_next.png) #9DCAE9;
+  background: url(/images/ui/button_next.png) transparent;
 }
 
 .pagedGrid .Empty {

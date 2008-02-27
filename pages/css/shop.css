@@ -21,35 +21,58 @@
 }
 
 .catalogPanel .SideBar {
-  background: #5DA6DB;
   margin-top: 5px;
   padding: 10px 5px 10px 0px
 }
 
-.catalogPanel .NaviBar {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.catalogPanel .SideBar .Top {
+  background: url(/images/shop/sidebar_top.png) no-repeat top;
 }
 
-.catalogPanel .NaviBar .Title {
+.catalogPanel .SideBar .Title {
+  background: #5CA5DA;
   color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0px 0px 2px 4px;
+}
+
+.catalogPanel .SideBar .Middle {
+  background: #5CA5DA;
+}
+
+.catalogPanel .SideBar .Bottom {
+  background: url(/images/shop/sidebar_bottom.png) no-repeat bottom;
+}
+
+.catalogPanel .NaviBar {
+  background: url(/images/shop/navi_bg.png) no-repeat top;
+  font-size: 16px;
+  font-weight: bold;
+  width: 89px;
+  height: 222px;
+  margin-bottom: 10px;
+  padding-top: 3px;
 }
 
 .catalogPanel .NaviBar .Selected {
-  background: #BCDAF2;
   color: #E78917;
   padding-left: 5px;
+  height: 24px;
 }
 
 .catalogPanel .NaviBar .Link {
-  background: #BCDAF2;
+  height: 24px;
 }
 
 .catalogPanel .NaviBar .Link a {
   color: #27628E;
   text-decoration: none;
   padding-left: 5px;
+}
+
+.catalogPanel .SideBar .tagCloud {
+  margin-left: 5px;
 }
 
 .catalogPanel .Types .Type {
@@ -86,11 +109,11 @@
 }
 
 .catalogPanel .Listings .Type {
+  background: url(/images/shop/type_bg.png) no-repeat top;
+  color: white;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
-  background: #F6B348;
-  color: white;
   width: 260px;
   height: 50px;
   text-align: center;
@@ -98,9 +121,23 @@
 }
 
 .catalogPanel .Listings .ListingGrid {
-  width: 100%;
   background: white;
+  width: 100%;
   margin-top: 5px;
+}
+
+.catalogPanel .pagedGrid .Header .SortBy {
+  white-space: nowrap;
+  width: 50px;
+  padding-right: 5px;
+}
+
+.catalogPanel .pagedGrid .Header .TopLeft {
+  background: #1D5884 url(/images/ui/grid_header_left.png) no-repeat left;
+}
+
+.catalogPanel .pagedGrid .Header .TopRight {
+  background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
 }
 
 .catalogPanel .itemBox .Creator {

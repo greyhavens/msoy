@@ -5,10 +5,11 @@
  */
 
 .tagCloud {
-  background: #BCDAF2;
-  padding-bottom: 5px;
+  background: url(/images/item/top_tags.png) no-repeat top;
   font-size: 12px;
   width: 85px;
+  height: 200px;
+  padding-top: 34px;
 }
 
 .tagCloud .Link { 
