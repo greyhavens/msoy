@@ -438,7 +438,7 @@ public class Frame
         public TitleBar (String pageId, String title, Widget subnavi) {
             super("pageTitle", 0, 0);
 
-            setWidget(0, 0, new Image("/images/header/" + pageId + "_bar.png"), 3, null);
+            setWidget(0, 0, createImage(pageId), 3, null);
             setText(1, 0, _deftitle = title, 1, "Title");
             setWidget(1, 1, subnavi, 1, "SubNavi");
 
@@ -457,6 +457,13 @@ public class Frame
 
         public void setCloseVisible (boolean visible) {
             _closeBox.setVisible(visible);
+        }
+
+        protected Image createImage (String page) {
+            String id = (page.equals(Page.ME) || page.equals(Page.PEOPLE) ||
+                         page.equals(Page.GAMES) || page.equals(Page.WHIRLEDS) ||
+                         page.equals(Page.SHOP) || page.equals(Page.HELP)) ? page : "solid";
+            return new Image("/images/header/" + id + "_cap.png");
         }
 
         protected String _deftitle;
