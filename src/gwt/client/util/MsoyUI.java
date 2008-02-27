@@ -6,6 +6,8 @@ package client.util;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -140,6 +142,27 @@ public class MsoyUI
     }
 
     /**
+     * Creates a pair of previous and next buttons in a horizontal panel.
+     */
+    public static Widget createPrevNextButtons (ClickListener onPrev, ClickListener onNext)
+    {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setStyleName("pagedGrid"); // hijack PagedGrid styles
+        Button prev = new Button(CShell.cmsgs.prev());
+        prev.setStyleName("Button");
+        prev.addStyleName("PrevButton");
+        prev.addClickListener(onPrev);
+        panel.add(prev);
+        panel.add(WidgetUtil.makeShim(5, 5));
+        Button next = new Button(CShell.cmsgs.next());
+        next.setStyleName("Button");
+        next.addStyleName("NextButton");
+        next.addClickListener(onNext);
+        panel.add(next);
+        return panel;
+    }
+
+    /**
      * Creates an arrow that does History.back().
      */
     public static Image createBackArrow ()
@@ -186,9 +209,17 @@ public class MsoyUI
     public static Widget createBox (String icon, String title, Widget contents)
     {
         SmartTable box = new SmartTable("roundBox", 0, 0);
-        box.setWidget(0, 0, new Image("/images/ui/box/header_left.png"));
-        box.setText(0, 1, title, 1, "Title"); // TODO: icon + title in flowpanel
-        box.setWidget(0, 2, new Image("/images/ui/box/header_right.png"));
+        box.setWidget(0, 0, new Image("/images/ui/box/header_left.png"), 1, "Corner");
+        if (icon != null) {
+            FlowPanel tbox = new FlowPanel();
+            tbox.add(new Image(icon));
+            tbox.add(new Label(title));
+            box.setWidget(0, 1, tbox, 1, "Title");
+        } else {
+            box.setText(0, 1, title, 1, "Title");
+        }
+        box.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+        box.setWidget(0, 2, new Image("/images/ui/box/header_right.png"), 1, "Corner");
         box.setWidget(1, 0, contents, 3, "Contents");
         // TODO: footer with rounded edges
         return box;

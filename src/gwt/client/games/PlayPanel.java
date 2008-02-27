@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -22,24 +23,27 @@ public class PlayPanel extends SmartTable
     {
         super("playPanel", 0, 0);
 
-        setText(0, 0, CGames.msgs.gdpPlay(), 1, "Title");
+        setText(0, 0, CGames.msgs.gdpPlay(), 3, "Title");
 
-        int col = 0;
+        Widget single = WidgetUtil.makeShim(120, 44);
         if (minPlayers == 1 && maxPlayers != Integer.MAX_VALUE) {
-            setWidget(1, col++, makePlayButton("SinglePlay", new ClickListener() {
+            single = makePlayButton("SinglePlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", ""+gameId));
                 }
-            }));
+            });
         }
+        Widget multi = WidgetUtil.makeShim(120, 44);
         if (maxPlayers > 1) {
-            setWidget(1, col++, makePlayButton("FriendPlay", new ClickListener() {
+            multi = makePlayButton("FriendPlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "l", ""+gameId));
                 }
-            }));
+            });
         }
-        getFlexCellFormatter().setColSpan(0, 0, col);
+        setWidget(1, 0, single);
+        setWidget(1, 1, WidgetUtil.makeShim(15, 15));
+        setWidget(1, 2, multi);
     }
 
     protected PushButton makePlayButton (String styleName, ClickListener onClick)

@@ -75,6 +75,10 @@
   padding-right: 5px;
 }
 
+.playPanel {
+  width: 255px;
+}
+
 .playPanel .Title {
   text-align: center;
   vertical-align: top;
@@ -91,7 +95,6 @@
 
 .playPanel .SinglePlay {
   background: transparent url(/images/game/play_alone.png);
-  margin-right: 15px;
 }
 .playPanel .FriendPlay {
   background: transparent url(/images/game/play_friends.png);
@@ -224,7 +227,7 @@
 
 .arcade {
   background: url(/images/game/featured_bg.png) no-repeat top left;
-  width: 686px;
+  width: 100%;
 }
 
 .arcade .Genre {
@@ -247,9 +250,9 @@
 }
 
 .whyPlay {
-  width: 150px;
+  width: 152px;
   font-size: 14px;
-  padding: 5px 20px;
+  padding: 10px 20px;
 }
 
 .whyPlay .Title {
@@ -264,8 +267,17 @@
 }
 
 .featuredGame {
-  width: 475px;
   height: 242px;
+}
+
+.featuredGame .SashBox {
+  position: relative;
+}
+
+.featuredGame .Sash {
+  position: absolute;
+  left: -10px;
+  top: -10px;
 }
 
 .featuredGame .Name {

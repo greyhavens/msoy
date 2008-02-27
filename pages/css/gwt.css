@@ -296,13 +296,21 @@ img, embed, applet, object {
 }
 
 /** Rounded box */
+.roundBox .Corner {
+  width: 10px;
+  height: 25px;
+}
+
 .roundBox .Title {
   background: url(/images/ui/box/header_tile.png) repeat-x;
   color: #FFFFFF;
   font-size: 14px;
   font-weight: bold;
-  width: 100%;
-  text-align: center;
+}
+
+.roundBox .Title img, .roundBox .Title div {
+  display: inline;
+  vertical-align: middle;
 }
 
 .roundBox .Contents {

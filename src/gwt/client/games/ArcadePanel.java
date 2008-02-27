@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -32,7 +31,6 @@ public class ArcadePanel extends VerticalPanel
     public ArcadePanel ()
     {
         setStyleName("arcade");
-        setSpacing(5);
 
         CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
@@ -45,21 +43,19 @@ public class ArcadePanel extends VerticalPanel
     {
         HorizontalPanel row = new HorizontalPanel();
         row.add(new WhyPlayPanel());
-        row.add(WidgetUtil.makeShim(5, 5));
         row.add(new FeaturedGamePanel(data.featuredGames)); // TODO: next/prev
         add(row);
 
         for (int ii = 0; ii < data.genres.size(); ii++) {
             if (ii % 3 == 0) {
                 row = new HorizontalPanel();
+                row.setSpacing(5);
                 add(row);
             }
             ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
-            row.add(MsoyUI.createBox(null, CGames.dmsgs.getString("genre" + genre.genre),
+            row.add(MsoyUI.createBox("/images/game/genre/" + genre.genre + ".png",
+                                     CGames.dmsgs.getString("genre" + genre.genre),
                                      new GenreSummaryPanel(genre)));
-            if (ii % 3 != 2) {
-                row.add(WidgetUtil.makeShim(5, 5));
-            }
         }
     }
 

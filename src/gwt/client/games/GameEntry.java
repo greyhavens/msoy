@@ -38,8 +38,10 @@ public class GameEntry extends SmartTable
 
         setText(1, 0, truncate(game.description), 1, "Descrip");
 
-        setText(2, 0, (game.playersOnline == 1) ? CGames.msgs.genrePlayer() :
-                CGames.msgs.genrePlayers(""+game.playersOnline), 1, "Players");
+        String players = (game.playersOnline == 0) ? "" :
+            (game.playersOnline == 1 ? CGames.msgs.genrePlayer() :
+             CGames.msgs.genrePlayers(""+game.playersOnline));
+        setText(2, 0, players, 1, "Players");
         getFlexCellFormatter().setRowSpan(0, 0, 3);
     }
 

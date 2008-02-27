@@ -6,6 +6,7 @@ package client.games;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,8 +19,8 @@ import com.threerings.msoy.web.data.FeaturedGameInfo;
 import client.shell.Application;
 import client.shell.Page;
 import client.shell.Args;
-import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.ThumbBox;
 
 /**
  * Displays a featured game.
@@ -29,25 +30,47 @@ public class FeaturedGamePanel extends SmartTable
     public FeaturedGamePanel (FeaturedGameInfo[] games)
     {
         super("featuredGame", 0, 10);
+        _games = games;
+        selectGame(0);
+    }
 
-        // TODO: allow next/prev
-        final FeaturedGameInfo game = games[0];
+    protected void selectGame (final int index)
+    {
+        final FeaturedGameInfo game = _games[index];
 
-        VerticalPanel left = new VerticalPanel();
-        left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        left.add(MediaUtil.createMediaView(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT,
-                                           new ClickListener() {
+        ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.GAMES, Args.compose("d", game.gameId));
             }
-        }));
+        };
+
+        VerticalPanel left = new VerticalPanel();
+        left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        FlowPanel sashBox = new FlowPanel();
+        sashBox.setStyleName("SashBox");
+        Image sash = new Image("/images/game/featured_banner.png");
+        sash.addStyleName("Sash");
+        sashBox.add(sash);
+        sashBox.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
+        left.add(sashBox);
         left.add(WidgetUtil.makeShim(5, 5));
         // TODO: add by Foozle
         left.add(new GameBitsPanel(null, game.genre, game.minPlayers, game.maxPlayers,
                                    game.avgDuration, 0));
-        // TODO: add next, prev
+
+        left.add(WidgetUtil.makeShim(10, 10));
+        left.add(MsoyUI.createPrevNextButtons(new ClickListener() {
+            public void onClick (Widget sender) {
+                selectGame((index+_games.length-1)%_games.length);
+            }
+        }, new ClickListener() {
+            public void onClick (Widget sender) {
+                selectGame((index+1)%_games.length);
+            }
+        }));
         setWidget(0, 0, left);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        getFlexCellFormatter().setWidth(0, 0, Game.SHOT_WIDTH + "px");
 
         VerticalPanel right = new VerticalPanel();
         right.add(MsoyUI.createLabel(game.name, "Name"));
@@ -66,6 +89,8 @@ public class FeaturedGamePanel extends SmartTable
         return (descrip.length() <= MAX_DESCRIP_LENGTH) ? descrip :
             descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
     }
+
+    protected FeaturedGameInfo[] _games;
 
     protected static final int MAX_DESCRIP_LENGTH = 150;
 }
