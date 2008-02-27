@@ -93,6 +93,9 @@
 
 .instructionsPanel {
   padding: 5px;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
 }
 
 .instructionsPanel img {
@@ -177,9 +180,7 @@
 }
 
 .topRankingPanel .Footer {
-  color: #FFFFFF;
-  background: #424242;
-  border: 1px solid #000000;
+  border-top: 1px dotted;
   font-size: 12px;
   text-align: center;
 }
