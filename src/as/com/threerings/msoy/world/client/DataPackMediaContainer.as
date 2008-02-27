@@ -136,7 +136,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         }
 
         // we use the stub only on non-file non-images
-        return !((url == null) || isImage(url) || isFileUrl(url));
+        return !(isImage(url) || isFileUrl(url));
     }
 
     /**
