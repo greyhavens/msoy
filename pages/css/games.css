@@ -250,11 +250,18 @@
 .whyPlay {
   width: 150px;
   font-size: 14px;
-  padding: 40px 20px;
+  padding: 5px 20px;
+}
+
+.whyPlay .Title {
+  padding-bottom: 10px;
+  font-weight: bold;
+  color: #FFFFFF;
 }
 
 .whyPlay ul {
   padding-left: 25px;
+  color: #3D5174;
 }
 
 .featuredGame {
