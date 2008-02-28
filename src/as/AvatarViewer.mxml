@@ -2,6 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
+    preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="addChild(_viewer = new AvatarViewerComp());">
 <!-- 
     Setting the width/height here defines them both for the SWF and
