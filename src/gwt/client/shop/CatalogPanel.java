@@ -231,12 +231,15 @@ public class CatalogPanel extends SimplePanel
             }
 
             // grab our data model and display it
-            DataModel model = (DataModel) _models.get(_query);
+            CatalogDataModel model = (CatalogDataModel)_models.get(_query);
             if (model == null) {
                 _models.put(_query, model = new CatalogDataModel(_query));
             }
-            if (_items.getModel() != model) {
-                _items.clear(); // clear if we're switching item types
+            CatalogDataModel current = (CatalogDataModel)_items.getModel();
+            if (current != null && current.getType() != model.getType()) {
+                // clear the display when we switching item types so that we don't see items of the
+                // old type while items of the new type are loading
+                _items.clear();
             }
             _items.setModel(model, args.get(4, 0));
 
@@ -425,6 +428,10 @@ public class CatalogPanel extends SimplePanel
     {
         public CatalogDataModel (CatalogQuery query) {
             _query = query;
+        }
+
+        public byte getType () {
+            return _query.itemType;
         }
 
         public int getItemCount () {
