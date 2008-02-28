@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.util.MediaUtil;
+import client.util.ThumbBox;
 
 /**
  * Abstract display of a message posted by a member.
@@ -40,7 +40,7 @@ public class MessagePanel extends FlexTable
                 Application.go(Page.PEOPLE, "" + poster.name.getMemberId());
             }
         };
-        setWidget(0, 0, MediaUtil.createMediaView(poster.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
+        setWidget(0, 0, new ThumbBox(poster.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");
         getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
