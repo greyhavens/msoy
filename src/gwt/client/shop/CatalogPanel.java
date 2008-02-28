@@ -235,11 +235,10 @@ public class CatalogPanel extends SimplePanel
             if (model == null) {
                 _models.put(_query, model = new CatalogDataModel(_query));
             }
-            int page = args.get(4, 0);
-            if (page == 0) {
-                _items.clear();
+            if (_items.getModel() != model) {
+                _items.clear(); // clear if we're switching item types
             }
-            _items.setModel(model, page);
+            _items.setModel(model, args.get(4, 0));
 
             // set up our page title
             Frame.setTitle(CShop.dmsgs.getString("pItemType" + _query.itemType));
