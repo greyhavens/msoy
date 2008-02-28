@@ -239,8 +239,6 @@ img, embed, applet, object {
 
 /** Page styles */
 .pageTitle {
-  width: 700px;
-  height: 37px;
   background: #000000 url(/images/header/titlebar.png) no-repeat bottom;
 }
 
@@ -272,7 +270,7 @@ img, embed, applet, object {
   font-weight: bold;
   height: 34px;
   color: white;
-  padding: 3px 0px 0px 15px;
+  padding: 0px 0px 0px 15px;
   white-space: nowrap;
   opacity: 0.6;
 }
@@ -991,12 +989,12 @@ img, embed, applet, object {
   border: 1px solid #CCCCCC;
   margin: 5px;
   padding: 5px; /* TODO: IE won't like */
-  width: 120px;
 }
 
 .itemBox .Name {
   font-size: 14px;
   padding-top: 5px;
   white-space: nowrap;
+  width: 110px;
   overflow: hidden;
 }

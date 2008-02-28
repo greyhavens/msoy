@@ -22,6 +22,7 @@
 }
 
 .gameName .Descrip {
+  font-size: 14px;
   overflow: hidden;
 }
 
@@ -265,6 +266,10 @@
 
 .featuredGame .playPanel {
   margin-left: 15px;
+}
+
+.featuredGame .gameName .Descrip {
+  height: 65px;
 }
 
 .featuredGame .Online, .gameDetail .Online {

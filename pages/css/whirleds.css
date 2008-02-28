@@ -70,6 +70,10 @@
   color: #CD853F;
 }
 
+.galaxy .itemBox .Name {
+  text-align: center;
+}
+
 .galaxy .itemBox .Population {
   font-size: 12px;
 }
