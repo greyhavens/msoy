@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -27,6 +28,7 @@ public class ThumbBox extends SimplePanel
     {
         setWidth(width + "px");
         setHeight(height + "px");
+        DOM.setStyleAttribute(getElement(), "overflow", "hidden");
         add(MediaUtil.createMediaView(desc, width, height, onClick));
     }
 }
