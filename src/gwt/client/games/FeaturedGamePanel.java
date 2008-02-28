@@ -48,7 +48,7 @@ public class FeaturedGamePanel extends SmartTable
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         FlowPanel sashBox = new FlowPanel();
         sashBox.setStyleName("SashBox");
-        Image sash = new Image("/images/game/featured_banner.png");
+        Image sash = MsoyUI.createActionImage("/images/game/featured_banner.png", onClick);
         sash.addStyleName("Sash");
         sashBox.add(sash);
         sashBox.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
