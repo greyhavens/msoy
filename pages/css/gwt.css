@@ -57,22 +57,22 @@ img, embed, applet, object {
 
 /** Form element styles. */
 .gwt-Button {
-    background-image: url(/images/ui/button_middle.png);
-    background-repeat: repeat-x;
-    border: 1px solid #404040;
-    font-size: 12px;
-    vertical-align: top;
-    cursor: pointer;
-    height: 19px;
-    margin: 0px;
-    padding-bottom: 1px;
-    white-space: nowrap;
+  background-image: url(/images/ui/button_middle.png);
+  background-repeat: repeat-x;
+  border: 1px solid #404040;
+  font-size: 12px;
+  vertical-align: top;
+  cursor: pointer;
+  height: 19px;
+  margin: 0px;
+  padding-bottom: 1px;
+  white-space: nowrap;
 }
 
 .tinyButton {
-    background-image: url(/images/ui/tiny_button_middle.png);
-    font-size: 8px;
-    height: 12px;
+  background-image: url(/images/ui/tiny_button_middle.png);
+  font-size: 8px;
+  height: 12px;
 }
 
 .bigButton {
@@ -94,33 +94,33 @@ img, embed, applet, object {
 }
 
 .gwt-PushButton {
-    text-align: center;
+  text-align: center;
 }
 
 .gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering {
-    background: #CCCCCC;
-    cursor: pointer;
+  background: #CCCCCC;
+  cursor: pointer;
 }
 
 .gwt-ToggleButton {
-    text-align: center;
+  text-align: center;
 }
 
 .gwt-ToggleButton-up {
 }
 
 .gwt-ToggleButton-up-hovering {
-    background: #CCCCCC;
-    cursor: pointer;
+  background: #CCCCCC;
+  cursor: pointer;
 }
 
 .gwt-ToggleButton-down {
-    background: #999999;
+  background: #999999;
 }
 
 .gwt-ToggleButton-down-hovering {
-    background: #CCCCCC;
-    cursor: pointer;
+  background: #CCCCCC;
+  cursor: pointer;
 }
 
 .gwt-TextBox {
@@ -315,35 +315,6 @@ img, embed, applet, object {
 
 .roundBox .Contents {
   background: #FFFFFF;
-}
-
-/** Starry boxes */
-.peopleBox .HeaderCenter, .gamesBox .HeaderCenter {
-  width: 100%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-align: center;
-}
-
-.peopleBox .HeaderLeft, .peopleBox .HeaderRight {
-  background-image: url(/images/whirled/people_star.png);
-  width: 20px;
-  height: 20px;
-}
-.peopleBox .Header {
-  background-image: url(/images/whirled/people_tile.png);
-  height: 20px;
-}
-
-.gamesBox .HeaderLeft, .gamesBox .HeaderRight {
-  background-image: url(/images/whirled/games_star.png);
-  width: 20px;
-  height: 20px;
-}
-.gamesBox .Header {
-  background-image: url(/images/whirled/games_tile.png);
-  height: 20px;
 }
 
 /** Misc styles. */
@@ -983,36 +954,37 @@ img, embed, applet, object {
 }
 
 .photoChoiceBox .Preview {
-    width: 40px;
-    height: 30px;
-    padding-right: 5px;
+  width: 40px;
+  height: 30px;
+  padding-right: 5px;
 }
 
 .contentFooterPanel {
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .contentFooterPanel .Content {
-    border-left: 1px dotted;
-    border-right: 1px dotted;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
 }
 
 .contentFooterPanel .Footer {
-    border-top: 1px dotted;
-    padding-top: 2px;
-    font-size: 12px;
-    height: 20px;
+  border-top: 1px dotted;
+  padding-top: 2px;
+  font-size: 12px;
+  height: 20px;
 }
 
 /*.contentFooterPanel .Footer .gwt-Button {
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
 }*/
 
 .contentFooterPanel .Tip {
-    font-size: 12px;
-    width: 300px;
+  font-size: 12px;
+  width: 300px;
 }
 
 .itemBox {

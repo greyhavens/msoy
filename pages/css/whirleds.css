@@ -5,127 +5,85 @@
  */
 
 /* GroupView specific formatting */
-.groupView td {
-    vertical-align: top;
+.groupView {
+  width: 100%;
 }
 
-.groupView .Back {
-    padding: 5px;
+.groupView .Window {
+  text-align: center;
+  width: 424px;
+  padding-right: 10px;
 }
 
 .groupView .Name {
-    font-size: 22px;
-    font-weight: bold;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.groupView .Blurb, .groupView .Charter, .groupView .PeoplePanel {
-    font-size: 12px;
-}
-
-.groupView .PeoplePanel {
-    width: 200px;
-}
-
-.groupView .PeoplePanel a {
-    white-space: nowrap;
-}
-
-.groupView .Blurb {
-    margin-bottom: 5px;
-}
-
-.groupView .DescriptionPanel {
-    margin: 5px 0px 0px 0px;
-}
-
-.groupView .DescriptionPanel p {
-    margin: 0px 0px 5px 0px;
-}
-
-.groupView .LogoPanel {
-    margin: 5px;
-    font-size: 12px;
-    width: 100px;
-}
-
-.groupView .LogoPanel .Links {
-    font-weight: 600;
+.groupView .Managers, .groupView .Blurb {
+  font-size: 12px;
 }
 
 .groupView .Established, .groupView .LogoPanel .Policy {
-    font-size: 12px;
-    font-style: italic;
+  font-size: 12px;
+  font-style: italic;
 }
 
 .groupView .LogoPanel .Policy {
-    margin: 7px;
-}
-
-.groupView .Established a {
-    font-style: normal;
-}
-
-.groupView .LabelLink {
-    cursor: pointer;
-    text-decoration: underline;
-    color: black;
-}
-
-.groupView .gwt-Hyperlink {
-    display: inline;
+  margin: 7px;
 }
 
 /* GroupList specific formattting */
 .galaxy {
-    padding: 0px 5px;
-    width: 680px;
+  padding: 0px 5px;
+  width: 680px;
 }
 
 .galaxy .Intro {
-    font-size: 16px;
-    padding: 10px;
-    vertical-align: top;
+  font-size: 16px;
+  padding: 10px;
+  vertical-align: top;
 }
 
 .galaxy .Title {
-    font-size: 16px;
-    font-weight: bold;
-    padding-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  padding-top: 10px;
 }
 
 .galaxy .PopularTags {
-    vertical-align: top;
-    padding-right: 10px;
-    font-size: 12px;
+  vertical-align: top;
+  padding-right: 10px;
+  font-size: 12px;
 }
 
 .galaxy .PopularTags a {
-    font-style: italic;
-    color: #696969;
+  font-style: italic;
+  color: #696969;
 }
 
 .galaxy .PopularTags .Label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .galaxy .PopularTags #moreLink {
-    color: #CD853F;
+  color: #CD853F;
 }
 
 .galaxy .itemBox .Population {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .featuredWhirled {
-    width: 424px;
+  width: 424px;
 }
 
 .featuredWhirled .Name {
-    font-weight: bold;
-    font-size: 16px;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .featuredWhirled .MoreInfo {
-    font-size: 12px;
-    text-align: center;
+  font-size: 12px;
+  text-align: center;
 }

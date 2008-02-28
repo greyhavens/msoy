@@ -5,171 +5,172 @@
  */
 
 .MailComposer {
-    padding: 8px;
+  padding: 8px;
 }
 
 .MailComposer .Headers {
-    background: white;
-    padding-top: 3px;
-    height: 2em;
-    width: 100%;
+  background: white;
+  padding-top: 3px;
+  height: 2em;
+  width: 100%;
 }
 
 .MailComposer .Label {
-    text-align: right;
-    width: 7em;
+  text-align: right;
+  width: 7em;
 }
 
 .MailComposer .Value {
-    text-align: left;
+  text-align: left;
 }
 
 .MailComposer .Headers .SubjectBox {
-    width: 100%;
+  width: 100%;
 }
 
 .MailComposer .Payload {
-    border: none;
-    width: 100%;
-    padding-top: 4px;
-    padding-bottom: 4px;
+  border: none;
+  width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .MailComposer .Body {
-    padding: 4px;
+  padding: 4px;
 }
 
 .MailComposer .Bar {
-    background-image: url(/images/mail/box_tile.png);
-    height: 27px;
-    width: 100%;
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
 }
 
 .MailComposer .Bar .Star {
-    background-image: url(/images/mail/box_left.png);
-    height: 27px;
-    width: 33px;
-    float: left;
+  background-image: url(/images/mail/box_left.png);
+  height: 27px;
+  width: 33px;
+  float: left;
 }
 
 .MailControls .gwt-Button {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .GroupInvitation .JoinButton {
-    display: block;
-    margin-left: 8em;
+  display: block;
+  margin-left: 8em;
 }
 
 .friendshipInvitation .AyeButton {
-    margin-top: 10px;
-    margin-left: 30px;
+  margin-top: 10px;
+  margin-left: 30px;
 }
 
 .itemGift {
-    width: 100%;
-    padding: 5px;
+  width: 100%;
+  padding: 5px;
 }
 
 .itemGift .Title {
-    border-bottom: black solid 2px;
-    margin-bottom: 5px;
+  border-bottom: black solid 2px;
+  margin-bottom: 5px;
 }
 
 .itemGift .ControlButton {
-    margin-left: 4px;
-    margin-top: 4px;
-    float: right;
+  margin-left: 4px;
+  margin-top: 4px;
+  float: right;
 }
 
 .titledListPanel {
-    width: 100%;
+  width: 100%;
+  margin: 5px;
 }
 
 .titledListPanel .Header {
-    border: 1px solid #000000;
-    background: #222222;
-    color: #FFFFFF;
-    width: 100%;
+  background: #3A86B7;
+  color: #FFFFFF;
+  width: 100%;
+  border: 1px solid #3A86B7;
 }
 
 .titledListPanel .Header .Title {
-    padding: 5px;
-    font-weight: bold;
+  padding: 5px;
+  font-weight: bold;
 }
 
 .titledListPanel .Header .RightBits {
-    padding-right: 10px;
+  padding-right: 10px;
 }
 
 .titledListPanel .Header .RightBits a {
-    white-space: nowrap;
-    color: #FFFFFF;
+  white-space: nowrap;
+  color: #FFFFFF;
 }
 
 .titledListPanel .Header .Posts {
-    width: 50px;
-    font-size: 12px;
-    text-align: right;
-    vertical-align: bottom;
-    padding-right: 20px;
+  width: 50px;
+  font-size: 12px;
+  text-align: right;
+  vertical-align: bottom;
+  padding-right: 20px;
 }
 
 .titledListPanel .Header .LastPost {
-    width: 150px;
-    font-size: 12px;
-    vertical-align: bottom;
-    white-space: nowrap;
+  width: 150px;
+  font-size: 12px;
+  vertical-align: bottom;
+  white-space: nowrap;
 }
 
 .titledListPanel .Header .Back {
-    padding-left: 5px;
+  padding-left: 5px;
 }
 
 .threadSummaryPanel {
-    width: 100%;
+  width: 100%;
 }
 
 .threadSummaryPanel .Status {
-    width: 30px;
+  width: 30px;
 }
 
 .threadSummaryPanel .Status img {
-    margin-left: auto;
-    margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .threadSummaryPanel .Subject {
 }
 
 .threadSummaryPanel .EditFlags {
-    background-image: url(/images/msgs/edit_flags.png);
-    width: 16px;
-    height: 16px;
+  background-image: url(/images/msgs/edit_flags.png);
+  width: 16px;
+  height: 16px;
 }
 
 .threadSummaryPanel .Posts {
-    width: 50px;
-    text-align: right;
-    padding-right: 20px;
+  width: 50px;
+  text-align: right;
+  padding-right: 20px;
 }
 
 .threadSummaryPanel .LastPost {
-    width: 150px;
-    font-size: 12px;
-    padding: 2px 0px;
+  width: 150px;
+  font-size: 12px;
+  padding: 2px 0px;
 }
 
 .messageSummaryPanel {
-    width: 100%;
+  width: 100%;
 }
 
 .replyPanel {
-    border-left: 1px dotted;
-    border-right: 1px dotted;
-    border-bottom: 1px dotted;
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  border-bottom: 1px dotted;
 }
 
 .replyPanel .Title {
-    font-weight: bold;
+  font-weight: bold;
 }

@@ -21,6 +21,7 @@ public class TableFooterPanel extends ContentFooterPanel
         _content = (FlexTable)getWidget(0, 0);
         _content.setCellPadding(0);
         _content.setCellSpacing(5);
+        _content.setWidth("100%");
         _footer = (FlowPanel)getWidget(1, 0);
     }
 

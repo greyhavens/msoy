@@ -15,7 +15,8 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
-import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
@@ -137,46 +138,53 @@ public class GroupServlet extends MsoyServiceServlet
     public GroupDetail getGroupDetail (WebIdent ident, int groupId)
         throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser(ident);
+
         try {
             // load the group record
-            GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
-            if (gRec == null) {
+            GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (grec == null) {
                 return null;
-            }
-
-            // load the creator's member record
-            MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
-            if (mRec == null) {
-                log.warning("Couldn't load group creator [groupId=" + groupId +
-                    ", creatorId=" + gRec.creatorId + "]");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
             // set up the detail
             GroupDetail detail = new GroupDetail();
-            detail.creator = mRec.getName();
-            detail.group = gRec.toGroupObject();
-            detail.extras = gRec.toExtrasObject();
-            List<GroupMembership> members = Lists.newArrayList();
-            detail.members = members;
-            for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
-                mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
-                if (mRec == null) {
-                    log.warning("Group has non-existent member [groupId=" + groupId +
-                                ", memberId=" + gmRec.memberId + "].");
-                    continue;
-                }
-                GroupMembership membership = new GroupMembership();
-                // membership.group left null intentionally 
-                membership.member = mRec.getName();
-                membership.rank = gmRec.rank;
-                membership.rankAssignedDate = gmRec.rankAssigned.getTime();
-                members.add(membership);
+            detail.group = grec.toGroupObject();
+            detail.extras = grec.toExtrasObject();
+            detail.creator = MsoyServer.memberRepo.loadMemberName(grec.creatorId);
+            detail.managers = loadGroupMembers(grec.groupId, GroupMembership.RANK_MANAGER);
+
+            // determine if we're a member
+            if (mrec != null) {
+                GroupMembershipRecord gmrec =
+                    MsoyServer.groupRepo.getMembership(grec.groupId, mrec.memberId);
+                detail.myRank = (gmrec == null) ? GroupMembership.RANK_NON_MEMBER : gmrec.rank;
             }
+
             return detail;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupDetail failed [groupId=" + groupId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GroupService
+    public MembersResult getGroupMembers (WebIdent ident, int groupId)
+        throws ServiceException
+    {
+        try {
+            GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (grec == null) {
+                return null;
+            }
+            MembersResult result = new MembersResult();
+            result.name = grec.toGroupName();
+            result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER);
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getGroupMembers failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -201,8 +209,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         try {
             List<Group> groups = Lists.newArrayList();
-            for (GroupRecord gRec : MsoyServer.groupRepo.searchGroups(searchString)) {
-                groups.add(gRec.toGroupObject());
+            for (GroupRecord grec : MsoyServer.groupRepo.searchGroups(searchString)) {
+                groups.add(grec.toGroupObject());
             }
             return groups;
 
@@ -218,8 +226,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         try {
             List<Group> groups = Lists.newArrayList();
-            for (GroupRecord gRec : MsoyServer.groupRepo.searchForTag(tag)) {
-                groups.add(gRec.toGroupObject());
+            for (GroupRecord grec : MsoyServer.groupRepo.searchForTag(tag)) {
+                groups.add(grec.toGroupObject());
             }
             return groups;
         } catch (PersistenceException pe) {
@@ -280,39 +288,39 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         try {
-            final GroupRecord gRec = new GroupRecord();
-            gRec.name = group.name;
-            gRec.blurb = group.blurb;
-            gRec.policy = group.policy;
+            final GroupRecord grec = new GroupRecord();
+            grec.name = group.name;
+            grec.blurb = group.blurb;
+            grec.policy = group.policy;
             if (group.logo != null) {
-                gRec.logoMimeType = group.logo.mimeType;
-                gRec.logoMediaHash = group.logo.hash;
-                gRec.logoMediaConstraint = group.logo.constraint;
+                grec.logoMimeType = group.logo.mimeType;
+                grec.logoMediaHash = group.logo.hash;
+                grec.logoMediaConstraint = group.logo.constraint;
             }
-            gRec.homepageUrl = extras.homepageUrl;
-            gRec.charter = extras.charter;
+            grec.homepageUrl = extras.homepageUrl;
+            grec.charter = extras.charter;
             if (extras.background != null) {
-                gRec.backgroundMimeType = extras.background.mimeType;
-                gRec.backgroundHash = extras.background.hash;
+                grec.backgroundMimeType = extras.background.mimeType;
+                grec.backgroundHash = extras.background.hash;
             }
 
             // we fill this in ourselves
-            gRec.creatorId = mrec.memberId;
+            grec.creatorId = mrec.memberId;
 
             // create the group and then add the creator to it
-            MsoyServer.groupRepo.createGroup(gRec);
+            MsoyServer.groupRepo.createGroup(grec);
             MsoyServer.groupRepo.joinGroup(
-                gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+                grec.groupId, grec.creatorId, GroupMembership.RANK_MANAGER);
 
             // if the creator is online, update their runtime data
             MsoyServer.omgr.postRunnable(new Runnable() {
                 public void run () {
                     MsoyServer.groupMan.updateMemberGroup(
-                        gRec.creatorId, gRec.groupId, gRec.name, GroupMembership.RANK_MANAGER);
+                        grec.creatorId, grec.groupId, grec.name, GroupMembership.RANK_MANAGER);
                 }
             });
 
-            return gRec.toGroupObject();
+            return grec.toGroupObject();
 
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
@@ -345,11 +353,11 @@ public class GroupServlet extends MsoyServiceServlet
                 throw new ServiceException("m.invalid_permissions");
             }
 
-            GroupRecord gRec = MsoyServer.groupRepo.loadGroup(group.groupId);
-            if (gRec == null) {
+            GroupRecord grec = MsoyServer.groupRepo.loadGroup(group.groupId);
+            if (grec == null) {
                 throw new PersistenceException("Group not found [id=" + group.groupId + "]");
             }
-            Map<String, Object> updates = gRec.findUpdates(group, extras);
+            Map<String, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 MsoyServer.groupRepo.updateGroup(group.groupId, updates);
             }
@@ -501,6 +509,26 @@ public class GroupServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "getTags failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    protected List<GroupMembership> loadGroupMembers (int groupId, byte minRank)
+        throws PersistenceException
+    {
+        IntMap<GroupMembership> members = IntMaps.newHashIntMap();
+        for (GroupMembershipRecord gmrec : MsoyServer.groupRepo.getMembers(groupId)) {
+            // TODO: filter in the database query
+            if (gmrec.rank == GroupMembership.RANK_MANAGER) {
+                members.put(gmrec.memberId, gmrec.toGroupMembership());
+            }
+        }
+        for (MemberName name : MsoyServer.memberRepo.loadMemberNames(members.keySet())) {
+            GroupMembership gm = members.get(name.getMemberId());
+            gm.member = name;
+            // TODO: make these member cards
+        }
+        List<GroupMembership> mlist = Lists.newArrayList();
+        mlist.addAll(members.values());
+        return mlist;
     }
 
     protected static boolean isValidName (String name) 

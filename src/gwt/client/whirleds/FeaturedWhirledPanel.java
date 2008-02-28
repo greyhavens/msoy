@@ -31,7 +31,6 @@ public class FeaturedWhirledPanel extends VerticalPanel
     public FeaturedWhirledPanel (GroupCard[] whirleds)
     {
         setStyleName("featuredWhirled");
-        MsoyUI.makeBox(this, "people", CWhirleds.msgs.featuredTitle());
 
         // TODO: next, prev
         final GroupCard group = whirleds[0];

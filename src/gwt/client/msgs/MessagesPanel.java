@@ -37,6 +37,7 @@ public class MessagesPanel extends PagedGrid
     public MessagesPanel (ThreadPanel parent, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
+        setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
         addStyleName("dottedGrid");
         setWidth("100%");
         setHeight("100%");

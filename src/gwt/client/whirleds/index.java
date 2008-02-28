@@ -60,6 +60,11 @@ public class index extends MsgsEntryPoint
             fpanel.displayUnreadThreads(false);
             setContent(fpanel);
 
+        } else if (action.equals("f")) {
+            ForumPanel forums = new ForumPanel(_fmodels);
+            forums.displayGroupThreads(args.get(1, 0));
+            setContent(forums);
+
         } else if (action.equals("t")) {
             int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
             setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
@@ -89,6 +94,6 @@ public class index extends MsgsEntryPoint
     }
 
     protected ForumModels _fmodels = new ForumModels();
-    protected GroupView _gview = new GroupView(_fmodels);
+    protected GroupView _gview = new GroupView();
     protected GalaxyPanel _galaxy;
 }

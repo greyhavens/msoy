@@ -6,11 +6,14 @@ package com.threerings.msoy.web.client;
 import java.util.List;
 import java.util.Collection;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.ServiceException;
@@ -22,6 +25,20 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface GroupService extends RemoteService
 {
+    /** Delivers the response to {@link #getGroupMembers}. */
+    public static class MembersResult implements IsSerializable
+    {
+        /** The group's name and id. */
+        public GroupName name;
+
+        /**
+         * The members of this group.
+         *
+         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
+         */
+        public List members;
+    }
+
     /**
      * Loads the information displayed on the Galaxy page.
      */
@@ -71,6 +88,12 @@ public interface GroupService extends RemoteService
      * Construct a {@link GroupDetail} object for one given group.
      */
     public GroupDetail getGroupDetail (WebIdent ident, int groupId)
+        throws ServiceException;
+
+    /**
+     * Returns a list of all the members for the specified group.
+     */
+    public MembersResult getGroupMembers (WebIdent ident, int groupId)
         throws ServiceException;
 
     /**

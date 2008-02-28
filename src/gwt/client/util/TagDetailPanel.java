@@ -65,13 +65,14 @@ public class TagDetailPanel extends VerticalPanel
     {
         setStyleName("tagDetailPanel");
         _service = service;
+        _canEdit = CShell.getMemberId() > 0 && showAddUI;
 
         _tags = new FlowPanel();
         _tags.setStyleName("Tags");
         _tags.add(new Label(CShell.cmsgs.tagLoading()));
         add(_tags);
 
-        if (CShell.getMemberId() > 0 && showAddUI) {
+        if (_canEdit) {
             RowPanel addRow = new RowPanel();
             addRow.add(new InlineLabel(CShell.cmsgs.tagAddTag(), false, false, false),
                        HasAlignment.ALIGN_MIDDLE);
@@ -214,7 +215,7 @@ public class TagDetailPanel extends VerticalPanel
         for (Iterator iter = tags.iterator(); iter.hasNext() ; ) {
             final String tag = (String) iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
-            if (CShell.getMemberId() > 0) {
+            if (_canEdit) {
                 final Command remove = new Command() {
                     public void execute () {
                         new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
@@ -311,6 +312,7 @@ public class TagDetailPanel extends VerticalPanel
     }
 
     protected TagService _service;
+    protected boolean _canEdit;
 
     protected FlowPanel _tags;
     protected ListBox _quickTags;

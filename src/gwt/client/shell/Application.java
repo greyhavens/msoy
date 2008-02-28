@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
+
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.client.CatalogService;

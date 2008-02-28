@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.GroupMembership;
 
 /**
  * Contains the details of a group.
@@ -25,12 +26,13 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
+    /** My rank in this group ({@link GroupMembership#RANK_NON_MEMBER} if we're not a member). */
+    public byte myRank;
+
     /**
-     * The members of this group, expressed as a Set of GroupMembership(s). TODO: only put the
-     * managers in here and have the client request the full members list only if it actually needs
-     * it.
+     * The managers of this group.
      *
      * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
      */
-    public List members;
+    public List managers;
 }

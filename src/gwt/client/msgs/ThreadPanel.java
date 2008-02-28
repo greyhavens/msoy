@@ -22,6 +22,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Frame;
 import client.shell.MessagePanel;
 import client.shell.Page;
@@ -65,7 +66,8 @@ public class ThreadPanel extends TitledListPanel
     {
         _thread = thread;
         updateTitle(getThreadTitle());
-        setRightBits(Application.groupViewLink(thread.group.toString(), thread.group.getGroupId()));
+        setRightBits(Application.createLink(thread.group.toString(), Page.WHIRLEDS,
+                                            Args.compose("f", thread.group.getGroupId())));
     }
 
     public void editFlags ()

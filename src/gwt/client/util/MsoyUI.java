@@ -237,23 +237,6 @@ public class MsoyUI
     }
 
     /**
-     * Adds a box header to and styles the supplied vertical panel.
-     */
-    public static void makeBox (VerticalPanel box, String styleName, String title)
-    {
-        box.addStyleName(styleName + "Box");
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("Header");
-        header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        header.add(MsoyUI.createLabel("", "HeaderLeft"));
-        Label tlabel = createLabel(title, "HeaderCenter");
-        header.add(tlabel);
-        header.setCellWidth(tlabel, "100%");
-        header.add(createLabel("", "HeaderRight"));
-        box.add(header);
-    }
-
-    /**
      * Displays informational feedback to the user in a non-offensive way.
      */
     public static void info (String message)

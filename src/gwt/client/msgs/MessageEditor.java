@@ -3,23 +3,22 @@
 
 package client.msgs;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import client.util.RichTextToolbar;
 
 /**
  * A {@link RichTextArea} with toolbar for editing forum messages.
  */
-public class MessageEditor extends VerticalPanel
+public class MessageEditor extends FlowPanel
 {
     public MessageEditor ()
     {
         _text = new RichTextArea();
-        RichTextToolbar toolbar = new RichTextToolbar(_text, false);
-        add(toolbar);
+        add(new RichTextToolbar(_text, false));
         add(_text);
-        _text.setWidth("650px");
+        _text.setWidth("100%");
         _text.setHeight("300px");
     }
 

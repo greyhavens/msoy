@@ -75,15 +75,25 @@ public class GroupMembershipRecord extends PersistentRecord
     public Timestamp rankAssigned;
 
     /**
+     * Converts this persistent record to a runtime record with no member or group name
+     * information.
+     */
+    public GroupMembership toGroupMembership ()
+    {
+        GroupMembership gm = new GroupMembership();
+        gm.rank = rank;
+        gm.rankAssignedDate = rankAssigned.getTime();
+        return gm;
+    }
+
+    /**
      * Converts this persistent record to a runtime record.
      */
     public GroupMembership toGroupMembership (MemberName member, IntMap<GroupName> groups)
     {
-        GroupMembership gm = new GroupMembership();
+        GroupMembership gm = toGroupMembership();
         gm.member = member;
         gm.group = groups.get(groupId);
-        gm.rank = rank;
-        gm.rankAssignedDate = rankAssigned.getTime();
         return gm;
     }
 

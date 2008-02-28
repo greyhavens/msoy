@@ -47,9 +47,14 @@ public interface GroupServiceAsync
                                      AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link GroupService.loadGroup} 
+     * The asynchronous version of {@link GroupService.getGroupDetail} 
      */
     public void getGroupDetail (WebIdent ident, int groupId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.getGroupMembers} 
+     */
+    public void getGroupMembers (WebIdent ident, int groupId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService.updateGroup} 

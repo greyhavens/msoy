@@ -23,11 +23,11 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.web.client.GroupService;
 
 import client.util.MsoyCallback;
 
@@ -163,10 +163,11 @@ public abstract class GroupInvite
              
             protected void refreshUI ()
             {
-                CMsgs.groupsvc.getGroupDetail(
+                CMsgs.groupsvc.getGroupMembers(
                     CMsgs.ident, _invitePayload.groupId, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        _detail = (GroupDetail) result;
+                        _name = ((GroupService.MembersResult) result).name.toString();
+                        _members = ((GroupService.MembersResult) result).members;
                         buildUI();
                     }
                     public void onFailure (Throwable caught) {
@@ -178,17 +179,15 @@ public abstract class GroupInvite
             protected void buildUI ()
             {
                 _content.clear();
-                Iterator members = _detail.members.iterator();
+                Iterator members = _members.iterator();
                 while (members.hasNext()) {
                     GroupMembership ship = (GroupMembership) members.next();
                     if (CMsgs.creds.name.equals(ship.member)) {
-                        _content.add(new InlineLabel(
-                            CMsgs.mmsgs.groupAlreadyMember(_detail.group.name)));
+                        _content.add(new InlineLabel(CMsgs.mmsgs.groupAlreadyMember(_name)));
                         return;
                     }
                 }
-                _content.add(new InlineLabel(
-                    CMsgs.mmsgs.groupInvitation(_detail.group.name), true, false, true));
+                _content.add(new InlineLabel(CMsgs.mmsgs.groupInvitation(_name), true, false, true));
                 Button joinButton = new Button(CMsgs.mmsgs.groupBtnJoin());
                 joinButton.addStyleName("JoinButton");
                 joinButton.setEnabled(_enabled);
@@ -224,7 +223,8 @@ public abstract class GroupInvite
 
             protected boolean _enabled;
             
-            protected GroupDetail _detail;
+            protected String _name;
+            protected List _members;
             
             protected Label _status;
             protected FlowPanel _content;
