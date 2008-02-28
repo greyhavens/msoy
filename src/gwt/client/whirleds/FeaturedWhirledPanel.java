@@ -38,7 +38,7 @@ public class FeaturedWhirledPanel extends VerticalPanel
         _info.setWidth("100%");
         _info.setWidget(0, 0, MsoyUI.createPrevNextButtons(new ClickListener() {
             public void onClick (Widget sender) {
-                showWhirled((_selidx+_whirleds.length+1) % _whirleds.length);
+                showWhirled((_selidx+_whirleds.length-1) % _whirleds.length);
             }
         }, new ClickListener() {
             public void onClick (Widget sender) {
