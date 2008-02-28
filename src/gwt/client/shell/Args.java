@@ -142,16 +142,19 @@ public class Args
     // Since we're using _ for our own purposes, encode it as %- and thus also % as %%
     protected static String escape (String str)
     {
-        return str.replaceAll("%", "%%").replaceAll("_", "%-");
+        return str.replaceAll(ARG_ESC, ARG_ESC_ESC).replaceAll(ARG_SEP, ARG_ESC_SEP);
     }
 
     protected static String unescape (String str)
     {
-        return str.replaceAll("%-", "_").replaceAll("%%", "%");
+        return str.replaceAll(ARG_ESC_SEP, ARG_SEP).replaceAll(ARG_ESC_ESC, ARG_ESC);
     }
     
     
     protected List _args = new ArrayList();
 
     protected static final String ARG_SEP = "_";
+    protected static final String ARG_ESC = "%";
+    protected static final String ARG_ESC_ESC = "%%";
+    protected static final String ARG_ESC_SEP = "%-"; // Note: dash, not underscore!
 }
