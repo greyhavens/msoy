@@ -467,7 +467,6 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
-      <arg value="-compiler.verbose-stacktraces=true"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
@@ -476,6 +475,20 @@
       <arg value="${asrc.dir}/${astype}.mxml"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
+  </target>
+
+  <!-- builds the preloader that's used to load our large clients -->
+  <target name="preloader">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/preloader.swf"/>
+      <arg value="-file-specs"/>
+      <arg value="${asrc.dir}/Preloader.as"/>
+    </exec>
+    <copy file="${deploy.dir}/preloader.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds the mediastub that's used to wrap SWF media -->
@@ -870,7 +883,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,tutorial,avatarviewer,
+  <target name="flashapps" depends="asprepare,preloader,mediastub,tutorial,avatarviewer,
                                     videoviewer,decorviewer,remixer">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
