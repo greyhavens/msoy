@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameControl,com.whirled.game.GameControl,local,net,player,game,services,isConnected" name="keywords">
+<meta content="GameControl,com.whirled.game.GameControl,game,local,net,player,services,isConnected" name="keywords">
 <title>com.whirled.game.GameControl</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'GameControl - API Documentation';
+				asdocTitle = 'GameControl - Whirled API Documentation';
 				var baseRef = '../../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/GameControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/GameControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;GameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
@@ -43,12 +43,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </table>
 <p></p>
  Used to coordinate game state and control your multiplayer game.
- <br></br><br></br>
+ <br/><br/>
  <b>Note:</b> Check out the
    <a href="/code/GameControl.html" target="_top">Easy GameControl Index</a>.
- <br></br><br></br>
-  Typically, you create this in your top-level MovieClip/Sprite:
- <code><pre>
+ <br/><br/>
+  <p></p>
+<br>
+<span class="label">Example</span>
+<br>Typically, you create this in your top-level MovieClip/Sprite:
+ <div class='listing'><pre>
  public class MyGame extends Sprite
  {
      public var ctrl :GameControl;
@@ -57,7 +60,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      {
           ctrl = new GameControl(this);
           ...
- </pre></code>
+ </pre></div>
  <p></p>
 <br>
 <hr>
@@ -127,6 +130,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../AbstractControl.html#addEventListener()">addEventListener</a>(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Registers an event listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
 <div class="summaryTableDescription">
      Execute the specified function as a batch of commands that will be sent to the server
@@ -138,10 +149,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#isConnected()">isConnected</a>():Boolean</div>
 <div class="summaryTableDescription">
+     
      Are we connected and running inside the whirled environment, or has someone just
      loaded up our SWF by itself?
      </div>
 </td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../AbstractControl.html#removeEventListener()">removeEventListener</a>(type:String, listener:Function, useCapture:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Unregisters an event listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
 </tr>
 </table>
 </div>
@@ -291,6 +311,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public override function isConnected():Boolean</code><p>
+     
      Are we connected and running inside the whirled environment, or has someone just
      loaded up our SWF by itself?
      </p><p></p>
@@ -306,9 +327,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->

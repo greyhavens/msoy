@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ContentPackLoader,com.whirled.util.ContentPackLoader,_infos,_processedLoaderCount,_loadedCallback,_doneCallback,loaderProcessed" name="keywords">
+<meta content="ContentPackLoader,com.whirled.util.ContentPackLoader,_doneCallback,_infos,_loadedCallback,_processedLoaderCount,loaderProcessed" name="keywords">
 <title>com.whirled.util.ContentPackLoader</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'ContentPackLoader - API Documentation';
+				asdocTitle = 'ContentPackLoader - Whirled API Documentation';
 				var baseRef = '../../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/util/ContentPackLoader.html&amp;com/whirled/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/util/ContentPackLoader.html&amp;com/whirled/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ContentPackLoader</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
@@ -40,7 +40,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </table>
 <p></p>
  <b>Note</b>: This class is deprecated. It will be removed when a suitable replacement
- is made.<br></br>
+ is made.<br/>
   Loader utility for loading item and level packs.
  <p></p>
 <br>
@@ -145,7 +145,13 @@ showHideInherited();
 <div class="detailBody">
 <code>public function ContentPackLoader(definitions:Array, loaded:Function, done:Function, useSubDomain:Boolean = false)</code><p>
      This constructor takes a list of pack definitions, and two callback functions.
-     Pack definitions should be in the format produced by {</p><span class="label">Parameters</span>
+     Pack definitions should be in the format produced by <code>GameControl.getItemPacks</code>
+     <code>GameControl.getLevelPacks</code>
+          The loader will start loading content packs immediately. Every time a content pack finished
+     processing, the <i>loaded</i> callback will be called, and it will receive either a
+     ContentPack instance for the loaded SWF, or null if the pack failed to load. Finally,
+     after all packs have been processed, the <i>done</i> callback will be called.
+           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">definitions</span>:Array</code> &mdash; Array of content pack definitions.
@@ -172,9 +178,17 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">useSubDomain</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; Optional boolean flag; if true, it will create a separate child
         application domain for the content pack, allowing class redefinition.
-     </td>
+          </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/GameControl.html#getItemPacks()" target="">com.whirled.game.GameControl.getItemPacks()</a>
+<br>
+<a href="../game/GameControl.html#getLevelPacks()" target="">com.whirled.game.GameControl.getLevelPacks()</a>
+</div>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -197,9 +211,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->

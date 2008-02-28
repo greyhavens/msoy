@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,log,_url,_w,_h,_media,_initialized,_isImage,isContentInitialized,getMedia,setMedia,setMediaClass,setMediaObject,willShowNewMedia,showNewMedia,didShowNewMedia,setupVideo,setupSwfOrImage,initLoader,setupBrokenImage,getApplicationDomain,shutdown,getContentWidth,getContentHeight,getMaxContentWidth,getMaxContentHeight,getMediaScaleX,getMediaScaleY,containerDimensionsUpdated,hitTestPoint,toString,getContext,getSecurityDomain,isImage,addListeners,removeListeners,handleIOError,handleProgress,handleVideoSizeKnown,handleVideoError,handleInit,handleComplete,configureMask,updateContentDimensions,contentDimensionsUpdated,getMaskRectangle,updateLoadingProgress,startedLoading,stoppedLoading" name="keywords">
+<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleIOError,handleInit,handleProgress,handleVideoError,handleVideoSizeKnown,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaClass,setMediaObject,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
 <title>com.threerings.flash.MediaContainer</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'MediaContainer - API Documentation';
+				asdocTitle = 'MediaContainer - Whirled API Documentation';
 				var baseRef = '../../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/flash/MediaContainer.html&amp;com/threerings/flash/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/flash/MediaContainer.html&amp;com/threerings/flash/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;MediaContainer</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
@@ -102,15 +102,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#containerDimensionsUpdated()">containerDimensionsUpdated</a>(newWidth:Number, newHeight:Number):void</div>
 <div class="summaryTableDescription">
      Called by MediaWrapper as notification that its size has changed.</div>
-</td><td class="summaryTableOwnerCol">MediaContainer</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getApplicationDomain()">getApplicationDomain</a>():ApplicationDomain</div>
-<div class="summaryTableDescription">
-     Get the application domain being used by this media, or null if
-     none or not applicable.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -642,24 +633,6 @@ showHideInherited();
 <code>protected function didShowNewMedia():void</code><p>
      A place where subclasses can configure things after we've setup new media.
      </p></div>
-<a name="getApplicationDomain()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getApplicationDomain</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getApplicationDomain():ApplicationDomain</code><p>
-     Get the application domain being used by this media, or null if
-     none or not applicable.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>ApplicationDomain</code></td>
-</tr>
-</table>
-</div>
 <a name="getContentHeight()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1338,9 +1311,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->

@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AVRGameControl,com.whirled.AVRGameControl,quests,state,hitPointTester,mobSpriteExporter,getStageSize,getRoomBounds,stageToRoom,roomToStage,setHitPointTester,setMobSpriteExporter,deactivateGame,getRoomId,getPlayerId,isPlayerHere,getPlayerIds,hasControl,requestControl,spawnMob,despawnMob,getAvatarInfo,playAvatarAction,setAvatarState,setAvatarMoveSpeed,setAvatarLocation,setAvatarOrientation" name="keywords">
+<meta content="AVRGameControl,com.whirled.AVRGameControl,hitPointTester,mobSpriteExporter,quests,state,deactivateGame,despawnMob,getAvatarInfo,getPlayerId,getPlayerIds,getRoomBounds,getRoomId,getStageSize,hasControl,isPlayerHere,playAvatarAction,requestControl,roomToStage,setAvatarLocation,setAvatarMoveSpeed,setAvatarOrientation,setAvatarState,setHitPointTester,setMobSpriteExporter,spawnMob,stageToRoom" name="keywords">
 <title>com.whirled.AVRGameControl</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'AVRGameControl - API Documentation';
+				asdocTitle = 'AVRGameControl - Whirled API Documentation';
 				var baseRef = '../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/AVRGameControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/AVRGameControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AVRGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
@@ -104,6 +104,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Create a world game interface.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="AbstractControl.html#addEventListener()">addEventListener</a>(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Registers an event listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -207,6 +215,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="AbstractControl.html#removeEventListener()">removeEventListener</a>(type:String, listener:Function, useCapture:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Unregisters an event listener.</div>
+</td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -300,10 +316,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#event:avatarChanged">avatarChanged</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when something has changed about a player's
+ avatar.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#event:enteredRoom">enteredRoom</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when we've entered our current room.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:gotControl">gotControl</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when this client-side instance of the AVRG
+ has gained "control" over the other client-side instances.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -339,6 +373,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when another player in our current room took up a new location.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:sizeChanged">sizeChanged</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the control has been resized.</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -366,7 +408,7 @@ showHideInherited();
 <div class="detailBody">
 <code>hitPointTester:Function</code>&nbsp;&nbsp;[read-only]<p>
      Returns the AVRG's currently configured hit point tester.
-          {</p><span class="label">Implementation</span>
+          </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get hitPointTester():Function</code>
 <br>
@@ -374,7 +416,7 @@ showHideInherited();
 <span class="label">See also</span>
 </p>
 <div class="seeAlso">
-<a href="../whirled/AVRGameControl.html#setHitPointTester}" target="">setHitPointTester}</a>
+<a href="../whirled/AVRGameControl.html#setHitPointTester()" target="">setHitPointTester()</a>
 </div>
 </div>
 <a name="mobSpriteExporter"></a>
@@ -804,8 +846,10 @@ showHideInherited();
      for mouse purposes and which are not. By default, all non-transparent pixels will
      capture the mouse. The prototype for this method is identical to what the Flash
      API establishes in DisplayObject:
+     <code>
         testHitPoint(x :Number, y :Number, shapeFlag :Boolean) :Boolean
-          {</p><span class="label">Parameters</span>
+     </code>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">tester</span>:Function</code></td>
@@ -814,7 +858,7 @@ showHideInherited();
 <p>
 <span class="label">See also</span>
 </p>
-<div class="seeAlso">DisplayObject.testHitPoint}</div>
+<div class="seeAlso">flash.display.DisplayObject.testHitPoint()</div>
 </div>
 <a name="setMobSpriteExporter()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -879,10 +923,28 @@ showHideInherited();
 </table>
 </div>
 <div class="detailSectionHeader">Event detail</div>
+<a name="event:avatarChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">avatarChanged</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#AVATAR_CHANGED"><code>com.whirled.AVRGameControlEvent.AVATAR_CHANGED</code></a>
+<br><p>
+ Dispatched when something has changed about a player's
+ avatar.
+ 
+ </p><p> An event type dispatched when a something has changed about a player's avatar.
+     key: N/A
+     value: N/A
+          </p></div>
 <a name="event:enteredRoom"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">enteredRoom</td><td class="detailHeaderType">event&nbsp;</td>
+<td class="detailHeaderName">enteredRoom</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -893,6 +955,25 @@ showHideInherited();
  Dispatched when we've entered our current room.
  
  </p></div>
+<a name="event:gotControl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">gotControl</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#GOT_CONTROL"><code>com.whirled.AVRGameControlEvent.GOT_CONTROL</code></a>
+<br><p>
+ Dispatched when this client-side instance of the AVRG
+ has gained "control" over the other client-side instances.
+ 
+ </p><p> An event type dispatched when this client-side instance of the AVRG
+     has gained "control" over the other client-side instances.
+     name: unused
+     value: unused
+          </p></div>
 <a name="event:leftRoom"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -921,9 +1002,10 @@ showHideInherited();
  Dispatched either when somebody in our room entered our current game,
  or somebody playing the game entered our current room.
  
- </p><p> An event type dispatched when we've entered a new room.
+ </p><p> An event type dispatched either when somebody in our room joined our current game,
+     or somebody playing the game entered our current room.
      key: N/A
-     value: the id of the scene we entered
+     value: the oid of the player body
           </p></div>
 <a name="event:playerLeft"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -939,9 +1021,10 @@ showHideInherited();
  Dispatched either when somebody in our room left our current game,
  or somebody playing the game left our current room.
  
- </p><p> An event type dispatched when we leave our current room.
+ </p><p> An event type dispatched either when a player of our game who's also in our
+     current room took up a new location in the scene.
      key: N/A
-     value: N/A
+     value: the oid of the player body
           </p></div>
 <a name="event:playerMoved"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -957,14 +1040,30 @@ showHideInherited();
  Dispatched when another player in our current room took up a new location.
  
  </p></div>
+<a name="event:sizeChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sizeChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/AVRGameControlEvent.html"><code>com.whirled.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#SIZE_CHANGED"><code>com.whirled.AVRGameControlEvent.SIZE_CHANGED</code></a>
+<br><p>
+ Dispatched when the control has been resized.
+ 
+ </p><p> An event type dispatched when the control has been resized.
+     key: N/A
+     value: N/A
+          </p></div>
 <br>
 <br>
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->

@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MessageBundle,com.threerings.util.MessageBundle,_msgmgr,_path,_bundle,_parent,TAINT_CHAR,QUAL_PREFIX,QUAL_SEP,init,getPath,exists,getResourceString,getResourceString,get,getSuffix,xlate,taint,compose,tcompose,qualify,getBundle,getUnqualifiedKey,unescape" name="keywords">
+<meta content="MessageBundle,com.threerings.util.MessageBundle,QUAL_PREFIX,QUAL_SEP,TAINT_CHAR,_msgmgr,_parent,_path,compose,exists,getAll,getAllMapped,getBundle,getPath,getResourceString,getSuffix,getUnqualifiedKey,init,qualify,taint,tcompose,unescape,xlate,get" name="keywords">
 <title>com.threerings.util.MessageBundle</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'MessageBundle - API Documentation';
+				asdocTitle = 'MessageBundle - Whirled API Documentation';
 				var baseRef = '../../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/MessageBundle.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/MessageBundle.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;MessageBundle</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
@@ -50,10 +50,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bundle">_bundle</a> : ResourceBundle<div class="summaryTableDescription"> The resource bundle from which we obtain our messages.</div>
-</td><td class="summaryTableOwnerCol">MessageBundle</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_msgmgr">_msgmgr</a> : <a href="../util/MessageManager.html">MessageManager</a>
@@ -108,6 +104,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getAll()">getAll</a>(prefix:String, includeParent:Boolean = true):Array</div>
+<div class="summaryTableDescription">
+     Get all the messages that begin with the specified prefix.</div>
+</td><td class="summaryTableOwnerCol">MessageBundle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getAllMapped()">getAllMapped</a>(prefix:String, includeParent:Boolean = true):Object</div>
+<div class="summaryTableDescription">
+     Get all the messages and their keys that begin with the specified prefix.</div>
+</td><td class="summaryTableOwnerCol">MessageBundle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getBundle()">getBundle</a>(qualifiedKey:String):String</div>
 <div class="summaryTableDescription">[static]
      Returns the bundle name from a fully qualified message key.</div>
@@ -133,7 +145,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#init()">init</a>(msgmgr:<a href="MessageManager.html">MessageManager</a>, path:String, bundle:ResourceBundle, parent:<a href="MessageBundle.html">MessageBundle</a>):void</div>
+<a class="signatureLink" href="#init()">init</a>(msgmgr:<a href="MessageManager.html">MessageManager</a>, path:String, parent:<a href="MessageBundle.html">MessageBundle</a>):void</div>
 <div class="summaryTableDescription">
      Initializes the message bundle which will obtain localized messages
      from the supplied resource bundle.</div>
@@ -198,15 +210,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#getResourceString()">getResourceString</a>(key:String, reportMissing:Boolean = true):String</div>
 <div class="summaryTableDescription">
-     Adds all messages whose key starts with the specified prefix to the
-     supplied array.</div>
-</td><td class="summaryTableOwnerCol">MessageBundle</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getResourceString()">getResourceString</a>(key:String, reportMissing:Boolean = true):String</div>
-<div class="summaryTableDescription">
      Get a String from the resource bundle, or null if there was an
      error.</div>
 </td><td class="summaryTableOwnerCol">MessageBundle</td>
@@ -249,18 +252,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_bundle"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_bundle</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _bundle:ResourceBundle</code><p> The resource bundle from which we obtain our messages. </p></div>
 <a name="_msgmgr"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_msgmgr</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_msgmgr</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -368,6 +363,66 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getAll()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getAll</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getAll(prefix:String, includeParent:Boolean = true):Array</code><p>
+     Get all the messages that begin with the specified prefix.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">prefix</span>:String</code> &mdash; if true, messages from our parent bundle (and its
+     parent bundle, all the way up the chain will be included).
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">includeParent</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getAllMapped()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getAllMapped</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getAllMapped(prefix:String, includeParent:Boolean = true):Object</code><p>
+     Get all the messages and their keys that begin with the specified prefix.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">prefix</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">includeParent</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
 <a name="getBundle()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -407,38 +462,6 @@ showHideInherited();
 <code>public function getPath():String</code><p>
      Get the path to this bundle.
      </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-</div>
-<a name="getResourceString()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getResourceString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function getResourceString(key:String, reportMissing:Boolean = true):String</code><p>
-     Adds all messages whose key starts with the specified prefix to the
-     supplied array.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">key</span>:String</code> &mdash; if true, messages from our parent bundle (and its
-     parent bundle, all the way up the chain will be included).
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">reportMissing</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
-</tr>
-</table>
-<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -538,7 +561,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function init(msgmgr:<a href="MessageManager.html">MessageManager</a>, path:String, bundle:ResourceBundle, parent:<a href="MessageBundle.html">MessageBundle</a>):void</code><p>
+<code>public function init(msgmgr:<a href="MessageManager.html">MessageManager</a>, path:String, parent:<a href="MessageBundle.html">MessageBundle</a>):void</code><p>
      Initializes the message bundle which will obtain localized messages
      from the supplied resource bundle. The path is provided purely for
      reporting purposes.
@@ -552,12 +575,6 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">path</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">bundle</span>:ResourceBundle</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -734,9 +751,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->

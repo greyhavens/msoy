@@ -4,19 +4,19 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,removeEventListener,getSize,feedback,filter,getHeadShot,setShowButtons,setOccupantsLabel,clearScores,setPlayerScores,setMappedScores,backToWhirled" name="keywords">
+<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,backToWhirled,clearScores,feedback,filter,getHeadShot,getSize,removeEventListener,setMappedScores,setOccupantsLabel,setPlayerScores,setShowButtons" name="keywords">
 <title>com.whirled.game.LocalSubControl</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'LocalSubControl - API Documentation';
+				asdocTitle = 'LocalSubControl - Whirled API Documentation';
 				var baseRef = '../../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/LocalSubControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/LocalSubControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
 <td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;LocalSubControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
@@ -68,7 +68,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#addEventListener()">addEventListener</a>(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
 <div class="summaryTableDescription">
-     </div>
+     
+     Registers an event listener.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -92,6 +93,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="../AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
 <div class="summaryTableDescription">
+     
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractSubControl.html">AbstractSubControl</a></td>
@@ -135,6 +137,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="../AbstractSubControl.html#isConnected()">isConnected</a>():Boolean</div>
 <div class="summaryTableDescription">
+     
      Are we connected and running inside the whirled environment, or has someone just
      loaded up our SWF by itself?
      </div>
@@ -145,7 +148,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#removeEventListener()">removeEventListener</a>(type:String, listener:Function, useCapture:Boolean = false):void</div>
 <div class="summaryTableDescription">
-     </div>
+     
+     Unregisters an event listener.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -247,6 +251,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public override function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</code><p>
+     
+     Registers an event listener.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -414,6 +420,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void</code><p>
+     
+     Unregisters an event listener.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -570,9 +578,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright"> 
-</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!-- -->
+<!--Copyright © 2008 Three Rings Design, Inc.-->
