@@ -8,6 +8,7 @@ import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
+import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 
 import flash.events.Event;
@@ -20,12 +21,13 @@ import flash.system.LoaderContext;
 
 import com.threerings.util.ParameterUtil;
 
-[SWF(width="200", height="200")]
+[SWF(width="0", height="0")]
 public class Preloader extends Sprite
 {
     public function Preloader ()
     {
         stage.scaleMode = StageScaleMode.NO_SCALE;
+        stage.align = StageAlign.TOP_LEFT;
 
         drawProgress(0, 100);
 
