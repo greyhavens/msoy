@@ -73,7 +73,9 @@ public class index extends MsgsEntryPoint
             if (_galaxy == null) {
                 _galaxy = new GalaxyPanel();
             }
-            setContent(_galaxy);
+            if (getContent() != _galaxy) {
+                setContent(_galaxy);
+            }
             _galaxy.setArgs(args);
         }
     }
