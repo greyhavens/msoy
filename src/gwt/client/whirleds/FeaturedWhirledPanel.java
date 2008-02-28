@@ -10,14 +10,11 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.data.GroupCard;
 
 import client.shell.Application;
-import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.MsoyUI;
@@ -70,6 +67,4 @@ public class FeaturedWhirledPanel extends VerticalPanel
 
     protected SmartTable _info;
     protected SimplePanel _flashPanel;
-
-    protected static final SimpleDateFormat EST_FMT = new SimpleDateFormat("MMM dd, yyyy");
 }
