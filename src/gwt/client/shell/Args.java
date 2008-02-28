@@ -22,7 +22,7 @@ public class Args
             if (ii > 0) {
                 builder.append(ARG_SEP);
             }
-            builder.append(args[ii]);
+            builder.append(escape(args[ii]));
         }
         return builder.toString();
     }
@@ -38,7 +38,7 @@ public class Args
             if (ii > 0) {
                 builder.append(ARG_SEP);
             }
-            builder.append(args.get(ii));
+            builder.append(escape(args.get(ii).toString()));
         }
         return builder.toString();
     }
@@ -124,10 +124,10 @@ public class Args
         do {
             int didx = token.indexOf(ARG_SEP);
             if (didx == -1) {
-                _args.add(token);
+                _args.add(unescape(token));
                 token = null;
             } else {
-                _args.add(token.substring(0, didx));
+                _args.add(unescape(token.substring(0, didx)));
                 token = token.substring(didx+1);
             }
         } while (token != null && token.length() > 0);
@@ -139,6 +139,18 @@ public class Args
         return _args.toString();
     }
 
+    // Since we're using _ for our own purposes, encode it as %- and thus also % as %%
+    protected static String escape (String str)
+    {
+        return str.replaceAll("%", "%%").replaceAll("_", "%-");
+    }
+
+    protected static String unescape (String str)
+    {
+        return str.replaceAll("%-", "_").replaceAll("%%", "%");
+    }
+    
+    
     protected List _args = new ArrayList();
 
     protected static final String ARG_SEP = "_";
