@@ -12,8 +12,6 @@ import com.threerings.util.Config;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
-
 /**
  * Dispatched when a piece of media is bleeped or unbleeped.
  * This is dispatched on the 'config' object.
@@ -269,11 +267,6 @@ public class Prefs
     private static function staticInit () :void
     {
         var lastBuild :String = (config.getValue("lastBuild", null) as String);
-        if (lastBuild == null) {
-            // TEMP: added 2007-03-21, can be removed after a while.
-            // We need to ensure that all cached scenes are no more.
-            (new SharedObjectSceneRepository()).TEMPClearSceneCache();
-        }
 
         // update our stored last build time
         if (lastBuild != DeploymentConfig.buildTime) {
@@ -286,6 +279,6 @@ public class Prefs
 
     staticInit();
 
-    private static const log :Log = Log.getLog(Prefs);
+    //private static const log :Log = Log.getLog(Prefs);
 }
 }
