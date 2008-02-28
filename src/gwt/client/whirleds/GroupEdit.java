@@ -100,7 +100,8 @@ public class GroupEdit extends FlexTable
         footer.add(WidgetUtil.makeShim(5, 5));
         footer.add(new Button(CWhirleds.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WHIRLEDS, Args.compose("d", _group.groupId));
+                Application.go(Page.WHIRLEDS, _group.groupId == 0 ? "" :
+                               Args.compose("d", _group.groupId));
             }
         }));
         int frow = getRowCount();
