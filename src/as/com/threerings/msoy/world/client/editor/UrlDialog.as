@@ -28,7 +28,7 @@ public class UrlDialog extends FloatingPanel
     {
         super.buttonClicked(buttonId);
         if (buttonId == OK_BUTTON) {
-            _callback(_url.text);
+            _callback(_url.text, _tip.text);
         }
     }
 
@@ -46,10 +46,20 @@ public class UrlDialog extends FloatingPanel
         _url.maxWidth = 300;
         addChild(_url);
 
+        label = new Label();
+        label.text = Msgs.EDITING.get("l.urlTip");
+        addChild(label);
+
+        _tip = new TextInput();
+        _tip.percentWidth = 100;
+        _tip.maxWidth = 300;
+        addChild(_tip);
+
         addButtons(OK_BUTTON, CANCEL_BUTTON);
     }
 
     protected var _callback :Function;
     protected var _url :TextInput;
+    protected var _tip :TextInput;
 }
 }

@@ -22,6 +22,7 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.client.MemberService;
 
@@ -360,9 +361,14 @@ public class RoomEditorController
     }
 
     /** Starts editing the URL. */
-    public function actionTargetLink (url :String) :void
+    public function actionTargetLink (url :String, tip :String) :void
     {
-        setTargetAction(FurniData.ACTION_URL, url);
+        var actionData :String = url;
+        tip = StringUtil.trim(tip);
+        if (!StringUtil.isBlank(tip)) {
+            actionData += "||" + tip;
+        }
+        setTargetAction(FurniData.ACTION_URL, actionData);
     }
 
     /** Makes the target into a regular furni. */

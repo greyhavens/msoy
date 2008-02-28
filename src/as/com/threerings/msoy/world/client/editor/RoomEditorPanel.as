@@ -171,8 +171,9 @@ public class RoomEditorPanel extends FloatingPanel
      */
     protected function makeUrl () :void
     {
-        var dialog :UrlDialog = new UrlDialog(_controller.ctx, function (url :String) :void {
-                _controller.actionTargetLink(url);
+        var dialog :UrlDialog = new UrlDialog(_controller.ctx,
+            function (url :String, tip :String) :void {
+                _controller.actionTargetLink(url, tip);
                 swapButtons(_middle, _makeLinkButton, _removeLinkButton);
             });
     }
