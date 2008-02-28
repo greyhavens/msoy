@@ -16,12 +16,11 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.data.GroupCard;
 
-import client.util.MsoyUI;
-
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.WorldClient;
+import client.util.MsoyUI;
 
 /**
  * Displays info on a featured Whirled.
@@ -31,35 +30,46 @@ public class FeaturedWhirledPanel extends VerticalPanel
     public FeaturedWhirledPanel (GroupCard[] whirleds)
     {
         setStyleName("featuredWhirled");
+        _whirleds = whirleds;
 
-        // TODO: next, prev
-        final GroupCard group = whirleds[0];
-        SimplePanel panel = new SimplePanel();
-        add(panel);
-        WorldClient.displayFeaturedPlace(group.homeSceneId, panel);
+        add(_flashPanel = new SimplePanel());
 
-        SmartTable info = new SmartTable(0, 5);
-        info.setWidth("100%");
-        info.setText(0, 0, group.name.toString(), 1, "Name");
-        Widget link = Application.groupViewLink(
-            CWhirleds.msgs.featuredMoreInfo(), group.name.getGroupId());
-        info.setWidget(0, 1, link, 1, "MoreInfo");
-        info.setWidget(0, 2, new Button(CWhirleds.msgs.featuredEnter(), new ClickListener() {
+        add(_info = new SmartTable(0, 5));
+        _info.setWidth("100%");
+        _info.setWidget(0, 0, MsoyUI.createPrevNextButtons(new ClickListener() {
+            public void onClick (Widget sender) {
+                showWhirled((_selidx+_whirleds.length+1) % _whirleds.length);
+            }
+        }, new ClickListener() {
+            public void onClick (Widget sender) {
+                showWhirled((_selidx+1) % _whirleds.length);
+            }
+        }));
+
+        showWhirled(0);
+    }
+
+    protected void showWhirled (int index)
+    {
+        final GroupCard group = _whirleds[_selidx = index];
+        WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+
+        int col = 1;
+        Widget link = Application.groupViewLink(group.name.toString(), group.name.getGroupId());
+        _info.setWidget(0, col++, link, 1, "Name");
+        _info.getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
+        _info.setWidget(0, col++, new Button(CWhirleds.msgs.featuredEnter(), new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WORLD, "g" + group.name.getGroupId());
             }
         }));
-        info.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        add(info);
     }
 
-    protected static String truncate (String descrip)
-    {
-        return (descrip.length() <= MAX_DESCRIP_LENGTH) ? descrip :
-            descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
-    }
+    protected GroupCard[] _whirleds;
+    protected int _selidx;
 
-    protected static final int MAX_DESCRIP_LENGTH = 100;
+    protected SmartTable _info;
+    protected SimplePanel _flashPanel;
 
     protected static final SimpleDateFormat EST_FMT = new SimpleDateFormat("MMM dd, yyyy");
 }
