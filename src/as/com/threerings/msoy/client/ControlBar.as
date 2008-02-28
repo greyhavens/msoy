@@ -208,8 +208,8 @@ public class ControlBar extends HBox
         _spacer.percentWidth = 100;
 
         _chatBtn = new CommandButton();
-        _chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
-        _chatBtn.setCommand(MsoyController.CHAT_PREFS);
+        _chatBtn.toolTip = Msgs.GENERAL.get("i.channel"); // i.chatPrefs
+        _chatBtn.setCommand(MsoyController.POP_CHANNEL_MENU); // MsoyController.CHAT_PREFS
         _chatBtn.styleName = "controlBarButtonChat";
 
         _volBtn = new CommandButton();
@@ -246,13 +246,13 @@ public class ControlBar extends HBox
         addGroupChild(_spacer, [ UI_SIDEBAR ]);
 
         // add our standard control bar features
+        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         _chatControl = null;
         _chatControl = new ChatControl(
             _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT ]);
+        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
 
         // add our various control buttons
         addControlButtons();

@@ -195,6 +195,8 @@ public class WorldController extends MsoyController
     public function handlePopChannelMenu (trigger :Button) :void
     {
         var menuData :Array = [];
+        menuData.push({ label: Msgs.GENERAL.get("i.chatPrefs"), command: CHAT_PREFS });
+
         if (!(_wctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
             if (!Prefs.getSlidingChatHistory()) {
                 var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
@@ -275,7 +277,7 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        CommandMenu.createMenu(menuData).popUpIn(Application.application.screen);
+        CommandMenu.createMenu(menuData.reverse()).popUpIn(Application.application.screen);
     }
 
     /**

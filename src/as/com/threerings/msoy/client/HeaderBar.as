@@ -162,12 +162,6 @@ public class HeaderBar extends HBox
         _tabsContainer.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_tabsContainer);
 
-        var channelBtn :CommandButton = new CommandButton();
-        channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, channelBtn);
-        channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
-        channelBtn.styleName = "headerBarButtonChannel";
-        _tabsContainer.addChild(channelBtn);
-
         _tabsContainer.addChild(_tabs);
 
         _owner = new HBox();

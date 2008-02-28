@@ -353,12 +353,6 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
 }
 
-.headerBarButtonChannel {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_channel.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_channel_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_channel_down.png");
-}
-
 .controlBarSpacer { 
   backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
   backgroundSize: "100%";
