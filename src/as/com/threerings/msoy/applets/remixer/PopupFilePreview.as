@@ -66,16 +66,18 @@ public class PopupFilePreview extends TitleWindow
         controlBox.addChild(makeHeader("Change..."));
         controlBox.addChild(makeBullet(
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
-        if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
-            controlBox.addChild(makeBullet(
-                new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
-        }
+        controlBox.addChild(makeBullet(
+            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
         var filenames :Array = ctx.pack.getFilenames();
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
             controlBox.addChild(makeBullet(
                 new CommandLinkButton("Use an existing file from the remix...",
                 handleChooseExistingFile, [ filenames ])));
+        }
+        if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
+            controlBox.addChild(makeBullet(
+                new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
         }
 
         previewBox.addChild(makeHeader("Preview"));
@@ -147,6 +149,12 @@ public class PopupFilePreview extends TitleWindow
     {
         var uploader :Uploader = new Uploader(_serverURL, getFilters());
         uploader.addEventListener(Event.COMPLETE, handleFileChosen);
+    }
+
+    protected function handleChooseURL () :void
+    {
+        var ufc :URLFileChooser = new URLFileChooser();
+        ufc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
     protected function handleChooseExistingFile (filenames :Array) :void
