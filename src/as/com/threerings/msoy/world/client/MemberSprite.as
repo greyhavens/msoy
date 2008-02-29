@@ -76,20 +76,6 @@ public class MemberSprite extends ActorSprite
     }
 
     // from ActorSprite
-    override public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
-    {
-        super.messageReceived(name, arg, isAction);
-
-        // TODO: remove someday
-        // TEMP: dispatch an old-style avatar action notification
-        // Deprecated 2007-03-13
-        // Commented out 2008-02-11. We should be good.
-        //if (isAction) {
-        //    callUserCode("action_v1", name); // no arg
-        //}
-    }
-
-    // from ActorSprite
     override public function getDesc () :String
     {
         return "m.avatar";
