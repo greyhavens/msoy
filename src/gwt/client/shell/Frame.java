@@ -138,9 +138,11 @@ public class Frame
             _bar.setCloseVisible(false);
         }
 
-        // if we're on a "world" page, go to the landing page
-        if (History.getToken().startsWith(Page.WORLD)) {
-            Application.go(Page.ME, "");
+        // if we're on a "world" page, go to a landing page
+        String curToken = History.getToken();
+        if (curToken.startsWith(Page.WORLD)) {
+            // if we were in a game, go to the games page, otherwise go to me
+            Application.go(curToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
         }
     }
 
