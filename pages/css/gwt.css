@@ -431,7 +431,7 @@ img, embed, applet, object {
 }
 
 .pagedGrid .Footer {
-  border-top: 1px dotted;
+  border-top: 1px solid #DADADA;
   padding-top: 2px;
 }
 
@@ -490,8 +490,8 @@ img, embed, applet, object {
 }
 
 .dottedGrid .Grid {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
 }
 
 .dottedGrid .Grid .Cell {
@@ -509,8 +509,8 @@ img, embed, applet, object {
 }
 
 .dottedGrid .Empty {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
 }
 
 /** Configuration for our bordered popup window */
@@ -963,12 +963,12 @@ img, embed, applet, object {
 }
 
 .contentFooterPanel .Content {
-  border-left: 1px dotted;
-  border-right: 1px dotted;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
 }
 
 .contentFooterPanel .Footer {
-  border-top: 1px dotted;
+  border-top: 1px solid #DADADA;
   padding-top: 2px;
   font-size: 12px;
   height: 20px;
