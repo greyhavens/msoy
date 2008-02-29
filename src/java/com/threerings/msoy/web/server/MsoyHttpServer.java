@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponseWrapper;
+
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.NCSARequestLog;
@@ -26,6 +29,8 @@ import org.mortbay.jetty.servlet.ServletHolder;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -60,7 +65,13 @@ public class MsoyHttpServer extends Server
         context.setWelcomeFiles(new String[] { "index.html" });
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
 
-        context.addServlet(new ServletHolder(new MsoyDefaultServlet()), "/*");
+        // if -Dthrottle=true is set, serve up files as if we were on a slow connection
+        if (Boolean.getBoolean("throttle")) {
+            log.info("NOTE: Serving static media via throttled servlet.");
+            context.addServlet(new ServletHolder(new MsoyThrottleServlet()), "/*");
+        } else {
+            context.addServlet(new ServletHolder(new MsoyDefaultServlet()), "/*");
+        }
 
         HandlerCollection handlers = new HandlerCollection();
         handlers.addHandler(contexts);
@@ -90,6 +101,96 @@ public class MsoyHttpServer extends Server
                 super.doGet(req, rsp);
             }
         }
+    }
+
+    protected static class MsoyThrottleServlet extends MsoyDefaultServlet
+    {
+        protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
+            throws ServletException, IOException {
+            HttpServletResponse rsp2 = new HttpServletResponseWrapper(rsp) {
+                @Override
+                public ServletOutputStream getOutputStream () throws IOException {
+                    if (_out == null) {
+                        _out = new ThrottleOutputStream(super.getOutputStream());
+                    }
+                    return _out;
+                }
+                protected ServletOutputStream _out;
+            };
+            super.doGet(req, rsp2);
+        }
+    }
+
+    protected static class ThrottleOutputStream extends ServletOutputStream
+    {
+        public ThrottleOutputStream (ServletOutputStream out) {
+            _out = out;
+        }
+
+        public void write (int i) throws IOException {
+            _out.write(i);
+        }
+
+        public void write (byte[] b, int off, int len) throws IOException {
+            while (len > 0) {
+                int toWrite = Math.min(len, 1024);
+                _out.write(b, off, toWrite);
+                off += toWrite;
+                len -= toWrite;
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ie) {
+                }
+            }
+        }
+
+        public void print (boolean arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (char arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (double arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (float arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (int arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (long arg) throws IOException {
+            _out.print(arg);
+        }
+        public void print (String arg) throws IOException {
+            _out.print(arg);
+        }
+        public void println () throws IOException {
+            _out.println();
+        }
+        public void println (boolean arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (char arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (double arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (float arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (int arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (long arg) throws IOException {
+            _out.println(arg);
+        }
+        public void println (String arg) throws IOException {
+            _out.println(arg);
+        }
+
+        protected ServletOutputStream _out;
     }
 
     protected static final String[] SERVLET_NAMES = {
