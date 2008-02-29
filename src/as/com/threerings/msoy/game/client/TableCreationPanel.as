@@ -157,7 +157,7 @@ public class TableCreationPanel extends HBox
 
         _buttonBox.addChild(
             new CommandButton(Msgs.GAME.get("b.create"), createGame, [ tconfigger, gconf ]));
-        _buttonBox.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.hideCreateGame));
+        _buttonBox.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
     }
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void

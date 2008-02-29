@@ -524,13 +524,13 @@ public class WorldController extends MsoyController
             return;
         }
 
-        // if we're not in a scene, go to our home scene while we're displaying the lobby (but not
-        // if we're in the standalone client because it's just pointless slowdown)
-        if (Capabilities.playerType != "StandAlone") {
-            if (_wctx.getSceneDirector().getScene() == null) {
-                _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());
-            }
-        }
+//         // if we're not in a scene, go to our home scene while we're displaying the lobby (but not
+//         // if we're in the standalone client because it's just pointless slowdown)
+//         if (Capabilities.playerType != "StandAlone") {
+//             if (_wctx.getSceneDirector().getScene() == null) {
+//                 _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());
+//             }
+//         }
 
         // now display the lobby interface
         _wctx.getGameDirector().displayLobby(gameId, ghost, gport);
@@ -642,6 +642,17 @@ public class WorldController extends MsoyController
         if (_wctx.getSceneDirector().getScene() != null) {
             displayPageGWT("world", "s" + _wctx.getSceneDirector().getScene().getId());
         }
+    }
+
+    /**
+     * If we're joining a game lobby and have not yet logged onto the world server, we start the
+     * game lobby connection process immediately instead of waiting until we're connected to the
+     * world server. This short-circuits the normal logon-go process.
+     */
+    public function preLogonGo (params :Object) :void
+    {
+        _didFirstLogonGo = true;
+        goToPlace(params);
     }
 
     /**

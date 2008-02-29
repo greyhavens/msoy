@@ -34,14 +34,11 @@ import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
-import com.threerings.msoy.game.client.FloatingTableDisplay;
-
 public class TopPanel extends Canvas 
     implements LocationObserver
 {
     public static const DECORATIVE_MARGIN_HEIGHT :int = 0;
 
-    public static const LEFT_PANEL_WIDTH :int = 700;
     public static const RIGHT_SIDEBAR_WIDTH :int = 300;
 
     /**
@@ -151,18 +148,12 @@ public class TopPanel extends Canvas
     // from LocationObserver
     public function locationMayChange (placeId :int) :Boolean
     {
-        // currently there are no side panel types that should survive a place change
-        clearLeftPanel(null);
         return true;
     }
 
     // from LocationObserver
     public function locationDidChange (place :PlaceObject) :void
     {
-        // if we just moved to a game lobby make sure the current floating table display is cleared
-        if (place is GameObject) {
-            clearTableDisplay();
-        }
     }
 
     // from LocationObserver
@@ -234,9 +225,9 @@ public class TopPanel extends Canvas
     public function getPlaceViewBounds () :Rectangle
     {
         var bounds :Rectangle = new Rectangle();
-        bounds.x = getLeftPanelWidth();
+        bounds.x = 0;
         bounds.y = HeaderBar.HEIGHT;
-        bounds.width = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
+        bounds.width = stage.stageWidth - getRightPanelWidth();
         bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
         if (padVertical(_placeBox.getPlaceView())) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
@@ -260,53 +251,6 @@ public class TopPanel extends Canvas
     public function getHeaderBar () :HeaderBar
     {
         return _headerBar;
-    }
-
-    /**
-     * Configures our left side panel. Any previous left side panel will be cleared.
-     */
-    public function setLeftPanel (side :UIComponent) :void
-    {
-        // make sure we're not minimized
-        if (_ctx.getMsoyClient().isMinimized()) {
-            _ctx.getMsoyClient().restoreClient();
-        }
-
-        clearLeftPanel(null);
-        _leftPanel = side;
-        _leftPanel.includeInLayout = false;
-        _leftPanel.width = LEFT_PANEL_WIDTH;
-
-        if (_tableDisp != null) {
-            _tableDisp.x += _leftPanel.width;
-        }
-
-        minimizePlaceView();
-
-        addChild(_leftPanel); // add to end
-        layoutPanels();
-    }
-
-    /**
-     * Clear the specified left side panel, or null to clear any.
-     */
-    public function clearLeftPanel (side :UIComponent) :void
-    {
-        if ((_leftPanel != null) && (side == null || side == _leftPanel)) {
-            if (_tableDisp != null) {
-                _tableDisp.x -= _leftPanel.width;
-                if (_tableDisp.x < 0) {
-                    _tableDisp.x = 0;
-                }
-            }
-
-            removeChild(_leftPanel);
-            _leftPanel = null;
-
-            restorePlaceView();
-
-            layoutPanels();
-        }
     }
 
     /**
@@ -342,39 +286,6 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Sets the current table display
-     */
-    public function setTableDisplay (tableDisp :FloatingTableDisplay) :void
-    {
-        if (tableDisp != _tableDisp) {
-            clearTableDisplay();
-            _tableDisp = tableDisp;
-            _tableDisp.x = 0;
-            _tableDisp.y = DECORATIVE_MARGIN_HEIGHT + HeaderBar.HEIGHT;
-        }
-    }
-
-    /**
-     * Gets the current table display
-     */
-    public function getTableDisplay () :FloatingTableDisplay
-    {
-        return _tableDisp;
-    }
-
-    /**
-     * Clears the current table display - should only be used if this table display should be
-     * destroyed (i.e. the game started, or the another table was joined)
-     */
-    public function clearTableDisplay () :void
-    {
-        if (_tableDisp != null) {
-            _tableDisp.shutdown();
-            _tableDisp = null;
-        }
-    }
-
-    /**
      * Set the panel that should be shown along the bottom. The panel should have an explicit
      * height.
      */
@@ -406,11 +317,6 @@ public class TopPanel extends Canvas
             _bottomComp = null;
             layoutPanels();
         }
-    }
-
-    public function getLeftPanelWidth () :int
-    {
-        return (_leftPanel == null ? 0 : _leftPanel.width);
     }
 
     public function getRightPanelWidth () :int
@@ -461,11 +367,9 @@ public class TopPanel extends Canvas
 
     protected function miniWillChange (event :ValueEvent) :void
     {
-        // clear out our left panel if we are about to be minimized
         if (event.value as Boolean) {
-            clearLeftPanel(null);
             minimizePlaceView();
-        } else if (_leftPanel == null) {
+        } else {
             restorePlaceView();
         }
     }
@@ -515,26 +419,17 @@ public class TopPanel extends Canvas
             return;
         }
 
-        if (_leftPanel != null) {
-            _leftPanel.setStyle("top", 0);
-            _leftPanel.setStyle("bottom", getBottomPanelHeight());
-            _leftPanel.setStyle("left", 0);
-            _leftPanel.width = LEFT_PANEL_WIDTH;
-            _controlBar.setStyle("left", _leftPanel.width);
-            _headerBar.setStyle("left", _leftPanel.width);
-        } else {
-            _controlBar.setStyle("left", 0);
-            _headerBar.setStyle("left", 0);
-        }
+        _controlBar.setStyle("left", 0);
+        _headerBar.setStyle("left", 0);
 
         if (_rightPanel != null) {
             _rightPanel.setStyle("top", HeaderBar.HEIGHT);
             _rightPanel.setStyle("right", 0);
             _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
 
-            // if we have no place view currently and we have no left panel, stretch it all the 
-            // way to the left.  Otherwise, let it be as wide as it wants to be.
-            if (_placeBox.parent == this || _leftPanel != null) {
+            // if we have no place view currently, stretch it all the way to the left; otherwise
+            // let it be as wide as it wants to be
+            if (_placeBox.parent == this) {
                 _rightPanel.clearStyle("left");
             } else {
                 _rightPanel.setStyle("left", 0);
@@ -574,7 +469,7 @@ public class TopPanel extends Canvas
             return;
         }
 
-        var w :int = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
+        var w :int = stage.stageWidth - getRightPanelWidth();
         var h :int = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
         var top :int = HeaderBar.HEIGHT;
         if (padVertical(_placeBox.getPlaceView())) {
@@ -591,13 +486,13 @@ public class TopPanel extends Canvas
         bottom += ControlBar.HEIGHT;
         h -= ControlBar.HEIGHT;
 
-        var left :int = getLeftPanelWidth();
+        var left :int = 0;
         if (_chat != null) {
             left += _chatBounds.width - SLIDE_CHAT_OVERLAP;
             w -= _chatBounds.width - SLIDE_CHAT_OVERLAP;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
-            _chat.setStyle("left", getLeftPanelWidth());
+            _chat.setStyle("left", 0);
             _chat.setStyle("right", getRightPanelWidth() + w - SLIDE_CHAT_OVERLAP);
         }
         _placeBox.setStyle("top", top);
@@ -622,9 +517,6 @@ public class TopPanel extends Canvas
     /** The box that will hold the placeview. */
     protected var _placeBox :PlaceBox;
 
-    /** The current left panel component. */
-    protected var _leftPanel :UIComponent;
-
     /** The current right panel component. */
     protected var _rightPanel :UIComponent;
 
@@ -642,9 +534,6 @@ public class TopPanel extends Canvas
 
     /** Storage for a GUI element corresponding to decorative lines. */
     protected var _decorativeBar :Canvas;
-
-    /** the currently active table display */
-    protected var _tableDisp :FloatingTableDisplay;
 
     /** A flag to indicate if we're working in mini-view or not. */
     protected var _minimized :Boolean = false;

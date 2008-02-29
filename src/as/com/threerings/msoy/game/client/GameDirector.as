@@ -65,7 +65,7 @@ public class GameDirector extends BasicDirector
 
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).showLobbyUI();
+                LobbyGameLiaison(_liaison).showLobby();
             } else {
                 _liaison.shutdown();
                 _liaison = null;
@@ -221,7 +221,7 @@ public class GameDirector extends BasicDirector
     {
         if (showLobby) {
             LobbyGameLiaison(_liaison).clearGame();
-            LobbyGameLiaison(_liaison).showLobbyUI();
+            LobbyGameLiaison(_liaison).showLobby();
         } else {
             // go back to our previous location
             _wctx.getMsoyController().handleMoveBack();

@@ -20,6 +20,7 @@ import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -53,10 +54,12 @@ public class LobbyGameLiaison extends GameLiaison
         // display feedback indicating that we're locating their game
         var loading :HBox = new HBox();
         loading.styleName = "lobbyLoadingBox";
-        loading.width = LobbyPanel.LOBBY_PANEL_WIDTH;
-        loading.percentHeight = 100;
-        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.locating_game"), "topLevelLabel"));
-        _wctx.getTopPanel().setLeftPanel(loading);
+        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("m.locating_game")));
+        _loading = new FloatingPanel(ctx, Msgs.GAME.get("t.locating_game"));
+        _loading.addChild(loading);
+        _wctx.getTopPanel().callLater(function () :void {
+            _loading.open();
+        });
     }
 
     /**
@@ -75,9 +78,9 @@ public class LobbyGameLiaison extends GameLiaison
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // some failure cases are innocuous, and should be followed up by a display of the 
-            // lobby - if we really are hosed, joinLobby() will cause the liaison to shut down.
+            // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
             _wctx.getWorldController().restoreSceneURL();
-            showLobbyUI();
+            joinLobby();
         }, gotPlayerGameOid);
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
@@ -104,15 +107,22 @@ public class LobbyGameLiaison extends GameLiaison
         return (ctrl == null) ? null : (ctrl.getPlaceConfig() as MsoyGameConfig);
     }
 
-    public function showLobbyUI () :void
+    /**
+     * Displays the lobby for the game for which we liaise. If the lobby is already showing, this
+     * is a NOOP.
+     */
+    public function showLobby () :void
     {
-        if (_lobby != null) {
-            _lobby.restoreLobbyUI();
-        } else {
+        if (_lobby == null) {
             joinLobby();
-        }
+        } // otherwise it's already showing
     }
 
+    /**
+     * Attempst to go right into a game based on the supplied mode.
+     *
+     * @see LobbyCodes
+     */
     public function playNow (mode :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
@@ -138,16 +148,22 @@ public class LobbyGameLiaison extends GameLiaison
         lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
     }
 
+    /**
+     * Shuts down any active lobby and enters the specified game.
+     */
     public function enterGame (gameOid :int) :void
     {
+        // note our game oid and enter the game location
         _gameOid = gameOid;
         _gctx.getLocationDirector().moveTo(gameOid);
 
+        // shut our lobby down now that we're entering the game
+        if (_lobby != null) {
+            _lobby.shutdown();
+        }
+
         // make a note what game we're playing, for posterity
         _wctx.getGameDirector().setMostRecentLobbyGame(_gameId);
-
-        // clear out our lobby side panel in case it has not been cleared already
-        _wctx.getTopPanel().clearLeftPanel(null);
     }
 
     /**
@@ -169,6 +185,13 @@ public class LobbyGameLiaison extends GameLiaison
             _lobby.forceShutdown();
         }
         _wctx.getLocationDirector().removeLocationObserver(_worldLocObs);
+
+        // clear out our loading display if it's lingering around for some reason
+        if (_loading != null) {
+            _loading.close();
+            _loading = null;
+        }
+
         super.shutdown();
     }
 
@@ -199,7 +222,6 @@ public class LobbyGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        _wctx.getTopPanel().clearTableDisplay();
         if (_enterNextGameDirect) {
             _enterNextGameDirect = false;
             _wctx.getGameDirector().enterGame(gameOid);
@@ -211,6 +233,10 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function joinLobby () :void
     {
+        if (_lobby != null) { // sanity check
+            log.warning("Requested to join lobby but we're already joined.");
+            return;
+        }
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
@@ -234,6 +260,11 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function gotLobbyOid (result :Object) :void
     {
+        if (_loading != null) {
+            _loading.close();
+            _loading = null;
+        }
+
         // this will create a panel and add it to the side panel on the top level
         _lobby = new LobbyController(_gctx, int(result), _mode, lobbyCleared);
 
@@ -249,7 +280,7 @@ public class LobbyGameLiaison extends GameLiaison
         var gameOid :int = int(result);
         if (gameOid == -1) {
             // player isn't currently playing - show the lobby instead
-            showLobbyUI();
+            joinLobby();
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
@@ -257,21 +288,26 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    protected function lobbyCleared (inGame :Boolean, closedByUser :Boolean) :void
+    protected function lobbyCleared (closedByUser :Boolean) :void
     {
-        // if we're not about to go into a game, shutdown, otherwise stick around
-        if (!_shuttingDown && !inGame && _gameOid == 0) {
-            shutdown();
-            // we may be being closed due to navigation away from the lobby URL, so we don't want
-            // to mess with the URL in that circumstance; only if the player pressed the close box
-            if (closedByUser) {
-                // either restore our current scene URL or go home if we have no scene
-                if (_wctx.getSceneDirector().getScene() == null) {
-                    _wctx.getWorldController().handleGoScene(
-                        _wctx.getMemberObject().getHomeSceneId());
-                } else {
-                    _wctx.getWorldController().restoreSceneURL();
-                }
+        _lobby = null;
+
+        // if we're about to enter a game, or already shutting down, stop her
+        if (_gameOid != 0 || _shuttingDown) {
+            return;
+        }
+        // otherwise shut ourselves down
+        shutdown();
+
+        // we may be being closed due to navigation away from the lobby URL, so we don't want to
+        // mess with the URL in that circumstance; only if the player pressed the close box
+        if (closedByUser) {
+            // if we have no scene (meaning we went right into a game and now they've canceled
+            // that, close the client and take them back to the Games section
+            if (_wctx.getSceneDirector().getScene() == null) {
+                _wctx.getWorldClient().closeClient();
+            } else {
+                _wctx.getWorldController().restoreSceneURL();
             }
         }
     }
@@ -288,6 +324,9 @@ public class LobbyGameLiaison extends GameLiaison
     /** Listens for world location changes. */
     protected var _worldLocObs :LocationAdapter =
         new LocationAdapter(null, worldLocationDidChange, null);
+
+    /** Displays something while we're connecting to the game server. */
+    protected var _loading :FloatingPanel;
 
     /** Our active lobby, if we have one. */
     protected var _lobby :LobbyController;

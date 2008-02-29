@@ -54,7 +54,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 
 /**
  * Dispatched when the client is minimized or unminimized.
- * 
+ *
  * @eventType com.threerings.msoy.client.MsoyClient.MINI_WILL_CHANGE
  */
 [Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
@@ -62,7 +62,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 /**
  * Dispatched when the client is known to be either embedded or not. This happens shortly after the
  * client is initialized.
- * 
+ *
  * @eventType com.threerings.msoy.client.MsoyClient.EMBEDDED_STATE_KNOWN
  */
 [Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
@@ -105,7 +105,7 @@ public /*abstract*/ class MsoyClient extends Client
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
-        
+
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -239,7 +239,7 @@ public /*abstract*/ class MsoyClient extends Client
             Log.getLog(this).warning("triggerFlashEvent failed: " + err);
         }
     }
-     
+
     /**
      * Called just before we logon to a server.
      */
@@ -278,7 +278,7 @@ public /*abstract*/ class MsoyClient extends Client
     /**
      * Exposed to javascript so that it may let us know when we've been pushed out of the way.
      */
-    protected function externalSetMinimized (minimized :Boolean) :void   
+    protected function externalSetMinimized (minimized :Boolean) :void
     {
         dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
     }

@@ -16,9 +16,9 @@ import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.util.CommandEvent;
-
 import com.threerings.flex.CommandButton;
+import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
@@ -38,7 +38,7 @@ public class FloatingPanel extends TitleWindow
     /**
      * Create a Floating Panel.
      */
-    public function FloatingPanel (ctx :MsoyContext, title :String)
+    public function FloatingPanel (ctx :MsoyContext, title :String = "")
     {
         _ctx = ctx;
         this.title = title;
@@ -47,8 +47,9 @@ public class FloatingPanel extends TitleWindow
         // showCloseButton=true, which we allow subclasses to do with convenience.
         addEventListener(CloseEvent.CLOSE, handleClose);
 
-        // add a listener to handle command events we generate
-        addEventListener(CommandEvent.COMMAND, handleCommand);
+        // add a listener to handle command events we generate (we use priority -1 so that if a
+        // controller is listening to this panel directly, it will get the event first)
+        addEventListener(CommandEvent.COMMAND, handleCommand, false, -1);
     }
 
     /**
@@ -62,14 +63,12 @@ public class FloatingPanel extends TitleWindow
     public function open (modal :Boolean = false, parent :DisplayObject = null,
                           avoid :DisplayObject = null) :void
     {
-        if (parent == null) {
-            parent = _ctx.getTopPanel();
-        }
-        _parent = parent;
+        // fall back to the top panel if no explicit parent was provided
+        _parent = (parent == null) ? _ctx.getTopPanel() : parent;
 
         // TODO: avoiding
 
-        PopUpManager.addPopUp(this, parent, modal);
+        PopUpManager.addPopUp(this, _parent, modal);
         if (avoid == null) {
             PopUpManager.centerPopUp(this);
         }
@@ -191,9 +190,12 @@ public class FloatingPanel extends TitleWindow
     protected function handleCommand (event :CommandEvent) :void
     {
         if (_parent != null) {
+            Log.getLog(this).info("Forwarding " + event);
             event.markAsHandled();
             // redispatch a new event...
             CommandEvent.dispatch(_parent, event.command, event.arg);
+        } else {
+            Log.getLog(this).info("Not forwarding " + event);
         }
     }
 

@@ -235,7 +235,7 @@ public class ChatTabBar extends HBox
         }
 
         log.warning("asked for location history in a non-game");
-        Log.dumpStack();
+        // Log.dumpStack();
         return null;
     }
 

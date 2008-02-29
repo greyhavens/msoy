@@ -110,6 +110,13 @@ public class WorldClient extends MsoyClient
         if (_wctx.getTopPanel().verifyFlashVersion()) {
             logon(); // now logon
         }
+
+        // if we are actually going right into a game lobby, do that now
+        var params :Object = _stage.loaderInfo.parameters;
+        if (params["gameLobby"]) {
+            log.info("Doing pre-logon go to join game lobby.");
+            _wctx.getWorldController().preLogonGo(params);
+        }
     }
 
     // from MsoyClient
@@ -166,7 +173,7 @@ public class WorldClient extends MsoyClient
                     ExternalInterface.call("flashDidLogon", "Foo", 1, rdata.sessionToken);
                 }
             } catch (err :Error) {
-                log.warning("Unable to inform javascript about login: " + err);
+                 log.warning("Unable to inform javascript about login: " + err);
             }
         }
 

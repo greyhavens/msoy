@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import flash.events.Event;
+import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
@@ -48,9 +49,6 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave a table. */
     public static const LEAVE_TABLE :String = "LeaveTable";
 
-    /** Notifies the lobby controller that we sat at a table. */
-    public static const SAT_AT_TABLE :String = "SatAtTable";
-
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
@@ -65,15 +63,33 @@ public class LobbyController extends Controller implements Subscriber
         _subscriber.subscribe(_gctx.getDObjectManager());
 
         _panel = new LobbyPanel(_gctx, this);
-        _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
+        _panel.addEventListener(CloseEvent.CLOSE, function (event :Event) :void {
+            handleCloseLobby();
+        });
+        _panel.open();
         setControlledPanel(_panel);
-        _panelIsVisible = true;
-        _mctx.getTopPanel().setLeftPanel(_panel);
 
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
         c = LobbyMarshaller;
+    }
+
+    /**
+     * Returns the id of the game managed by this lobby controller. Not valid until we've
+     * subscribed to our lobby object.
+     */
+    public function get gameId () :int
+    {
+        return _lobj.game.itemId;
+    }
+
+    /**
+     * Returns the table director in use by this lobby.
+     */
+    public function get tableDir () :TableDirector
+    {
+        return _tableDir;
     }
 
     /**
@@ -106,13 +122,6 @@ public class LobbyController extends Controller implements Subscriber
     public function handleLeaveTable (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
-
-        if (!_panelIsVisible) {
-            shutdown(false);
-            // in case shutdown happens before the leave table event is propagated, we need to make
-            // sure the panel hears about it
-            _panel.seatednessDidChange(false);
-        } 
     }
 
     /**
@@ -124,34 +133,16 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * Handles SAT_AT_TABLE.
-     */
-    public function handleSatAtTable () :void
-    {
-        _mctx.getTopPanel().clearLeftPanel(_panel);
-    }
-
-    /**
      * Handles CLOSE_LOBBY.
      */
     public function handleCloseLobby () :void
     {
         _closedByUser = true;
-        _mctx.getTopPanel().clearLeftPanel(_panel);
+        forceShutdown();
     }
 
     /**
-     * Returns the id of the game managed by this lobby controller. Not valid until we've
-     * subscribed to our lobby object.
-     */
-    public function get gameId () :int
-    {
-        return _lobj.game.itemId;
-    }
-
-    /**
-     * This is called if something external wants us to leave any table we're seated at and 
-     * shutdown.
+     * Leaves any occupied table and then shuts down our lobby.
      */
     public function forceShutdown () :void
     {
@@ -162,7 +153,30 @@ public class LobbyController extends Controller implements Subscriber
                 _panel.seatednessDidChange(false);
             }
         }
-        shutdown(false);
+        shutdown();
+    }
+
+    /**
+     * Shuts down the lobby without leaving any occupied table (ie. when we want to enter our
+     * game).
+     */
+    public function shutdown () :void
+    {
+        // first do our UI cleanup
+        if (_panel.isOpen) {
+            _panel.close();
+        }
+
+        // then our distributed services cleanup
+        _subscriber.unsubscribe(_mctx.getDObjectManager());
+        if (_tableDir != null) {
+            _tableDir.clearTableObject();
+            _tableDir.removeTableObserver(_panel);
+            _tableDir.removeSeatednessObserver(_panel);
+        }
+
+        // finally let whoever cares know that we're gone
+        _onClear(_closedByUser);
     }
 
     /**
@@ -207,11 +221,8 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function restoreLobbyUI () :void
     {
-        if (!_panelIsVisible) {
-            _panelIsVisible = true;
-            setControlledPanel(_panel);
-            _mctx.getTopPanel().clearTableDisplay();
-            _mctx.getTopPanel().setLeftPanel(_panel);
+        if (!_panel.isOpen) {
+            _panel.open();
         }
     }
 
@@ -222,27 +233,6 @@ public class LobbyController extends Controller implements Subscriber
     {
         if (_lobj != null) {
             _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
-        }
-    }
-
-    /**
-     * Event handler for Event.REMOVED_FROM_STAGE
-     */
-    public function handleRemovedFromStage (evt :Event) :void
-    {
-        _panelIsVisible = false;
-
-        var seatedTable :Table = _tableDir != null ? _tableDir.getSeatedTable() : null;
-        if ((seatedTable != null) && !seatedTable.inPlay()) {
-            var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(
-                _mctx, _gctx, _panel, _tableDir, _panel.getGame().name);
-            tableDisplay.open();
-            setControlledPanel(tableDisplay.getPanel());
-            _mctx.getTopPanel().setTableDisplay(tableDisplay);
-
-        } else {
-            // if we're in a table, then it must have started
-            shutdown(seatedTable != null);
         }
     }
 
@@ -302,31 +292,6 @@ public class LobbyController extends Controller implements Subscriber
         return false;
     }
 
-    /**
-     * Clean up our references, and notify those that care that we're all done here.
-     */
-    protected function shutdown (inGame :Boolean) :void
-    {
-        // first do our UI cleanup
-        _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
-        var currentDisp :FloatingTableDisplay = _mctx.getTopPanel().getTableDisplay();
-        if (_lobj != null && currentDisp != null && currentDisp.getGameId() == _lobj.game.itemId) {
-            // only clear the display if its a display for this lobby
-            _mctx.getTopPanel().clearTableDisplay();
-        }
-
-        // then our distributed services cleanup
-        _subscriber.unsubscribe(_mctx.getDObjectManager());
-        if (_tableDir != null) {
-            _tableDir.clearTableObject();
-            _tableDir.removeTableObserver(_panel);
-            _tableDir.removeSeatednessObserver(_panel);
-        }
-
-        // finally let whoever cares know that we're gone
-        _onClear(inGame, _closedByUser);
-    }
-
     /** The provider of free cheese. */
     protected var _mctx :MsoyContext;
 
@@ -350,9 +315,6 @@ public class LobbyController extends Controller implements Subscriber
 
     /** Used to subscribe to our lobby object. */
     protected var _subscriber :SafeSubscriber;
-
-    /** Tracks whether or not our lobby panel is visible. */
-    protected var _panelIsVisible :Boolean;
 
     /** Whether or not the user clicked the close box to close this lobby. */
     protected var _closedByUser :Boolean;

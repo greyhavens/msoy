@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
@@ -32,6 +33,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
@@ -51,14 +53,11 @@ import com.threerings.msoy.game.data.PlayerObject;
 /**
  * A panel that displays pending table games.
  */
-public class LobbyPanel extends VBox
+public class LobbyPanel extends FloatingPanel
     implements TableObserver, SeatednessObserver
 {
     /** The width of the lobby panel. */
     public static const LOBBY_PANEL_WIDTH :int = 500; // in px
-
-    /** The lobby controller. */
-    public var controller :LobbyController;
 
     /**
      * Returns the count of friends of the specified member that are seated at this table.
@@ -84,11 +83,21 @@ public class LobbyPanel extends VBox
      */
     public function LobbyPanel (gctx :GameContext, ctrl :LobbyController)
     {
+        super(gctx.getMsoyContext());
         _gctx = gctx;
-        controller = ctrl;
+        _ctrl = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
         styleName = "lobbyPanel";
+        showCloseButton = true;
+    }
+
+    /**
+     * Returns this panel's controller.
+     */
+    public function get controller () :LobbyController
+    {
+        return _ctrl;
     }
 
     public function init (lobbyObj :LobbyObject, friendsOnly :Boolean) :void
@@ -98,18 +107,18 @@ public class LobbyPanel extends VBox
 
         // fill in the UI bits
         var game :Game = getGame();
-        _title.text = game.name;
-        _title.validateNow();
-        _title.width = _title.textWidth + TextFieldUtil.WIDTH_PAD;
-        _about.label = Msgs.GAME.get("b.about");
-        _about.setCommand(MsoyController.VIEW_GAME, game.gameId);
-        // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
-        if (game.ownerId == 0) {
-            _buy.label = Msgs.GAME.get("b.buy");
-            _buy.setCommand(MsoyController.VIEW_ITEM, game.getIdent());
-        } else {
-            _buy.parent.removeChild(_buy);
-        }
+        this.title = game.name;
+//         _title.validateNow();
+//         _title.width = _title.textWidth + TextFieldUtil.WIDTH_PAD;
+//         _about.label = Msgs.GAME.get("b.about");
+//         _about.setCommand(MsoyController.VIEW_GAME, game.gameId);
+//         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
+//         if (game.ownerId == 0) {
+//             _buy.label = Msgs.GAME.get("b.buy");
+//             _buy.setCommand(MsoyController.VIEW_ITEM, game.getIdent());
+//         } else {
+//             _buy.parent.removeChild(_buy);
+//         }
 
         _logo.setItem(getGame());
         _info.text = game.description;
@@ -162,9 +171,9 @@ public class LobbyPanel extends VBox
             tableAdded(table);
         }
         updateTableState();
-        if (_pendingList.numChildren == 1 && _runningList.numChildren == 1) {
-            showCreateGame();
-        }
+//         if (_pendingList.numChildren == 1 && _runningList.numChildren == 1) {
+//             showCreateGame();
+//         }
     }
 
     /**
@@ -205,29 +214,32 @@ public class LobbyPanel extends VBox
     }
 
     /**
-     * Hides the header display and shows the create game interface.
+     * Shows the table list display.
      */
-    public function showCreateGame () :void
+    public function showTables () :void
     {
-        if (_headerBox.parent != null) {
-            _contents.removeChild(_headerBox);
-        }
-        if (_creationPanel.parent == null) {
-            _contents.addChildAt(_creationPanel, 0);
-            _creationPanel.updateOnlineFriends();
-        }
+        this.title = getGame().name;
+        setContents(_contents);
     }
 
     /**
-     * Hides the create game interface and shows the header display.
+     * Shows the create game interface.
      */
-    public function hideCreateGame () :void
+    public function showCreateGame () :void
     {
-        if (_creationPanel.parent != null) {
-            _contents.removeChild(_creationPanel);
-        }
-        if (_headerBox.parent == null) {
-            _contents.addChildAt(_headerBox, 0);
+        this.title = Msgs.GAME.get("t.create_game", getGame().name);
+        setContents(_creationPanel);
+        _creationPanel.updateOnlineFriends();
+    }
+
+    /**
+     * Shows just our currently joined table.
+     */
+    public function showMiniTable () :void
+    {
+        if (_miniTable != null) { // sanity check
+            this.title = Msgs.GAME.get("t.mini_table", getGame().name);
+            setContents(_miniTable);
         }
     }
 
@@ -263,6 +275,11 @@ public class LobbyPanel extends VBox
             }
         }
 
+        // if this is our seated table, update mini-table
+        if (_miniTable != null && table.tableId == _miniTable.tableId) {
+            _miniTable.update(table, true);
+        }
+
         // if we have no ui for it, no problem, stop here
         if (panel == null) {
             return;
@@ -295,10 +312,16 @@ public class LobbyPanel extends VBox
         _isSeated = nowSeated;
         _createBtn.enabled = !_isSeated;
         if (_isSeated) {
-            hideCreateGame();
+            showTables();
         }
+
+        // create our minimized-mode table and switch to minimized mode
         if (_isSeated) {
-            CommandEvent.dispatch(this, LobbyController.SAT_AT_TABLE);
+            _miniTable = new TablePanel(_gctx, this, _ctrl.tableDir.getSeatedTable(), true);
+            showMiniTable();
+        } else {
+            showTables();
+            _miniTable = null;
         }
 
         // TODO: do we need to do this
@@ -314,49 +337,48 @@ public class LobbyPanel extends VBox
     {
         super.createChildren();
         styleName = "lobbyPanel";
-        percentHeight = 100;
+//         percentHeight = 100;
 
-        var titleBox :HBox = new HBox();
-        titleBox.styleName = "titleBox";
-        titleBox.percentWidth = 100;
-        titleBox.height = 20;
-        addChild(titleBox);
-        _title = MsoyUI.createLabel("", "locationName");
-        _title.width = 160;
-        titleBox.addChild(_title);
-        var padding :HBox = new HBox();
-        padding.percentWidth = 100;
-        padding.percentHeight = 100;
-        titleBox.addChild(padding);
+//         var titleBox :HBox = new HBox();
+//         titleBox.styleName = "titleBox";
+//         titleBox.percentWidth = 100;
+//         titleBox.height = 20;
+//         main.addChild(titleBox);
+//         _title = MsoyUI.createLabel("", "locationName");
+//         _title.width = 160;
+//         titleBox.addChild(_title);
+//         var padding :HBox = new HBox();
+//         padding.percentWidth = 100;
+//         padding.percentHeight = 100;
+//         titleBox.addChild(padding);
 
-        var embedBtnBox :HBox = new HBox();
-        _about = new CommandLinkButton();
-        _about.styleName = "headerLink";
-        _buy = new CommandLinkButton();
-        _buy.styleName = "headerLink";
-        embedBtnBox.addChild(_about);
-        embedBtnBox.addChild(_buy);
-        embedBtnBox.styleName = "headerEmbedBox";
-        embedBtnBox.percentHeight = 100;
-        titleBox.addChild(embedBtnBox);
-        var embedBtn :CommandLinkButton = new CommandLinkButton();
-        embedBtn.styleName = "headerLink";
-        embedBtn.label = Msgs.GENERAL.get("b.share")
-        embedBtn.setCallback(function () :void {
-            new EmbedDialog(_gctx.getMsoyContext());
-        });
-        embedBtnBox.addChild(embedBtn);
+//         var embedBtnBox :HBox = new HBox();
+//         _about = new CommandLinkButton();
+//         _about.styleName = "headerLink";
+//         _buy = new CommandLinkButton();
+//         _buy.styleName = "headerLink";
+//         embedBtnBox.addChild(_about);
+//         embedBtnBox.addChild(_buy);
+//         embedBtnBox.styleName = "headerEmbedBox";
+//         embedBtnBox.percentHeight = 100;
+//         titleBox.addChild(embedBtnBox);
+//         var embedBtn :CommandLinkButton = new CommandLinkButton();
+//         embedBtn.styleName = "headerLink";
+//         embedBtn.label = Msgs.GENERAL.get("b.share")
+//         embedBtn.setCallback(function () :void {
+//             new EmbedDialog(_gctx.getMsoyContext());
+//         });
+//         embedBtnBox.addChild(embedBtn);
 
-        var leaveBtnBox :VBox = new VBox();
-        leaveBtnBox.styleName = "lobbyCloseBox";
-        leaveBtnBox.percentHeight = 100;
-        titleBox.addChild(leaveBtnBox);
-        var leaveBtn :CommandButton = new CommandButton(null, LobbyController.CLOSE_LOBBY);
-        leaveBtn.styleName = "closeButton";
-        leaveBtnBox.addChild(leaveBtn);
+//         var leaveBtnBox :VBox = new VBox();
+//         leaveBtnBox.styleName = "lobbyCloseBox";
+//         leaveBtnBox.percentHeight = 100;
+//         titleBox.addChild(leaveBtnBox);
+//         var leaveBtn :CommandButton = new CommandButton(null, LobbyController.CLOSE_LOBBY);
+//         leaveBtn.styleName = "closeButton";
+//         leaveBtnBox.addChild(leaveBtn);
 
         _contents = new VBox();
-        addChild(_contents);
         _contents.styleName = "contentsBox";
         _contents.percentWidth = 100;
         _contents.percentHeight = 100;
@@ -404,6 +426,20 @@ public class LobbyPanel extends VBox
         _tableList.percentWidth = 100;
         _tableList.percentHeight = 100;
         _contents.addChild(_tableList);
+
+        setContents(_contents);
+    }
+
+    protected function setContents (contents :DisplayObject) :Boolean
+    {
+        if (numChildren > 0) {
+            if (contents === getChildAt(0)) {
+                return false;
+            }
+            removeChildAt(0);
+        }
+        addChild(contents);
+        return true;
     }
 
     protected function updateTableState () :void
@@ -435,6 +471,9 @@ public class LobbyPanel extends VBox
     /** Buy one get one free. */
     protected var _gctx :GameContext;
 
+    /** Our controller. */
+    protected var _ctrl :LobbyController;
+
     /** Our lobby object. */
     protected var _lobbyObj :LobbyObject;
 
@@ -448,14 +487,17 @@ public class LobbyPanel extends VBox
     protected var _creationPanel :TableCreationPanel;
 
     // various UI bits that need filling in with data arrives
+//     protected var _title :Label;
+//     protected var _about :CommandLinkButton;
+//     protected var _buy :CommandLinkButton;
+
     protected var _headerBox :HBox;
     protected var _contents :VBox;
     protected var _logo :ThumbnailPanel;
     protected var _info :Text;
-    protected var _title :Label;
-    protected var _about :CommandLinkButton;
-    protected var _buy :CommandLinkButton;
     protected var _createBtn :CommandButton;
+
+    protected var _miniTable :TablePanel;
 
     protected var _noTablesLabel :Label;
     protected var _tableList :VBox;

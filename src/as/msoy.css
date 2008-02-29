@@ -939,7 +939,7 @@ Tree {
   fontWeight: bold;
 }
 
-.lobbyLoadingBox, .lobbyTableList {
+.lobbyTableList {
   backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
           scaleGridTop="4", scaleGridBottom="16",
           scaleGridLeft="4", scaleGridRight="16");
