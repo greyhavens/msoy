@@ -110,6 +110,19 @@ ComboBox {
   selectionColor: #54a9da;
   useRollOver: true;
   rollOverColor: #c8d0d3;
+  fontSize: 9;
+  upSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+          scaleGridTop="5", scaleGridBottom="13",
+          scaleGridLeft="5", scaleGridRight="45");
+  overSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+          scaleGridTop="5", scaleGridBottom="13",
+          scaleGridLeft="5", scaleGridRight="45");
+  downSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+          scaleGridTop="5", scaleGridBottom="13",
+          scaleGridLeft="5", scaleGridRight="45");
+  disabledSkin: Embed(source="../../rsrc/media/skins/combobox/disabled.png",
+          scaleGridTop="5", scaleGridBottom="45",
+          scaleGridLeft="5", scaleGridRight="13");
 }
 
 CheckBox {
