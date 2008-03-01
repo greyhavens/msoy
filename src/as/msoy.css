@@ -14,21 +14,39 @@ Panel {
   backgroundColor: #ffffff;
   borderAlpha: 1;
   borderColor: #000000;
+  borderThickness: 0;
   borderThicknessLeft: 0;
   borderThicknessRight: 0;
+  borderThicknessTop: 0;
   borderThicknessBottom: 0;
   cornerRadius: 0;
   dropShadowColor: #443522;
   dropShadowEnabled: true;
   footerColors: #ffffff, #c7c7c7;
   headerColors: #000000, #444444;
-  headerHeight: 20;
   highlightAlphas: 0, 0;
   modalTransparencyBlur: 0;
-  roundedBottomCorners: false;
   shadowDistance: 2;
   textAlign: left;
+}
+
+TitleWindow {
+  borderAlpha: 0;
+  cornerRadius: 4;
+  roundedBottomCorners: true;
+  headerHeight: 23;
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/title_bg.png",
+          scaleGridTop="8", scaleGridBottom="14",
+          scaleGridLeft="8", scaleGridRight="28");
   titleStyleName: "msoyTitleStyle";
+  backgroundImage: Embed(source="../../rsrc/media/skins/window_bg.png",
+          scaleGridTop="10", scaleGridBottom="20",
+          scaleGridLeft="10", scaleGridRight="20");
+  backgroundSize: "100%";
+  closeButtonOverSkin: Embed(source="../../pages/images/ui/close_over.png");
+  closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close.png");
+  closeButtonDownSkin: Embed(source="../../pages/images/ui/close_down.png");
+  closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
 }
 
 .topPanel {
@@ -41,87 +59,7 @@ Panel {
 
 .msoyTitleStyle {
   color: #FFFFFF;
-}
-
-TabNavigator, TabBar {
-  borderStyle: none;
-  borderThickness: 0;
-  tabHeight: 20;
-  tabStyleName: "msoyTabButton";
-  selectedTabTextStyleName: "selectedMsoyTabButton";
-}
-
-.msoyTabButton {
-  color: #b4cbd7;
-  fontFamily: Arial;
-  textRollOverColor: #b4cbd7;
-  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-}
-
-.unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
-    .attentionGroupTab {
-  color: white;
-  fontFamily: Arial;
   fontWeight: bold;
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-}
-
-.selectedRoomTab, .selectedTellTab, .selectedGroupTab {
-  color: black;
-  fontFamily: Arial;
-  fontWeight: bold;
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-  checkboxUpSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small.png");
-  checkboxOverSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_over.png");
-  checkboxSelectedSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_selected.png");
-}
-
-.unselectedRoomTab, .attentionRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.unselectedTellTab, .attentionTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.unselectedGroupTab, .attentionGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.tabCheckBox {
-  downSkin: Embed(source="../../rsrc/media/skins/checkbox_down.png");
-  upSkin: Embed(source="../../rsrc/media/skins/checkbox.png");
-  overSkin: Embed(source="../../rsrc/media/skins/checkbox_over.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox_selected.png");
 }
 
 Accordion {
@@ -241,24 +179,171 @@ ButtonBar {
   horizontalGap: 6;
 }
 
-TitleWindow {
-  cornerRadius: 0;
-  closeButtonDisabledSkin: Embed(source="../../rsrc/media/skins/close.png");
-  closeButtonDownSkin: Embed(source="../../rsrc/media/skins/close_down.png");
-  closeButtonOverSkin: Embed(source="../../rsrc/media/skins/close_over.png");
-  closeButtonUpSkin: Embed(source="../../rsrc/media/skins/close.png");
-}
-
-Window {
-  closeButtonDisabledSkin: Embed(source="../../rsrc/media/skins/close.png");
-  closeButtonDownSkin: Embed(source="../../rsrc/media/skins/close_down.png");
-  closeButtonOverSkin: Embed(source="../../rsrc/media/skins/close_over.png");
-  closeButtonUpSkin: Embed(source="../../rsrc/media/skins/close.png");
-}
-
 .msoyButtonBar {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
+}
+
+VScrollBar {
+  cornerRadius: 4;
+  borderColor: #cccccc;
+  highlightAlphas: 0.18, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
+  themeColor: #ffcc66;
+  trackColors: #d8bd8f, #e3cfab;
+    downArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_disabledSkin");
+    downArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_downSkin");
+    downArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_overSkin");
+    downArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_upSkin");
+    thumbDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_downSkin");
+    thumbIcon: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollBar_thumbIcon");
+    thumbOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_overSkin");
+    thumbUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_upSkin");
+    trackSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollTrack_Skin");
+    upArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_disabledSkin");
+    upArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_downSkin");
+    upArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_overSkin");
+    upArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_upSkin");
+}
+
+HScrollBar {
+  cornerRadius: 4;
+  borderColor: #cccccc;
+  highlightAlphas: 0.18, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
+  themeColor: #ffcc66;
+  trackColors: #d8bd8f, #e3cfab;
+}
+
+Menu {
+  openDuration: 0;
+  checkIcon: Embed(source="../../rsrc/media/skins/selected_menu_icon.png");
+}
+
+MenuBar {
+  cornerRadius: 4;
+  backgroundAlpha: 1;
+  backgroundColor: #ffffff;
+  fillAlphas: 1, 1;
+  fillColors: #d2d8dc, #9ba8b0;
+  rollOverColor: #c8d0d3;
+  selectionColor: #54a9da;
+  themeColor: #999999;
+}
+
+HRule {
+  strokeColor: #d5dcdf;
+  shadowColor: #9facb3;
+  strokeWidth: 2;
+}
+
+LinkButton {
+  fontWeight: "normal";
+  color: #AAB5B9;
+  textRollOverColor: #AAB5B9;
+  textSelectedColor: #AAB5B9;
+  overSkin: Embed(source="../../rsrc/media/skins/blank.png");
+  downSkin: Embed(source="../../rsrc/media/skins/blank.png");
+  paddingLeft: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingRight: 0;
+}
+
+ProgressBar {
+  barColor: #54a9da;
+}
+
+ListBase {
+  rollOverColor: #c8d0d3;
+  selectionColor: #54a9da;
+}
+
+Tree {
+  openDuration: 0;
+}
+
+TabNavigator, TabBar {
+  borderStyle: none;
+  borderThickness: 0;
+  tabHeight: 20;
+  tabStyleName: "msoyTabButton";
+  selectedTabTextStyleName: "selectedMsoyTabButton";
+}
+
+.msoyTabButton {
+  color: #b4cbd7;
+  fontFamily: Arial;
+  textRollOverColor: #b4cbd7;
+  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+}
+
+.unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
+    .attentionGroupTab {
+  color: white;
+  fontFamily: Arial;
+  fontWeight: bold;
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+}
+
+.selectedRoomTab, .selectedTellTab, .selectedGroupTab {
+  color: black;
+  fontFamily: Arial;
+  fontWeight: bold;
+  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+  checkboxUpSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small.png");
+  checkboxOverSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_over.png");
+  checkboxSelectedSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_selected.png");
+}
+
+.unselectedRoomTab, .attentionRoomTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.selectedRoomTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.unselectedTellTab, .attentionTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.selectedTellTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.unselectedGroupTab, .attentionGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_unselected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.selectedGroupTab {
+  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_selected.png",
+    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
+}
+
+.tabCheckBox {
+  downSkin: Embed(source="../../rsrc/media/skins/checkbox_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/checkbox.png");
+  overSkin: Embed(source="../../rsrc/media/skins/checkbox_over.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox_selected.png");
 }
 
 .controlBar, .headerBar { 
@@ -759,6 +844,19 @@ Window {
   backgroundColor: #222222;
 }
 
+.closeButton {
+  height: 13px;
+  width: 13px;
+  overSkin: Embed(source="../../pages/images/ui/close_over.png");
+  disabledSkin: Embed(source="../../pages/images/ui/close.png");
+  downSkin: Embed(source="../../pages/images/ui/close_down.png");
+  upSkin: Embed(source="../../pages/images/ui/close.png");
+  selectedOverSkin: Embed(source="../../pages/images/ui/close_over.png");
+  selectedDisabledSkin: Embed(source="../../pages/images/ui/close.png");
+  selectedDownSkin: Embed(source="../../pages/images/ui/close_down.png");
+  selectedUpSkin: Embed(source="../../pages/images/ui/close.png");
+}
+
 .locationName {
   fontSize: 12px;
   fontWeight: bold;
@@ -792,87 +890,6 @@ Window {
   icon: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
 }
 
-VScrollBar {
-  cornerRadius: 4;
-  borderColor: #cccccc;
-  highlightAlphas: 0.18, 0;
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
-  themeColor: #ffcc66;
-  trackColors: #d8bd8f, #e3cfab;
-    downArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_disabledSkin");
-    downArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_downSkin");
-    downArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_overSkin");
-    downArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_upSkin");
-    thumbDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_downSkin");
-    thumbIcon: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollBar_thumbIcon");
-    thumbOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_overSkin");
-    thumbUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_upSkin");
-    trackSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollTrack_Skin");
-    upArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_disabledSkin");
-    upArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_downSkin");
-    upArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_overSkin");
-    upArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_upSkin");
-}
-
-HScrollBar {
-  cornerRadius: 4;
-  borderColor: #cccccc;
-  highlightAlphas: 0.18, 0;
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
-  themeColor: #ffcc66;
-  trackColors: #d8bd8f, #e3cfab;
-}
-
-Menu {
-  openDuration: 0;
-  checkIcon: Embed(source="../../rsrc/media/skins/selected_menu_icon.png");
-}
-
-MenuBar {
-  cornerRadius: 4;
-  backgroundAlpha: 1;
-  backgroundColor: #ffffff;
-  fillAlphas: 1, 1;
-  fillColors: #d2d8dc, #9ba8b0;
-  rollOverColor: #c8d0d3;
-  selectionColor: #54a9da;
-  themeColor: #999999;
-}
-
-HRule {
-  strokeColor: #d5dcdf;
-  shadowColor: #9facb3;
-  strokeWidth: 2;
-}
-
-LinkButton {
-  fontWeight: "normal";
-  color: #AAB5B9;
-  textRollOverColor: #AAB5B9;
-  textSelectedColor: #AAB5B9;
-  overSkin: Embed(source="../../rsrc/media/skins/blank.png");
-  downSkin: Embed(source="../../rsrc/media/skins/blank.png");
-  paddingLeft: 0;
-  paddingTop: 0;
-  paddingBottom: 0;
-  paddingRight: 0;
-}
-
-ProgressBar {
-  barColor: #54a9da;
-}
-
-ListBase {
-  rollOverColor: #c8d0d3;
-  selectionColor: #54a9da;
-}
-
-Tree {
-  openDuration: 0;
-}
-
 .roomToolTip {
 /** Crap, the fontSize=12 seems to fuck-up the background of the tooltip.
     Something to debug later.
@@ -886,9 +903,20 @@ Tree {
   verticalAlign: middle;
 }
 
-.lobbyPanel, .contentsBox, .descriptionBox, .titleBox, .infoBox {
+.contentsBox, .descriptionBox, .titleBox, .infoBox {
   horizontalGap: 0;
   verticalGap: 0;
+}
+
+.descriptionBox {
+  paddingBottom: 10px;
+}
+
+.lobbyPanel {
+  paddingTop: 10px;
+  paddingRight: 10px;
+  paddingBottom: 10px;
+  paddingLeft: 10px;
 }
 
 .titleBox {
@@ -896,17 +924,17 @@ Tree {
   borderThickness: 1px;
   borderSides: "right";
   borderColor: #000000;
+  verticalAlign: middle;
+  paddingLeft: 4px;
+  paddingRight: 4px;
+}
+
+.titleBox, .tabsFillerBox {
+  backgroundColor: #222222;
 }
 
 .startBox {
   verticalAlign: bottom;
-}
-
-.descriptionBox {
-  paddingLeft: 5px;
-  paddingRight: 5px;
-  paddingTop: 5px;
-  paddingBottom: 5px;
 }
 
 .lobbyLink {
@@ -914,16 +942,6 @@ Tree {
   verticalAlign: middle;
   color: white;
   textDecoration: underline;
-}
-
-.titleBox, .tabsFillerBox {
-  backgroundColor: #222222;
-}
-
-.titleBox {
-  verticalAlign: middle;
-  paddingLeft: 4px;
-  paddingRight: 4px;
 }
 
 .lobbyInfo {
@@ -940,31 +958,31 @@ Tree {
 }
 
 .lobbyTableList {
-  backgroundImage: Embed(source="../../rsrc/media/skins/box/border.png",
-          scaleGridTop="4", scaleGridBottom="16",
-          scaleGridLeft="4", scaleGridRight="16");
-  backgroundSize: "100%";
-  paddingLeft: 4px;
-  paddingRight: 4px;
-  paddingTop: 4px;
-  paddingBottom: 4px;
+  backgroundAlpha: 1;
+  backgroundColor: #E0EAEB;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingTop: 0px;
+  paddingBottom: 5px;
+  borderAlpha: 1;
+  borderColor: #4E97CC;
+  borderStyle: "solid";
+  borderSides: "left right bottom";
+  borderThicknessTop: 0;
+  verticalGap: 0;
 }
 
-.lobbyTableList, .pendingTableList, .runningTableList {
-  verticalGap: 0px;
-}
-
-.tablesStar {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/lobby/games_star.png");
+.pendingTableList, .runningTableList {
+  verticalGap: 5;
 }
 
 .tablesTitle {
-  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/games_tile.png",
-                         scaleGridTop="4", scaleGridBottom="16", 
-                         scaleGridLeft="4", scaleGridRight="16");
+  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/subtitle_bg.png",
+                         scaleGridTop="8", scaleGridBottom="14", 
+                         scaleGridLeft="10", scaleGridRight="41");
   backgroundSize: "100%";
   color: #FFFFFF;
-  fontSize: 12;
+  fontSize: 10;
   fontWeight: bold;
   horizontalAlign: center;
 }
@@ -980,19 +998,6 @@ Tree {
   paddingTop: 4px;
   paddingRight: 3px;
   paddingBottom: 3px;
-}
-
-.closeButton {
-  height: 13px;
-  width: 13px;
-  overSkin: Embed(source="../../pages/images/ui/close_over.png");
-  disabledSkin: Embed(source="../../pages/images/ui/close.png");
-  downSkin: Embed(source="../../pages/images/ui/close_down.png");
-  upSkin: Embed(source="../../pages/images/ui/close.png");
-  selectedOverSkin: Embed(source="../../pages/images/ui/close_over.png");
-  selectedDisabledSkin: Embed(source="../../pages/images/ui/close.png");
-  selectedDownSkin: Embed(source="../../pages/images/ui/close_down.png");
-  selectedUpSkin: Embed(source="../../pages/images/ui/close.png");
 }
 
 .embedButton {
@@ -1019,20 +1024,6 @@ Tree {
   borderThickness: 0;
 }
 
-.floatingTableDisplay {
-  paddingTop: 0px;
-  paddingBottom: 0px;
-  paddingLeft: 6px;
-  paddingRight: 6px;
-  borderThicknessLeft: 4px;
-  borderThicknessRight: 4px;
-}
-
-.floatingTableRow {
-  horizontalGap: 4;
-  verticalGap: 0;
-}
-
 .backToLobbyBtnBox {
   paddingTop: 7px;
   paddingRight: 5px;
@@ -1050,18 +1041,27 @@ Tree {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
 }
 
-.floatingTablePanel, .listTablePanel {
+.runningTablePanel, .tablePanel {
   /* horizontalGap: set programmatically */
   verticalGap: 0;
   paddingTop: 5px;
+  borderAlpha: 0;
+  cornerRadius: 4;
+  horizontalAlign: center;
 }
 
-.listTablePanel {
-  borderThickness: 2;
-  borderStyle: "solid";
-  borderColor: #E0E7EE;
-  borderSides: "left right bottom";
-  horizontalAlign: center;
+.tablePanel, .configBox, .friendsBox {
+  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
+          scaleGridTop="10", scaleGridBottom="67",
+          scaleGridLeft="10", scaleGridRight="67");
+  backgroundSize: "100%";
+}
+
+.runningTablePanel {
+  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/running_game_bg.png",
+          scaleGridTop="10", scaleGridBottom="67",
+          scaleGridLeft="10", scaleGridRight="67");
+  backgroundSize: "100%";
 }
 
 .seatsGrid {
@@ -1070,18 +1070,15 @@ Tree {
 }
 
 .tableHeader {
-  fontWeight: bold;
-  borderThickness: 2px;
-  borderStyle: "solid";
-  borderColor: #E0E7EE;
-  borderSides: "bottom";
+  paddingTop: 5px;
 }
 
 .tableMessage {
+  fontWeight: "normal";
   paddingLeft: 10px;
   paddingTop: 10px;
   paddingRight: 10px;
-  paddingBottom: 10px;
+  paddingBottom: 5px;
 }
 
 .seatPanel {
@@ -1093,7 +1090,7 @@ Tree {
 
 .tableStatusLabel {
   fontWeight: bold;
-  color: #859BAE;
+  color: #6A859A;
 }
 
 .createBtnBox {
@@ -1116,6 +1113,14 @@ Tree {
   paddingBottom: 5px;
 }
 
+.configBox, .friendsBox {
+  verticalGap: 4;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingTop: 5px;
+  paddingBottom: 5px;
+}
+
 .chatterRenderer {
   borderThickness: 0;
   borderStyle: "none";
@@ -1129,10 +1134,6 @@ Tree {
   borderThickness: 0;
   borderStyle: "solid";
   borderColor: #222222;
-}
-
-.lobbyPanel {
-  backgroundColor: white;
 }
 
 .topLevelLabel {

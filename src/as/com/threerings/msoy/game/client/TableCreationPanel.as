@@ -36,7 +36,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
-public class TableCreationPanel extends HBox
+public class TableCreationPanel extends VBox
 {
     public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel)
     {
@@ -56,14 +56,11 @@ public class TableCreationPanel extends HBox
         if (onlineFriends.length ==  0) {
             _friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
         } else {
-            _friendsBox.addChild(
-                MsoyUI.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyLabel"));
             var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
             _friendsGrid = new SimpleGrid(columns);
-            _friendsGrid.setStyle("horizontalGap", TCP_GAP);
-            var maxWidth :int = (TCP_WIDTH - (columns-1)*TCP_GAP)/columns;
+            _friendsGrid.setStyle("horizontalGap", 5);
             for each (var friend :FriendEntry in onlineFriends) {
-                _friendsGrid.addCell(new FriendCheckBox(friend, maxWidth));
+                _friendsGrid.addCell(new FriendCheckBox(friend));
             }
             _friendsBox.addChild(_friendsGrid);
         }
@@ -76,12 +73,9 @@ public class TableCreationPanel extends HBox
         styleName = "tableCreationPanel";
         percentWidth = 100;
 
-        addChild(_logo = new ThumbnailPanel());
-        _logo.setItem(_game);
-
-        var contents :VBox = new VBox();
-        contents.percentWidth = 100;
-        addChild(contents);
+        var row :HBox = new HBox();
+        row.percentWidth = 100;
+        addChild(row);
 
         // create our various game configuration bits but do not add them
         var rparam :ToggleParameter = new ToggleParameter();
@@ -89,7 +83,7 @@ public class TableCreationPanel extends HBox
         rparam.tip = Msgs.GAME.get("t.rated");
         rparam.start = true;
         var gconf :WhirledGameConfigurator = new WhirledGameConfigurator(rparam);
-        gconf.setColumns(3);
+        gconf.setColumns(1);
         gconf.init(_ctx);
 
         var plparam :RangeParameter = new RangeParameter();
@@ -137,27 +131,38 @@ public class TableCreationPanel extends HBox
         gconf.setGameConfig(config);
 
         _configBox = gconf.getContainer();
-        _configBox.styleName = "seatsGrid";
-        contents.addChild(_configBox);
-
-        var bottomRow :HBox = new HBox();
-        bottomRow.percentWidth = 100;
-        bottomRow.setStyle("verticalAlign", "bottom");
+        _configBox.styleName = "configBox";
+        row.addChild(wrapBox(Msgs.GAME.get("l.config_game"), _configBox));
 
         // add an interface for inviting friends to play
         _friendsBox = new VBox();
+        _friendsBox.styleName = "friendsBox";
         _friendsBox.percentWidth = 100;
+        _friendsBox.percentHeight = 100;
         _friendsBox.setStyle("verticalGap", 0);
-        bottomRow.addChild(_friendsBox);
+        row.addChild(wrapBox(Msgs.GAME.get("l.invite_friends"), _friendsBox, true));
 
         // finally add buttons for create and cancel
-        _buttonBox = new HBox();
-        bottomRow.addChild(_buttonBox);
-        contents.addChild(bottomRow);
-
-        _buttonBox.addChild(
+        var bottomRow :HBox = new HBox();
+        bottomRow.percentWidth = 100;
+        bottomRow.setStyle("horizontalAlign", "right");
+        bottomRow.addChild(
             new CommandButton(Msgs.GAME.get("b.create"), createGame, [ tconfigger, gconf ]));
-        _buttonBox.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
+        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
+        addChild(bottomRow);
+    }
+
+    protected function wrapBox (title :String, contents :Container, hstretch :Boolean = false) :VBox
+    {
+        var wrapper :VBox = new VBox();
+        wrapper.setStyle("verticalGap", 0);
+        wrapper.addChild(MsoyUI.createLabel(title));
+        wrapper.addChild(contents);
+        if (hstretch) {
+            wrapper.percentWidth = 100;
+        }
+        wrapper.percentHeight = 100;
+        return wrapper;
     }
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void
@@ -185,19 +190,14 @@ public class TableCreationPanel extends HBox
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;
 
-    protected var _logo :ThumbnailPanel;
     protected var _configBox :Container;
     protected var _friendsBox :VBox;
     protected var _friendsGrid :SimpleGrid;
-    protected var _buttonBox :HBox;
 
     protected static const FRIENDS_GRID_COLUMNS :int = 6;
-    protected static const TCP_WIDTH :int = 420;
-    protected static const TCP_GAP :int = 15;
 }
 }
 
-import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.Label;
@@ -212,22 +212,19 @@ class FriendCheckBox extends VBox
 {
     public var friend :FriendEntry;
 
-    public function FriendCheckBox (friend :FriendEntry, maxWidth :int)
+    public function FriendCheckBox (friend :FriendEntry)
     {
         styleName = "friendCheckBox";
         this.friend = friend;
 
-        var row :HBox = new HBox();
-        row.setStyle("horizontalGap", 4);
         var thumb :ThumbnailPanel = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE);
         thumb.setMediaDesc(friend.photo);
-        row.addChild(thumb);
-        row.addChild(_check = new CheckBox());
-        _check.width = 14; // don't ask; go punch someone at adobe instead
-        addChild(row);
+        addChild(thumb);
         var name :Label = MsoyUI.createLabel(friend.name.toString());
-        name.maxWidth = maxWidth;
+        name.maxWidth = 2*MediaDesc.THUMBNAIL_WIDTH/3;
         addChild(name);
+        addChild(_check = new CheckBox());
+        _check.width = 14; // don't ask; go punch someone at adobe instead
     }
 
     public function get checked () :Boolean

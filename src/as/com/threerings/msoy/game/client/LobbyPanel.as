@@ -57,7 +57,7 @@ public class LobbyPanel extends FloatingPanel
     implements TableObserver, SeatednessObserver
 {
     /** The width of the lobby panel. */
-    public static const LOBBY_PANEL_WIDTH :int = 500; // in px
+    public static const LOBBY_PANEL_MAX_WIDTH :int = 500; // in px
 
     /**
      * Returns the count of friends of the specified member that are seated at this table.
@@ -87,8 +87,8 @@ public class LobbyPanel extends FloatingPanel
         _gctx = gctx;
         _ctrl = ctrl;
 
-        width = LOBBY_PANEL_WIDTH;
         styleName = "lobbyPanel";
+        maxWidth = LOBBY_PANEL_MAX_WIDTH;
         showCloseButton = true;
     }
 
@@ -317,7 +317,7 @@ public class LobbyPanel extends FloatingPanel
 
         // create our minimized-mode table and switch to minimized mode
         if (_isSeated) {
-            _miniTable = new TablePanel(_gctx, this, _ctrl.tableDir.getSeatedTable(), true);
+            _miniTable = new TablePanel(_gctx, this, _ctrl.tableDir.getSeatedTable());
             showMiniTable();
         } else {
             showTables();
@@ -409,16 +409,9 @@ public class LobbyPanel extends FloatingPanel
         _headerBox.addChild(startBox);
 
         var tablesHeader :HBox = new HBox();
-        tablesHeader.setStyle("horizontalGap", 0);
+        tablesHeader.styleName = "tablesTitle";
         tablesHeader.percentWidth = 100;
-        tablesHeader.addChild(new SkinnableImage("tablesStar"));
-        var thCenter :HBox = new HBox();
-        thCenter.styleName = "tablesTitle";
-        thCenter.percentWidth = 100;
-        thCenter.height = 20;
-        thCenter.addChild(MsoyUI.createLabel("Game Tables"));
-        tablesHeader.addChild(thCenter);
-        tablesHeader.addChild(new SkinnableImage("tablesStar"));
+        tablesHeader.addChild(MsoyUI.createLabel("Join a Game"));
         _contents.addChild(tablesHeader);
 
         _tableList = new VBox();

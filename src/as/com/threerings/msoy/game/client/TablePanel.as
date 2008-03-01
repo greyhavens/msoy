@@ -41,10 +41,8 @@ public class TablePanel extends VBox
 {
     public var tableId :int;
 
-    public function TablePanel (
-        gctx :GameContext, panel :LobbyPanel, table :Table, popup :Boolean = false)
+    public function TablePanel (gctx :GameContext, panel :LobbyPanel, table :Table)
     {
-        styleName = popup ? "floatingTablePanel" : "listTablePanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         percentWidth = 100;
@@ -63,16 +61,13 @@ public class TablePanel extends VBox
             var seat :SeatPanel = new SeatPanel();
             _seatsGrid.addCell(seat);
         }
-        _seatsGrid.setStyle("horizontalGap",
-                            10 * (popup ? 1 : Math.max(1, 8-table.players.length)));
+        _seatsGrid.setStyle("horizontalGap", 10 * Math.max(1, 8-table.players.length));
 
-        // create a box to hold configuration options if we're not a popup
-        if (!popup) {
-            _labelsBox = new HBox();
-            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
-            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-            addChild(_labelsBox);
-        }
+        // create a box to hold configuration options
+        _labelsBox = new HBox();
+        _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
+        _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+        addChild(_labelsBox);
 
         // if we are the creator, add a button for starting the game now
         if (table.players.length > 0 &&
@@ -90,7 +85,7 @@ public class TablePanel extends VBox
     public function update (table :Table, isSeated :Boolean) :void
     {
         // update our background color based on whether or not we're running
-        setStyle("backgroundColor", (table.gameOid > 0) ? 0xEEEEEE : 0xFFFFFF);
+        styleName = (table.gameOid > 0) ? "runningTablePanel" : "tablePanel";
         if (_startBtn != null) {
             _startBtn.enabled = table.mayBeStarted();
         }
