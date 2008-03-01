@@ -1052,6 +1052,8 @@ TabNavigator, TabBar {
   /* horizontalGap: set programmatically */
   verticalGap: 0;
   paddingTop: 5px;
+  paddingLeft: 10px;
+  paddingRight: 10px;
   borderAlpha: 0;
   cornerRadius: 4;
   horizontalAlign: center;
