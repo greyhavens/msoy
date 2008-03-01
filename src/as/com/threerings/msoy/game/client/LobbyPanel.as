@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObject;
-
 import mx.effects.Resize;
+import mx.events.EffectEvent;
 import mx.managers.PopUpManager;
 
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
+import mx.core.UIComponent;
 import mx.controls.Label;
 import mx.controls.Text;
 
@@ -84,9 +84,16 @@ public class LobbyPanel extends TitleWindow
         maxWidth = LOBBY_PANEL_MAX_WIDTH;
         showCloseButton = true;
 
+        // TODO: wrap this up in some useful reusable utility so that others don't have to go
+        // through the hours long process of Adobe-are-fuckwads-discovery that I did
         var resize :Resize = new Resize(this);
         resize.duration = 300;
         setStyle("resizeEffect", resize);
+        addEventListener(EffectEvent.EFFECT_END, function (event :EffectEvent) :void {
+            if (numChildren > 0) {
+                (getChildAt(0) as UIComponent).setVisible(true);
+            }
+        });
     }
 
     /**
@@ -449,7 +456,7 @@ public class LobbyPanel extends TitleWindow
         addChild(loading);
     }
 
-    protected function setContents (contents :DisplayObject) :Boolean
+    protected function setContents (contents :UIComponent) :Boolean
     {
         if (numChildren > 0) {
             if (contents === getChildAt(0)) {
@@ -457,6 +464,7 @@ public class LobbyPanel extends TitleWindow
             }
             removeChildAt(0);
         }
+        contents.setVisible(false);
         addChild(contents);
         return true;
     }
