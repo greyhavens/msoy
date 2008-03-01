@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import mx.effects.Resize;
+import mx.effects.easing.Cubic;
 import mx.events.EffectEvent;
 import mx.managers.PopUpManager;
 
@@ -87,6 +88,7 @@ public class LobbyPanel extends TitleWindow
         // TODO: wrap this up in some useful reusable utility so that others don't have to go
         // through the hours long process of Adobe-are-fuckwads-discovery that I did
         var resize :Resize = new Resize(this);
+        resize.easingFunction = Cubic.easeInOut;
         resize.duration = 300;
         setStyle("resizeEffect", resize);
         addEventListener(EffectEvent.EFFECT_END, function (event :EffectEvent) :void {
