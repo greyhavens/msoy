@@ -91,7 +91,7 @@ public class URLFileChooser extends TitleWindow
         _validator.property = "text";
         _validator.addEventListener(ValidationResultEvent.VALID, checkValid);
         _validator.addEventListener(ValidationResultEvent.INVALID, checkValid);
-        _validator.triggerEvent == TextEvent.TEXT_INPUT;
+        _validator.triggerEvent = Event.CHANGE; //TextEvent.TEXT_INPUT;
         _validator.trigger = _entry;
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
