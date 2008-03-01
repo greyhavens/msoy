@@ -60,6 +60,7 @@ public class URLFileChooser extends TitleWindow
         box.addChild(lbl);
 
         _entry = new TextInput();
+        _entry.text = "http://"; // start 'em off right
         _entry.addEventListener(FlexEvent.ENTER, handleEntryEnter);
         _entry.percentWidth = 100;
         _entry.minWidth = 300;
