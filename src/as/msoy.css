@@ -175,6 +175,16 @@ Button {
           scaleGridLeft="2", scaleGridRight="19");
 }
 
+ColorPicker {
+  /* For some reason, this is inheriting Button skins, and since
+     we specify upSkin/downSkin/etc for Button, we need to specify
+     that here too, rather than rely on the "skin" style. */
+  overSkin: ClassReference("mx.skins.halo.ColorPickerSkin");
+  disabledSkin: ClassReference("mx.skins.halo.ColorPickerSkin");
+  downSkin: ClassReference("mx.skins.halo.ColorPickerSkin");
+  upSkin: ClassReference("mx.skins.halo.ColorPickerSkin");
+}
+
 PopUpButton {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
