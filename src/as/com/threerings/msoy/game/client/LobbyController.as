@@ -178,9 +178,7 @@ public class LobbyController extends Controller implements Subscriber
     public function shutdown () :void
     {
         // first do our UI cleanup
-        if (_panel.isOpen) {
-            _panel.close();
-        }
+        _panel.close();
 
         // then our distributed services cleanup
         if (_subscriber != null) {
@@ -238,9 +236,7 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function restoreLobbyUI () :void
     {
-        if (!_panel.isOpen) {
-            _panel.open();
-        }
+        _panel.open();
     }
 
     /**

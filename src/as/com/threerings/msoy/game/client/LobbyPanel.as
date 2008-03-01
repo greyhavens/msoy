@@ -5,9 +5,11 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
+import mx.effects.Resize;
 import mx.managers.PopUpManager;
 
 import mx.containers.HBox;
+import mx.containers.TitleWindow;
 import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.Text;
@@ -26,7 +28,6 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.ThumbnailPanel;
@@ -46,7 +47,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 /**
  * A panel that displays pending table games.
  */
-public class LobbyPanel extends FloatingPanel
+public class LobbyPanel extends TitleWindow
     implements TableObserver, SeatednessObserver
 {
     /** The width of the lobby panel. */
@@ -76,13 +77,38 @@ public class LobbyPanel extends FloatingPanel
      */
     public function LobbyPanel (gctx :GameContext, ctrl :LobbyController)
     {
-        super(gctx.getMsoyContext());
         _gctx = gctx;
         _ctrl = ctrl;
 
         styleName = "lobbyPanel";
         maxWidth = LOBBY_PANEL_MAX_WIDTH;
         showCloseButton = true;
+
+        var resize :Resize = new Resize(this);
+        resize.duration = 300;
+        setStyle("resizeEffect", resize);
+    }
+
+    /**
+     * Displays this panel as a popup.
+     */
+    public function open () :void
+    {
+        if (parent == null) {
+            x = 50;
+            y = 50;
+            PopUpManager.addPopUp(this, _gctx.getMsoyContext().getTopPanel(), false);
+        }
+    }
+
+    /**
+     * Removes this panel from the display.
+     */
+    public function close () :void
+    {
+        if (parent != null) {
+            PopUpManager.removePopUp(this);
+        }
     }
 
     /**
@@ -432,7 +458,6 @@ public class LobbyPanel extends FloatingPanel
             removeChildAt(0);
         }
         addChild(contents);
-        PopUpManager.centerPopUp(this);
         return true;
     }
 
