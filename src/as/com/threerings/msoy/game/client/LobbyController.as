@@ -52,27 +52,42 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
-    public function LobbyController (gctx :GameContext, lobbyOid :int, mode :int, onClear :Function) 
+    public function LobbyController (gctx :GameContext, mode :int, onClear :Function) 
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
         _mode = mode;
         _onClear = onClear;
 
-        _subscriber = new SafeSubscriber(lobbyOid, this)
-        _subscriber.subscribe(_gctx.getDObjectManager());
+        // let the compiler know that these must be compiled into the client
+        var c :Class = MsoyGameDefinition;
+        c = LobbyMarshaller;
 
+        // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
         _panel.addEventListener(CloseEvent.CLOSE, function (event :Event) :void {
             handleCloseLobby();
         });
-        _panel.open();
         setControlledPanel(_panel);
 
-        // let the compiler know that these must be compiled into the client
-        var c :Class = MsoyGameDefinition;
-        c = LobbyMarshaller;
+        // we may be being created during the very beginning of client initialization, so don't
+        // open our panel immediately but rather queue it up to be opened on the next frame
+        _mctx.getTopPanel().callLater(_panel.open);
+    }
+
+    /**
+     * Subscribes to our lobby object and 
+     */
+    public function enterLobby (lobbyOid :int) :void
+    {
+        if (_subscriber == null) {
+            _subscriber = new SafeSubscriber(lobbyOid, this);
+            _subscriber.subscribe(_gctx.getDObjectManager());
+        } else {
+            Log.getLog(this).warning("Asked to re-enter lobby [sub=" + _subscriber +
+                                     ", newOid=" + lobbyOid + "].");
+        }
     }
 
     /**
@@ -168,7 +183,9 @@ public class LobbyController extends Controller implements Subscriber
         }
 
         // then our distributed services cleanup
-        _subscriber.unsubscribe(_mctx.getDObjectManager());
+        if (_subscriber != null) {
+            _subscriber.unsubscribe(_mctx.getDObjectManager());
+        }
         if (_tableDir != null) {
             _tableDir.clearTableObject();
             _tableDir.removeTableObserver(_panel);

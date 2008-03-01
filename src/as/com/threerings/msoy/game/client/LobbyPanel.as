@@ -4,21 +4,14 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
-import flash.events.Event;
-import flash.events.MouseEvent;
 
-import mx.collections.ArrayCollection;
+import mx.managers.PopUpManager;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
-import mx.controls.List;
 import mx.controls.Text;
 
-import mx.core.ClassFactory;
-
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
 import com.threerings.flash.TextFieldUtil;
@@ -57,7 +50,7 @@ public class LobbyPanel extends FloatingPanel
     implements TableObserver, SeatednessObserver
 {
     /** The width of the lobby panel. */
-    public static const LOBBY_PANEL_MAX_WIDTH :int = 500; // in px
+    public static const LOBBY_PANEL_MAX_WIDTH :int = 600; // in px
 
     /**
      * Returns the count of friends of the specified member that are seated at this table.
@@ -167,13 +160,14 @@ public class LobbyPanel extends FloatingPanel
         _creationPanel = new TableCreationPanel(_gctx, this);
         _creationPanel.enabled = !isSeated();
 
+        // update our existing tables
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
         updateTableState();
-//         if (_pendingList.numChildren == 1 && _runningList.numChildren == 1) {
-//             showCreateGame();
-//         }
+
+        // and finally switch to the table display
+        showTables();
     }
 
     /**
@@ -420,7 +414,13 @@ public class LobbyPanel extends FloatingPanel
         _tableList.percentHeight = 100;
         _contents.addChild(_tableList);
 
-        setContents(_contents);
+        // display feedback indicating that we're locating their game; once init is called, we'll
+        // display the real UI
+        var loading :HBox = new HBox();
+        loading.styleName = "lobbyLoadingBox";
+        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("m.locating_game")));
+        this.title = Msgs.GAME.get("t.locating_game");
+        addChild(loading);
     }
 
     protected function setContents (contents :DisplayObject) :Boolean
@@ -432,6 +432,7 @@ public class LobbyPanel extends FloatingPanel
             removeChildAt(0);
         }
         addChild(contents);
+        PopUpManager.centerPopUp(this);
         return true;
     }
 

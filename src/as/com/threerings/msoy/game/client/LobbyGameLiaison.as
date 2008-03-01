@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import mx.containers.HBox;
-
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
@@ -18,10 +16,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.client.GameReadyObserver;
 
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -51,15 +47,8 @@ public class LobbyGameLiaison extends GameLiaison
         // listen for changes in world location so that we can shutdown if we move
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
-        // display feedback indicating that we're locating their game
-        var loading :HBox = new HBox();
-        loading.styleName = "lobbyLoadingBox";
-        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("m.locating_game")));
-        _loading = new FloatingPanel(ctx, Msgs.GAME.get("t.locating_game"));
-        _loading.addChild(loading);
-        _wctx.getTopPanel().callLater(function () :void {
-            _loading.open();
-        });
+        // create our lobby controller which will display a "locating game..." interface
+        _lobby = new LobbyController(_gctx, _mode, lobbyCleared);
     }
 
     /**
@@ -114,6 +103,7 @@ public class LobbyGameLiaison extends GameLiaison
     public function showLobby () :void
     {
         if (_lobby == null) {
+            _lobby = new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared);
             joinLobby();
         } // otherwise it's already showing
     }
@@ -186,12 +176,6 @@ public class LobbyGameLiaison extends GameLiaison
         }
         _wctx.getLocationDirector().removeLocationObserver(_worldLocObs);
 
-        // clear out our loading display if it's lingering around for some reason
-        if (_loading != null) {
-            _loading.close();
-            _loading = null;
-        }
-
         super.shutdown();
     }
 
@@ -233,10 +217,6 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function joinLobby () :void
     {
-        if (_lobby != null) { // sanity check
-            log.warning("Requested to join lobby but we're already joined.");
-            return;
-        }
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
@@ -260,13 +240,7 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function gotLobbyOid (result :Object) :void
     {
-        if (_loading != null) {
-            _loading.close();
-            _loading = null;
-        }
-
-        // this will create a panel and add it to the side panel on the top level
-        _lobby = new LobbyController(_gctx, int(result), _mode, lobbyCleared);
+        _lobby.enterLobby(int(result));
 
         // if we have a player table to enter do that now
         if (_playerIdTable != 0) {
@@ -324,9 +298,6 @@ public class LobbyGameLiaison extends GameLiaison
     /** Listens for world location changes. */
     protected var _worldLocObs :LocationAdapter =
         new LocationAdapter(null, worldLocationDidChange, null);
-
-    /** Displays something while we're connecting to the game server. */
-    protected var _loading :FloatingPanel;
 
     /** Our active lobby, if we have one. */
     protected var _lobby :LobbyController;
