@@ -104,12 +104,6 @@ NumericStepper {
 }
 
 ComboBox {
-  highlightAlphas: 0.26, 0;
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #dadfe3, #9eabb2, #9eabb2, #dadfe3;
-  selectionColor: #54a9da;
-  useRollOver: true;
-  rollOverColor: #c8d0d3;
   fontSize: 9;
   upSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
