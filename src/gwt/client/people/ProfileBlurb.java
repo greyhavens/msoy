@@ -66,6 +66,7 @@ public class ProfileBlurb extends Blurb
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         bits.add(buttons);
+        boolean isMe = (_name.getMemberId() == CPeople.getMemberId());
 
         // add our various buttons: homepage, send mail, visit, admin info
         if (!isBlank(_profile.homePageURL)) {
@@ -75,7 +76,7 @@ public class ProfileBlurb extends Blurb
             homepage.setTitle(CPeople.msgs.showHomepage());
             buttons.add(homepage);
         }
-        if (CPeople.getMemberId() != 0 && _name.getMemberId() != CPeople.getMemberId()) {
+        if (CPeople.getMemberId() != 0 && !isMe) {
             buttons.add(MsoyUI.createActionImage("/images/profile/sendmail.png",
                                                  CPeople.msgs.sendMail(), new ClickListener() {
                 public void onClick (Widget widget) {
@@ -83,21 +84,10 @@ public class ProfileBlurb extends Blurb
                 }
             }));
         }
-        buttons.add(MsoyUI.createActionImage("/images/profile/visithome.png",
-                                             CPeople.msgs.visitHome(), new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.WORLD, "m" + _name.getMemberId());
-            }
-        }));
-        if (CPeople.isAdmin()) {
-            buttons.add(MsoyUI.createActionImage("/images/profile/admininfo.png",
-                                                 CPeople.msgs.adminBrowse(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.ADMIN, Args.compose("browser", _name.getMemberId()));
-                }
-            }));
-        }
-        if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend) {
+        buttons.add(Application.createImageLink("/images/profile/visithome.png",
+                                                CPeople.msgs.visitHome(),
+                                                Page.WORLD, "m" + _name.getMemberId()));
+        if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend && !isMe) {
             buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
                                                  CPeople.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
@@ -106,6 +96,11 @@ public class ProfileBlurb extends Blurb
                                         CPeople.msgs.inviteBody()).show();
                 }
             }));
+        }
+        if (CPeople.isAdmin()) {
+            buttons.add(Application.createImageLink("/images/profile/admininfo.png",
+                                                    CPeople.msgs.adminBrowse(), Page.ADMIN,
+                                                    Args.compose("browser", _name.getMemberId())));
         }
 
         // create the info table with their name, a/s/l, etc.
