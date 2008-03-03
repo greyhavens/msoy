@@ -8,16 +8,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
@@ -204,18 +201,6 @@ public class ItemPanel extends VerticalPanel
             }
         }
         return false;
-    }
-
-    protected RadioButton createFilter (String label, final Predicate pred)
-    {
-        RadioButton button = new RadioButton("filters", label);
-        button.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                showInventory(0, pred);
-            }
-        });
-        button.setChecked(pred == Predicate.TRUE);
-        return button;
     }
 
     protected boolean isShowing (ItemIdent ident)
