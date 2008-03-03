@@ -125,41 +125,48 @@ public class MemberList extends PagedGrid
             int row = 0;
             ClickListener onClick;
 
-            if (card.isFriend) {
+            // if this is me, skip most of this stuff
+            if (CPeople.getMemberId() != card.name.getMemberId()) {
+                // if they are our friend, show the remove friend button
+                if (card.isFriend) {
+                    onClick = new ClickListener() {
+                        public void onClick (Widget widget) {
+                            removeFriend(card, false);
+                        }
+                    };
+                    extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                         "/images/profile/remove.png", onClick));
+                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                         CPeople.msgs.mlRemoveFriend(), onClick));
+
+                // otherwise if we're not a guest, show the add friend button
+                } else if (CPeople.getMemberId() != 0) {
+                    onClick = new ClickListener() {
+                        public void onClick (Widget sender) {
+                            new MailComposition(card.name, CPeople.msgs.inviteTitle(),
+                                                new FriendInvite.Composer(),
+                                                CPeople.msgs.inviteBody()).show();
+                        }
+                    };
+                    extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                         "/images/profile/addfriend.png", onClick));
+                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                         CPeople.msgs.mlAddFriend(), onClick));
+                }
+
+                // show the send mail button
                 onClick = new ClickListener() {
                     public void onClick (Widget widget) {
-                        removeFriend(card, false);
+                        new MailComposition(card.name, null, null, null).show();
                     }
                 };
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                     "/images/profile/remove.png", onClick));
+                                     "/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlRemoveFriend(), onClick));
-
-            } else if (CPeople.getMemberId() != 0) {
-                onClick = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        new MailComposition(card.name, CPeople.msgs.inviteTitle(),
-                                            new FriendInvite.Composer(),
-                                            CPeople.msgs.inviteBody()).show();
-                    }
-                };
-                extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                     "/images/profile/addfriend.png", onClick));
-                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlAddFriend(), onClick));
+                                     CPeople.msgs.mlSendMail(), onClick));
             }
 
-            onClick = new ClickListener() {
-                public void onClick (Widget widget) {
-                    new MailComposition(card.name, null, null, null).show();
-                }
-            };
-            extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                 "/images/profile/sendmail.png", onClick));
-            extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                 CPeople.msgs.mlSendMail(), onClick));
-
+            // add the visit home button
             onClick = new ClickListener() {
                 public void onClick (Widget widget) {
                     Application.go(Page.WORLD, "m" + card.name.getMemberId());
@@ -173,6 +180,7 @@ public class MemberList extends PagedGrid
             setWidget(0, 2, extras);
             getFlexCellFormatter().setRowSpan(0, 2, getRowCount());
             getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
 
         protected Widget createOnlineLink (String text, String page, String args)
