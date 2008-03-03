@@ -163,6 +163,7 @@ public class AVRGameBackend extends ControlBackend
         // AVRG Avatar functions
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
+        o["playAvatarAction_v1"] = playAvatarAction_v1;
         o["setAvatarState_v1"] = setAvatarState_v1;
         o["setAvatarMoveSpeed_v1"] = setAvatarMoveSpeed_v1;
         o["setAvatarLocation_v1"] = setAvatarLocation_v1;
