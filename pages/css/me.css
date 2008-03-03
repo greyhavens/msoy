@@ -1,25 +1,14 @@
 /**
  * $Id$
  *
- * Styles for MyWhirled and The Whirled.
+ * Styles for Me pages.
  */
-
-/**********  My Whirled ************/
-
-.myWhirled, .myWhirled .Stuff {
-  width: 100%;
-}
 
 .myWhirled .Pop {
   text-align: right;
   font-size: 10px;
   padding: 5px 5px 0px 0px;
   color: #63AAE2;
-}
-
-.myWhirled .Stuff .Item {
-  font-size: 12px;
-  text-align: center;
 }
 
 .myWhirled .PersonWidget {
@@ -34,14 +23,6 @@
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
-}
-
-.myWhirled .PersonWidget .Room {
-  color: #355B6E;
-}
-
-.myWhirled .PersonWidget .Game {
-  color: #E98932;
 }
 
 .FeedList {
@@ -160,7 +141,6 @@
   color: red;
 }
 
-/** MyRooms */
 .myRooms {
   width: 100%;
 }

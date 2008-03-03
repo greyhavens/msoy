@@ -87,6 +87,21 @@ public class Application
     }
 
     /**
+     * Returns a {@link Hyperlink} that navigates to the specified application page with the
+     * specified arguments. A page should use this method to pass itself arguments.
+     */
+    public static Hyperlink createImageLink (String path, String tip, String page, String args)
+    {
+        Hyperlink link = new Hyperlink(
+            "<img border=0 src=\"" + path + "\">", true, createLinkToken(page, args));
+        if (tip != null) {
+            link.setTitle(tip);
+        }
+        link.addStyleName("inline");
+        return link;
+    }
+
+    /**
      * Returns HTML that links to the specified page with the specified arguments. Don't use this
      * if you can avoid it. Hyperlink does special stuff to make the history mechanism work in some
      * browsers and this breaks that.

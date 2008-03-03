@@ -998,3 +998,7 @@ img, embed, applet, object {
   width: 110px;
   overflow: hidden;
 }
+
+.stuffNaviBar {
+  width: 100%;
+}

@@ -9,6 +9,10 @@
   font-size: 12px;
 }
 
+.itemPanel {
+  width: 100%;
+}
+
 .itemPanel .pagedGrid .Header .Show {
   white-space: nowrap;
   width: 50px;
@@ -16,7 +20,7 @@
 }
 
 .itemPanel .Shop {
-  margin-top: 5px;
+  margin: 5px 10px 0px;
 }
 
 .itemPanel .Contents {

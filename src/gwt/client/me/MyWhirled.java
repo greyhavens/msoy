@@ -29,6 +29,7 @@ import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.StuffNaviBar;
 import client.util.TongueBox;
 
 public class MyWhirled extends VerticalPanel
@@ -46,6 +47,8 @@ public class MyWhirled extends VerticalPanel
 
     protected void init (MyWhirledData data)
     {
+        add(new StuffNaviBar(Item.NOT_A_TYPE));
+
         // display the Whirled population
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
 
@@ -71,23 +74,6 @@ public class MyWhirled extends VerticalPanel
                                Args.compose("f", CMe.getMemberId()));
             add(fbox);
         }
-
-        // add links to our stuff
-        SmartTable stuff = new SmartTable();
-        stuff.setStyleName("Stuff");
-        for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            final byte type = Item.TYPES[ii];
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.STUFF, "" + type);
-                }
-            };
-            String ipath = Item.getDefaultThumbnailMediaFor(type).getMediaPath();
-            stuff.setWidget(0, ii, MsoyUI.createActionImage(ipath, onClick), 1, "Item");
-            String ilabel = CMe.dmsgs.getString("pItemType" + type);
-            stuff.setWidget(1, ii, MsoyUI.createActionLabel(ilabel, onClick), 1, "Item");
-        }
-        add(new TongueBox(CMe.msgs.headerStuff(), stuff));
 
         // add our news feed
         FeedPanel feed = new FeedPanel(

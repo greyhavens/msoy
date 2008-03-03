@@ -30,8 +30,10 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.StuffNaviBar;
 
 /**
  * Displays all items of a particular type in a player's inventory.
@@ -72,15 +74,19 @@ public class ItemPanel extends VerticalPanel
             }));
         }
 
-        // determine if we should show the creation UI at the bottom
+        // compute the number of rows of items we can fit on the page
         int used = Frame.HEADER_HEIGHT + NAV_BAR_ETC;
         boolean showCreate = shouldShowCreate(type);
         if (showCreate) {
             used += BLURB_HEIGHT;
         }
+        int boxHeight = BOX_HEIGHT;
+        if (FlashClients.clientExists()) {
+            boxHeight += ACTIVATOR_HEIGHT;
+        }
+        int rows = Math.max(1, (Window.getClientHeight() - used) / boxHeight);
 
-        // this will contain our items
-        int rows = Math.max(1, (Window.getClientHeight() - used) / BOX_HEIGHT);
+        // now create our grid of items
         _contents = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
@@ -103,6 +109,7 @@ public class ItemPanel extends VerticalPanel
         };
         _contents.addStyleName("Contents");
 
+        // finally optionally add the "create your own" sales blurb
         if (showCreate) {
             createUploadInterface();
         }
@@ -264,6 +271,7 @@ public class ItemPanel extends VerticalPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
+            add(new StuffNaviBar(_type));
             if (_shop != null) {
                 add(_shop);
                 setCellHorizontalAlignment(_shop, HasAlignment.ALIGN_RIGHT);
@@ -346,10 +354,11 @@ public class ItemPanel extends VerticalPanel
         }
     };
 
-    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ +
-        10 /* gap */ + 25 /*  filters */;
-    protected static final int BLURB_HEIGHT = 25 /* gap */ + 33 /* title */ + 72 /* contents */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 5 /* gap */;
+    protected static final int NAV_BAR_ETC = 63 /* item navi */ + 24 /* shop */ +
+        29 /* grid navi */ + 20 /* margin */;
+    protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
+    protected static final int BOX_HEIGHT = 104;
+    protected static final int ACTIVATOR_HEIGHT = 22;
 
     protected static final int MIN_CREATE_LEVEL = 5;
 }
