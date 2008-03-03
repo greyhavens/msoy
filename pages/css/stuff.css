@@ -9,26 +9,23 @@
   font-size: 12px;
 }
 
-.itemPanel .Filters {
-  margin-top: 5px;
-  margin-left: 10px;
-  width: 100%;
-}
-
-.itemPanel .Filters .Shop {
-  text-align: right;
+.itemPanel .pagedGrid .Header .Show {
+  white-space: nowrap;
+  width: 50px;
   padding-right: 5px;
 }
 
+.itemPanel .Shop {
+  margin-top: 5px;
+}
+
 .itemPanel .Contents {
-  border: white solid 10px;
+  margin: 10px;
   width: 650px;
 }
 
 .itemPanel .Upload {
   margin-left: 10px;
-  margin-top: 10px;
-  width: 100%;
 }
 
 .itemPanel .Upload .Header {

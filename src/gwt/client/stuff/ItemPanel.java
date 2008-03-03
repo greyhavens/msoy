@@ -5,16 +5,20 @@ package client.stuff;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -48,28 +52,23 @@ public class ItemPanel extends VerticalPanel
         _models = models;
         _type = type;
 
-        // this will contain radio buttons for setting filters (eventually it will have user
-        // creatable folders)
-        int col = 0;
-        _filters = new SmartTable("Filters", 0, 0);
-        _filters.setText(0, col++, CStuff.msgs.ipfTitle());
-        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfAll(), Predicate.TRUE));
-        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfUploaded(), new Predicate() {
-            public boolean isMatch (Object o) {
-                return ((Item)o).sourceId == 0;
+        // a drop down for setting filters (eventually it will have user creatable folders)
+        _filters = new ListBox();
+        for (int ii = 0; ii < FLABELS.length; ii++) {
+            _filters.addItem(FLABELS[ii]);
+        }
+        _filters.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                showInventory(0, FILTERS[_filters.getSelectedIndex()]);
             }
-        }));
-        _filters.setWidget(0, col++, createFilter(CStuff.msgs.ipfPurchased(), new Predicate() {
-            public boolean isMatch (Object o) {
-                return ((Item)o).sourceId != 0;
-            }
-        }));
+        });
 
         if (isCatalogItem(type)) {
-            String slabel = CStuff.msgs.ipShopFor(CStuff.dmsgs.getString("pItemType" + _type));
-            _filters.setHTML(0, col++, "&nbsp;");
-            _filters.setText(0, col++, slabel, 1, "Shop");
-            _filters.setWidget(0, col++, new Button(CStuff.msgs.ipToCatalog(), new ClickListener() {
+            _shop = new HorizontalPanel();
+            _shop.setStyleName("Shop");
+            _shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
+            _shop.add(WidgetUtil.makeShim(5, 5));
+            _shop.add(new Button(CStuff.msgs.ipToCatalog(), new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.SHOP, ""+_type);
                 }
@@ -98,6 +97,11 @@ public class ItemPanel extends VerticalPanel
             }
             protected boolean displayNavi (int items) {
                 return true;
+            }
+            protected void addCustomControls (FlexTable controls) {
+                controls.setText(0, 0, CStuff.msgs.ipfTitle());
+                controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
+                controls.setWidget(0, 1, _filters);
             }
         };
         _contents.addStyleName("Contents");
@@ -275,11 +279,11 @@ public class ItemPanel extends VerticalPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
-            add(_filters);
-            add(_contents);
-            if (_tocat != null) {
-                add(_tocat);
+            if (_shop != null) {
+                add(_shop);
+                setCellHorizontalAlignment(_shop, HasAlignment.ALIGN_RIGHT);
             }
+            add(_contents);
             if (_upload != null) {
                 add(_upload);
             }
@@ -331,11 +335,31 @@ public class ItemPanel extends VerticalPanel
     protected int _mostRecentPage;
     protected ItemDetail _detail;
 
-    protected SmartTable _filters;
+    protected HorizontalPanel _shop;
+    protected ListBox _filters;
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
-    protected SmartTable _tocat;
     protected VerticalPanel _upload;
+
+    protected static final String[] FLABELS = {
+        CStuff.msgs.ipfAll(),
+        CStuff.msgs.ipfUploaded(),
+        CStuff.msgs.ipfPurchased(),
+    };
+
+    protected static final Predicate[] FILTERS = {
+        Predicate.TRUE,   // show all
+        new Predicate() { // uploaded
+            public boolean isMatch (Object o) {
+                return ((Item)o).sourceId == 0;
+            }
+        },
+        new Predicate() { // purchased
+            public boolean isMatch (Object o) {
+                return ((Item)o).sourceId != 0;
+            }
+        }
+    };
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ +
         10 /* gap */ + 25 /*  filters */;
