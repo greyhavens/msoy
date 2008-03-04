@@ -33,9 +33,9 @@ import client.util.MsoyUI;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    public ListingDetailPanel (ItemDetail detail, CatalogListing listing, CatalogPanel panel)
+    public ListingDetailPanel (CatalogListing listing, CatalogPanel panel)
     {
-        super(detail);
+        super(listing.detail);
         addStyleName("listingDetailPanel");
 
         _listing = listing;
@@ -86,7 +86,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         info.setText(1, 1, "" + listing.purchases);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_listing.creator.getMemberId() == CShop.getMemberId() || CShop.isAdmin()) {
+        if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isAdmin()) {
             Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
@@ -105,8 +105,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
-                String args = Args.compose(
-                    ""+detail.item.getType(), "0", ""+_listing.originalItemId);
+                String args = Args.compose(""+_item.getType(), "0", ""+_listing.originalItemId);
                 info.addWidget(Application.createLink(CShop.msgs.listingViewOrig(),
                                                       Page.STUFF, args), 2, null);
             }
@@ -116,10 +115,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _details.add(info);
 
         // display a comment interface below the listing details
-        addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId), true);
+        addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
 
 //         // if this item supports sub-items, add a tab for those item types
-//         byte[] types = detail.item.getSalableSubTypes();
+//         byte[] types = _item.getSalableSubTypes();
 //         if (types.length > 0) {
 //             for (int ii = 0; ii < types.length; ii++) {
 //                 addTabBelow(CShop.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));

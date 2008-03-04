@@ -26,9 +26,6 @@ public class ItemDetail implements Streamable, IsSerializable
     /** A display-friendly expansion of Item.creatorId. */
     public MemberName creator;
 
-    /** A display-friendly expansion of Item.ownerId, or null. */
-    public MemberName owner;
-
     /** The item's rating given by the member specified in the request. */
     public byte memberRating;
 }

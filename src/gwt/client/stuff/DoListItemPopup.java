@@ -159,8 +159,7 @@ public class DoListItemPopup extends VerticalPanel
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    CatalogListing listing = (CatalogListing)result;
-                    _item.catalogId = listing.catalogId;
+                    _item.catalogId = ((Integer)result).intValue();
                     MsoyUI.info(resultMsg);
                     Frame.clearDialog(DoListItemPopup.this);
                     _listener.itemListed(_item, false);

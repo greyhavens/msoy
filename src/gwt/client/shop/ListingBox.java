@@ -7,7 +7,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
+
+import com.threerings.msoy.web.data.ListingCard;
 
 import client.item.ItemRating;
 import client.shell.Args;
@@ -22,19 +23,18 @@ import client.util.Stars;
  */
 public class ListingBox extends ItemBox
 {
-    public ListingBox (CatalogListing listing)
+    public ListingBox (ListingCard listing)
     {
-        super(listing.item.getThumbnailMedia(), ItemUtil.getName(listing.item, true), Page.SHOP,
+        super(listing.getThumbnailMedia(), listing.name, Page.SHOP,
               Args.compose(new String[] {
-                  "" + listing.item.getType(), CatalogPanel.ONE_LISTING, "" + listing.catalogId
+                  "" + listing.itemType, CatalogPanel.ONE_LISTING, "" + listing.catalogId
               }));
 
         String cname = CShop.msgs.itemBy(listing.creator.toString());
         addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
 
         int row = getRowCount();
-        setWidget(row, 0, new ItemRating(listing.item, Stars.NO_RATING,
-                                         Stars.MODE_READ, true, false), 1, "Rating");
+        setWidget(row, 0, new ItemRating(listing.rating, true, false), 1, "Rating");
 
         SmartTable cost = new SmartTable(0, 0);
         setWidget(row, 1, cost);

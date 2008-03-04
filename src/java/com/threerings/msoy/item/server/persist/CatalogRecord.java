@@ -20,7 +20,10 @@ import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.ListingCard;
+
 import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 /**
  * Represents a catalog listing of an item.
@@ -109,9 +112,8 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         CatalogListing listing = new CatalogListing();
         listing.catalogId = catalogId;
         if (item != null) {
-            listing.item = item.toItem();
-            // the name part of the MemberName is filled in by ItemManager
-            listing.creator = new MemberName(null, item.creatorId);
+            listing.detail = new ItemDetail();
+            listing.detail.item = item.toItem();
         }
         listing.originalItemId = originalItemId;
         listing.listedDate = new Date(listedDate.getTime());
@@ -122,6 +124,24 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         listing.purchases = purchases;
         listing.returns = returns;
         return listing;
+    }
+
+    /**
+     * Creates a runtime card record from this persistent record.
+     */
+    public ListingCard toListingCard ()
+    {
+        ListingCard card = new ListingCard();
+        card.itemType = item.getType();
+        card.catalogId = catalogId;
+        card.name = item.name;
+        card.thumbMedia = item.getThumbMediaDesc();
+        card.creator = new MemberName(null, item.creatorId); // name filled in by caller
+        card.descrip = item.description;
+        card.rating = item.rating;
+        card.flowCost = flowCost;
+        card.goldCost = goldCost;
+        return card;
     }
 
     @Override

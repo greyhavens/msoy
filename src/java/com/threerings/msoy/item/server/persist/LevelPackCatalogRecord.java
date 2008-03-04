@@ -7,8 +7,6 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-
 /** Catalog Records for LevelPacks. */
 @TableGenerator(name="catalogId", pkColumnValue="LEVELPACK_CATALOG")
 public class LevelPackCatalogRecord extends CatalogRecord<LevelPackRecord>

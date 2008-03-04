@@ -187,7 +187,6 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
-        int memberId = (mrec == null) ? 0 : mrec.memberId;
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 
         try {
@@ -198,37 +197,16 @@ public class ItemServlet extends MsoyServiceServlet
 
             // if you're not the owner or support+, you cannot view original items
             if (record.ownerId != 0 && record.itemId > 0 &&
-                !mrec.isSupport() && mrec.memberId != record.ownerId) {
+                (mrec == null || (!mrec.isSupport() && mrec.memberId != record.ownerId))) {
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
 
-            // the detail contains the item...
             ItemDetail detail = new ItemDetail();
             detail.item = record.toItem();
-
-            // its ratings...
-            if (memberId != 0) {
-                detail.memberRating = repo.getRating(iident.itemId, memberId);
+            detail.creator = MsoyServer.memberRepo.loadMemberName(record.creatorId);
+            if (mrec != null) {
+                detail.memberRating = repo.getRating(iident.itemId, mrec.memberId);
             }
-
-            // the creator's name
-            MemberRecord crrec = MsoyServer.memberRepo.loadMember(record.creatorId);
-            if (crrec == null) {
-                log.warning("Item missing creator " + record + ".");
-            } else {
-                detail.creator = crrec.getName();
-            }
-
-            // and the owner's name
-            if (record.ownerId != 0) {
-                crrec = MsoyServer.memberRepo.loadMember(record.ownerId);
-                if (crrec != null) {
-                    detail.owner = crrec.getName();
-                } else {
-                    log.warning("Item missing owner " + record + ".");
-                }
-            }
-
             return detail;
 
         } catch (PersistenceException pe) {
@@ -554,9 +532,8 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
         List<ItemDetail> items = new ArrayList<ItemDetail>();
-        // it'd be nice to round-robin the item types or something, so the first items in
-        // the queue aren't always from the same type... perhaps we'll just do something
-        // clever in the UI
+        // it'd be nice to round-robin the item types or something, so the first items in the queue
+        // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
             for (byte type : MsoyServer.itemMan.getRepositoryTypes()) {
                 ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
@@ -567,9 +544,7 @@ public class ItemServlet extends MsoyServiceServlet
                     ItemDetail detail = new ItemDetail();
                     detail.item = item;
                     detail.memberRating = 0; // not populated
-                    MemberRecord memRec = MsoyServer.memberRepo.loadMember(record.creatorId);
-                    detail.creator = memRec.getName();
-                    detail.owner = null; // not populated
+                    detail.creator = MsoyServer.memberRepo.loadMemberName(record.creatorId);
 
                     // add the detail to our result and see if we're done
                     items.add(detail);

@@ -39,6 +39,7 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.ListingCard;
 
 import client.item.TagCloud;
 import client.shell.Application;
@@ -112,7 +113,7 @@ public class CatalogPanel extends SimplePanel
                 Application.go(Page.SHOP, CShop.composeArgs(_query, page));
             }
             protected Widget createWidget (Object item) {
-                return new ListingBox((CatalogListing)item);
+                return new ListingBox((ListingCard)item);
             }
             protected String getEmptyMessage () {
                 String name = CShop.dmsgs.getString("itemType" + _query.itemType);
@@ -151,31 +152,12 @@ public class CatalogPanel extends SimplePanel
         String mode = args.get(1, LISTING_PAGE);
         if (mode.equals(ONE_LISTING)) {
             int catalogId = args.get(2, 0);
-
-            // search for the listing in our resolved data models
-            CatalogListing listing = null;
-            for (Iterator iter = _models.keySet().iterator(); iter.hasNext(); ) {
-                CatalogQuery query = (CatalogQuery)iter.next();
-                if (query.itemType != argQuery.itemType) {
-                    continue;
-                }
-                CatalogDataModel model = (CatalogDataModel)_models.get(query);
-                if ((listing = model.getListing(catalogId)) != null) {
-                    break;
-                }
-            }
-
-            // if we found the listing, display it, otherwise load it from the server
-            MsoyCallback gotListing = new MsoyCallback() {
+            CShop.catalogsvc.loadListing(
+                CShop.ident, argQuery.itemType, catalogId, new MsoyCallback() {
                 public void onSuccess (Object result) {
-                    showListing((CatalogListing)result);
+                    setWidget(new ListingDetailPanel((CatalogListing)result, CatalogPanel.this));
                 }
-            };
-            if (listing == null) {
-                CShop.catalogsvc.loadListing(CShop.ident, argQuery.itemType, catalogId, gotListing);
-            } else {
-                gotListing.onSuccess(listing);
-            }
+            });
 
         } else if (argQuery.itemType == Item.NOT_A_TYPE) {
             // display a grid of the selectable item types
@@ -298,16 +280,6 @@ public class CatalogPanel extends SimplePanel
         return page;
     }
 
-    protected void showListing (final CatalogListing listing)
-    {
-        // load up the item details
-        CShop.itemsvc.loadItemDetail(CShop.ident, listing.item.getIdent(), new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setWidget(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
-            }
-        });
-    }
-
     protected void itemPurchased (Item item)
     {
         // report to the client that we generated a tutorial event
@@ -392,17 +364,6 @@ public class CatalogPanel extends SimplePanel
             return _listingCount;
         }
 
-        public CatalogListing getListing (int catalogId) {
-            int count = (_result == null) ? 0 : _result.listings.size();
-            for (int ii = 0; ii < count; ii++) {
-                CatalogListing listing = (CatalogListing)_result.listings.get(ii);
-                if (listing.catalogId == catalogId) {
-                    return listing;
-                }
-            }
-            return null;
-        }
-
         public void doFetchRows (int start, int count, final AsyncCallback callback) {
             CShop.catalogsvc.loadCatalog(
                 CShop.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
@@ -450,10 +411,10 @@ public class CatalogPanel extends SimplePanel
         CShop.msgs.sortByPurchases(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
-        CatalogListing.SORT_BY_RATING,
-        CatalogListing.SORT_BY_LIST_DATE,
-        CatalogListing.SORT_BY_PRICE_ASC,
-        CatalogListing.SORT_BY_PRICE_DESC,
-        CatalogListing.SORT_BY_PURCHASES,
+        CatalogQuery.SORT_BY_RATING,
+        CatalogQuery.SORT_BY_LIST_DATE,
+        CatalogQuery.SORT_BY_PRICE_ASC,
+        CatalogQuery.SORT_BY_PRICE_DESC,
+        CatalogQuery.SORT_BY_PURCHASES,
     };
 }

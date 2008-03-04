@@ -59,6 +59,7 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -451,23 +452,23 @@ public abstract class ItemRepository<
         List<SQLExpression> obExprs = Lists.newArrayList();
         List<OrderBy.Order> obOrders = Lists.newArrayList();
         switch(sortBy) {
-        case CatalogListing.SORT_BY_LIST_DATE:
+        case CatalogQuery.SORT_BY_LIST_DATE:
             addOrderByListDate(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
             break;
-        case CatalogListing.SORT_BY_RATING:
+        case CatalogQuery.SORT_BY_RATING:
             addOrderByRating(obExprs, obOrders);
             addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
             break;
-        case CatalogListing.SORT_BY_PRICE_ASC:
+        case CatalogQuery.SORT_BY_PRICE_ASC:
             addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
             addOrderByRating(obExprs, obOrders);
             break;
-        case CatalogListing.SORT_BY_PRICE_DESC:
+        case CatalogQuery.SORT_BY_PRICE_DESC:
             addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
             addOrderByRating(obExprs, obOrders);
             break;
-        case CatalogListing.SORT_BY_PURCHASES:
+        case CatalogQuery.SORT_BY_PURCHASES:
             addOrderByPurchases(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
             break;

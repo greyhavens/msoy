@@ -176,7 +176,7 @@ public class ItemManager
     public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type, ResultListener<?> rl)
     {
         try {
-            return getRepositoryFor (type);
+            return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
             rl.requestFailed(mre);
             return null;
@@ -190,7 +190,7 @@ public class ItemManager
         byte type, InvocationService.InvocationListener lner)
     {
         try {
-            return getRepositoryFor (type);
+            return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
             lner.requestFailed(ItemCodes.E_INTERNAL_ERROR);
             return null;
@@ -213,7 +213,7 @@ public class ItemManager
         throws ServiceException
     {
         try {
-            return getRepositoryFor (type);
+            return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
             log.warning("Requested invalid repository type " + type + ".");
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -1032,7 +1032,7 @@ public class ItemManager
     }
 
     /**
-     * Get a random item out of the catalog. TODO: return a CatalogListing? (currently GWT only)
+     * Get a random item out of the catalog.
      *
      * @param tags limits selection to one that matches any of these tags. If omitted, selection is
      * from all catalog entries.
@@ -1263,7 +1263,7 @@ public class ItemManager
         {
             LookupType lt = _byType.get(itemType);
             if (lt == null) {
-                lt = new LookupType(itemType, getRepositoryFor (itemType));
+                lt = new LookupType(itemType, getRepositoryFor(itemType));
                 _byType.put(itemType, lt);
             }
             lt.addItemId(itemId);

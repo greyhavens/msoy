@@ -7,8 +7,6 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-
 /** Catalog Records for Decor. */
 @TableGenerator(name="catalogId", pkColumnValue="DECOR_CATALOG")
 public class DecorCatalogRecord extends CatalogRecord<DecorRecord>

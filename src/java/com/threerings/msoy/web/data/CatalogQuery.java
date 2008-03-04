@@ -6,7 +6,6 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 /**
  * Contains information needed to query the catalog.
@@ -14,11 +13,24 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 public class CatalogQuery
     implements IsSerializable
 {
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_RATING = 1;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_LIST_DATE = 2;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_SATISFACTION = 3;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_PRICE_ASC = 4;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_PRICE_DESC = 5;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_PURCHASES = 6;
+
     /** The type of item being browsed. */
     public byte itemType = Item.NOT_A_TYPE;
 
     /** The order in which to return the catalog listings. */
-    public byte sortBy = CatalogListing.SORT_BY_RATING;
+    public byte sortBy = SORT_BY_RATING;
 
     /** The tag by which to filter the listings or null. */
     public String tag;

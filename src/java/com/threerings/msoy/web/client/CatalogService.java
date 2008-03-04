@@ -14,7 +14,9 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -31,10 +33,16 @@ public interface CatalogService extends RemoteService
         /**
          * The particular set of listings requested.
          *
-         * @gwt.typeArgs <com.threerings.msoy.item.data.gwt.CatalogListing>
+         * @gwt.typeArgs <com.threerings.msoy.web.data.ListingCard>
          */
         public List listings;
     }
+
+    /**
+     * Loads the featured items shown on the top-level catalog page.
+     */
+    public ShopData loadShopData (WebIdent ident)
+        throws ServiceException;
 
     /**
      * Loads all catalogue items of the specified type. If memberId == 0, it's a guest request.
@@ -54,9 +62,11 @@ public interface CatalogService extends RemoteService
 
     /**
      * Lists the specified item in the catalog.
+     *
+     * @return the catalog id of the newly listed item.
      */
-    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
-                                    int salesTarget, int flowCost, int goldCost)
+    public int listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
+                         int salesTarget, int flowCost, int goldCost)
         throws ServiceException;
 
     /**

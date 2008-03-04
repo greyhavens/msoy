@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
@@ -15,6 +15,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
@@ -45,7 +46,9 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
@@ -57,6 +60,28 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
+    public ShopData loadShopData (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            ShopData data = new ShopData();
+            data.topAvatars = loadTopItems(mrec, Item.AVATAR);
+            data.topFurniture = loadTopItems(mrec, Item.FURNITURE);
+            ListingCard[] pets = loadTopItems(mrec, Item.PET);
+            data.featuredPet = (pets.length > 0) ? RandomUtil.pickRandom(pets) : null;
+            ListingCard[] toys = loadTopItems(mrec, Item.TOY);
+            data.featuredToy = (toys.length > 0) ? RandomUtil.pickRandom(toys) : null;
+            return data;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load shop data [for=" + ident + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface CatalogService
     public CatalogResult loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
                                       boolean includeCount)
         throws ServiceException
@@ -64,7 +89,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
-        List<CatalogListing> list = new ArrayList<CatalogListing>();
+        List<ListingCard> list = Lists.newArrayList();
 
         // if the type in question is not salable, return an empty list
         if (!isSalable(query.itemType)) {
@@ -73,21 +98,17 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         try {
-            boolean mature = false;
-            if (mrec != null) {
-                mature |= mrec.isSet(MemberRecord.FLAG_SHOW_MATURE);
-            }
-
             TagNameRecord tagRecord = (query.tag != null) ?
                 repo.getTagRepository().getTag(query.tag) : null;
             int tagId = (tagRecord != null) ? tagRecord.tagId : 0;
 
             // fetch catalog records and loop over them
             IntSet members = new ArrayIntSet();
-            for (CatalogRecord record : repo.loadCatalog(
-                     query.sortBy, mature, query.search, tagId, query.creatorId, offset, rows)) {
+            for (CatalogRecord record : repo.loadCatalog(query.sortBy, showMature(mrec),
+                                                         query.search, tagId, query.creatorId,
+                                                         offset, rows)) {
                 // convert them to listings
-                list.add(record.toListing());
+                list.add(record.toListingCard());
                 // and keep track of which member names we need to look up
                 members.add(record.item.creatorId);
             }
@@ -99,14 +120,14 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // finally fill in the listings using the map
-            for (CatalogListing listing : list) {
-                listing.creator = map.get(listing.creator.getMemberId());
+            for (ListingCard card : list) {
+                card.creator = map.get(card.creator.getMemberId());
             }
 
             // if they want the total number of matches, compute that as well
             if (includeCount) {
                 result.listingCount = repo.countListings(
-                    mature, query.search, tagId, query.creatorId);
+                    showMature(mrec), query.search, tagId, query.creatorId);
             }
 
         } catch (PersistenceException pe) {
@@ -203,8 +224,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
-                                    int salesTarget, int flowCost, int goldCost)
+    public int listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
+                         int salesTarget, int flowCost, int goldCost)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -289,7 +310,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
             }
 
-            return record.toListing();
+            return record.catalogId;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "List item failed [item=" + item + "].", pe);
@@ -311,6 +332,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
+
             // if we're not the creator of the listing (who has to download it to update it) do
             // some access control checks
             if (mrec == null || (record.item.creatorId != mrec.memberId && !mrec.isAdmin())) {
@@ -323,7 +345,14 @@ public class CatalogServlet extends MsoyServiceServlet
                     throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
                 }
             }
-            return record.toListing();
+
+            // finally convert the listing to a runtime record
+            CatalogListing clrec = record.toListing();
+            clrec.detail.creator = MsoyServer.memberRepo.loadMemberName(record.item.creatorId);
+            if (mrec != null) {
+                clrec.detail.memberRating = repo.getRating(record.item.itemId, mrec.memberId);
+            }
+            return clrec;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Load listing failed [type=" + itemType +
@@ -550,6 +579,21 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     /**
+     * Helper function for {@link #loadShopData}.
+     */
+    protected ListingCard[] loadTopItems (MemberRecord mrec, byte type)
+        throws PersistenceException, ServiceException
+    {
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        List<ListingCard> cards = Lists.newArrayList();
+        for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
+                                                   null, 0, 0, 0, ShopData.TOP_ITEM_COUNT)) {
+            cards.add(crec.toListingCard());
+        }
+        return cards.toArray(new ListingCard[cards.size()]);
+    }
+
+    /**
      * Helper function for {@link #listItem}.
      */
     protected int getCheckListingPrice (MemberRecord mrec, boolean newListing)
@@ -597,5 +641,10 @@ public class CatalogServlet extends MsoyServiceServlet
                         ", action=" + action + ", item=" + item + "].");
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
+    }
+
+    protected boolean showMature (MemberRecord mrec)
+    {
+        return (mrec == null) ? false : mrec.isSet(MemberRecord.FLAG_SHOW_MATURE);
     }
 }

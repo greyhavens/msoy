@@ -41,7 +41,7 @@ public abstract class Stars extends FlowPanel
         update();
     }
 
-    protected void updateStarImage (double rating)
+    protected void updateStarImage (float rating)
     {
         int filledStars = (int) (rating * 2);
         String prefix = "/images/ui/stars/" + (_halfSize ? "half" : "full") + "/";
@@ -108,7 +108,7 @@ public abstract class Stars extends FlowPanel
      * This method is called when the mouse pointer enters the widget. The subclasser should
      * update the view here, probably by calling {@link #updateStarImages}.
      */
-    protected abstract void update (double rating);
+    protected abstract void update (float rating);
     
     /**
      * This method is called when the user clicks on the widget.

@@ -15,6 +15,11 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface CatalogServiceAsync
 {
     /**
+     * The asynchronous version of {@link CatalogService#loadShopData}.
+     */
+    public void loadShopData (WebIdent ident, AsyncCallback callback);
+    
+    /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
     public void loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,

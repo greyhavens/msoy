@@ -9,8 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 /**
  * Represents a catalog listing of an item.
@@ -18,19 +17,6 @@ import com.threerings.msoy.item.data.all.Item;
 public class CatalogListing
     implements Streamable, IsSerializable
 {
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_RATING = 1;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_LIST_DATE = 2;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_SATISFACTION = 3;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_PRICE_ASC = 4;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_PRICE_DESC = 5;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_PURCHASES = 6;
-
     /** An item that is not actually for sale (used for game awards). */
     public static final int PRICING_HIDDEN = 1;
     /** An item with a manually configured price. */
@@ -58,17 +44,14 @@ public class CatalogListing
     /** The unique id for this listing. */
     public int catalogId;
 
-    /** The item being listed. */
-    public Item item;
+    /** The details of the listed item (including the item). */
+    public ItemDetail detail;
 
     /** The item id of the original from which this listing was created. */
     public int originalItemId;
 
     /** The date on which the item was listed. */
     public Date listedDate;
-
-    /** The creator of the item. */
-    public MemberName creator;
 
     /** The amount of flow it costs to purchase this item, if it's listed, else zero. */
     public int flowCost;
