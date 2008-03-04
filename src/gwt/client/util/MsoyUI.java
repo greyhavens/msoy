@@ -215,11 +215,12 @@ public class MsoyUI
     }
 
     /**
-     * Creates a box with a rounded header and footer.
+     * Creates a box with a rounded header. Additional bits can be added as long as they are
+     * colspan 3.
      */
-    public static Widget createBox (String icon, String title, Widget contents)
+    public static SmartTable createHeaderBox (String icon, String title)
     {
-        SmartTable box = new SmartTable("roundBox", 0, 0);
+        SmartTable box = new SmartTable("headerBox", 0, 0);
         box.setWidget(0, 0, new Image("/images/ui/box/header_left.png"), 1, "Corner");
         if (icon != null) {
             FlowPanel tbox = new FlowPanel();
@@ -231,8 +232,16 @@ public class MsoyUI
         }
         box.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
         box.setWidget(0, 2, new Image("/images/ui/box/header_right.png"), 1, "Corner");
-        box.setWidget(1, 0, contents, 3, "Contents");
-        // TODO: footer with rounded edges
+        return box;
+    }
+
+    /**
+     * Creates a box with a rounded header.
+     */
+    public static Widget createHeaderBox (String icon, String title, Widget contents)
+    {
+        SmartTable box = createHeaderBox(icon, title);
+        box.addWidget(contents, 3, "Contents");
         return box;
     }
 

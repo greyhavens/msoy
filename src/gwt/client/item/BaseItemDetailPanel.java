@@ -6,12 +6,12 @@ package client.item;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -31,68 +31,56 @@ import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
+import client.util.RoundBox;
 import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
  */
-public abstract class BaseItemDetailPanel extends FlexTable
+public abstract class BaseItemDetailPanel extends SmartTable
 {
     protected BaseItemDetailPanel (ItemDetail detail)
     {
-        setStyleName("itemDetailPanel");
-        setCellPadding(0);
-        setCellSpacing(5);
+        super("itemDetailPanel", 0, 10);
 
         _detail = detail;
         _item = detail.item;
 
-        getFlexCellFormatter().setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
-        setWidget(0, 0, MsoyUI.createBackArrow(new ClickListener() {
-            public void onClick (Widget sender) {
-                onUpClicked();
-            }
-        }));
-
-        FlexTable box = new FlexTable();
-        box.setStyleName("Box");
-        box.setCellPadding(0);
-        box.setCellSpacing(0);
-        box.getFlexCellFormatter().setColSpan(0, 0, 2);
-        box.getFlexCellFormatter().setStyleName(0, 0, "Name");
-        box.setText(0, 0, _item.name);
-        box.getFlexCellFormatter().setColSpan(1, 0, 2);
-        box.getFlexCellFormatter().setStyleName(1, 0, "Preview");
-        box.setWidget(1, 0, createPreview(_item));
-        box.getFlexCellFormatter().setStyleName(2, 0, "Extras");
-        box.setWidget(2, 0, _extras = new HorizontalPanel());
-        box.getFlexCellFormatter().setStyleName(2, 1, "Buttons");
-        box.setWidget(2, 1, _buttons = new HorizontalPanel());
+        SmartTable bits = MsoyUI.createHeaderBox(null, _item.name);
+        bits.addStyleName("Box");
+        bits.addWidget(createPreview(_item), 3, "Preview");
         if (_item.isRatable()) {
-            box.getFlexCellFormatter().setColSpan(3, 0, 2);
-            box.getFlexCellFormatter().setStyleName(3, 0, "Rating");
-            box.setWidget(3, 0, new ItemRating(_detail.item, CShell.getMemberId(),
-                                               _detail.memberRating, true));
+            bits.addWidget(new ItemRating(_detail.item, CShell.getMemberId(),
+                                          _detail.memberRating, true), 3, "Rating");
         }
-        getFlexCellFormatter().setRowSpan(0, 1, 2);
-        getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
-        setWidget(0, 1, box);
+        setWidget(0, 0, bits);
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_TOP);
 
         // a place for details
-        setWidget(0, 2, _details = new VerticalPanel());
-        getFlexCellFormatter().setVerticalAlignment(0, 2, VerticalPanel.ALIGN_TOP);
-        _details.setStyleName("Details");
-        _details.setSpacing(5);
+        setWidget(0, 1, _details = new RoundBox(RoundBox.BLUE), 1, "Details");
+        _details.setWidth("100%");
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        // allow derived classes to add their own nefarious bits
-        createInterface(_details);
+        // set up our detail bits
+        _details.add(_creator = new CreatorLabel());
+        _creator.setMember(_detail.creator);
+        _details.add(WidgetUtil.makeShim(5, 5));
+
+        _indeets = new RoundBox(RoundBox.WHITE);
+        _indeets.setWidth("100%");
+        _details.add(_indeets);
+        _indeets.add(new Label(ItemUtil.getDescription(_item)));
+
+        if (_item instanceof Game) {
+            String args = Args.compose("d" , ((Game)_item).gameId);
+            _details.add(Application.createLink("More info...", Page.GAMES, args));
+        }
 
         // add our tag business at the bottom
-        setWidget(1, 0, _footer = new HorizontalPanel());
         getFlexCellFormatter().setHeight(1, 0, "10px");
-        _footer.add(new TagDetailPanel(new TagDetailPanel.TagService() {
+        setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback callback) {
                 CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
             } 
@@ -141,18 +129,6 @@ public abstract class BaseItemDetailPanel extends FlexTable
          
         } else {
             return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
-        }
-    }
-
-    protected void createInterface (VerticalPanel details)
-    {
-        details.add(_creator = new CreatorLabel());
-        _creator.setMember(_detail.creator);
-        details.add(_description = new Label(ItemUtil.getDescription(_item)));
-
-        if (_item instanceof Game) {
-            String args = Args.compose("d" , ((Game)_item).gameId);
-            details.add(Application.createLink("More info...", Page.GAMES, args));
         }
     }
 
@@ -251,11 +227,9 @@ public abstract class BaseItemDetailPanel extends FlexTable
     protected Item _item;
     protected ItemDetail _detail;
 
-    protected HorizontalPanel _header, _footer;
-    protected HorizontalPanel _extras, _buttons;
-    protected VerticalPanel _details;
+    protected RoundBox _details;
+    protected RoundBox _indeets;
 
-    protected Label _description;
     protected CreatorLabel _creator;
 
     protected StyledTabPanel _belowTabs;

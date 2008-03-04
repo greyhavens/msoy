@@ -293,25 +293,43 @@ img, embed, applet, object {
   height: 13px;
 }
 
-/** Rounded box */
-.roundBox .Corner {
+/** Box with rounded header */
+.headerBox .Corner {
   width: 10px;
   height: 25px;
 }
 
-.roundBox .Title {
+.headerBox .Title {
   background: url(/images/ui/box/header_tile.png) repeat-x;
   color: #FFFFFF;
   font-size: 14px;
   font-weight: bold;
 }
 
-.roundBox .Title img, .roundBox .Title div {
+.headerBox .Title img, .headerBox .Title div {
   display: inline;
   vertical-align: middle;
 }
 
-.roundBox .Contents {
+.headerBox .Contents {
+  background: #FFFFFF;
+}
+
+/** Box with rounded borders but no header */
+.roundBox .Corner {
+  width: 10px;
+  height: 10px;
+}
+
+.roundBoxBlue .Contents {
+  padding: 5px 0px;
+}
+
+.roundBoxBlue .Contents, .roundBoxBlue .Side {
+  background: #E8F5FE;
+}
+
+.roundBoxWhite .Contents, .roundBoxWhite .Side {
   background: #FFFFFF;
 }
 
@@ -704,41 +722,6 @@ img, embed, applet, object {
 
 .borderedDialog .Controls a {
   color: white;
-}
-
-/** HeaderBox **/
-.headerBox {
-  width: 340px;
-  height: 100%;
-}
-
-.headerBox .BoxHeader { 
-  width: 100%;
-}
-
-.headerBox .BoxHeader .Left {
-  width: 33px;
-  height: 27px;
-  background: url(/images/profile/box_left.png);
-}
-
-.headerBox .BoxHeader .Right {
-  width: 31px;
-  height: 27px;
-  background: url(/images/profile/box_right.png);
-}
-
-.headerBox .BoxHeader .Title {
-  background: url(/images/profile/box_tile.png);
-  color: #EAF4F8;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.headerBox .Content {
-  width: 100%;
-  height: 100%;
 }
 
 /** General UI styles. */

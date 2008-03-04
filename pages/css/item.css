@@ -16,46 +16,19 @@
   padding: 0px 8px 4px 8px; 
 }
 
-.itemDetailPanel { 
-  width: 650px;
-}
-
 .itemDetailPanel .Box {
-  width: 320px;
+  width: 380px;
 }
 
-.itemDetailPanel .Box .Name {
-  text-align: center;
+.itemDetailPanel .headerBox .Title {
   font-size: 18px;
-  font-weight: bold;
-  color: #FFFFFF;
-  background-image: url(/images/ui/popup/header_tile.png);
-  padding: 2px;
-}
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+} 
 
 .itemDetailPanel .Box .Preview {
   background-image: url(/images/item/detail_preview_bg.png);
-  width: 320px;
-/*  height: 240px; */
   padding: 10px;
-}
-
-.itemDetailPanel .Box .Preview img {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.itemDetailPanel .Box .Extras {
-  color: #FFFFFF;
-  background: #242424;
-  text-align: left;
-  padding-left: 10px;
-}
-
-.itemDetailPanel .Box .Buttons {
-  background: #242424;
-  text-align: right;
-  width: 1px;
 }
 
 .itemDetailPanel .Box .Rating {
@@ -69,9 +42,6 @@
 
 .itemDetailPanel .Details {
   width: 250px;
-}
-
-.itemDetailPanel .Details td {
   font-size: 14px;
 }
 
@@ -80,9 +50,9 @@
 }
 
 .itemDetailPanel .LabelLink {
-   cursor: pointer;
-   text-decoration: underline;
-   color: black;
+ cursor: pointer;
+ text-decoration: underline;
+ color: black;
 }
 
 .tagDetailPanel {

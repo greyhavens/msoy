@@ -146,6 +146,20 @@
   font-size: 12px;
 }
 
+.listingDetailPanel .Price {
+  text-align: right;
+}
+
+.listingDetailPanel .Info {
+  margin-left: auto;
+  margin-right: auto;
+  color: #3776A0;
+}
+
+.listingDetailPanel .Info .What {
+  font-weight: bold;
+}
+
 .buyButton {
   font-size: 28px;
   font-weight: bold;

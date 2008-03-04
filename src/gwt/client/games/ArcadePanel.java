@@ -54,9 +54,9 @@ public class ArcadePanel extends VerticalPanel
 
         for (int ii = 0; ii < data.genres.size(); ii++) {
             ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
-            Widget gbox = MsoyUI.createBox("/images/game/genre/" + genre.genre + ".png",
-                                          CGames.dmsgs.getString("genre" + genre.genre),
-                                          new GenreSummaryPanel(genre));
+            Widget gbox = MsoyUI.createHeaderBox("/images/game/genre/" + genre.genre + ".png",
+                                                 CGames.dmsgs.getString("genre" + genre.genre),
+                                                 new GenreSummaryPanel(genre));
             grid.setWidget(ii/3, ii%3, gbox);
         }
     }

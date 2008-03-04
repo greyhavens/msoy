@@ -7,7 +7,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -45,6 +44,31 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         _models = models;
         _panel = panel;
 
+// TODO
+//         ItemUtil.addItemSpecificButtons(_item, _buttons);
+
+        // only add owner buttons for owners and admins
+        if (_item.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
+            addOwnerButtons();
+        }
+
+        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
+        // will be straightforward
+        /*_creator.setMember(_detail.creator, new PopupMenu() {
+            protected void addMenuItems () {
+                this.addMenuItem(CStuff.imsgs.viewProfile(), new Command() {
+                    public void execute () {
+                        Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
+                    }
+                });
+                this.addMenuItem(CStuff.imsgs.browseCatalogFor(), new Command() {
+                    public void execute () {
+                        // TODO
+                    }
+                });
+            }
+        });*/
+
         // if this item supports sub-items, add a tab for those item types
         SubItem[] types = _item.getSubTypes();
         for (int ii = 0; ii < types.length; ii++) {
@@ -73,36 +97,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _listTip.setText(CStuff.msgs.detailUplistTip());
             _listBtn.setText(CStuff.msgs.detailUplist());
         }
-    }
-
-    // @Override // BaseItemDetailPanel
-    protected void createInterface (VerticalPanel details)
-    {
-        super.createInterface(details);
-
-        ItemUtil.addItemSpecificButtons(_item, _buttons);
-
-        // only add owner buttons for owners and admins
-        if (_item.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
-            addOwnerButtons();
-        }
-
-        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
-        // will be straightforward
-        /*_creator.setMember(_detail.creator, new PopupMenu() {
-            protected void addMenuItems () {
-                this.addMenuItem(CStuff.imsgs.viewProfile(), new Command() {
-                    public void execute () {
-                        Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
-                    }
-                });
-                this.addMenuItem(CStuff.imsgs.browseCatalogFor(), new Command() {
-                    public void execute () {
-                        // TODO
-                    }
-                });
-            }
-        });*/
     }
 
     // @Override // BaseItemDetailPanel
@@ -141,7 +135,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
-            _buttons.add(button);
+// TODO
+//             _buttons.add(button);
         }
 
         if (_item.sourceId == 0) {
@@ -151,7 +146,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     CStuff.editItem(_item.getType(), _item.itemId);
                 }
             });
-            _buttons.add(button);
+// TODO
+//             _buttons.add(button);
         }
 
         if (_item.ownerId == CShell.getMemberId() && FlashClients.clientExists()) {
