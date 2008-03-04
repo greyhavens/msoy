@@ -980,12 +980,21 @@ img, embed, applet, object {
   padding: 5px; /* TODO: IE won't like */
 }
 
-.itemBox .Name {
-  font-size: 14px;
-  padding-top: 5px;
+.itemBox .Name, .itemBox .Creator {
   white-space: nowrap;
   width: 110px;
   overflow: hidden;
+}
+
+.itemBox .Name {
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+.itemBox .Creator {
+  font-size: 12px;
+  padding-top: 2px;
+  color: #AABDC8;
 }
 
 .stuffNaviBar {

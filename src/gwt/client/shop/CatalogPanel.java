@@ -112,7 +112,7 @@ public class CatalogPanel extends SimplePanel
                 Application.go(Page.SHOP, CShop.composeArgs(_query, page));
             }
             protected Widget createWidget (Object item) {
-                return new ListingContainer((CatalogListing)item);
+                return new ListingBox((CatalogListing)item);
             }
             protected String getEmptyMessage () {
                 String name = CShop.dmsgs.getString("itemType" + _query.itemType);

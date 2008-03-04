@@ -14,21 +14,23 @@ import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemBox;
 import client.util.ItemUtil;
+import client.util.MsoyUI;
 import client.util.Stars;
 
 /**
  * Displays a catalog listing.
  */
-public class ListingContainer extends ItemBox
+public class ListingBox extends ItemBox
 {
-    public ListingContainer (CatalogListing listing)
+    public ListingBox (CatalogListing listing)
     {
         super(listing.item.getThumbnailMedia(), ItemUtil.getName(listing.item, true), Page.SHOP,
               Args.compose(new String[] {
                   "" + listing.item.getType(), CatalogPanel.ONE_LISTING, "" + listing.catalogId
               }));
 
-        addText(CShop.msgs.itemBy(listing.creator.toString()), 2, "Creator");
+        String cname = CShop.msgs.itemBy(listing.creator.toString());
+        addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
 
         int row = getRowCount();
         setWidget(row, 0, new ItemRating(listing.item, Stars.NO_RATING,
