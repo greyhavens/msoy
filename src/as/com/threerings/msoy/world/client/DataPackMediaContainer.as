@@ -15,6 +15,9 @@ import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
+
 import flash.utils.ByteArray;
 
 import com.threerings.util.StringUtil;
@@ -240,7 +243,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         }
 
         if (!usingStub) {
-            Loader(_media).loadBytes(ba);
+            Loader(_media).loadBytes(ba, new LoaderContext(false, new ApplicationDomain(null)));
             // all the regular listeners are already installed on this listener
 
         } else {
