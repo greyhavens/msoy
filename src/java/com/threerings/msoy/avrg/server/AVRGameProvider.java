@@ -24,7 +24,7 @@ public interface AVRGameProvider extends InvocationProvider
     /**
      * Handles a {@link AVRGameService#completeQuest} request.
      */
-    public void completeQuest (ClientObject caller, String arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void completeQuest (ClientObject caller, String arg1, float arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

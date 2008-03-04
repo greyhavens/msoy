@@ -14,7 +14,6 @@ import com.samskivert.util.IntMap;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
@@ -25,28 +24,27 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
+import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.MsoyGameServer;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
 import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -78,10 +76,11 @@ public class AVRGameManager
         return _gameId;
     }
 
-    public void startup (AVRGameObject gameObj, Game game, List<GameStateRecord> stateRecords)
+    public void startup (AVRGameObject gameObj, GameContent content,
+                         List<GameStateRecord> stateRecords)
     {
         _gameObj = gameObj;
-        _game = game;
+        _content = content;
 
         // listen for gameObj.playerOids removals
         gameObj.addListener(this);
@@ -90,7 +89,7 @@ public class AVRGameManager
             new AVRGameDispatcher(this)));
 
         gameObj.startTransaction();
-        gameObj.setGameMedia(game.gameMedia);
+        gameObj.setGameMedia(_content.game.gameMedia);
         try {
             for (GameStateRecord rec : stateRecords) {
                 gameObj.addToState(rec.toEntry());
@@ -100,30 +99,31 @@ public class AVRGameManager
         }
     }
 
-    // the Game has changed while we're hosting it -- just update the AVRGameObject
+    /** The game has changed while we're hosting it; update the media, the client will reload. */
     public void updateGame (Game game)
     {
-        // we might have to do some fancy stuff client-side to deal with this
         _gameObj.setGameMedia(game.gameMedia);
     }
 
     public void shutdown ()
     {
-        // flush any modified memory records to the database
+        // identify any modified memory records for flushing to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
             if (entry.persistent && entry.modified) {
                 recs.add(new GameStateRecord(_gameId, entry));
             }
         }
-        if (recs.size() == 0) {
-            return;
-        }
+        
+        final int totalMinutes = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
+
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("shutdown") {
             public void invokePersist () throws Exception {
                 for (GameStateRecord rec : recs) {
                     _repo.storeState(rec);
                 }
+                // TODO: Cut up noteGamePlayed() so we don't have to pass in a 1
+                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 1, totalMinutes);
             }
             public void handleSuccess () {
             }
@@ -152,7 +152,7 @@ public class AVRGameManager
                     "Player removed from OidList without a corresponding DSet entry [gameId=" +
                     _gameId + ", oid=" + event.getOid() + "]");
             }
-            PlayerObject player = _players.remove(playerOid);
+            Player player = _players.remove(playerOid);
             if (player == null) {
                 log.warning(
                     "Eek, unregistered player vanished from OidList [gameId=" + _gameId +
@@ -160,9 +160,11 @@ public class AVRGameManager
                 return;
             }
 
-            flushPlayerGameState(player);
+            
+            
+            flushPlayerGameState(player.playerObject);
 
-            MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), null);
+            MsoyGameServer.worldClient.updatePlayer(player.playerObject.getMemberId(), null);
         }
     }
 
@@ -183,7 +185,7 @@ public class AVRGameManager
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
             public void invokePersist () throws PersistenceException {
                 _repo.setQuestState(
-                    player.getMemberId(), _gameId, questId, QuestState.STEP_FIRST, status, sceneId);
+                    _gameId, player.getMemberId(), questId, QuestState.STEP_FIRST, status, sceneId);
             }
             public void handleSuccess () {
                 player.addToQuestState(
@@ -215,7 +217,7 @@ public class AVRGameManager
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(player.getMemberId(), _gameId, questId, step, status, sceneId);
+                _repo.setQuestState(_gameId, player.getMemberId(), questId, step, status, sceneId);
             }
             public void handleSuccess () {
                 player.updateQuestState(new QuestState(questId, step, status, sceneId));
@@ -230,40 +232,84 @@ public class AVRGameManager
     }
 
     // from AVRGameProvider
-    public void completeQuest (ClientObject caller, final String questId, int payoutLevel,
+    public void completeQuest (ClientObject caller, final String questId, final float payoutLevel,
                                final ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
 
-        QuestState oldState = player.questState.get(questId);
-        if (oldState == null) {
-            throw new IllegalArgumentException(
-                "Member not subscribed to updated quest [questId=" + questId + "]");
-        }
+        final QuestState oldState = player.questState.get(questId);
+//        if (oldState == null) {
+//            throw new IllegalArgumentException(
+//                "Member not subscribed to completed quest [questId=" + questId + "]");
+//        }
 
-        final int payout;
+        final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
+        final int recalcMinutes;
+        final int oldPayoutFactor;
+        
+        log.info("Completing quest: " + questId);
+        
+        // the tutorial gets to pay out fixed amounts of flow; all other games are dynamic
         if (_gameId == Game.TUTORIAL_GAME_ID) {
-            payout = payoutLevel;
+            oldPayoutFactor = 1;
+            recalcMinutes = 0;
+            
+        } else if (_content.detail.payoutFactor == 0) {
+            // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
+            oldPayoutFactor = Math.round(flowPerHour * (5 / 3600f));
+            recalcMinutes = 0;
+
         } else {
-            payout = 0;
-            log.warning("Flow payout not implemented for quests [gameId=" + _gameId + "]");
+            oldPayoutFactor = _content.detail.payoutFactor;
+            
+            // TODO: Change the "100" into a runtime configuration value
+            if (((_content.detail.singlePlayerGames + 1) % 100) == 0) {
+                recalcMinutes = Math.round(getTotalTrackedSeconds() / 60f) +
+                    (_content.detail.singlePlayerMinutes -  _content.detail.lastPayoutRecalc);
+
+            } else {
+                recalcMinutes = 0;
+            }
         }
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(
-                    player.getMemberId(), _gameId, questId, QuestState.STEP_COMPLETED, null, 0);
-                if (payout > 0) {
+                _payoutFactor = oldPayoutFactor;
+                // see if it's time to recalculate the payout factor
+                if (recalcMinutes > 0) {
+                    QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
+                    _payoutFactor = (flowPerHour * recalcMinutes) / 60 / record.payoutFactorTotal;
+
+                    GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
+                    gameRepo.updatePayoutFactor(_gameId, _payoutFactor);
+                }
+                
+                // mark the quest completed and create a log record
+                _repo.noteQuestCompleted(_gameId, player.getMemberId(), questId, _payoutFactor);
+
+                // now award the flow
+                _payout = Math.round(_payoutFactor * Math.max(0, Math.min(payoutLevel, 1.0f)));
+                if (_payout > 0) {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
-                        player.getMemberId(), payout, UserAction.COMPLETED_QUEST,
+                        player.getMemberId(), _payout, UserAction.COMPLETED_QUEST,
                         _gameId + " " + questId);
                 }
             }
             public void handleSuccess () {
-                player.removeFromQuestState(questId);
-                if (payout > 0) {
-                    MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), payout);
+                if (oldState != null) {
+                    player.removeFromQuestState(questId);
+                }
+
+                log.info("Paying out flow: " + _payout);
+                // if we paid out flow, let any logged-on member objects know
+                if (_payout > 0) {
+                    MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), _payout);
+                }
+                
+                // if we updated the payout factor in the db, do it in dobj land too
+                if (_payoutFactor != oldPayoutFactor) {
+                    _content.detail.payoutFactor = _payoutFactor;
                 }
                 listener.requestProcessed();
             }
@@ -271,7 +317,16 @@ public class AVRGameManager
                 log.log(Level.WARNING, "Unable to complete quest [questId=" + questId + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
+            
+            protected int _payout;
+            protected int _payoutFactor;
         });
+    }
+
+    protected int getPlayerMinutes ()
+    {
+        // TODO: iterate over tracking records
+        return 0;
     }
 
     // from AVRGameProvider
@@ -378,7 +433,7 @@ public class AVRGameManager
     public void addPlayer (PlayerObject player, List<QuestStateRecord> questRecords,
                            List<PlayerGameStateRecord> stateRecords)
     {
-        _players.put(player.getOid(), player);
+        _players.put(player.getOid(), new Player(player));
 
         _gameObj.startTransaction();
         try {
@@ -400,7 +455,7 @@ public class AVRGameManager
             player.commitTransaction();
         }
 
-        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _game);
+        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _content.game);
     }
 
     public void removePlayer (PlayerObject player)
@@ -448,9 +503,55 @@ public class AVRGameManager
         });
     }
 
+    /**
+     * Return the total number of seconds that players were being tracked.
+     */
+    protected int getTotalTrackedSeconds ()
+    {
+        int total = _totalTrackedSeconds;
+        int now = (int) (System.currentTimeMillis() / 1000);
+
+        for (Player player : _players.values()) {
+            total += player.getPlayTime(now);
+        }
+        return total;
+    }
+
+    protected class Player
+    {
+        public PlayerObject playerObject;
+        public int beganStamp;
+        public int secondsPlayed;
+
+        public Player (PlayerObject playerObject)
+        {
+            this.playerObject = playerObject;
+        }
+        
+        public int getPlayTime (int now) {
+            int secondsOfPlay = secondsPlayed;
+            if (beganStamp != 0) {
+                secondsOfPlay += (now - beganStamp);
+            }
+            return secondsOfPlay;
+        }
+
+        public void stopTracking (int endStamp) {
+            if (beganStamp != 0) {
+                secondsPlayed += endStamp - beganStamp;
+                beganStamp = 0;
+            }
+        }
+    }
+    
     protected int _gameId;
-    protected Game _game;
+
+    /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
+     * tracked member that is no longer present with a Player object. */
+    protected int _totalTrackedSeconds = 0;
+
+    protected GameContent _content;
     protected AVRGameObject _gameObj;
     protected AVRGameRepository _repo;
-    protected IntMap<PlayerObject> _players = new HashIntMap<PlayerObject>();
+    protected IntMap<Player> _players = new HashIntMap<Player>();
 }

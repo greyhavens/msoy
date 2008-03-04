@@ -33,7 +33,7 @@ public interface AVRGameService extends InvocationService
         Client caller, String questId, int step, String progress, ConfirmListener listener);
 
     public void completeQuest (
-        Client caller, String questId, int payoutLevel, ConfirmListener listener);
+        Client caller, String questId, float payoutLevel, ConfirmListener listener);
 
     public void cancelQuest (
         Client caller, String questId, ConfirmListener listener);

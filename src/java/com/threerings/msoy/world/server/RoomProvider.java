@@ -44,11 +44,6 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link RoomService#requestAVRGameControl} request.
-     */
-    public void requestAVRGameControl (ClientObject caller, int arg1);
-
-    /**
      * Handles a {@link RoomService#requestControl} request.
      */
     public void requestControl (ClientObject caller, ItemIdent arg1);

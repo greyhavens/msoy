@@ -36,12 +36,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int COMPLETE_QUEST = 2;
 
     // from interface AVRGameService
-    public void completeQuest (Client arg1, String arg2, int arg3, InvocationService.ConfirmListener arg4)
+    public void completeQuest (Client arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)
     {
         InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, COMPLETE_QUEST, new Object[] {
-            arg2, Integer.valueOf(arg3), listener4
+            arg2, Float.valueOf(arg3), listener4
         });
     }
 

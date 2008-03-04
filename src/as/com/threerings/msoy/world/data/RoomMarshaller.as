@@ -80,19 +80,8 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #requestAVRGameControl} requests. */
-    public static const REQUEST_AVRGAME_CONTROL :int = 5;
-
-    // from interface RoomService
-    public function requestAVRGameControl (arg1 :Client, arg2 :int) :void
-    {
-        sendRequest(arg1, REQUEST_AVRGAME_CONTROL, [
-            Integer.valueOf(arg2)
-        ]);
-    }
-
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static const REQUEST_CONTROL :int = 6;
+    public static const REQUEST_CONTROL :int = 5;
 
     // from interface RoomService
     public function requestControl (arg1 :Client, arg2 :ItemIdent) :void
@@ -103,7 +92,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static const SEND_SPRITE_MESSAGE :int = 7;
+    public static const SEND_SPRITE_MESSAGE :int = 6;
 
     // from interface RoomService
     public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
@@ -114,7 +103,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
-    public static const SEND_SPRITE_SIGNAL :int = 8;
+    public static const SEND_SPRITE_SIGNAL :int = 7;
 
     // from interface RoomService
     public function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void
@@ -125,7 +114,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static const SET_ACTOR_STATE :int = 9;
+    public static const SET_ACTOR_STATE :int = 8;
 
     // from interface RoomService
     public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
@@ -136,7 +125,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setRoomProperty} requests. */
-    public static const SET_ROOM_PROPERTY :int = 10;
+    public static const SET_ROOM_PROPERTY :int = 9;
 
     // from interface RoomService
     public function setRoomProperty (arg1 :Client, arg2 :RoomPropertyEntry) :void
@@ -147,7 +136,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #spawnMob} requests. */
-    public static const SPAWN_MOB :int = 11;
+    public static const SPAWN_MOB :int = 10;
 
     // from interface RoomService
     public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void
@@ -160,7 +149,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 12;
+    public static const UPDATE_MEMORY :int = 11;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
@@ -171,7 +160,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 13;
+    public static const UPDATE_ROOM :int = 12;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void

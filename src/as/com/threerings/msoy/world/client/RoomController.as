@@ -182,29 +182,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Requests that this client be given control of the specified item.
-     */
-    public function requestAVRGameControl () :void
-    {
-        var gameId :int = _wdctx.getGameDirector().getGameId();
-        if (gameId == 0) {
-            log.warning("Got AVRG control request, but we don't seem to be playing one.");
-            return;
-        }
-
-        if (_roomObj == null) {
-            log.warning("Cannot request AVRG control, no room object [gameId=" + gameId + "].");
-            return;
-        }
-
-        var result :Object = hasAVRGameControl();
-        if (result == null) {
-            // only if nobody currently has control do we issue the request
-            _roomObj.roomService.requestAVRGameControl(_wdctx.getClient(), gameId);
-        }
-    }
-
-    /**
      * Handles a request by an item in our room to send an "action" (requires control) or a
      * "message" (doesn't require control).
      */

@@ -308,6 +308,12 @@ public class MsoyGameRegistry
         memobj.setGame(game);
         if (game != null && game.avrGame) {
             memobj.setAvrGameId(game.gameId);
+
+            // immediately let the room manager give us of control, if needed
+            PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
+            if (pmgr instanceof RoomManager) {
+                ((RoomManager) pmgr).occupantEnteredAVRGame(memobj);
+            }
         }
 
         // update their occupant info if they're in a scene
@@ -337,7 +343,7 @@ public class MsoyGameRegistry
         // immediately let the room manager relieve us of control, if needed
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
         if (pmgr instanceof RoomManager) {
-            ((RoomManager) pmgr).occupantLeftAVRGame(memobj.getOid());
+            ((RoomManager) pmgr).occupantLeftAVRGame(memobj);
         }
     }
 

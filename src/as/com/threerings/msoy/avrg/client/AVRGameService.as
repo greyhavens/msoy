@@ -21,7 +21,7 @@ public interface AVRGameService extends InvocationService
     function cancelQuest (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
-    function completeQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_ConfirmListener) :void;
+    function completeQuest (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
     function deletePlayerProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;

@@ -49,7 +49,7 @@ public class AVRGameDispatcher extends InvocationDispatcher
         case AVRGameMarshaller.COMPLETE_QUEST:
             ((AVRGameProvider)provider).completeQuest(
                 source,
-                (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.ConfirmListener)args[2]
+                (String)args[0], ((Float)args[1]).floatValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
 

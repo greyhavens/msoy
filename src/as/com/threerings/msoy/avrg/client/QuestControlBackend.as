@@ -117,12 +117,8 @@ public class QuestControlBackend
         };
 
         if (outro == null) {
-            // only the tutorial is allowed to skip the UI
-            if (_wctx.getGameDirector().isPlayingTutorial()) {
-                actualComplete();
-                return true;
-            }
-            return false;
+            actualComplete();
+            return true;
         }
 
         new QuestCompletionPanel(_wctx, outro, actualComplete).open(false);

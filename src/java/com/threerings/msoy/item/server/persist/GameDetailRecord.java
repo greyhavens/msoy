@@ -135,7 +135,8 @@ public class GameDetailRecord extends PersistentRecord
     /** The total number of multiplayer minutes spent playing this game. */
     public int multiPlayerMinutes;
 
-    /** The current payout factor, from 0 to 255. */
+    /** The current payout factor for this game: for standalone games, this is a tuning factor
+     * between 0 and 255, for AVRGs it is the amount of flow a player gets for a 100% quest. */
     @Column(defaultValue=(""+DEFAULT_PAYOUT_FACTOR))
     public int payoutFactor;
 

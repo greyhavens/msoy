@@ -39,6 +39,13 @@ public class MemberCardRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(MemberCardRecord.class, NAME);
 
+    /** The column identifier for the {@link #lastSession} field. */
+    public static final String LAST_SESSION = "lastSession";
+
+    /** The qualified column identifier for the {@link #lastSession} field. */
+    public static final ColumnExp LAST_SESSION_C =
+        new ColumnExp(MemberCardRecord.class, LAST_SESSION);
+
     /** The column identifier for the {@link #photoHash} field. */
     public static final String PHOTO_HASH = "photoHash";
 
@@ -59,6 +66,13 @@ public class MemberCardRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #photoConstraint} field. */
     public static final ColumnExp PHOTO_CONSTRAINT_C =
         new ColumnExp(MemberCardRecord.class, PHOTO_CONSTRAINT);
+
+    /** The column identifier for the {@link #headline} field. */
+    public static final String HEADLINE = "headline";
+
+    /** The qualified column identifier for the {@link #headline} field. */
+    public static final ColumnExp HEADLINE_C =
+        new ColumnExp(MemberCardRecord.class, HEADLINE);
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */

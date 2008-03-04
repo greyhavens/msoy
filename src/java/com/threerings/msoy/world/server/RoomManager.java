@@ -214,13 +214,6 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void requestAVRGameControl (ClientObject caller, int gameId)
-    {
-        boolean gotControl = ensureAVRGameControl((MemberObject) caller, gameId);
-        // TODO: throw invocationexception on failure?
-    }
-
-    // documentation inherited from RoomProvider
     public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg,
                                    boolean isAction)
     {
@@ -555,36 +548,17 @@ public class RoomManager extends SpotSceneManager
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
     }
+    
+    public void occupantLeftAVRGame (MemberObject member)
+    {
+        reassignControllers(member.getOid(), true);
+    }
 
-    /**
-     * Checks to see if an AVRG is being controlled by any client. If not, the calling client is
-     * assigned as the AVRG controller and true is returned. If the AVRG is already being
-     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
-     * that another client currently has control of the AVRG).
-     */
-    public boolean ensureAVRGameControl (MemberObject who, int gameId)
+    public void occupantEnteredAVRGame (MemberObject member)
     {
-        if (who.game.gameId != gameId) {
-            log.warning(
-                "Received AVRG control request from client not registered as playing [gameId=" +
-                gameId + ", who=" + who.who() + "]");
-            return false;
-        }
-        Controllable reference = new ControllableAVRGame(gameId);
-        EntityControl ctrl = _roomObj.controllers.get(reference);
-        if (ctrl == null) {
-            log.info("Assigning control [avrGameId=" + gameId + ", to=" + who.who() + "].");
-            _roomObj.addToControllers(new EntityControl(reference, who.getOid()));
-            return true;
-        }
-        return (ctrl.controllerOid == who.getOid());
+        ensureAVRGameControl(member);
     }
-    
-    public void occupantLeftAVRGame (int memberOid)
-    {
-        reassignControllers(memberOid, true);
-    }
-    
+
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
@@ -651,7 +625,18 @@ public class RoomManager extends SpotSceneManager
         // load up any pets that are "let out" in this room scene
         MsoyServer.petMan.loadRoomPets(_roomObj, _scene.getId());
     }
-
+    
+    @Override // from PlaceManager
+    protected void bodyEntered (final int bodyOid)
+    {
+        super.bodyEntered(bodyOid);
+        
+        MsoyBodyObject body = (MsoyBodyObject) MsoyServer.omgr.getObject(bodyOid);
+        if (body instanceof MemberObject) {
+            ensureAVRGameControl((MemberObject) body);
+        }
+    }
+    
     @Override // from PlaceManager
     protected void bodyUpdated (OccupantInfo info)
     {
@@ -688,6 +673,20 @@ public class RoomManager extends SpotSceneManager
 
         // flush any modified memory records to the database
         flushMemories(_roomObj.memories);
+    }
+
+    // if the given member is playing an AVRG, make sure it's controlled; if not, control it
+    protected void ensureAVRGameControl (MemberObject member)
+    {
+        if (member.game != null && member.game.avrGame) {
+            Controllable reference = new ControllableAVRGame(member.game.gameId);
+            EntityControl ctrl = _roomObj.controllers.get(reference);
+            if (ctrl == null) {
+                log.info("Assigning control [avrGameId=" + member.game.gameId + ", to=" +
+                    member.who() + "].");
+                _roomObj.addToControllers(new EntityControl(reference, member.getOid()));
+            }
+        }
     }
 
     @Override // documentation inherited
@@ -872,7 +871,7 @@ public class RoomManager extends SpotSceneManager
         List<Controllable> items = new ArrayList<Controllable>();
         for (EntityControl ctrl : _roomObj.controllers) {
             if (ctrl.controllerOid == bodyOid &&
-                (!avrgOnly || !(ctrl.controlled instanceof ControllableAVRGame))) {
+                (!avrgOnly || (ctrl.controlled instanceof ControllableAVRGame))) {
                 items.add(ctrl.controlled);
             }
         }
@@ -896,6 +895,8 @@ public class RoomManager extends SpotSceneManager
 
     /**
      * Handles a request to select a controller for the supplied set of items.
+     * 
+     * TODO: This gives AVRG control to people not playing the AVRG, heh.
      */
     protected boolean assignControllers (Collection<Controllable> controllables)
     {

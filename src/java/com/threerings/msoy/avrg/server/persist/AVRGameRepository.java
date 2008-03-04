@@ -10,7 +10,10 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
@@ -40,7 +43,7 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public void setQuestState (
-        int memberId, int gameId, String questId, int step, String status, int sceneId)
+        int gameId, int memberId, String questId, int step, String status, int sceneId)
         throws PersistenceException
     {
         store(new QuestStateRecord(memberId, gameId, questId, step, status, sceneId));
@@ -106,11 +109,38 @@ public class AVRGameRepository extends DepotRepository
         delete(PlayerGameStateRecord.class, PlayerGameStateRecord.getKey(gameId, memberId, key));
     }
 
+    public void noteQuestCompleted (int gameId, int memberId, String questId, float payoutFactor)
+        throws PersistenceException
+    {
+        setQuestState(gameId, memberId, questId, QuestState.STEP_COMPLETED, null, 0);
+        insert(new QuestLogRecord(gameId, memberId, questId, payoutFactor));
+    }
+    
+    public QuestLogSummaryRecord summarizeQuestLogRecords (int gameId)
+        throws PersistenceException
+    {
+        return load(
+            QuestLogSummaryRecord.class,
+            new Where(QuestLogRecord.GAME_ID_C, gameId),
+            new FromOverride(QuestLogRecord.class),
+            new FieldOverride(QuestLogSummaryRecord.GAME_ID,
+                              QuestLogRecord.GAME_ID_C),
+            new FieldOverride(QuestLogSummaryRecord.PAYOUT_FACTOR_TOTAL,
+                              new FunctionExp("sum", QuestLogRecord.PAYOUT_FACTOR_C)));
+    }
+    
+    public void deleteQuestLogRecords (int gameId)
+        throws PersistenceException
+    {
+        deleteAll(QuestLogRecord.class, new Where(QuestLogRecord.GAME_ID_C, gameId), null);
+    }
+    
     @Override
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(GameStateRecord.class);
         classes.add(PlayerGameStateRecord.class);
         classes.add(QuestStateRecord.class);
+        classes.add(QuestLogRecord.class);
     }
 }

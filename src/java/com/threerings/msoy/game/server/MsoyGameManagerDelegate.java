@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Collection;
 import java.util.logging.Level;
 
 import com.google.common.collect.Comparators;
@@ -19,24 +18,19 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
@@ -46,24 +40,18 @@ import com.whirled.game.data.ItemData;
 import com.whirled.game.data.LevelData;
 import com.whirled.game.data.TrophyData;
 import com.whirled.game.data.WhirledGameObject;
-import com.whirled.game.data.WhirledGameMarshaller;
-import com.whirled.game.server.WhirledGameDispatcher;
 import com.whirled.game.server.WhirledGameManager;
-import com.whirled.game.server.WhirledGameProvider;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.GameFlowSummaryRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
@@ -403,13 +391,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             }
         }
         int totalMinutes = Math.round(totalSeconds / 60f);
-        if (totalMinutes == 0 && totalSeconds > 0) {
+        if (totalMinutes == 0) {
+            if (totalSeconds == 0) {
+                // if we were played for zero minutes, don't bother updating anything
+                return;
+            }
             totalMinutes = 1; // round very short games up to 1 minute.
-        }
-
-        // if we were played for zero minutes, don't bother updating anything
-        if (totalMinutes <= 0) {
-            return;
         }
 
         // to avoid a single anomalous game freakout out our distribution, cap game duration at
@@ -425,15 +412,21 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             totalMinutes = capDuration * _allPlayers.size();
         }
 
-        // record this game's playtime to the repository
+        // record this game's play time to the repository
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final boolean recalc = (RuntimeConfig.server.payoutFactorReassessment == 0) ? false :
             _content.detail.shouldRecalcPayout(
                 playerMins, RuntimeConfig.server.payoutFactorReassessment);
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
             public void invokePersist () throws Exception {
-                _newPayout = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
-                    _content.game.gameId, playerGames, playerMins, recalc);
+                GameRepository repo = MsoyGameServer.gameReg.getGameRepository();
+                if (recalc) {
+                    GameFlowSummaryRecord record = repo.summarizeFlowGrants(_content.game.gameId);
+                    _newPayout = 128; // TODO: real algorithm
+                    repo.updatePayoutFactor(_content.game.gameId, _newPayout);
+                    repo.deleteFlowGrants(_content.game.gameId);
+                }
+                repo.noteGamePlayed(_content.game.gameId, playerGames, playerMins);
             }
             public void handleSuccess () {
                 if (_newPayout != null) {

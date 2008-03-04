@@ -317,26 +317,25 @@ public class GameGameRegistry
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = MsoyGameRegistry.TUTORIAL_GAME;
+                    _content = new GameContent();
+                    _content.game = MsoyGameRegistry.TUTORIAL_GAME;
+
                 } else {
-                    GameRecord gRec = _gameRepo.loadGameRecord(gameId);
-                    if (gRec != null) {
-                        _game = (Game) gRec.toItem();
-                    }
+                    _content = assembleGameContent(gameId);
                 }
-                if (_game != null) {
+                if (_content.game != null) {
                     _recs = _avrgRepo.getGameState(gameId);
                 }
             }
 
             public void handleSuccess () {
-                if (_game == null) {
+                if (_content.game == null) {
                     reportFailure("m.no_such_game");
                     return;
                 }
 
                 _omgr.registerObject(gameObj);
-                fmgr.startup(gameObj, _game, _recs);
+                fmgr.startup(gameObj, _content, _recs);
 
                 _avrgManagers.put(gameId, fmgr);
 
@@ -364,7 +363,7 @@ public class GameGameRegistry
                 }
             }
 
-            protected Game _game;
+            protected GameContent _content;
             protected List<GameStateRecord> _recs;
         });
     }

@@ -42,12 +42,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const COMPLETE_QUEST :int = 2;
 
     // from interface AVRGameService
-    public function completeQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
+    public function completeQuest (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
     {
         var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, COMPLETE_QUEST, [
-            arg2, Integer.valueOf(arg3), listener4
+            arg2, Float.valueOf(arg3), listener4
         ]);
     }
 

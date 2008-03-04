@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,21 +11,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
 
-import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.EntityMigration;
-import com.samskivert.jdbc.depot.FieldMarshaller;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
@@ -36,6 +31,7 @@ import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.GameFlowGrantLogRecord;
+import com.threerings.msoy.server.persist.GameFlowSummaryRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
@@ -145,16 +141,42 @@ public class GameRepository extends ItemRepository<
         return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
     }
 
+    public GameFlowSummaryRecord summarizeFlowGrants (int gameId)
+        throws PersistenceException
+    {
+        return load(
+            GameFlowSummaryRecord.class,
+            new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
+            new FromOverride(GameFlowGrantLogRecord.class),
+            new FieldOverride(GameFlowSummaryRecord.GAME_ID,
+                              GameFlowGrantLogRecord.GAME_ID_C),
+            new FieldOverride(GameFlowSummaryRecord.AMOUNT,
+                              new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
+    }
+    
+    public void deleteFlowGrants (int gameId)
+        throws PersistenceException
+    {
+        deleteAll(GameFlowGrantLogRecord.class,
+            new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
+    }
+
+    public boolean updatePayoutFactor (int gameId, int factor)
+        throws PersistenceException
+    {
+        return 0 < updatePartial(GameDetailRecord.class, gameId,
+                                 GameDetailRecord.PAYOUT_FACTOR, factor);
+    }
+    
     /**
      * Updates the specified {@link GameDetailRecord}, recording an increase in games played and
      * total player minutes.
      *
      * @return null or the recalculated payout factor if one was recalculated.
      */
-    public Integer noteGamePlayed (int gameId, int playerGames, int playerMins, boolean recalc)
+    public void noteGamePlayed (int gameId, int playerGames, int playerMins)
         throws PersistenceException
     {
-        Integer newPayout = null;
         gameId = Math.abs(gameId); // how to handle playing the original?
 
         String gcname, mcname;
@@ -175,28 +197,6 @@ public class GameRepository extends ItemRepository<
         fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
         fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
 
-        // if game payout reassessment is enabled, potentially recalculate that
-        if (recalc) {
-            // load all actions logged since our last assessment
-//            List<GameFlowSummaryRecord> records =
-//                findAll(GameFlowSummaryRecord.class,
-//                    new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
-//                    new FromOverride(GameFlowGrantLogRecord.class),
-//                    new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-//                                      GameFlowGrantLogRecord.GAME_ID_C),
-//                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-//                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
-//                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
-
-            // TODO: write an algorithm that actually does something with 'records' here
-            newPayout = 128;
-            fieldMap.put(GameDetailRecord.PAYOUT_FACTOR, new LiteralExp("" + newPayout));
-
-            // then delete the records
-            deleteAll(GameFlowGrantLogRecord.class,
-                      new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
-        }
-
         // if this addition would cause us to overflow the player minutes field, don't do it
         int overflow = Integer.MAX_VALUE - playerMins;
         Where where = new Where(
@@ -204,7 +204,6 @@ public class GameRepository extends ItemRepository<
                           new Conditionals.LessThan(mcol, overflow)));
 
         updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
-        return newPayout;
     }
 
     /**
