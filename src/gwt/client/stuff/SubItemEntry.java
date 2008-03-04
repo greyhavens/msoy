@@ -28,7 +28,7 @@ public class SubItemEntry extends ItemEntry
             CStuff.msgs.detailList() : CStuff.msgs.detailUplist();
         _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
-                new DoListItemPopup(item, null, SubItemEntry.this).show();
+                DoListItemPopup.show(item, null, SubItemEntry.this);
             }
         });
         _list.addStyleName("tinyButton");

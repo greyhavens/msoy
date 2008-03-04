@@ -275,8 +275,14 @@ img, embed, applet, object {
   opacity: 0.6;
 }
 
+.pageDialog {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .pageDialog .DialogTitle {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
 }
@@ -321,15 +327,15 @@ img, embed, applet, object {
   height: 10px;
 }
 
-.roundBoxBlue .Contents {
-  padding: 5px 0px;
+.roundBoxBlue .Center {
+  padding: 10px 0px;
 }
 
-.roundBoxBlue .Contents, .roundBoxBlue .Side {
+.roundBoxBlue .Center, .roundBoxBlue .Side {
   background: #E8F5FE;
 }
 
-.roundBoxWhite .Contents, .roundBoxWhite .Side {
+.roundBoxWhite .Center, .roundBoxWhite .Side {
   background: #FFFFFF;
 }
 

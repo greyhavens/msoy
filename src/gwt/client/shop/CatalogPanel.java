@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -81,7 +80,7 @@ public class CatalogPanel extends SimplePanel
         ClickListener clickListener = new ClickListener() {
             public void onClick (Widget sender) {
                 String query = _searchBox.getText().trim();
-                Application.go(Page.SHOP, composeArgs(_query, null, query, 0));
+                Application.go(Page.SHOP, CShop.composeArgs(_query, null, query, 0));
             }
         };
         _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
@@ -102,7 +101,7 @@ public class CatalogPanel extends SimplePanel
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 _query.sortBy = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
-                Application.go(Page.SHOP, composeArgs(_query, 0));
+                Application.go(Page.SHOP, CShop.composeArgs(_query, 0));
             }
         });
 
@@ -110,7 +109,7 @@ public class CatalogPanel extends SimplePanel
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
-                Application.go(Page.SHOP, composeArgs(_query, page));
+                Application.go(Page.SHOP, CShop.composeArgs(_query, page));
             }
             protected Widget createWidget (Object item) {
                 return new ListingContainer((CatalogListing)item);
@@ -258,15 +257,6 @@ public class CatalogPanel extends SimplePanel
     }
 
     /**
-     * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
-     * items.
-     */
-    public void browseByCreator (int creatorId, String creatorName)
-    {
-        Application.go(Page.SHOP, composeArgs(_query, null, null, creatorId));
-    }
-
-    /**
      * Called by the {@link ListingDetailPanel} if the owner requests to delist an item.
      */
     public void itemDelisted (CatalogListing listing)
@@ -274,17 +264,10 @@ public class CatalogPanel extends SimplePanel
         _items.removeItem(listing);
     }
 
-    /**
-     * Clears any tag, creator or search filters currently in effect.
-     */
-    public void clearFilters ()
-    {
-    }
-
     // from interface TagCloud.TagListener
     public void tagClicked (String tag)
     {
-        Application.go(Page.SHOP, composeArgs(_query, tag, null, 0));
+        Application.go(Page.SHOP, CShop.composeArgs(_query, tag, null, 0));
     }
 
     protected Widget createCategorizedPage (
@@ -352,7 +335,7 @@ public class CatalogPanel extends SimplePanel
             CatalogQuery query = new CatalogQuery();
             query.itemType = _query.itemType;
             filter.add(Application.createLink(CShop.msgs.catalogClearFilter(),
-                                              Page.SHOP, composeArgs(query, 0)));
+                                              Page.SHOP, CShop.composeArgs(query, 0)));
             _listings.setWidget(0, 0, filter, 1, "Blurb");
         }
     }
@@ -375,35 +358,6 @@ public class CatalogPanel extends SimplePanel
             }
         }
         return query;
-    }
-
-    protected String composeArgs (CatalogQuery query, String tag, String search, int creatorId)
-    {
-        query.tag = tag;
-        query.search = search;
-        query.creatorId = creatorId;
-        return composeArgs(query, 0);
-    }
-
-    protected String composeArgs (CatalogQuery query, int page)
-    {
-        ArrayList args = new ArrayList();
-        args.add(new Byte(query.itemType));
-        args.add(LISTING_PAGE);
-        args.add(new Byte(query.sortBy));
-        if (query.tag != null) {
-            args.add("t" + query.tag);
-        } else if (query.search != null) {
-            args.add("s" + query.search);
-        } else if (query.creatorId != 0) {
-            args.add("c" + query.creatorId);
-        } else {
-            args.add("");
-        }
-        if (page > 0) {
-            args.add(new Integer(page));
-        }
-        return Args.compose(args);
     }
 
     protected static class NaviPanel extends FlowPanel

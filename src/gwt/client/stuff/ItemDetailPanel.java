@@ -52,23 +52,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             addOwnerButtons();
         }
 
-        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
-        // will be straightforward
-        /*_creator.setMember(_detail.creator, new PopupMenu() {
-            protected void addMenuItems () {
-                this.addMenuItem(CStuff.imsgs.viewProfile(), new Command() {
-                    public void execute () {
-                        Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
-                    }
-                });
-                this.addMenuItem(CStuff.imsgs.browseCatalogFor(), new Command() {
-                    public void execute () {
-                        // TODO
-                    }
-                });
-            }
-        });*/
-
         // if this item supports sub-items, add a tab for those item types
         SubItem[] types = _item.getSubTypes();
         for (int ii = 0; ii < types.length; ii++) {
@@ -113,45 +96,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected void addOwnerButtons ()
     {
-        Button button;
-
-        // don't show delete to anyone but the owner
-        if (_item.ownerId == CShell.getMemberId()) {
-            button = new Button(CStuff.msgs.detailDelete());
-            new ClickCallback(button, CStuff.msgs.detailConfirmDelete()) {
-                public boolean callService () {
-                    CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
-                    return true;
-                }
-                public boolean gotResult (Object result) {
-                    // remove the item from our cached models
-                    int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
-                    DataModel model = _models.getModel(_item.getType(), suiteId);
-                    if (model != null) {
-                        model.removeItem(_item);
-                    }
-                    MsoyUI.info(CStuff.msgs.msgItemDeleted());
-                    History.back(); // back up to the page that contained the item
-                    return false;
-                }
-            };
-// TODO
-//             _buttons.add(button);
-        }
-
-        if (_item.sourceId == 0) {
-            button = new Button(CStuff.msgs.detailEdit());
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    CStuff.editItem(_item.getType(), _item.itemId);
-                }
-            });
-// TODO
-//             _buttons.add(button);
-        }
+        Label label;
 
         if (_item.ownerId == CShell.getMemberId() && FlashClients.clientExists()) {
-            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new ItemActivator(_item));
         }
 
@@ -164,14 +112,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 tip = CStuff.msgs.detailListTip();
                 butlbl = CStuff.msgs.detailList();
             }
-            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(_listTip = new Label(tip));
 
             // add a button for listing or updating the item
             RowPanel buttons = new RowPanel();
             buttons.add(_listBtn = new Button(butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
-                    new DoListItemPopup(_item, null, ItemDetailPanel.this).show();
+                    DoListItemPopup.show(_item, null, ItemDetailPanel.this);
                 }
             }));
 
@@ -183,16 +131,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                         CStuff.catalogsvc.loadListing(
                             CStuff.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
                             public void onSuccess (Object result) {
-                                new DoListItemPopup(
-                                    _item, (CatalogListing)result, ItemDetailPanel.this).show();
+                                DoListItemPopup.show(
+                                    _item, (CatalogListing)result, ItemDetailPanel.this);
                             }
                         });
                     }
                 }));
             }
+            _details.add(WidgetUtil.makeShim(10, 5));
             _details.add(buttons);
         }
-
 
         // TODO: enable remixing for everyone
         boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP) &&
@@ -200,8 +148,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (remixable) {
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
-            button = new Button(CStuff.msgs.detailRemix());
-            button.addClickListener(new ClickListener() {
+            label = MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
                 public void onClick (Widget sender) {
                     CStuff.remixItem(_item.getType(), _item.itemId);
                 }
@@ -218,7 +165,39 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 //                    return false;
 //                }
 //            };
-            _details.add(button);
+            _details.add(label);
+        }
+
+        // add a button for deleting this item
+        _details.add(WidgetUtil.makeShim(10, 10));
+        label = new Label(CStuff.msgs.detailDelete());
+        new ClickCallback(label, CStuff.msgs.detailConfirmDelete()) {
+            public boolean callService () {
+                CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                // remove the item from our cached models
+                int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
+                DataModel model = _models.getModel(_item.getType(), suiteId);
+                if (model != null) {
+                    model.removeItem(_item);
+                }
+                MsoyUI.info(CStuff.msgs.msgItemDeleted());
+                History.back(); // back up to the page that contained the item
+                return false;
+            }
+        };
+        _details.add(label);
+
+        // add a button for editing this item, if it's an original
+        if (_item.sourceId == 0) {
+            label = MsoyUI.createActionLabel(CStuff.msgs.detailEdit(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    CStuff.editItem(_item.getType(), _item.itemId);
+                }
+            });
+            _details.add(label);
         }
     }
 

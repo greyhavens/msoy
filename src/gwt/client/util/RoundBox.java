@@ -38,7 +38,7 @@ public class RoundBox extends SmartTable
             setWidget(2, 1, _images.blue_lower_right().createImage(), 1, "Corner");
         }
 
-        setWidget(0, 1, _contents = new FlowPanel(), 1, "Contents");
+        setWidget(0, 1, _contents = new FlowPanel(), 1, "Center");
         getFlexCellFormatter().setRowSpan(0, 1, 3);
 
         setHTML(1, 0, "&nbsp;");

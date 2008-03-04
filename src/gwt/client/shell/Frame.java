@@ -393,6 +393,7 @@ public class Frame
                 }
             }), 1, "Close");
             setWidget(1, 0, content, 2, null);
+            getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
             setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }
 

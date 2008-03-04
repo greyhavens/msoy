@@ -95,7 +95,7 @@ public class FlashClients
         }
         return WidgetUtil.createFlashContainer(
             "avatarViewer", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
-            360, 518, flashVars);
+            360, 385, flashVars);
     }
 
     /**

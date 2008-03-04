@@ -150,10 +150,13 @@
   text-align: right;
 }
 
+.listingDetailPanel .Buttons {
+  text-align: center;
+}
+
 .listingDetailPanel .Info {
   margin-left: auto;
   margin-right: auto;
-  color: #3776A0;
 }
 
 .listingDetailPanel .Info .What {

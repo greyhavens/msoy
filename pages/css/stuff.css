@@ -19,6 +19,10 @@
   padding-right: 5px;
 }
 
+.itemPanel .itemDetailPanel .itemActivator .Tip {
+  color: #3776A0;
+}
+
 .itemPanel .Shop {
   margin: 5px 10px 0px;
 }
@@ -110,11 +114,7 @@
 }
 
 .doListItem {
-  width: 450px;
- }
-
-.doListItem .Content {
-  padding: 10px;
+  margin: 10px;
 }
 
 .doListItem .Header {

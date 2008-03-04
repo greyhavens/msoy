@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -16,25 +17,32 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
-import client.util.BorderedDialog;
+import client.shell.Frame;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
-public class DoListItemPopup extends BorderedDialog
+public class DoListItemPopup extends VerticalPanel
 {
     public interface ListedListener
     {
         public void itemListed (Item item, boolean updated);
     }
 
-    public DoListItemPopup (Item item, final CatalogListing listing, ListedListener listener)
+    public static void show (Item item, CatalogListing listing, ListedListener listener)
     {
-        super(false, true);
+        String title = item.catalogId == 0 ?
+            CStuff.msgs.doListCreateTitle() : CStuff.msgs.doListUpdateTitle();
+        Frame.showDialog(title, new DoListItemPopup(item, listing, listener));
+    }
+
+    protected DoListItemPopup (Item item, final CatalogListing listing, ListedListener listener)
+    {
         addStyleName("doListItem");
 
         _item = item;
@@ -46,16 +54,14 @@ public class DoListItemPopup extends BorderedDialog
         // note whether we are listing this item for the first time or updating its listing or
         // whether or not we're repricing an existing listing
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
-
-        _header.add(createTitleLabel(CStuff.msgs.doListHdrTop(), null));
         if (firstTime) {
-            _content.add(MsoyUI.createLabel(CStuff.msgs.doListBlurb(), "Blurb"));
+            add(MsoyUI.createLabel(CStuff.msgs.doListBlurb(), "Blurb"));
         } else if (repricing) {
-            _content.add(MsoyUI.createLabel(CStuff.msgs.doUppriceBlurb(), "Blurb"));
+            add(MsoyUI.createLabel(CStuff.msgs.doUppriceBlurb(), "Blurb"));
         } else {
             HTML update = new HTML(CStuff.msgs.doUpdateBlurb());
             update.setStyleName("Blurb");
-            _content.add(update);
+            add(update);
         }
 
         // determine whether or not this item is salable
@@ -63,10 +69,10 @@ public class DoListItemPopup extends BorderedDialog
 
         // only add the description if we're not repricing
         if (!repricing) {
-            _content.add(MsoyUI.createLabel(CStuff.msgs.doListDescripHeader(), "Header"));
-            _content.add(MsoyUI.createLabel(firstTime ? CStuff.msgs.doListNeedsDescrip() :
-                                            CStuff.msgs.doUpdateNeedsDescrip(), "Blurb"));
-            _content.add(_description = new TextArea());
+            add(MsoyUI.createLabel(CStuff.msgs.doListDescripHeader(), "Header"));
+            add(MsoyUI.createLabel(firstTime ? CStuff.msgs.doListNeedsDescrip() :
+                                   CStuff.msgs.doUpdateNeedsDescrip(), "Blurb"));
+            add(_description = new TextArea());
             _description.setText(item.description);
             _description.setCharacterWidth(50);
             _description.setVisibleLines(3);
@@ -119,24 +125,29 @@ public class DoListItemPopup extends BorderedDialog
 //             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
 //             _goldCost.setText(String.valueOf(goldCost));
 
-            _content.add(MsoyUI.createLabel(CStuff.msgs.doListPricingHeader(), "Header"));
-            _content.add(pricing);
+            add(MsoyUI.createLabel(CStuff.msgs.doListPricingHeader(), "Header"));
+            add(pricing);
 
             _pricingBox.setSelectedIndex(selectedPricing);
             tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
 
-        _content.add(_status);
+        add(_status);
 
-        _footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
+        // create buttons for listing and 
+        HorizontalPanel footer = new HorizontalPanel();
+        footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                hide();
+                Frame.clearDialog(DoListItemPopup.this);
             }
         }));
-
+        footer.add(WidgetUtil.makeShim(10, 10));
         String doLbl = firstTime ? CStuff.msgs.doListBtnGo() : CStuff.msgs.doUpdateBtnGo();
-        _footer.add(_doIt = new Button(doLbl));
+        footer.add(_doIt = new Button(doLbl));
+        setHorizontalAlignment(ALIGN_RIGHT);
+        add(footer);
 
+        // set up our button actions
         if (firstTime) {
             final String resultMsg = firstTime ?
                 CStuff.msgs.doListListed() : CStuff.msgs.doListUpdated();
@@ -151,7 +162,7 @@ public class DoListItemPopup extends BorderedDialog
                     CatalogListing listing = (CatalogListing)result;
                     _item.catalogId = listing.catalogId;
                     MsoyUI.info(resultMsg);
-                    hide();
+                    Frame.clearDialog(DoListItemPopup.this);
                     _listener.itemListed(_item, false);
                     return false;
                 }
@@ -173,7 +184,7 @@ public class DoListItemPopup extends BorderedDialog
                 }
                 public boolean gotResult (Object result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    hide();
+                    Frame.clearDialog(DoListItemPopup.this);
                     _listener.itemListed(_item, true);
                     return false;
                 }
@@ -188,7 +199,7 @@ public class DoListItemPopup extends BorderedDialog
                 }
                 public boolean gotResult (Object result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    hide();
+                    Frame.clearDialog(DoListItemPopup.this);
                     return false;
                 }
             };
@@ -223,19 +234,9 @@ public class DoListItemPopup extends BorderedDialog
         return (_goldCost == null) ? 0 : _goldCost.getValue().intValue();
     }
 
-    // @Override
-    protected Widget createContents ()
-    {
-        _content = new VerticalPanel();
-        _content.addStyleName("Content");
-        _content.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        return _content;
-    }
-
     protected Item _item;
     protected ListedListener _listener;
 
-    protected VerticalPanel _content;
     protected TextArea _description;
     protected ListBox _pricingBox;
     protected Label _pricingTip, _salesTargetLabel;

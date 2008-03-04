@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,12 +19,14 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
+import client.shop.CShop;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.ItemUtil;
@@ -65,11 +68,27 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // set up our detail bits
         _details.add(_creator = new CreatorLabel());
-        _creator.setMember(_detail.creator);
-        _details.add(WidgetUtil.makeShim(5, 5));
+        _creator.setMember(_detail.creator, new PopupMenu() {
+            protected void addMenuItems () {
+                this.addMenuItem(CShell.imsgs.viewProfile(), new Command() {
+                    public void execute () {
+                        Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
+                    }
+                });
+                this.addMenuItem(CShell.imsgs.browseCatalogFor(), new Command() {
+                    public void execute () {
+                        CatalogQuery query = new CatalogQuery();
+                        query.itemType = _detail.item.getType();
+                        query.creatorId = _detail.creator.getMemberId();
+                        Application.go(Page.SHOP, CShop.composeArgs(query, 0));
+                    }
+                });
+            }
+        });
 
+        _details.add(WidgetUtil.makeShim(10, 10));
         _indeets = new RoundBox(RoundBox.WHITE);
-        _indeets.setWidth("100%");
+        _indeets.addStyleName("Description");
         _details.add(_indeets);
         _indeets.add(new Label(ItemUtil.getDescription(_item)));
 

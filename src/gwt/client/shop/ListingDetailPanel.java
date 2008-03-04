@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -24,12 +23,10 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
-import client.shell.Frame;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
-import client.util.PopupMenu;
 
 /**
  * Displays a detail view of an item from the catalog.
@@ -58,10 +55,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(price);
 
         _details.add(WidgetUtil.makeShim(10, 10));
-        _details.add(_purchase = new Button(CShop.msgs.listingBuy()));
-        _purchase.addStyleName("bigButton"); // make it big!
-        _purchase.addStyleName("buyButton"); // really big!
-        new ClickCallback(_purchase) {
+        Button purchase = new Button(CShop.msgs.listingBuy());
+        purchase.addStyleName("bigButton"); // make it big!
+        purchase.addStyleName("buyButton"); // really big!
+        new ClickCallback(purchase) {
             public boolean callService () {
                 CShop.catalogsvc.purchaseItem(
                     CShop.ident, _item.getType(), _listing.catalogId, this);
@@ -73,8 +70,15 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return false; // don't reenable buy button
             }
         };
-        _purchase.setEnabled(CShop.getMemberId() > 0);
+        purchase.setEnabled(CShop.getMemberId() > 0);
 
+        // we want to center our purchase button, so we have to put it in a centered div
+        FlowPanel buttons = new FlowPanel();
+        buttons.setStyleName("Buttons");
+        buttons.add(purchase);
+        _details.add(buttons);
+
+        // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
         info.setText(0, 0, CShop.msgs.listingListed(), 1, "What");
         info.setText(0, 1, _lfmt.format(listing.listedDate));
@@ -83,7 +87,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_listing.creator.getMemberId() == CShop.getMemberId() || CShop.isAdmin()) {
-            Button delist = new Button(CShop.msgs.listingDelist());
+            Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
                     CShop.catalogsvc.removeListing(
@@ -97,39 +101,19 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
-// TODO
-//             _buttons.add(delist);
+            info.addWidget(delist, 2, null);
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
                 String args = Args.compose(
                     ""+detail.item.getType(), "0", ""+_listing.originalItemId);
-                info.addWidget(Application.createLink(
-                                   CShop.msgs.listingViewOrig(), Page.STUFF, args), 2, null);
+                info.addWidget(Application.createLink(CShop.msgs.listingViewOrig(),
+                                                      Page.STUFF, args), 2, null);
             }
         }
 
-        _details.add(WidgetUtil.makeShim(1, 10));
+        _details.add(WidgetUtil.makeShim(10, 10));
         _details.add(info);
-
-        // createInterface() has already been called by our superclass constructor so now we can
-        // fill in information from our listing record
-
-        _creator.setMember(_detail.creator, new PopupMenu() {
-            protected void addMenuItems () {
-                this.addMenuItem(CShop.imsgs.viewProfile(), new Command() {
-                    public void execute () {
-                        Application.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
-                    }
-                });
-                this.addMenuItem(CShop.imsgs.browseCatalogFor(), new Command() {
-                    public void execute () {
-                        _panel.browseByCreator(
-                            _detail.creator.getMemberId(), _detail.creator.toString());
-                    }
-                });
-            }
-        });
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(detail.item.getType(), listing.catalogId), true);
@@ -145,8 +129,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected CatalogListing _listing;
     protected CatalogPanel _panel;
-
-    protected Button _purchase;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

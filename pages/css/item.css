@@ -43,6 +43,16 @@
 .itemDetailPanel .Details {
   width: 250px;
   font-size: 14px;
+  color: #3776A0;
+}
+
+.itemDetailPanel .Details a {
+  color: #3776A0;
+}
+
+.itemDetailPanel .Description {
+  width: 100%;
+  color: #000000;
 }
 
 .itemDetailPanel .gwt-Hyperlink {
@@ -52,7 +62,6 @@
 .itemDetailPanel .LabelLink {
  cursor: pointer;
  text-decoration: underline;
- color: black;
 }
 
 .tagDetailPanel {
