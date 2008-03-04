@@ -21,7 +21,7 @@ public class ItemEntry extends ItemBox
     public ItemEntry (Item item)
     {
         super(item.getThumbnailMedia(), ItemUtil.getName(item, true), Page.STUFF,
-              Args.compose(""+item.getType(), "-1", ""+item.itemId));
+              Args.compose("d", ""+item.getType(), ""+item.itemId));
 
         if (item.itemId > 0) { // if this item is an original, style it slightly differently
             getFlexCellFormatter().addStyleName(1, 0, "Original");

@@ -3,11 +3,14 @@
 
 package client.stuff;
 
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
@@ -15,6 +18,7 @@ import client.remix.ItemRemixer;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -38,14 +42,38 @@ public class index extends Page
         if (CStuff.ident == null) {
             // if we have no creds, just display a message saying login
             setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
-            _inventory = null;
             return;
         }
 
         String arg0 = args.get(0, "");
 
+        // if we're displaying an item's detail, do that
+        if ("d".equals(arg0)) {
+            byte type = (byte)args.get(1, Item.AVATAR);
+            int itemId = args.get(2, 0);
+
+            // otherwise we're display a particular item's details
+            Item item = _models.findItem(type, itemId);
+            ItemIdent ident = new ItemIdent(type, itemId);
+
+            final String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
+            if (_detail != null && _detail.item.getIdent().equals(ident)) {
+                if (item != null) {
+                    _detail.item = item;
+                }
+                setContent(title, new ItemDetailPanel(_models, _detail));
+
+            } else {
+                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        _detail = (ItemDetail)result;
+                        setContent(title, new ItemDetailPanel(_models, _detail));
+                    }
+                });
+            }
+
         // if we're editing an item, display that interface
-        if ("e".equals(arg0) || "c".equals(arg0)) {
+        } else if ("e".equals(arg0) || "c".equals(arg0)) {
             byte type = (byte)args.get(1, Item.AVATAR);
             ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
@@ -64,7 +92,6 @@ public class index extends Page
                 }
             }
             setContent(editor);
-            return;
 
         // or maybe we're remixing an item
         } else if ("r".equals(arg0)) {
@@ -78,11 +105,15 @@ public class index extends Page
                 remixer.setItem(type, itemId);
             }
             setContent(remixer);
-            return;
-        }
 
-        // otherwise we're viewing our inventory
-        displayInventory((byte)args.get(0, Item.AVATAR), args.get(1, -1), args.get(2, 0));
+        } else {
+            // otherwise we're viewing our inventory
+            byte type = (byte)args.get(0, Item.AVATAR);
+            String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
+            ItemPanel panel = getItemPanel(type);
+            panel.setPage(args.get(1, -1));
+            setContent(title, panel);
+        }
     }
 
     protected EditorHost createEditorHost ()
@@ -120,13 +151,18 @@ public class index extends Page
         CStuff.msgs = (StuffMessages)GWT.create(StuffMessages.class);
     }
 
-    protected void displayInventory (byte type, int pageNo, int itemId)
+    protected ItemPanel getItemPanel (byte itemType)
     {
-        String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
-        setContent(title, _inventory);
-        _inventory.display(type, pageNo, itemId);
+        Byte key = new Byte(itemType);
+        ItemPanel panel = (ItemPanel) _itemPanels.get(key);
+        if (panel == null) {
+            panel = new ItemPanel(_models, itemType);
+            _itemPanels.put(key, panel);
+        }
+        return panel;
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected InventoryPanel _inventory = new InventoryPanel(_models);
+    protected HashMap _itemPanels = new HashMap();
+    protected ItemDetail _detail;
 }

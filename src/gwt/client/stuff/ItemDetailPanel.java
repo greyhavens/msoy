@@ -38,11 +38,10 @@ import client.util.RowPanel;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (InventoryModels models, ItemDetail detail, ItemPanel panel)
+    public ItemDetailPanel (InventoryModels models, ItemDetail detail)
     {
         super(detail);
         _models = models;
-        _panel = panel;
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
@@ -60,16 +59,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 continue;
             }
             addTabBelow(CStuff.dmsgs.getString("pItemType" + types[ii].getType()),
-                        new SubItemPanel(models, types[ii].getType(), _item, panel), false);
+                        new SubItemPanel(models, types[ii].getType(), _item), false);
         }
-    }
-
-    /**
-     * Returns true if we're displaying the specified item.
-     */
-    public boolean isShowing (ItemIdent ident)
-    {
-        return (_item != null) && _item.getIdent().equals(ident);
     }
 
     // from DoListItemPopup.ListedListener
@@ -202,7 +193,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected InventoryModels _models;
-    protected ItemPanel _panel;
     protected Label _listTip;
     protected Button _listBtn;
 }

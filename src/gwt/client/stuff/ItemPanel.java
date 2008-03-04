@@ -21,11 +21,7 @@ import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
 
-import client.editem.EditorHost;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
@@ -39,7 +35,6 @@ import client.util.StuffNaviBar;
  * Displays all items of a particular type in a player's inventory.
  */
 public class ItemPanel extends VerticalPanel
-    implements EditorHost
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 5;
@@ -130,64 +125,6 @@ public class ItemPanel extends VerticalPanel
         showInventory(page, null);
     }
 
-    /**
-     * Requests that detail for the specified item be displayed.
-     */
-    public void showDetail (ItemIdent ident)
-    {
-        if (_detail != null && _detail.item.getIdent().equals(ident)) {
-            showDetail(_detail);
-            return;
-        }
-
-        // load up the item details
-        CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                showDetail((ItemDetail)result);
-            }
-        });
-    }
-
-    /**
-     * Requests that detail for the specified item be displayed.
-     */
-    public void showDetail (Item item)
-    {
-        if (_detail != null && _detail.item.getIdent().equals(item.getIdent())) {
-            _detail.item = item;
-            showDetail(_detail);
-        } else {
-            showDetail(item.getIdent());
-        }
-    }
-
-    /**
-     * Displays the supplied item detail.
-     */
-    public void showDetail (ItemDetail detail)
-    {
-        _detail = detail;
-        clear();
-        add(new ItemDetailPanel(_models, _detail, this));
-    }
-
-    // from EditorHost
-    public void editComplete (Item item)
-    {
-        _create.setEnabled(true);
-
-        if (item != null) {
-            // refresh the detail view
-            if (_detail != null && _detail.item.getIdent().equals(item.getIdent())) {
-                _detail.item = item;
-                showDetail(_detail);
-            } else {
-                ((SimpleDataModel)_contents.getModel()).addItem(0, item);
-                _contents.displayPage(0, true);
-            }
-        }
-    }
-
     protected boolean shouldShowCreate (byte type)
     {
         // if this is photos, music, videos, or furni always show create
@@ -208,12 +145,6 @@ public class ItemPanel extends VerticalPanel
             }
         }
         return false;
-    }
-
-    protected boolean isShowing (ItemIdent ident)
-    {
-        Widget top = (getWidgetCount() > 0) ? getWidget(0) : null;
-        return (top instanceof ItemDetailPanel && ((ItemDetailPanel)top).isShowing(ident));
     }
 
     protected void createUploadInterface ()
@@ -305,28 +236,9 @@ public class ItemPanel extends VerticalPanel
         });
     }
 
-    protected SimpleDataModel getFilteredModel (Predicate pred)
-    {
-        return null;
-    }
-
-    /**
-     * Called by an active {@link ItemDetailPanel} to let us know that an item has been remixed.
-     * Since this is a relatively uncommon operation and completely replaces the item with a new
-     * one with a new id, we force a server roundtrip refresh.
-     */
-    protected void itemRemixed (Item oldItem, Item newItem)
-    {
-        // this may be from a sub-item in which case we ignore it
-        if (newItem.getType() == _type) {
-            // TODO: add new item to our list
-        }
-    }
-
     protected InventoryModels _models;
     protected byte _type;
     protected int _mostRecentPage;
-    protected ItemDetail _detail;
 
     protected HorizontalPanel _shop;
     protected ListBox _filters;

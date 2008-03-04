@@ -23,7 +23,7 @@ import client.util.MsoyCallback;
  */
 public class SubItemPanel extends PagedGrid
 {
-    public SubItemPanel (InventoryModels models, byte type, Item parent, final ItemPanel panel)
+    public SubItemPanel (InventoryModels models, byte type, Item parent)
     {
         super(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
         addStyleName("subInventoryContents");
