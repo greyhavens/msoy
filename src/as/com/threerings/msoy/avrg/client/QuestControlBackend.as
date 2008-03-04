@@ -99,7 +99,7 @@ public class QuestControlBackend
 
     protected function completeQuest_v1 (questId :String, outro :String, payout :int) :Boolean
     {
-        if (!_backend.isPlaying() || !isOnQuest(questId)) {
+        if (!_backend.isPlaying()) {
             return false;
         }
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
