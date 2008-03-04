@@ -409,7 +409,7 @@ class ViewerAvatarSprite extends MemberSprite
         _scale = scale;
         scaleUpdated();
         x = (_comp.width - width)/2;
-        y = Math.max(0, (_comp.height - height - parent.y));
+        y = (_comp.height - height - parent.y);
     }
 
     override public function getState () :String
