@@ -266,7 +266,7 @@ public class ItemPanel extends VerticalPanel
         }
     };
 
-    protected static final int NAV_BAR_ETC = 63 /* item navi */ + 24 /* shop */ +
+    protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
         29 /* grid navi */ + 20 /* margin */;
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
