@@ -59,6 +59,6 @@ public class RoundBox extends SmartTable
 
     protected FlowPanel _contents;
 
-    /** Our navigation menu images. */
+    /** Our corner images. */
     protected static BoxImages _images = (BoxImages)GWT.create(BoxImages.class);
 }

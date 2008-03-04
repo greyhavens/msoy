@@ -13,6 +13,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -92,13 +93,17 @@ public class Application
      */
     public static Hyperlink createImageLink (String path, String tip, String page, String args)
     {
-        Hyperlink link = new Hyperlink(
-            "<img border=0 src=\"" + path + "\">", true, createLinkToken(page, args));
-        if (tip != null) {
-            link.setTitle(tip);
-        }
-        link.addStyleName("inline");
-        return link;
+        return createHTMLLink("<img border=0 src=\"" + path + "\">", tip, page, args);
+    }
+
+    /**
+     * Returns a {@link Hyperlink} that navigates to the specified application page with the
+     * specified arguments. A page should use this method to pass itself arguments.
+     */
+    public static Hyperlink createImageLink (
+        AbstractImagePrototype image, String tip, String page, String args)
+    {
+        return createHTMLLink(image.getHTML(), tip, page, args);
     }
 
     /**
@@ -375,6 +380,19 @@ public class Application
         _creators.put(Page.SWIFTLY, client.swiftly.index.getCreator());
         _creators.put(Page.WHIRLEDS, client.whirleds.index.getCreator());
         _creators.put(Page.WORLD, client.world.index.getCreator());
+    }
+
+    /**
+     * A helper function for both {@link #getImageLink}s.
+     */
+    protected static Hyperlink createHTMLLink (String html, String tip, String page, String args)
+    {
+        Hyperlink link = new Hyperlink(html, true, createLinkToken(page, args));
+        if (tip != null) {
+            link.setTitle(tip);
+        }
+        link.addStyleName("inline");
+        return link;
     }
 
     /**

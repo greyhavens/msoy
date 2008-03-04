@@ -989,5 +989,20 @@ img, embed, applet, object {
 }
 
 .stuffNaviBar {
-  width: 100%;
+  background-image: url(/images/me/stuff_bg.png);
+}
+
+.stuffNaviBar .Edge {
+  width: 55px;
+}
+
+.stuffNaviBar .Link {
+  width: 64px;
+}
+
+.stuffNaviBar .Label {
+  text-align: center;
+  font-weight: bold;
+  color: #FFFFFF;
+  height: 25px;
 }
