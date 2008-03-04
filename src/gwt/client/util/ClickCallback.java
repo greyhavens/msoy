@@ -6,6 +6,8 @@ package client.util;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
@@ -22,7 +24,7 @@ public abstract class ClickCallback
      * Creates a callback for the supplied trigger (the constructor will automatically add this
      * callback to the trigger as a click listener). Failure will automatically be reported.
      */
-    public ClickCallback (Button trigger)
+    public ClickCallback (SourcesClickEvents trigger)
     {
         this(trigger, null);
     }
@@ -34,14 +36,15 @@ public abstract class ClickCallback
      * @param confirmMessage if non-null, a confirm dialog will be popped up when the button is
      * clicked and the service call wil only be made if the user confirms the dialog.
      */
-    public ClickCallback (Button trigger, String confirmMessage)
+    public ClickCallback (SourcesClickEvents trigger, String confirmMessage)
     {
         _trigger = trigger;
-        _trigger.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                takeAction(false);
-            }
-        });
+        _trigger.addClickListener(_onClick);
+        if (_trigger instanceof Label) {
+            // make sure to add our style, but don't doubly add it if it's already added
+            ((Label)_trigger).removeStyleName("actionLabel");
+            ((Label)_trigger).addStyleName("actionLabel");
+        }
         _confirmMessage = confirmMessage;
     }
 
@@ -61,14 +64,14 @@ public abstract class ClickCallback
     // from interface AsyncCallback
     public void onSuccess (Object result)
     {
-        _trigger.setEnabled(gotResult(result));
+        setEnabled(gotResult(result));
     }
 
     // from interface AsyncCallback
     public void onFailure (Throwable cause)
     {
-        CShell.log("Callback failure [for=" + _trigger.getText() + "]", cause);
-        _trigger.setEnabled(true);
+        CShell.log("Callback failure [for=" + _trigger + "]", cause);
+        setEnabled(true);
         MsoyUI.error(CShell.serverError(cause));
     }
 
@@ -76,14 +79,14 @@ public abstract class ClickCallback
     {
         // if we have not yet confirmed and desire to do so, show the confirm popup
         if (_confirmMessage != null && !confirmed) {
-            _trigger.setEnabled(false);
+            setEnabled(false);
             new PromptPopup(_confirmMessage) {
                 public void onAffirmative () {
-                    _trigger.setEnabled(true);
+                    setEnabled(true);
                     takeAction(true);
                 }
                 public void onNegative () {
-                    _trigger.setEnabled(true);
+                    setEnabled(true);
                 }
             }.prompt();
             return;
@@ -91,10 +94,33 @@ public abstract class ClickCallback
 
         // we're confirmed or don't want to, so go ahead and call the service
         if (callService()) {
-            _trigger.setEnabled(false);
+            setEnabled(false);
         }
     }
 
-    protected Button _trigger;
+    protected void setEnabled (boolean enabled)
+    {
+        if (_trigger instanceof Button) {
+            ((Button)_trigger).setEnabled(enabled);
+
+        } else if (_trigger instanceof Label) {
+            Label tlabel = (Label)_trigger;
+            // always remove first so that if we do end up adding, we don't doubly add
+            tlabel.removeClickListener(_onClick);
+            tlabel.removeStyleName("actionLabel");
+            if (enabled) {
+                tlabel.addClickListener(_onClick);
+                tlabel.addStyleName("actionLabel");
+            }
+        }
+    }
+
+    protected ClickListener _onClick = new ClickListener() {
+        public void onClick (Widget sender) {
+            takeAction(false);
+        }
+    };
+
+    protected SourcesClickEvents _trigger;
     protected String _confirmMessage;
 }
