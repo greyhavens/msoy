@@ -54,7 +54,7 @@ public class GameDetailPanel extends SmartTable
 
     public GameDetailPanel ()
     {
-        super("gameDetail", 0, 5);
+        super("gameDetail", 0, 10);
     }
 
     public void setGame (final int gameId, final String tab)
