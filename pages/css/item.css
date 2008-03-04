@@ -17,7 +17,7 @@
 }
 
 .itemDetailPanel .Box {
-  width: 380px;
+  width: 320px;
 }
 
 .itemDetailPanel .headerBox .Title {
@@ -41,7 +41,7 @@
 }
 
 .itemDetailPanel .Details {
-  width: 250px;
+  width: 320px;
   font-size: 14px;
   color: #3776A0;
 }
