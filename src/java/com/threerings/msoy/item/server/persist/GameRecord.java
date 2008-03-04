@@ -197,12 +197,8 @@ public class GameRecord extends ItemRecord
         info.genre = genre;
         info.thumbMedia = getThumbMediaDesc();
         info.description = description;
-        if (info instanceof FeaturedGameInfo) {
-            if (shotMediaHash != null) {
-                ((FeaturedGameInfo)info).shotMedia = new MediaDesc(shotMediaHash, shotMimeType);
-            } else if (furniMediaHash != null) {
-                ((FeaturedGameInfo)info).shotMedia = new MediaDesc(furniMediaHash, furniMimeType);
-            }
+        if (info instanceof FeaturedGameInfo && shotMediaHash != null) {
+            ((FeaturedGameInfo)info).shotMedia = new MediaDesc(shotMediaHash, shotMimeType);
         }
         return info;
     }

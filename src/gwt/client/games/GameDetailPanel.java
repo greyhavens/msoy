@@ -79,7 +79,7 @@ public class GameDetailPanel extends SmartTable
         Game game = detail.getGame();
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        shot.add(new ThumbBox(game.getPreviewMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
+        shot.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
         int online = 0; // TODO
         if (online > 0) {
             shot.add(WidgetUtil.makeShim(5, 5));

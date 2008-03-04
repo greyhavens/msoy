@@ -90,6 +90,15 @@ public class Game extends Item
         return isDeveloperVersion(gameId);
     }
 
+    /**
+     * Returns this game's screenshot media. Falls back to its thumbnail media in the absence of a
+     * screenshot.
+     */
+    public MediaDesc getShotMedia ()
+    {
+        return (shotMedia == null) ? getThumbnailMedia() : shotMedia;
+    }
+
     // @Override from Item
     public byte getType ()
     {
@@ -109,9 +118,6 @@ public class Game extends Item
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        if (shotMedia != null) {
-            return shotMedia;
-        }
         if (furniMedia != null) {
             return furniMedia;
         }
