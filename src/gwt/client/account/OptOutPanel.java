@@ -15,7 +15,6 @@ import com.threerings.msoy.web.data.Invitation;
 import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
-import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
 

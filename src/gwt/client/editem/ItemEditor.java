@@ -27,7 +27,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
-import client.util.BorderedDialog;
 import client.util.LimitedTextArea;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
