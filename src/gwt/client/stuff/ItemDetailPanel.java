@@ -4,9 +4,9 @@
 package client.stuff;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -87,8 +87,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected void addOwnerButtons ()
     {
-        Label label;
-
         if (_item.ownerId == CShell.getMemberId() && FlashClients.clientExists()) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new ItemActivator(_item));
@@ -108,16 +106,18 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
             // add a button for listing or updating the item
             RowPanel buttons = new RowPanel();
-            buttons.add(_listBtn = new Button(butlbl, new ClickListener() {
+            ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, null, ItemDetailPanel.this);
                 }
-            }));
+            };
+            buttons.add(_listBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, onClick));
 
             boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
             if (_item.catalogId != 0 && salable) {
                 // add a button for repricing the listing
-                buttons.add(new Button(CStuff.msgs.detailUpprice(), new ClickListener() {
+                butlbl = CStuff.msgs.detailUpprice();
+                buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
                     public void onClick (Widget sender) {
                         CStuff.catalogsvc.loadListing(
                             CStuff.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
@@ -139,30 +139,18 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (remixable) {
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
-            label = MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
+            _details.add(MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
                 public void onClick (Widget sender) {
                     CStuff.remixItem(_item.getType(), _item.itemId);
                 }
-            });
-//            new ClickCallback(button) {
-//                public boolean callService () {
-//                    CStuff.itemsvc.remixItem(CStuff.ident, _item.getIdent(), this);
-//                    return true;
-//                }
-//                public boolean gotResult (Object result) {
-//                    MsoyUI.info(CStuff.msgs.msgItemRemixed());
-//                    _panel.itemRemixed(_item, (Item) result);
-//                    History.back();
-//                    return false;
-//                }
-//            };
-            _details.add(label);
+            }));
         }
 
         // add a button for deleting this item
-        _details.add(WidgetUtil.makeShim(10, 10));
-        label = new Label(CStuff.msgs.detailDelete());
-        new ClickCallback(label, CStuff.msgs.detailConfirmDelete()) {
+        _details.add(WidgetUtil.makeShim(5, 5));
+        RowPanel buttons = new RowPanel();
+        PushButton delete = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
+        new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
                 CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                 return true;
@@ -179,20 +167,21 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return false;
             }
         };
-        _details.add(label);
+        buttons.add(delete);
 
         // add a button for editing this item, if it's an original
         if (_item.sourceId == 0) {
-            label = MsoyUI.createActionLabel(CStuff.msgs.detailEdit(), new ClickListener() {
+            String butlbl = CStuff.msgs.detailEdit();
+            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
                     CStuff.editItem(_item.getType(), _item.itemId);
                 }
-            });
-            _details.add(label);
+            }));
         }
+        _details.add(buttons);
     }
 
     protected InventoryModels _models;
     protected Label _listTip;
-    protected Button _listBtn;
+    protected PushButton _listBtn;
 }

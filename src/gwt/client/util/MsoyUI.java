@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -27,6 +28,24 @@ import client.shell.CShell;
  */
 public class MsoyUI
 {
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String SHORT_THIN = "shortThin";
+
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String MEDIUM_THIN = "mediumThin";
+
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String LONG_THIN = "longThin";
+
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String SHORT_THICK = "shortThick";
+
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String MEDIUM_THICK = "mediumThick";
+
+    /** A button size constant for use with {@link #createOrangeButton}. */
+    public static final String LONG_THICK = "longThick";
+
     /**
      * Creates a label with the supplied text and style.
      */
@@ -102,6 +121,20 @@ public class MsoyUI
         area.setCharacterWidth(width);
         area.setVisibleLines(height);
         return area;
+    }
+
+    /**
+     * Creates an orange button of the specified size with the supplied text.
+     */
+    public static PushButton createButton (String size, String label, ClickListener listener)
+    {
+        PushButton button = new PushButton(label);
+        if (listener != null) {
+            button.addClickListener(listener);
+        }
+        button.setStyleName(size + "OrangeButton");
+        button.addStyleName("orangeButton");
+        return button;
     }
 
     /**

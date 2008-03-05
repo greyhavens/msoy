@@ -52,6 +52,7 @@
   height: 44px;
   border: none;
   cursor: pointer;
+  text-align: center;
 }
 
 .playPanel .SinglePlay {

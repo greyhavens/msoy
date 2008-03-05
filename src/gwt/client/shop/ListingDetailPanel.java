@@ -4,10 +4,10 @@
 package client.shop;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -56,9 +56,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(price);
 
         _details.add(WidgetUtil.makeShim(10, 10));
-        Button purchase = new Button(CShop.msgs.listingBuy());
-        purchase.addStyleName("bigButton"); // make it big!
-        purchase.addStyleName("buyButton"); // really big!
+        PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
         new ClickCallback(purchase) {
             public boolean callService () {
                 CShop.catalogsvc.purchaseItem(
@@ -72,11 +70,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         };
         purchase.setEnabled(CShop.getMemberId() > 0);
 
-        // we want to center our purchase button, so we have to put it in a centered div
-        FlowPanel buttons = new FlowPanel();
-        buttons.setStyleName("Buttons");
-        buttons.add(purchase);
-        _details.add(buttons);
+//         // we want to center our purchase button, so we have to put it in a centered div
+//         FlowPanel buttons = new FlowPanel();
+//         buttons.setStyleName("Buttons");
+//         buttons.add(purchase);
+        _details.add(purchase);
 
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);

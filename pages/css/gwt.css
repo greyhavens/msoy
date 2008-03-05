@@ -83,6 +83,76 @@ img, embed, applet, object {
   font-size: 21px;
 }
 
+.orangeButton {
+  border: none;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.shortThinOrangeButton, .mediumThinOrangeButton, .longThinOrangeButton {
+  font-size: 14px;
+  height: 23px;
+  padding-top: 6px;
+}
+
+.shortThickOrangeButton, .mediumThickOrangeButton, .longThickOrangeButton {
+  font-size: 28px;
+  height: 39px;
+  padding-top: 5px;
+}
+
+.shortThinOrangeButton {
+  background-image: url(/images/ui/orange/short_thin.png);
+  width: 78px;
+}
+.shortThinOrangeButton-up-hovering, .shortThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/short_thin_over.png);
+}
+
+.mediumThinOrangeButton {
+  background-image: url(/images/ui/orange/medium_thin.png);
+  width: 92px;
+}
+.mediumThinOrangeButton-up-hovering, .mediumThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/medium_thin_over.png);
+}
+
+.longThinOrangeButton {
+  background-image: url(/images/ui/orange/long_thin.png);
+  width: 120px;
+}
+.longThinOrangeButton-up-hovering, .longThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/long_thin_over.png);
+}
+
+.shortThickOrangeButton {
+  background-image: url(/images/ui/orange/short_thick.png);
+  width: 102px;
+}
+.shortThickOrangeButton-up-hovering, .shortThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/short_thick_over.png);
+}
+
+.mediumThickOrangeButton {
+  background-image: url(/images/ui/orange/medium_thick.png);
+  width: 120px;
+}
+.mediumThickOrangeButton-up-hovering, .mediumThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/medium_thick_over.png);
+}
+
+.longThickOrangeButton {
+  background-image: url(/images/ui/orange/long_thick.png);
+  width: 146px;
+}
+.longThickOrangeButton-up-hovering, .longThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/long_thick_over.png);
+}
+
 .closeButton {
   background-image: url(/images/ui/close.png);
   width: 13px;

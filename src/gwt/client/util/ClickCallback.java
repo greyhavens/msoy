@@ -4,8 +4,8 @@
 package client.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,8 +100,8 @@ public abstract class ClickCallback
 
     protected void setEnabled (boolean enabled)
     {
-        if (_trigger instanceof Button) {
-            ((Button)_trigger).setEnabled(enabled);
+        if (_trigger instanceof ButtonBase) {
+            ((ButtonBase)_trigger).setEnabled(enabled);
 
         } else if (_trigger instanceof Label) {
             Label tlabel = (Label)_trigger;

@@ -144,8 +144,9 @@
   text-align: right;
 }
 
-.listingDetailPanel .Buttons {
-  text-align: center;
+.listingDetailPanel .shortThickOrangeButton {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .listingDetailPanel .Info {
@@ -154,11 +155,6 @@
 }
 
 .listingDetailPanel .Info .What {
-  font-weight: bold;
-}
-
-.buyButton {
-  font-size: 28px;
   font-weight: bold;
 }
 
