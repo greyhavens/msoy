@@ -46,14 +46,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
-        FlowPanel price = new FlowPanel();
-        price.setStyleName("Price");
-        price.add(new InlineLabel(CShop.msgs.listingPrice(), false, false, true));
-//         price.add(MsoyUI.createInlineImage("/images/header/symbol_gold.png"));
-//         price.add(new InlineLabel(""+_listing.goldCost, false, false, true));
-        price.add(MsoyUI.createInlineImage("/images/header/symbol_flow.png"));
-        price.add(new InlineLabel(""+_listing.flowCost, false, false, true));
-        _indeets.add(price);
+        _indeets.add(new PriceLabel(_listing.flowCost, _listing.goldCost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
         PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);

@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
@@ -67,12 +68,27 @@ public class CatalogServlet extends MsoyServiceServlet
 
         try {
             ShopData data = new ShopData();
+
+            // load up our top and featured items
             data.topAvatars = loadTopItems(mrec, Item.AVATAR);
             data.topFurniture = loadTopItems(mrec, Item.FURNITURE);
             ListingCard[] pets = loadTopItems(mrec, Item.PET);
             data.featuredPet = (pets.length > 0) ? RandomUtil.pickRandom(pets) : null;
             ListingCard[] toys = loadTopItems(mrec, Item.TOY);
             data.featuredToy = (toys.length > 0) ? RandomUtil.pickRandom(toys) : null;
+
+            // resolve the creator names for these listings
+            List<ListingCard> list = Lists.newArrayList();
+            CollectionUtil.addAll(list, data.topAvatars);
+            CollectionUtil.addAll(list, data.topFurniture);
+            if (data.featuredPet != null) {
+                list.add(data.featuredPet);
+            }
+            if (data.featuredToy != null) {
+                list.add(data.featuredToy);
+            }
+            resolveCardNames(list);
+
             return data;
 
         } catch (PersistenceException pe) {
@@ -103,26 +119,15 @@ public class CatalogServlet extends MsoyServiceServlet
             int tagId = (tagRecord != null) ? tagRecord.tagId : 0;
 
             // fetch catalog records and loop over them
-            IntSet members = new ArrayIntSet();
             for (CatalogRecord record : repo.loadCatalog(query.sortBy, showMature(mrec),
                                                          query.search, tagId, query.creatorId,
                                                          offset, rows)) {
                 // convert them to listings
                 list.add(record.toListingCard());
-                // and keep track of which member names we need to look up
-                members.add(record.item.creatorId);
             }
 
-            // now look up the names and build a map of memberId -> MemberName
-            IntMap<MemberName> map = new HashIntMap<MemberName>();
-            for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
-                map.put(record.getMemberId(), record);
-            }
-
-            // finally fill in the listings using the map
-            for (ListingCard card : list) {
-                card.creator = map.get(card.creator.getMemberId());
-            }
+            // resolve the creator names for these listings
+            resolveCardNames(list);
 
             // if they want the total number of matches, compute that as well
             if (includeCount) {
@@ -591,6 +596,28 @@ public class CatalogServlet extends MsoyServiceServlet
             cards.add(crec.toListingCard());
         }
         return cards.toArray(new ListingCard[cards.size()]);
+    }
+
+    /**
+     * Helper function for {@link ListingCard} loading methods.
+     */
+    protected void resolveCardNames (List<ListingCard> list)
+        throws PersistenceException
+    {
+        // determine which member names we need to look up
+        IntSet members = new ArrayIntSet();
+        for (ListingCard card : list) {
+            members.add(card.creator.getMemberId());
+        }
+        // now look up the names and build a map of memberId -> MemberName
+        IntMap<MemberName> map = new HashIntMap<MemberName>();
+        for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
+            map.put(record.getMemberId(), record);
+        }
+        // finally fill in the listings using the map
+        for (ListingCard card : list) {
+            card.creator = map.get(card.creator.getMemberId());
+        }
     }
 
     /**

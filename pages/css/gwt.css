@@ -946,6 +946,10 @@ img, embed, applet, object {
   padding: 0px;
 }
 
+.stars img {
+  display: inline;
+}
+
 .promptPopup .Header {
   padding: 4px 0px 0px 0px;
   background-image: url(/images/ui/popup/header_text_tile.png);

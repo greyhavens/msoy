@@ -4,6 +4,7 @@
 package client.item;
 
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
@@ -15,6 +16,16 @@ import client.util.Stars;
 
 public class ItemRating extends FlexTable
 {
+    /**
+     * Creates a simple rating display with no editing ability.
+     */
+    public static Widget createStars (float rating, boolean halfSize)
+    {
+        ItemStars stars = new ItemStars(Stars.MODE_READ, true, halfSize);
+        stars.update(rating);
+        return stars;
+    }
+
     /**
      * Construct a new display for the given item with member's previous rating of the item,
      * automatically figuring out read-only or read/write display mode.
@@ -31,61 +42,12 @@ public class ItemRating extends FlexTable
      */
     public ItemRating (Item item, byte memberRating, int mode, boolean halfSize, boolean horiz)
     {
-        super();
         // sanity check
         if (mode != Stars.MODE_READ && !item.isRatable()) {
             throw new IllegalArgumentException("Can only rate clones and listed items " + _item);
         }
-        setStyleName("itemRating");
 
         _item = item;
-        _memberRating = memberRating;
-        _averageStars = new ItemStars(Stars.MODE_READ, true, halfSize);
-        _playerStars = new ItemStars(mode, false, halfSize);
-
-        // if we're not logged in, force MODE_READ
-        if (CShell.ident == null || mode == Stars.MODE_READ) {
-            setWidget(0, 0, _averageStars);
-
-        } else if (horiz) {
-            int col = 0;
-            setText(0, col++, CShell.cmsgs.averageRating());
-            setWidget(0, col++, _averageStars);
-            setWidget(0, col++, WidgetUtil.makeShim(15, 5));
-            setText(0, col++, CShell.cmsgs.playerRating());
-            setWidget(0, col++, _playerStars);
-
-        } else {
-            setText(0, 0, CShell.cmsgs.averageRating());
-            setWidget(0, 1, _averageStars);
-            setText(1, 0, CShell.cmsgs.playerRating());
-            setWidget(1, 1, _playerStars);
-        }
-    }
-
-    /**
-     * Constructs a simple rating display with no editing ability.
-     */
-    public ItemRating (float rating, boolean halfSize, boolean horiz)
-    {
-        this(null, rating, Stars.NO_RATING, Stars.MODE_READ, halfSize, horiz);
-    }
-
-    /**
-     * Construct a new display for the given item with member's previous rating of the item and a
-     * specified display mode.
-     */
-    protected ItemRating (Item item, float rating, byte memberRating, int mode,
-                          boolean halfSize, boolean horiz)
-    {
-        // sanity check
-        if (mode != Stars.MODE_READ && !item.isRatable()) {
-            throw new IllegalArgumentException("Can only rate clones and listed items " + _item);
-        }
-        setStyleName("itemRating");
-
-        _item = item;
-        _rating = rating;
         _memberRating = memberRating;
         _averageStars = new ItemStars(Stars.MODE_READ, true, halfSize);
         _playerStars = new ItemStars(mode, false, halfSize);

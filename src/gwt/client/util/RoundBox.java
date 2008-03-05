@@ -22,6 +22,19 @@ public class RoundBox extends SmartTable
     public static final String BLUE = "Blue";
 
     /**
+     * Adds colored corner images to the bottom row of the supplied table. This will only work
+     * properly on a box created by a call to {@link MsoyUI#createHeaderBox}, after its content has
+     * been added.
+     */
+    public static void makeRoundBottom (SmartTable table)
+    {
+        int row = table.getRowCount();
+        table.setWidget(row, 0, _images.white_lower_left().createImage());
+        table.getFlexCellFormatter().setStyleName(row, 1, "Contents");
+        table.setWidget(row, 2, _images.white_lower_right().createImage());
+    }
+
+    /**
      * Creates a round box in either {@link #WHITE} or {@link #BLUE}.
      */
     public RoundBox (String color)

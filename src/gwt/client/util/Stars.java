@@ -24,8 +24,8 @@ public abstract class Stars extends FlowPanel
 
     public Stars (int mode, boolean averageRating, boolean halfSize)
     {
-        super();
-        
+        setStyleName("stars");
+
         _mode = mode;
         _averageRating = averageRating;
         _halfSize = halfSize;

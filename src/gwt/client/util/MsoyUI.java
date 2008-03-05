@@ -28,22 +28,22 @@ import client.shell.CShell;
  */
 public class MsoyUI
 {
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String SHORT_THIN = "shortThin";
 
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String MEDIUM_THIN = "mediumThin";
 
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String LONG_THIN = "longThin";
 
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String SHORT_THICK = "shortThick";
 
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String MEDIUM_THICK = "mediumThick";
 
-    /** A button size constant for use with {@link #createOrangeButton}. */
+    /** A button size constant for use with {@link #createButton}. */
     public static final String LONG_THICK = "longThick";
 
     /**
@@ -271,7 +271,7 @@ public class MsoyUI
     /**
      * Creates a box with a rounded header.
      */
-    public static Widget createHeaderBox (String icon, String title, Widget contents)
+    public static SmartTable createHeaderBox (String icon, String title, Widget contents)
     {
         SmartTable box = createHeaderBox(icon, title);
         box.addWidget(contents, 3, "Contents");
