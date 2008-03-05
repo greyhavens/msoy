@@ -37,7 +37,6 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 
-import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.OccupantSprite;
@@ -143,6 +142,7 @@ public class AVRGameBackend extends ControlBackend
         super.populateControlProperties(o);
 
         // AVRGameControl
+        o["hasControl_v1"] = hasControl_v1;
         o["getStageSize_v1"] = getStageSize_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
@@ -172,9 +172,15 @@ public class AVRGameBackend extends ControlBackend
         _questBackend.populateSubProperties(o);
     }
 
+    protected function hasControl_v1 () :Boolean
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        return view && view.getRoomController().hasAVRGameControl() == true;
+    }
+
     protected function getStageSize_v1 (full :Boolean) :Rectangle
     {
-        var view :AbstractRoomView = _wctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             if (full) {
                 return _wctx.getTopPanel().getPlaceViewBounds();
@@ -186,7 +192,7 @@ public class AVRGameBackend extends ControlBackend
 
     protected function getRoomBounds_v1 () :Rectangle
     {
-        var view :AbstractRoomView = _wctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             var metrics :RoomMetrics = view.layout.metrics;
             return new Rectangle(0, 0, metrics.sceneWidth, metrics.sceneHeight);
@@ -196,7 +202,7 @@ public class AVRGameBackend extends ControlBackend
 
     protected function stageToRoom_v1 (p :Point) :Point
     {
-        var view :AbstractRoomView = _wctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             p = view.globalToLocal(p);
             p.x -= view.getScrollOffset();
@@ -207,7 +213,7 @@ public class AVRGameBackend extends ControlBackend
 
     protected function roomToStage_v1 (p :Point) :Point
     {
-        var view :AbstractRoomView = _wctx.getTopPanel().getPlaceView() as AbstractRoomView;
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             return view.localToGlobal(new Point(p.x + view.getScrollOffset(), p.y));
         }
