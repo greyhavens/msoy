@@ -94,9 +94,9 @@ img, embed, applet, object {
 }
 
 .shortThinOrangeButton, .mediumThinOrangeButton, .longThinOrangeButton {
-  font-size: 14px;
-  height: 23px;
-  padding-top: 6px;
+  font-size: 15px;
+  height: 25px;
+  padding-top: 4px;
 }
 
 .shortThickOrangeButton, .mediumThickOrangeButton, .longThickOrangeButton {

@@ -59,14 +59,16 @@ public class ItemPanel extends VerticalPanel
 
         if (isCatalogItem(type)) {
             _shop = new HorizontalPanel();
-            _shop.setStyleName("Shop");
+            _shop.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
             _shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
             _shop.add(WidgetUtil.makeShim(5, 5));
-            _shop.add(new Button(CStuff.msgs.ipToCatalog(), new ClickListener() {
+            ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.SHOP, ""+_type);
                 }
-            }));
+            };
+            _shop.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
+            _shop.add(WidgetUtil.makeShim(10, 10));
         }
 
         // compute the number of rows of items we can fit on the page
@@ -184,13 +186,12 @@ public class ItemPanel extends VerticalPanel
         contents.setHTML(0, 0, why);
 
         // add the create button
-        _create = new Button(CStuff.msgs.panelCreateNew());
-        _create.addClickListener(new ClickListener() {
+        contents.setWidget(0, 1, MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.panelCreateNew(),
+                                                     new ClickListener() {
             public void onClick (Widget widget) {
                 CStuff.createItem(_type, (byte)0, 0);
             }
-        });
-        contents.setWidget(0, 1, _create);
+        }));
     }
 
     /**
@@ -243,7 +244,6 @@ public class ItemPanel extends VerticalPanel
     protected HorizontalPanel _shop;
     protected ListBox _filters;
     protected PagedGrid _contents;
-    protected Button _create, _next, _prev;
     protected VerticalPanel _upload;
 
     protected static final String[] FLABELS = {
