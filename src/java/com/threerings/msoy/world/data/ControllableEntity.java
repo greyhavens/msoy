@@ -31,5 +31,12 @@ public class ControllableEntity extends Controllable
         return _ident;
     }
     
+    @Override
+    public boolean isControllableBy (int bodyOid)
+    {
+        // any member can control an entity
+        return true;
+    }
+    
     protected ItemIdent _ident;
 }

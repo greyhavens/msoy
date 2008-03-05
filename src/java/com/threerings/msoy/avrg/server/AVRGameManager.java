@@ -160,7 +160,7 @@ public class AVRGameManager
                 return;
             }
 
-            
+            _totalTrackedSeconds += player.getPlayTime(now());
             
             flushPlayerGameState(player.playerObject);
 
@@ -509,12 +509,20 @@ public class AVRGameManager
     protected int getTotalTrackedSeconds ()
     {
         int total = _totalTrackedSeconds;
-        int now = (int) (System.currentTimeMillis() / 1000);
+        int now = now();
 
         for (Player player : _players.values()) {
             total += player.getPlayTime(now);
         }
         return total;
+    }
+
+    /**
+     * Convenience method to calculate the current timestmap in seconds.
+     */
+    protected static int now ()
+    {
+        return (int) (System.currentTimeMillis() / 1000);
     }
 
     protected class Player

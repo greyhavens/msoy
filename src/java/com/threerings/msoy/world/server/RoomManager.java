@@ -895,8 +895,6 @@ public class RoomManager extends SpotSceneManager
 
     /**
      * Handles a request to select a controller for the supplied set of items.
-     * 
-     * TODO: This gives AVRG control to people not playing the AVRG, heh.
      */
     protected boolean assignControllers (Collection<Controllable> controllables)
     {
@@ -922,18 +920,24 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        // choose the least loaded controller, remove them from the set, assign them control of an
-        // item, add them back to the set, then move to the next item
+        // choose the least loaded controller that is compatible with the controllable, remove the
+        // controller from the set, assign them control of the controllable, add them back to the
+        // set, then finally move to the next item
         try {
             _roomObj.startTransaction();
             TreeSet<Controller> set = new TreeSet<Controller>(controllers.values());
             for (Controllable controllable : controllables) {
-                Controller ctrl = set.first();
-                set.remove(ctrl);
-                ctrl.load++;
-                log.info("Assigning control [item=" + controllable + ", to=" + ctrl.bodyOid + "].");
-                _roomObj.addToControllers(new EntityControl(controllable, ctrl.bodyOid));
-                set.add(ctrl);
+                for (Controller ctrl : set) {
+                    if (!controllable.isControllableBy(ctrl.bodyOid)) {
+                        continue;
+                    }
+                    set.remove(ctrl);
+                    ctrl.load++;
+                    log.info("Assigning control [item=" + controllable + ", to=" + ctrl.bodyOid + "].");
+                    _roomObj.addToControllers(new EntityControl(controllable, ctrl.bodyOid));
+                    set.add(ctrl);
+                    break;
+                }
             }
 
         } finally {

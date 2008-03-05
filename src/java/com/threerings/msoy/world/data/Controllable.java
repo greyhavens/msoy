@@ -14,4 +14,6 @@ import com.threerings.io.SimpleStreamableObject;
 public abstract class Controllable extends SimpleStreamableObject
     implements Comparable<Controllable>
 {
+    /** Determines whether or not the given body is able to control this controllable. */
+    public abstract boolean isControllableBy (int bodyOid);
 }

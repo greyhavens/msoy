@@ -304,14 +304,24 @@ public class MsoyGameRegistry
             return;
         }
 
-        // note that they're now playing an AVRG
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
+
+        int avrGameId = (memobj.game != null && memobj.game.avrGame) ? memobj.game.gameId : 0;
+        
+        // update our game
         memobj.setGame(game);
+
+        // if we left an AVRG, let the room know
+        if ((game == null || game.gameId != avrGameId) && (pmgr instanceof RoomManager)) {
+            ((RoomManager) pmgr).occupantLeftAVRGame(memobj);
+        }
+
+        // if we're now in a new one, subscribe to it
         if (game != null && game.avrGame) {
             memobj.setAvrGameId(game.gameId);
 
-            // immediately let the room manager give us of control, if needed
-            PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-            if (pmgr instanceof RoomManager) {
+            // and immediately let the room manager give us of control, if needed
+            if (game.gameId != avrGameId && (pmgr instanceof RoomManager)) {
                 ((RoomManager) pmgr).occupantEnteredAVRGame(memobj);
             }
         }
@@ -340,11 +350,6 @@ public class MsoyGameRegistry
         // clear their AVRG affiliation
         memobj.setAvrGameId(0);
 
-        // immediately let the room manager relieve us of control, if needed
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-        if (pmgr instanceof RoomManager) {
-            ((RoomManager) pmgr).occupantLeftAVRGame(memobj);
-        }
     }
 
     // from interface PeerGameProvider
