@@ -37,10 +37,6 @@ public class EntityPopup extends FloatingPanel
         showCloseButton = true;
         // TODO: a nice pop-up effect when this thing comes up. ZoomEffect.
 
-        // don't let us get too big, we'd rather scroll dahling
-        maxWidth = 400;
-        maxHeight = 300;
-
         // set up the canvas and the mask
         _canvas = new Canvas();
         _canvas.width = panelWidth;
