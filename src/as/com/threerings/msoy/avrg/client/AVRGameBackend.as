@@ -175,7 +175,7 @@ public class AVRGameBackend extends ControlBackend
     protected function hasControl_v1 () :Boolean
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        return view && view.getRoomController().hasAVRGameControl() == true;
+        return (view != null) && view.getRoomController().hasAVRGameControl();
     }
 
     protected function getStageSize_v1 (full :Boolean) :Rectangle
