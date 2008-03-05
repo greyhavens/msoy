@@ -305,15 +305,16 @@ public class MsoyGameRegistry
         }
 
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-
+        RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
+        
         int avrGameId = (memobj.game != null && memobj.game.avrGame) ? memobj.game.gameId : 0;
         
         // update our game
         memobj.setGame(game);
 
         // if we left an AVRG, let the room know
-        if ((game == null || game.gameId != avrGameId) && (pmgr instanceof RoomManager)) {
-            ((RoomManager) pmgr).occupantLeftAVRGame(memobj);
+        if (avrGameId != 0 && (game == null || game.gameId != avrGameId) && rmgr != null) {
+            rmgr.occupantLeftAVRGame(memobj);
         }
 
         // if we're now in a new one, subscribe to it
@@ -321,8 +322,8 @@ public class MsoyGameRegistry
             memobj.setAvrGameId(game.gameId);
 
             // and immediately let the room manager give us of control, if needed
-            if (game.gameId != avrGameId && (pmgr instanceof RoomManager)) {
-                ((RoomManager) pmgr).occupantEnteredAVRGame(memobj);
+            if (game.gameId != avrGameId && rmgr != null) {
+                rmgr.occupantEnteredAVRGame(memobj);
             }
         }
 
