@@ -54,8 +54,7 @@ TitleWindow {
 }
 
 .entityPopup {
-  /* TODO: put in the new EntityPopup title background image here */
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/title_bg.png",
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/furni_popup_bg.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   backgroundImage: null;
