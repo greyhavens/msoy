@@ -25,6 +25,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
 
@@ -33,13 +34,13 @@ import client.util.MsoyUI;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    public ListingDetailPanel (CatalogListing listing, CatalogPanel panel)
+    public ListingDetailPanel (CatalogModels models, CatalogListing listing)
     {
         super(listing.detail);
         addStyleName("listingDetailPanel");
 
+        _models = models;
         _listing = listing;
-        _panel = panel;
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
@@ -65,8 +66,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Object result) {
-                // tell our parent panel that we bought the item, it can display fanciness
-                _panel.itemPurchased((Item)result);
+                itemPurchased((Item)result);
                 return false; // don't reenable buy button
             }
         };
@@ -96,7 +96,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
                 public boolean gotResult (Object result) {
                     MsoyUI.info(CShop.msgs.msgListingDelisted());
-                    _panel.itemDelisted(_listing);
+                    _models.itemDelisted(_listing);
                     History.back();
                     return false;
                 }
@@ -126,8 +126,23 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         }
     }
 
+    protected void itemPurchased (Item item)
+    {
+        // report to the client that we generated a tutorial event
+        if (item.getType() == Item.DECOR) {
+            FlashClients.tutorialEvent("decorBought");
+        } else if (item.getType() == Item.FURNITURE) {
+            FlashClients.tutorialEvent("furniBought");
+        } else if (item.getType() == Item.AVATAR) {
+            FlashClients.tutorialEvent("avatarBought");
+        }
+
+        // display the "you bought an item" UI
+        // TODO: setWidget(new BoughtItemPanel(item));
+    }
+
+    protected CatalogModels _models;
     protected CatalogListing _listing;
-    protected CatalogPanel _panel;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

@@ -36,7 +36,6 @@ public class CShop extends CShell
     {
         ArrayList args = new ArrayList();
         args.add(new Byte(query.itemType));
-        args.add(CatalogPanel.LISTING_PAGE);
         args.add(new Byte(query.sortBy));
         if (query.tag != null) {
             args.add("t" + query.tag);
@@ -51,5 +50,28 @@ public class CShop extends CShell
             args.add(new Integer(page));
         }
         return Args.compose(args);
+    }
+
+    /**
+     * Parses args previously composed via {@link #composeArgs}.
+     */
+    public static CatalogQuery parseArgs (Args args)
+    {
+        CatalogQuery query = new CatalogQuery();
+        query.itemType = (byte)args.get(0,  query.itemType);
+        query.sortBy = (byte)args.get(1, query.sortBy);
+        String action = args.get(2, "");
+        if (action.startsWith("s")) {
+            query.search = action.substring(1);
+        } else if (action.startsWith("t")) {
+            query.tag = action.substring(1);
+        } else if (action.startsWith("c")) {
+            try {
+                query.creatorId = Integer.parseInt(action.substring(1));
+            } catch (Exception e) {
+                // oh well
+            }
+        }
+        return query;
     }
 }

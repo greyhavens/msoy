@@ -5,10 +5,13 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -34,10 +37,29 @@ public class index extends Page
             setContent(MsoyUI.createLabel(CShop.cmsgs.noGuests(), "infoLabel"));
             return;
         }
-        if (_catalog == null) {
-            setContent(_catalog = new CatalogPanel());
+
+        String action = args.get(0, "");
+        if (action.equals("l")) {
+            byte type = (byte)args.get(1, Item.NOT_A_TYPE);
+            int catalogId = args.get(2, 0);
+            CShop.catalogsvc.loadListing(CShop.ident, type, catalogId, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    setContent(new ListingDetailPanel(_models, (CatalogListing)result));
+                }
+            });
+
+        } else {
+            byte type = (byte)args.get(0, Item.NOT_A_TYPE);
+            if (type == Item.NOT_A_TYPE) {
+                setContent(CShop.msgs.catalogTitle(), new ShopPanel());
+
+            } else {
+                if (!_catalog.isAttached()) {
+                    setContent(_catalog);
+                }
+                _catalog.display(CShop.parseArgs(args), args.get(3, 0));
+            }
         }
-        _catalog.display(args);
     }
 
     // @Override // from Page
@@ -55,5 +77,6 @@ public class index extends Page
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
-    protected CatalogPanel _catalog;
+    protected CatalogModels _models = new CatalogModels();
+    protected CatalogPanel _catalog = new CatalogPanel(_models);
 }

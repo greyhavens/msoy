@@ -4,22 +4,17 @@
  * CSS styles for the Catalog interfaces.
  */
 
-.catalogPanel {
+.shopPanel, .catalogPanel {
   width: 100%;
   height: 100%;
-}
-
-.catalogPanel .WithCatNav {
   background: #1D5884;
-  width: 100%;
-  height: 100%;
 }
 
-.catalogPanel .SideBar {
+.sideBar {
   margin: 15px 5px 10px 0px
 }
 
-.catalogPanel .SideBar .Title {
+.sideBar .Title {
   background: #5CA5DA;
   color: #FFFFFF;
   font-size: 14px;
@@ -27,11 +22,11 @@
   padding: 0px 0px 2px 4px;
 }
 
-.catalogPanel .SideBar .Middle {
+.sideBar .Middle {
   background: #5CA5DA;
 }
 
-.catalogPanel .NaviPanel {
+.sideBar .NaviPanel {
   background: url(/images/shop/navi_bg.png) no-repeat top;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 16px;
@@ -42,47 +37,52 @@
   padding-top: 3px;
 }
 
-.catalogPanel .NaviPanel div {
+.sideBar .NaviPanel div {
   padding: 3px 0px 0px 5px;
   height: 21px;
 }
 
-.catalogPanel .NaviPanel .Selected {
+.sideBar .NaviPanel .Selected {
   color: #E78917;
 }
 
-.catalogPanel .NaviPanel a {
+.sideBar .NaviPanel a {
   color: #27628E;
   text-decoration: none;
 }
 
-.catalogPanel .SideBar .tagCloud {
+.catalogPanel .sideBar .tagCloud {
   margin-left: 5px;
 }
 
-.catalogPanel .Intro {
+.shopPanel .Intro {
   color: #9FB2C0;
   font-size: 16px;
   padding: 10px 10px 10px 85px;
 }
 
-.catalogPanel .Types .Type {
+.shopPanel .Types .Type {
 }
 
-.catalogPanel .Types .Type .Icon {
+.shopPanel .Types .Type .Icon {
   width: 60px;
   padding-right: 10px;
 }
 
-.catalogPanel .Types .Type .Name {
+.shopPanel .Types .Type .Name {
   color: #FFFFFF;
   font-size: 16px;
   font-weight: bold;
 }
 
-.catalogPanel .Types .Type .Blurb {
+.shopPanel .Types .Type .Blurb {
   font-size: 12px;
   color: #9FB2C0;
+}
+
+.catalogPanel .ListingsCell {
+  background: #FFFFFF;
+  width: 100%;
 }
 
 .catalogPanel .Listings {
