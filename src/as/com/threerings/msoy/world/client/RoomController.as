@@ -261,15 +261,10 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles a request by an item in our room to update a property.
+     * Handles a request to update a property in this room.
      */
-    public function setRoomProperty (ident :ItemIdent, key :String, value: Object) :Boolean
+    public function setRoomProperty (key :String, value: Object) :Boolean
     {
-        // don't let mobiles set memories
-        if (ident.type == Item.AVATAR || ident.type == Item.PET) {
-            return false;
-        }
-
         // serialize datum
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
 

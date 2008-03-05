@@ -796,11 +796,14 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function setRoomProperty (key :String, value: Object) :Boolean
     {
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).getRoomController().setRoomProperty(_ident, key, value);
-        } else {
+        // don't let mobiles set memories
+        if (_ident == null || _ident.type == Item.AVATAR || _ident.type == Item.PET) {
             return false;
         }
+        if (parent is RoomView) {
+            return (parent as RoomView).getRoomController().setRoomProperty(key, value);
+        }
+        return false;
     }
 
     /**

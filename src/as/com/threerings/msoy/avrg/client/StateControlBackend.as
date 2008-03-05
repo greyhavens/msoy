@@ -14,7 +14,10 @@ import com.threerings.presents.dobj.*;
 
 import com.threerings.msoy.client.ControlBackend;
 
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.game.client.GameContext;
@@ -52,6 +55,9 @@ public class StateControlBackend
         // StateControl (sub)
         o["getProperty_v1"] = getProperty_v1;
         o["setProperty_v1"] = setProperty_v1;
+        o["getRoomProperty_v1"] = getRoomProperty_v1;
+        o["setRoomProperty_v1"] = setRoomProperty_v1;
+        o["getRoomProperties_v1"] = getRoomProperties_v1;
 //        o["setPropertyAt_v1"] = setPropertyAt_v1;
         o["getPlayerProperty_v1"] = getPlayerProperty_v1;
         o["setPlayerProperty_v1"] = setPlayerProperty_v1;
@@ -81,7 +87,46 @@ public class StateControlBackend
         }
         return true;
     }
-    
+
+    protected function getRoomProperties_v1 () :Object
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view == null) {
+            return null;
+        }
+        var props :Object = { };
+        var roomObj :RoomObject = view.getRoomObject();
+        for each (var entry :RoomPropertyEntry in roomObj.roomProperties.toArray()) {
+            // filter out memories with null as the value, those will not be persisted
+            if (entry.value != null) {
+                props[entry.key] = ObjectMarshaller.decode(entry.value);
+            }
+        }
+        return props;
+    }
+
+    protected function getRoomProperty_v1 (key :String) :Object
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            var roomObj :RoomObject = view.getRoomObject();
+            var entry :RoomPropertyEntry = roomObj.roomProperties.get(key) as RoomPropertyEntry;
+            if (entry != null) {
+                return ObjectMarshaller.decode(entry.value);
+            }
+        }
+        return null;
+    }
+
+    protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            return view.getRoomController().setRoomProperty(key, value);
+        }
+        return false;
+    }
+   
     protected function getPlayerProperty_v1 (key :String) :Object
     {
         var entry :GameState = GameState(_playerObj.gameState.get(key));
