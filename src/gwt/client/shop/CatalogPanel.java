@@ -136,9 +136,9 @@ public class CatalogPanel extends SmartTable
     {
         _query = query;
 
-        // TODO: add logo image
         String tname = CShop.dmsgs.getString("pItemType" + _query.itemType);
-        _listings.setText(0, 1, tname, 1, "Type");
+        // TODO: add logo image
+        _listings.setWidget(0, 1, new Marquee(null, tname));
 
         // configure our filter interface
         _searchBox.setText(_query.search == null ? "" : _query.search);

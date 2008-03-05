@@ -44,7 +44,7 @@ public class ShopPanel extends HorizontalPanel
         SmartTable header = new SmartTable(0, 0);
         header.setWidget(0, 0, new Image("/images/shop/shop_bag.png"), 1, "Bag");
         header.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        header.setText(0, 1, CShop.msgs.shopMarquee(), 1, "Marquee");
+        header.setWidget(0, 1, new Marquee(null, CShop.msgs.shopMarquee()), 1, "Marquee");
         header.setText(1, 0, CShop.msgs.shopIntro(), 1, "Intro");
         _contents.add(header);
         _contents.add(WidgetUtil.makeShim(10, 10));
