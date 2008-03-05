@@ -4,6 +4,7 @@
 package client.shop;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,6 +14,7 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.ListingCard;
 
 import client.util.MsoyCallback;
 
@@ -39,21 +41,21 @@ public class CatalogModels
             CShop.catalogsvc.loadCatalog(
                 CShop.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
                 public void onSuccess (Object result) {
-                    _result = (CatalogService.CatalogResult)result;
+                    CatalogService.CatalogResult data = (CatalogService.CatalogResult)result;
                     if (_listingCount == -1) {
-                        _listingCount = _result.listingCount;
+                        _listingCount = data.listingCount;
                     }
-                    callback.onSuccess(_result.listings);
+                    callback.onSuccess(data.listings);
                 }
             });
         }
 
         public void removeItem (Object item) {
-            // currently we do no internal caching, no problem!
+            // currently we do no internal caching, so just decrement our listing count
+            _listingCount--;
         }
 
         protected CatalogQuery _query;
-        protected CatalogService.CatalogResult _result;
         protected int _listingCount = -1;
     }
 
@@ -68,7 +70,20 @@ public class CatalogModels
 
     public void itemDelisted (CatalogListing listing)
     {
-        // TODO
+        // fake up a listing card as that's what we remove from our models
+        ListingCard card = new ListingCard();
+        card.itemType = listing.detail.item.getType();
+        card.catalogId = listing.catalogId;
+
+        // now scan through our models and remove that listing from any that might contain it
+        for (Iterator iter = _models.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            CatalogQuery query = (CatalogQuery)entry.getKey();
+            if (query.itemType != listing.detail.item.getType()) {
+                continue;
+            }
+            ((Listings)entry.getValue()).removeItem(card);
+        }
     }
 
     protected Map _models = new HashMap(); /* CatalogQuery, Listings */

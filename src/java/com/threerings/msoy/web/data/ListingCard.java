@@ -42,6 +42,16 @@ public class ListingCard implements IsSerializable
     /** The item's gold cost. */
     public int goldCost;
 
+    // @Override // from Object
+    public boolean equals (Object other)
+    {
+        if (other instanceof ListingCard) {
+            ListingCard oc = (ListingCard)other;
+            return oc.itemType == itemType && oc.catalogId == catalogId;
+        }
+        return false;
+    }
+
     /**
      * Returns this listing's item thumbnail media or the default.
      */
