@@ -45,6 +45,7 @@ public class ShopPanel extends HorizontalPanel
         header.setWidget(0, 0, new Image("/images/shop/shop_bag.png"), 1, "Bag");
         header.getFlexCellFormatter().setRowSpan(0, 0, 2);
         header.setWidget(0, 1, new Marquee(null, CShop.msgs.shopMarquee()), 1, "Marquee");
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
         header.setText(1, 0, CShop.msgs.shopIntro(), 1, "Intro");
         _contents.add(header);
         _contents.add(WidgetUtil.makeShim(10, 10));
@@ -60,21 +61,21 @@ public class ShopPanel extends HorizontalPanel
     protected void init (ShopData data)
     {
         SmartTable boxes = new SmartTable(0, 0);
-        boxes.setWidget(0, 0, createTop(null, CShop.msgs.shopTopAvatars(), data.topAvatars));
+        boxes.setWidget(0, 0, createTop("avatar", CShop.msgs.shopTopAvatars(), data.topAvatars));
         boxes.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         boxes.getFlexCellFormatter().setRowSpan(0, 0, 3);
         boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
         if (data.featuredPet != null) {
-            boxes.setWidget(0, 2, createFeatured(null, CShop.msgs.shopFeatPet(), data.featuredPet));
+            boxes.setWidget(0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
         }
         boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
         if (data.featuredToy != null) {
-            boxes.setWidget(2, 0, createFeatured(null, CShop.msgs.shopFeatToy(), data.featuredToy));
+            boxes.setWidget(2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
         }
         boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
-        boxes.setWidget(0, 4, createTop(null, CShop.msgs.shopTopFurniture(), data.topFurniture));
+        boxes.setWidget(0, 4, createTop("furni", CShop.msgs.shopTopFurniture(), data.topFurniture));
         boxes.getFlexCellFormatter().setVerticalAlignment(0, 4, HasAlignment.ALIGN_TOP);
         boxes.getFlexCellFormatter().setRowSpan(0, 4, 3);
 
@@ -83,7 +84,7 @@ public class ShopPanel extends HorizontalPanel
 
     protected SmartTable createTop (String icon, String title, ListingCard[] listings)
     {
-        SmartTable box = MsoyUI.createHeaderBox(null, title);
+        SmartTable box = MsoyUI.createHeaderBox("/images/shop/icon_" + icon + ".png", title);
         for (int ii = 0; ii < listings.length; ii++) {
             box.addWidget(new TopListingBox(ii+1, listings[ii]), 3, "Contents");
         }
@@ -114,7 +115,8 @@ public class ShopPanel extends HorizontalPanel
         contents.setWidget(2, 0, new PriceLabel(card.flowCost, card.goldCost));
         contents.setWidget(2, 1, ItemRating.createStars(card.rating, false));
 
-        SmartTable box = MsoyUI.createHeaderBox(icon, title, contents);
+        SmartTable box = MsoyUI.createHeaderBox(
+            "/images/shop/icon_" + icon + ".png", title, contents);
         RoundBox.makeRoundBottom(box);
         return box;
     }

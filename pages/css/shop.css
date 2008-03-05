@@ -67,7 +67,7 @@
 }
 
 .shopPanel .Bag {
-  padding: 0px 30px;
+  padding: 10px 30px;
 }
 
 .shopPanel .Intro {
@@ -77,9 +77,13 @@
   padding-top: 5px;
 }
 
+.shopPanel .roundBox {
+  width: 100%;
+}
+
 .shopPanel .TopListingBox {
   font-size: 12px;
-  margin: 5px 10px 0px 10px;
+  margin: 10px 10px 0px 10px;
   width: 150px;
 }
 

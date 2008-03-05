@@ -387,6 +387,10 @@ img, embed, applet, object {
   vertical-align: middle;
 }
 
+.headerBox .Title img {
+  padding-right: 5px;
+}
+
 .headerBox .Contents {
   background: #FFFFFF;
 }
