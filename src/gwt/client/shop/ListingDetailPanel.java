@@ -69,11 +69,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             }
         };
         purchase.setEnabled(CShop.getMemberId() > 0);
-
-//         // we want to center our purchase button, so we have to put it in a centered div
-//         FlowPanel buttons = new FlowPanel();
-//         buttons.setStyleName("Buttons");
-//         buttons.add(purchase);
         _details.add(purchase);
 
         // create a table to display miscellaneous info and admin/owner actions
