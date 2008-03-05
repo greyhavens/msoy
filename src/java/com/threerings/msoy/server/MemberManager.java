@@ -89,7 +89,7 @@ public class MemberManager
         _ppInvalidator = new Interval(MsoyServer.omgr) {
             public void expired() {
                 PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot();
-                synchronized(this) {
+                synchronized(MemberManager.this) {
                     _ppSnapshot = newSnapshot;
                 }
             }
