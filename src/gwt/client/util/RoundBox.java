@@ -30,7 +30,10 @@ public class RoundBox extends SmartTable
         addStyleName("roundBox" + color);
 
         if (color.equals(WHITE)) {
-            // TODO
+            setWidget(0, 0, _images.white_upper_left().createImage(), 1, "Corner");
+            setWidget(0, 2, _images.white_upper_right().createImage(), 1, "Corner");
+            setWidget(2, 0, _images.white_lower_left().createImage(), 1, "Corner");
+            setWidget(2, 1, _images.white_lower_right().createImage(), 1, "Corner");
         } else if (color.equals(BLUE)) {
             setWidget(0, 0, _images.blue_upper_left().createImage(), 1, "Corner");
             setWidget(0, 2, _images.blue_upper_right().createImage(), 1, "Corner");
