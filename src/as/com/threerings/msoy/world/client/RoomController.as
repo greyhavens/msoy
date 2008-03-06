@@ -1696,7 +1696,7 @@ public class RoomController extends SceneController
      */
     internal function showEntityPopup (
         sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number,
-        color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
+        color :uint = 0xFFFFFF, alpha :Number = 1.0, mask :Boolean = true) :Boolean
     {
 //        if (_entityAllowedToPop != sprite) {
 //            return false;
@@ -1710,7 +1710,7 @@ public class RoomController extends SceneController
             _entityPopup.close();
         }
 
-        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha);
+        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha, mask);
         _entityPopup.open();
         return true;
     }
