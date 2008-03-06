@@ -40,7 +40,6 @@ public class RoundBox extends SmartTable
     public RoundBox (String color)
     {
         super("roundBox", 0, 0);
-        addStyleName("roundBox" + color);
 
         if (color.equals(WHITE)) {
             setWidget(0, 0, _images.white_upper_left().createImage(), 1, "Corner");
@@ -60,12 +59,13 @@ public class RoundBox extends SmartTable
         }
 
         setWidget(0, 1, _contents = new FlowPanel(), 1, "Center");
+        getFlexCellFormatter().addStyleName(0, 1, color + "Center");
         getFlexCellFormatter().setRowSpan(0, 1, 3);
 
         setHTML(1, 0, "&nbsp;");
-        getFlexCellFormatter().setStyleName(1, 0, "Side");
+        getFlexCellFormatter().setStyleName(1, 0, color + "Side");
         setHTML(1, 1, "&nbsp;");
-        getFlexCellFormatter().setStyleName(1, 1, "Side");
+        getFlexCellFormatter().setStyleName(1, 1, color + "Side");
     }
 
     public void add (Widget widget)
