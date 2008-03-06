@@ -92,6 +92,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(new ItemActivator(_item));
         }
 
+        int gap = 10;
         if (_item.catalogId != 0 || _item.sourceId == 0) {
             String tip, butlbl;
             if (_item.catalogId != 0) {
@@ -103,6 +104,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(_listTip = new Label(tip));
+            gap = 5; // tuck our second set of buttons up next to these
 
             // add a button for listing or updating the item
             RowPanel buttons = new RowPanel();
@@ -133,21 +135,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(buttons);
         }
 
-        // TODO: enable remixing for everyone
-        boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP) &&
-            CShell.isSupport();
-        if (remixable) {
-            _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(CStuff.msgs.detailRemixTip()));
-            _details.add(MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    CStuff.remixItem(_item.getType(), _item.itemId);
-                }
-            }));
-        }
-
         // add a button for deleting this item
-        _details.add(WidgetUtil.makeShim(5, 5));
+        _details.add(WidgetUtil.makeShim(5, gap));
         RowPanel buttons = new RowPanel();
         PushButton delete = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
         new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
@@ -179,6 +168,19 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }));
         }
         _details.add(buttons);
+
+        // TODO: enable remixing for everyone
+        boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP) &&
+            CShell.isSupport();
+        if (remixable) {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(new Label(CStuff.msgs.detailRemixTip()));
+            _details.add(MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    CStuff.remixItem(_item.getType(), _item.itemId);
+                }
+            }));
+        }
     }
 
     protected InventoryModels _models;
