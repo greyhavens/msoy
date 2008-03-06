@@ -1036,7 +1036,7 @@ public class RoomView extends AbstractRoomView
                 log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
             }
         });
-        callAVRGCode("roomPropertyChanged_v1", key, value);
+        callAVRGCode("roomPropertyChanged_v1", entry.key, value);
     }
 
     /**
