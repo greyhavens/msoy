@@ -20,6 +20,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
 
@@ -52,27 +53,33 @@ public class MyWhirled extends VerticalPanel
         // display the Whirled population
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
 
-        // display our online friends if we have any
-        if (data.friends != null && data.friends.size() > 0) {
-            // sort our friends list alphabetically (hopefully this sort is stable...)
-            Collections.sort(data.friends, new Comparator() {
-                public int compare (Object o1, Object o2) {
-                    MemberCard m1 = (MemberCard) o1, m2 = (MemberCard) o2;
-                    return ("" + m1.name).compareTo("" + m2.name);
+        if (DeploymentConfig.devDeployment) { // not quite ready for prime time
+            add(new WhatsNextPanel(data));
+
+        } else {
+            // display our online friends if we have any
+            if (data.friends != null && data.friends.size() > 0) {
+                // sort our friends list alphabetically (hopefully this sort is stable...)
+                Collections.sort(data.friends, new Comparator() {
+                    public int compare (Object o1, Object o2) {
+                        MemberCard m1 = (MemberCard) o1, m2 = (MemberCard) o2;
+                        return ("" + m1.name).compareTo("" + m2.name);
+                    }
+                });
+
+                SmartTable people = new SmartTable();
+                people.setStyleName("Friends");
+                for (int ii = 0; ii < data.friends.size(); ii++) {
+                    MemberCard card = (MemberCard)data.friends.get(ii);
+                    people.setWidget(ii / PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS,
+                                     new PersonWidget(card));
                 }
-            });
 
-            SmartTable people = new SmartTable();
-            people.setStyleName("Friends");
-            for (int ii = 0; ii < data.friends.size(); ii++) {
-                MemberCard card = (MemberCard)data.friends.get(ii);
-                people.setWidget(ii / PEOPLE_COLUMNS, ii % PEOPLE_COLUMNS, new PersonWidget(card));
+                TongueBox fbox = new TongueBox(CMe.msgs.headerPeople(), people);
+                fbox.setFooterLink("All your friends...", Page.PEOPLE,
+                                   Args.compose("f", CMe.getMemberId()));
+                add(fbox);
             }
-
-            TongueBox fbox = new TongueBox(CMe.msgs.headerPeople(), people);
-            fbox.setFooterLink("All your friends...", Page.PEOPLE,
-                               Args.compose("f", CMe.getMemberId()));
-            add(fbox);
         }
 
         // add our news feed

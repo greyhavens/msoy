@@ -228,7 +228,14 @@ public class MsoyUI
      */
     public static Image createActionImage (String path, String tip, ClickListener onClick)
     {
-        Image image = new Image(path);
+        return makeActionImage(new Image(path), tip, onClick);
+    }
+
+    /**
+     * Makes an image into one that responds to clicking.
+     */
+    public static Image makeActionImage (Image image, String tip, ClickListener onClick)
+    {
         image.addStyleName("actionLabel");
         image.addClickListener(onClick);
         if (tip != null) {

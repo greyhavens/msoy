@@ -64,6 +64,9 @@ public class Frame
 
         // set up the callbackd that our flash clients can call
         configureCallbacks();
+
+        // create our header
+        _header = new Header();
     }
 
     /**
@@ -590,7 +593,7 @@ public class Frame
         }
     };
 
-    protected static Header _header = new Header();
+    protected static Header _header;
     protected static String _closeToken;
 
     protected static TitleBar _bar;

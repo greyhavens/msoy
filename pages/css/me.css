@@ -7,7 +7,7 @@
 .myWhirled .Pop {
   text-align: right;
   font-size: 10px;
-  padding: 5px 5px 0px 0px;
+  padding: 5px 20px 0px 0px;
   color: #63AAE2;
 }
 
@@ -23,6 +23,72 @@
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.whatsNext {
+  background: url(/images/me/next_bg.png) no-repeat top left;
+  width: 649px;
+  height: 341px;
+  margin: 0px auto 10px;
+  color: #216CA3;
+}
+
+.whatsNext .roundBox {
+  width: 100%;
+  height: 100%;
+}
+
+.whatsNext .Play {
+  width: 191px;
+  padding: 10px 5px 5px 10px;
+}
+
+.whatsNext .Explore {
+  width: 191px;
+  padding: 10px 10px 5px 5px;
+}
+
+.whatsNext .Decorate {
+  padding: 5px 10px 10px 10px;
+  text-align: center;
+}
+
+.whatsNext .Decorate .Screen {
+  padding-right: 10px;
+}
+
+.whatsNext .Friends {
+  width: 217px;
+  padding: 5px 10px 10px 10px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.whatsNext .Friends img {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.whatsNext .Friends .Title {
+  font-weight: bold;
+}
+
+.whatsNext .Friends .NoFriends {
+  height: 60px;
+  vertical-align: bottom;
+  padding-bottom: 5px;
+}
+
+.whatsNext .Friends .Or {
+  height: 60px;
+  vertical-align: middle;
+}
+
+.whatsNext .Friends .FindTip {
+  height: 60px;
+  vertical-align: top;
+  font-size: 12px;
+  padding-top: 5px;
 }
 
 .FeedList {

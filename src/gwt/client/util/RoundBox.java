@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -66,6 +67,12 @@ public class RoundBox extends SmartTable
         getFlexCellFormatter().setStyleName(1, 0, color + "Side");
         setHTML(1, 1, "&nbsp;");
         getFlexCellFormatter().setStyleName(1, 1, color + "Side");
+    }
+
+    public void setHorizontalAlignment (
+        HasHorizontalAlignment.HorizontalAlignmentConstant horizAlign)
+    {
+        getFlexCellFormatter().setHorizontalAlignment(0, 1, horizAlign);
     }
 
     public void add (Widget widget)
