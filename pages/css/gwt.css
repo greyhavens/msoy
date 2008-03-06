@@ -168,7 +168,6 @@ img, embed, applet, object {
 }
 
 .gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering {
-  background: #CCCCCC;
   cursor: pointer;
 }
 
@@ -405,15 +404,15 @@ img, embed, applet, object {
   padding: 10px 0px;
 }
 
-.roundBoxWhite .Center, .roundBoxWhite .Side {
+.roundBox .WhiteCenter, .roundBox .WhiteSide {
   background: #FFFFFF;
 }
 
-.roundBoxBlue .Center, .roundBoxBlue .Side {
+.roundBox .BlueCenter, .roundBox .BlueSide {
   background: #E8F5FE;
 }
 
-.roundBoxDarkBlue .Center, .roundBoxDarkBlue .Side {
+.roundBox .DarkBlueCenter, .roundBox .DarkBlueSide {
   background: #3F8EBA;
 }
 
