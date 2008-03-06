@@ -20,7 +20,9 @@ cd $WHIRLED_DIR
 # ant sdk
 
 cp $WHIRLED_DIR/dist/whirled_sdk.zip $MSOY_DIR/data/whirled_sdk_$1.zip
-rsync -avrq $WHIRLED_DIR/dist/sdk/whirled/docs/* -type f $MSOY_DIR/pages/code/asdocs
+rsync -avrq $WHIRLED_DIR/dist/sdk/whirled/docs/* --exclude .svn --delete -type f \
+  $MSOY_DIR/pages/code/asdocs
+svn status $MSOY_DIR/pages/code/asdocs | egrep '^\!' | awk '{ print $2 }' | xargs svn rm
 
 echo ""
 echo "Now delete the old SDK and commit the new one:"
