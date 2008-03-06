@@ -901,7 +901,7 @@ public class RoomManager extends SpotSceneManager
         // determine the available controllers
         HashIntMap<Controller> controllers = new HashIntMap<Controller>();
         for (OccupantInfo info : _roomObj.occupantInfo) {
-            if (info instanceof MemberInfo && info.status == OccupantInfo.ACTIVE) {
+            if (info instanceof MemberInfo && info.status != OccupantInfo.DISCONNECTED) {
                 controllers.put(info.bodyOid, new Controller(info.bodyOid));
             }
         }
