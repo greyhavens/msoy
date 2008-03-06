@@ -41,7 +41,7 @@ public class Group
     public static final int ACCESS_POST = 3;
 
     /** The maximum allowed length for a group's blurb. */
-    public static final int MAX_BLURB_LENGTH = 80;
+    public static final int MAX_BLURB_LENGTH = 200;
 
     /** The maximum allowed length for a group's charter. */
     public static final int MAX_CHARTER_LENGTH = 2000;

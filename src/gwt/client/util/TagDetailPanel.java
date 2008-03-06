@@ -216,20 +216,15 @@ public class TagDetailPanel extends VerticalPanel
             final String tag = (String) iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
             if (_canEdit) {
-                final Command remove = new Command() {
-                    public void execute () {
-                        new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
-                            public void onAffirmative () {
-                                _service.untag(tag, new MsoyCallback() {
-                                    public void onSuccess (Object result) {
-                                        refreshTags();
-                                    }
-                                });
+                final Command remove = new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
+                    public void onAffirmative () {
+                        _service.untag(tag, new MsoyCallback() {
+                            public void onSuccess (Object result) {
+                                refreshTags();
                             }
-                            public void onNegative () { 
-                            }
-                        }.prompt();
+                        });
                     }
+                    public void onNegative () { /* nada */ }
                 };
                 new PopupMenu(tagLabel) {
                     protected void addMenuItems () {

@@ -7,26 +7,25 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Hyperlink;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -54,19 +53,18 @@ import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
-import client.util.RowPanel;
+import client.util.RoundBox;
+import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
-import client.util.TongueBox;
 
 /**
- * Display the details of a group, including all its members, and let managers remove other members
- * (unless the group's policy is PUBLIC) and pop up the group editor.
+ * Displays the details of a Whirled.
  */
-public class GroupView extends VerticalPanel
+public class WhirledDetailPanel extends VerticalPanel
 {
-    public GroupView ()
+    public WhirledDetailPanel ()
     {
-        setStyleName("groupView");
+        setStyleName("whirledDetail");
     }
 
     /**
@@ -125,92 +123,20 @@ public class GroupView extends VerticalPanel
         _group = _detail.group;
         _extras = _detail.extras;
 
-        SmartTable main = new SmartTable(0, 5);
+        HorizontalPanel main = new HorizontalPanel();
+        main.setSpacing(10);
+        main.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
         add(main);
 
         FlowPanel window = new FlowPanel();
         SimplePanel panel = new SimplePanel();
+        panel.setStyleName("Whirled");
         window.add(panel);
-        window.add(MsoyUI.createLabel("Click the Whirled above to enter.", "tipLabel"));
-        main.setWidget(0, 0, window, 1, "Window");
-        WorldClient.displayFeaturedPlace(_group.homeSceneId, panel);
-
-        VerticalPanel bits = new VerticalPanel();
-        bits.setSpacing(0);
-        bits.add(MsoyUI.createLabel(_group.name, "Name"));
-
-        FlowPanel established = new FlowPanel();
-        established.setStyleName("Established");
-        established.add(new InlineLabel(CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)),
-                                        false, false, true));
-        CreatorLabel creator = new CreatorLabel(_detail.creator);
-        creator.addStyleName("inline");
-        established.add(creator);
-        bits.add(established);
-
-        if (_group.blurb != null) {
-            bits.add(MsoyUI.createLabel(_group.blurb, "Blurb"));
-        }
-
-        bits.add(WidgetUtil.makeShim(10, 10));
-        bits.add(MsoyUI.createLabel(CWhirleds.msgs.viewManagers(), null));
-        FlowPanel managers = new FlowPanel();
-        managers.setStyleName("Managers");
-        for (int ii = 0; ii < _detail.managers.size(); ii++) {
-            if (ii > 0) {
-                managers.add(new InlineLabel(", ", false, false, true));
-            }
-            GroupMembership mgr = (GroupMembership)_detail.managers.get(ii);
-            managers.add(Application.memberViewLink(mgr.member));
-        }
-        bits.add(managers);
-        // TODO: add CWhirleds.msgs.viewMembers() XXX [see all]
-
-        bits.add(WidgetUtil.makeShim(10, 10));
-        bits.add(Application.createLink("Discussion forums", Page.WHIRLEDS,
-                                        Args.compose("f", _group.groupId)));
-
-        RowPanel buttons = new RowPanel();
-        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
-            buttons.add(new Button(CWhirleds.msgs.viewEdit(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, Args.compose("edit", _group.groupId));
-                }
-            }));
-        }
-        if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
-                buttons.add(new Button(CWhirleds.msgs.viewJoin(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        (new PromptPopup(CWhirleds.msgs.viewJoinPrompt(_group.name)) {
-                            public void onAffirmative () {
-                                joinGroup();
-                            }
-                            public void onNegative () { }
-                        }).prompt();
-                    }
-                }));
-            }
-        } else {
-            buttons.add(new Button(CWhirleds.msgs.viewLeave(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    (new PromptPopup(CWhirleds.msgs.viewLeavePrompt(_group.name)) {
-                        public void onAffirmative () {
-                            removeMember(CWhirleds.getMemberId());
-                        }
-                        public void onNegative () { }
-                    }).prompt();
-                }
-            }));
-        } 
-        if (buttons.getWidgetCount() > 0) {
-            bits.add(WidgetUtil.makeShim(10, 10));
-            bits.add(buttons);
-        }
+        window.add(MsoyUI.createLabel(CWhirleds.msgs.detailEnter(), "Enter"));
 
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
-            bits.add(WidgetUtil.makeShim(10, 10));
-            bits.add(new TagDetailPanel(new TagDetailPanel.TagService() {
+            window.add(WidgetUtil.makeShim(10, 10));
+            window.add(new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback callback) {
                     CWhirleds.groupsvc.tagGroup(
                         CWhirleds.ident, _group.groupId, tag, true, callback);
@@ -232,7 +158,7 @@ public class GroupView extends VerticalPanel
                     // nada
                 }
                 public void addMenuItems (final String tag, PopupMenu menu) {
-                    menu.addMenuItem(CWhirleds.msgs.viewTagLink(), new Command() {
+                    menu.addMenuItem(CWhirleds.msgs.detailTagLink(), new Command() {
                         public void execute () {
                             Application.go(Page.WHIRLEDS, Args.compose("tag", tag));
                         }
@@ -241,15 +167,92 @@ public class GroupView extends VerticalPanel
             }, _detail.myRank == GroupMembership.RANK_MANAGER));
         }
 
-        main.setWidget(0, 1, bits);
-        main.getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
+        main.add(window);
+        WorldClient.displayFeaturedPlace(_group.homeSceneId, panel);
 
-        if (_extras.charter != null) {
-            add(new TongueBox("Charter", new PrettyTextPanel(_extras.charter)));
+        RoundBox bits = new RoundBox(RoundBox.BLUE);
+        bits.add(MsoyUI.createLabel(_group.name, "Name"));
+
+        FlowPanel established = new FlowPanel();
+        established.setStyleName("Established");
+        established.add(new InlineLabel(CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)),
+                                        false, false, true));
+        CreatorLabel creator = new CreatorLabel(_detail.creator);
+        creator.addStyleName("inline");
+        established.add(creator);
+        bits.add(established);
+
+        if (_group.blurb != null) {
+            bits.add(WidgetUtil.makeShim(10, 10));
+            RoundBox blurb = new RoundBox(RoundBox.WHITE);
+            blurb.setWidth("100%");
+            blurb.add(MsoyUI.createLabel(_group.blurb, "Blurb"));
+            bits.add(blurb);
         }
+
+        HorizontalPanel buttons = new HorizontalPanel();
+        if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
+            if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
+                addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailJoin(),
+                          new PromptPopup(CWhirleds.msgs.detailJoinPrompt(_group.name)) {
+                              public void onAffirmative () {
+                                  joinGroup();
+                              }
+                              public void onNegative () { /* nada */ }
+                          });
+            }
+        } else {
+            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailLeave(),
+                      new PromptPopup(CWhirleds.msgs.detailLeavePrompt(_group.name)) {
+                          public void onAffirmative () {
+                              removeMember(CWhirleds.getMemberId());
+                          }
+                          public void onNegative () { }
+                      });
+        } 
+        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
+            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEdit(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.WHIRLEDS, Args.compose("edit", _group.groupId));
+                }
+            });
+        }
+        addButton(buttons, MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(),
+                  Application.createLinkListener(Page.WHIRLEDS, Args.compose("f", _group.groupId)));
+        bits.add(WidgetUtil.makeShim(10, 10));
+        bits.add(buttons);
+        main.add(bits);
+
+        add(_tabs = new StyledTabPanel());
+
+        String charter = (_extras.charter == null) ?
+            CWhirleds.msgs.detailNoCharter() : _extras.charter;
+        _tabs.add(new PrettyTextPanel(charter), CWhirleds.msgs.detailTabCharter());
+        _tabs.selectTab(0);
+
+        // TODO: make this prettier; get data on demand; use MemberCard
+        FlowPanel managers = new FlowPanel();
+        for (int ii = 0; ii < _detail.managers.size(); ii++) {
+            if (ii > 0) {
+                managers.add(new InlineLabel(", ", false, false, true));
+            }
+            GroupMembership mgr = (GroupMembership)_detail.managers.get(ii);
+            managers.add(Application.memberViewLink(mgr.member));
+        }
+        _tabs.add(managers, CWhirleds.msgs.detailTabManagers());
+
+        // TODO: add members tab
 
 //         setBackgroundImage(
 //             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
+    }
+
+    protected void addButton (HorizontalPanel panel, String type, String label, ClickListener click)
+    {
+        if (panel.getWidgetCount() > 0) {
+            panel.add(WidgetUtil.makeShim(5, 5));
+        }
+        panel.add(MsoyUI.createButton(type, label, click));
     }
 
 //     protected FlowPanel createMembersPanel (byte rank)
@@ -305,14 +308,14 @@ public class GroupView extends VerticalPanel
 //     {
 //         // MenuBar(true) creates a vertical menu
 //         MenuBar menu = new MenuBar(true);
-//         menu.addItem(CWhirleds.msgs.viewViewProfile(), new Command() {
+//         menu.addItem(CWhirleds.msgs.detailViewProfile(), new Command() {
 //             public void execute () {
 //                 Application.go(Page.PEOPLE, "" + membership.member.getMemberId());
 //             }
 //         });
-//         MenuItem promote = new MenuItem(CWhirleds.msgs.viewPromote(), new Command() {
+//         MenuItem promote = new MenuItem(CWhirleds.msgs.detailPromote(), new Command() {
 //             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.viewPromotePrompt(membership.member.toString())) {
+//                 (new PromptPopup(CWhirleds.msgs.detailPromotePrompt(membership.member.toString())) {
 //                     public void onAffirmative () {
 //                         parent.hide();
 //                         updateMemberRank(
@@ -322,9 +325,9 @@ public class GroupView extends VerticalPanel
 //                 }).prompt();
 //             }
 //         });
-//         MenuItem demote = new MenuItem(CWhirleds.msgs.viewDemote(), new Command() {
+//         MenuItem demote = new MenuItem(CWhirleds.msgs.detailDemote(), new Command() {
 //             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.viewPromotePrompt(membership.member.toString())) {
+//                 (new PromptPopup(CWhirleds.msgs.detailPromotePrompt(membership.member.toString())) {
 //                     public void onAffirmative () {
 //                         parent.hide();
 //                         updateMemberRank(membership.member.getMemberId(),
@@ -334,9 +337,9 @@ public class GroupView extends VerticalPanel
 //                 }).prompt();
 //             }
 //         });
-//         MenuItem remove = new MenuItem(CWhirleds.msgs.viewRemove(), new Command() {
+//         MenuItem remove = new MenuItem(CWhirleds.msgs.detailRemove(), new Command() {
 //             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.viewRemovePrompt(membership.member.toString(), 
+//                 (new PromptPopup(CWhirleds.msgs.detailRemovePrompt(membership.member.toString(), 
 //                     _group.name)) { 
 //                     public void onAffirmative () {
 //                         parent.hide();
@@ -435,6 +438,7 @@ public class GroupView extends VerticalPanel
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupDetail _detail;
+    protected StyledTabPanel _tabs;
 
     protected static SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
 }

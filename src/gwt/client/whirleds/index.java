@@ -39,20 +39,20 @@ public class index extends MsgsEntryPoint
 
         String action = args.get(0, "");
         if (action.equals("d")) {
-            setContent(_gview);
-            _gview.setGroup(args.get(1, 0), args.get(2, "").equals("r"));
+            setContent(_detail);
+            _detail.setGroup(args.get(1, 0), args.get(2, "").equals("r"));
 
         } else if (action.equals("edit")) {
             int groupId = args.get(1, 0);
             if (groupId == 0) {
                 setContent(new GroupEdit());
             } else {
-                Group group = _gview.getGroup();
+                Group group = _detail.getGroup();
                 if (group == null && group.groupId != groupId) {
                     MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
                     return;
                 }
-                setContent(new GroupEdit(group, _gview.getGroupExtras()));
+                setContent(new GroupEdit(group, _detail.getGroupExtras()));
             }
 
         } else if (action.equals("unread")) {
@@ -96,6 +96,6 @@ public class index extends MsgsEntryPoint
     }
 
     protected ForumModels _fmodels = new ForumModels();
-    protected GroupView _gview = new GroupView();
+    protected WhirledDetailPanel _detail = new WhirledDetailPanel();
     protected GalaxyPanel _galaxy;
 }

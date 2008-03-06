@@ -5,32 +5,44 @@
  */
 
 /* GroupView specific formatting */
-.groupView {
+.whirledDetail {
   width: 100%;
 }
 
-.groupView .Window {
-  text-align: center;
-  width: 424px;
-  padding-right: 10px;
+.whirledDetail .Whirled {
+  border: 1px solid #408AB9;
 }
 
-.groupView .Name {
-  font-size: 22px;
+.whirledDetail .Enter {
+  background: url(/images/group/enter_bg.png) center no-repeat;
+  height: 19px;
+  font-size: 12px;
   font-weight: bold;
+  text-align: center;
+  color: #408AB9;
 }
 
-.groupView .Managers, .groupView .Blurb {
+.whirledDetail .Name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #204260;
+}
+
+.whirledDetail .Blurb {
   font-size: 12px;
 }
 
-.groupView .Established, .groupView .LogoPanel .Policy {
+.whirledDetail .Established, .whirledDetail .LogoPanel .Policy {
   font-size: 12px;
   font-style: italic;
 }
 
-.groupView .LogoPanel .Policy {
+.whirledDetail .LogoPanel .Policy {
   margin: 7px;
+}
+
+.whirledDetail .gwt-TabPanelBottom {
+  margin: 10px;
 }
 
 /* GroupList specific formattting */

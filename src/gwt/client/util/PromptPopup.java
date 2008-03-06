@@ -3,21 +3,24 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
 
 /**
- * A class that will prompt the user, and will call one of two abstract functions, depending
- * on the option selected.
+ * A class that will prompt the user, and will call one of two abstract functions, depending on the
+ * option selected. This implements {@link ClickListener} and {@link Command} so you can have your
+ * popup directly {@link #prompt} when the target is clicked.
  */
 public abstract class PromptPopup extends BorderedPopup
+    implements ClickListener, Command
 {
     /**
      * Create a PromptPopup that uses "Yes" and "No" for the buttons.
@@ -103,6 +106,18 @@ public abstract class PromptPopup extends BorderedPopup
     public void onNegative ()
     {
         // default to doing nothing, just go away
+    }
+
+    // from interface ClickListener
+    public void onClick (Widget sender)
+    {
+        prompt();
+    }
+
+    // from interface Command
+    public void execute ()
+    {
+        prompt();
     }
 
     protected String _prompt, _context;
