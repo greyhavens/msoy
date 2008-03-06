@@ -23,25 +23,29 @@ import client.util.MsoyUI;
  */
 public class GameGenrePanel extends VerticalPanel
 {
-    public GameGenrePanel (byte genre)
+    public GameGenrePanel (final byte genre)
     {
         setStyleName("gameGenre");
 
         CGames.gamesvc.loadGameGenre(CGames.ident, genre, new MsoyCallback() {
             public void onSuccess (Object result) {
-                init((GameGenreData)result);
+                init(genre, (GameGenreData)result);
             }
         });
     }
 
-    protected void init (GameGenreData data)
+    protected void init (byte genre, GameGenreData data)
     {
-        HorizontalPanel row = new HorizontalPanel();
-        row.add(new WhyPlayPanel());
-        row.add(new FeaturedGamePanel(data.featuredGames));
-        add(row);
+        if (genre >= 0) {
+            HorizontalPanel row = new HorizontalPanel();
+            row.setStyleName("Features");
+            row.add(new WhyPlayPanel());
+            row.add(new FeaturedGamePanel(data.featuredGames));
+            add(row);
+        }
 
-        PagedGrid games = new PagedGrid(5, 3, PagedGrid.NAV_ON_TOP) {
+        int rows = (genre >= 0) ? ROWS : FEATURELESS_ROWS;
+        PagedGrid games = new PagedGrid(rows, COLUMNS, PagedGrid.NAV_ON_TOP) {
             protected Widget createWidget (Object item) {
                 return new GameEntry((GameInfo)item);
             }
@@ -53,4 +57,8 @@ public class GameGenrePanel extends VerticalPanel
         add(games);
         games.setModel(new SimpleDataModel(data.games), 0);
     }
+
+    protected static final int COLUMNS = 3;
+    protected static final int ROWS = 3;
+    protected static final int FEATURELESS_ROWS = 7;
 }

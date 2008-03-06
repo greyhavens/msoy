@@ -349,6 +349,7 @@ public class Frame
                 subnavi.addLink(null, "My Trophies", Page.GAMES,
                                 Args.compose("t", CShell.getMemberId()));
             }
+            subnavi.addLink(null, "All Games", Page.GAMES, "g");
 
         } else if (pageId.equals(Page.WHIRLEDS)) {
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");

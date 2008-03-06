@@ -206,8 +206,11 @@
 }
 
 .arcade, .gameGenre {
-  background: url(/images/game/featured_bg.png) no-repeat top left;
   width: 100%;
+}
+
+.arcade .Features, .gameGenre .Features {
+  background: url(/images/game/featured_bg.png) no-repeat top left;
 }
 
 .arcade .Genre {

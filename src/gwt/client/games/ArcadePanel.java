@@ -43,6 +43,7 @@ public class ArcadePanel extends VerticalPanel
     protected void init (ArcadeData data)
     {
         HorizontalPanel row = new HorizontalPanel();
+        row.setStyleName("Features");
         row.add(new WhyPlayPanel());
         row.add(new FeaturedGamePanel(data.featuredGames));
         add(row);
