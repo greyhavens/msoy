@@ -283,7 +283,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="msoy/index.html#profile"/>
+        <arg value="msoy/index.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -293,7 +293,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="msoy/index.html#profile"/>
+        <arg value="msoy/index.html"/>
       </java>
     </else></if>
   </target>
