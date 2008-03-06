@@ -18,8 +18,8 @@ import client.util.images.box.BoxImages;
 public class RoundBox extends SmartTable
 {
     public static final String WHITE = "White";
-
     public static final String BLUE = "Blue";
+    public static final String DARK_BLUE = "DarkBlue";
 
     /**
      * Adds colored corner images to the bottom row of the supplied table. This will only work
@@ -52,6 +52,11 @@ public class RoundBox extends SmartTable
             setWidget(0, 2, _images.blue_upper_right().createImage(), 1, "Corner");
             setWidget(2, 0, _images.blue_lower_left().createImage(), 1, "Corner");
             setWidget(2, 1, _images.blue_lower_right().createImage(), 1, "Corner");
+        } else if (color.equals(DARK_BLUE)) {
+            setWidget(0, 0, _images.darkblue_upper_left().createImage(), 1, "Corner");
+            setWidget(0, 2, _images.darkblue_upper_right().createImage(), 1, "Corner");
+            setWidget(2, 0, _images.darkblue_lower_left().createImage(), 1, "Corner");
+            setWidget(2, 1, _images.darkblue_lower_right().createImage(), 1, "Corner");
         }
 
         setWidget(0, 1, _contents = new FlowPanel(), 1, "Center");

@@ -401,16 +401,20 @@ img, embed, applet, object {
   height: 10px;
 }
 
-.roundBoxBlue .Center {
+.roundBox .Center {
   padding: 10px 0px;
+}
+
+.roundBoxWhite .Center, .roundBoxWhite .Side {
+  background: #FFFFFF;
 }
 
 .roundBoxBlue .Center, .roundBoxBlue .Side {
   background: #E8F5FE;
 }
 
-.roundBoxWhite .Center, .roundBoxWhite .Side {
-  background: #FFFFFF;
+.roundBoxDarkBlue .Center, .roundBoxDarkBlue .Side {
+  background: #3F8EBA;
 }
 
 /** Misc styles. */
