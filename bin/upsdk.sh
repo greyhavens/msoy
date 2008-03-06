@@ -17,12 +17,23 @@ if [ -z "$1" ]; then
 fi
 
 cd $WHIRLED_DIR
-# ant sdk
+ant sdk
 
 cp $WHIRLED_DIR/dist/whirled_sdk.zip $MSOY_DIR/data/whirled_sdk_$1.zip
+
 rsync -avrq $WHIRLED_DIR/dist/sdk/whirled/docs/* --exclude .svn --delete -type f \
   $MSOY_DIR/pages/code/asdocs
-svn status $MSOY_DIR/pages/code/asdocs | egrep '^\!' | awk '{ print $2 }' | xargs svn rm
+OBSOLETE=`svn status $MSOY_DIR/pages/code/asdocs | egrep '^\!' | awk '{ print $2 }'`
+if [ ! -z "$OBSOLETE" ]; then
+    echo $OBSOLETE | xargs svn rm
+fi
+
+rsync -avrq $WHIRLED_DIR/dist/sdk/whirled/contrib/docs/* --exclude .svn --delete -type f \
+  $MSOY_DIR/pages/code/contrib/asdocs
+OBSOLETE=`svn status $MSOY_DIR/pages/code/contrib/asdocs | egrep '^\!' | awk '{ print $2 }'`
+if [ ! -z "$OBSOLETE" ]; then
+    echo $OBSOLETE | xargs svn rm
+fi
 
 echo ""
 echo "Now delete the old SDK and commit the new one:"
