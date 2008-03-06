@@ -87,8 +87,7 @@ public class GameDetailPanel extends SmartTable
         }
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
-            shot.add(new ItemRating(detail.listedItem, CGames.getMemberId(),
-                                    detail.memberRating, false));
+            shot.add(new ItemRating(detail.listedItem, detail.memberRating, false));
         }
         setWidget(0, 0, shot);
         getFlexCellFormatter().setRowSpan(0, 0, 2);

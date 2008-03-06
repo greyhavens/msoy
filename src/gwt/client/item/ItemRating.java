@@ -4,7 +4,6 @@
 package client.item;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
@@ -15,48 +14,26 @@ import client.util.MsoyCallback;
 import client.util.Stars;
 
 public class ItemRating extends FlexTable
+    implements Stars.StarClickListener
 {
-    /**
-     * Creates a simple rating display with no editing ability.
-     */
-    public static Widget createStars (float rating, boolean halfSize)
-    {
-        ItemStars stars = new ItemStars(Stars.MODE_READ, true, halfSize);
-        stars.update(rating);
-        return stars;
-    }
-
-    /**
-     * Construct a new display for the given item with member's previous rating of the item,
-     * automatically figuring out read-only or read/write display mode.
-     */
-    public ItemRating (Item item, int memberId, byte memberRating, boolean horiz)
-    {
-        this(item, memberRating, (item.isRatable() && (memberId != 0)) ?
-             Stars.MODE_BOTH : Stars.MODE_READ, false, horiz);
-    }
-
     /**
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (Item item, byte memberRating, int mode, boolean halfSize, boolean horiz)
+    public ItemRating (Item item, byte memberRating, boolean horiz)
     {
-        // sanity check
-        if (mode != Stars.MODE_READ && !item.isRatable()) {
-            throw new IllegalArgumentException("Can only rate clones and listed items " + _item);
+        _item = item;
+        _averageStars = new Stars(_item.rating, true, false, null);
+
+        // if we're not logged in, force read-only mode
+        if (CShell.getMemberId() == 0 || !item.isRatable()) {
+            setWidget(0, 0, _averageStars);
+            return;
         }
 
-        _item = item;
         _memberRating = memberRating;
-        _averageStars = new ItemStars(Stars.MODE_READ, true, halfSize);
-        _playerStars = new ItemStars(mode, false, halfSize);
-
-        // if we're not logged in, force MODE_READ
-        if (CShell.ident == null || mode == Stars.MODE_READ) {
-            setWidget(0, 0, _averageStars);
-
-        } else if (horiz) {
+        _playerStars = new Stars(_memberRating, false, false, this);
+        if (horiz) {
             int col = 0;
             setText(0, col++, CShell.cmsgs.averageRating());
             setWidget(0, col++, _averageStars);
@@ -72,59 +49,19 @@ public class ItemRating extends FlexTable
         }
     }
 
-    /** The subclass of {#link Stars} that implements most of the item rating. */
-    protected class ItemStars extends Stars
+    // from interface Stars.StarClickListener
+    public void starClicked (byte newRating)
     {
-        protected ItemStars (int mode, boolean averageRating, boolean halfSize)
-        {
-            super(mode, averageRating, halfSize);
-        }
-
-        // @Override
-        protected void update ()
-        {
-            if (_averageRating) {
-                updateStarImage(_rating);
-            } else {
-                updateStarImage(_memberRating);
+        _playerStars.setRating(_memberRating = newRating);
+        ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
+        CShell.itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                _averageStars.setRating(_item.rating = ((Float)result).floatValue());
             }
-        }
-
-        // @Override
-        protected void update (float rating)
-        {
-            // we only allow mouse updates on player stars
-            updateStarImage(rating);
-        }
-
-        // @Override
-        protected void starsClicked (byte newRating)
-        {
-            rateItem(newRating);
-        }
-    
-        /**
-         * Performs a server call to give an item a new rating by this member.
-         */
-        protected void rateItem (byte newRating)
-        {
-            _memberRating = newRating;
-            ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-            CShell.itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _item.rating = ((Float)result).floatValue();
-                    _averageStars.update();
-                    if (_playerStars != null) {
-                        _playerStars.update();
-                    }
-                }
-            });
-        }
+        });
     }
 
-    protected float _rating;
     protected Item _item;
     protected byte _memberRating;
-    protected ItemStars _averageStars;
-    protected ItemStars _playerStars;
+    protected Stars _averageStars, _playerStars;
 }

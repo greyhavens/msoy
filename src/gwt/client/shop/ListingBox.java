@@ -10,12 +10,12 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.data.ListingCard;
 
-import client.item.ItemRating;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemBox;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
+import client.util.Stars;
 
 /**
  * Displays a catalog listing.
@@ -31,7 +31,7 @@ public class ListingBox extends ItemBox
         addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
 
         int row = getRowCount();
-        setWidget(row, 0, ItemRating.createStars(listing.rating, true), 1, "Rating");
+        setWidget(row, 0, new Stars(listing.rating, true, true, null), 1, "Rating");
 
         SmartTable cost = new SmartTable(0, 0);
         setWidget(row, 1, cost);

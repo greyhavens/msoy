@@ -17,13 +17,13 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ShopData;
 
-import client.item.ItemRating;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
+import client.util.Stars;
 import client.util.ThumbBox;
 
 /**
@@ -113,7 +113,7 @@ public class ShopPanel extends HorizontalPanel
         contents.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         contents.setWidget(1, 0, WidgetUtil.makeShim(5, 5), 2, null);
         contents.setWidget(2, 0, new PriceLabel(card.flowCost, card.goldCost));
-        contents.setWidget(2, 1, ItemRating.createStars(card.rating, false));
+        contents.setWidget(2, 1, new Stars(card.rating, true, false, null));
 
         SmartTable box = MsoyUI.createHeaderBox(
             "/images/shop/icon_" + icon + ".png", title, contents);

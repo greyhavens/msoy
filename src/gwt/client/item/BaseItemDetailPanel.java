@@ -54,8 +54,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         bits.addStyleName("Box");
         bits.addWidget(createPreview(_item), 3, "Preview");
         if (_item.isRatable()) {
-            bits.addWidget(new ItemRating(_detail.item, CShell.getMemberId(),
-                                          _detail.memberRating, true), 3, "Rating");
+            bits.addWidget(new ItemRating(_detail.item, _detail.memberRating, true), 3, "Rating");
         }
         setWidget(0, 0, bits);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
