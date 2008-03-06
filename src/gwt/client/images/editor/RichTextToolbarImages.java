@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util.images;
+package client.images.editor;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ImageBundle;

@@ -31,7 +31,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
 
-import client.shell.images.NaviImages;
+import client.images.navi.NaviImages;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 

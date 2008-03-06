@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.util.images.box.BoxImages;
+import client.images.box.BoxImages;
 
 /**
  * Basically a {@link VerticalPanel} with a rounded background. It's not actually a VerticalPanel

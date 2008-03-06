@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.images.stuff.StuffImages;
 import client.shell.Application;
 import client.shell.CShell;
 import client.shell.Page;
-import client.util.images.stuff.StuffImages;
 
 /**
  * Displays a way to navigate our stuff. Used on the Me page and the My Stuff page which is why it

@@ -46,7 +46,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
-import client.util.images.RichTextToolbarImages;
+import client.images.editor.RichTextToolbarImages;
 
 /**
  * A sample toolbar for use with {@link RichTextArea}. It provides a simple UI
