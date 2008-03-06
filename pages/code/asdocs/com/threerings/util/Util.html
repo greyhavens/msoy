@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Util,com.threerings.util.Util,XMLtoString,XMLtoXMLString,equals,init,isSimple,newXML,safeXMLOp,unfuckVarargs" name="keywords">
+<meta content="Util,com.threerings.util.Util,XMLtoString,XMLtoXMLString,equals,init,isPlainObject,isSimple,newXML,safeXMLOp,unfuckVarargs" name="keywords">
 <title>com.threerings.util.Util</title>
 </head>
 <body>
@@ -65,6 +65,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">[static]
      Initialize the target object with values present in the initProps object and the defaults
      object.</div>
+</td><td class="summaryTableOwnerCol">Util</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isPlainObject()">isPlainObject</a>(obj:Object):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Returns true if the specified object is just a regular old associative hash.</div>
 </td><td class="summaryTableOwnerCol">Util</td>
 </tr>
 <tr class="">
@@ -206,6 +214,29 @@ showHideInherited();
 <tr>
 <td width="20"></td><td><code></code> &mdash; if a property cannot be set on the target object.
           </td>
+</tr>
+</table>
+</div>
+<a name="isPlainObject()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isPlainObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function isPlainObject(obj:Object):Boolean</code><p>
+     Returns true if the specified object is just a regular old associative hash.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">obj</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

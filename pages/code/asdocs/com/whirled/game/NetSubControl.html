@@ -130,7 +130,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#set()">set</a>(propName:String, value:Object, immediate:Boolean = false):void</div>
 <div class="summaryTableDescription">
-     Set a property value.</div>
+     Set a property value to be distributed to the other clients in this game.</div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 <tr class="">
@@ -309,11 +309,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function set(propName:String, value:Object, immediate:Boolean = false):void</code><p>
-     Set a property value. Note that if you set the value as an Array or Dictionary,
-     you can update the values within by using either setAt (for Arrays) or
-     setIn (for Dictionarys) to efficiently update and distribute just that one change.
-     Note that Dictionarys must have int keys, the intention is to use occupantIds as keys.
-          </p><span class="label">Parameters</span>
+     Set a property value to be distributed to the other clients in this game.
+     Property values can be any of the primitive types: int, Number, Boolean, String,
+     ByteArray; or you may set Arrays, Dictionarys, or plain old Objects, as long as
+     the values within them are primitive types or other Arrays, Dictionarys and Objects.
+          </p><p>You may not set your own classes as properties. However, you can serialize your data
+     into a ByteArray and set that.</p>
+     
+     <p><b>Note</b>: top-level Dictionarys must have int keys, the intention is to use
+     occupantIds as keys.</p>
+          <p>Note that if you set the value as an Array or Dictionary, the value is serialized
+     slightly differently in order to enable updating individual elements efficiently.
+     The individual elements will be serialized separately. You may update the elements
+     individually by using either setAt (for Arrays) or setIn (for Dictionarys). The
+     effect of serializing elements individually is that references to the same object will
+     not be reconstructed off the network as references to the same object. See the example
+     below.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">propName</span>:String</code> &mdash; the name of the property to set.
@@ -333,9 +345,35 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">immediate</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, the value is updated immediately in the local object. Otherwise
      any old value will remain in effect until the PropertyChangedEvent arrives after
      a round-trip to the server.
+     
      </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">Array<br>flash.utils.Dictionary<br>
+<a href="../game/NetSubControl.html#setAt()" target="">setAt()</a>
+<br>
+<a href="../game/NetSubControl.html#setIn()" target="">setIn()</a>
+</div>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+     // demonstrates expert-level difference between setting values in an array and an object.
+     var o :Object = { blue: true };
+     var objTest :Object = { 0: o, 1: o};
+     var arrayTest :Array = [ o, o ];
+     _ctrl.net.set("object", objTest);
+     _ctrl.net.set("array", arrayTest);
+     
+     // Later, when reading those values back out:
+     var obj :Object = _ctrl.net.get("object");
+     var array :Array = _ctrl.net.get("array") as Array;
+     trace("array: " + (array[0] == array[1])); // traces false
+     trace("object: " + (obj[0] == obj[1])); // traces true
+     </pre></div>
+               <p></p>
 </div>
 <a name="setAt()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -379,9 +417,15 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">immediate</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, the value is updated immediately in the local object. Otherwise
      any old value will remain in effect until the ElementChangedEvent arrives after
      a round-trip to the server.
-     </td>
+          </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/NetSubControl.html#set()" target="">set()</a>
+</div>
 </div>
 <a name="setIn()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

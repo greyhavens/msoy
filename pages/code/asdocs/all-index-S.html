@@ -177,7 +177,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Set a property value.</td>
+     Set a property value to be distributed to the other clients in this game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html"><i>Set</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
@@ -332,20 +332,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Set a label to be shown above the occupants list in the game.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#setOnComplete()">setOnComplete</a>(onComplete) &mdash; Method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Configures this path's onComplete function.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#setOnStart()">setOnStart</a>(onStart) &mdash; Method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Configures this path's onStart function.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#setOrientation()">setOrientation</a>(orient) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
 </tr>
 <tr>
@@ -399,6 +385,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td>
      Requests that the room's shared property space be updated with the supplied key/value
      pair.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html#setRoomProperty()">setRoomProperty</a>(key, value) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html">StateControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Random.html#setSeed()">setSeed</a>(seed) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Random.html">Random</a></td>
@@ -836,19 +828,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Start (or restart) the specified animation.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/LinearFunc.html#_start">_start</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/LinearFunc.html">LinearFunc</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#start()">start</a>() &mdash; Method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Starts this path.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/LineSegment.html#start">start</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/LineSegment.html">LineSegment</a></td>
 </tr>
 <tr>
@@ -881,18 +860,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Start the next player's turn.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#startPath()">startPath</a>(path:<a href="com/threerings/flash/path/Path.html" onclick="javascript:loadClassListFrame('com/threerings/flash/path./class-list.html');">com.threerings.flash.path:Path</a>, curStamp, startOffset) &mdash; Static method in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html#_startStamp">_startStamp</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/Path.html">Path</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#startsWith()">startsWith</a>(str, substr) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
 </tr>
 <tr>
@@ -907,19 +874,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Start the ticker with the specified name.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/EasingPath.html#_startX">_startX</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/EasingPath.html">EasingPath</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FloatingTextAnimation.html#_startY">_startY</a> &mdash; Property in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/FloatingTextAnimation.html">FloatingTextAnimation</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/EasingPath.html#_startY">_startY</a> &mdash; Property in class com.threerings.flash.path.<a onclick="javascript:loadClassListFrame('com/threerings/flash/path/class-list.html');" href="com/threerings/flash/path/EasingPath.html">EasingPath</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
