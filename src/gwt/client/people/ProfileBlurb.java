@@ -39,6 +39,8 @@ import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.events.FlashEvents;
+import client.util.events.NameChangeEvent;
 
 /**
  * Displays a person's basic profile information.
@@ -262,7 +264,7 @@ public class ProfileBlurb extends Blurb
     protected void commitEdit ()
     {
         // validate their display name
-        String name = _ename.getText().trim();
+        final String name = _ename.getText().trim();
         if (!Profile.isValidDisplayName(name)) {
             MsoyUI.infoNear(CPeople.msgs.displayNameInvalid(
                                 "" + Profile.MIN_DISPLAY_NAME_LENGTH,
@@ -292,6 +294,9 @@ public class ProfileBlurb extends Blurb
         CPeople.profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback() {
             public void onSuccess (Object result) {
                 displayProfile();
+                if (!name.equals(CPeople.creds.name.toString())) {
+                    FlashEvents.dispatchEvent(new NameChangeEvent(name));
+                }
                 FlashClients.tutorialEvent("profileEdited");
             }
         });

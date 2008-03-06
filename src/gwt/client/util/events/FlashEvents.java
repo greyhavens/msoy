@@ -92,6 +92,8 @@ public class FlashEvents
             return FurniChangedEvent.NAME;
         } else if (listener instanceof StatusChangeListener) {
             return StatusChangeEvent.NAME;
+        } else if (listener instanceof NameChangeListener) {
+            return NameChangeEvent.NAME;
         } else if (listener instanceof PetListener) {
             return PetEvent.NAME;
         } else if (listener instanceof FriendsListener) {
@@ -114,6 +116,8 @@ public class FlashEvents
             return new FurniChangedEvent();
         } else if (StatusChangeEvent.NAME.equals(eventName)) {
             return new StatusChangeEvent();
+        } else if (NameChangeEvent.NAME.equals(eventName)) {
+            return new NameChangeEvent();
         } else if (PetEvent.NAME.equals(eventName)) {
             return new PetEvent();
         } else if (FriendEvent.NAME.equals(eventName)) {

@@ -16,11 +16,14 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
+import client.util.events.NameChangeEvent;
+import client.util.events.NameChangeListener;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
 
@@ -62,6 +65,13 @@ public class StatusPanel extends SmartTable
                     _mail.setCount(event.getValue());
                     break;
                 }
+            }
+        });
+
+        FlashEvents.addListener(new NameChangeListener() {
+            public void nameChanged (NameChangeEvent event) {
+                _creds.name = new MemberName(event.getName(), _creds.name.getMemberId());
+                setText(0, 0, event.getName());
             }
         });
     }
