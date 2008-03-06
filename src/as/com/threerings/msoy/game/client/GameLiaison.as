@@ -12,14 +12,13 @@ import flash.display.Sprite;
 import flash.system.Security;
 import flash.events.Event;
 import flash.text.TextField;
-import flash.utils.ByteArray;
 
 import mx.core.Container;
 
 import com.threerings.flash.path.Path;
-import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.MultiLoader;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
@@ -197,12 +196,10 @@ public class GameLiaison
         // if we haven't yet loaded our trophy panel, do that
         if (_awardPanel == null) {
             _awardPanel = AWARD_LOADING;
-            var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-            loader.addEventListener(Event.COMPLETE, function (levent :Event) :void {
-                _awardPanel = (loader.getContent() as DisplayObjectContainer);
+            MultiLoader.getContents(AWARD_PANEL, function (result :DisplayObjectContainer) :void {
+                _awardPanel = result;
                 checkPendingAwards();
             });
-            loader.load(ByteArray(new AWARD_PANEL()));
 
         } else if (_awardPanel == AWARD_LOADING || _awardPanel.stage != null ||
                    _pendingAwards.length == 0) {
