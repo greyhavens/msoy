@@ -186,8 +186,7 @@ public class ItemPanel extends VerticalPanel
         contents.setHTML(0, 0, why);
 
         // add the create button
-        contents.setWidget(0, 1, MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.panelCreateNew(),
-                                                     new ClickListener() {
+        contents.setWidget(0, 1, new Button(CStuff.msgs.panelCreateNew(), new ClickListener() {
             public void onClick (Widget widget) {
                 CStuff.createItem(_type, (byte)0, 0);
             }
