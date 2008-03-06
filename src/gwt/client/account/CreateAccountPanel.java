@@ -199,8 +199,8 @@ public class CreateAccountPanel extends FlexTable
                     Application.setCurrentToken(null);
                     // pass our credentials into the application
                     CAccount.app.didLogon((SessionData)result);
-                    // then head to our home
-                    Application.go(Page.WORLD, "h");
+                    // then head to our me page
+                    Application.go(Page.ME, "");
                 }
                 public void onFailure (Throwable caught) {
                     setError(CAccount.serverError(caught));
