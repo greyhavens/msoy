@@ -66,8 +66,9 @@ public class PopupFilePreview extends TitleWindow
         controlBox.addChild(makeHeader("Change..."));
         controlBox.addChild(makeBullet(
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
-        controlBox.addChild(makeBullet(
-            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
+// Flash security prevents us from using most loaded content as 'data'
+//        controlBox.addChild(makeBullet(
+//            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
         var filenames :Array = ctx.pack.getFilenames();
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
@@ -81,11 +82,11 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new ImagePreview();
+        _image = new ImagePreview(Number(entry.width), Number(entry.height));
         _image.addEventListener(ImagePreview.SIZE_KNOWN, handleSizeKnown);
-        _image.maxWidth = 300;
+        _image.maxWidth = 400;
         _image.maxHeight = 300;
-        _image.minWidth = 100;
+        _image.minWidth = 200;
         _image.minHeight = 100;
         previewBox.addChild(_image);
         _label = new Label();
