@@ -57,55 +57,18 @@ public class IssueServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
-
-        try {
-            IssueResult result = new IssueResult();
-
-            // load up the requested set of issues
-            ArrayIntSet types = new ArrayIntSet();
-            types.add(type);
-            ArrayIntSet states = new ArrayIntSet();
-            states.add(state);
-            List<IssueRecord> irecs =
-                MsoyServer.issueRepo.loadIssues(types, states, offset, count);
-
-            List<Issue> issues = Lists.newArrayList();
-            if (irecs.size() > 0) {
-                IntMap<MemberName> mnames = IntMaps.newHashIntMap();
-                IntSet members = new ArrayIntSet();
-
-                for (IssueRecord record : irecs) {
-                    members.add(record.creatorId);
-                    if (record.ownerId != -1) {
-                        members.add(record.ownerId);
-                    }
-                }
-                for (MemberRecord mem : MsoyServer.memberRepo.loadMembers(members)) {
-                    mnames.put(mem.memberId, new MemberName(mem.permaName, mem.memberId));
-                }
-                for (IssueRecord record : irecs) {
-                    Issue issue = record.toIssue();
-                    issue.creator = mnames.get(record.creatorId);
-                    if (record.ownerId != -1) {
-                        issue.owner = mnames.get(record.ownerId);
-                    }
-                    issues.add(issue);
-                }
-            }
-            result.issues = issues;
-
-            if (needTotalCount) {
-                result.issueCount = (result.issues.size() < count && offset == 0) ?
-                    result.issues.size() : MsoyServer.issueRepo.loadIssueCount(types, states);
-            }
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load issues [for=" + who(mrec) + ", type=" + type +
-                    ", state=" + state + ", offset=" + offset + ", count=" + count + "].", pe);
-            throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
-        }
+        return loadIssues(mrec, type, state, 0, offset, count, needTotalCount);
     }
+
+    // from interface IssueService
+    public IssueResult loadOwnedIssues (
+            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+        return loadIssues(mrec, type, state, mrec.memberId, offset, count, needTotalCount);
+    }
+
 
     // from interface IssueService
     public Issue loadIssue (WebIdent ident, int issueId)
@@ -243,5 +206,58 @@ public class IssueServlet extends MsoyServiceServlet
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
         return owners;
+    }
+
+    protected IssueResult loadIssues (MemberRecord mrec, int type, int state, int owner, int offset,
+            int count, boolean needTotalCount)
+        throws ServiceException
+    {
+        try {
+            IssueResult result = new IssueResult();
+
+            // load up the requested set of issues
+            ArrayIntSet types = new ArrayIntSet();
+            types.add(type);
+            ArrayIntSet states = new ArrayIntSet();
+            states.add(state);
+            List<IssueRecord> irecs =
+                MsoyServer.issueRepo.loadIssues(types, states, owner, offset, count);
+
+            List<Issue> issues = Lists.newArrayList();
+            if (irecs.size() > 0) {
+                IntMap<MemberName> mnames = IntMaps.newHashIntMap();
+                IntSet members = new ArrayIntSet();
+
+                for (IssueRecord record : irecs) {
+                    members.add(record.creatorId);
+                    if (record.ownerId != -1) {
+                        members.add(record.ownerId);
+                    }
+                }
+                for (MemberRecord mem : MsoyServer.memberRepo.loadMembers(members)) {
+                    mnames.put(mem.memberId, new MemberName(mem.permaName, mem.memberId));
+                }
+                for (IssueRecord record : irecs) {
+                    Issue issue = record.toIssue();
+                    issue.creator = mnames.get(record.creatorId);
+                    if (record.ownerId != -1) {
+                        issue.owner = mnames.get(record.ownerId);
+                    }
+                    issues.add(issue);
+                }
+            }
+            result.issues = issues;
+
+            if (needTotalCount) {
+                result.issueCount = (result.issues.size() < count && offset == 0) ?
+                    result.issues.size() : MsoyServer.issueRepo.loadIssueCount(types, states);
+            }
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load issues [for=" + who(mrec) + ", type=" + type +
+                    ", state=" + state + ", offset=" + offset + ", count=" + count + "].", pe);
+            throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
+        }
     }
 }

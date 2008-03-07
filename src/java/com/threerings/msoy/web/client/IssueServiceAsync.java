@@ -21,6 +21,12 @@ public interface IssueServiceAsync
                             boolean needTotalCount, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link IssueService#loadOwnedIssues}.
+     */
+    public void loadOwnedIssues (WebIdent ident, int type, int state, int offset, int count,
+                                 boolean needTotalCount, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link IssueServie#loadIssue}.
      */
     public void loadIssue (WebIdent ident, int issueId, AsyncCallback callback);

@@ -33,9 +33,16 @@ public interface IssueService extends RemoteService
     }
 
     /**
-     * Loads issues of specific types, states and dates.
+     * Loads issues of specific types, states.
      */
     public IssueResult loadIssues (
+            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+        throws ServiceException;
+
+    /**
+     * Loads issues of specific types, states owned by the user.
+     */
+    public IssueResult loadOwnedIssues (
             WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
         throws ServiceException;
 

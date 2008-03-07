@@ -36,8 +36,15 @@ public class IssuePanel extends TitledListPanel
     public void displayIssues (boolean refresh)
     {
         IssueListPanel issues = new IssueListPanel(this);
-        issues.displayIssues(_type, _state, _imodels, refresh);
-        setContents(createHeader(CMsgs.mmsgs.issueListHeader()), issues);
+        issues.displayIssues(_type, _state, _owned, _imodels, refresh);
+        setContents(createHeader(_owned ? CMsgs.mmsgs.myIssueListHeader() :
+                    CMsgs.mmsgs.issueListHeader()), issues);
+    }
+
+    public void displayOwnedIssues (int type, int state, boolean refresh)
+    {
+        _owned = true;
+        displayIssues(type, state, refresh);
     }
 
     public void displayIssue (int issueId)
@@ -132,6 +139,9 @@ public class IssuePanel extends TitledListPanel
 
     /** Our current state and type being displayed. */
     protected int _state, _type;
+
+    /** If we're only showing owned issues. */
+    protected boolean _owned;
 
     /** The issue viewing/editing panel. */
     protected EditIssuePanel _ipanel;

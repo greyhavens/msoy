@@ -77,6 +77,11 @@ public class index extends MsgsEntryPoint
             issues.displayIssues(Issue.TYPE_BUG, Issue.STATE_OPEN, false);
             setContent(issues);
 
+        } else if (action.equals("owned")) {
+            IssuePanel issues = new IssuePanel(_imodels);
+            issues.displayOwnedIssues(Issue.TYPE_BUG, Issue.STATE_OPEN, false);
+            setContent(issues);
+
         } else if (action.equals("i")) {
             int issueId = args.get(1, 0);
             IssuePanel issues = new IssuePanel(_imodels);

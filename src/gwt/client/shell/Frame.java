@@ -360,6 +360,7 @@ public class Frame
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
                 if (CShell.isAdmin()) {
                     subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
+                    subnavi.addLink(null, "My Issues", Page.WHIRLEDS, "owned");
                 }
             }
 

@@ -52,8 +52,22 @@ public class IssueRepository extends DepotRepository
             IntSet types, IntSet states, int offset, int count)
         throws PersistenceException
     {
+        return loadIssues(types, states, 0, offset, count);
+    }
+
+
+    /**
+     * Load issues of specific types, states and ownerId.
+     */
+    public List<IssueRecord> loadIssues (
+            IntSet types, IntSet states, int ownerId, int offset, int count)
+        throws PersistenceException
+    {
         List<SQLOperator> whereBits = Lists.newArrayList();
         ColumnExp sortColumn = IssueRecord.CREATED_TIME_C;
+        if (ownerId > 0) {
+            whereBits.add(new Conditionals.Equals(IssueRecord.OWNER_ID_C, ownerId));
+        }
         if (types != null) {
             whereBits.add(new Conditionals.In(IssueRecord.TYPE_C, types));
         }

@@ -38,9 +38,14 @@ public class IssueListPanel extends PagedGrid
         _parent = parent;
     }
 
-    public void displayIssues (int type, int state, IssueModels imodels, boolean refresh)
+    public void displayIssues (
+            int type, int state, boolean owned, IssueModels imodels, boolean refresh)
     {
-        setModel(imodels.getIssues(type, state, refresh), 0);
+        if (owned) {
+            setModel(imodels.getOwnedIssues(type, state, refresh), 0);
+        } else {
+            setModel(imodels.getIssues(type, state, refresh), 0);
+        }
     }
 
     // @Override // from PagedGrid
