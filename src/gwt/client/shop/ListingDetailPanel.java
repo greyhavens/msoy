@@ -23,6 +23,7 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
+import client.shell.Frame;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
@@ -123,8 +124,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             FlashClients.tutorialEvent("avatarBought");
         }
 
-        // display the "you bought an item" UI
-        // TODO: setWidget(new BoughtItemPanel(item));
+        // display the "you bought an item" dialog
+        String type = CShop.dmsgs.getString("itemType" + item.getType());
+        Frame.showDialog(CShop.msgs.bipTitle(type), new BoughtItemPanel(item));
     }
 
     protected CatalogModels _models;

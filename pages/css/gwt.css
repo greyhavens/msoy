@@ -89,7 +89,6 @@ img, embed, applet, object {
   font-weight: bold;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   text-align: center;
-  cursor: pointer;
   white-space: nowrap;
 }
 
@@ -111,6 +110,7 @@ img, embed, applet, object {
 }
 .shortThinOrangeButton-up-hovering, .shortThinOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/short_thin_over.png);
+  cursor: pointer;
 }
 
 .mediumThinOrangeButton {
@@ -119,6 +119,7 @@ img, embed, applet, object {
 }
 .mediumThinOrangeButton-up-hovering, .mediumThinOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/medium_thin_over.png);
+  cursor: pointer;
 }
 
 .longThinOrangeButton {
@@ -127,6 +128,7 @@ img, embed, applet, object {
 }
 .longThinOrangeButton-up-hovering, .longThinOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/long_thin_over.png);
+  cursor: pointer;
 }
 
 .shortThickOrangeButton {
@@ -135,6 +137,7 @@ img, embed, applet, object {
 }
 .shortThickOrangeButton-up-hovering, .shortThickOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/short_thick_over.png);
+  cursor: pointer;
 }
 
 .mediumThickOrangeButton {
@@ -143,6 +146,7 @@ img, embed, applet, object {
 }
 .mediumThickOrangeButton-up-hovering, .mediumThickOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/medium_thick_over.png);
+  cursor: pointer;
 }
 
 .longThickOrangeButton {
@@ -151,6 +155,7 @@ img, embed, applet, object {
 }
 .longThickOrangeButton-up-hovering, .longThickOrangeButton-down-hovering {
   background-image: url(/images/ui/orange/long_thick_over.png);
+  cursor: pointer;
 }
 
 .closeButton {
@@ -345,9 +350,9 @@ img, embed, applet, object {
 }
 
 .pageDialog {
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 10px 10px 0px 10px;
+  width: 100%;
+  border: 1px solid #3F8EBA;
 }
 
 .pageDialog .DialogTitle {
@@ -358,7 +363,7 @@ img, embed, applet, object {
 
 .pageTitle .Close, .pageDialog .Close {
   width: 13px;
-  padding: 3px 5px 0px 0px;
+  padding: 3px 3px 0px 0px;
   vertical-align: top;
 }
 
