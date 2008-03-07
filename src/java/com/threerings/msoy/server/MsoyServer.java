@@ -56,6 +56,7 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.GroupManager;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
@@ -115,6 +116,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our forums. */
     public static ForumRepository forumRepo;
+
+    /** Contains information on our issues. */
+    public static IssueRepository issueRepo;
 
     /** Contains member comments on various things. */
     public static CommentRepository commentRepo;
@@ -267,6 +271,7 @@ public class MsoyServer extends MsoyBaseServer
         // create our various repositories
         groupRepo = new GroupRepository(perCtx, _eventLog);
         forumRepo = new ForumRepository(perCtx);
+        issueRepo = new IssueRepository(perCtx);
         commentRepo = new CommentRepository(perCtx);
         trophyRepo = new TrophyRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);

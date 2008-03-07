@@ -30,6 +30,9 @@ public class ForumMessage
     /** The name and profile photo of the member that posted this message. */
     public MemberCard poster;
 
+    /** The id of the issue to which is message is associated, or zero. */
+    public int issueId;
+
     /** The time at which this message was created. */
     public Date created;
 

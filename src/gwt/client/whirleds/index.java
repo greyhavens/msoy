@@ -5,11 +5,14 @@ package client.whirleds;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.fora.data.Issue;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
+import client.msgs.IssueModels;
+import client.msgs.IssuePanel;
 import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
@@ -69,6 +72,17 @@ public class index extends MsgsEntryPoint
             int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
             setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
 
+        } else if (action.equals("b")) {
+            IssuePanel issues = new IssuePanel(_imodels);
+            issues.displayIssues(Issue.TYPE_BUG, Issue.STATE_OPEN, false);
+            setContent(issues);
+
+        } else if (action.equals("i")) {
+            int issueId = args.get(1, 0);
+            IssuePanel issues = new IssuePanel(_imodels);
+            issues.displayIssue(issueId);
+            setContent(issues);
+
         } else {
             if (_galaxy == null) {
                 _galaxy = new GalaxyPanel();
@@ -96,6 +110,7 @@ public class index extends MsgsEntryPoint
     }
 
     protected ForumModels _fmodels = new ForumModels();
+    protected IssueModels _imodels = new IssueModels();
     protected WhirledDetailPanel _detail = new WhirledDetailPanel();
     protected GalaxyPanel _galaxy;
 }

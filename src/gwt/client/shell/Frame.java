@@ -358,6 +358,9 @@ public class Frame
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
             if (CShell.getMemberId() != 0) {
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
+                if (CShell.isAdmin()) {
+                    subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
+                }
             }
 
         } else if (pageId.equals(Page.SHOP)) {

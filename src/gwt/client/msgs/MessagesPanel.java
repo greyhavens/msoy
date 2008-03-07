@@ -24,7 +24,7 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Frame;
-import client.shell.MessagePanel;
+import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -44,6 +44,11 @@ public class MessagesPanel extends PagedGrid
 
         _parent = parent;
         _scrollToId = scrollToId;
+    }
+
+    public void refreshDisplay ()
+    {
+        displayPage(_page, true);
     }
 
     // @Override // from PagedGrid
@@ -146,7 +151,7 @@ public class MessagesPanel extends PagedGrid
         return label;
     }
 
-    protected class ThreadMessagePanel extends MessagePanel
+    protected class ThreadMessagePanel extends SimpleMessagePanel
     {
         public ThreadMessagePanel (ForumThread thread, ForumMessage message)
         {
@@ -157,21 +162,7 @@ public class MessagesPanel extends PagedGrid
         public void setMessage (ForumMessage message)
         {
             _message = message;
-            setMessage(message.poster, message.created, message.message);
-
-            if (!message.lastEdited.equals(message.created)) {
-                getFlexCellFormatter().setRowSpan(0, 0, 3); // extend the photo cell
-                setText(2, 0, "Edited on " + _pfmt.format(message.lastEdited));
-                getFlexCellFormatter().setStyleName(2, 0, "Posted");
-                getFlexCellFormatter().addStyleName(2, 0, "LeftPad");
-                getFlexCellFormatter().addStyleName(2, 0, "BottomPad");
-            }
-        }
-
-        // @Override // from MessagePanel
-        protected boolean textIsHTML ()
-        {
-            return true;
+            super.setMessage(message);
         }
 
         // @Override // from MessagePanel
@@ -219,6 +210,20 @@ public class MessagesPanel extends PagedGrid
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineDelete(), new ClickListener() {
                     public void onClick (Widget sender) {
                         deletePost(_message, false);
+                    }
+                }));
+            }
+
+            if (_message.issueId > 0) {
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineIssue(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CMsgs.app.go(Page.WHIRLEDS, "i_" + _message.issueId);
+                    }
+                }));
+            } else if (CMsgs.isAdmin()) {
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineNewIssue(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _parent.newIssue(_message);
                     }
                 }));
             }

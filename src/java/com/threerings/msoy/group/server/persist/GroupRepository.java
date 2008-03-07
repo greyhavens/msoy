@@ -388,6 +388,18 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Fetches the membership roster of a given group for a given member rank.
+     */
+    public List<GroupMembershipRecord> getMembers (int groupId, byte rank)
+        throws PersistenceException
+    {
+        return findAll(GroupMembershipRecord.class,
+                       new Where(new And(
+                               new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
+                               new Equals(GroupMembershipRecord.RANK_C, rank))));
+    }
+
+    /**
      * Fetches the group memberships a given member belongs to.
      */
     public List<GroupMembershipRecord> getMemberships (int memberId)

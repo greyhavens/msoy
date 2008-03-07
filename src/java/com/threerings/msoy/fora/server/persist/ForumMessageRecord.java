@@ -25,7 +25,8 @@ import com.threerings.msoy.fora.data.ForumMessage;
  * Contains information on a single post to a thread.
  */
 @Entity(indices={
-    @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED })
+    @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED }),
+    @Index(name="ixIssueId", fields={ ForumMessageRecord.ISSUE_ID })
 })
 public class ForumMessageRecord extends PersistentRecord
 {
@@ -58,6 +59,13 @@ public class ForumMessageRecord extends PersistentRecord
     public static final ColumnExp POSTER_ID_C =
         new ColumnExp(ForumMessageRecord.class, POSTER_ID);
 
+    /** The column identifier for the {@link #issueId} field. */
+    public static final String ISSUE_ID = "issueId";
+
+    /** The qualified column identifier for the {@link #issueId} field. */
+    public static final ColumnExp ISSUE_ID_C =
+        new ColumnExp(ForumMessageRecord.class, ISSUE_ID);
+
     /** The column identifier for the {@link #created} field. */
     public static final String CREATED = "created";
 
@@ -82,7 +90,7 @@ public class ForumMessageRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** This message's unique identifier. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -96,6 +104,9 @@ public class ForumMessageRecord extends PersistentRecord
 
     /** The id of the member that posted this message. */
     public int posterId;
+
+    /** The id of the issue to which this message is asoociated, or zero. */
+    public int issueId;
 
     /** The time at which this message was created. */
     public Timestamp created;
@@ -120,6 +131,7 @@ public class ForumMessageRecord extends PersistentRecord
         msg.threadId = threadId;
         msg.inReplyTo = inReplyTo;
         msg.poster = members.get(posterId);
+        msg.issueId = issueId;
         msg.created = new Date(created.getTime());
         msg.lastEdited = new Date(lastEdited.getTime());
         msg.message = message;

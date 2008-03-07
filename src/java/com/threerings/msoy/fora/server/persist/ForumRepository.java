@@ -196,6 +196,16 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Loads all the message records that are associated with this issueId.
+     */
+    public List<ForumMessageRecord> loadIssueMessages (int issueId)
+        throws PersistenceException
+    {
+        return findAll(ForumMessageRecord.class,
+                       new Where(ForumMessageRecord.ISSUE_ID_C, issueId));
+    }
+
+    /**
      * Updates the text of the supplied message.
      */
     public void updateMessage (int messageId, String message)
@@ -204,6 +214,16 @@ public class ForumRepository extends DepotRepository
         updatePartial(ForumMessageRecord.class, messageId,
                       ForumMessageRecord.LAST_EDITED, new Timestamp(System.currentTimeMillis()),
                       ForumMessageRecord.MESSAGE, message);
+    }
+
+    /**
+     * Updates the issueid of the supplied message.
+     */
+    public void updateMessageIssue (int messageId, int issueId)
+        throws PersistenceException
+    {
+        updatePartial(ForumMessageRecord.class, messageId,
+                      ForumMessageRecord.ISSUE_ID, issueId);
     }
 
     /**

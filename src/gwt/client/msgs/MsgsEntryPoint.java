@@ -10,6 +10,8 @@ import com.threerings.msoy.web.client.ForumService;
 import com.threerings.msoy.web.client.ForumServiceAsync;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.GroupServiceAsync;
+import com.threerings.msoy.web.client.IssueService;
+import com.threerings.msoy.web.client.IssueServiceAsync;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MailService;
@@ -40,6 +42,8 @@ public abstract class MsgsEntryPoint extends Page
         ((ServiceDefTarget)CMsgs.itemsvc).setServiceEntryPoint("/itemsvc");
         CMsgs.forumsvc = (ForumServiceAsync)GWT.create(ForumService.class);
         ((ServiceDefTarget)CMsgs.forumsvc).setServiceEntryPoint("/forumsvc");
+        CMsgs.issuesvc = (IssueServiceAsync)GWT.create(IssueService.class);
+        ((ServiceDefTarget)CMsgs.issuesvc).setServiceEntryPoint("/issuesvc");
 
         // load up our translation dictionaries
         CMsgs.mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);

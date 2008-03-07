@@ -39,6 +39,7 @@ public class ThreadPanel extends TitledListPanel
     {
         _threadId = threadId;
         _mpanel = new MessagesPanel(this, scrollToId);
+        _parent = parent;
 
         // look for our thread in the resolved group thread models
         ForumThread thread = fmodels.findThread(threadId);
@@ -55,10 +56,17 @@ public class ThreadPanel extends TitledListPanel
 
     public void showMessages ()
     {
+        showMessages(false);
+    }
+
+    public void showMessages (boolean refresh)
+    {
         setContents(getThreadTitle(), _mpanel, true);
+        if (refresh) {
+            _mpanel.refreshDisplay();
+        }
         if (_thread != null) { // if we already have our group, restore the group link
-            setRightBits(Application.groupViewLink(_thread.group.toString(),
-                                                   _thread.group.getGroupId()));
+            updateGroupLink();
         }
     }
 
@@ -66,8 +74,7 @@ public class ThreadPanel extends TitledListPanel
     {
         _thread = thread;
         updateTitle(getThreadTitle());
-        setRightBits(Application.createLink(thread.group.toString(), Page.WHIRLEDS,
-                                            Args.compose("f", thread.group.getGroupId())));
+        updateGroupLink();
     }
 
     public void editFlags ()
@@ -84,6 +91,17 @@ public class ThreadPanel extends TitledListPanel
     public void editPost (ForumMessage message, AsyncCallback callback)
     {
         setContents(getThreadTitle(), new PostEditorPanel(message, callback));
+    }
+
+    public void newIssue (ForumMessage message)
+    {
+        setContents(CMsgs.mmsgs.newIssue(), new EditIssuePanel(this, message));
+    }
+
+    protected void updateGroupLink ()
+    {
+        setRightBits(Application.createLink(_thread.group.toString(), Page.WHIRLEDS,
+                Args.compose("f", _thread.group.getGroupId())));
     }
 
     protected void replyPosted (ForumMessage message)
@@ -307,4 +325,5 @@ public class ThreadPanel extends TitledListPanel
     protected int _threadId;
     protected ForumThread _thread;
     protected MessagesPanel _mpanel;
+    protected Page _parent;
 }
