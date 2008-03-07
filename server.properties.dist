@@ -143,3 +143,9 @@ oooauth.access_denied_url = /register/access_denied.wm
 # jabber.port = 5275
 # jabber.secret = secret
 # jabber.gateways = aim,msn,yahoo,icq
+
+#
+# User the managers of the whirled specified with issue_group_id as the pool
+# to assign issue owners
+#
+# issue_group_id = 1
