@@ -28,8 +28,19 @@ import static com.threerings.msoy.Log.log;
  */
 public class PolicyServer extends IoHandlerAdapter
 {
-    /** Fire up a stand-alone server. */
+    /**
+     * Entry point for the stand-alone server.
+     */
     public static void main (String[] args) throws IOException
+    {
+        init();
+    }
+
+    /**
+     * Initializes the policy server and begins listening for requests on the policy port.
+     */
+    public static IoAcceptor init ()
+        throws IOException
     {
         // The following two lines change the default buffer type to 'heap', which yields better
         // performance according to the Apache MINA documentation.
@@ -54,6 +65,7 @@ public class PolicyServer extends IoHandlerAdapter
 
         log.info("Policy server listening on port " + port + ".");
         acceptor.bind(new InetSocketAddress(port), new PolicyServer(port, publicServerHost), cfg);
+        return acceptor;
     }
 
     /** Create a new server instance. */
@@ -101,9 +113,7 @@ public class PolicyServer extends IoHandlerAdapter
         session.setIdleTime(IdleStatus.WRITER_IDLE, 1);
     }
 
-    protected int _socketPolicyPort;
     protected String _policy;
-    protected IoAcceptor _acceptor;
 
     protected static final int MASTER_PORT = 843;
 }

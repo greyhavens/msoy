@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 
+import org.apache.mina.common.IoAcceptor;
+
 import com.google.common.collect.Maps;
 import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -52,6 +54,7 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 
 import com.threerings.msoy.fora.server.persist.CommentRepository;
@@ -298,6 +301,11 @@ public class MsoyServer extends MsoyBaseServer
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to stop http server.", e);
         }
+
+        // and our policy server if one is running
+        if (_policyServer != null) {
+            _policyServer.unbindAll();
+        }
     }
 
     @Override // from MsoyBaseServer
@@ -390,6 +398,12 @@ public class MsoyServer extends MsoyBaseServer
         httpServer = new MsoyHttpServer(_logdir, _eventLog);
         httpServer.start();
 
+        // if we're a dev deployment and our policy port is not privileged, run the policy server
+        // right in the msoy server to simplify life for developers
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024) {
+            _policyServer = PolicyServer.init();
+        }
+
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has
         if (ServerConfig.config.getValue("auto_restart", false)) {
@@ -459,14 +473,17 @@ public class MsoyServer extends MsoyBaseServer
         adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
+    /** Used to auto-restart the development server when its code is updated. */
+    protected long _codeModified;
+
+    /** A policy server used on dev deployments. */
+    protected IoAcceptor _policyServer;
+
     /** Our transition repository. */
     protected static TransitionRepository _transitRepo;
 
     /** A mapping from member name to member object for all online members. */
     protected static HashMap<MemberName,MemberObject> _online = Maps.newHashMap();
-
-    /** Used to auto-restart the development server when its code is updated. */
-    protected long _codeModified;
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
