@@ -525,10 +525,12 @@ public class Frame
 
         // from Header
         public void onClick (Widget sender) {
-            if (CShell.getMemberId() != 0) {
+            if (closeContent()) {
+                // peachy, nothing else to do
+            } else if (CShell.getMemberId() != 0) {
                 Application.go(Page.WORLD, "h");
             } else {
-                Application.go(Page.ME, "");
+                History.newItem("");
             }
         }
 
@@ -569,7 +571,12 @@ public class Frame
             });
             ClickListener go = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(pageId, "");
+                    // if a guest clicks on "me", send them to create account
+                    if (pageId.equals(Page.ME) && CShell.getMemberId() == 0) {
+                        Application.go(Page.ACCOUNT, "create");
+                    } else {
+                        Application.go(pageId, "");
+                    }
                 }
             };
             _overImage.addClickListener(go);

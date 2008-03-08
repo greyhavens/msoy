@@ -35,7 +35,7 @@ public class index extends Page
         String action = args.get(0, "");
         if (action.equals("create")) {
             _onLogonRedirect = true;
-            setContent(null, new CreateAccountPanel(), false);
+            setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("optout")) {
             _onLogonRedirect = true;
