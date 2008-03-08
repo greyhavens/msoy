@@ -114,6 +114,11 @@
   font-weight: bold;
 }
 
+.shopPanel .FeatListingBox .Descrip {
+  max-height: 50px;
+  overflow: hidden;
+}
+
 .catalogPanel .ListingsCell {
   background: #FFFFFF;
   width: 100%;
