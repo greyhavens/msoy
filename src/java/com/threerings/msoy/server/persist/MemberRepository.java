@@ -181,6 +181,9 @@ public class MemberRepository extends DepotRepository
     public List<MemberRecord> loadMembers (Set<Integer> memberIds)
         throws PersistenceException
     {
+        if (memberIds.size() == 0) {
+            return Collections.emptyList();
+        }
         return findAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
     }
 
