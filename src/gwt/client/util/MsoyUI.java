@@ -148,16 +148,6 @@ public class MsoyUI
     }
 
     /**
-     * Creates a button with big text.
-     */
-    public static Button createBigButton (String label, ClickListener listener)
-    {
-        Button button = new Button(label, listener);
-        button.addStyleName("bigButton");
-        return button;
-    }
-
-    /**
      * Creates a button for closing things (a square with an x in it).
      */
     public static Widget createCloseButton (ClickListener listener)

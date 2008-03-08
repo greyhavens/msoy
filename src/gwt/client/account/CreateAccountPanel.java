@@ -114,7 +114,8 @@ public class CreateAccountPanel extends FlexTable
         setWidget(row++, 0, _status = new Label(""));
 
         getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
-        setWidget(row, 1, MsoyUI.createBigButton(CAccount.msgs.createCreate(), new ClickListener() {
+        setWidget(row, 1, MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createCreate(),
+                                              new ClickListener() {
             public void onClick (Widget sender) {
                 createAccount();
             }
