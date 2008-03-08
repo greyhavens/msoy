@@ -57,6 +57,45 @@ public class MemberRecord extends PersistentRecord
         protected int _bit;
     }
 
+    /** Experiences used in the {@link #experiences} field. */
+    public static enum Experience
+    {
+        /** Indicates whether this user has received their one free avatar item. */
+        GOT_FREE_AVATAR(1 << 0),
+
+        /** Indicates whether this user has received their one free decor item. */
+        GOT_FREE_DECOR(1 << 1),
+
+        /** Indicates whether this user has received their one free furniture item. */
+        GOT_FREE_FURNITURE(1 << 2),
+
+        /** Indicates whether this user has received their one free toy item. */
+        GOT_FREE_TOY(1 << 3),
+
+        /** Indicates whether this user has played a game. */
+        PLAYED_GAME(1 << 4),
+
+        /** Indicates whether this user has entered a Whirled. */
+        EXPLORED_WHIRLED(1 << 5),
+
+        /** Indicates whether this user has decorated their home. */
+        DECORATED_HOME(1 << 6),
+
+        /** A place holder experience that is not used and reminds us that we can't have more than
+         * 32 experiences. */
+        NOT_USED(1 << 32);
+
+        public int getBit () {
+            return _bit;
+        }
+
+        Experience (int bit) {
+            _bit = bit;
+        }
+
+        protected int _bit;
+    }
+
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
@@ -156,6 +195,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp LAST_HUMANITY_ASSESSMENT_C =
         new ColumnExp(MemberRecord.class, LAST_HUMANITY_ASSESSMENT);
 
+    /** The column identifier for the {@link #experiences} field. */
+    public static final String EXPERIENCES = "experiences";
+
+    /** The qualified column identifier for the {@link #experiences} field. */
+    public static final ColumnExp EXPERIENCES_C =
+        new ColumnExp(MemberRecord.class, EXPERIENCES);
+
     /** The column identifier for the {@link #flags} field. */
     public static final String FLAGS = "flags";
 
@@ -178,9 +224,9 @@ public class MemberRecord extends PersistentRecord
         new ColumnExp(MemberRecord.class, LEVEL);
     // AUTO-GENERATED: FIELDS END
 
-    /** Increment this value if you modify the definition of this persistent
-     * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 13;
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 14;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -226,6 +272,9 @@ public class MemberRecord extends PersistentRecord
 
     /** The time at which we last assessed this member's humanity. */
     public Timestamp lastHumanityAssessment;
+
+    /** Bits tracking whether the user has had any of a set of "one time" experiences. */
+    public int experiences;
 
     /** Various one bit data. */
     public int flags;
@@ -293,7 +342,23 @@ public class MemberRecord extends PersistentRecord
      */
     public void setFlag (Flag flag, boolean value)
     {
-        flags = value ? (flags | flag.getBit()) : (flags & ~flag.getBit());
+        flags = (value ? (flags | flag.getBit()) : (flags & ~flag.getBit()));
+    }
+
+    /**
+     * Returns true if this member has had the specified experience.
+     */
+    public boolean isSet (Experience experience)
+    {
+        return (experiences & experience.getBit()) != 0;
+    }
+
+    /**
+     * Sets a given experience to on or off.
+     */
+    public void setExperience (Experience exp, boolean value)
+    {
+        experiences = (value ? (experiences | exp.getBit()) : (experiences & ~exp.getBit()));
     }
 
     /** Returns this member's name as a proper {@link Name} instance. */

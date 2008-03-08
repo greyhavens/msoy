@@ -278,7 +278,7 @@ public class WebUserServlet extends MsoyServiceServlet
         mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, !emailAnnouncements);
         if (mrec.flags != oflags) {
             try {
-                MsoyServer.memberRepo.configureFlags(mrec.memberId, mrec.flags);
+                MsoyServer.memberRepo.storeFlags(mrec);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to update flags [who=" + mrec.memberId +
                         ", flags=" + mrec.flags + "].", pe);

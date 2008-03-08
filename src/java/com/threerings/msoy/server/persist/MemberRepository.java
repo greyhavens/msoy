@@ -406,12 +406,21 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Configures this member's flags.
+     * Writes the supplied member's flags to the database.
      */
-    public void configureFlags (int memberId, int flags)
+    public void storeFlags (MemberRecord mrec)
         throws PersistenceException
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.FLAGS, flags);
+        updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.FLAGS, mrec.flags);
+    }
+
+    /**
+     * Writes the supplied member's experiences to the database.
+     */
+    public void storeExperiences (MemberRecord mrec)
+        throws PersistenceException
+    {
+        updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.EXPERIENCES, mrec.experiences);
     }
 
     /**
