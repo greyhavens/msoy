@@ -37,11 +37,11 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CPeople.ident == null) {
-            setContent(MsoyUI.createLabel(CPeople.cmsgs.noGuests(), "infoLabel"));
-            return;
-        }
+//         // if we're not a dev deployment, disallow guests
+//         if (!DeploymentConfig.devDeployment && CPeople.ident == null) {
+//             setContent(MsoyUI.createLabel(CPeople.cmsgs.noGuests(), "infoLabel"));
+//             return;
+//         }
 
         String action = args.get(0, "");
         if (action.equals("search")) {

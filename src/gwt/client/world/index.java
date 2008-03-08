@@ -46,11 +46,11 @@ public class index extends Page
     {
         try {
             String action = args.get(0, "s1");
-            if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
+            /* if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
                 // if we're not a dev deployment, disallow guests
                 setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
 
-            } else if (action.startsWith("s")) {
+            } else */ if (action.startsWith("s")) {
                 String sceneId = action.substring(1);
                 if (args.getArgCount() <= 1) {
                     WorldClient.displayFlash("sceneId=" + sceneId);
