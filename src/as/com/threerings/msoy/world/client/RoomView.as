@@ -1073,6 +1073,9 @@ public class RoomView extends AbstractRoomView
     {
         super.removeSprite(sprite);
 
+        // clear any popup associated with it
+        _ctrl.clearEntityPopup(sprite);
+
         if (sprite is ActorSprite) {
             // remove the sprite from the entities table
             _entities.remove((sprite as ActorSprite).getActorInfo().getItemIdent());

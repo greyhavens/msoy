@@ -1701,6 +1701,12 @@ public class RoomController extends SceneController
 //        if (_entityAllowedToPop != sprite) {
 //            return false;
 //        }
+
+        // other people's avatars cannot put a popup on our screen...
+        if ((sprite is MemberSprite) && (sprite != _roomView.getMyAvatar())) {
+            return false;
+        }
+
         if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0 || title == null || panel == null) {
             return false;
         }
