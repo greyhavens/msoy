@@ -57,38 +57,82 @@
   padding-right: 10px;
 }
 
-.whatsNext .Friends {
+.whatsNext .NoFriends, .whatsNext .Friends {
   width: 217px;
   padding: 5px 10px 10px 10px;
   color: #FFFFFF;
   text-align: center;
 }
 
-.whatsNext .Friends img {
+.whatsNext .NoFriends .Title, .whatsNext .Friends .Title {
+  font-weight: bold;
+}
+
+.whatsNext .NoFriends img {
   margin-left: auto;
   margin-right: auto;
 }
 
-.whatsNext .Friends .Title {
-  font-weight: bold;
-}
-
-.whatsNext .Friends .NoFriends {
+.whatsNext .NoFriends .NoFriends {
   height: 60px;
   vertical-align: bottom;
   padding-bottom: 5px;
 }
 
-.whatsNext .Friends .Or {
+.whatsNext .NoFriends .Or {
   height: 60px;
   vertical-align: middle;
 }
 
-.whatsNext .Friends .FindTip {
+.whatsNext .NoFriends .FindTip {
   height: 60px;
   vertical-align: top;
   font-size: 12px;
   padding-top: 5px;
+}
+
+.whatsNext .Friends {
+  vertical-align: top;
+}
+
+.whatsNext .Friends .ClickTip {
+  font-size: 12px;
+  color: #FFFFFF;
+  opacity: 0.6;
+}
+
+.whatsNext .Friends .PlaceName {
+  color: #3B556E;
+  font-size: 14px;
+  padding-top: 3px;
+  overflow: hidden;
+}
+
+.whatsNext .Friends .Member {
+  background: #DEECF7;
+  text-align: left;
+  font-size: 14px;
+  width: 100%;
+}
+
+.whatsNext .Friends .Member .Photo {
+  padding: 2px;
+  width: 20px;
+}
+
+.whatsNext .Friends .Member .Name {
+  font-weight: bold;
+  text-align: left;
+  padding-left: 10px;
+  overflow: hidden;
+}
+
+.whatsNext .Friends .MemberRoom .Name {
+  color: #6DA8D2;
+}
+
+.whatsNext .Friends .MemberGame .Name {
+  color: #E88436;
 }
 
 .FeedList {
