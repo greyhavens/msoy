@@ -48,7 +48,7 @@ public class WhatsNextPanel extends SmartTable
 
         setWidget(0, 0, createPlay(data), 1, "Play");
         setWidget(0, 1, createExplore(data), 1, "Explore");
-        if (data.friends.size() == 0) {
+        if (data.friends == null || data.friends.size() == 0) {
             setWidget(0, 2, createNoFriends(data), 1, "NoFriends");
         } else {
             setWidget(0, 2, createFriends(data), 1, "Friends");
