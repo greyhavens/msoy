@@ -421,7 +421,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             public void invokePersist () throws Exception {
                 GameRepository repo = MsoyGameServer.gameReg.getGameRepository();
                 if (recalc) {
-                    GameFlowSummaryRecord record = repo.summarizeFlowGrants(_content.game.gameId);
+//                     GameFlowSummaryRecord record =
+//                         repo.summarizeFlowGrants(_content.game.gameId);
                     _newPayout = 128; // TODO: real algorithm
                     repo.updatePayoutFactor(_content.game.gameId, _newPayout);
                     repo.deleteFlowGrants(_content.game.gameId);
