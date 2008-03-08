@@ -73,6 +73,11 @@ server_root = /export/msoy
 # auto_restart = false
 
 #
+# Configures the group used to determine who is eligible for issue assignment
+
+# issue_group_id = 0
+
+#
 # Defines the directory into which uploaded media will be stored (in addition
 # to S3, if that is enabled) and the URL from which media will be downloaded.
 
