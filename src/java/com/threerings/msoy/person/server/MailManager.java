@@ -145,7 +145,7 @@ public class MailManager
                 super.handleSuccess();
 
                 // finally send a real email to the recipient
-                if (!internalOnly && !_reciprec.isSet(MemberRecord.FLAG_NO_WHIRLED_MAIL_TO_EMAIL)) {
+                if (!internalOnly && !_reciprec.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL)) {
                     MsoyServer.mailInvoker.postUnit(
                         new MailSender.Unit(_reciprec.accountName, "gotMail") {
                             protected void populateContext (VelocityContext ctx) {

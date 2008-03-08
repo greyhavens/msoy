@@ -672,6 +672,6 @@ public class CatalogServlet extends MsoyServiceServlet
 
     protected boolean showMature (MemberRecord mrec)
     {
-        return (mrec == null) ? false : mrec.isSet(MemberRecord.FLAG_SHOW_MATURE);
+        return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
 }

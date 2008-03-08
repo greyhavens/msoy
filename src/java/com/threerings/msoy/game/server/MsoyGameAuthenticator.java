@@ -95,10 +95,10 @@ public class MsoyGameAuthenticator extends Authenticator
             // replace the tokens provided by the Domain with tokens derived from their member
             // record (a newly created record will have its bits set from the Domain values)
             int tokens = 0;
-            if (member.isSet(MemberRecord.ADMIN_FLAG)) {
+            if (member.isSet(MemberRecord.Flag.ADMIN)) {
                 tokens |= MsoyTokenRing.ADMIN;
                 tokens |= MsoyTokenRing.SUPPORT;
-            } else if (member.isSet(MemberRecord.SUPPORT_FLAG)) {
+            } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
                 tokens |= MsoyTokenRing.SUPPORT;
             }
             rsp.authdata = new MsoyTokenRing(tokens);

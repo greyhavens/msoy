@@ -28,6 +28,35 @@ import com.threerings.msoy.web.data.WebCreds;
 })
 public class MemberRecord extends PersistentRecord
 {
+    /** Flags used in the {@link #flags} field. */
+    public static enum Flag
+    {
+        /** A flag denoting this user as having support privileges. */
+        SUPPORT(1 << 0),
+
+        /** A flag denoting this user as having admin privileges. */
+        ADMIN(1 << 1),
+
+        /** A flag denoting this user has having elected to see mature content. */
+        SHOW_MATURE(1 << 2),
+
+        /** A flag denoting this user does not want to receive real email for Whirled mail. */
+        NO_WHIRLED_MAIL_TO_EMAIL(1 << 3),
+
+        /** A flag denoting this user does not want to receive announcement mail. */
+        NO_ANNOUNCE_EMAIL(1 << 4);
+
+        public int getBit () {
+            return _bit;
+        }
+
+        Flag (int bit) {
+            _bit = bit;
+        }
+
+        protected int _bit;
+    }
+
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
@@ -153,21 +182,6 @@ public class MemberRecord extends PersistentRecord
      * object in a way that will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 13;
 
-    /** A flag denoting this user as having support privileges. */
-    public static final int SUPPORT_FLAG = 1 << 0;
-
-    /** A flag denoting this user as having admin privileges. */
-    public static final int ADMIN_FLAG = 1 << 1;
-
-    /** A flag denoting this user has having elected to see mature content. */
-    public static final int FLAG_SHOW_MATURE = 1 << 2;
-
-    /** A flag denoting this user does not want to receive real email for Whirled mail. */
-    public static final int FLAG_NO_WHIRLED_MAIL_TO_EMAIL = 1 << 3;
-
-    /** A flag denoting this user does not want to receive announcement mail. */
-    public static final int FLAG_NO_ANNOUNCE_EMAIL = 1 << 4;
-
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
@@ -255,7 +269,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSupport ()
     {
-        return isSet(SUPPORT_FLAG) || isSet(ADMIN_FLAG);
+        return isSet(Flag.SUPPORT) || isSet(Flag.ADMIN);
     }
 
     /**
@@ -263,23 +277,23 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isAdmin ()
     {
-        return isSet(ADMIN_FLAG);
+        return isSet(Flag.ADMIN);
     }
 
     /**
      * Tests whether a given flag is set on this member.
      */
-    public boolean isSet (int flag)
+    public boolean isSet (Flag flag)
     {
-        return (flags & flag) != 0;
+        return (flags & flag.getBit()) != 0;
     }
 
     /**
      * Sets a given flag to on or off.
      */
-    public void setFlag (int flag, boolean value)
+    public void setFlag (Flag flag, boolean value)
     {
-        flags = value ? (flags | flag) : (flags & ~flag);
+        flags = value ? (flags | flag.getBit()) : (flags & ~flag.getBit());
     }
 
     /** Returns this member's name as a proper {@link Name} instance. */

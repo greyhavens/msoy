@@ -293,10 +293,10 @@ public class MsoyAuthenticator extends Authenticator
             // replace the tokens provided by the Domain with tokens derived from their member
             // record (a newly created record will have its bits set from the Domain values)
             int tokens = 0;
-            if (member.isSet(MemberRecord.ADMIN_FLAG)) {
+            if (member.isSet(MemberRecord.Flag.ADMIN)) {
                 tokens |= MsoyTokenRing.ADMIN;
                 tokens |= MsoyTokenRing.SUPPORT;
-            } else if (member.isSet(MemberRecord.SUPPORT_FLAG)) {
+            } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
                 tokens |= MsoyTokenRing.SUPPORT;
             }
             account.tokens = new MsoyTokenRing(tokens);
@@ -524,8 +524,8 @@ public class MsoyAuthenticator extends Authenticator
         });
 
         // use the tokens filled in by the domain to assign privileges
-        mrec.setFlag(MemberRecord.SUPPORT_FLAG, account.tokens.isSupport());
-        mrec.setFlag(MemberRecord.ADMIN_FLAG, account.tokens.isAdmin());
+        mrec.setFlag(MemberRecord.Flag.SUPPORT, account.tokens.isSupport());
+        mrec.setFlag(MemberRecord.Flag.ADMIN, account.tokens.isAdmin());
 
         // create a blank room for them, store it
         String name = MsoyServer.msgMan.getBundle("server").get("m.new_room_name", mrec.name);

@@ -274,8 +274,8 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // update their mail preferences if appropriate
         int oflags = mrec.flags;
-        mrec.setFlag(MemberRecord.FLAG_NO_WHIRLED_MAIL_TO_EMAIL, !emailOnWhirledMail);
-        mrec.setFlag(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL, !emailAnnouncements);
+        mrec.setFlag(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL, !emailOnWhirledMail);
+        mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, !emailAnnouncements);
         if (mrec.flags != oflags) {
             try {
                 MsoyServer.memberRepo.configureFlags(mrec.memberId, mrec.flags);
@@ -366,8 +366,8 @@ public class WebUserServlet extends MsoyServiceServlet
             if (prec != null) {
                 ainfo.realName = prec.realName;
             }
-            ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.FLAG_NO_WHIRLED_MAIL_TO_EMAIL);
-            ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL);
+            ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL);
+            ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL);
             return ainfo;
 
         } catch (PersistenceException pe) {

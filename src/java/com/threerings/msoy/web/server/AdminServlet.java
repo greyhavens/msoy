@@ -154,7 +154,7 @@ public class AdminServlet extends MsoyServiceServlet
                 for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
                     found++;
 
-                    if (mrec.isSet(MemberRecord.FLAG_NO_ANNOUNCE_EMAIL)) {
+                    if (mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL)) {
                         results[2]++;
                         continue;
                     }
