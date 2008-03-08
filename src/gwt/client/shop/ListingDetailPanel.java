@@ -53,8 +53,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
         new ClickCallback(purchase) {
             public boolean callService () {
-                CShop.catalogsvc.purchaseItem(
-                    CShop.ident, _item.getType(), _listing.catalogId, this);
+                if (CShop.getMemberId() > 0) {
+                    CShop.catalogsvc.purchaseItem(
+                        CShop.ident, _item.getType(), _listing.catalogId, this);
+                } else {
+                    MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
+                                      Application.createLinkListener(Page.ACCOUNT, "create"));
+                }
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -62,7 +67,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return false; // don't reenable buy button
             }
         };
-        purchase.setEnabled(CShop.getMemberId() > 0);
         _details.add(purchase);
 
         // create a table to display miscellaneous info and admin/owner actions

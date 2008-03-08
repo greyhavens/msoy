@@ -139,7 +139,7 @@ public class MemberList extends PagedGrid
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(
                                          CPeople.msgs.mlRemoveFriend(), onClick));
 
-                // otherwise if we're not a guest, show the add friend button
+                // otherwise if we're not a guest, show the add friend button...
                 } else if (CPeople.getMemberId() != 0) {
                     onClick = new ClickListener() {
                         public void onClick (Widget sender) {
@@ -152,21 +152,21 @@ public class MemberList extends PagedGrid
                                          "/images/profile/addfriend.png", onClick));
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(
                                          CPeople.msgs.mlAddFriend(), onClick));
-                }
 
-                // show the send mail button
-                onClick = new ClickListener() {
-                    public void onClick (Widget widget) {
-                        new MailComposition(card.name, null, null, null).show();
-                    }
-                };
-                extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                     "/images/profile/sendmail.png", onClick));
-                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlSendMail(), onClick));
+                    // ...and the send mail button
+                    onClick = new ClickListener() {
+                        public void onClick (Widget widget) {
+                            new MailComposition(card.name, null, null, null).show();
+                        }
+                    };
+                    extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                         "/images/profile/sendmail.png", onClick));
+                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                         CPeople.msgs.mlSendMail(), onClick));
+                }
             }
 
-            // add the visit home button
+            // always show the visit home button
             onClick = new ClickListener() {
                 public void onClick (Widget widget) {
                     Application.go(Page.WORLD, "m" + card.name.getMemberId());
