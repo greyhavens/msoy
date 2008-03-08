@@ -226,6 +226,11 @@ public class MessagesPanel extends PagedGrid
                         _parent.newIssue(_message);
                     }
                 }));
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineAssignIssue(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CMsgs.app.go(Page.WHIRLEDS, "assign_" + _message.messageId + "_" + _page);
+                    }
+                }));
             }
         }
 

@@ -94,13 +94,17 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public List loadMessages (WebIdent ident, int issueId)
+    public List loadMessages (WebIdent ident, int issueId, int messageId)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
 
         try {
             List<ForumMessageRecord> msgrecs = MsoyServer.forumRepo.loadIssueMessages(issueId);
+            if (messageId > 0) {
+                ForumMessageRecord msgrec = MsoyServer.forumRepo.loadMessage(messageId);
+                msgrecs.add(0, msgrec);
+            }
             // TODO Do we want to validate read priviledges for these individual messages?
 
             // enumerate the posters and create member cards for them
@@ -177,6 +181,28 @@ public class IssueServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update issue [for=" + who(mrec) +
                     "issueId=" + issue.issueId + ", description=" + issue.description + "].", pe);
+            throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface IssueService
+    public void assignMessage (WebIdent ident, int issueId, int messageId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        try {
+            if (!mrec.isAdmin()) {
+                throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
+            }
+            IssueRecord irec = MsoyServer.issueRepo.loadIssue(issueId);
+            if (irec.state != Issue.STATE_OPEN) {
+                throw new ServiceException(IssueCodes.E_ISSUE_CLOSED);
+            }
+
+            MsoyServer.forumRepo.updateMessageIssue(messageId, issueId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to assign message [for=" + who(mrec) +
+                    "issueId=" + issueId + ", messageId=" + messageId + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
     }

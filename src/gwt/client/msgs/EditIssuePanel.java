@@ -10,8 +10,8 @@ import client.util.MsoyUI;
 
 import client.shell.Page;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -61,13 +61,20 @@ public class EditIssuePanel extends TableFooterPanel
 
     public void setIssue (Issue issue)
     {
+        setIssue(issue, 0, 0);
+    }
+
+    public void setIssue (Issue issue, int messageId, int page)
+    {
         _issue = issue;
-        if (CMsgs.isAdmin() && _issue.state == Issue.STATE_OPEN) {
+        _messageId = messageId;
+        _page = page;
+        if (CMsgs.isAdmin() && _issue.state == Issue.STATE_OPEN && messageId == 0) {
             fillEditPanel();
         } else {
             fillViewPanel();
         }
-        CMsgs.issuesvc.loadMessages(CMsgs.ident, _issue.issueId, new AsyncCallback() {
+        CMsgs.issuesvc.loadMessages(CMsgs.ident, _issue.issueId, messageId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (result != null) {
                     setMessages((List)result);
@@ -108,6 +115,21 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(6, 1, IssueMsgs.categoryMsg(_issue.category, CMsgs.mmsgs));
         _table.setText(7, 1, _issue.closeComment);
         _messagesRow = 8;
+        if (_messageId > 0) {
+            Button assign = new Button(CMsgs.mmsgs.assign());
+            new ClickCallback(assign) {
+                public boolean callService () {
+                    CMsgs.issuesvc.assignMessage(CMsgs.ident, _issue.issueId, _messageId, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    CMsgs.app.go(Page.WHIRLEDS,
+                            "t_" + _message.threadId + "_" + _page + "_" + _messageId);
+                    return false;
+                }
+            };
+            _table.setWidget(0, _messagesRow++, assign);
+        }
     }
 
     protected void fillEditPanel ()
@@ -133,7 +155,7 @@ public class EditIssuePanel extends TableFooterPanel
                 MsoyUI.error(CMsgs.serverError(caught));
             }
         });
-        _description = MsoyUI.createTextBox(_issue.description, Issue.MAX_DESC_LENGTH, 30);
+        _description = MsoyUI.createTextArea(_issue.description, 50, 3);
         _table.setWidget(row++, 1, _description);
 
         _table.setWidget(row++, 1, _stateBox = new ListBox());
@@ -160,7 +182,7 @@ public class EditIssuePanel extends TableFooterPanel
             }
         }
 
-        _comment = MsoyUI.createTextBox(_issue.closeComment, Issue.MAX_COMMENT_LENGTH, 30);
+        _comment = MsoyUI.createTextArea(_issue.closeComment, 50, 3);
         _table.setWidget(row++, 1, _comment);
 
         HorizontalPanel buttons = new HorizontalPanel();
@@ -188,13 +210,18 @@ public class EditIssuePanel extends TableFooterPanel
             };
             buttons.add(create);
         } else {
+            buttons.add(new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
+                public void onClick (Widget source) {
+                    _ipanel.redisplayIssues();
+                }
+            }));
             Button update = new Button(CMsgs.mmsgs.update());
             new ClickCallback(update) {
                 public boolean callService () {
                     return commitEdit(false, this);
                 }
                 public boolean gotResult (Object result) {
-                    _ipanel.displayIssues(true);
+                    _ipanel.redisplayIssues();
                     return false;
                 }
             };
@@ -210,7 +237,7 @@ public class EditIssuePanel extends TableFooterPanel
             MemberName name = (MemberName)owners.get(ii);
             _ownerBox.addItem(name.toString());
             if (name.equals(_issue.owner)) {
-                _ownerBox.setSelectedIndex(ii);
+                _ownerBox.setSelectedIndex(ii + 1);
             }
         }
     }
@@ -219,6 +246,9 @@ public class EditIssuePanel extends TableFooterPanel
     {
         for (int ii = 0, nn = messages.size(); ii < nn; ii++) {
             addMessage((ForumMessage)messages.get(ii));
+        }
+        if (_messageId > 0) {
+            _message = (ForumMessage)messages.get(0);
         }
     }
 
@@ -236,6 +266,9 @@ public class EditIssuePanel extends TableFooterPanel
         if (_issue.description.length() == 0) {
             MsoyUI.error(CMsgs.mmsgs.errINoDescription());
             return false;
+        } else if (_issue.description.length() > Issue.MAX_DESC_LENGTH) {
+            MsoyUI.error(CMsgs.mmsgs.errIDescLong());
+            return false;
         }
         _issue.state = Issue.STATE_VALUES[_stateBox.getSelectedIndex()];
         _issue.priority = Issue.PRIORITY_VALUES[_priorityBox.getSelectedIndex()];
@@ -245,6 +278,9 @@ public class EditIssuePanel extends TableFooterPanel
             _issue.closeComment = _comment.getText();
             if (_issue.closeComment.length() == 0) {
                 MsoyUI.error(CMsgs.mmsgs.errINoComment());
+                return false;
+            } else if (_issue.closeComment.length() > Issue.MAX_COMMENT_LENGTH) {
+                MsoyUI.error(CMsgs.mmsgs.errICommentLong());
                 return false;
             } else if (_issue.owner == null ||
                     _issue.owner.getMemberId() != CMsgs.creds.getMemberId()) {
@@ -265,15 +301,16 @@ public class EditIssuePanel extends TableFooterPanel
     protected Issue _issue;
     protected ThreadPanel _tpanel;
     protected ForumMessage _message;
+    protected int _messageId, _page;
 
     protected SmartTable _table;
     protected ListBox _typeBox;
     protected ListBox _ownerBox;
-    protected TextBox _description;
+    protected TextArea _description;
     protected ListBox _stateBox;
     protected ListBox _priorityBox;
     protected ListBox _categoryBox;
-    protected TextBox _comment;
+    protected TextArea _comment;
     protected List _ownerNames;
     protected Hyperlink _threadLink;
 

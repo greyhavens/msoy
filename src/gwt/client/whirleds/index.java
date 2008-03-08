@@ -72,20 +72,38 @@ public class index extends MsgsEntryPoint
             int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
             setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
 
-        } else if (action.equals("b")) {
+        } else if (action.equals("owned") && CWhirleds.isAdmin()) {
+            int type = args.get(1, Issue.TYPE_BUG);
             IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayIssues(Issue.TYPE_BUG, Issue.STATE_OPEN, false);
+            issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
             setContent(issues);
 
-        } else if (action.equals("owned")) {
+        } else if (action.equals("assign") && CWhirleds.isAdmin()) {
+            int messageId = args.get(1, 0), page = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayOwnedIssues(Issue.TYPE_BUG, Issue.STATE_OPEN, false);
+            issues.displayAssignIssues(Issue.TYPE_BUG, messageId, page);
+            setContent(issues);
+
+        } else if (action.equals("b") || action.equals("assign") || action.equals("owned")) {
+            int type = args.get(1, Issue.TYPE_BUG), state = args.get(2, Issue.STATE_OPEN);
+            IssuePanel issues = new IssuePanel(_imodels);
+            issues.displayIssues(type, state, false);
+            setContent(issues);
+
+        } else if (action.equals("a")) {
+            int messageId = args.get(1, 0), page = args.get(2, 0), issueId = args.get(3, 0);
+            IssuePanel issues = new IssuePanel(_imodels);
+            if (CWhirleds.isAdmin()) {
+                issues.displayIssue(issueId, 0, messageId, page);
+            } else {
+                issues.displayIssue(issueId, 0);
+            }
             setContent(issues);
 
         } else if (action.equals("i")) {
-            int issueId = args.get(1, 0);
+            int issueId = args.get(1, 0), owned = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayIssue(issueId);
+            issues.displayIssue(issueId, owned);
             setContent(issues);
 
         } else {

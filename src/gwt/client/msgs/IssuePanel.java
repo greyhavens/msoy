@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.fora.data.Issue;
 
+import client.shell.Page;
 import client.util.MsoyUI;
 
 /**
@@ -38,7 +39,7 @@ public class IssuePanel extends TitledListPanel
         IssueListPanel issues = new IssueListPanel(this);
         issues.displayIssues(_type, _state, _owned, _imodels, refresh);
         setContents(createHeader(_owned ? CMsgs.mmsgs.myIssueListHeader() :
-                    CMsgs.mmsgs.issueListHeader()), issues);
+                    CMsgs.mmsgs.issueListHeader(), true), issues);
     }
 
     public void displayOwnedIssues (int type, int state, boolean refresh)
@@ -47,21 +48,46 @@ public class IssuePanel extends TitledListPanel
         displayIssues(type, state, refresh);
     }
 
-    public void displayIssue (int issueId)
+    public void displayAssignIssues (int type, int messageId, int page)
+    {
+        _type = type;
+        _state = Issue.STATE_OPEN;
+        IssueListPanel issues = new IssueListPanel(this);
+        issues.displayAssignIssues(_type, _state, _imodels, messageId, page);
+        setContents(createHeader(CMsgs.mmsgs.assignIssueListHeader(), false), issues);
+    }
+
+    public void redisplayIssues ()
+    {
+        CMsgs.app.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
+    }
+
+    public void displayIssue (int issueId, int owned)
+    {
+        displayIssue(issueId, owned, 0, 0);
+    }
+
+    public void displayIssue (int issueId, int owned, final int messageId, final int page)
     {
         if (_ipanel == null) {
             _ipanel = new EditIssuePanel(this);
         }
+        _owned = owned > 0;
         Issue issue = _imodels.findIssue(issueId);
 
         if (issue != null) {
-            _ipanel.setIssue(issue);
+            _state = issue.state;
+            _type = issue.type;
+            _ipanel.setIssue(issue, messageId, page);
             setContents(CMsgs.mmsgs.viewIssue(issue.description), _ipanel, true);
         } else {
             CMsgs.issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _ipanel.setIssue((Issue)result);
-                    updateTitle(CMsgs.mmsgs.viewIssue(((Issue)result).description));
+                    Issue issue = (Issue)result;
+                    _state = issue.state;
+                    _type = issue.type;
+                    _ipanel.setIssue(issue, messageId, page);
+                    updateTitle(CMsgs.mmsgs.viewIssue(issue.description));
                 }
                 public void onFailure (Throwable caught) {
                     MsoyUI.error(CMsgs.mmsgs.errINotFound());
@@ -71,7 +97,7 @@ public class IssuePanel extends TitledListPanel
         }
     }
 
-    protected FlexTable createHeader (String title)
+    protected FlexTable createHeader (String title, boolean states)
     {
         FlexTable header = new FlexTable();
         header.setCellSpacing(0);
@@ -99,21 +125,23 @@ public class IssuePanel extends TitledListPanel
         });
         filter.add(typeBox);
 
-        filter.add(new Label(CMsgs.mmsgs.IState()));
-        ListBox stateBox = new ListBox();
-        for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
-            stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], CMsgs.mmsgs));
-            if (Issue.STATE_VALUES[ii] == _state) {
-                stateBox.setSelectedIndex(ii);
+        if (states) {
+            filter.add(new Label(CMsgs.mmsgs.IState()));
+            ListBox stateBox = new ListBox();
+            for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
+                stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], CMsgs.mmsgs));
+                if (Issue.STATE_VALUES[ii] == _state) {
+                    stateBox.setSelectedIndex(ii);
+                }
             }
+            stateBox.addChangeListener(new ChangeListener() {
+                public void onChange (Widget sender) {
+                    displayIssues(
+                        _type, Issue.STATE_VALUES[((ListBox)sender).getSelectedIndex()], false);
+                }
+            });
+            filter.add(stateBox);
         }
-        stateBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                displayIssues(
-                    _type, Issue.STATE_VALUES[((ListBox)sender).getSelectedIndex()], false);
-            }
-        });
-        filter.add(stateBox);
         header.setWidget(0, 1, filter);
         header.getFlexCellFormatter().setStyleName(0, 1, "Filter");
         header.getFlexCellFormatter().setColSpan(0, 1, 4);
@@ -138,7 +166,7 @@ public class IssuePanel extends TitledListPanel
     protected IssueModels _imodels;
 
     /** Our current state and type being displayed. */
-    protected int _state, _type;
+    protected int _state, _type, _page;
 
     /** If we're only showing owned issues. */
     protected boolean _owned;

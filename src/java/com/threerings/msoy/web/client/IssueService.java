@@ -56,7 +56,7 @@ public interface IssueService extends RemoteService
      * Loads a list of ForumMessage for an issueId.
      * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage>
      */
-    public List loadMessages (WebIdent ident, int issueId)
+    public List loadMessages (WebIdent ident, int issueId, int messageId)
         throws ServiceException;
 
     /**
@@ -69,6 +69,12 @@ public interface IssueService extends RemoteService
      * Updates an issue.
      */
     public void updateIssue (WebIdent ident, Issue issue)
+        throws ServiceException;
+
+    /**
+     * Assigns a message to an issue.
+     */
+    public void assignMessage (WebIdent ident, int issueId, int messageId)
         throws ServiceException;
 
     /**

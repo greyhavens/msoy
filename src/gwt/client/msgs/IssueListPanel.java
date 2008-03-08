@@ -41,11 +41,20 @@ public class IssueListPanel extends PagedGrid
     public void displayIssues (
             int type, int state, boolean owned, IssueModels imodels, boolean refresh)
     {
+        _linkPrefix = "i_";
         if (owned) {
+            _linkPostfix = "_1";
             setModel(imodels.getOwnedIssues(type, state, refresh), 0);
         } else {
             setModel(imodels.getIssues(type, state, refresh), 0);
         }
+    }
+
+    public void displayAssignIssues (
+            int type, int state, IssueModels imodels, int messageId, int page)
+    {
+        _linkPrefix = "a_" + messageId + "_" + page + "_";
+        setModel(imodels.getIssues(type, state, false), 0);
     }
 
     // @Override // from PagedGrid
@@ -106,7 +115,7 @@ public class IssueListPanel extends PagedGrid
 
             int col = 0;
             Hyperlink toIssue = Application.createLink(
-                    issue.description, Page.WHIRLEDS, "i_" + issue.issueId);
+                    issue.description, Page.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
@@ -140,6 +149,9 @@ public class IssueListPanel extends PagedGrid
     protected IssuePanel _parent;
 
     protected Button _refresh;
+
+    protected String _linkPrefix;
+    protected String _linkPostfix = "";
 
     /** Used to format the created date. */
     protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
