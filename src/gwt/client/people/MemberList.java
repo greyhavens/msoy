@@ -113,7 +113,7 @@ public class MemberList extends PagedGrid
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(
                                          CPeople.msgs.mlRemoveFriend(), onClick));
 
-                // otherwise if we're not a guest, show the add friend button...
+                // otherwise if we're not a guest, show the add friend button
                 } else if (CPeople.getMemberId() != 0) {
                     onClick = new ClickListener() {
                         public void onClick (Widget sender) {
@@ -126,8 +126,10 @@ public class MemberList extends PagedGrid
                                          "/images/profile/addfriend.png", onClick));
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(
                                          CPeople.msgs.mlAddFriend(), onClick));
+                }
 
-                    // ...and the send mail button
+                // if we're not a guest, we can send them mail
+                if (CPeople.getMemberId() != 0) {
                     onClick = new ClickListener() {
                         public void onClick (Widget widget) {
                             new MailComposition(card.name, null, null, null).show();
