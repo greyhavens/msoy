@@ -4,20 +4,19 @@
 package client.util;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
+
 /**
- * Displays a bordered popup with an area for a title, an area for contents and an area for
- * controls.
+ * Displays a bordered popup with an area for a title and contents.
  */
 public abstract class BorderedDialog extends BorderedPopup
 {
@@ -40,79 +39,42 @@ public abstract class BorderedDialog extends BorderedPopup
     {
         super(autoHide);
 
-        _main = new VerticalPanel();
-        _main.setStyleName("borderedDialog");
-        setWidget(_main);
-
-        FlexTable headerBackground = new FlexTable();
-        headerBackground.setStyleName("HeaderBackground");
-        headerBackground.setCellSpacing(0);
-        headerBackground.setCellPadding(0);
-        headerBackground.getCellFormatter().setStyleName(0, 0, "HeaderLeft");
-        headerBackground.getCellFormatter().setStyleName(0, 1, "HeaderCenter");
-        headerBackground.getCellFormatter().setHorizontalAlignment(0, 1, 
-            HorizontalPanel.ALIGN_CENTER);
-        headerBackground.getCellFormatter().setStyleName(0, 2, "HeaderRight");
-
-        Label dragLabel = new Label();
-        dragLabel.setStyleName("HeaderDrag");
-        dragLabel.setWidth("100%");
-        if (enableDrag) {
-            dragLabel.addMouseListener(createDragListener());
-        }
-
-        Grid headerTitle = new Grid(1, 3);
-        headerTitle.setStyleName("HeaderTitle");
-        headerTitle.setCellSpacing(0);
-        headerTitle.setCellPadding(0);
-        headerTitle.getCellFormatter().setStyleName(0, 0, "TitleLeft");
-        headerTitle.getCellFormatter().setStyleName(0, 1, "TitleCenter");
-        headerTitle.getCellFormatter().setStyleName(0, 2, "TitleRight");
-        headerTitle.setWidget(0, 1, _header = new HorizontalPanel());
-        headerBackground.setWidget(0, 1, headerTitle);
-
-        FlowPanel titleBar = new FlowPanel();
-        titleBar.setStyleName("TitleBar");
-        titleBar.add(headerBackground);
-        titleBar.add(dragLabel);
-        
-        _main.add(titleBar);
-        _header.setSpacing(0);
-        _header.setStyleName("Title");
-        _header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        _main = new SmartTable("borderedDialog", 0, 0);
+        _main.setText(0, 0, "");
         if (!omitCloseBox) {
-            _header.add(MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+            _main.setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
                     hide();
                 }
-            }));
+            }), 1, "CloseCell");
         }
-        _main.add(_contents = createContents());
-        _contents.setWidth("100%");
-
-        _main.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-        _main.setVerticalAlignment(VerticalPanel.ALIGN_BOTTOM);
-        _main.add(_footer = new HorizontalPanel());
-        // there's no way to do this through normal channels
-        DOM.setAttribute(DOM.getParent(_footer.getElement()), "className", "Footer");
-        _footer.setSpacing(10);
-        _footer.setStyleName("Controls");
+        setWidget(_main);
     }
 
-    protected Label createTitleLabel (String text, String style)
+    protected void setHeaderTitle (String text)
     {
-        Label label = new Label(text);
-        if (style != null) {
-            label.setStyleName(style);
-        }
-        return label;
+        Label label = MsoyUI.createLabel(text, "HeaderTitle");
+        label.addMouseListener(createDragListener());
+        _main.setWidget(0, 0, label);
     }
 
-    /**
-     * Creates the Widget that will contain the contents of this dialog. Do not populate that
-     * widget here, just created it.
-     */
-    protected abstract Widget createContents ();
+    protected void setContents (Widget contents)
+    {
+        _main.setWidget(1, 0, contents, _main.getCellCount(0), null);
+    }
+
+    protected void addButton (Button button)
+    {
+        if (_buttons == null) {
+            _buttons = new HorizontalPanel();
+            _main.setWidget(2, 0, _buttons, _main.getCellCount(0), "Buttons");
+            _main.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+        }
+        if (_buttons.getWidgetCount() > 0) {
+            _buttons.add(WidgetUtil.makeShim(5, 5));
+        }
+        _buttons.add(button);
+    }
 
     /** Creates the drag listener. */
     protected MouseListenerAdapter createDragListener () {
@@ -143,8 +105,6 @@ public abstract class BorderedDialog extends BorderedPopup
         };
     }
 
-    protected VerticalPanel _main;
-    protected HorizontalPanel _header;
-    protected Widget _contents;
-    protected HorizontalPanel _footer;
+    protected SmartTable _main;
+    protected HorizontalPanel _buttons;
 }

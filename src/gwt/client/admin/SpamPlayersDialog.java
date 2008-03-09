@@ -5,11 +5,11 @@ package client.admin;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.gwt.ui.SmartTable;
 
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
@@ -27,13 +27,11 @@ public class SpamPlayersDialog extends BorderedDialog
 {
     public SpamPlayersDialog ()
     {
-        _header.add(createTitleLabel(CAdmin.msgs.spamTitle(), null));
+        setHeaderTitle(CAdmin.msgs.spamTitle());
 
-        FlexTable contents = (FlexTable)_contents;
-        contents.setStyleName("spamPlayers");
+        SmartTable contents = new SmartTable("spamPlayers", 0, 5);
 
-        contents.setText(0, 0, CAdmin.msgs.spamIntro());
-        contents.getFlexCellFormatter().setColSpan(0, 0, 2);
+        contents.setText(0, 0, CAdmin.msgs.spamIntro(), 2, null);
         contents.getFlexCellFormatter().setWidth(0, 0, "500px");
 
         contents.setText(1, 0, CAdmin.msgs.spamSubject());
@@ -41,8 +39,7 @@ public class SpamPlayersDialog extends BorderedDialog
         _subject.setVisibleLength(50);
         _subject.setMaxLength(80);
 
-        contents.setWidget(2, 0, _body = new TextArea());
-        contents.getFlexCellFormatter().setColSpan(2, 0, 2);
+        contents.addWidget(_body = new TextArea(), 2, null);
         _body.setCharacterWidth(60);
         _body.setVisibleLines(20);
 
@@ -52,8 +49,8 @@ public class SpamPlayersDialog extends BorderedDialog
         _startId.setText("0");
         niggles.add(_endId = new NumberTextBox(false, 8));
         _endId.setText("0");
-        contents.setWidget(3, 0, niggles);
-        contents.getFlexCellFormatter().setColSpan(3, 0, 2);
+        contents.addWidget(niggles, 2, null);
+        setContents(contents);
 
         Button spam = new Button(CAdmin.msgs.spamSend());
         new ClickCallback(spam, CAdmin.msgs.spamConfirm()) {
@@ -74,18 +71,12 @@ public class SpamPlayersDialog extends BorderedDialog
                 return false;
             }
         };
-        _footer.add(spam);
-        _footer.add(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
+        addButton(spam);
+        addButton(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
         }));
-    }
-
-    // @Override // from BorderedDialog
-    protected Widget createContents ()
-    {
-        return new FlexTable();
     }
 
     protected TextBox _subject;

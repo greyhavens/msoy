@@ -257,34 +257,32 @@ public class ThreadPanel extends TitledListPanel
     {
         public ThreadFlagsEditorPanel ()
         {
-            _header.add(createTitleLabel(CMsgs.mmsgs.tfepTitle(), null));
+            setHeaderTitle(CMsgs.mmsgs.tfepTitle());
 
-            FlexTable contents = new FlexTable();
-            contents.setCellSpacing(10);
+            FlexTable main = new FlexTable();
+            main.setCellSpacing(10);
 
             int row = 0;
-            contents.setText(row, 0, CMsgs.mmsgs.tfepIntro());
-            contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+            main.setText(row, 0, CMsgs.mmsgs.tfepIntro());
+            main.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
-            contents.setText(row, 0, CMsgs.mmsgs.tfepAnnouncement());
-            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            contents.setWidget(row++, 1, _announce = new CheckBox());
+            main.setText(row, 0, CMsgs.mmsgs.tfepAnnouncement());
+            main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            main.setWidget(row++, 1, _announce = new CheckBox());
             _announce.setChecked(_thread.isAnnouncement());
 
-            contents.setText(row, 0, CMsgs.mmsgs.tfepSticky());
-            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            contents.setWidget(row++, 1, _sticky = new CheckBox());
+            main.setText(row, 0, CMsgs.mmsgs.tfepSticky());
+            main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            main.setWidget(row++, 1, _sticky = new CheckBox());
             _sticky.setChecked(_thread.isSticky());
 
-            contents.setText(row, 0, CMsgs.mmsgs.tfepLocked());
-            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            contents.setWidget(row++, 1, _locked = new CheckBox());
+            main.setText(row, 0, CMsgs.mmsgs.tfepLocked());
+            main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            main.setWidget(row++, 1, _locked = new CheckBox());
             _locked.setChecked(_thread.isLocked());
+            setContents(main);
 
-            ((VerticalPanel)_contents).setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-            ((VerticalPanel)_contents).add(contents);
-
-            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget widget) {
                     ThreadFlagsEditorPanel.this.hide();
                 }
@@ -310,7 +308,7 @@ public class ThreadPanel extends TitledListPanel
                 }
                 protected int _flags;
             };
-            _footer.add(update);
+            addButton(update);
         }
 
         // @Override // from BorderedDialog

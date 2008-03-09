@@ -16,7 +16,7 @@ public class BorderedHorizontalPanel extends FlexTable
 {
     public BorderedHorizontalPanel ()
     {
-        setStyleName("borderedWidget");
+        setStyleName("borderedHP");
         setCellPadding(0);
         setCellSpacing(0);
     }

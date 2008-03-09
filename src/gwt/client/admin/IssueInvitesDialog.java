@@ -24,9 +24,9 @@ public class IssueInvitesDialog extends BorderedDialog
 {
     public IssueInvitesDialog ()
     {
-        _header.add(createTitleLabel(CAdmin.msgs.invitesTitle(), null));
+        setHeaderTitle(CAdmin.msgs.invitesTitle());
 
-        FlexTable contents = (FlexTable)_contents;
+        FlexTable contents = new FlexTable();
         FlexCellFormatter formatter = contents.getFlexCellFormatter();
         contents.setCellSpacing(10);
         contents.setStyleName("sendInvites");
@@ -46,13 +46,14 @@ public class IssueInvitesDialog extends BorderedDialog
         formatter.setStyleName(row, 0, "Tip");
         formatter.setColSpan(row, 0, 2);
         contents.setText(row, 0, CAdmin.msgs.activeUsersTip());
+        setContents(contents);
 
-        _footer.add(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
+        addButton(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget widget) {
                 hide();
             }
         }));
-        _footer.add(new Button(CAdmin.msgs.invitesIssueButton(), new ClickListener() {
+        addButton(new Button(CAdmin.msgs.invitesIssueButton(), new ClickListener() {
             public void onClick (Widget widget) {
                 Date activeSince = null;
                 if (_issueToSelection.getSelectedIndex() == 1) {
@@ -71,12 +72,6 @@ public class IssueInvitesDialog extends BorderedDialog
                     });
             }
         }));
-    }
-
-    // @Override // from BorderedDialog
-    protected Widget createContents ()
-    {
-        return new FlexTable();
     }
 
     protected NumberTextBox _numberInvites;

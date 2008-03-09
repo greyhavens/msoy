@@ -49,44 +49,11 @@ public class MailComposition extends BorderedDialog
     {
         super(false);
         _recipient = recipient;
-        buildUI(subject, bodyText, payloadComposer);
-    }
 
-    public void addMailSentListener (MailSentListener listener)
-    {
-        if (listener != null) {
-            _listeners.add(listener);
-        }
-    }
+        setHeaderTitle(CMsgs.mmsgs.popupHeader());
 
-    public void removeMailSentListener (MailSentListener listener)
-    {
-        if (listener != null) {
-            _listeners.remove(listener);
-        }
-    }
-
-    /**
-     * Remove the payload from the message currently being composed. This can be safely called
-     * from payload implementations if they wish to vanish.
-     */
-    public void removePayload ()
-    {
-        setPayloadComposer(null);
-    }
-
-    // @Override
-    protected Widget createContents ()
-    {
-        _panel = new VerticalPanel();
-        _panel.addStyleName("MailComposer");
-        return _panel;
-    }
-
-    // generate the composer UI, prepopulated wih the given subject line and body text
-    protected void buildUI (String subject, String bodyText, MailPayloadComposer composer)
-    {
-        _header.add(createTitleLabel(CMsgs.mmsgs.popupHeader(), "ComposerTitle"));
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("MailComposer");
 
         // set up the recipient/subject header grid
         Grid grid = new Grid(2, 2);
@@ -111,10 +78,10 @@ public class MailComposition extends BorderedDialog
         _subjectBox.addKeyboardListener(keyListener);
         grid.setWidget(1, 1, _subjectBox);
         formatter.setStyleName(1, 1, "Value");
-        _panel.add(grid);
+        panel.add(grid);
 
         _payloadBox = new SimplePanel();
-        _panel.add(_payloadBox);
+        panel.add(_payloadBox);
 
         // then the textarea where we enter the body of the text
         // TODO: give us focus if this is a reply (otherwise the subject line)
@@ -123,16 +90,11 @@ public class MailComposition extends BorderedDialog
         _messageBox.setVisibleLines(10);
         _messageBox.addStyleName("Body");
         _messageBox.setText(bodyText);
-        _panel.add(_messageBox);
-
-        // then a button box
-        HorizontalPanel buttonBox = new HorizontalPanel();
-        // this needs a distinctive style name since it's in BorderedDialog's CSS context
-        buttonBox.addStyleName("MailControls");
+        panel.add(_messageBox);
+        setContents(panel);
 
         // with a send button
-        _sendButton = new Button(CMsgs.mmsgs.btnSend());
-        _sendButton.addClickListener(new ClickListener() {
+        _sendButton = new Button(CMsgs.mmsgs.btnSend(), new ClickListener() {
             public void onClick (Widget sender) {
                 _sendButton.setEnabled(false);
                 if (_payloadComposer != null) {
@@ -145,32 +107,51 @@ public class MailComposition extends BorderedDialog
                 deliverMail();
             }
         });
-        buttonBox.add(_sendButton);
+        addButton(_sendButton);
 
         // add a button for attaching items
-        _attachButton = new Button(CMsgs.mmsgs.btnAttach());
-        _attachButton.addClickListener(new ClickListener() {
+        _attachButton = new Button(CMsgs.mmsgs.btnAttach(), new ClickListener() {
             public void onClick (Widget sender) {
                 _attachButton.setEnabled(false);
                 setPayloadComposer(new ItemGift.Composer(MailComposition.this));
             }
         });
-        buttonBox.add(_attachButton);
+        addButton(_attachButton);
 
         // and a discard button
-        Button discardButton = new Button(CMsgs.mmsgs.btnDiscard());
-        discardButton.addClickListener(new ClickListener() {
+        Button discardButton = new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: confirmation dialog?
                 hide();
             }
         });
-        buttonBox.add(discardButton);
+        addButton(discardButton);
 
         // setting the payload composer will properly set the state of all the buttons
-        setPayloadComposer(composer);
+        setPayloadComposer(payloadComposer);
+    }
 
-        _footer.add(buttonBox);
+    public void addMailSentListener (MailSentListener listener)
+    {
+        if (listener != null) {
+            _listeners.add(listener);
+        }
+    }
+
+    public void removeMailSentListener (MailSentListener listener)
+    {
+        if (listener != null) {
+            _listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Remove the payload from the message currently being composed. This can be safely called
+     * from payload implementations if they wish to vanish.
+     */
+    public void removePayload ()
+    {
+        setPayloadComposer(null);
     }
 
     protected void setPayloadComposer (MailPayloadComposer composer)
@@ -225,7 +206,6 @@ public class MailComposition extends BorderedDialog
     }
 
     protected MemberName _recipient;
-    protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;
     protected Set _listeners = new HashSet();
 

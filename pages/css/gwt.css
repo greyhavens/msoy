@@ -616,92 +616,100 @@ img, embed, applet, object {
   background: #FFFFFF;
 }
 
+.borderedWidget {
+  border: 1px solid #0D4163;
+}
+
+.borderedWidget .Inner {
+  border: 2px solid #357197;
+}
+
 /** First the four verticals */
-.borderedWidget .westOut {
+.borderedHP .westOut {
   background-image: url(/images/ui/quads/e.png);
   width: 2px;
 }
 
-.borderedWidget .westIn {
+.borderedHP .westIn {
   background-image: url(/images/ui/quads/w.png);
   width: 2px;
 }
 
-.borderedWidget .eastOut {
+.borderedHP .eastOut {
   background-image: url(/images/ui/quads/w.png);
   width: 2px;
 }
 
-.borderedWidget .eastIn {
+.borderedHP .eastIn {
   background-image: url(/images/ui/quads/e.png);
   width: 2px;
 }
 
 /** Then the four horizontals */
-.borderedWidget .northOut {
+.borderedHP .northOut {
   background-image: url(/images/ui/quads/s.png);
   height: 2px;
 }
 
-.borderedWidget .northIn {
+.borderedHP .northIn {
   background-image: url(/images/ui/quads/n.png);
   height: 2px;
 }
 
-.borderedWidget .southOut {
+.borderedHP .southOut {
   background-image: url(/images/ui/quads/n.png);
   height: 2px;
 }
 
-.borderedWidget .southIn {
+.borderedHP .southIn {
   background-image: url(/images/ui/quads/s.png);
   height: 2px;
 }
 
 /** Then eight corners */
-.borderedWidget .northWestIn {
+.borderedHP .northWestIn {
   background-image: url(/images/ui/quads/nw_in.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .northWestOut {
+.borderedHP .northWestOut {
   background-image: url(/images/ui/quads/se_out.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .southWestIn {
+.borderedHP .southWestIn {
   background-image: url(/images/ui/quads/sw_in.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .southWestOut {
+.borderedHP .southWestOut {
   background-image: url(/images/ui/quads/ne_out.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .northEastIn {
+.borderedHP .northEastIn {
   background-image: url(/images/ui/quads/ne_in.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .northEastOut {
+.borderedHP .northEastOut {
   background-image: url(/images/ui/quads/sw_out.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .southEastIn {
+.borderedHP .southEastIn {
   background-image: url(/images/ui/quads/se_in.png);
   width: 2px;
   height: 2px;
 }
 
-.borderedWidget .southEastOut {
+.borderedHP .southEastOut {
   background-image: url(/images/ui/quads/nw_out.png);
   width: 2px;
   height: 2px;
@@ -713,95 +721,26 @@ img, embed, applet, object {
 }
 
 .borderedDialog {
-  background: url(/images/ui/popup/footer_tile.png) repeat-x bottom;
 }
 
-.borderedDialog .HeaderBackground {
-  width: 100%;
-  margin: 0px;
-  padding: 0px;
-  border-width: 0px;
+.borderedDialog .HeaderTitle, .borderedDialog .CloseCell {
+  background: url(/images/ui/dialog_title.png) repeat-x top;
+  height: 20px;
+  font-size: 14px;
 }
 
-.borderedDialog .HeaderBackground td {
-  height: 33px;
-}
-
-.borderedDialog .TitleBar {
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
-}
-
-.borderedDialog .HeaderDrag {
-  width: 100%;
-  height: 33px;
-  position: absolute;
-  display: inline;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
-}
-
-.borderedDialog .HeaderBackground .HeaderLeft {
-  background-image: url(/images/ui/popup/header_left.png);
-  width: 75px;
-}
-
-.borderedDialog .HeaderBackground .HeaderRight {
-  background-image: url(/images/ui/popup/header_right.png);
-  width: 75px;
-}
-
-.borderedDialog .HeaderBackground .HeaderCenter {
-  background-image: url(/images/ui/popup/header_tile.png);
-}
-
-.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleLeft {
-  background-image: url(/images/ui/popup/header_star_left.png);
-  width: 50px;
-}
-
-.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleRight {
-  background-image: url(/images/ui/popup/header_star_right.png);
-  width: 50px;
-}
-
-.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleCenter {
-  background-image: url(/images/ui/popup/header_text_tile.png);
-}
-
-.borderedDialog .Title div {
-  color: #EAEFF1;
-  font-size: 22px;
+.borderedDialog .HeaderTitle {
+  color: #FFFFFF;
+  padding-left: 10px;
   font-weight: bold;
-  white-space: nowrap;
 }
 
-.borderedDialog .Footer {
-  background: url(/images/ui/popup/footer_left.png) no-repeat bottom left;
-  height: 50px;
+.borderedDialog .CloseCell {
+  width: 16px;
 }
 
-.borderedDialog .CloseBox {
-  background-image: url(/images/ui/close.png);
-  width: 13px;
-  height: 13px;
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  z-index: 100;
-}
-
-.borderedDialog .Controls {
-  color: white;
-}
-
-.borderedDialog .Controls a {
-  color: white;
+.borderedDialog .Buttons {
+  padding: 10px;
 }
 
 /** General UI styles. */
