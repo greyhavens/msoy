@@ -101,15 +101,14 @@ public class ChatChannelManager
         // ensure this member has access to this channel
         switch (channel.type) {
         case ChatChannel.GROUP_CHANNEL:
-            GroupMembership gm = member.groups.get(channel.ident);
+            final GroupName gName = (GroupName) channel.ident;
+            GroupMembership gm = member.groups.get(gName.getGroupId());
             if (gm != null) {
                 // we're already members, no need to check further
                 break;
             }
 
             // else check that the group is public
-            final GroupName gName = (GroupName) channel.ident;
-
             MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
                 public void invokePersistent () throws PersistenceException {
                     GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gName.getGroupId());
