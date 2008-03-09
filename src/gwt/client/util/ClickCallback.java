@@ -80,7 +80,7 @@ public abstract class ClickCallback
         // if we have not yet confirmed and desire to do so, show the confirm popup
         if (_confirmMessage != null && !confirmed) {
             setEnabled(false);
-            new PromptPopup(_confirmMessage) {
+            new PromptPopup(_confirmMessage, null) {
                 public void onAffirmative () {
                     setEnabled(true);
                     takeAction(true);

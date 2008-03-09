@@ -60,7 +60,6 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
-import com.threerings.msoy.group.server.GroupManager;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
 
@@ -101,9 +100,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Handles management of member's friends lists. */
     public static FriendManager friendMan = new FriendManager();
-
-    /** Our runtime group manager. */
-    public static GroupManager groupMan = new GroupManager();
 
     /** Our runtime mail manager. */
     public static MailManager mailMan = new MailManager();
@@ -376,7 +372,6 @@ public class MsoyServer extends MsoyBaseServer
         adminMan.init(this, _eventLog);
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
-        groupMan.init(groupRepo, memberRepo);
         mailMan.init(perCtx, memberRepo, _eventLog);
         channelMan.init(invmgr);
         jabberMan.init(invmgr);

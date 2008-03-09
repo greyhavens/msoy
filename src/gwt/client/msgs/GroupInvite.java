@@ -23,6 +23,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailMessage;
@@ -179,10 +180,9 @@ public abstract class GroupInvite
             protected void buildUI ()
             {
                 _content.clear();
-                Iterator members = _members.iterator();
-                while (members.hasNext()) {
-                    GroupMembership ship = (GroupMembership) members.next();
-                    if (CMsgs.creds.name.equals(ship.member)) {
+                for (Iterator members = _members.iterator(); members.hasNext(); ) {
+                    GroupMemberCard card = (GroupMemberCard) members.next();
+                    if (CMsgs.creds.name.equals(card.name)) {
                         _content.add(new InlineLabel(CMsgs.mmsgs.groupAlreadyMember(_name)));
                         return;
                     }
@@ -202,8 +202,7 @@ public abstract class GroupInvite
 
             protected void joinGroup ()
             {
-                CMsgs.groupsvc.joinGroup(CMsgs.ident, _invitePayload.groupId,
-                                         CMsgs.getMemberId(), new MsoyCallback() {
+                CMsgs.groupsvc.joinGroup(CMsgs.ident, _invitePayload.groupId, new MsoyCallback() {
                     // if joining the group succeeds, mark this invitation as accepted
                     public void onSuccess (Object result) {
                         _invitePayload.responded = true;

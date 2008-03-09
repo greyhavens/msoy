@@ -5,14 +5,14 @@ package client.shell;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.data.MemberCard;
+
+import client.util.PromptPopup;
 
 /**
  * Displays a single comment.
@@ -37,11 +37,9 @@ public class CommentPanel extends MessagePanel
 
         if (CShell.getMemberId() == _comment.commentor.getMemberId() || CShell.isSupport()) {
             InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
-            delete.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    _parent.deleteComment(_comment, false);
-                }
-            });
+            delete.addClickListener(new PromptPopup(CShell.cmsgs.deletePostConfirm(),
+                                                    _parent.deleteComment(_comment)).
+                                    setContext("\"" + _comment.text + "\""));
             delete.addStyleName("Posted");
             delete.addStyleName("actionLabel");
             info.add(delete);

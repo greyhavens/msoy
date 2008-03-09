@@ -121,25 +121,20 @@ public class MessagesPanel extends PagedGrid
         displayPage(_page, true);
     }
 
-    protected void deletePost (final ForumMessage message, boolean confirmed)
+    protected Command deletePost (final ForumMessage message)
     {
-        if (!confirmed) {
-            // TODO: if forum admin, make them send a mail to the poster explaining why their post
-            // was deleted?
-            new PromptPopup(CMsgs.mmsgs.confirmDelete()) {
-                public void onAffirmative () {
-                    deletePost(message, true);
-                }
-            }.prompt();
-            return;
-        }
-
-        CMsgs.forumsvc.deleteMessage(CMsgs.ident, message.messageId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                removeItem(message);
-                MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
+        return new Command() {
+            public void execute () {
+                // TODO: if forum admin, make them send a mail to the poster explaining why their
+                // post was deleted?
+                CMsgs.forumsvc.deleteMessage(CMsgs.ident, message.messageId, new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        removeItem(message);
+                        MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
+                    }
+                });
             }
-        });
+        };
     }
 
     protected static InlineLabel makeInfoLabel (String text, ClickListener listener)
@@ -207,11 +202,9 @@ public class MessagesPanel extends PagedGrid
 
             // TODO: also if forum admin
             if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineDelete(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        deletePost(_message, false);
-                    }
-                }));
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineDelete(),
+                                       new PromptPopup(CMsgs.mmsgs.confirmDelete(),
+                                                       deletePost(_message))));
             }
 
             if (_message.issueId > 0) {

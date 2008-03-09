@@ -100,18 +100,14 @@ public class TagDetailPanel extends VerticalPanel
                 InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
                 PopupMenu menu = new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
-                        addMenuItem(CShell.cmsgs.tagMatureFlag(), new Command() {
-                            public void execute () {
-                                maybeUpdateFlag(CShell.cmsgs.tagMaturePrompt(),
-                                                Item.FLAG_FLAGGED_MATURE);
-                            }
-                        });
-                        addMenuItem(CShell.cmsgs.tagCopyrightFlag(), new Command() {
-                            public void execute () {
-                                maybeUpdateFlag(CShell.cmsgs.tagCopyrightPrompt(),
-                                                Item.FLAG_FLAGGED_COPYRIGHT);
-                            }
-                        });
+                        addFlag(CShell.cmsgs.tagMatureFlag(), CShell.cmsgs.tagMaturePrompt(),
+                                updateFlag(Item.FLAG_FLAGGED_MATURE));
+                        addFlag(CShell.cmsgs.tagCopyrightFlag(), CShell.cmsgs.tagCopyrightPrompt(),
+                                updateFlag(Item.FLAG_FLAGGED_COPYRIGHT));
+                    }
+                    protected void addFlag (String label, String prompt, Command action) {
+                        addMenuItem(label, new PromptPopup(prompt, CShell.cmsgs.tagFlagFlag(),
+                                                           CShell.cmsgs.cancel(), action));
                     }
                 };
                 addRow.add(flagLabel, HasAlignment.ALIGN_MIDDLE);
@@ -124,14 +120,14 @@ public class TagDetailPanel extends VerticalPanel
         refreshTags();
     }
 
-    protected void maybeUpdateFlag (String prompt, final byte flag)
+    protected Command updateFlag (final byte flag)
     {
-        new PromptPopup(prompt, CShell.cmsgs.tagFlagFlag(), CShell.cmsgs.cancel()) {
-            public void onAffirmative () {
+        return new Command() {
+            public void execute () {
                 _service.setFlags(flag);
                 MsoyUI.info(CShell.cmsgs.tagThanks());
             }
-        }.prompt();
+        };
     }
     
     protected void toggleTagHistory ()
@@ -216,19 +212,19 @@ public class TagDetailPanel extends VerticalPanel
             final String tag = (String) iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
             if (_canEdit) {
-                final Command remove = new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
-                    public void onAffirmative () {
+                final Command remove = new Command() {
+                    public void execute () {
                         _service.untag(tag, new MsoyCallback() {
                             public void onSuccess (Object result) {
                                 refreshTags();
                             }
                         });
                     }
-                    public void onNegative () { /* nada */ }
                 };
                 new PopupMenu(tagLabel) {
                     protected void addMenuItems () {
-                        addMenuItem(CShell.cmsgs.tagRemove(), remove);
+                        addMenuItem(CShell.cmsgs.tagRemove(),
+                                    new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag), remove));
                         _service.addMenuItems(tag, this);
                     }
                 };

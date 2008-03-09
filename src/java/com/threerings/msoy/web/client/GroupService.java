@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.web.data.GalaxyData;
@@ -34,7 +35,7 @@ public interface GroupService extends RemoteService
         /**
          * The members of this group.
          *
-         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
+         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMemberCard>
          */
         public List members;
     }
@@ -115,9 +116,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Create a new membership connection between a group and a member.
+     * Requests that the caller be added as a member of the specified group.
      */
-    public void joinGroup (WebIdent ident, int groupId, int memberId)
+    public void joinGroup (WebIdent ident, int groupId)
         throws ServiceException;
 
     /**

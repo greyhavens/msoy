@@ -3,13 +3,8 @@
 
 package client.whirleds;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -137,19 +132,17 @@ public class WhirledDetailPanel extends VerticalPanel
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
             window.add(WidgetUtil.makeShim(10, 10));
             window.add(new TagDetailPanel(new TagDetailPanel.TagService() {
-                public void tag (String tag, AsyncCallback callback) {
-                    CWhirleds.groupsvc.tagGroup(
-                        CWhirleds.ident, _group.groupId, tag, true, callback);
+                public void tag (String tag, AsyncCallback cback) {
+                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
                 }
-                public void untag (String tag, AsyncCallback callback) {
-                    CWhirleds.groupsvc.tagGroup(
-                        CWhirleds.ident, _group.groupId, tag, false, callback);
+                public void untag (String tag, AsyncCallback cback) {
+                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
                 }
-                public void getRecentTags (AsyncCallback callback) {
-                    CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, callback);
+                public void getRecentTags (AsyncCallback cback) {
+                    CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, cback);
                 }
-                public void getTags (AsyncCallback callback) {
-                    CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, callback);
+                public void getTags (AsyncCallback cback) {
+                    CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
                 }
                 public boolean supportFlags () {
                     return false;
@@ -171,6 +164,7 @@ public class WhirledDetailPanel extends VerticalPanel
         WorldClient.displayFeaturedPlace(_group.homeSceneId, panel);
 
         RoundBox bits = new RoundBox(RoundBox.BLUE);
+        bits.addStyleName("Bits");
         bits.add(MsoyUI.createLabel(_group.name, "Name"));
 
         FlowPanel established = new FlowPanel();
@@ -194,28 +188,18 @@ public class WhirledDetailPanel extends VerticalPanel
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
             if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
                 addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailJoin(),
-                          new PromptPopup(CWhirleds.msgs.detailJoinPrompt(_group.name)) {
-                              public void onAffirmative () {
-                                  joinGroup();
-                              }
-                              public void onNegative () { /* nada */ }
-                          });
+                          new PromptPopup(CWhirleds.msgs.detailJoinPrompt(_group.name),
+                                          joinGroup()));
             }
         } else {
             addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailLeave(),
-                      new PromptPopup(CWhirleds.msgs.detailLeavePrompt(_group.name)) {
-                          public void onAffirmative () {
-                              removeMember(CWhirleds.getMemberId());
-                          }
-                          public void onNegative () { }
-                      });
-        } 
+                      new PromptPopup(CWhirleds.msgs.detailLeavePrompt(_group.name),
+                                      removeMember(CWhirleds.getMemberId())));
+        }
         if (_detail.myRank == GroupMembership.RANK_MANAGER) {
-            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEdit(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, Args.compose("edit", _group.groupId));
-                }
-            });
+            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEdit(),
+                      Application.createLinkListener(
+                          Page.WHIRLEDS, Args.compose("edit", _group.groupId)));
         }
         addButton(buttons, MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(),
                   Application.createLinkListener(Page.WHIRLEDS, Args.compose("f", _group.groupId)));
@@ -230,18 +214,7 @@ public class WhirledDetailPanel extends VerticalPanel
         _tabs.add(new PrettyTextPanel(charter), CWhirleds.msgs.detailTabCharter());
         _tabs.selectTab(0);
 
-        // TODO: make this prettier; get data on demand; use MemberCard
-        FlowPanel managers = new FlowPanel();
-        for (int ii = 0; ii < _detail.managers.size(); ii++) {
-            if (ii > 0) {
-                managers.add(new InlineLabel(", ", false, false, true));
-            }
-            GroupMembership mgr = (GroupMembership)_detail.managers.get(ii);
-            managers.add(Application.memberViewLink(mgr.member));
-        }
-        _tabs.add(managers, CWhirleds.msgs.detailTabManagers());
-
-        // TODO: add members tab
+        _tabs.add(new WhirledMembersPanel(_detail), CWhirleds.msgs.detailTabMembers());
 
 //         setBackgroundImage(
 //             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
@@ -255,40 +228,6 @@ public class WhirledDetailPanel extends VerticalPanel
         panel.add(MsoyUI.createButton(type, label, click));
     }
 
-//     protected FlowPanel createMembersPanel (byte rank)
-//     {
-//         FlowPanel panel = new FlowPanel();
-//         for (Iterator i = _detail.members.iterator(); i.hasNext(); ) {
-//             GroupMembership membership = (GroupMembership) i.next();
-//             if (membership.rank != rank) {
-//                 continue;
-//             }
-//             if (panel.getWidgetCount() > 0) {
-//                 panel.add(new InlineLabel(", "));
-//             }
-
-//             MemberName name = membership.member;
-//             if (amManager()) {
-//                 final PopupPanel menuPanel = new PopupPanel(true);
-//                 MenuBar menu = getManagerMenuBar(membership, menuPanel);
-//                 menuPanel.add(menu);
-//                 final InlineLabel person = new InlineLabel(name.toString(), false, false, false);
-//                 person.addStyleName("LabelLink");
-//                 person.addMouseListener(new MouseListenerAdapter() {
-//                     public void onMouseDown (Widget sender, int x, int y) { 
-//                         menuPanel.setPopupPosition(
-//                             person.getAbsoluteLeft() + x, person.getAbsoluteTop() + y);
-//                         menuPanel.show();
-//                     }
-//                 });
-//                 panel.add(person);
-//             } else {
-//                 panel.add(Application.memberViewLink(name.toString(), name.getMemberId()));
-//             }
-//         }
-//         return panel;
-//     }
-
     protected String getPolicyName (int policy)
     {
         String policyName;
@@ -300,89 +239,6 @@ public class WhirledDetailPanel extends VerticalPanel
         }
         return policyName;
     }
-
-//     /**
-//      * Get the menus for use by managers when perusing the members of their group.
-//      */
-//     protected MenuBar getManagerMenuBar (final GroupMembership membership, final PopupPanel parent) 
-//     {
-//         // MenuBar(true) creates a vertical menu
-//         MenuBar menu = new MenuBar(true);
-//         menu.addItem(CWhirleds.msgs.detailViewProfile(), new Command() {
-//             public void execute () {
-//                 Application.go(Page.PEOPLE, "" + membership.member.getMemberId());
-//             }
-//         });
-//         MenuItem promote = new MenuItem(CWhirleds.msgs.detailPromote(), new Command() {
-//             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.detailPromotePrompt(membership.member.toString())) {
-//                     public void onAffirmative () {
-//                         parent.hide();
-//                         updateMemberRank(
-//                             membership.member.getMemberId(), GroupMembership.RANK_MANAGER);
-//                     }
-//                     public void onNegative () { }
-//                 }).prompt();
-//             }
-//         });
-//         MenuItem demote = new MenuItem(CWhirleds.msgs.detailDemote(), new Command() {
-//             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.detailPromotePrompt(membership.member.toString())) {
-//                     public void onAffirmative () {
-//                         parent.hide();
-//                         updateMemberRank(membership.member.getMemberId(),
-//                             GroupMembership.RANK_MEMBER);
-//                     }
-//                     public void onNegative () { }
-//                 }).prompt();
-//             }
-//         });
-//         MenuItem remove = new MenuItem(CWhirleds.msgs.detailRemove(), new Command() {
-//             public void execute() {
-//                 (new PromptPopup(CWhirleds.msgs.detailRemovePrompt(membership.member.toString(), 
-//                     _group.name)) { 
-//                     public void onAffirmative () {
-//                         parent.hide();
-//                         removeMember(membership.member.getMemberId());
-//                     }
-//                     public void onNegative () { }
-//                 }).prompt();
-//             }
-//         });
-
-//         // show actions that we don't have permission to take, but make sure they are
-//         // disabled
-//         if (!isSenior(_me, membership)) {
-//             // you can't do jack!
-//             promote.setCommand(null);
-//             promote.addStyleName("Disabled");
-//             demote.setCommand(null);
-//             demote.addStyleName("Disabled");
-//             remove.setCommand(null);
-//             remove.addStyleName("Disabled");
-//         } else if (membership.rank == GroupMembership.RANK_MANAGER) {
-//             promote.setCommand(null);
-//             promote.addStyleName("Disabled");
-//         } else {
-//             demote.setCommand(null);
-//             demote.addStyleName("Disabled");
-//         }
-//         menu.addItem(promote);
-//         menu.addItem(demote);
-//         menu.addItem(remove);
-//         return menu;
-//     }
-
-//     public boolean isSenior (GroupMembership member1, GroupMembership member2) 
-//     {
-//         if (member1.rank == GroupMembership.RANK_MANAGER && 
-//             (member2.rank == GroupMembership.RANK_MEMBER || 
-//              member1.rankAssignedDate.longValue() < member2.rankAssignedDate.longValue())) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
 
     protected void setBackgroundImage (MediaDesc background, boolean repeat)
     {
@@ -396,43 +252,31 @@ public class WhirledDetailPanel extends VerticalPanel
         }
     }
 
-//     protected void updateMemberRank (final int memberId, final byte rank) 
-//     {
-//         CWhirleds.groupsvc.updateMemberRank(CWhirleds.ident, _group.groupId, memberId, rank,
-//             new MsoyCallback() {
-//             public void onSuccess (Object result) {
-//                 loadGroup(_group.groupId);
-//             }
-//         });
-//     }
-
-    protected void removeMember (final int memberId)
+    protected Command removeMember (final int memberId)
     {
-        CWhirleds.groupsvc.leaveGroup(CWhirleds.ident, _group.groupId, memberId, new MsoyCallback() {
+        return new Command() {
+            public void execute () {
+                CWhirleds.groupsvc.leaveGroup(CWhirleds.ident, _group.groupId, memberId, refresh());
+            }
+        };
+    }
+
+    protected Command joinGroup ()
+    {
+        return new Command() {
+            public void execute () {
+                CWhirleds.groupsvc.joinGroup(CWhirleds.ident, _group.groupId, refresh());
+            }
+        };
+    }
+
+    protected MsoyCallback refresh ()
+    {
+        return new MsoyCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
             }
-        });
-    }
-
-    protected void joinGroup () 
-    {
-        CWhirleds.groupsvc.joinGroup(
-            CWhirleds.ident, _group.groupId, CWhirleds.getMemberId(), new MsoyCallback() {
-            public void onSuccess (Object result) {
-                loadGroup(_group.groupId);
-            }
-        });
-    }
-
-    protected static GroupMembership findMember (List members, int memberId) 
-    {
-        Iterator i = members.iterator();
-        GroupMembership member = null;
-        while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
-            member = (GroupMembership)i.next();
-        }
-        return (member != null && member.member.getMemberId() == memberId) ? member : null;
+        };
     }
 
     protected Group _group;

@@ -1093,3 +1093,7 @@ img, embed, applet, object {
   color: #FFFFFF;
   height: 25px;
 }
+
+.memberStatus {
+  font-size: 14px;
+}

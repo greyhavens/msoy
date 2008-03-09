@@ -119,7 +119,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // load up this member's group memberships
         userObj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
-            MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null, null).iterator());
+            MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail message count
         MailRepository mailRepo = MsoyServer.mailMan.getRepository();

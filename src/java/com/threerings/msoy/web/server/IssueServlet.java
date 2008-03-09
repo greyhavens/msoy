@@ -32,12 +32,10 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.Issue;
 import com.threerings.msoy.fora.data.IssueCodes;
 
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 
-import com.threerings.msoy.group.data.GroupMembership;
-
 import com.threerings.msoy.web.client.IssueService;
-
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;

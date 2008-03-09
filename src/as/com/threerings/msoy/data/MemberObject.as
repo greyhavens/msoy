@@ -21,7 +21,6 @@ import com.threerings.crowd.data.TokenRing;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -305,8 +304,7 @@ public class MemberObject extends MsoyBodyObject
     public function getGroupRank (groupId :int) :int
     {
         if (groups != null) {
-            var membInfo :GroupMembership =
-                (groups.get(GroupName.makeKey(groupId)) as GroupMembership);
+            var membInfo :GroupMembership = (groups.get(groupId) as GroupMembership);
             if (membInfo != null) {
                 return membInfo.rank;
             }

@@ -5,6 +5,7 @@ package client.shell;
 
 import java.util.List;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -20,7 +21,6 @@ import com.threerings.msoy.web.client.CommentService;
 
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
-import client.util.PromptPopup;
 import client.util.RowPanel;
 import client.util.ServiceBackedDataModel;
 
@@ -106,25 +106,20 @@ public class CommentsPanel extends PagedGrid
         }
     }
 
-    protected void deleteComment (final Comment comment, boolean confirmed)
+    protected Command deleteComment (final Comment comment)
     {
-        if (!confirmed) {
-            new PromptPopup(CShell.cmsgs.deletePostConfirm()) {
-                public void onAffirmative () {
-                    deleteComment(comment, true);
-                }
-            }.setContext("\"" + comment.text + "\"").prompt();
-            return;
-        }
-
-        CShell.commentsvc.deleteComment(
-            CShell.ident, _entityType, _entityId, comment.posted, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                MsoyUI.info(CShell.cmsgs.commentDeleted());
-                _commentCount = -1;
-                removeItem(comment);
+        return new Command() {
+            public void execute () {
+                CShell.commentsvc.deleteComment(
+                    CShell.ident, _entityType, _entityId, comment.posted, new MsoyCallback() {
+                    public void onSuccess (Object result) {
+                        MsoyUI.info(CShell.cmsgs.commentDeleted());
+                        _commentCount = -1;
+                        removeItem(comment);
+                    }
+                });
             }
-        });
+        };
     }
 
     protected class CommentModel extends ServiceBackedDataModel

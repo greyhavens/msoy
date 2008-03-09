@@ -207,15 +207,7 @@ public class ProfileServlet extends MsoyServiceServlet
             }
             List<MemberCard> list =
                 ServletUtil.resolveMemberCards(friendIds, false, callerFriendIds);
-            Collections.sort(list, new Comparator<MemberCard>() {
-                public int compare (MemberCard c1, MemberCard c2) {
-                    int rv = MemberCard.compare(c1.status, c2.status);
-                    if (rv != 0) {
-                        return rv;
-                    }
-                    return MemberName.compareNames(c1.name, c2.name);
-                }
-            });
+            Collections.sort(list, ServletUtil.SORT_BY_LAST_ONLINE);
             result.friends = list;
             return result;
 

@@ -29,7 +29,6 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
@@ -256,7 +255,7 @@ public class MemberObject extends MsoyBodyObject
     public byte getGroupRank (int groupId)
     {
         if (groups != null) {
-            GroupMembership membInfo = groups.get(GroupName.makeKey(groupId));
+            GroupMembership membInfo = groups.get(groupId);
             if (membInfo != null) {
                 return membInfo.rank;
             }

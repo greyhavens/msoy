@@ -15,32 +15,35 @@ import com.google.gwt.user.client.ui.Widget;
 import client.shell.CShell;
 
 /**
- * A class that will prompt the user, and will call one of two abstract functions, depending on the
- * option selected. This implements {@link ClickListener} and {@link Command} so you can have your
- * popup directly {@link #prompt} when the target is clicked.
+ * A class that will prompt the user, and take action on affirmative or negative response. A
+ * command can be provided for the affirmative action, or {@link #onAffirmative} and {@link
+ * #onNegative} can be overridden. PromptPopup implements {@link ClickListener} and {@link Command}
+ * so you can have your popup directly {@link #prompt} when the target is clicked.
  */
-public abstract class PromptPopup extends BorderedPopup
+public class PromptPopup extends BorderedPopup
     implements ClickListener, Command
 {
     /**
      * Create a PromptPopup that uses "Yes" and "No" for the buttons.
      */
-    public PromptPopup (String prompt)
+    public PromptPopup (String prompt, Command onAffirmative)
     {
-        this(prompt, CShell.cmsgs.yes(), CShell.cmsgs.no());
+        this(prompt, CShell.cmsgs.yes(), CShell.cmsgs.no(), onAffirmative);
     }
 
     /**
-     * @param prompt The string to prompt the user with.  This string cannot contain HTML.
-     * @param affirmative The text to use on the "true" button.
-     * @param negative The text to use on the "false" button.
+     * @param prompt the string with which to prompt the user. This string cannot contain HTML.
+     * @param affirmative the text to use on the "true" button.
+     * @param negative the text to use on the "false" button.
+     * @param onAffirmative the command to execute if the user clicks the affirmative button.
      */
-    public PromptPopup (String prompt, String affirmative, String negative)
+    public PromptPopup (String prompt, String affirmative, String negative, Command onAffirmative)
     {
         super(false);
         _prompt = prompt;
         _affirmative = affirmative;
         _negative = negative;
+        _onAffirmative = onAffirmative;
     }
 
     /**
@@ -98,7 +101,12 @@ public abstract class PromptPopup extends BorderedPopup
     /**
      * Called if the user selects the affirmative option.
      */
-    public abstract void onAffirmative ();
+    public void onAffirmative ()
+    {
+        if (_onAffirmative != null) {
+            _onAffirmative.execute();
+        }
+    }
 
     /**
      * Called if the user selects the negative option.
@@ -123,4 +131,5 @@ public abstract class PromptPopup extends BorderedPopup
     protected String _prompt, _context;
     protected String _affirmative;
     protected String _negative;
+    protected Command _onAffirmative;
 }

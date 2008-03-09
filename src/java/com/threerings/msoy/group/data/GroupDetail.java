@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.group.data;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.GroupMembership;
 
@@ -29,10 +28,6 @@ public class GroupDetail
     /** My rank in this group ({@link GroupMembership#RANK_NON_MEMBER} if we're not a member). */
     public byte myRank;
 
-    /**
-     * The managers of this group.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
-     */
-    public List managers;
+    /** When my rank was assigned (in millis since the epoch), or 0 if we're a non-member. */
+    public long myRankAssigned;
 }

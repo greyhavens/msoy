@@ -22,27 +22,38 @@
   color: #408AB9;
 }
 
-.whirledDetail .Name {
+.whirledDetail .Bits .Name {
   font-size: 18px;
   font-weight: bold;
   color: #204260;
 }
 
-.whirledDetail .Blurb {
+.whirledDetail .Bits .Blurb {
   font-size: 12px;
 }
 
-.whirledDetail .Established, .whirledDetail .LogoPanel .Policy {
+.whirledDetail .Bits .Established {
   font-size: 12px;
   font-style: italic;
 }
 
-.whirledDetail .LogoPanel .Policy {
-  margin: 7px;
+.whirledDetail .Member {
+  width: 100%;
+  margin: 5px;
 }
 
-.whirledDetail .gwt-TabPanelBottom {
-  margin: 10px;
+.whirledDetail .Member .Photo {
+  padding-right: 5px;
+}
+
+.whirledDetail .Member .Name {
+  width: 100%;
+}
+
+.whirledDetail .Member .Edit {
+  color: #999999;
+  font-size: 12px;
+  padding: 0px 10px;
 }
 
 /* GroupList specific formattting */

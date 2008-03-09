@@ -6,12 +6,10 @@ package com.threerings.msoy.group.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
-import com.threerings.util.Long;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Summarizes a person's membership in a group.
@@ -29,19 +27,11 @@ public class GroupMembership
     /** Rank code for a manager. */
     public static const RANK_MANAGER :int = 2;
 
-    /** The name and id of the member of the group. <em>Note:</em> this will be null in the records
-     * maintained in a member's MemberObject. */
-    public var member :MemberName;
-
-    /** The group's identity. <em>Note:</em> this will be null in the records contained in a
-     * GroupDetail.members list.*/
+    /** The group's identity. */
     public var group :GroupName;
 
     /** The member's rank in the group. */
     public var rank :int;
-
-    /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
-    public var rankAssignedDate :Long;
 
     /**
      * Returns true if the supplied rank is a valid rank (not {@link #RANK_NON_MEMBER} or an
@@ -56,36 +46,24 @@ public class GroupMembership
     {
     }
 
-    /**
-     * Get the date this member's rank was assigned on as a Date object.
-     */
-    public function getRankAssignedDate () :Date
-    {
-        throw new Error("Not implemented");
-    }
-
     // from DSet_Entry
     public function getKey () :Object
     {
-        return group;
+        return group.getGroupId();
     }
 
     // from Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        member = (ins.readObject() as MemberName);
         group = (ins.readObject() as GroupName);
         rank = ins.readByte();
-        rankAssignedDate = (ins.readField(Long) as Long);
     }
 
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeObject(member);
         out.writeObject(group);
         out.writeByte(rank);
-        out.writeField(rankAssignedDate);
     }
 }
 }

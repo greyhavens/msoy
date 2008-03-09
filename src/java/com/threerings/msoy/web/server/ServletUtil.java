@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -17,6 +18,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
@@ -34,6 +36,17 @@ import static com.threerings.msoy.Log.log;
  */
 public class ServletUtil
 {
+    /** A compartor for sorting lists of MemberCard, most recently online to least. */
+    public static Comparator<MemberCard> SORT_BY_LAST_ONLINE = new Comparator<MemberCard>() {
+        public int compare (MemberCard c1, MemberCard c2) {
+            int rv = MemberCard.compare(c1.status, c2.status);
+            if (rv != 0) {
+                return rv;
+            }
+            return MemberName.compareNames(c1.name, c2.name);
+        }
+    };
+
     /**
      * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
      * and blocks the current thread until the execution has completed.

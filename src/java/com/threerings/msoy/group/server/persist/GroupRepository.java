@@ -238,13 +238,14 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Deletes the specified group from the repository.  This is generally only done when the
-     * last member of a group leaves.
+     * Deletes the specified group from the repository. This assumes that the group has no members
+     * and thus does not remove any {@link GroupMembershipRecord} rows. It also assumes the caller
+     * will take care of deleting the group's scenes.
      */
-    public void deleteGroup (GroupRecord group)
+    public void deleteGroup (int groupId)
         throws PersistenceException
     {
-        delete(group);
+        delete(GroupRecord.class, groupId);
     }
 
     /**
@@ -302,7 +303,7 @@ public class GroupRepository extends DepotRepository
      * returned.
      */
     public List<GroupMembership> resolveGroupMemberships (
-        int memberId, MemberName name, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
+        int memberId, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
         throws PersistenceException
     {
         List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(memberId);
@@ -324,7 +325,7 @@ public class GroupRepository extends DepotRepository
         List<GroupMembership> groups = Lists.newArrayList();
         for (GroupMembershipRecord record : records) {
             if (groupNames.containsKey(record.groupId)) {
-                groups.add(record.toGroupMembership(name, groupNames));
+                groups.add(record.toGroupMembership(groupNames));
             }
         }
         return groups;

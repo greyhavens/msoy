@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -226,29 +226,26 @@ public class ProjectSelectionPanel extends FlexTable
     }
 
     protected static class DeleteButton extends Button
-        implements ClickListener
+        implements Command
     {
         public DeleteButton (SwiftlyProject project, ProjectSelectionPanel panel)
         {
             super(CSwiftly.msgs.deleteButton());
             _project = project;
             _panel = panel;
-            addClickListener(this);
+            addClickListener(
+                new PromptPopup(CSwiftly.msgs.projectDeletePrompt(_project.projectName), this));
         }
 
-        public void onClick (Widget target)
+        // from interface Command
+        public void execute ()
         {
-            new PromptPopup(CSwiftly.msgs.projectDeletePrompt(_project.projectName)) {
-                public void onAffirmative () {
-                    CSwiftly.swiftlysvc.deleteProject(
-                        CSwiftly.ident, _project.projectId, new MsoyCallback() {
-                        public void onSuccess (Object result) {
-                            _panel.projectWasRemoved(_project);
-                        }
-                    });
+            CSwiftly.swiftlysvc.deleteProject(
+                CSwiftly.ident, _project.projectId, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    _panel.projectWasRemoved(_project);
                 }
-                public void onNegative () { }
-            }.prompt();
+            });
         }
 
         protected SwiftlyProject _project;

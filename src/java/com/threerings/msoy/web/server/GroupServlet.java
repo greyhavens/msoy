@@ -21,9 +21,13 @@ import com.samskivert.util.Predicate;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -36,6 +40,7 @@ import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupCodes;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -152,13 +157,15 @@ public class GroupServlet extends MsoyServiceServlet
             detail.group = grec.toGroupObject();
             detail.extras = grec.toExtrasObject();
             detail.creator = MsoyServer.memberRepo.loadMemberName(grec.creatorId);
-            detail.managers = loadGroupMembers(grec.groupId, GroupMembership.RANK_MANAGER);
 
-            // determine if we're a member
+            // determine our rank info if we're a member
             if (mrec != null) {
                 GroupMembershipRecord gmrec =
                     MsoyServer.groupRepo.getMembership(grec.groupId, mrec.memberId);
-                detail.myRank = (gmrec == null) ? GroupMembership.RANK_NON_MEMBER : gmrec.rank;
+                if (gmrec != null) {
+                    detail.myRank = gmrec.rank;
+                    detail.myRankAssigned = gmrec.rankAssigned.getTime();
+                }
             }
 
             return detail;
@@ -252,7 +259,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             return MsoyServer.groupRepo.resolveGroupMemberships(
-                memberId, mRec.getName(), new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
                     public boolean isMatch (Tuple<GroupRecord,GroupMembershipRecord> info) {
                         // if we're not the person in question, don't show exclusive groups
                         if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
@@ -313,12 +320,10 @@ public class GroupServlet extends MsoyServiceServlet
                 grec.groupId, grec.creatorId, GroupMembership.RANK_MANAGER);
 
             // if the creator is online, update their runtime data
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.groupMan.updateMemberGroup(
-                        grec.creatorId, grec.groupId, grec.name, GroupMembership.RANK_MANAGER);
-                }
-            });
+            GroupMembership gm = new GroupMembership();
+            gm.group = grec.toGroupName();
+            gm.rank = GroupMembership.RANK_MANAGER;
+            MemberNodeActions.joinedGroup(grec.creatorId, gm);
 
             return grec.toGroupObject();
 
@@ -370,36 +375,86 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void leaveGroup (WebIdent ident, final int groupId, final int memberId)
+    public void leaveGroup (WebIdent ident, int groupId, int memberId)
         throws ServiceException
     {
-        requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "leaveGroup[" + groupId + ", " + memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.leaveGroup(groupId, memberId, waiter);
+        try {
+            GroupMembershipRecord tgtrec = MsoyServer.groupRepo.getMembership(groupId, memberId);
+            if (tgtrec == null) {
+                log.info("Requested to remove non-member from group [who=" + mrec.who() +
+                         ", gid=" + groupId + ", mid=" + memberId + "].");
+                return; // no harm no foul
             }
-        });
-        waiter.waitForResult();
+
+            // if we're not removing ourselves, make sure we're a manager and outrank the target
+            if (mrec.memberId != memberId) {
+                GroupMembershipRecord gmrec =
+                    MsoyServer.groupRepo.getMembership(groupId, mrec.memberId);
+                if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER ||
+                    (tgtrec.rank == GroupMembership.RANK_MANAGER &&
+                     tgtrec.rankAssigned.getTime() < gmrec.rankAssigned.getTime())) {
+                    log.warning("Rejecting remove from group request [who=" + mrec.who() +
+                                ", gid=" + groupId + ", mid=" + memberId +
+                                ", reqrec=" + gmrec + ", tgtrec=" + tgtrec + "].");
+                    throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+                }
+            }
+
+            // if we made it this far, go ahead and remove the member from the group
+            MsoyServer.groupRepo.leaveGroup(groupId, memberId);
+
+            // if the group has no members left, remove the group as well
+            if (MsoyServer.groupRepo.countMembers(groupId) == 0) {
+                // TODO: delete this group's scenes
+                log.warning("Group deleted, but we haven't implemented group scene deletion! " +
+                            "[id=" + groupId + "].");
+                MsoyServer.groupRepo.deleteGroup(groupId);
+            }
+
+            // let the dobj world know that this member has been removed
+            MemberNodeActions.leftGroup(memberId, groupId);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "leaveGroup failed [who=" + mrec.who() + ", gid=" + groupId +
+                    ", mid=" + memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
-    public void joinGroup (WebIdent ident, final int groupId, final int memberId)
+    public void joinGroup (WebIdent ident, int groupId)
         throws ServiceException
     {
-        requireAuthedUser(ident);
+        final MemberRecord mrec = requireAuthedUser(ident);
 
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "joinGroup[" + groupId + ", " + memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.joinGroup(
-                    groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
+        try {
+            // make sure the group in question exists
+            final GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (grec == null) {
+                log.warning("Requested to join non-existent group [who=" + mrec.who() +
+                            ", gid=" + groupId + "].");
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-        });
-        waiter.waitForResult();
+
+            // TODO: we currently only prevent members from joining private groups by not showing
+            // them the UI for joining; this will eventually be a problem
+
+            // create a record indicating that we've joined this group
+            MsoyServer.groupRepo.joinGroup(groupId, mrec.memberId, GroupMembership.RANK_MEMBER);
+
+            // update this member's distributed object if they're online anywhere
+            GroupMembership gm = new GroupMembership();
+            gm.group = grec.toGroupName();
+            gm.rank = GroupMembership.RANK_MEMBER;
+            MemberNodeActions.joinedGroup(mrec.memberId, gm);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "joinGroup failed [who=" + mrec.who() +
+                    ", gid=" + groupId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
@@ -417,6 +472,9 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
+
+            // TODO: MemberNodeActions.groupRankUpdated(memberId, groupId, newRank)
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "updateMemberRank failed [groupId=" + groupId + ", memberId=" +
                 memberId + ", newRank=" + newRank + "]", pe);
@@ -511,23 +569,21 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
-    protected List<GroupMembership> loadGroupMembers (int groupId, byte minRank)
+    protected List<GroupMemberCard> loadGroupMembers (int groupId, byte minRank)
         throws PersistenceException
     {
-        IntMap<GroupMembership> members = IntMaps.newHashIntMap();
+        IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
         for (GroupMembershipRecord gmrec : MsoyServer.groupRepo.getMembers(groupId)) {
-            // TODO: filter in the database query
-            if (gmrec.rank == GroupMembership.RANK_MANAGER) {
-                members.put(gmrec.memberId, gmrec.toGroupMembership());
+            if (gmrec.rank >= minRank) { // TODO: filter in the database query
+                members.put(gmrec.memberId, gmrec.toGroupMemberCard());
             }
         }
-        for (MemberName name : MsoyServer.memberRepo.loadMemberNames(members.keySet())) {
-            GroupMembership gm = members.get(name.getMemberId());
-            gm.member = name;
-            // TODO: make these member cards
+        for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
+            mcr.toMemberCard(members.get(mcr.memberId));
         }
-        List<GroupMembership> mlist = Lists.newArrayList();
+        List<GroupMemberCard> mlist = Lists.newArrayList();
         mlist.addAll(members.values());
+        Collections.sort(mlist, ServletUtil.SORT_BY_LAST_ONLINE);
         return mlist;
     }
 

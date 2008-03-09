@@ -4,9 +4,12 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
+
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.peer.server.MemberNodeAction;
 
 /**
  * Contains various member node actions.
@@ -38,6 +41,24 @@ public class MemberNodeActions
     public static void reportUnreadMail (int memberId, int newMailCount)
     {
         MsoyServer.peerMan.invokeNodeAction(new ReportUnreadMail(memberId, newMailCount));
+    }
+
+    /**
+     * Dispatches a notification that a member has joined the specified group to whichever server
+     * they are logged into.
+     */
+    public static void joinedGroup (int memberId, GroupMembership gm)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new JoinedGroup(memberId, gm));
+    }
+
+    /**
+     * Dispatches a notification that a member has left the specified group to whichever server
+     * they are logged into.
+     */
+    public static void leftGroup (int memberId, int groupId)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new LeftGroup(memberId, groupId));
     }
 
     protected static class DisplayNameChanged extends MemberNodeAction
@@ -92,5 +113,33 @@ public class MemberNodeActions
         }
 
         protected int _newMailCount;
+    }
+
+    protected static class JoinedGroup extends MemberNodeAction
+    {
+        public JoinedGroup (int memberId, GroupMembership gm) {
+            super(memberId);
+            _gm = gm;
+        }
+
+        protected void execute (MemberObject memobj) {
+            memobj.addToGroups(_gm);
+        }
+
+        protected GroupMembership _gm;
+    }
+
+    protected static class LeftGroup extends MemberNodeAction
+    {
+        public LeftGroup (int memberId, int groupId) {
+            super(memberId);
+            _groupId = groupId;
+        }
+
+        protected void execute (MemberObject memobj) {
+            memobj.removeFromGroups(_groupId);
+        }
+
+        protected int _groupId;
     }
 }

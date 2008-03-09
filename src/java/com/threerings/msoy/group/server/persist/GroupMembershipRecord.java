@@ -16,8 +16,8 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 
 /**
@@ -68,31 +68,30 @@ public class GroupMembershipRecord extends PersistentRecord
     /** The id of the group in the group membership. */
     public int groupId;
 
-    /** The rank of the member in the group, defined in {@link GroupMembership}. */
+    /** The rank of the member in the group, defined in {@link GroupMemberCard}. */
     public byte rank;
 
     /** The date that this rank was assigned on.  Used to decide rank seniority. */
     public Timestamp rankAssigned;
 
     /**
-     * Converts this persistent record to a runtime record with no member or group name
-     * information.
+     * Converts this persistent record to a group member card.
      */
-    public GroupMembership toGroupMembership ()
+    public GroupMemberCard toGroupMemberCard ()
     {
-        GroupMembership gm = new GroupMembership();
-        gm.rank = rank;
-        gm.rankAssignedDate = rankAssigned.getTime();
-        return gm;
+        GroupMemberCard card = new GroupMemberCard();
+        card.rank = rank;
+        card.rankAssigned = rankAssigned.getTime();
+        return card;
     }
 
     /**
      * Converts this persistent record to a runtime record.
      */
-    public GroupMembership toGroupMembership (MemberName member, IntMap<GroupName> groups)
+    public GroupMembership toGroupMembership (IntMap<GroupName> groups)
     {
-        GroupMembership gm = toGroupMembership();
-        gm.member = member;
+        GroupMembership gm = new GroupMembership();
+        gm.rank = rank;
         gm.group = groups.get(groupId);
         return gm;
     }
@@ -103,9 +102,7 @@ public class GroupMembershipRecord extends PersistentRecord
     @Override
     public String toString ()
     {
-        StringBuilder buf = new StringBuilder("[");
-        StringUtil.fieldsToString(buf, this);
-        return buf.append("]").toString();
+        return StringUtil.fieldsToString(this);
     }
 
     // AUTO-GENERATED: METHODS START

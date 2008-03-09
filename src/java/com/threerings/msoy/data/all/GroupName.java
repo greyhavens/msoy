@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
@@ -11,7 +13,7 @@ import com.threerings.util.Name;
  * Contains a group name and group id in one handy object.
  */
 public class GroupName extends Name
-    implements IsSerializable
+    implements IsSerializable, Serializable
 {
     /** The maximum length of a group name */
     public static final int LENGTH_MAX = 24;

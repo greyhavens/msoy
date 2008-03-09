@@ -76,7 +76,7 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService.joinGroup} 
      */
-    public void joinGroup (WebIdent ident, int groupId, int memberId, AsyncCallback callback);
+    public void joinGroup (WebIdent ident, int groupId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService.updateMemberRank}
