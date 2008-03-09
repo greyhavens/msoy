@@ -52,7 +52,6 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -699,12 +698,10 @@ public class WorldController extends MsoyController
             handleJoinAVRGame(int(params["worldGame"]));
 
         } else if (null != params["groupChat"]) {
-            var group :GroupName = new GroupName(null, int(params["groupChat"]));
-            // get the real GroupName, complete with text name
-            var groupMembership :GroupMembership =
-                _wctx.getMemberObject().groups.get(group) as GroupMembership;
-            if (groupMembership != null) {
-                handleOpenChannel(groupMembership.group);
+            var groupId :int = int(params["groupChat"]);
+            var gm :GroupMembership = _wctx.getMemberObject().groups.get(groupId) as GroupMembership;
+            if (gm != null) {
+                handleOpenChannel(gm.group);
             }
 
             // fix the URL
