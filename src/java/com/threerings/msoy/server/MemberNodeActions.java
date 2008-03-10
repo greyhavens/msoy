@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 

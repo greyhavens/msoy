@@ -3,11 +3,8 @@
 
 package com.threerings.msoy.server.util;
 
-import java.io.FileReader;
 import java.net.URL;
 import java.util.logging.Level;
-
-import org.apache.commons.io.IOUtils;
 
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;

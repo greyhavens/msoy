@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,6 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.WhereClause;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -31,10 +29,8 @@ import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
