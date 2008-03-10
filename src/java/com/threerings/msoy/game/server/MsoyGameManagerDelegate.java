@@ -43,6 +43,7 @@ import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -826,12 +827,16 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // because we've been doing that all along
         MsoyGameServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
             public boolean invoke () {
+                UserActionDetails action = new UserActionDetails(
+                        record.memberId, UserAction.PLAYED_GAME, 
+                        _content.game.getType(), _content.game.itemId);
                 try {
-                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
-                        record.memberId, record.awarded, UserAction.PLAYED_GAME, details);
+                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(action, record.awarded);
+                    MsoyGameServer.gameReg.gamePayout(
+                        action, _content.game, record.awarded, record.secondsPlayed); 
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to grant flow [mid=" + record.memberId +
-                            ", amount=" + record.awarded + ", details=" + details + "].", pe);
+                    log.log(Level.WARNING, "Failed to grant flow [amount=" + 
+                            record.awarded + ", action=" + action + "].", pe);
                 }
                 return false;
             }

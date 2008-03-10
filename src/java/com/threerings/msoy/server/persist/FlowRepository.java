@@ -32,6 +32,7 @@ import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -83,14 +84,14 @@ public class FlowRepository extends DepotRepository
      * @return null if no flow was granted as a result of this action, the member's new
      * MemberFlowRecord if flow was granted by the action.
      */
-    public MemberFlowRecord logUserAction (int memberId, UserAction action, String details)
+    public MemberFlowRecord logUserAction (UserActionDetails info)
         throws PersistenceException
     {
         // if they get flow for performing this action, grant it to them
-        if (action.getFlow() > 0) {
-            return grantFlow(memberId, action.getFlow(), action, details);
+        if (info.action.getFlow() > 0) {
+            return grantFlow(info, info.action.getFlow());
         } else {
-            recordUserAction(memberId, action, details);
+            recordUserAction(info);
             return null;
         }
     }
@@ -153,7 +154,7 @@ public class FlowRepository extends DepotRepository
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
      */
-    public int grantFlow (String accountName, int amount, UserAction action, String details)
+    public int grantFlow (UserActionDetails action, String accountName, int amount)
         throws PersistenceException
     {
         MemberRecord record =
@@ -162,9 +163,12 @@ public class FlowRepository extends DepotRepository
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", action=" + action + "]");
         }
-        return grantFlow(record.memberId, amount, action, details).flow;
+        
+        final UserActionDetails newInfo = new UserActionDetails(
+            record.memberId, action.action, action.otherMemberId, action.itemType, action.itemId);
+        return grantFlow(newInfo, amount).flow;
     }
-
+    
     /**
      * Expire a member's flow given that dMin minute passed since last we did so.  The flow field
      * of the supplied MemberRecord is modified by this method: the expired flow is subtracted from
@@ -187,10 +191,10 @@ public class FlowRepository extends DepotRepository
      *
      * @return the member's new flow value following the update.
      */
-    public MemberFlowRecord spendFlow (int memberId, int amount, UserAction action, String details)
+    public MemberFlowRecord spendFlow (UserActionDetails info, int amount)
         throws PersistenceException
     {
-        return updateFlow(memberId, amount, action, details, false, false);
+        return updateFlow(info, amount, false, false);
     }
 
     /**
@@ -199,10 +203,10 @@ public class FlowRepository extends DepotRepository
      *
      * @return the member's new flow value following the update.
      */
-    public MemberFlowRecord grantFlow (int memberId, int amount, UserAction action, String details)
+    public MemberFlowRecord grantFlow (UserActionDetails info, int amount)
         throws PersistenceException
     {
-        return updateFlow(memberId, amount, action, details, true, true);
+        return updateFlow(info, amount, true, true);
     }
 
     /**
@@ -212,10 +216,10 @@ public class FlowRepository extends DepotRepository
      *
      * @return the member's new flow value following the update.
      */
-    public MemberFlowRecord refundFlow (int memberId, int amount, UserAction action, String details)
+    public MemberFlowRecord refundFlow (UserActionDetails info, int amount)
         throws PersistenceException
     {
-        return updateFlow(memberId, amount, action, details, true, false);
+        return updateFlow(info, amount, true, false);
     }
 
     /**
@@ -223,14 +227,14 @@ public class FlowRepository extends DepotRepository
      *
      * @return the user's new flow value following the update.
      */
-    protected MemberFlowRecord updateFlow (int memberId, int amount, UserAction action,
-                                           String details, boolean grant, boolean accumulate)
+    protected MemberFlowRecord updateFlow (
+        UserActionDetails info, int amount, boolean grant, boolean accumulate)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + type + " [memberId=" + memberId + ", amount=" + amount + "]");
+                "Illegal flow " + type + " [memberId=" + info.memberId + ", amount=" + amount + "]");
         }
 
         Map<String, SQLExpression> fieldMap = Maps.newHashMap();
@@ -243,32 +247,32 @@ public class FlowRepository extends DepotRepository
                          new Arithmetic.Add(MemberRecord.ACC_FLOW_C, amount));
         }
 
-        Key key = MemberRecord.getKey(memberId);
+        Key key = MemberRecord.getKey(info.memberId);
         int mods;
         if (grant) {
             mods = updateLiteral(MemberRecord.class, key, key, fieldMap);
             if (mods == 0) {
                 throw new PersistenceException(
-                    "Grant modified zero rows!? [mid=" + memberId + ", amount=" + amount + "]");
+                    "Grant modified zero rows!? [mid=" + info.memberId + ", amount=" + amount + "]");
             }
 
         } else {
             mods = updateLiteral(
                 MemberRecord.class,
                 new Where(new Logic.And(
-                              new Conditionals.Equals(MemberRecord.MEMBER_ID_C, memberId),
+                              new Conditionals.Equals(MemberRecord.MEMBER_ID_C, info.memberId),
                               new Conditionals.GreaterThanEquals(MemberRecord.FLOW_C, amount))),
                 key, fieldMap);
             if (mods == 0) {
                 throw new PersistenceException(
                     "Spend modified zero rows (probably NSF) " +
-                    "[mid=" + memberId + ", amount=" + amount + "]");
+                    "[mid=" + info.memberId + ", amount=" + amount + "]");
             }
         }
 
         // sanity check
         if (mods > 1) {
-            log.warning("Flow " + type + " modified multiple rows [mid=" + memberId +
+            log.warning("Flow " + type + " modified multiple rows [mid=" + info.memberId +
                         ", amount=" + amount + ", mods=" + mods + "].");
         }
 
@@ -285,7 +289,7 @@ public class FlowRepository extends DepotRepository
                 if (again) {
                     throw new PersistenceException(
                         "Flow summary update modified zero rows after insertion " +
-                        "[memberId=" + memberId + ", amount=" + amount + "]");
+                        "[memberId=" + info.memberId + ", amount=" + amount + "]");
                 }
                 DailyFlowRecord summary = new DailyFlowRecord();
                 summary.date = date;
@@ -308,14 +312,14 @@ public class FlowRepository extends DepotRepository
         } while (again);
 
         // record the associated user action
-        recordUserAction(memberId, action, details);
+        // TODO (RZ): is this necessary anymore?
+        recordUserAction(info);
 
         // TODO: can we magically get the updated value from the database? stored procedure?
-        MemberFlowRecord updatedFlow = loadMemberFlow(memberId);
+        MemberFlowRecord updatedFlow = loadMemberFlow(info.memberId);
 
         // record this flow transaction to our uber log
-        _eventLog.flowTransaction(memberId, action.getNumber(), grant ? amount : -amount,
-                                  updatedFlow.flow, details);
+        _eventLog.flowTransaction(info, grant ? amount : -amount, updatedFlow.flow);
 
         return updatedFlow;
     }
@@ -323,14 +327,14 @@ public class FlowRepository extends DepotRepository
     /**
      * Records a user action in the database.
      */
-    protected void recordUserAction (int memberId, UserAction action, String details)
+    protected void recordUserAction (UserActionDetails info)
         throws PersistenceException
     {
         MemberActionLogRecord record = new MemberActionLogRecord();
-        record.memberId = memberId;
-        record.actionId = action.getNumber();
+        record.memberId = info.memberId;
+        record.actionId = info.action.getNumber();
         record.actionTime = new Timestamp(System.currentTimeMillis());
-        record.data = details;
+        record.data = info.misc;
         insert(record);
     }
 

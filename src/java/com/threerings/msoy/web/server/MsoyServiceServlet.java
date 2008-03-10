@@ -16,6 +16,7 @@ import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
@@ -104,11 +105,10 @@ public class MsoyServiceServlet extends RemoteServiceServlet
      * A convenience method to record that a user took an action, and potentially award them flow
      * for doing so.
      */
-    protected void logUserAction (MemberRecord memrec, UserAction action, String details)
+    protected void logUserAction (UserActionDetails info)
         throws PersistenceException
     {
-        MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().logUserAction(
-            memrec.memberId, action, details);
+        MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().logUserAction(info);
         if (flowRec != null) {
             MemberNodeActions.flowUpdated(flowRec);
         }

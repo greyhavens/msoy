@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import com.threerings.panopticon.client.net.LoggingConnection;
 import com.threerings.panopticon.common.Event;
 
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
@@ -64,14 +65,15 @@ public class MsoyEventLogger
         post(message);
     }
 
-    public void flowTransaction (int memberId, int actionType, int deltaFlow, int newTotal,
-                                 String details)
+    public void flowTransaction (UserActionDetails info, int deltaFlow, int newTotal)
     {
         MsoyEvents.FlowTransaction message = new MsoyEvents.FlowTransaction();
-        message.memberId = memberId;
-        message.actionType = actionType;
+        message.memberId = info.memberId;
+        message.actionType = info.action.getNumber();
+        message.itemType = info.itemType;
+        message.itemId = info.itemId;
         message.deltaFlow = deltaFlow;
-        message.details = details;
+        message.newtotal = newTotal;
         post(message);
     }
 
@@ -100,12 +102,13 @@ public class MsoyEventLogger
         post(message);
     }
 
-    public void userLoggedIn (int memberId, boolean firstLogin, String sessionToken)
+    public void userLoggedIn (int memberId, boolean firstLogin, long createdOn, String sessionToken)
     {
         MsoyEvents.Login message = new MsoyEvents.Login();
         message.memberId = memberId;
         message.firstLogin = firstLogin;
         message.sessionToken = sessionToken;
+        message.createdOn = createdOn;
         post(message);
     }
 
@@ -173,6 +176,17 @@ public class MsoyEventLogger
         post(message);
     }
 
+    public void gamePlayed (int gameGenre, int gameId, int itemId, int payout, int secondsPlayed) 
+    {
+        MsoyEvents.GamePlayed message = new MsoyEvents.GamePlayed();
+        message.gameGenre = gameGenre;
+        message.gameId = gameId;
+        message.itemId = itemId;
+        message.payout = payout;
+        message.secondsPlayed = secondsPlayed;
+        post(message);
+    }
+    
     public void trophyEarned (int recipientId, int gameId, String trophyIdent)
     {
         MsoyEvents.TrophyEarned message = new MsoyEvents.TrophyEarned();

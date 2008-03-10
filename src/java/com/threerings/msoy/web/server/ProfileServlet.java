@@ -15,19 +15,16 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.Predicate;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.game.data.all.Trophy;
@@ -37,11 +34,6 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-
-import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupMembership;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.group.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GameRating;
@@ -90,8 +82,10 @@ public class ProfileServlet extends MsoyServiceServlet
             MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
-            logUserAction(memrec, (nrec.modifications == 1) ?
-                          UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE, null);
+            UserAction action = (nrec.modifications == 1) 
+                ? UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
+
+            logUserAction(new UserActionDetails(memrec.memberId, action));
             _eventLog.profileUpdated(memrec.memberId);
 
             // handle a display name change if necessary

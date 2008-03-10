@@ -34,6 +34,7 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -286,6 +287,15 @@ public class GameGameRegistry
         });
     }
 
+    /**
+     * Called when a game was successfully finished with a payout. 
+     * Right now just logs the results for posterity.
+     */
+    public void gamePayout (UserActionDetails info, Game game, int payout, int secondsPlayed)
+    {
+        _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed);
+    }
+    
     // from AVRProvider
     public void activateGame (ClientObject caller, final int gameId,
                               final InvocationService.ResultListener listener)

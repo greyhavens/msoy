@@ -28,6 +28,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 
@@ -209,7 +210,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
                 // take flow from purchaser
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                    mrec.memberId, flowCost, UserAction.BOUGHT_ITEM, details);
+                    new UserActionDetails(mrec.memberId, UserAction.BOUGHT_ITEM, itemType, catalogId),
+                    flowCost);
                 // update member's new flow
                 MemberNodeActions.flowUpdated(flowRec);
 
@@ -217,8 +219,9 @@ public class CatalogServlet extends MsoyServiceServlet
                 if (creatorPortion > 0) {
                     // TODO: hold this in escrow
                     flowRec = MsoyServer.memberRepo.getFlowRepository().grantFlow(
-                        listing.item.creatorId, creatorPortion, UserAction.RECEIVED_PAYOUT,
-                        details + " " + mrec.memberId);
+                        new UserActionDetails(listing.item.creatorId, UserAction.RECEIVED_PAYOUT, 
+                                              mrec.memberId, itemType, catalogId), 
+                        creatorPortion);
                     MemberNodeActions.flowUpdated(flowRec);
                 }
             }
@@ -316,13 +319,14 @@ public class CatalogServlet extends MsoyServiceServlet
                 listItem, originalItemId, pricing, salesTarget, flowCost, goldCost, now);
 
             // record the listing action and charge the flow
-            String details = repo.getItemType() + " " + originalItemId + " " + pricing;
+            UserActionDetails info = new UserActionDetails(
+                mrec.memberId, UserAction.LISTED_ITEM, repo.getItemType(), originalItemId);
             if (price > 0) {
-                MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                    mrec.memberId, price, UserAction.LISTED_ITEM, details);
+                MemberFlowRecord flowRec = 
+                    MsoyServer.memberRepo.getFlowRepository().spendFlow(info, price);
                 MemberNodeActions.flowUpdated(flowRec);
             } else {
-                logUserAction(mrec, UserAction.LISTED_ITEM, details);
+                logUserAction(info);
             }
 
             // publish to the member's feed if it's not hidden
@@ -431,13 +435,15 @@ public class CatalogServlet extends MsoyServiceServlet
             repo.updateOriginalItem(listItem);
 
             // record the listing action
-            String details = repo.getItemType() + " " + originalItemId;
+            UserActionDetails info = new UserActionDetails(
+                mrec.memberId, UserAction.UPDATED_LISTING, repo.getItemType(), originalItemId);
+            
             if (price > 0) {
-                MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                    mrec.memberId, price, UserAction.UPDATED_LISTING, details);
+                MemberFlowRecord flowRec = 
+                    MsoyServer.memberRepo.getFlowRepository().spendFlow(info, price);
                 MemberNodeActions.flowUpdated(flowRec);
             } else {
-                logUserAction(mrec, UserAction.UPDATED_LISTING, details);
+                logUserAction(info);
             }
 
             // kick off a notification that the list item was updated to e.g. reload game lobbies
@@ -491,9 +497,11 @@ public class CatalogServlet extends MsoyServiceServlet
                 catalogId, pricing, salesTarget, flowCost, goldCost, System.currentTimeMillis());
 
             // record the update action
-            String details = itemType + " " + catalogId + " " + pricing + " " + salesTarget + " " +
-                flowCost + " " + goldCost;
-            logUserAction(mrec, UserAction.UPDATED_PRICING, details);
+            // String details = itemType + " " + catalogId + " " + pricing + " " + salesTarget + " " +
+            //    flowCost + " " + goldCost;
+            UserActionDetails info = new UserActionDetails(
+                mrec.memberId, UserAction.UPDATED_PRICING, itemType, catalogId);
+            logUserAction(info);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Update pricing failed [type=" + itemType +
@@ -563,18 +571,20 @@ public class CatalogServlet extends MsoyServiceServlet
             int flowRefund = (cRec.flowPaid * daysLeft) / 5;
             int goldRefund = (0 /* TODO */ * daysLeft) / 5;
 
-            String details = iident.type + " " + iident.itemId + " " + (20*daysLeft) + "% " +
-                flowRefund + " " + goldRefund;
-            MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().refundFlow(
-                mrec.memberId, flowRefund, UserAction.RETURNED_ITEM, details);
+            UserActionDetails returnInfo = new UserActionDetails(
+                mrec.memberId, UserAction.RETURNED_ITEM, iident.type, iident.itemId);
+            MemberFlowRecord flowRec = 
+                MsoyServer.memberRepo.getFlowRepository().refundFlow(returnInfo, flowRefund);
             MemberNodeActions.flowUpdated(flowRec);
 
             // now we have to take 30% of the refund away from the creator
             // TODO: when escrow works, this will blessedly go away
             int creatorPortion = (3 * flowRefund) / 10;
-            flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                item.creatorId, creatorPortion, UserAction.RECEIVED_PAYOUT,
-                details + " " + mrec.memberId);
+            UserActionDetails payoutInfo = 
+                new UserActionDetails(item.creatorId, UserAction.RECEIVED_PAYOUT, 
+                        mrec.memberId, iident.type, iident.itemId);
+            flowRec = 
+                MsoyServer.memberRepo.getFlowRepository().spendFlow(payoutInfo, creatorPortion);
             MemberNodeActions.flowUpdated(flowRec);
 
             return new int[] { flowRefund, goldRefund };

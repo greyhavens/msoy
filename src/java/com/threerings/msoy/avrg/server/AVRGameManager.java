@@ -27,6 +27,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -292,8 +293,9 @@ public class AVRGameManager
                 _payout = Math.round(_payoutFactor * Math.max(0, Math.min(payoutLevel, 1.0f)));
                 if (_payout > 0) {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
-                        player.getMemberId(), _payout, UserAction.COMPLETED_QUEST,
-                        _gameId + " " + questId);
+                        new UserActionDetails(player.getMemberId(), UserAction.COMPLETED_QUEST,
+                                -1, Game.GAME, _gameId, questId), 
+                        _payout);
                 }
             }
             public void handleSuccess () {

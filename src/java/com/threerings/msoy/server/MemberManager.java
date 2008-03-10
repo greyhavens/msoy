@@ -48,6 +48,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
@@ -486,21 +487,18 @@ public class MemberManager
      * DailyFlowGrantedRecord}. A {@link MemberActionLogRecord} is recorded for the supplied grant
      * action. Finally, a line is written to the flow grant log.
      */
-    public void grantFlow (final int memberId, final int amount,
-                           final UserAction grantAction, final String details)
+    public void grantFlow (final UserActionDetails info, final int amount)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _flowRec = _memberRepo.getFlowRepository().grantFlow(
-                    memberId, amount, grantAction, details);
+                _flowRec = _memberRepo.getFlowRepository().grantFlow(info, amount);
             }
             public void handleSuccess () {
                 MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
-                        ", action=" + grantAction + ", amount=" + amount +
-                        ", details=" + details + "]", pe);
+                log.log(Level.WARNING, "Unable to grant flow [memberId=" + info.memberId +
+                        ", action=" + info.action + ", amount=" + amount + "]", pe);
             }
             protected MemberFlowRecord _flowRec;
         });
@@ -512,21 +510,18 @@ public class MemberManager
      * DailyFlowSpentRecord}. A {@link MemberActionLogRecord} is recorded for the supplied spend
      * action. Finally, a line is written to the flow grant log.
      */
-    public void spendFlow (final int memberId, final int amount,
-                           final UserAction spendAction, final String details)
+    public void spendFlow (final UserActionDetails info, final int amount)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _flowRec = _memberRepo.getFlowRepository().spendFlow(
-                    memberId, amount, spendAction, details);
+                _flowRec = _memberRepo.getFlowRepository().spendFlow(info, amount);
             }
             public void handleSuccess () {
                 MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
-                        ", action=" + spendAction + ", amount=" + amount +
-                        ", details=" + details + "]", pe);
+                log.log(Level.WARNING, "Unable to spend flow [amount=" + amount +
+                        ", info=" + info + "]", pe);
             }
             protected MemberFlowRecord _flowRec;
         });
@@ -537,13 +532,12 @@ public class MemberManager
      * analysis purposes. Some actions grant flow as a result of being taken, this method handles
      * that granting and updating the member's flow if they are online.
      */
-    public void logUserAction (MemberName member, final UserAction action, final String details)
+    public void logUserAction (final UserActionDetails info)
     {
-        final int memberId = member.getMemberId();
         MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
             public void invokePersist () throws PersistenceException {
                 // record that that took the action
-                _flowRec = _memberRepo.getFlowRepository().logUserAction(memberId, action, details);
+                _flowRec = _memberRepo.getFlowRepository().logUserAction(info);
             }
             public void handleSuccess () {
                 if (_flowRec != null) {
@@ -551,8 +545,7 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to note user action [memberId=" + memberId +
-                            ", action=" + action + ", details=" + details + "]");
+                log.warning("Unable to note user action [action=" + info + "].");
             }
             protected MemberFlowRecord _flowRec;
         });

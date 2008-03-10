@@ -27,6 +27,7 @@ public class MsoyEvents
         public int memberId;
         public boolean firstLogin;
         public String sessionToken;
+        public long createdOn;
     }
 
     public static class Logout extends MsoyEvent
@@ -48,9 +49,10 @@ public class MsoyEvents
     {
         public int memberId;
         public int actionType;
+        public int itemId;
+        public int itemType;
         public int deltaFlow;
         public int newtotal;
-        public String details;
     }
 
     public static class ItemPurchase extends MsoyEvent
@@ -92,6 +94,15 @@ public class MsoyEvents
         public int memberId;
         public int groupId;
         public byte newRank;
+    }
+    
+    public static class GamePlayed extends MsoyEvent
+    {
+        public int gameGenre;
+        public int gameId;
+        public int itemId;
+        public int payout;
+        public int secondsPlayed;
     }
 
     public static class TrophyEarned extends MsoyEvent
