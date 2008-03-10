@@ -1060,20 +1060,20 @@ public class RoomManager extends SpotSceneManager
             this.bodyOid = bodyOid;
         }
         public boolean equals (Object other) {
-        	if (other instanceof Controller) {
-        		Controller otherController = (Controller) other;
-        		return (bodyOid == otherController.bodyOid && load == otherController.load);
-        	} else {
-        		return false;
-        	}
+            if (other instanceof Controller) {
+                Controller otherController = (Controller) other;
+                return (bodyOid == otherController.bodyOid && load == otherController.load);
+            } else {
+                return false;
+            }
         }
         public int hashCode () {
             return bodyOid;
         }
         public int compareTo (Controller other) {
-        	// sort first by load, then by body oid
-        	int loadDifference = load - other.load;
-        	return (loadDifference != 0 ? loadDifference : bodyOid - other.bodyOid);
+            // sort first by load, then by body oid
+            int loadDifference = load - other.load;
+            return (loadDifference != 0 ? loadDifference : bodyOid - other.bodyOid);
         }
     } // End: static class Controller
 
