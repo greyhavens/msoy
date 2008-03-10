@@ -414,8 +414,8 @@ public class ChatTab extends HBox
     protected static const PADDING :int = 5;
 
     protected static const COLOR_ROOM :int = 0xFFFFFF;
-    protected static const COLOR_TELL :int = 0xB6D2E3;
-    protected static const COLOR_GROUP :int = 0xF0AF75;
+    protected static const COLOR_TELL :int = 0xFFCE7C;
+    protected static const COLOR_GROUP :int = 0xC7DAEA;
 
     protected var _label :Label;
     protected var _controller :ChatChannelController;

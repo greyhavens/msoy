@@ -313,14 +313,25 @@ TabNavigator, TabBar {
 
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
     .attentionGroupTab {
-  color: white;
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
+.unselectedRoomTab {
+  color: #8BA1AF;
+}
+
+.unselectedTellTab {
+  color: #B2A696;
+}
+
+.unselectedGroupTab {
+  color: #8E969D;
+}
+
 .selectedRoomTab, .selectedTellTab, .selectedGroupTab {
-  color: black;
+  color: white;
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
