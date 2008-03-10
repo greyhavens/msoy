@@ -284,6 +284,15 @@ public class MsoyUI
     }
 
     /**
+     * Displays informational feedback to the user next to the supplied widget in a non-offensive
+     * way.
+     */
+    public static void infoNear (String message, Widget source)
+    {
+        new InfoPopup(message).showNear(source);
+    }
+
+    /**
      * Displays informational feedback along with an action button which will dismiss the info
      * display and take an action.
      */
@@ -309,15 +318,6 @@ public class MsoyUI
     }
 
     /**
-     * Displays informational feedback to the user next to the supplied widget in a non-offensive
-     * way.
-     */
-    public static void infoNear (String message, Widget source)
-    {
-        new InfoPopup(message).showNear(source);
-    }
-
-    /**
      * Displays error feedback to the user in a non-offensive way.
      */
     public static void error (String message)
@@ -326,19 +326,13 @@ public class MsoyUI
         new InfoPopup(message).show();
     }
 
-//     /**
-//      * Creates a pair of submit and cancel buttons in a horizontal row.
-//      */
-//     public static RowPanel createSubmitCancel (
-//         PopupPanel popup, ClickListener onSubmit)
-//     {
-//         RowPanel buttons = new RowPanel();
-//         buttons.add(new Button(CShell.cmsgs.submit(), onSubmit));
-//         buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
-//             public void onClick (Widget sender) {
-//                 box.hide();
-//             }
-//         }));
-//         return buttons;
-//     }
+    /**
+     * Displays error feedback to the user in a non-offensive way. The error feedback is displayed
+     * near the supplied component.
+     */
+    public static void errorNear (String message, Widget source)
+    {
+        // TODO: style this differently than info feedback
+        new InfoPopup(message).showNear(source);
+    }
 }
