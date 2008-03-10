@@ -7,6 +7,7 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.LoaderInfo;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.ErrorEvent;
@@ -15,16 +16,14 @@ import flash.events.IOErrorEvent;
 
 import flash.utils.ByteArray;
 
-import mx.controls.Image;
+import mx.controls.Spacer;
 
+import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.core.FlexLoader;
 import mx.core.ScrollPolicy;
-
-import com.adobe.images.JPGEncoder;
-import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
@@ -41,7 +40,11 @@ import com.threerings.flex.ScrollBox;
  */
 public class ImagePreview extends HBox
 {
-    public static const SIZE_KNOWN :String = "SizeKnown";
+    public static const SIZE_KNOWN :String = EditCanvas.SIZE_KNOWN;
+
+    public static const MAX_WIDTH :int = 300;
+    public static const MAX_HEIGHT :int = 300;
+
 
     public function ImagePreview (cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
@@ -53,39 +56,31 @@ public class ImagePreview extends HBox
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xCCCCCC);
-        _imageBox = new HBox();
-        _imageBox.maxWidth = 300;
-        _imageBox.maxHeight = 300;
-        _image = new Image();
-        _imageBox.addChild(_image);
-        _imageBox.rawChildren.addChild(_overlay = createControlOverlay());
+        _imageBox = new Canvas();
+        _imageBox.maxWidth = MAX_WIDTH;
+        _imageBox.maxHeight = MAX_HEIGHT;
+        _imageBox.addChild(_editor = new EditCanvas());
+        _editor.addEventListener(EditCanvas.SIZE_KNOWN, dispatchEvent);
+
+        var mask :Shape = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+        mask.graphics.endFill();
+        _editor.mask = mask;
+        _imageBox.rawChildren.addChild(mask);
+
         addChild(_imageBox);
         addChild(_controlBar = createControlBar());
-        setImageSource(null);
+        setImage(null);
     }
 
-    public function setBitmap (bitmapData :BitmapData) :void
+    public function setImage (image :Object) :void
     {
-        _bytes = null;
-        setImageSource(new Bitmap(bitmapData));
-        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ bitmapData.width, bitmapData.height ]));
-    }
+        _editor.setImage(image);
 
-    public function setImage (bytes :ByteArray) :void
-    {
-        _bytes = bytes;
-        if (bytes == null) {
-            setImageSource(null);
-
-        } else {
-            // TODO: maybe subclass the Image control and make it able to load bytes?
-            // There is a Base64Image in flexlib, but it a) does things wrong, and
-            // b) should accept a ByteArray. Base64 decoding is a fucking separate operation, guys.
-            var l :FlexLoader = new FlexLoader();
-            l.contentLoaderInfo.addEventListener(Event.COMPLETE, handleFlexLoaderComplete);
-            l.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleFlexLoaderError);
-            l.loadBytes(bytes);
-        }
+        var showControls :Boolean = (image != null);
+        _controlBar.includeInLayout = showControls;
+        _controlBar.visible = showControls;
     }
 
     /**
@@ -96,55 +91,7 @@ public class ImagePreview extends HBox
      */
     public function getImage (asJpg :Boolean = false, quality :Number = 50) :ByteArray
     {
-        if (_bytes != null) {
-            return _bytes;
-        }
-
-        var src :Object = _image.source;
-        if (src is Bitmap) {
-            var bmpData :BitmapData = Bitmap(src).bitmapData;
-            // TODO: image cropping, etc?
-
-            if (asJpg) {
-                return (new JPGEncoder(quality)).encode(bmpData);
-
-            } else {
-                return PNGEncoder.encode(bmpData);
-            }
-        }
-        return null;
-    }
-
-    protected function handleFlexLoaderError (event :ErrorEvent) :void
-    {
-        trace("Unhandled error: " + event);
-    }
-
-    /**
-     */
-    protected function handleFlexLoaderComplete (event :Event) :void
-    {
-        setImageSource(LoaderInfo(event.target).loader);
-        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ event.target.width, event.target.height ]));
-    }
-
-    protected function setImageSource (source :Object) :void
-    {
-        _image.source = source;
-
-        var showControls :Boolean = (source != null);
-        _controlBar.includeInLayout = showControls;
-        _controlBar.visible = showControls;
-    }
-
-    protected function createControlOverlay () :Sprite
-    {
-        var overlay :Sprite = new Sprite();
-//        var g :Graphics = overlay.graphics;
-//        g.lineStyle(1, 0xFF0000);
-//        g.drawRect(0, 0, 100, 100);
-
-        return overlay;
+        return _editor.getImage(asJpg, quality);
     }
 
     protected function createControlBar () :VBox
@@ -160,6 +107,8 @@ public class ImagePreview extends HBox
         bar.addChild(addMode("move", MOVE));
 
         // TODO add zoom in and out buttons
+        bar.addChild(new CommandButton("+", changeZoom, true));
+        bar.addChild(new CommandButton("-", changeZoom, false));
 
         return bar;
     }
@@ -180,17 +129,22 @@ public class ImagePreview extends HBox
         }
     }
 
-    /** The control displaying the image, for now. */
-    protected var _image :Image;
-
-    /** The raw bytes of the image we're showing. */
-    protected var _bytes :ByteArray;
+    protected function changeZoom (zoomIn :Boolean) :void
+    {
+        if (zoomIn) {
+            _editor.scaleX += .05;
+            _editor.scaleY += .05;
+        } else {
+            _editor.scaleX -= .05;
+            _editor.scaleY -= .05;
+        }
+    }
 
     protected var _controlBar :VBox;
 
-    protected var _imageBox :HBox;
+    protected var _imageBox :Canvas;
 
-    protected var _overlay :Sprite;
+    protected var _editor :EditCanvas;
 
     protected var _buttons :Array = [];
 

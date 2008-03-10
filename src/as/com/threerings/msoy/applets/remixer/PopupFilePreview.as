@@ -119,7 +119,7 @@ public class PopupFilePreview extends TitleWindow
     public function setBitmap (filename :String, bitmapData :BitmapData) :void
     {
         setFilename(filename);
-        _image.setBitmap(bitmapData);
+        _image.setImage(bitmapData);
         _ok.enabled = (bitmapData != null);
     }
 
