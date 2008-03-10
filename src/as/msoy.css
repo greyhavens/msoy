@@ -35,11 +35,11 @@ TitleWindow {
   cornerRadius: 4;
   roundedBottomCorners: true;
   headerHeight: 23;
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/title_bg.png",
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/title_bg.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   titleStyleName: "msoyTitleStyle";
-  backgroundImage: Embed(source="../../rsrc/media/skins/window_bg.png",
+  backgroundImage: Embed(source="../../rsrc/media/skins/window/window_bg.png",
           scaleGridTop="10", scaleGridBottom="20",
           scaleGridLeft="10", scaleGridRight="20");
   backgroundSize: "100%";
@@ -872,7 +872,8 @@ TabNavigator, TabBar {
 }
 
 .headerBar {
-  backgroundColor: #222222;
+  backgroundImage: Embed(source="../../rsrc/media/skins/headerbar_bg.png");
+  backgroundSize: "100%";
 }
 
 .closeButton {
