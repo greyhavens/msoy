@@ -272,10 +272,7 @@ public class MsoyAuthenticator extends Authenticator
             Account account = domain.authenticateAccount(accountName, password);
 
             // we need to find out if this account has ever logged in so that we can decide how to
-            // handle tainted idents; so we load up the member record for this account; if this
-            // user makes it through the gauntlet, we'll stash this away in a place that the client
-            // resolver can get its hands on it so that we can avoid loading the record twice
-            // during authentication
+            // handle tainted idents; so we load up the member record for this account
             if (member == null) {
                 member = MsoyServer.memberRepo.loadMember(account.accountName);
                 // if this is their first logon, create them a member record
@@ -301,14 +298,6 @@ public class MsoyAuthenticator extends Authenticator
             }
             account.tokens = new MsoyTokenRing(tokens);
 
-//             // check whether we're restricting non-insider login
-//             if (!RuntimeConfig.server.openToPublic &&
-//                 !user.holdsToken(OOOUser.INSIDER) &&
-//                 !user.holdsToken(OOOUser.TESTER) &&
-//                 !user.isSupportPlus()) {
-//                 throw new ServiceException(NON_PUBLIC_SERVER);
-//             }
-
             // check whether we're restricting non-admin login
             if (!RuntimeConfig.server.nonAdminsAllowed && !account.tokens.isSupport()) {
                 throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
@@ -319,12 +308,6 @@ public class MsoyAuthenticator extends Authenticator
             rdata.code = MsoyAuthResponseData.SUCCESS;
             _eventLog.userLoggedIn(member.memberId, account.firstLogon, 
                 member.created.getTime(), creds.sessionToken);
-
-//             // pass their user record to the client resolver for retrieval
-//             // later in the logging on process
-//             if (member != null) {
-//                 MsoyClientResolver.stashMember(member);
-//             }
 
         } catch (ServiceException se) {
             rdata.code = se.getMessage();
