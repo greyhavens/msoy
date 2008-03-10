@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.Predicate;
 
@@ -68,10 +69,10 @@ public class LogonPanel extends SmartTable
         if (headerMode) {
             setText(0, 0, CShell.cmsgs.logonEmail(), 1, "rightLabel");
             setWidget(0, 1, _email);
-            setWidget(0, 2, forgot);
+            setWidget(0, 3, forgot);
             setText(1, 0, CShell.cmsgs.logonPassword(), 1, "rightLabel");
             setWidget(1, 1, _password);
-            setWidget(1, 2, logon);
+            setWidget(1, 3, logon);
 
         } else {
             int row = 0;
@@ -79,7 +80,8 @@ public class LogonPanel extends SmartTable
             setWidget(row++, 0, _email);
             setText(row++, 0, CShell.cmsgs.logonPassword());
             setWidget(row, 0, _password);
-            setWidget(row++, 1, forgot);
+            setWidget(row, 1, WidgetUtil.makeShim(3, 3));
+            setWidget(row++, 2, forgot);
             // in non-header mode logon is handled externally
         }
     }
@@ -99,7 +101,7 @@ public class LogonPanel extends SmartTable
             }
             public void onFailure (Throwable caught) {
                 CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
-                MsoyUI.error(CShell.serverError(caught));
+                MsoyUI.errorNear(CShell.serverError(caught), _password);
             }
         });
     }

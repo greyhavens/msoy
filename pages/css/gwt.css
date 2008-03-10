@@ -220,8 +220,11 @@ img, embed, applet, object {
   height: 50px;
 }
 
-.frameHeader .Navi {
-  width: 195px;
+.frameHeader .NaviButton {
+  height: 32px;
+  margin-left: 0px;
+  margin-right: 4px;
+  padding-top: 18px;
 }
 
 .frameHeader .Right {
@@ -230,35 +233,20 @@ img, embed, applet, object {
   vertical-align: bottom;
 }
 
-.frameHeader .Signup {
-  width: 300px;
-  text-align: center;
-  background: #000000;
-}
-
-.frameHeader .Signup table {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.frameHeader .Signup a {
-  color: #FFFFFF;
+.frameHeader .TongueButton {
+  background: url(/images/header/tongue.png) no-repeat bottom;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  width: 129px;
+  height: 30px;
+  padding-top: 5px;
+  cursor: pointer;
 }
 
-.frameHeader .Logon {
-  background: #000000;
-}
-
-.frameHeader .Logon table {
-  margin-top: 5px;
-}
-
-.frameHeader .Button {
-  height: 32px;
-  margin-left: 0px;
-  margin-right: 4px;
-  padding-top: 18px;
+.frameHeader .TongueButton-up-hovering, .frameHeader .TongueButton-down-hovering {
+  padding-top: 10px;
 }
 
 .logonPanel .gwt-TextBox,
@@ -269,6 +257,9 @@ img, embed, applet, object {
 
 .frameHeader .logonPanel {
   font-size: 10px;
+  background: url(/images/header/logon_bg.png) no-repeat bottom;
+  width: 211px;
+  padding: 0px 5px 5px 5px;
 }
 
 .frameHeader .logonPanel td {
@@ -342,15 +333,21 @@ img, embed, applet, object {
 }
 
 .pageDialog {
-  margin: 10px 10px 0px 10px;
+  margin: 0px 0px 5px 0px;
   width: 100%;
-  border: 1px solid #3F8EBA;
+  border-bottom: 2px solid #3F8EBA;
 }
 
 .pageDialog .DialogTitle {
   font-size: 18px;
   font-weight: bold;
   text-align: center;
+  background: #3F8EBA;
+  color: #FFFFFF;
+}
+
+.pageDialog .Close { 
+  background: #3F8EBA;
 }
 
 .pageTitle .Close, .pageDialog .Close {

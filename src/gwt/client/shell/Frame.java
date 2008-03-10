@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -75,6 +76,13 @@ public class Frame
     public static void didLogon ()
     {
         _header.didLogon();
+
+        // clear out the logon dialog
+        clearDialog(new Predicate() {
+            public boolean isMatch (Object o) {
+                return (o instanceof LogonPanel);
+            }
+        });
     }
 
     /**
@@ -508,12 +516,14 @@ public class Frame
 
         public void didLogon () {
             getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
+            getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_BOTTOM);
             setWidget(0, _statusCol, CShell.app.getStatusPanel(), 1, "Right");
         }
 
         public void didLogoff () {
             getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_CENTER);
-            setWidget(0, _statusCol, new LogonPanel(true), 1, "Right");
+            getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
+            setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
         }
 
         public void selectTab (String pageId) {
@@ -545,13 +555,35 @@ public class Frame
         protected ArrayList _buttons = new ArrayList();
     }
 
+    protected static class SignOrLogonPanel extends SmartTable
+    {
+        public SignOrLogonPanel () {
+            super(0, 0);
+            PushButton signup = new PushButton(
+                CShell.cmsgs.headerSignup(),
+                Application.createLinkListener(Page.ACCOUNT, "create"));
+            signup.setStyleName("TongueButton");
+            setWidget(0, 0, signup);
+            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+            setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+            PushButton logon = new PushButton(CShell.cmsgs.headerLogon(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    setWidget(0, 2, new LogonPanel(true));
+                }
+            });
+            logon.setStyleName("TongueButton");
+            setWidget(0, 2, logon);
+            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+        }
+    }
+
     protected static class NaviButton extends SimplePanel
     {
         public final String pageId;
 
         public NaviButton (String page, String text, AbstractImagePrototype up,
                            AbstractImagePrototype over, AbstractImagePrototype down) {
-            setStyleName("Button");
+            setStyleName("NaviButton");
             pageId = page;
 
             _upImage = up.createImage();
