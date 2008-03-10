@@ -86,6 +86,17 @@ public class LogonPanel extends SmartTable
         }
     }
 
+    // @Override // from Widget
+    protected void onAttach ()
+    {
+        super.onAttach();
+        if (_email.getText().length() == 0) {
+            _email.setFocus(true);
+        } else {
+            _password.setFocus(true);
+        }
+    }
+
     protected void doLogon ()
     {
         String account = _email.getText(), password = _password.getText();
