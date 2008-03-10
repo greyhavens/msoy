@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
+import com.samskivert.util.Comparators;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
@@ -1061,8 +1062,8 @@ public class RoomManager extends SpotSceneManager
         }
         public boolean equals (Object other) {
             if (other instanceof Controller) {
-                Controller otherController = (Controller) other;
-                return (bodyOid == otherController.bodyOid && load == otherController.load);
+                Controller that = (Controller) other;
+                return (this.bodyOid == that.bodyOid);
             } else {
                 return false;
             }
@@ -1072,8 +1073,11 @@ public class RoomManager extends SpotSceneManager
         }
         public int compareTo (Controller other) {
             // sort first by load, then by body oid
-            int loadDifference = load - other.load;
-            return (loadDifference != 0 ? loadDifference : bodyOid - other.bodyOid);
+            int diff = Comparators.compare(load, other.load);
+            if (diff == 0) {
+                diff = Comparators.compare(bodyOid, other.bodyOid);
+            }
+            return diff;
         }
     } // End: static class Controller
 
