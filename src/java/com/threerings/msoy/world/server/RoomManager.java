@@ -1054,7 +1054,7 @@ public class RoomManager extends SpotSceneManager
     /** Used during the process of controller assignment. */
     protected static class Controller implements Comparable<Controller>
     {
-        public int bodyOid;
+        public final int bodyOid;
         public int load;
 
         public Controller (int bodyOid) {
