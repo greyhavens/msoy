@@ -1059,15 +1059,11 @@ public class RoomManager extends SpotSceneManager
         public Controller (int bodyOid) {
             this.bodyOid = bodyOid;
         }
-
-        public boolean equals (Object other) {
-            return ((Controller)other).bodyOid == bodyOid;
-        }
-        public int hashCode () {
-            return bodyOid;
-        }
+        
         public int compareTo (Controller other) {
-            return (load - other.load);
+        	// sort first by load, then by body oid
+        	int loadDifference = load - other.load;
+        	return (loadDifference != 0 ? loadDifference : bodyOid - other.bodyOid);
         }
     } // End: static class Controller
 
