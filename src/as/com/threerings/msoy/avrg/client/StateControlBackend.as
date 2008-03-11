@@ -204,13 +204,14 @@ public class StateControlBackend
 
     protected var _messageListener :MessageListener = new MessageAdapter(
         function (event :MessageEvent) :void {
+            var name :String = event.getName();
             var args :Array = event.getArgs();
             var key :String = (args[0] as String);
-            if (AVRGameObject.USER_MESSAGE == event.getName()) {
+            if (AVRGameObject.USER_MESSAGE == name) {
                 _backend.callUserCode(
                     "messageReceived_v1", key, ObjectMarshaller.decode(args[1]));
 
-            } else if (AVRGameObject.TICKER == event.getName()) {
+            } else if (AVRGameObject.TICKER == name) {
                 _backend.callUserCode("messageReceived_v1", key, (args[1] as int));
             }
         });
