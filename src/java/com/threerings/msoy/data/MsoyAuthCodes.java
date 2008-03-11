@@ -13,9 +13,6 @@ public interface MsoyAuthCodes extends AuthCodes
     /** A message bundle used during client authorization. */
     public static final String AUTH_MSGS = "logon";
 
-    /** The prefix for all authentication usernames provided to guests. */
-    public static final String GUEST_USERNAME_PREFIX = "Guest";
-
     /** A code indicating that the user does not have access to the requested service. */
     public static final String ACCESS_DENIED = "m.access_denied";
 

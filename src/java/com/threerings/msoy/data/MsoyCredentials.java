@@ -5,6 +5,7 @@ package com.threerings.msoy.data;
 
 import com.samskivert.servlet.user.Password;
 
+import com.samskivert.util.StringUtil;
 import com.threerings.util.ActionScript;
 import com.threerings.util.Name;
 
@@ -15,6 +16,9 @@ import com.threerings.presents.net.UsernamePasswordCreds;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
+    /** A string prepended to session tokens that represent guest sessions. */
+    public static final String GUEST_SESSION_PREFIX = "G_";
+
     /** A session token that identifies a user without requiring username or password. */
     public String sessionToken;
 
@@ -23,6 +27,14 @@ public class MsoyCredentials extends UsernamePasswordCreds
 
     /** Indicates whether this client is set up as a featured place view. */
     public boolean featuredPlaceView;
+
+    /**
+     * Converts a session token supplied by a guest into its underlying bytes.
+     */
+    public static byte[] getGuestTokenData (String sessionToken)
+    {
+        return StringUtil.unhexlate(sessionToken.substring(GUEST_SESSION_PREFIX.length()));
+    }
 
     /**
      * Creates credentials with the specified username and password.  {@link #ident} should be set

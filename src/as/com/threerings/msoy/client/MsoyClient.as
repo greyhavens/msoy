@@ -44,13 +44,14 @@ import com.threerings.crowd.chat.data.ChatMarshaller;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.data.ChatChannel;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.ChannelName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -145,6 +146,7 @@ public /*abstract*/ class MsoyClient extends Client
 
         var c :Class;
         c = MsoyBootstrapData;
+        c = GuestName;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;

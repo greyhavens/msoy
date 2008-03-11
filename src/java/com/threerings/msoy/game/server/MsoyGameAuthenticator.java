@@ -17,7 +17,9 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
+import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -72,36 +74,37 @@ public class MsoyGameAuthenticator extends Authenticator
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            // if they're a guest, assign them a username and send them on their merry way
             if (StringUtil.isBlank(creds.sessionToken)) {
-                // for guests, we use the same Name object as their username and their display
-                // name. We create it here.
+                log.warning("Receieved session-tokenless auth request " + req + ".");
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+
+            if (creds.sessionToken.startsWith(MsoyCredentials.GUEST_SESSION_PREFIX)) {
+                // configure their guest name with the proper identifying bits; TODO: set their
+                // name to something consistent
                 creds.setUsername(
-                    new MemberName(MsoyAuthCodes.GUEST_USERNAME_PREFIX + (++_guestCount),
-                                   MemberName.GUEST_ID));
-                rsp.authdata = null;
-                rdata.code = AuthResponseData.SUCCESS;
-                return;
-            }
+                    new GuestName(MsoyCredentials.getGuestTokenData(creds.sessionToken)));
 
-            MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
-            if (member == null) {
-                throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-            }
+            } else {
+                MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
+                if (member == null) {
+                    throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+                }
 
-            // set their starting username to their auth username
-            creds.setUsername(new Name(member.accountName));
+                // set their starting username to their auth username
+                creds.setUsername(new Name(member.accountName));
 
-            // replace the tokens provided by the Domain with tokens derived from their member
-            // record (a newly created record will have its bits set from the Domain values)
-            int tokens = 0;
-            if (member.isSet(MemberRecord.Flag.ADMIN)) {
-                tokens |= MsoyTokenRing.ADMIN;
-                tokens |= MsoyTokenRing.SUPPORT;
-            } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
-                tokens |= MsoyTokenRing.SUPPORT;
+                // replace the tokens provided by the Domain with tokens derived from their member
+                // record (a newly created record will have its bits set from the Domain values)
+                int tokens = 0;
+                if (member.isSet(MemberRecord.Flag.ADMIN)) {
+                    tokens |= MsoyTokenRing.ADMIN;
+                    tokens |= MsoyTokenRing.SUPPORT;
+                } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
+                    tokens |= MsoyTokenRing.SUPPORT;
+                }
+                rsp.authdata = new MsoyTokenRing(tokens);
             }
-            rsp.authdata = new MsoyTokenRing(tokens);
 
             // log.info("User logged on [user=" + user.username + "].");
             rdata.code = AuthResponseData.SUCCESS;
