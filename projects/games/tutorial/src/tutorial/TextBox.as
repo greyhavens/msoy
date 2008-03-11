@@ -22,16 +22,14 @@ import flash.text.TextFormatAlign;
 
 import com.threerings.flash.AlphaFade;
 import com.threerings.flash.SimpleTextButton;
-import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 
 public class TextBox extends Sprite
 {
     public function TextBox (swirlBytes :ByteArray, done :Function)
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader(true);
-        loader.addEventListener(Event.COMPLETE, handleTextboxLoaded);
-        loader.load(swirlBytes);
+        MultiLoader.getContents(swirlBytes, handleTextboxLoaded);
 
         _done = done;
 
@@ -169,10 +167,10 @@ public class TextBox extends Sprite
         _timer = setTimeout(function () :void { _timer = 0; fun(); }, delay);
     }
 
-    protected function handleTextboxLoaded (evt :Event) :void
+    protected function handleTextboxLoaded (clip :MovieClip) :void
     {
         // create the textbox clip
-        _boxClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _boxClip = clip;
         _boxClip.x = -Content.BOX_OFFSET.x;
         _boxClip.y = -Content.BOX_OFFSET.y;
 
