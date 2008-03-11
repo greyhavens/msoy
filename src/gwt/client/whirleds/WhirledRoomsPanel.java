@@ -90,6 +90,9 @@ public class WhirledRoomsPanel extends VerticalPanel
     protected void transferCurrentRoom () 
     {
         final int index = _roomsListBox.getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
         GroupService.Room room = (GroupService.Room)_roomsResult.callerRooms.get(index);
         CWhirleds.groupsvc.transferRoom(CWhirleds.ident, _detail.group.groupId, room.sceneId,
             new MsoyCallback() {
