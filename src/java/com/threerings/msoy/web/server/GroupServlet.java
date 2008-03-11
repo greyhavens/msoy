@@ -219,6 +219,9 @@ public class GroupServlet extends MsoyServiceServlet
 
             rooms = Lists.newArrayList();
             for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
+                if (scene.sceneId == mrec.homeSceneId) {
+                    continue;
+                }
                 GroupService.Room room = new GroupService.Room();
                 room.sceneId = scene.sceneId;
                 room.name = scene.sceneName;
