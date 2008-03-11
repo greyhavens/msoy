@@ -8,6 +8,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -38,7 +39,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         PlayerObject playerObj = (PlayerObject) clobj;
         playerObj.setAccessController(MsoyObjectAccess.USER);
-        if (isResolvingGuest()) {
+        if (_username instanceof GuestName) {
             resolveGuest(playerObj);
         } else {
             resolveMember(playerObj);
@@ -78,19 +79,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
     protected void resolveGuest (PlayerObject playerObj)
         throws Exception
     {
-        MemberName authName = (MemberName)_username;
         playerObj.memberName = new VizMemberName(
-            authName.toString(), authName.getMemberId(), Profile.DEFAULT_PHOTO);
-    }
-
-    /**
-     * Return true if we're resolving a guest.
-     */
-    protected boolean isResolvingGuest ()
-    {
-        // this seems strange, but we're testing the authentication username, which is set to be a
-        // MemberName for guests and a regular Name for members. The reason for this is that the
-        // guests will use the same MemberName object for their display name and auth name
-        return (_username instanceof MemberName);
+            _username.toString(), MemberName.GUEST_ID, Profile.DEFAULT_PHOTO);
     }
 }

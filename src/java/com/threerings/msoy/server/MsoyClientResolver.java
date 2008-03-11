@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
+import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -56,7 +57,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         MemberObject userObj = (MemberObject) clobj;
         userObj.setAccessController(MsoyObjectAccess.USER);
-        if (isResolvingGuest()) {
+        if (_username instanceof GuestName) {
             resolveGuest(userObj);
         } else {
             resolveMember(userObj);
@@ -143,8 +144,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveGuest (MemberObject userObj)
         throws Exception
     {
-        userObj.setMemberName(new VizMemberName(_username.toString(), MemberName.GUEST_ID,
-                                                Profile.DEFAULT_PHOTO));
+        userObj.memberName = new VizMemberName(
+            _username.toString(), MemberName.GUEST_ID, Profile.DEFAULT_PHOTO);
     }
 
     @Override // from ClientResolver
@@ -172,16 +173,5 @@ public class MsoyClientResolver extends CrowdClientResolver
                 }
             });
         }
-    }
-
-    /**
-     * Return true if we're resolving a guest.
-     */
-    protected boolean isResolvingGuest ()
-    {
-        // this seems strange, but we're testing the authentication username, which is set to be a
-        // MemberName for guests and a regular Name for members. The reason for this is that the
-        // guests will use the same MemberName object for their display name and auth name
-        return (_username instanceof MemberName);
     }
 }
