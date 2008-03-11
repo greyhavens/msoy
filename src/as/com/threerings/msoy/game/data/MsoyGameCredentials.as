@@ -17,9 +17,9 @@ public class MsoyGameCredentials extends Credentials
     /** A session token that identifies this user. */
     public var sessionToken :String;
 
-    public function MsoyGameCredentials ()
+    public function MsoyGameCredentials (name :Name = null)
     {
-        super(new Name(""));
+        super(name);
     }
 
     // from interface Streamable

@@ -20,7 +20,7 @@ public class TrophyCasePanel extends VerticalPanel
     {
         setStyleName("trophyCase");
 
-        if (memberId == 0) {
+        if (memberId <= 0) {
             setHeader(CGames.msgs.noSuchPlayer());
             return;
         }

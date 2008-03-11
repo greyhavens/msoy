@@ -26,7 +26,6 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
-import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -57,7 +56,15 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         MemberObject userObj = (MemberObject) clobj;
         userObj.setAccessController(MsoyObjectAccess.USER);
-        if (_username instanceof GuestName) {
+
+        // if our member object was forwarded from another server, it will already be fully ready
+        // to go so we can avoid the expensive resolution process
+        if (userObj.memberName != null) {
+            return;
+        }
+
+        // guests have MemberName as an auth username, members have Name
+        if (_username instanceof MemberName) {
             resolveGuest(userObj);
         } else {
             resolveMember(userObj);
@@ -70,12 +77,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (MemberObject userObj)
         throws Exception
     {
-        // if our member object was forwarded from another server, it will already be fully ready
-        // to go so we can avoid a whole bunch of expensive database lookups
-        if (userObj.memberName != null) {
-            return;
-        }
-
         // load up their member information using on their authentication (account) name
         MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
 
@@ -144,8 +145,10 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveGuest (MemberObject userObj)
         throws Exception
     {
+        // our auth username has our assigned name and member id, so use those
+        MemberName aname = (MemberName)_username;
         userObj.memberName = new VizMemberName(
-            _username.toString(), MemberName.GUEST_ID, Profile.DEFAULT_PHOTO);
+            aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
     }
 
     @Override // from ClientResolver

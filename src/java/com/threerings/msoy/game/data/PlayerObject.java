@@ -77,11 +77,11 @@ public class PlayerObject extends BodyObject
     public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
 
     /**
-     * Return true if this user is merely a guest.
+     * Return true if this user is a guest.
      */
     public boolean isGuest ()
     {
-        return (getMemberId() == MemberName.GUEST_ID);
+        return memberName.isGuest();
     }
 
     /**
@@ -123,7 +123,7 @@ public class PlayerObject extends BodyObject
     // from interface MsoyUserObject
     public int getMemberId ()
     {
-        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
+        return memberName.getMemberId();
     }
 
     // from interface MsoyUserObject

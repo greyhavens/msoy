@@ -32,13 +32,18 @@ public class MemberName extends Name
     /** The maximum allowable length of a permaname. */
     public static const MAXIMUM_PERMANAME_LENGTH :int = 12;
 
-    /** The "member id" used for guests. */
-    public static const GUEST_ID :int = 0;
+    /**
+     * Returns true if the supplied member id represents a guest.
+     */
+    public static function isGuest (memberId :int) :Boolean
+    {
+        return memberId <= 0;
+    }
 
     /**
      * Create a new MemberName.
      */
-    public function MemberName (displayName :String = "", memberId :int = GUEST_ID)
+    public function MemberName (displayName :String = "", memberId :int = 0)
     {
         super(displayName);
         _memberId = memberId;
@@ -61,32 +66,20 @@ public class MemberName extends Name
     // from Name
     override public function hashCode () :int
     {
-        // we return a different hash for guests so that they don't end up all in the same bucket
-        // in a Map.
-        return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
+        return _memberId;
     }
 
     // from Name
     override public function compareTo (o :Object) :int
     {
-        var that :MemberName = MemberName(o);
-        var diff :int = this._memberId - that._memberId;
-        // memberId is the primary sorting key
-        if (diff != 0) {
-            return diff;
-        }
-
-        // return 0 if diff is the same (they have the same memberId) UNLESS the member is 0, in
-        // which case they're a guest and we compare by name
-       return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME(this, that);
+        return _memberId - (o as MemberName)._memberId;
     }
 
     // from Name
     override public function equals (other :Object) :Boolean
     {
         if (other is MemberName) {
-            var otherId :int = (other as MemberName).getMemberId();
-            return (otherId == _memberId) && ((_memberId != GUEST_ID) || super.equals(other));
+            return (other as MemberName)._memberId == _memberId;
         }
         return false;
     }

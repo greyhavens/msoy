@@ -58,7 +58,7 @@ public class MemberInfo extends ActorInfo
      */
     public boolean isGuest ()
     {
-        return (MemberName.GUEST_ID == getMemberId());
+        return ((MemberName) username).isGuest();
     }
 
     /**

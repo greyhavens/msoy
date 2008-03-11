@@ -40,8 +40,13 @@ public class MemberName extends Name
     /** The maximum allowable length of a permaname. */
     public static final int MAXIMUM_PERMANAME_LENGTH = 12;
 
-    /** The "member id" used for guests. */
-    public static final int GUEST_ID = 0;
+    /**
+     * Returns true if the supplied member id represents a guest rather than a registered user.
+     */
+    public static boolean isGuest (int memberId)
+    {
+        return memberId <= 0;
+    }
 
     /** For unserialization. */
     public MemberName ()
@@ -58,11 +63,20 @@ public class MemberName extends Name
     }
 
     /**
-     * Return the memberId of this user, or 0 if they're a guest.
+     * Return the memberId of this user, positive if they are a registered member, negative if they
+     * are a guest.
      */
     public int getMemberId ()
     {
         return _memberId;
+    }
+
+    /**
+     * Returns true if this name represents a guest member.
+     */
+    public boolean isGuest ()
+    {
+        return isGuest(_memberId);
     }
 
     // from DSet.Entry
@@ -74,19 +88,14 @@ public class MemberName extends Name
     // @Override // from Name
     public int hashCode ()
     {
-        // we return a different hash for guests so that they don't end up all in the same bucket
-        // in a Map.
-        return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
+        return _memberId;
     }
 
     // @Override // from Name
     public boolean equals (Object other)
     {
         if (other instanceof MemberName) {
-            int otherId = ((MemberName) other).getMemberId();
-            // if we have the same memberId then we're equals, unless we're a guest, in which case
-            // we fall back to names
-            return (otherId == _memberId) && ((_memberId != GUEST_ID) || super.equals(other));
+            return ((MemberName) other).getMemberId() == _memberId;
         } else {
             return false;
         }
@@ -95,16 +104,7 @@ public class MemberName extends Name
     // @Override // from Name
     public int compareTo (Name o)
     {
-        MemberName that = (MemberName) o;
-        int diff = this._memberId - that._memberId;
-        // memberId is the primary sorting key
-        if (diff != 0) {
-            return diff;
-        }
-
-        // return 0 if diff is the same (they have the same memberId) UNLESS the memberId is 0, in
-        // which case they're a guest and we compare by name
-        return (_memberId != GUEST_ID) ? 0 : compareNames(this, that);
+        return _memberId - ((MemberName) o)._memberId;
     }
 
     // @Override // from Name

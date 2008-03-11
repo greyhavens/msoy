@@ -235,7 +235,7 @@ public class ControlBar extends HBox
     protected function checkControls () :void
     {
         var isMember :Boolean = (_ctx.getMyName() != null &&
-                                 _ctx.getMyName().getMemberId() != MemberName.GUEST_ID);
+                                 !MemberName.isGuest(_ctx.getMyName().getMemberId()));
         if (numChildren > 0 && (isMember == _isMember)) {
             return;
         }

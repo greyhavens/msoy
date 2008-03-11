@@ -45,7 +45,7 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all catalogue items of the specified type. If memberId == 0, it's a guest request.
+     * Loads all catalogue items of the specified type.
      *
      * @param includeCount if true, the count of all listings matching the query terms will also be
      * computed and included in the result.

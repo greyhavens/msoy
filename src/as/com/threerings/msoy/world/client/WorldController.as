@@ -734,7 +734,7 @@ public class WorldController extends MsoyController
         } else if (null != params["featuredPlace"]) {
             _wctx.getSceneDirector().moveTo(int(params["featuredPlace"]));
 
-        } else if (_wctx.getMemberObject().getMemberId() != 0) {
+        } else if (!_wctx.getMemberObject().isGuest()) {
             _wctx.getWorldDirector().goToMemberHome(_wctx.getMemberObject().getMemberId());
 
         } else {

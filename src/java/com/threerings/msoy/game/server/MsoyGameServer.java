@@ -117,16 +117,12 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     /**
-     * Returns the player object for the user identified by the given ID if they are resolved
-     * on this game server currently, null otherwise. This must only be called from the dobjmgr
+     * Returns the player object for the user identified by the given ID if they are resolved on
+     * this game server currently, null otherwise. This must only be called from the dobjmgr
      * thread.
      */
     public static PlayerObject lookupPlayer (int playerId)
     {
-        // We can't look up guests this way, as they all have the same memberId
-        if (playerId == MemberName.GUEST_ID) {
-            return null;
-        }
         // MemberName.equals and hashCode only depend on the id
         return lookupPlayer(new MemberName(null, playerId));
     }

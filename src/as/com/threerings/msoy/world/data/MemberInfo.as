@@ -26,7 +26,7 @@ public class MemberInfo extends ActorInfo
      */
     public function isGuest () :Boolean
     {
-        return (MemberName.GUEST_ID == getMemberId());
+        return MemberName.isGuest(getMemberId());
     }
 
     /**

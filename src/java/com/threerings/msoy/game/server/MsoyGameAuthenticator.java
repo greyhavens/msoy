@@ -17,7 +17,6 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -79,11 +78,10 @@ public class MsoyGameAuthenticator extends Authenticator
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            if (creds.sessionToken.startsWith(MsoyCredentials.GUEST_SESSION_PREFIX)) {
-                // configure their guest name with the proper identifying bits; TODO: set their
-                // name to something consistent
-                creds.setUsername(
-                    new GuestName(MsoyCredentials.getGuestTokenData(creds.sessionToken)));
+            if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
+                // extract their assigned member id from their token
+                int memberId = MsoyCredentials.getGuestMemberId(creds.sessionToken);
+                creds.setUsername(new MemberName(String.valueOf(creds.getUsername()), memberId));
 
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);

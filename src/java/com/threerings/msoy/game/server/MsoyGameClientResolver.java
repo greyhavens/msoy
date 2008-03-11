@@ -8,7 +8,6 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -39,7 +38,9 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         PlayerObject playerObj = (PlayerObject) clobj;
         playerObj.setAccessController(MsoyObjectAccess.USER);
-        if (_username instanceof GuestName) {
+
+        // guests have MemberName as an auth username, members have Name
+        if (_username instanceof MemberName) {
             resolveGuest(playerObj);
         } else {
             resolveMember(playerObj);
@@ -79,7 +80,9 @@ public class MsoyGameClientResolver extends CrowdClientResolver
     protected void resolveGuest (PlayerObject playerObj)
         throws Exception
     {
+        // our auth username has our assigned name and member id, so use those
+        MemberName aname = (MemberName)_username;
         playerObj.memberName = new VizMemberName(
-            _username.toString(), MemberName.GUEST_ID, Profile.DEFAULT_PHOTO);
+            aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
     }
 }

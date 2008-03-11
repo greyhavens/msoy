@@ -18,6 +18,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -37,7 +38,13 @@ public class LiaisonGameContext
 
         // set up our client with our world credentials
         var wcreds :MsoyCredentials = (wctx.getClient().getCredentials() as MsoyCredentials);
-        var gcreds :MsoyGameCredentials = new MsoyGameCredentials();
+        // if we are a guest and have an assigned member name, pass it along to the game server so
+        // that it will show us the same guest name that we had on the server
+        var name :MemberName = null;
+        if (_wctx.getMemberObject() != null && _wctx.getMemberObject().isGuest()) {
+            name = _wctx.getMemberObject().memberName;
+        }
+        var gcreds :MsoyGameCredentials = new MsoyGameCredentials(name);
         gcreds.sessionToken = wcreds.sessionToken;
         _client = new Client(gcreds, wctx.getStage());
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);

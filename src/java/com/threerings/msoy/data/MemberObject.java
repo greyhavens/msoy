@@ -202,11 +202,11 @@ public class MemberObject extends MsoyBodyObject
     public transient StatSet stats;
 
     /**
-     * Return true if this user is merely a guest.
+     * Return true if this user is a guest.
      */
     public boolean isGuest ()
     {
-        return (getMemberId() == MemberName.GUEST_ID);
+        return memberName.isGuest();
     }
 
     /**
@@ -397,7 +397,7 @@ public class MemberObject extends MsoyBodyObject
     // from interface MsoyUserObject
     public int getMemberId ()
     {
-        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
+        return memberName.getMemberId();
     }
 
     // from interface MsoyUserObject

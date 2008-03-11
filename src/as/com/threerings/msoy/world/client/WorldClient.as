@@ -163,18 +163,9 @@ public class WorldClient extends MsoyClient
         if (rdata.sessionToken != null) {
             Prefs.setSessionToken(rdata.sessionToken);
             // fill our session token into our credentials so that we can log in more efficiently
-            // on a reconnect and so that we can log into game servers
+            // on a reconnect, so that we can log into game servers and so that guests can preserve
+            // some sense of identity during the course of their session
             (getCredentials() as MsoyCredentials).sessionToken = rdata.sessionToken;
-        }
-
-        if (rdata.sessionToken != null) {
-            try {
-                if (ExternalInterface.available && !_embedded) {
-                    ExternalInterface.call("flashDidLogon", "Foo", 1, rdata.sessionToken);
-                }
-            } catch (err :Error) {
-                 log.warning("Unable to inform javascript about login: " + err);
-            }
         }
 
         log.info("Client logged on [built=" + DeploymentConfig.buildTime +

@@ -5,7 +5,6 @@ package com.threerings.msoy.data;
 
 import com.samskivert.servlet.user.Password;
 
-import com.samskivert.util.StringUtil;
 import com.threerings.util.ActionScript;
 import com.threerings.util.Name;
 
@@ -29,11 +28,28 @@ public class MsoyCredentials extends UsernamePasswordCreds
     public boolean featuredPlaceView;
 
     /**
-     * Converts a session token supplied by a guest into its underlying bytes.
+     * Returns true if the supplied (non-null) session token is a guest session token.
      */
-    public static byte[] getGuestTokenData (String sessionToken)
+    public static boolean isGuestSessionToken (String sessionToken)
     {
-        return StringUtil.unhexlate(sessionToken.substring(GUEST_SESSION_PREFIX.length()));
+        return sessionToken.startsWith(GUEST_SESSION_PREFIX);
+    }
+
+    /**
+     * Encodes a member id into a guest session token.
+     */
+    public static String makeGuestSessionToken (int memberId)
+    {
+        return GUEST_SESSION_PREFIX + memberId;
+    }
+
+    /**
+     * Returns the member id encoded in a guest session token.
+     */
+    public static int getGuestMemberId (String sessionToken)
+    {
+        // if the token is invalid, we let our caller handle the number format exception
+        return Integer.parseInt(sessionToken.substring(GUEST_SESSION_PREFIX.length()));
     }
 
     /**

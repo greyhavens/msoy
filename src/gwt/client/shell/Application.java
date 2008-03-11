@@ -350,14 +350,6 @@ public class Application
     }
 
     /**
-     * Called when the flash client has logged on.
-     */
-    protected void didLogonFromFlash (String displayName, int memberId, String token)
-    {
-        validateSession(token);
-    }
-
-    /**
      * Called when a web page component wants to request a chat channel opened in the Flash
      * client, of the given type and name.
      */
@@ -399,10 +391,6 @@ public class Application
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app) /*-{
-       $wnd.flashDidLogon = function (displayName, memberId, token) {
-           app.@client.shell.Application::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(
-               displayName, memberId, token);
-       };
        $wnd.openChannel = function (type, name, id) {
            app.@client.shell.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
        };

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -28,7 +26,6 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.data.GuestName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ServiceException;
@@ -161,199 +158,6 @@ public class MsoyAuthenticator extends Authenticator
         _eventLog = eventLog;
     }
 
-    @Override
-    protected AuthResponseData createResponseData ()
-    {
-        return new MsoyAuthResponseData();
-    }
-
-    // from abstract Authenticator
-    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
-        throws PersistenceException
-    {
-        AuthRequest req = conn.getAuthRequest();
-        MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
-        MsoyCredentials creds = null;
-
-        try {
-            // make sure they've got the correct version
-            long cvers = 0L;
-            long svers = DeploymentConfig.version;
-            try {
-                cvers = Long.parseLong(req.getVersion());
-            } catch (Exception e) {
-                // ignore it and fail below
-            }
-            if (svers != cvers) {
-                log.info("Refusing wrong version [creds=" + req.getCredentials() +
-                         ", cvers=" + cvers + ", svers=" + svers + "].");
-                throw new ServiceException(
-                    (cvers > svers) ? MsoyAuthCodes.NEWER_VERSION :
-                    MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
-            }
-
-            // make sure they've sent valid credentials
-            try {
-                creds = (MsoyCredentials) req.getCredentials();
-            } catch (ClassCastException cce) {
-                log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-            if (creds == null) {
-                log.info("No credentials provided with auth request " + req + ".");
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-
-            if (creds.sessionToken != null) {
-                if (creds.sessionToken.startsWith(MsoyCredentials.GUEST_SESSION_PREFIX)) {
-                    byte[] sessionTokenData = StringUtil.unhexlate(
-                        creds.sessionToken.substring(MsoyCredentials.GUEST_SESSION_PREFIX.length()));
-                    authenticateGuest(creds, rdata, sessionTokenData);
-                    return;
-
-                } else {
-                    MemberRecord member =
-                        MsoyServer.memberRepo.loadMemberForSession(creds.sessionToken);
-                    if (member == null) {
-                        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-                    }
-                    rsp.authdata = authenticateMember(
-                        creds, rdata, member, member.accountName, Domain.PASSWORD_BYPASS);
-                }
-
-            } else if (creds.getUsername() != null) {
-                String aname = creds.getUsername().toString().toLowerCase();
-                rsp.authdata = authenticateMember(creds, rdata, null, aname, creds.getPassword());
-
-            } else {
-                // assign this guest a guest session code
-                String data = conn.getInetAddress().getHostAddress() + System.currentTimeMillis();
-                byte[] sessionTokenData = null;
-                try {
-                    MessageDigest digest = MessageDigest.getInstance("MD5");
-                    sessionTokenData = digest.digest(data.getBytes());
-                } catch (NoSuchAlgorithmException nsae) {
-                    log.warning("Unable to generate guest session token: " + nsae);
-                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-                }
-                authenticateGuest(creds, rdata, sessionTokenData);
-            }
-
-        } catch (ServiceException se) {
-            rdata.code = se.getMessage();
-            log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
-        }
-    }
-
-    protected void authenticateGuest (MsoyCredentials creds, MsoyAuthResponseData rdata,
-                                      byte[] tokenData)
-        throws ServiceException, PersistenceException
-    {
-        if (!RuntimeConfig.server.nonAdminsAllowed) {
-            throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
-        }
-
-        // guests get a username with a unique session token so that we can track them as they move
-        // between servers and preserve their runtime state
-        creds.setUsername(new GuestName(tokenData));
-        rdata.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + StringUtil.hexlate(tokenData);
-        rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(MemberName.GUEST_ID, false, System.currentTimeMillis(),
-                               creds.sessionToken);
-
-        log.info("Authenticated guest " + rdata.sessionToken + ".");
-    }
-
-    protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
-                                          MemberRecord member, String accountName, String password)
-        throws ServiceException, PersistenceException
-    {
-        // TODO: if they provide no client identifier, determine whether one has been assigned
-        // to the account in question and provide that to them if so, otherwise assign them a
-        // new one
-//             if (StringUtil.isBlank(creds.ident)) {
-//                 log.warning("Received blank ident, refusing [creds=" + req.getCredentials() +
-//                             ", ip=" + conn.getInetAddress() + "].");
-//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-//             }
-
-//             // if they supplied a known non-unique machine identifier, create
-//             // one for them
-//             if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
-//                 String sident = StringUtil.md5hex(
-//                     "" + Math.random() + System.currentTimeMillis());
-//                 creds.ident = "S" + IdentUtil.encodeIdent(sident);
-//                 Log.info("Creating ident [for=" + username + ", ip=" + conn.getInetAddress() +
-//                          " id=" + creds.ident + "].");
-//                 rdata.ident = creds.ident;
-//             }
-
-//             // convert the encrypted ident to the original MD5 hash
-//             try {
-//                 String prefix = creds.ident.substring(0, 1);
-//                 creds.ident = prefix +
-//                     IdentUtil.decodeIdent(creds.ident.substring(1));
-//             } catch (Exception e) {
-//                 log.warning("Received spoofed ident, refusing [who=" + username +
-//                             ", ip=" + conn.getInetAddress() + ", id=" + cred.sident +
-//                             ", err=" + e.getMessage() + "].");
-//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-//             }
-
-        // TODO: sort out the above
-        if (creds.ident == null) {
-            creds.ident = "";
-        }
-
-        // obtain the authentication domain appropriate to their account name
-        Domain domain = getDomain(accountName);
-
-        // load up and authenticate their domain account record
-        Account account = domain.authenticateAccount(accountName, password);
-
-        // we need to find out if this account has ever logged in so that we can decide how to
-        // handle tainted idents; so we load up the member record for this account
-        if (member == null) {
-            member = MsoyServer.memberRepo.loadMember(account.accountName);
-            // if this is their first logon, create them a member record
-            if (member == null) {
-                member = createMember(account, account.accountName, null);
-                account.firstLogon = true;
-            }
-            rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
-        }
-
-        // check to see whether this account has been banned or if this is a first time user
-        // logging in from a tainted machine
-        domain.validateAccount(account, creds.ident);
-
-        // replace the tokens provided by the Domain with tokens derived from their member
-        // record (a newly created record will have its bits set from the Domain values)
-        int tokens = 0;
-        if (member.isSet(MemberRecord.Flag.ADMIN)) {
-            tokens |= MsoyTokenRing.ADMIN;
-            tokens |= MsoyTokenRing.SUPPORT;
-        } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
-            tokens |= MsoyTokenRing.SUPPORT;
-        }
-        account.tokens = new MsoyTokenRing(tokens);
-
-        // check whether we're restricting non-admin login
-        if (!RuntimeConfig.server.nonAdminsAllowed && !account.tokens.isSupport()) {
-            throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
-        }
-
-        // rewrite this member's username to their canonical account name
-        creds.setUsername(new Name(account.accountName));
-
-        // log.info("User logged on [user=" + user.username + "].");
-        rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(member.memberId, account.firstLogon, 
-                               member.created.getTime(), creds.sessionToken);
-
-        return account;
-    }
-
     /**
      * Creates a new account with the supplied credentials.
      *
@@ -477,6 +281,193 @@ public class MsoyAuthenticator extends Authenticator
         }
     }
 
+    @Override // from Authenticator
+    protected AuthResponseData createResponseData ()
+    {
+        return new MsoyAuthResponseData();
+    }
+
+    @Override // from Authenticator
+    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
+        throws PersistenceException
+    {
+        AuthRequest req = conn.getAuthRequest();
+        MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
+        MsoyCredentials creds = null;
+
+        try {
+            // make sure they've got the correct version
+            long cvers = 0L;
+            long svers = DeploymentConfig.version;
+            try {
+                cvers = Long.parseLong(req.getVersion());
+            } catch (Exception e) {
+                // ignore it and fail below
+            }
+            if (svers != cvers) {
+                log.info("Refusing wrong version [creds=" + req.getCredentials() +
+                         ", cvers=" + cvers + ", svers=" + svers + "].");
+                throw new ServiceException(
+                    (cvers > svers) ? MsoyAuthCodes.NEWER_VERSION :
+                    MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
+            }
+
+            // make sure they've sent valid credentials
+            try {
+                creds = (MsoyCredentials) req.getCredentials();
+            } catch (ClassCastException cce) {
+                log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+            if (creds == null) {
+                log.info("No credentials provided with auth request " + req + ".");
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+
+            if (creds.sessionToken != null) {
+                if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
+                    authenticateGuest(
+                        creds, rdata, MsoyCredentials.getGuestMemberId(creds.sessionToken));
+
+                } else {
+                    MemberRecord member =
+                        MsoyServer.memberRepo.loadMemberForSession(creds.sessionToken);
+                    if (member == null) {
+                        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+                    }
+                    rsp.authdata = authenticateMember(
+                        creds, rdata, member, member.accountName, Domain.PASSWORD_BYPASS);
+                }
+
+            } else if (creds.getUsername() != null) {
+                String aname = creds.getUsername().toString().toLowerCase();
+                rsp.authdata = authenticateMember(creds, rdata, null, aname, creds.getPassword());
+
+            } else {
+                // if this is not just a "featured whirled" client; assign this guest a member id
+                // for the duration of their session
+                int memberId = creds.featuredPlaceView ? 0 : MsoyServer.peerMan.getNextGuestId();
+                authenticateGuest(creds, rdata, memberId);
+            }
+
+        } catch (ServiceException se) {
+            rdata.code = se.getMessage();
+            log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
+        }
+    }
+
+    protected void authenticateGuest (MsoyCredentials creds, MsoyAuthResponseData rdata,
+                                      int memberId)
+        throws ServiceException, PersistenceException
+    {
+        if (!RuntimeConfig.server.nonAdminsAllowed) {
+            throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
+        }
+
+        // if they supplied a name with their credentials, use that; if they're not a "featured
+        // whirled" client, generate a guest name for them; otherwise blank is fine
+        String name = "";
+        if (creds.getUsername() != null) {
+            name = creds.getUsername().toString();
+        } else if (!creds.featuredPlaceView) {
+            name = generateGuestName();
+        }
+        creds.setUsername(new MemberName(name, memberId));
+        rdata.sessionToken = MsoyCredentials.makeGuestSessionToken(memberId);
+        rdata.code = MsoyAuthResponseData.SUCCESS;
+        _eventLog.userLoggedIn(memberId, false, System.currentTimeMillis(), creds.sessionToken);
+    }
+
+    protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
+                                          MemberRecord member, String accountName, String password)
+        throws ServiceException, PersistenceException
+    {
+        // TODO: if they provide no client identifier, determine whether one has been assigned
+        // to the account in question and provide that to them if so, otherwise assign them a
+        // new one
+//             if (StringUtil.isBlank(creds.ident)) {
+//                 log.warning("Received blank ident, refusing [creds=" + req.getCredentials() +
+//                             ", ip=" + conn.getInetAddress() + "].");
+//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+//             }
+
+//             // if they supplied a known non-unique machine identifier, create
+//             // one for them
+//             if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
+//                 String sident = StringUtil.md5hex(
+//                     "" + Math.random() + System.currentTimeMillis());
+//                 creds.ident = "S" + IdentUtil.encodeIdent(sident);
+//                 Log.info("Creating ident [for=" + username + ", ip=" + conn.getInetAddress() +
+//                          " id=" + creds.ident + "].");
+//                 rdata.ident = creds.ident;
+//             }
+
+//             // convert the encrypted ident to the original MD5 hash
+//             try {
+//                 String prefix = creds.ident.substring(0, 1);
+//                 creds.ident = prefix +
+//                     IdentUtil.decodeIdent(creds.ident.substring(1));
+//             } catch (Exception e) {
+//                 log.warning("Received spoofed ident, refusing [who=" + username +
+//                             ", ip=" + conn.getInetAddress() + ", id=" + cred.sident +
+//                             ", err=" + e.getMessage() + "].");
+//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+//             }
+
+        // TODO: sort out the above
+        if (creds.ident == null) {
+            creds.ident = "";
+        }
+
+        // obtain the authentication domain appropriate to their account name
+        Domain domain = getDomain(accountName);
+
+        // load up and authenticate their domain account record
+        Account account = domain.authenticateAccount(accountName, password);
+
+        // we need to find out if this account has ever logged in so that we can decide how to
+        // handle tainted idents; so we load up the member record for this account
+        if (member == null) {
+            member = MsoyServer.memberRepo.loadMember(account.accountName);
+            // if this is their first logon, create them a member record
+            if (member == null) {
+                member = createMember(account, account.accountName, null);
+                account.firstLogon = true;
+            }
+            rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
+        }
+
+        // check to see whether this account has been banned or if this is a first time user
+        // logging in from a tainted machine
+        domain.validateAccount(account, creds.ident);
+
+        // replace the tokens provided by the Domain with tokens derived from their member
+        // record (a newly created record will have its bits set from the Domain values)
+        int tokens = 0;
+        if (member.isSet(MemberRecord.Flag.ADMIN)) {
+            tokens |= MsoyTokenRing.ADMIN;
+            tokens |= MsoyTokenRing.SUPPORT;
+        } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
+            tokens |= MsoyTokenRing.SUPPORT;
+        }
+        account.tokens = new MsoyTokenRing(tokens);
+
+        // check whether we're restricting non-admin login
+        if (!RuntimeConfig.server.nonAdminsAllowed && !account.tokens.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
+        }
+
+        // rewrite this member's username to their canonical account name
+        creds.setUsername(new Name(account.accountName));
+
+        // log.info("User logged on [user=" + user.username + "].");
+        rdata.code = MsoyAuthResponseData.SUCCESS;
+        _eventLog.userLoggedIn(member.memberId, account.firstLogon, 
+                               member.created.getTime(), creds.sessionToken);
+
+        return account;
+    }
+
     /**
      * Returns the authentication domain to use for the supplied account name. We support
      * federation of authentication domains based on the domain of the address. For example, we
@@ -544,9 +535,18 @@ public class MsoyAuthenticator extends Authenticator
         return mrec;
     }
 
+    protected static synchronized String generateGuestName ()
+    {
+        _nextGuestNumber = (_nextGuestNumber % 1000) + 1;
+        return "Guest" + _nextGuestNumber;
+    }
+
     /** Reference to the event logger. */
     protected MsoyEventLogger _eventLog;
 
     /** The default domain against which we authenticate. */
     protected Domain _defaultDomain;
+
+    /** Used to assign display names to guests. */
+    protected static int _nextGuestNumber;
 }

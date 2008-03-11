@@ -243,6 +243,6 @@ class ContextHelper
     public function isChatterValid (username :Name) :Boolean
     {
         return (username is MemberName) &&
-            (MemberName.GUEST_ID != (username as MemberName).getMemberId());
+            MemberName.isGuest((username as MemberName).getMemberId());
     }
 }

@@ -810,7 +810,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         _totalTrackedSeconds += record.secondsPlayed;
 
         // see if we even care
-        if (record.awarded == 0 || record.memberId == MemberName.GUEST_ID) {
+        if (record.awarded == 0 || MemberName.isGuest(record.memberId)) {
             return;
         }
 

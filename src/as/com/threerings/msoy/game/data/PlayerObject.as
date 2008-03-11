@@ -85,7 +85,7 @@ public class PlayerObject extends BodyObject
      */
     public function getMemberId () :int
     {
-        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
+        return memberName.getMemberId();
     }
 
     /**
@@ -93,7 +93,7 @@ public class PlayerObject extends BodyObject
      */
     public function isGuest () :Boolean
     {
-        return (getMemberId() == MemberName.GUEST_ID);
+        return MemberName.isGuest(getMemberId());
     }
 
     /**

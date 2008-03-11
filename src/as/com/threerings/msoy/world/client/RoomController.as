@@ -561,8 +561,7 @@ public class RoomController extends SceneController
             menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
                 command: WorldController.OPEN_CHANNEL, arg: occInfo.username });
 
-            var isGuest :Boolean = (memId == MemberName.GUEST_ID);
-            if (isGuest) {
+            if (MemberName.isGuest(memId)) {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("l.invite_to_whirled"),
                       command: WorldController.INVITE_GUEST, arg: occInfo.username });
