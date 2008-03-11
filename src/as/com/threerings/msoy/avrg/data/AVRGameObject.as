@@ -24,6 +24,9 @@ public class AVRGameObject extends DObject
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
 
+    /** The identifier for a MessageEvent containing ticker notifications. */
+    public static const TICKER :String = "Utick";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameMedia</code> field. */
     public static const GAME_MEDIA :String = "gameMedia";
