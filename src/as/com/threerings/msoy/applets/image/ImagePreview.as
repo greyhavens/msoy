@@ -7,7 +7,6 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.LoaderInfo;
-import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.ErrorEvent;
@@ -16,14 +15,15 @@ import flash.events.IOErrorEvent;
 
 import flash.utils.ByteArray;
 
-import mx.controls.Spacer;
+import mx.controls.HSlider;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.core.FlexLoader;
 import mx.core.ScrollPolicy;
+
+import mx.events.SliderEvent;
 
 import com.threerings.util.ValueEvent;
 
@@ -56,20 +56,10 @@ public class ImagePreview extends HBox
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xCCCCCC);
-        _imageBox = new Canvas();
-        _imageBox.maxWidth = MAX_WIDTH;
-        _imageBox.maxHeight = MAX_HEIGHT;
-        _imageBox.addChild(_editor = new EditCanvas());
+        _editor = new EditCanvas(300, 300);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, dispatchEvent);
 
-        var mask :Shape = new Shape();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
-        mask.graphics.endFill();
-        _editor.mask = mask;
-        _imageBox.rawChildren.addChild(mask);
-
-        addChild(_imageBox);
+        addChild(_editor);
         addChild(_controlBar = createControlBar());
         setImage(null);
     }
@@ -106,9 +96,23 @@ public class ImagePreview extends HBox
         bar.addChild(addMode("select", SELECT));
         bar.addChild(addMode("move", MOVE));
 
-        // TODO add zoom in and out buttons
-        bar.addChild(new CommandButton("+", changeZoom, true));
-        bar.addChild(new CommandButton("-", changeZoom, false));
+        // TODO: reset zoom?
+        bar.addChild(_zoomSlider = new HSlider());
+        _zoomSlider.liveDragging = true;
+        _zoomSlider.minimum = .01;
+        _zoomSlider.maximum = 10;
+        _zoomSlider.value = 1;
+        _zoomSlider.tickValues = [ 1 ];
+        _zoomSlider.addEventListener(SliderEvent.CHANGE, handleZoomChange);
+
+        // TODO: reset rotation
+        bar.addChild(_rotSlider = new HSlider());
+        _rotSlider.liveDragging = true;
+        _rotSlider.minimum = -180;
+        _rotSlider.maximum = 180;
+        _rotSlider.value = 0;
+        _rotSlider.tickValues = [ 0 ];
+        _rotSlider.addEventListener(SliderEvent.CHANGE, handleRotChange);
 
         return bar;
     }
@@ -129,15 +133,14 @@ public class ImagePreview extends HBox
         }
     }
 
-    protected function changeZoom (zoomIn :Boolean) :void
+    protected function handleZoomChange (event :SliderEvent) :void
     {
-        if (zoomIn) {
-            _editor.scaleX += .05;
-            _editor.scaleY += .05;
-        } else {
-            _editor.scaleX -= .05;
-            _editor.scaleY -= .05;
-        }
+        _editor.setZoom(event.value);
+    }
+
+    protected function handleRotChange (event :SliderEvent) :void
+    {
+        _editor.setRotation(event.value);
     }
 
     protected var _controlBar :VBox;
@@ -145,6 +148,9 @@ public class ImagePreview extends HBox
     protected var _imageBox :Canvas;
 
     protected var _editor :EditCanvas;
+
+    protected var _zoomSlider :HSlider;
+    protected var _rotSlider :HSlider;
 
     protected var _buttons :Array = [];
 

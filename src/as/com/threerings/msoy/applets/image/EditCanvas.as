@@ -6,9 +6,11 @@ package com.threerings.msoy.applets.image {
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.PixelSnapping;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -21,6 +23,8 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 import flash.utils.ByteArray;
+
+import mx.containers.Canvas;
 
 import mx.core.UIComponent;
 
@@ -37,19 +41,31 @@ import com.threerings.util.ValueEvent;
 /**
  * Allows primitive editing of an image.
  */
-public class EditCanvas extends UIComponent
+public class EditCanvas extends Canvas
 {
     public static const SIZE_KNOWN :String = "SizeKnown";
 
-    public function EditCanvas ()
+    public function EditCanvas (maxW :int, maxH:int)
     {
-        var editor :Sprite = new Sprite();
+        this.maxWidth = maxW;
+        this.maxHeight = maxH;
 
-        editor.addChild(_backgroundLayer = new Sprite());
-        editor.addChild(_imageLayer = new Sprite());
-        editor.addChild(_hudLayer = new Sprite());
+        _editor = new Sprite();
 
-        addChild(editor);
+        _editor.addChild(_imageLayer = new Sprite());
+        _editor.addChild(_hudLayer = new Sprite());
+
+        _backgroundLayer = new Sprite();
+
+        _holder = new UIComponent();
+        _holder.addChild(_editor);
+
+//        var mask :Shape = new Shape();
+//        mask.graphics.beginFill(0xFFFFFF);
+//        mask.graphics.drawRect(0, 0, maxWidth, maxHeight);
+//        mask.graphics.endFill();
+//        _editor.mask = mask;
+//        _editor.addChild(mask);
     }
 
     /**
@@ -156,13 +172,33 @@ public class EditCanvas extends UIComponent
         }
     }
 
+    public function setRotation (rotation :Number) :void
+    {
+        // rotate arond the center
+    }
+
+    public function setZoom (zoom :Number) :void
+    {
+        _holder.scaleX = zoom;
+        _holder.scaleY = zoom;
+        _holder.invalidateSize();
+    }
+
+    public function setScale (scale :Number) :void
+    {
+    }
+
     protected function sizeKnown (width :Number, height :Number) :void
     {
         _width = width;
         _height = height;
 
-        this.width = width;
-        this.height = height;
+        _holder.width = width;
+        _holder.height = height;
+
+        // un-fucking believable
+        this.width = Math.min(this.maxWidth, width);
+        this.height = Math.min(this.maxHeight, height);
 
         dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _width, _height ]));
     }
@@ -172,6 +208,31 @@ public class EditCanvas extends UIComponent
         var li :LoaderInfo = event.target as LoaderInfo;
         sizeKnown(li.width, li.height);
     }
+
+    override protected function createChildren () :void
+    {
+//        var g :Graphics = _backgroundLayer.graphics;
+//        var dark :Boolean;
+//        const GRID_SIZE :int = 10;
+//        for (var yy :int = 0; yy < maxHeight; yy += GRID_SIZE) {
+//            dark = ((yy % (GRID_SIZE * 2)) == 0);
+//            for (var xx :int = 0; xx < maxWidth; xx += GRID_SIZE) {
+//                g.beginFill(dark ? 0x666666 : 0x999999);
+//                g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
+//                g.endFill();
+//                dark = !dark;
+//            }
+//        }
+//        rawChildren.addChildAt(_backgroundLayer, 0);
+
+        super.createChildren();
+
+        addChild(_holder);
+    }
+
+    protected var _holder :UIComponent;
+
+    protected var _editor :Sprite;
 
     protected var _backgroundLayer :Sprite;
 
