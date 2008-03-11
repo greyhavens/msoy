@@ -8,6 +8,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -84,5 +85,8 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         MemberName aname = (MemberName)_username;
         playerObj.memberName = new VizMemberName(
             aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
+
+        // guests operate at the default new user humanity level
+        playerObj.humanity = MsoyCodes.STARTING_HUMANITY;
     }
 }

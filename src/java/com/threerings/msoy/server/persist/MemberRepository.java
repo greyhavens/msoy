@@ -369,7 +369,7 @@ public class MemberRepository extends DepotRepository
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
             member.lastHumanityAssessment = new Timestamp(now);
-            member.humanity = MsoyCodes.MAX_HUMANITY/2;
+            member.humanity = MsoyCodes.STARTING_HUMANITY;
         }
         insert(member);
     }

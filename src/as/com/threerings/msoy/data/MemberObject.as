@@ -40,9 +40,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>avrGameId</code> field. */
     public static const AVR_GAME_ID :String = "avrGameId";
 
-    /** The field name of the <code>humanity</code> field. */
-    public static const HUMANITY :String = "humanity";
-
     /** The field name of the <code>availability</code> field. */
     public static const AVAILABILITY :String = "availability";
 
@@ -127,9 +124,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** This user's current level. */
     public var level :int;
-
-    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
-    public var humanity :int;
 
     /** This member's availability for receiving invitations, requests, etc. from other members. */
     public var availability :int = AVAILABLE;
@@ -253,14 +247,6 @@ public class MemberObject extends MsoyBodyObject
         return contacts;
     }
 
-    /**
-     * Return our assessment of how likely this member is to be human, in [0, 1].
-     */
-    public function getHumanity () :Number
-    {
-        return humanity / 255;
-    }
-
     // documentation inherited
     override public function getTokens () :TokenRing
     {
@@ -320,7 +306,6 @@ public class MemberObject extends MsoyBodyObject
         flow = ins.readInt();
         accFlow = ins.readInt();
         level = ins.readInt();
-        humanity = ins.readInt();
         availability = ins.readInt();
         following = (ins.readObject() as MemberName);
         followers = (ins.readObject() as DSet);

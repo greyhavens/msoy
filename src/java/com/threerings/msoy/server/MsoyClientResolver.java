@@ -95,7 +95,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.flow = member.flow;
         userObj.accFlow = member.accFlow;
         userObj.level = member.level;
-        userObj.humanity = member.humanity;
 
         // load up this member's persistent stats
         List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);

@@ -54,9 +54,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>level</code> field. */
     public static final String LEVEL = "level";
 
-    /** The field name of the <code>humanity</code> field. */
-    public static final String HUMANITY = "humanity";
-
     /** The field name of the <code>availability</code> field. */
     public static final String AVAILABILITY = "availability";
 
@@ -138,10 +135,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** This user's current level. */
     public int level;
-
-    /** Our current assessment of how likely to be human this member is, in [0, {@link
-     * MsoyCodes#MAX_HUMANITY}]. */
-    public int humanity;
 
     /** This member's availability for receiving invitations, requests, etc. from other members. */
     public int availability = AVAILABLE;
@@ -400,12 +393,6 @@ public class MemberObject extends MsoyBodyObject
         return memberName.getMemberId();
     }
 
-    // from interface MsoyUserObject
-    public float getHumanity ()
-    {
-        return humanity / (float)MsoyCodes.MAX_HUMANITY;
-    }
-
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
@@ -503,22 +490,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             LEVEL, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.level = value;
-    }
-
-    /**
-     * Requests that the <code>humanity</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setHumanity (int value)
-    {
-        int ovalue = this.humanity;
-        requestAttributeChange(
-            HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.humanity = value;
     }
 
     /**
