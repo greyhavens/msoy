@@ -110,8 +110,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setTicker} requests. */
+    public static final int SET_TICKER = 8;
+
+    // from interface AVRGameService
+    public void setTicker (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_TICKER, new Object[] {
+            arg2, Integer.valueOf(arg3), listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #startQuest} requests. */
-    public static final int START_QUEST = 8;
+    public static final int START_QUEST = 9;
 
     // from interface AVRGameService
     public void startQuest (Client arg1, String arg2, String arg3, InvocationService.ConfirmListener arg4)
@@ -124,7 +137,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateQuest} requests. */
-    public static final int UPDATE_QUEST = 9;
+    public static final int UPDATE_QUEST = 10;
 
     // from interface AVRGameService
     public void updateQuest (Client arg1, String arg2, int arg3, String arg4, InvocationService.ConfirmListener arg5)

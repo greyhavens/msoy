@@ -39,6 +39,9 @@ public interface AVRGameService extends InvocationService
     function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
+    function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void;
+
+    // from Java interface AVRGameService
     function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService

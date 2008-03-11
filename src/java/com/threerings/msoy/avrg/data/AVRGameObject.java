@@ -20,6 +20,9 @@ public class AVRGameObject extends DObject
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
 
+    /** The identifier for a MessageEvent containing ticker notifications. */
+    public static final String TICKER = "Utick";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameMedia</code> field. */
     public static final String GAME_MEDIA = "gameMedia";

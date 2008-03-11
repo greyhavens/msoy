@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -11,12 +12,15 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Interval;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
@@ -108,6 +112,8 @@ public class AVRGameManager
 
     public void shutdown ()
     {
+        stopTickers();
+        
         // identify any modified memory records for flushing to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
@@ -432,6 +438,42 @@ public class AVRGameManager
         }
     }
 
+    // from AVRGameProvider
+    public void setTicker (ClientObject caller, String tickerName, int msOfDelay,
+                           InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        Ticker t;
+        if (msOfDelay >= MIN_TICKER_DELAY) {
+            if (_tickers != null) {
+                t = _tickers.get(tickerName);
+            } else {
+                _tickers = new HashMap<String, Ticker>();
+                t = null;
+            }
+
+            if (t == null) {
+                if (_tickers.size() >= MAX_TICKERS) {
+                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                }
+                t = new Ticker(tickerName, _gameObj);
+                _tickers.put(tickerName, t);
+            }
+            t.start(msOfDelay);
+
+        } else if (msOfDelay <= 0) {
+            if (_tickers != null) {
+                t = _tickers.remove(tickerName);
+                if (t != null) {
+                    t.stop();
+                }
+            }
+
+        } else {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+
     public void addPlayer (PlayerObject player, List<QuestStateRecord> questRecords,
                            List<PlayerGameStateRecord> stateRecords)
     {
@@ -520,6 +562,19 @@ public class AVRGameManager
     }
 
     /**
+     * Stop and clear all tickers.
+     */
+    protected void stopTickers ()
+    {
+        if (_tickers != null) {
+            for (Ticker ticker : _tickers.values()) {
+                ticker.stop();
+            }
+            _tickers = null;
+        }
+    }
+
+    /**
      * Convenience method to calculate the current timestmap in seconds.
      */
     protected static int now ()
@@ -554,14 +609,74 @@ public class AVRGameManager
         }
     }
     
+    /**
+     * A timer that fires message events to an AVRG. This is a precise copy of the same class
+     * in WhirledGameManager. Perhaps one day we can avoid this duplication.
+     */
+    protected static class Ticker
+    {
+        /**
+         * Create a Ticker.
+         */
+        public Ticker (String name, AVRGameObject gameObj)
+        {
+            _name = name;
+            // once we are constructed, we want to avoid calling methods on dobjs.
+            _oid = gameObj.getOid();
+            _omgr = gameObj.getManager();
+        }
+
+        public void start (int msOfDelay)
+        {
+            _value = 0;
+            _interval.schedule(0, msOfDelay);
+        }
+
+        public void stop ()
+        {
+            _interval.cancel();
+        }
+
+        /**
+         * The interval that does our work. Note well that this is not a 'safe' interval that
+         * operates using a RunQueue.  This interval instead does something that we happen to know
+         * is safe for any thread: posting an event to the dobj manager.  If we were using a
+         * RunQueue it would be the same event queue and we would be posted there, wait our turn,
+         * and then do the same thing: post this event. We just expedite the process.
+         */
+        protected Interval _interval = new Interval() {
+            public void expired () {
+                _omgr.postEvent(new MessageEvent(
+                    _oid, AVRGameObject.TICKER, new Object[] { _name, _value++ }));
+            }
+        };
+
+        protected int _oid;
+        protected DObjectManager _omgr;
+        protected String _name;
+        protected int _value;
+    } // End: static class Ticker
+
     protected int _gameId;
 
     /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
      * tracked member that is no longer present with a Player object. */
     protected int _totalTrackedSeconds = 0;
 
+    /** The map of tickers, lazy-initialized. */
+    protected HashMap<String, Ticker> _tickers;
+
     protected GameContent _content;
+    
     protected AVRGameObject _gameObj;
+    
     protected AVRGameRepository _repo;
+    
     protected IntMap<Player> _players = new HashIntMap<Player>();
+    
+    /** The minimum delay a ticker can have. */
+    protected static final int MIN_TICKER_DELAY = 50;
+
+    /** The maximum number of tickers allowed at one time. */
+    protected static final int MAX_TICKERS = 3;
 }

@@ -88,6 +88,13 @@ public class AVRGameDispatcher extends InvocationDispatcher
             );
             return;
 
+        case AVRGameMarshaller.SET_TICKER:
+            ((AVRGameProvider)provider).setTicker(
+                source,
+                (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
+            );
+            return;
+
         case AVRGameMarshaller.START_QUEST:
             ((AVRGameProvider)provider).startQuest(
                 source,

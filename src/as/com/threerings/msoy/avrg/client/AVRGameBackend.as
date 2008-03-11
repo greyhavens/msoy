@@ -154,6 +154,7 @@ public class AVRGameBackend extends ControlBackend
         o["getPlayerIds_v1"] = getPlayerIds_v1;
         o["spawnMob_v1"] = spawnMob_v1;
         o["despawnMob_v1"] = despawnMob_v1;
+        o["setTicker_v1"] = setTicker_v1;
 
         // MobControl helpers
         o["setMobDecoration_v1"] = setMobDecoration_v1;
@@ -343,6 +344,14 @@ public class AVRGameBackend extends ControlBackend
                     sprite.setHotSpot(x, y, height);
                 }
             }
+        }
+    }
+
+    protected function setTicker_v1 (tickerName :String, msOfDelay :int) :void
+    {
+        if (isPlaying() && tickerName != null) {
+            _gameObj.avrgService.setTicker(
+                _gctx.getClient(), tickerName, msOfDelay, loggingConfirmListener("setTicker"));
         }
     }
 

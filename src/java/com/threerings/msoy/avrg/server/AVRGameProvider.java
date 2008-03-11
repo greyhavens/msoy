@@ -58,6 +58,12 @@ public interface AVRGameProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link AVRGameService#setTicker} request.
+     */
+    public void setTicker (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link AVRGameService#startQuest} request.
      */
     public void startQuest (ClientObject caller, String arg1, String arg2, InvocationService.ConfirmListener arg3)
