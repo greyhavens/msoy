@@ -57,6 +57,16 @@ public interface GroupServiceAsync
     public void getGroupMembers (WebIdent ident, int groupId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GroupService.getGroupRooms}
+     */
+    public void getGroupRooms (WebIdent ident, int groupId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.transferRoom}
+     */
+    public void transferRoom (WebIdent ident, int groupId, int sceneId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService.updateGroup} 
      */
     public void updateGroup (WebIdent ident, Group group, GroupExtras extras, 

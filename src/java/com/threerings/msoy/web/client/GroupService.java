@@ -9,6 +9,8 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
@@ -38,6 +40,37 @@ public interface GroupService extends RemoteService
          * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMemberCard>
          */
         public List members;
+    }
+
+    /** Delivers the respose to {@link #getGroupRooms}. */
+    public static class RoomsResult implements IsSerializable
+    {
+        /**
+         * The rooms of this group.
+         *
+         * @gwt.typeArgs <com.threerings.msoy.web.client.GroupService.Room>
+         */
+        public List groupRooms;
+
+        /**
+         * The rooms owned by the caller.
+         * 
+         * @gwt.typeArgs <com.threerings.msoy.web.client.GroupService.Room>
+         */
+        public List callerRooms;
+    }
+
+    /** Contains information about one of our rooms. */
+    public static class Room implements IsSerializable
+    {
+        /** The room's scene id. */
+        public int sceneId;
+
+        /** The room's name. */
+        public String name;
+
+        /** The room's decor thumbnail image. */
+        public MediaDesc decor;
     }
 
     /**
@@ -95,6 +128,18 @@ public interface GroupService extends RemoteService
      * Returns a list of all the members for the specified group.
      */
     public MembersResult getGroupMembers (WebIdent ident, int groupId)
+        throws ServiceException;
+
+    /**
+     * Returns a list of all the rooms owned by a specific group.
+     */
+    public RoomsResult getGroupRooms (WebIdent ident, int groupId)
+        throws ServiceException;
+
+    /**
+     * Transfers a room owned by the caller to the given group.  Only allowed by managers.
+     */
+    public void transferRoom (WebIdent ident, int groupId, int sceneId)
         throws ServiceException;
 
     /**

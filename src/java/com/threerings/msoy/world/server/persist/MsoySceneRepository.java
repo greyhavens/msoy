@@ -349,6 +349,13 @@ public class MsoySceneRepository extends DepotRepository
         return record.sceneId;
     }
 
+    public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId) 
+        throws PersistenceException
+    {
+        updatePartial(SceneRecord.class, sceneId, SceneRecord.OWNER_TYPE, ownerType,
+                      SceneRecord.OWNER_ID, ownerId);
+    }
+
     /**
      * Insert a new scene, with furni and all, into the database and return the newly assigned
      * sceneId.

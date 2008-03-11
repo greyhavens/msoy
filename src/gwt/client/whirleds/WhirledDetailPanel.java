@@ -216,6 +216,10 @@ public class WhirledDetailPanel extends VerticalPanel
 
         _tabs.add(new WhirledMembersPanel(_detail), CWhirleds.msgs.detailTabMembers());
 
+        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
+            _tabs.add(new WhirledRoomsPanel(_detail), CWhirleds.msgs.detailTabRooms());
+        }
+
 //         setBackgroundImage(
 //             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
     }

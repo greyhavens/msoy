@@ -24,6 +24,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -35,6 +36,7 @@ import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupCodes;
@@ -192,6 +194,73 @@ public class GroupServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupMembers failed [groupId=" + groupId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GroupService
+    public RoomsResult getGroupRooms (WebIdent ident, int groupId)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            RoomsResult result = new RoomsResult();
+            List<GroupService.Room> rooms = Lists.newArrayList();
+            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(
+                    MsoySceneModel.OWNER_TYPE_GROUP, groupId)) {
+                GroupService.Room room = new GroupService.Room();
+                room.sceneId = scene.sceneId;
+                room.name = scene.sceneName;
+                // TODO: load decor thumbnail
+                rooms.add(room);
+            }
+            result.groupRooms = rooms;
+
+            rooms = Lists.newArrayList();
+            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
+                GroupService.Room room = new GroupService.Room();
+                room.sceneId = scene.sceneId;
+                room.name = scene.sceneName;
+                // TODO: load decor thumbnail for when a room is transfered to the group
+                rooms.add(room);
+            }
+            result.callerRooms = rooms;
+                    
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getGroupRooms failed [groupId=" + groupId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GroupService
+    public void transferRoom (WebIdent ident, int groupId, int sceneId)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            // ensure the caller is a manager of this group
+            GroupMembershipRecord membership = 
+                MsoyServer.groupRepo.getMembership(groupId, ident.memberId); 
+            if (membership.rank != GroupMembership.RANK_MANAGER) {
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+
+            // ensure the caller is the owner of this scene
+            SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
+            if (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER ||
+                scene.ownerId != mrec.memberId) {
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+
+            // sign the deed over
+            MsoyServer.sceneRepo.transferSceneOwnership(
+                sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "transferRoom failed [groupId=" + groupId + ", sceneId=" + 
+                sceneId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
