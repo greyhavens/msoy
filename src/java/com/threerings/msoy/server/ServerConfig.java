@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.Config;
@@ -23,6 +25,9 @@ public class ServerConfig
 {
     /** The name assigned to this server node. */
     public static String nodeName;
+
+    /** The unique id associated with this node. */
+    public static int nodeId;
 
     /** The root directory of the server installation. */
     public static File serverRoot;
@@ -132,6 +137,9 @@ public class ServerConfig
         return config.getValue(nodeName + ".http_port", httpPort);
     }
 
+    /** The pattern via which we obtain our node id from our name. */
+    protected static final Pattern NODE_ID_PATTERN = Pattern.compile("msoy([0-9]+)");
+
     /**
      * Configures server bits when this class is resolved.
      */
@@ -158,12 +166,41 @@ public class ServerConfig
                 System.exit(-1);
             }
 
-            // fill in our node-specific properties
-            serverHost = config.getValue(nodeName + ".server_host", serverHost);
-            serverPorts = config.getValue(nodeName + ".server_ports", serverPorts);
-            httpPort = config.getValue(nodeName + ".http_port", httpPort);
-            gameServerPort = config.getValue(nodeName + ".game_server_port", gameServerPort);
-            socketPolicyPort = config.getValue(nodeName + ".socket_policy_port", socketPolicyPort);
+            // obtain our node id from the node name
+            Matcher m = NODE_ID_PATTERN.matcher(nodeName);
+            if (!m.matches()) {
+                log.warning("Unable to determine node if from name [name=" + nodeName + "]. " +
+                            "Node name must match pattern '" + NODE_ID_PATTERN + "'.");
+                System.exit(-1);
+            }
+            nodeId = Integer.parseInt(m.group(1));
+
+            // configure our server hostname based on our server_host_pattern
+            String hostPattern = config.getValue("server_host_pattern", "");
+            if (!StringUtil.isBlank(hostPattern)) {
+                try {
+                    serverHost = String.format(hostPattern, nodeId);
+                } catch (Exception e) {
+                    log.warning("Invalid 'server_host_pattern' supplied: " + hostPattern);
+                    System.exit(-1);
+                }
+            }
+
+            // if node_port_offset is specified, adjust our various ports
+            String nodePortOffset = config.getValue("node_port_offset", "");
+            if (!StringUtil.isBlank(nodePortOffset)) {
+                try {
+                    int offset = Integer.valueOf(nodePortOffset);
+                    for (int ii = 0; ii < serverPorts.length; ii++) {
+                        serverPorts[ii] = serverPorts[ii] + offset + nodeId;
+                    }
+                    httpPort = httpPort + offset + nodeId;
+                    gameServerPort = gameServerPort + offset + nodeId;
+                } catch (Exception e) {
+                    log.warning("Invalid 'node_port_offset' supplied: " + nodePortOffset);
+                    System.exit(-1);
+                }
+            }
         }
 
         // fill in our standard properties

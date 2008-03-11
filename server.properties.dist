@@ -11,12 +11,12 @@ dev_deployment = true
 #
 # The public URL that should be used to access this Whirled installation
 
-# server_url = http://first.whirled.com
+# server_url = http://www.whirled.com
 
 #
 # The hostname used by the client to connect to the game server
 
-server_host = game.metasoy.com
+server_host = game.whirled.com
 
 #
 # The port on which the world server listens to Flash's socket policy requests.
@@ -36,19 +36,33 @@ http_port = 8080
 game_server_port = 47625
 
 #
-# When running in clustered mode, we must override the server_host for each
-# node and we can optionally override the ports on which this node listens for
-# Presents and HTTP connections
+# A pattern used to generate the server_host value for nodes based on their
+# node id using printf-style formatting. In production we would use:
+#
+# server_host_pattern = whirled%d.whirled.com
+#
+# A developer installation should leave this value commented out.
 
-# msoy1.server_host = game1.metasoy.com
-# msoy1.socket_policy_port = 47623
-# msoy1.server_ports = 47624
-# msoy1.http_port = 80
+# server_host_pattern = whirled%d.whirled.com
 
-# msoy2.server_host = game2.metasoy.com
-# msoy1.socket_policy_port = 47623
-# msoy2.server_ports = 47624
-# msoy2.http_port = 80
+#
+# If uncommented, this value will be used to adjust the server_ports, http_port
+# and game_server_port settings for each node by adding this offset and the
+# node's id to the default values for those configurations like so:
+#
+# node_value = default_value + node_port_offset + node_id
+#
+# So if you set http_port to 8080 and node_port_offset to -1 then:
+#
+# msoy1.http_port = 8080 (default) + -1 (offset) + 1 (node id) = 8080
+# msoy1.http_port = 8080 (default) + -1 (offset) + 2 (node id) = 8081
+# etc.
+#
+# The same goes for the server_ports values and the game_server_port value.
+# This is only useful for local developer's deployments where they run multiple
+# servers on the same machine.
+
+# node_port_offset = -1
 
 #
 # If this server is running as a part of a cluster, this value should be set to
@@ -90,7 +104,7 @@ static_media_url = http://localhost:8080/media/static/
 # S3-backed media storage configuration.
 
 # media_s3enable = true
-# media_s3bucket = media.metasoy.com
+# media_s3bucket = media.whirled.com
 # media_s3id = AWS ID
 # media_s3key = SECRET KEY
 
@@ -140,7 +154,7 @@ oooauth.access_denied_url = /register/access_denied.wm
 #
 # Hostname and port of the event log server.
 
-# event_log_url = http://logdb.metasoy.com
+# event_log_url = http://logdb.whirled.com
 
 #
 # Jabber component configuration
