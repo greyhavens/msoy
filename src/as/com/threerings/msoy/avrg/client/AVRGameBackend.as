@@ -89,7 +89,7 @@ public class AVRGameBackend extends ControlBackend
 
          _wctx.getLocationDirector().removeLocationObserver(_locationObserver);
          _wctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
-        
+
          _gameObj.removeListener(_gameListener);
 
          super.shutdown();
@@ -464,12 +464,12 @@ public class AVRGameBackend extends ControlBackend
     {
         if (!isPlaying()) {
             log.debug("getAvatarSprite(" + playerId + ") while !isPlaying()");
-            return;
+            return null;
         }
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view == null) {
             log.debug("getAvatarSprite(" + playerId + ") without RoomView");
-            return;
+            return null;
         }
         var name :MemberName = new MemberName("", playerId);
         var sprite :OccupantSprite = view.getOccupantByName(name);
