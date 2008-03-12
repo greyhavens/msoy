@@ -87,6 +87,13 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     {
         final PlayerObject plobj = verifyIsPlayer(caller);
 
+        // guests are not currently awarded trophies; some day when we have infinite time or
+        // infinite monkeys, we will track trophies awarded to guests and transfer them to their
+        // newly created account
+        if (plobj.isGuest()) {
+            return;
+        }
+
         // locate the trophy source record in question
         TrophySource source = null;
         for (TrophySource csource : _content.tsources) {
@@ -111,9 +118,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
         // store the trophy to the database, we won't tell them that they earned it and they'll be
         // able to earn it again next time
-        plobj.addToGameContent(
-            new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
+        plobj.addToGameContent(new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
 
+        // create the persistent record we will shortly store
         TrophyRecord trophy = new TrophyRecord();
         trophy.gameId = gameId;
         trophy.memberId = plobj.getMemberId();
@@ -131,12 +138,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         if (_content.game.isDeveloperVersion()) {
             log.info("Awarding transient trophy to developer [game=" + where() +
                      ", who=" + plobj.who() + ", ident=" + ident + "].");
-            plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
-            return;
-        }
-
-        // if the player is a guest, just report the award directly and don't persist it
-        if (plobj.isGuest()) {
             plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
             return;
         }
@@ -159,6 +160,13 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         throws InvocationException
     {
         final PlayerObject plobj = verifyIsPlayer(caller);
+
+        // guests are not currently awarded prizes; some day when we have infinite time or infinite
+        // monkeys, we will track prizes awarded to guests and transfer them to their newly created
+        // account
+        if (plobj.isGuest()) {
+            return;
+        }
 
         // locate the prize record in question
         Prize prize = null;
