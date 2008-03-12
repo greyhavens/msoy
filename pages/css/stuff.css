@@ -29,51 +29,25 @@
 }
 
 .itemPanel .Upload {
+  background: url(/images/item/upload_bg.png) no-repeat top;
   margin-left: 10px;
+  width: 655px;
+  height: 89px;
 }
 
 .itemPanel .Upload .Header {
-  width: 100%;
-}
-
-.itemPanel .Upload .TitleLeft {
-  background-image: url(/images/ui/popup/header_star_left.png);
-  width: 50px;
-  height: 33px;
-}
-
-.itemPanel .Upload .TitleRight {
-  background-image: url(/images/ui/popup/header_star_right.png);
-  width: 50px;
-  height: 33px;
-}
-
-.itemPanel .Upload .TitleCenter {
-  background-image: url(/images/ui/popup/header_text_tile.png);
+  height: 40px;
   color: #FFFFFF;
-  font-size: 18px;
   font-weight: bold;
-  font-style: italic;
-  white-space: nowrap;
-  text-align: center;
+  padding: 2px 0px 0px 65px;
 }
 
-.itemPanel .Upload .Body {
-  width: 100%;
-  background: url(/images/item/blue_diagonals.png) repeat;
-}
-
-.itemPanel .Upload .Body .Table {
-  background: url(/images/item/upload_swirl.png) no-repeat right;
-}
-
-.itemPanel .Upload .Body .Table .Pitch {
-  padding: 10px;
+.itemPanel .Upload .Pitch {
   padding-left: 20px;
   font-size: 14px;
 }
 
-.itemPanel .Upload .Body .Table .Button {
+.itemPanel .Upload .Button {
   padding-right: 20px;
 }
 

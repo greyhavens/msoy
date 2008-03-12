@@ -12,10 +12,12 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -152,45 +154,23 @@ public class ItemPanel extends VerticalPanel
     protected void createUploadInterface ()
     {
         // this will allow us to create new items
-        _upload = new VerticalPanel();
-        _upload.setStyleName("Upload");
-
-        Grid header = new Grid(1, 3);
-        header.setStyleName("Header");
-        header.setCellSpacing(0);
-        header.setCellPadding(0);
-        header.getCellFormatter().setStyleName(0, 0, "TitleLeft");
-        header.getCellFormatter().setStyleName(0, 1, "TitleCenter");
-        header.getCellFormatter().setStyleName(0, 2, "TitleRight");
-        header.setText(0, 1, CStuff.dmsgs.getString("itemUploadTitle" + _type));
-        _upload.add(header);
-
-        VerticalPanel cwrap = new VerticalPanel();
-        cwrap.setStyleName("Body");
-        _upload.add(cwrap);
-
-        Grid contents = new Grid(1, 2);
-        contents.setStyleName("Table");
-        contents.setCellSpacing(0);
-        contents.setCellPadding(0);
-        contents.getCellFormatter().setStyleName(0, 0, "Pitch");
-        contents.getCellFormatter().setStyleName(0, 1, "Button");
-        contents.getCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
-        contents.getCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
-        cwrap.add(contents);
+        _upload = new SmartTable("Upload", 0, 0);
+        _upload.setText(0, 0, CStuff.dmsgs.getString("itemUploadTitle" + _type), 2, "Header");
 
         // add the various "why to upload" pitches
         String why = (CStuff.dmsgs.getString("itemUploadPitch" + _type + "a") + "<br>" +
                       CStuff.dmsgs.getString("itemUploadPitch" + _type + "b") + "<br>" +
                       CStuff.dmsgs.getString("itemUploadPitch" + _type + "c"));
-        contents.setHTML(0, 0, why);
+        _upload.setHTML(1, 0, why);
+        _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
 
         // add the create button
-        contents.setWidget(0, 1, new Button(CStuff.msgs.panelCreateNew(), new ClickListener() {
+        _upload.setWidget(1, 1, new Button(CStuff.msgs.panelCreateNew(), new ClickListener() {
             public void onClick (Widget widget) {
                 CStuff.createItem(_type, (byte)0, 0);
             }
-        }));
+        }), 1, "Button");
+        _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
     }
 
     /**
@@ -243,7 +223,7 @@ public class ItemPanel extends VerticalPanel
     protected HorizontalPanel _shop;
     protected ListBox _filters;
     protected PagedGrid _contents;
-    protected VerticalPanel _upload;
+    protected SmartTable _upload;
 
     protected static final String[] FLABELS = {
         CStuff.msgs.ipfAll(),
