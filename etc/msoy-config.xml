@@ -139,7 +139,7 @@
       <!-- compiler.show-shadowed-device-font-warnings: toggles whether warnings are displayed when an embedded font name shadows a device font name-->
       <show-shadowed-device-font-warnings>true</show-shadowed-device-font-warnings>
       <!-- compiler.show-unused-type-selector-warnings: toggle whether warnings generated from unused CSS type selectors are displayed-->
-      <show-unused-type-selector-warnings>true</show-unused-type-selector-warnings>
+      <show-unused-type-selector-warnings>false</show-unused-type-selector-warnings>
       <!-- compiler.source-path: list of path elements that form the roots of ActionScript class hierarchies-->
       <!-- compiler.source-path usage:
       <source-path>
