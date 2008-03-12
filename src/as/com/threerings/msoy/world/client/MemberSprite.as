@@ -21,9 +21,9 @@ public class MemberSprite extends ActorSprite
     /**
      * Creates a sprite for the supplied member.
      */
-    public function MemberSprite (occInfo :MemberInfo)
+    public function MemberSprite (ctx :WorldContext, occInfo :MemberInfo)
     {
-        super(occInfo);
+        super(ctx, occInfo);
     }
 
     /**

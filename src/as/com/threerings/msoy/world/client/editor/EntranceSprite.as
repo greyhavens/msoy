@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client.editor {
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 public class EntranceSprite extends FurniSprite
@@ -13,13 +14,13 @@ public class EntranceSprite extends FurniSprite
     [Embed(source="../../../../../../../../rsrc/media/entrance.png")]
     public static const MEDIA_CLASS :Class;
 
-    public function EntranceSprite (location :MsoyLocation)
+    public function EntranceSprite (ctx :WorldContext, location :MsoyLocation)
     {
         // fake furni data for the fake sprite
         var furniData :EntranceFurniData = new EntranceFurniData();
         furniData.media = new MediaDesc();
         furniData.loc = location;
-        super(furniData);
+        super(ctx, furniData);
 
         setMediaClass(MEDIA_CLASS);
         setLocation(location);

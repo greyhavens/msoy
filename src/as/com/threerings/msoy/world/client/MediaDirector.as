@@ -43,19 +43,19 @@ public class MediaDirector extends BasicDirector
             if (isOurs && _ourAvatar != null) {
                 return _ourAvatar;
             }
-            var sprite :MemberSprite = new MemberSprite(occInfo as MemberInfo);
+            var sprite :MemberSprite = new MemberSprite(_wctx, occInfo as MemberInfo);
             if (isOurs) {
                 _ourAvatar = sprite;
             }
             return sprite;
 
         } else if (occInfo is PetInfo) {
-            return new PetSprite(occInfo as PetInfo);
+            return new PetSprite(_wctx, occInfo as PetInfo);
 
         } else if (occInfo is MobInfo) {
             if (MobInfo(occInfo).getGameId() == _wctx.getGameDirector().getGameId()) {
-                return new MobSprite(
-                    occInfo as MobInfo, _wctx.getGameDirector().getAVRGameBackend());
+                return new MobSprite(_wctx, occInfo as MobInfo,
+                    _wctx.getGameDirector().getAVRGameBackend());
             }
             return null;
 
@@ -74,7 +74,7 @@ public class MediaDirector extends BasicDirector
      */
     public function getFurni (furni :FurniData) :FurniSprite
     {
-        return new FurniSprite(furni);
+        return new FurniSprite(_wctx, furni);
     }
 
     /**
@@ -82,7 +82,7 @@ public class MediaDirector extends BasicDirector
      */
     public function getDecor (decor :Decor) :DecorSprite
     {
-        return new DecorSprite(decor);
+        return new DecorSprite(_wctx, decor);
     }
     
     /**

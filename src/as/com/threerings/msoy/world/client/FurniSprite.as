@@ -43,8 +43,9 @@ public class FurniSprite extends MsoySprite
     /**
      * Construct a new FurniSprite.
      */
-    public function FurniSprite (furni :FurniData)
+    public function FurniSprite (ctx :WorldContext, furni :FurniData)
     {
+        super(ctx);
         _furni = furni;
 
         // configure our media and item

@@ -112,7 +112,7 @@ public class RoomEditorController
         queryServerForNames(this.scene.getFurni());
 
         // make the fake entrance
-        _entranceSprite = new EntranceSprite(scene.getEntrance());
+        _entranceSprite = new EntranceSprite(_ctx, scene.getEntrance());
         _entranceSprite.setEditing(true);
         _view.addOtherSprite(_entranceSprite);
         var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();

@@ -19,9 +19,9 @@ import com.threerings.util.Log;
  */
 public class MobSprite extends OccupantSprite
 {
-    public function MobSprite (occInfo :MobInfo, backend :AVRGameBackend)
+    public function MobSprite (ctx :WorldContext, occInfo :MobInfo, backend :AVRGameBackend)
     {
-        super(occInfo);
+        super(ctx, occInfo);
 
         _holder = new Sprite();
         setMediaObject(_holder);

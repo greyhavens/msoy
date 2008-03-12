@@ -19,8 +19,9 @@ public class ControlBackend
     /**
      * Initialize a backend to safely communicate with usercode.
      */
-    public function init (loader :Loader) :void
+    public function init (ctx :MsoyContext, loader :Loader) :void
     {
+        _ctx = ctx;
         _sharedEvents = loader.contentLoaderInfo.sharedEvents;
         _sharedEvents.addEventListener("controlConnect", handleUserCodeConnect, false, 0, true);
     }
@@ -106,7 +107,8 @@ public class ControlBackend
      */
     protected function populateControlProperties (o :Object) :void
     {
-        // nothing by default
+        o["startTransaction"] = startTransaction_v1;
+        o["commitTransaction"] = commitTransaction_v1;
     }
 
     /**
@@ -117,6 +119,25 @@ public class ControlBackend
     {
         // nothing by default
     }
+
+    /**
+     * Starts a transaction that will group all invocation requests into a single message.
+     */
+    protected function startTransaction_v1 () :void
+    {
+        _ctx.getClient().getInvocationDirector().startTransaction();
+    }
+
+    /**
+     * Commits a transaction started with {@link #startTransaction_v1}.
+     */
+    protected function commitTransaction_v1 () :void
+    {
+        _ctx.getClient().getInvocationDirector().commitTransaction();
+    }
+
+    /** The giver of life. */
+    protected var _ctx :MsoyContext;
 
     /** Properties populated by usercode. */
     protected var _props :Object;

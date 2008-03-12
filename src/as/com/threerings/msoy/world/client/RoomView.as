@@ -964,7 +964,7 @@ public class RoomView extends AbstractRoomView
 
     protected function addEffect (effect :EffectData) :FurniSprite
     {
-        var sprite :EffectSprite = new EffectSprite(_ctrl.adjustEffectData(effect));
+        var sprite :EffectSprite = new EffectSprite(_ctx, _ctrl.adjustEffectData(effect));
         addChildAt(sprite, 1);
         sprite.setLocation(effect.loc);
         sprite.roomScaleUpdated();

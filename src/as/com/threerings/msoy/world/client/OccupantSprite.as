@@ -49,8 +49,10 @@ public class OccupantSprite extends MsoySprite
     /**
      * Creates a sprite for the supplied occupant.
      */
-    public function OccupantSprite (occInfo :OccupantInfo)
+    public function OccupantSprite (ctx :WorldContext, occInfo :OccupantInfo)
     {
+        super(ctx);
+
         // The label often jumps visibly when the actor is hovered over, a pixel up or down, and/or
         // left or right. As far as I (Ray) can figure, when the glow filter is applied it's doing
         // pixel snapping. The strange thing is that we apply our own outlining glow filter (below)
@@ -85,7 +87,7 @@ public class OccupantSprite extends MsoySprite
      */
     public function addTransientEffect (effect :EffectData) :void
     {
-        var sprite :EffectSprite = new EffectSprite(effect);
+        var sprite :EffectSprite = new EffectSprite(_ctx, effect);
         sprite.addEventListener(MsoySprite.LOCATION_UPDATED, handleEffectUpdated);
         sprite.addEventListener(EffectSprite.EFFECT_FINISHED, handleEffectFinished);
         sprite.x = getActualWidth()/2;

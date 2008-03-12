@@ -78,6 +78,14 @@ public class MsoySprite extends DataPackMediaContainer
     public static const GAME_HOVER :uint = 0xFFFFFF;  // white
     public static const OTHER_HOVER :uint = 0x000000; // black
 
+    /**
+     * Construct a MsoySprite.
+     */
+    public function MsoySprite (ctx :WorldContext)
+    {
+        _ctx = ctx;
+    }
+
     // from ContextMenuProvider, via MsoyMediaContainer
     override public function populateContextMenu (ctx :MsoyContext, items :Array) :void
     {
@@ -497,7 +505,7 @@ public class MsoySprite extends DataPackMediaContainer
         var loader :Loader = super.initLoader();
 
         _backend = createBackend();
-        _backend.init(loader);
+        _backend.init(_ctx, loader);
         _backend.setSprite(this);
 
         return loader;
@@ -877,6 +885,9 @@ public class MsoySprite extends DataPackMediaContainer
     {
         return (_backend != null) && _backend.hasUserCode(name);
     }
+
+    /** The giver of life. */
+    protected var _ctx :WorldContext;
 
     /** The current logical coordinate of this media. */
     protected const _loc :MsoyLocation = new MsoyLocation();

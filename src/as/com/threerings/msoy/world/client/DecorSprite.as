@@ -16,10 +16,10 @@ public class DecorSprite extends FurniSprite
     /**
      * Construct a new DecorSprite.
      */
-    public function DecorSprite (decor :Decor)
+    public function DecorSprite (ctx :WorldContext, decor :Decor)
     {
         var furniData :FurniData = makeFurniData(decor);
-        super(furniData);
+        super(ctx, furniData);
         setLocation(furniData.loc);
     }
     

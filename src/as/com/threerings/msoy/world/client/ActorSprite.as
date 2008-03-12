@@ -21,9 +21,9 @@ public class ActorSprite extends OccupantSprite
     /**
      * Creates an actor sprite for the supplied actor.
      */
-    public function ActorSprite (occInfo :ActorInfo)
+    public function ActorSprite (ctx :WorldContext, occInfo :ActorInfo)
     {
-        super(occInfo);
+        super(ctx, occInfo);
     }
 
     /**

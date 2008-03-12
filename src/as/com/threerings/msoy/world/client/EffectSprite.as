@@ -13,9 +13,9 @@ public class EffectSprite extends FurniSprite
     /** A value event dispatched when the effect is finished. */
     public static const EFFECT_FINISHED :String = "EffectFinished";
 
-    public function EffectSprite (effect :EffectData)
+    public function EffectSprite (ctx :WorldContext, effect :EffectData)
     {
-        super(effect);
+        super(ctx, effect);
     }
 
     override public function setLocation (newLoc :Object) :void

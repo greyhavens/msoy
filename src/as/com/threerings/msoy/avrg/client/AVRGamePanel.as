@@ -84,7 +84,7 @@ public class AVRGamePanel extends UIComponent
         var loader :Loader = Loader(_mediaHolder.getMedia());
 
         // hook the backend up with the media
-        _backend.init(loader);
+        _backend.init(_wctx, loader);
 
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
