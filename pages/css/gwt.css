@@ -162,6 +162,11 @@ img, embed, applet, object {
 
 .gwt-PushButton {
   text-align: center;
+  vertical-align: middle;
+}
+
+.gwt-PushButton input {
+  border: none;
 }
 
 .gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering {

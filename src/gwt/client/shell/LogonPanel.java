@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -34,7 +35,7 @@ public class LogonPanel extends SmartTable
         this(headerMode, new Button(CShell.cmsgs.logonLogon()));
     }
 
-    public LogonPanel (boolean headerMode, Button logon)
+    public LogonPanel (boolean headerMode, ButtonBase logon)
     {
         super("logonPanel", 0, 2);
 

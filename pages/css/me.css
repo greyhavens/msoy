@@ -173,28 +173,6 @@
   height: 630px;
 }
 
-.whatIsTheWhirled .Logon {
-  background-image: url(/images/landing/signin.jpg);
-  width: 105px;
-  height: 42px;
-  border: none;
-}
-
-.whatIsTheWhirled .Logon:hover {
-  background-image: url(/images/landing/signin_hover.jpg);
-}
-
-.whatIsTheWhirled .logonPanel {
-  color: #FFFFFF;
-  font-size: 14px;
-}
-
-.whatIsTheWhirled .logonPanel .gwt-TextBox,
-.whatIsTheWhirled .logonPanel .gwt-PasswordTextBox {
-  font-size: 16px;
-  width: 175px;
-}
-
 .whatIsTheWhirled .Stats {
   color: #FFFFFF;
   width: 75px;
@@ -213,6 +191,40 @@
   font-weight: bold;
   text-align: center;
   vertical-align: top;
+}
+
+.whatIsTheWhirled .Right .Label {
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #2E6F97;
+  height: 25px;
+  padding-left: 17px;
+}
+
+.whatIsTheWhirled .Right .LoginTip {
+  font-size: 12px;
+  font-weight: bold;
+  color: #FFFFFF;
+  height: 20px;
+  padding-left: 17px;
+}
+
+.whatIsTheWhirled .logonPanel {
+  color: #FFFFFF;
+  font-size: 12px;
+  margin: 0px 0px 5px 15px;
+  height: 88px;
+}
+
+.whatIsTheWhirled .logonPanel .gwt-TextBox,
+.whatIsTheWhirled .logonPanel .gwt-PasswordTextBox {
+  font-size: 16px;
+  width: 175px;
+}
+
+.whatIsTheWhirled .Login {
+  margin-left: 115px;
 }
 
 .editAccount .Header {
