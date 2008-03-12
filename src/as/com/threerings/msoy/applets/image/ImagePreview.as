@@ -16,13 +16,16 @@ import flash.events.IOErrorEvent;
 import flash.utils.ByteArray;
 
 import mx.controls.HSlider;
+import mx.controls.Label;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.core.Container;
 import mx.core.ScrollPolicy;
 
+import mx.events.FlexEvent;
 import mx.events.SliderEvent;
 
 import com.threerings.util.ValueEvent;
@@ -56,8 +59,8 @@ public class ImagePreview extends HBox
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xCCCCCC);
-        _editor = new EditCanvas(300, 300);
-        _editor.addEventListener(EditCanvas.SIZE_KNOWN, dispatchEvent);
+        _editor = new EditCanvas(MAX_WIDTH, MAX_HEIGHT);
+        _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
         addChild(_editor);
         addChild(_controlBar = createControlBar());
@@ -87,6 +90,8 @@ public class ImagePreview extends HBox
     protected function createControlBar () :VBox
     {
         var bar :VBox = new VBox();
+        bar.setStyle("paddingLeft", 0);
+        bar.setStyle("paddingRight", 0);
         bar.width = 100;
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
         bar.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -96,25 +101,51 @@ public class ImagePreview extends HBox
         bar.addChild(addMode("select", SELECT));
         bar.addChild(addMode("move", MOVE));
 
-        // TODO: reset zoom?
-        bar.addChild(_zoomSlider = new HSlider());
-        _zoomSlider.liveDragging = true;
-        _zoomSlider.minimum = .01;
-        _zoomSlider.maximum = 10;
-        _zoomSlider.value = 1;
-        _zoomSlider.tickValues = [ 1 ];
-        _zoomSlider.addEventListener(SliderEvent.CHANGE, handleZoomChange);
-
-        // TODO: reset rotation
-        bar.addChild(_rotSlider = new HSlider());
-        _rotSlider.liveDragging = true;
-        _rotSlider.minimum = -180;
-        _rotSlider.maximum = 180;
-        _rotSlider.value = 0;
-        _rotSlider.tickValues = [ 0 ];
-        _rotSlider.addEventListener(SliderEvent.CHANGE, handleRotChange);
+        _rotSlider = addSlider(bar, "Rotation", -180, 180, 0, handleRotChange);
+        _scaleSlider = addSlider(bar, "Scale", .01, 10, 1, handleScaleChange);
+        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, handleZoomChange);
 
         return bar;
+    }
+
+    protected function addSlider (
+        container :Container, name :String, min :Number, max :Number, value :Number,
+        changeHandler :Function) :HSlider
+    {
+        var box :VBox = new VBox();
+        box.horizontalScrollPolicy = ScrollPolicy.OFF;
+        box.verticalScrollPolicy = ScrollPolicy.OFF;
+        box.setStyle("verticalGap", 0);
+
+        var hbox :HBox = new HBox();
+        hbox.setStyle("horizontalGap", 0);
+
+        var lbl :Label = new Label();
+        lbl.setStyle("fontSize", 8);
+        lbl.text = name;
+
+        var slider :HSlider = new HSlider();
+        slider.liveDragging = true;
+        slider.minimum = min;
+        slider.maximum = max;
+        slider.value = value;
+        slider.tickValues = [ value ];
+        slider.addEventListener(SliderEvent.CHANGE, changeHandler);
+        slider.addEventListener(FlexEvent.VALUE_COMMIT, changeHandler);
+
+        container.addChild(box);
+        box.addChild(hbox);
+        box.addChild(slider);
+
+        var but :CommandButton = new CommandButton("reset", function () :void {
+            slider.value = value;
+        });
+        but.scaleY = .5;
+        but.scaleX = .5;
+        hbox.addChild(lbl);
+        hbox.addChild(but);
+
+        return slider;
     }
 
     protected function addMode (label :String, mode :int) :CommandButton
@@ -133,14 +164,31 @@ public class ImagePreview extends HBox
         }
     }
 
-    protected function handleZoomChange (event :SliderEvent) :void
+    protected function handleZoomChange (event :Event) :void
     {
-        _editor.setZoom(event.value);
+        _editor.setZoom(HSlider(event.target).value);
     }
 
-    protected function handleRotChange (event :SliderEvent) :void
+    protected function handleRotChange (event :Event) :void
     {
-        _editor.setRotation(event.value);
+        _editor.setRotation(HSlider(event.target).value);
+    }
+
+    protected function handleScaleChange (event :Event) :void
+    {
+        _editor.setScale(HSlider(event.target).value);
+    }
+
+    protected function handleSizeKnown (event :ValueEvent) :void
+    {
+        var w :Number = event.value[0];
+        var h :Number = event.value[1];
+
+        // at the minimum zoom level we want the longest side to just fit
+        _zoomSlider.minimum = Math.min(MAX_WIDTH / w, MAX_HEIGHT / h);
+
+        // redispatch
+        dispatchEvent(event);
     }
 
     protected var _controlBar :VBox;
@@ -149,8 +197,9 @@ public class ImagePreview extends HBox
 
     protected var _editor :EditCanvas;
 
-    protected var _zoomSlider :HSlider;
     protected var _rotSlider :HSlider;
+    protected var _scaleSlider :HSlider;
+    protected var _zoomSlider :HSlider;
 
     protected var _buttons :Array = [];
 

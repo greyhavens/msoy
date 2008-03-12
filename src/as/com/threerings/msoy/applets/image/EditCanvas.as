@@ -6,11 +6,13 @@ package com.threerings.msoy.applets.image {
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.PixelSnapping;
 import flash.display.Shape;
+import flash.display.SpreadMethod;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -33,6 +35,8 @@ import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
+import com.threerings.flash.GraphicsUtil;
+
 /** 
  * Dispatched when the size of the image is known.
  */
@@ -52,10 +56,17 @@ public class EditCanvas extends Canvas
 
         _editor = new Sprite();
 
-        _editor.addChild(_imageLayer = new Sprite());
-        _editor.addChild(_hudLayer = new Sprite());
-
         _backgroundLayer = new Sprite();
+        _imageLayer = new Sprite();
+        _scaleLayer = new Sprite();
+        _pixelLayer = new Sprite();
+        _hudLayer = new Sprite();
+
+        _editor.addChild(_backgroundLayer);
+        _scaleLayer.addChild(_imageLayer);
+        _scaleLayer.addChild(_pixelLayer);
+        _editor.addChild(_scaleLayer);
+        _editor.addChild(_hudLayer);
 
         _holder = new UIComponent();
         _holder.addChild(_editor);
@@ -68,6 +79,16 @@ public class EditCanvas extends Canvas
 //        _editor.addChild(mask);
     }
 
+    public function setSelection () :void
+    {
+        // TODO: not fake
+
+        // TEMP: show a fakey McThinger on the hud
+        var g :Graphics = _hudLayer.graphics;
+        g.lineStyle(1);
+        GraphicsUtil.dashRect(g, 50, 50, 100, 100);
+    }
+
     /**
      * Clear any currently displayed image.
      */
@@ -77,7 +98,7 @@ public class EditCanvas extends Canvas
         _bitmapData = null;
         _width = 0;
         _height = 0;
-        _imageLayer.graphics.clear();
+        _pixelLayer.graphics.clear();
         _hudLayer.graphics.clear();
         if (_image != null) {
             _imageLayer.removeChild(_image);
@@ -144,6 +165,8 @@ public class EditCanvas extends Canvas
         } else {
             throw new Error("Unknown image source: " + image);
         }
+
+        setSelection();
     }
 
     /**
@@ -162,7 +185,7 @@ public class EditCanvas extends Canvas
         if (bmp == null) {
             // screenshot the image
             bmp = new BitmapData(_width, _height);
-            bmp.draw(_imageLayer);
+            bmp.draw(_scaleLayer);
         }
 
         if (asJpg) {
@@ -186,6 +209,8 @@ public class EditCanvas extends Canvas
 
     public function setScale (scale :Number) :void
     {
+        _scaleLayer.scaleX = scale;
+        _scaleLayer.scaleY = scale;
     }
 
     protected function sizeKnown (width :Number, height :Number) :void
@@ -235,9 +260,9 @@ public class EditCanvas extends Canvas
     protected var _editor :Sprite;
 
     protected var _backgroundLayer :Sprite;
-
     protected var _imageLayer :Sprite;
-
+    protected var _scaleLayer :Sprite;
+    protected var _pixelLayer :Sprite;
     protected var _hudLayer :Sprite;
 
     protected var _bitmapData :BitmapData;
