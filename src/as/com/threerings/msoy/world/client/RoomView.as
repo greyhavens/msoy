@@ -309,7 +309,7 @@ public class RoomView extends AbstractRoomView
         }
 
         if (loading) {
-            var scale :Number = loadingDecor ? 4 : 1;
+            var scale :Number = loadingDecor ? 1 : .25;
             _loadingSpinner.scaleX = scale;
             _loadingSpinner.scaleY = scale;
         }
