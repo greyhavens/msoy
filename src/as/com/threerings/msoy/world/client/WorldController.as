@@ -754,7 +754,7 @@ public class WorldController extends MsoyController
     {
         if (_wctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
             // if we're in a game, closing means closing the game and going back to our place
-            handleMoveBack();
+            handleMoveBack(true);
         } else {
             // if we're in the whirled, closing means closing the flash client totally
             _wctx.getMsoyClient().closeClient();
@@ -762,7 +762,7 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function handleMoveBack () :void
+    override public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
         // if we're not in a scene, just go to the previous scene on the stack
         if (_wctx.getSceneDirector().getScene() == null) {
@@ -781,8 +781,12 @@ public class WorldController extends MsoyController
             return;
         }
 
-        // nothing on the stack, let's just go to our home scene
-        handleGoScene(_wctx.getMemberObject().getHomeSceneId());
+        // nothing on the stack, so either close the client or go home
+        if (closeInsteadOfHome) {
+            _wctx.getWorldClient().closeClient();
+        } else {
+            handleGoScene(_wctx.getMemberObject().getHomeSceneId());
+        }
     }
 
     // from MsoyController
@@ -808,6 +812,19 @@ public class WorldController extends MsoyController
             var name :Name = _wctx.getClient().getCredentials().getUsername();
             if (name != null) {
                 Prefs.setUsername(name.toString());
+            }
+
+        } else {
+            // if we are a guest, let the GWT application know the guest id as whom we're
+            // authenticated so that it can pass that guest id along to the server if we register
+            // and the server can transfer any flow we earn as this guest to our new account
+            try {
+                if (ExternalInterface.available) {
+                    ExternalInterface.call("setGuestId", memberObj.getMemberId());
+                }
+            } catch (e :Error) {
+                log.warning("Unable to inform GWT of our guest id " +
+                            "[id=" + memberObj.getMemberId() + "]: " + e);
             }
         }
 

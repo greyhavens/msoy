@@ -49,8 +49,13 @@ import client.item.ItemMessages;
 public class Application
     implements EntryPoint, HistoryListener
 {
-    /** Our active invitation if we landed at Whirled from an invite, null otherwise. */
+    /** Our active invitation if we landed at Whirled from an invite, null otherwise (for use if
+     * and when we create an account). */
     public static Invitation activeInvite;
+
+    /** Our active guest id if we logged into Whirled as a guest, zero otherwise (for use if and
+     * when we create an account). */
+    public static int activeGuestId;
 
     /**
      * Returns a {@link Hyperlink} that displays the details of a given group.
@@ -388,6 +393,16 @@ public class Application
     }
 
     /**
+     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
+     * if the guest creates an account we can transfer anything they earned as a guest to their
+     * newly created account.
+     */
+    protected static void setGuestId (int guestId)
+    {
+        activeGuestId = guestId;
+    }
+
+    /**
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app) /*-{
@@ -411,6 +426,9 @@ public class Application
        };
        $wnd.displayPage = function (page, args) {
            @client.shell.Application::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
+       };
+       $wnd.setGuestId = function (guestId) {
+           @client.shell.Application::setGuestId(I)(guestId);
        };
     }-*/;
 

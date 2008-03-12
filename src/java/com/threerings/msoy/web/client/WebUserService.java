@@ -35,7 +35,7 @@ public interface WebUserService extends RemoteService
      */
     public SessionData register (long clientVersion, String email, String password,
                                  String displayName, int[] birthday, AccountInfo info,
-                                 int expireDays, String inviteId)
+                                 int expireDays, String inviteId, int guestId)
         throws ServiceException;
 
     /**

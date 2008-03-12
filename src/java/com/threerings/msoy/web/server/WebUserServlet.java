@@ -14,12 +14,18 @@ import java.util.logging.Level;
 
 import org.apache.velocity.VelocityContext;
 
+import com.google.common.base.Preconditions;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
@@ -28,6 +34,7 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -63,7 +70,7 @@ public class WebUserServlet extends MsoyServiceServlet
     // from interface WebUserService
     public SessionData register (long clientVersion, String username, String password,
                                  final String displayName, int[] bdayvec, AccountInfo info,
-                                 int expireDays, String inviteId)
+                                 int expireDays, String inviteId, int guestId)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -115,6 +122,13 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to create initial profile [prec=" + prec + "]", pe);
             // keep on keepin' on
+        }
+
+        // if they have accumulated flow as a guest, transfer that to their account (note: only
+        // negative ids are valid guest ids)
+        if (guestId < 0) {
+            MsoyServer.peerMan.invokeNodeAction(
+                new TransferGuestFlowAction(guestId, newAccount.memberId));
         }
 
         // if we are responding to an invitation, wire that all up
@@ -446,6 +460,27 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         return data;
+    }
+
+    protected static class TransferGuestFlowAction extends MemberNodeAction
+    {
+        public TransferGuestFlowAction (int fromGuestId, int toMemberId) {
+            super(fromGuestId);
+            Preconditions.checkArgument(fromGuestId < 0, "guest id must be < 0: " + fromGuestId);
+            _toMemberId = toMemberId;
+        }
+
+        protected void execute (MemberObject memobj) {
+            final int flow = memobj.flow;
+            if (flow > 0) {
+                log.info("Transfering guest-accumulated flow to user [guestId=" + _memberId +
+                         ", memberId=" + _toMemberId + "].");
+                MsoyServer.memberMan.grantFlow(
+                    new UserActionDetails(_toMemberId, UserAction.TRANSFER_FROM_GUEST), flow);
+            }
+        }
+
+        protected int _toMemberId;
     }
 
     /** The regular expression defining valid permanames. */

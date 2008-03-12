@@ -192,21 +192,23 @@ public class CreateAccountPanel extends FlexTable
             null : Application.activeInvite.inviteId;
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
+
         setStatus(CAccount.msgs.creatingAccount());
-        CAccount.usersvc.register(DeploymentConfig.version, email, CAccount.md5hex(password), name, 
-            _dateOfBirth.getDate(), info, 1, inviteId, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    // clear our current token otherwise didLogon() will try to load it
-                    Application.setCurrentToken(null);
-                    // pass our credentials into the application
-                    CAccount.app.didLogon((SessionData)result);
-                    // then head to our me page
-                    Application.go(Page.ME, "");
-                }
-                public void onFailure (Throwable caught) {
-                    setError(CAccount.serverError(caught));
-                }
-            });
+        CAccount.usersvc.register(
+            DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
+            info, 1, inviteId, Application.activeGuestId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                // clear our current token otherwise didLogon() will try to load it
+                Application.setCurrentToken(null);
+                // pass our credentials into the application
+                CAccount.app.didLogon((SessionData)result);
+                // then head to our me page
+                Application.go(Page.ME, "");
+            }
+            public void onFailure (Throwable caught) {
+                setError(CAccount.serverError(caught));
+            }
+        });
     }
 
     protected void setStatus (String text)

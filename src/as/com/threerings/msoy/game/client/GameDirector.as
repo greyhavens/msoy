@@ -224,7 +224,7 @@ public class GameDirector extends BasicDirector
             LobbyGameLiaison(_liaison).showLobby();
         } else {
             // go back to our previous location
-            _wctx.getMsoyController().handleMoveBack();
+            _wctx.getMsoyController().handleMoveBack(true);
         }
     }
 

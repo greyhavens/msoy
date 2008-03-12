@@ -204,7 +204,7 @@ public class MsoyController extends Controller
     /**
      * Handles the MOVE_BACK command.
      */
-    public function handleMoveBack () :void
+    public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
         // handled by our derived classes
     }
