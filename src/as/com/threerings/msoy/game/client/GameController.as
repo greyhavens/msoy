@@ -36,12 +36,6 @@ public class GameController extends MsoyController
         _mctx.getMsoyClient().closeClient();
     }
 
-    // from MsoyController
-    override public function handleMoveBack () :void
-    {
-        // TODO
-    }
-
     // from ClientObserver
     override public function clientDidLogon (event :ClientEvent) :void
     {
