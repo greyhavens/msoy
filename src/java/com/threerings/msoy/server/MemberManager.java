@@ -49,6 +49,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.FlowRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -479,10 +480,9 @@ public class MemberManager
     }
 
     /**
-     * Grant a member some flow, categorized and optionally metatagged with an action type and a
-     * detail String. The member's {@link MemberRecord} is updated, as is the {@link
-     * DailyFlowGrantedRecord}. A {@link MemberActionLogRecord} is recorded for the supplied grant
-     * action. Finally, a line is written to the flow grant log.
+     * Grants flow to the member identified in the supplied user action details.
+     *
+     * @see FlowRepository#grantFlow(UserActionDetails,int)
      */
     public void grantFlow (final UserActionDetails info, final int amount)
     {
