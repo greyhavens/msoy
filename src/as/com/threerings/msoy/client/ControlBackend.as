@@ -125,7 +125,9 @@ public class ControlBackend
      */
     protected function startTransaction_v1 () :void
     {
-        _ctx.getClient().getInvocationDirector().startTransaction();
+        if (_ctx != null) { // _ctx may be null in the avatarviewer, places like that
+            _ctx.getClient().getInvocationDirector().startTransaction();
+        }
     }
 
     /**
@@ -133,7 +135,9 @@ public class ControlBackend
      */
     protected function commitTransaction_v1 () :void
     {
-        _ctx.getClient().getInvocationDirector().commitTransaction();
+        if (_ctx != null) { // _ctx may be null in the avatarviewer, places like that
+            _ctx.getClient().getInvocationDirector().commitTransaction();
+        }
     }
 
     /** The giver of life. */

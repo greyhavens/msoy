@@ -376,7 +376,7 @@ class ViewerAvatarSprite extends MemberSprite
 {
     public function ViewerAvatarSprite (comp :UIComponent, scale :Number = 1)
     {
-        super(null);
+        super(null, null);
         _comp = comp;
         _scale = scale; // defined in MemberSprite
         configureMouseProperties();
