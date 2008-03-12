@@ -74,9 +74,16 @@ public class AVRGamePanel extends UIComponent
     }
 
     protected function loadMedia () :void {
-        // if this is a reload, toss the old media
-        if (_mediaHolder != null && _mediaHolder.parent != null) {
-            removeChild(_mediaHolder);
+        if (_mediaHolder != null) {
+            // if this is a reload, remove the old holder
+            if (_mediaHolder.parent != null) {
+                removeChild(_mediaHolder);
+            }
+            // and make sure the contents are properly unloaded
+            _mediaHolder.shutdown();
+
+            // also make sure the backend is shut down until the new media is ready
+            _backend.shutdown();
         }
 
         // create the container for the user media
