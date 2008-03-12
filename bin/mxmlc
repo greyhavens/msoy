@@ -5,5 +5,4 @@
 # Runs the Flash compiler and greps out all the bullshit dependency output
 
 `dirname $0`/../lib/flex_sdk/bin/mxmlc "$@" | \
-    egrep -v "^(Reason|Recompile):" | \
-    egrep -v " was not processed,"
+    egrep -v "^(Reason|Recompile):"
