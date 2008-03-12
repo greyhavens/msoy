@@ -462,16 +462,21 @@ public class AVRGameBackend extends ControlBackend
 
     protected function getAvatarSprite (playerId :int) :MemberSprite
     {
-        if (isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-            if (view != null) {
-                var name :MemberName = new MemberName("", playerId);
-                var sprite :OccupantSprite = view.getOccupantByName(name);
-                if (sprite != null && _gameObj.getOccupantInfo(name) != null) {
-                    return sprite as MemberSprite;
-                }
-            }
+        if (!isPlaying()) {
+            log.debug("getAvatarSprite(" + playerId + ") while !isPlaying()");
+            return;
         }
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view == null) {
+            log.debug("getAvatarSprite(" + playerId + ") without RoomView");
+            return;
+        }
+        var name :MemberName = new MemberName("", playerId);
+        var sprite :OccupantSprite = view.getOccupantByName(name);
+        if (sprite != null && _gameObj.getOccupantInfo(name) != null) {
+            return sprite as MemberSprite;
+        }
+        log.debug("getAvatarSprite(" + playerId + ") return null [sprite=" + sprite + "]");
         return null;
     }
 
