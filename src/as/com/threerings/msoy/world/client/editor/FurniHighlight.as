@@ -12,6 +12,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.GraphicsUtil;
 import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
@@ -89,45 +90,7 @@ public class FurniHighlight
 
         // draw dashed outline
         g.lineStyle(0, 0xffffff, 1, true);
-        dashRect(g, 0, 0, w, h);
-    }
-
-    protected static function dashRect (g :Graphics, x :Number, y :Number,
-                                        width :Number, height :Number,
-                                        dashLength :Number = 5, spaceLength :Number = 5) :void
-    {
-        dashTo(g, x, y, x + width, y);
-        dashTo(g, x + width, y, x + width, y + height);
-        dashTo(g, x + width, y + height, x, y + height);
-        dashTo(g, x, y + height, x, y);
-    }
-
-    protected static function dashTo (g :Graphics, x1 :Number, y1 :Number, x2 :Number, y2 :Number,
-                                      dashLength :Number = 5, spaceLength :Number = 5) :void
-    {
-        var dx :Number = (x2 - x1), dy :Number = (y2 - y1);
-        var length :Number = Math.sqrt(dx*dx + dy*dy);
-        var units :Number = length/(dashLength+spaceLength);
-        var dashSpaceRatio :Number = dashLength/(dashLength+spaceLength);
-        var dashX :Number = (dx/units)*dashSpaceRatio, dashY :Number = (dy/units)*dashSpaceRatio;
-        var spaceX :Number = (dx/units)-dashX, spaceY :Number = (dy/units)-dashY;
-
-        g.moveTo(x1, y1);
-        while (length > 0) {
-            x1 += dashX;
-            y1 += dashY;
-            length -= dashLength;
-            if (length < 0) {
-                x1 = x2;
-                y1 = y2;
-            }
-            g.lineTo(x1, y1);
-            x1 += spaceX;
-            y1 += spaceY;
-            g.moveTo(x1, y1);
-            length -= spaceLength;
-        }
-        g.moveTo(x2, y2);
+        GraphicsUtil.dashRect(g, 0, 0, w, h);
     }
 
     /** Called by the media container when the sprite's visuals finished loading. */

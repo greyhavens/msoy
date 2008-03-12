@@ -10,6 +10,8 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.GraphicsUtil;
+
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
@@ -175,13 +177,13 @@ public class FurniEditor extends FurniHighlight
 
         // draw outer and inner outlines
         g.lineStyle(0, 0x000000, 0.5, true);
-        dashRect(g, 0, 0, w, h);
-        dashRect(g, -2, -2, w + 4, h + 4);
+        GraphicsUtil.dashRect(g, 0, 0, w, h);
+        GraphicsUtil.dashRect(g, -2, -2, w + 4, h + 4);
         g.drawRect(targetRoot.x - 1, targetRoot.y, 2, (targetLocation.y - targetRoot.y) + 2);
 
         // draw center lines
         g.lineStyle(0, 0xffffff, 1, true);
-        dashRect(g, -1, -1, w + 2, h + 2);
+        GraphicsUtil.dashRect(g, -1, -1, w + 2, h + 2);
         g.moveTo(targetRoot.x, targetRoot.y);
         g.lineTo(targetLocation.x, targetLocation.y + 1);
 
