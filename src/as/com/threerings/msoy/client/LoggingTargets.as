@@ -86,6 +86,10 @@ class FireBugTarget
         // END: temp
 */
 
-        ExternalInterface.call("console.debug", msg);
+        try {
+            ExternalInterface.call("console.debug", msg);
+        } catch (err :Error) {
+            // drop it, it's ok.
+        }
     }
 }
