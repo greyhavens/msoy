@@ -161,7 +161,6 @@ public class CreateAccountPanel extends VerticalPanel
             status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
             toFocus = _name;
         } else {
-            setStatus(CAccount.msgs.createReady());
             return true;
         }
 
