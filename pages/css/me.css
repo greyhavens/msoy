@@ -92,6 +92,7 @@
   font-size: 14px;
   padding-top: 3px;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .whatsNext .Friends .Member {
@@ -110,7 +111,6 @@
   font-weight: bold;
   text-align: left;
   padding-left: 10px;
-  overflow: hidden;
 }
 
 .whatsNext .Friends .MemberRoom .Name {
