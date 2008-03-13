@@ -7,12 +7,12 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.GroupCard;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -45,11 +45,8 @@ public class GroupsBlurb extends Blurb
     protected static Widget createEmptyTable (String message, String link, String page, String args)
     {
         FlowPanel bits = new FlowPanel();
-        bits.add(WidgetUtil.makeShim(25, 50));
-        bits.add(new HTML(message));
-        bits.add(WidgetUtil.makeShim(25, 25));
+        bits.add(new InlineLabel(message, false, false, true));
         bits.add(Application.createLink(link, page, args));
-        bits.setStyleName("Empty");
         return bits;
     }
 
