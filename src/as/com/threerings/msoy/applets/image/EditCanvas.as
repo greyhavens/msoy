@@ -67,19 +67,17 @@ public class EditCanvas extends Canvas
         _scaleLayer = new Sprite();
         _rotLayer = new Sprite();
         _unRotLayer = new Sprite();
-        _pixelLayer = new Sprite();
+        _paintLayer = new Sprite();
         _hudLayer = new Sprite();
 
         _cropSprite = new Sprite();
 
-        _editor.addChild(_backgroundLayer);
-
-        _rotLayer.addChild(_unRotLayer);
-
         _unRotLayer.addChild(_imageLayer);
-        _unRotLayer.addChild(_pixelLayer);
+        _unRotLayer.addChild(_paintLayer);
+        _rotLayer.addChild(_unRotLayer);
         _scaleLayer.addChild(_rotLayer);
 
+        _editor.addChild(_backgroundLayer);
         _editor.addChild(_scaleLayer);
         _editor.addChild(_hudLayer);
 
@@ -100,20 +98,7 @@ public class EditCanvas extends Canvas
     public function setMode (mode :int) :void
     {
         _mode = mode;
-
-        // configure various listeners and such
-        var fn :Function;
-
-        // PAINT
-        fn = (_mode == PAINT) ? _pixelLayer.addEventListener : _pixelLayer.removeEventListener;
-        fn(MouseEvent.CLICK, handlePaintPixel);
-
-        // SELECT
-        fn = (_mode == SELECT) ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
-        fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
-
-        // MOVE
-        // TODO
+        configureMode();
     }
 
     public function getMode () :int
@@ -133,11 +118,9 @@ public class EditCanvas extends Canvas
 
     public function doCrop () :void
     {
-        if (_crop == null) {
-            return; // nothing to crop
+        if (_crop != null) {
+            setImage(getImage());
         }
-
-        setImage(getImage());
     }
 
     /**
@@ -149,7 +132,7 @@ public class EditCanvas extends Canvas
         _bitmapData = null;
         _width = 0;
         _height = 0;
-        _pixelLayer.graphics.clear();
+        _paintLayer.graphics.clear();
         _hudLayer.graphics.clear();
         clearSelection();
 
@@ -178,6 +161,7 @@ public class EditCanvas extends Canvas
     public function setImage (image :Object) :void
     {
         clearImage();
+        configureMode();
         if (image == null) {
             return;
         }
@@ -283,8 +267,13 @@ public class EditCanvas extends Canvas
         this.width = Math.min(this.maxWidth, width);
         this.height = Math.min(this.maxHeight, height);
 
-        // color in some of our layers so we can click on them
-        var g :Graphics = _pixelLayer.graphics;
+        _rotLayer.x = _width/2;
+        _rotLayer.y = _height/2;
+        _unRotLayer.x = _width/-2;
+        _unRotLayer.y = _height/-2;
+
+        // color some layers so we can click on them
+        var g :Graphics = _paintLayer.graphics;
         g.beginFill(0xFFFFFF, 0);
         g.drawRect(0, 0, _width, _height);
         g.endFill();
@@ -294,11 +283,7 @@ public class EditCanvas extends Canvas
         g.drawRect(0, 0, _width, _height);
         g.endFill();
 
-        _rotLayer.x = _width/2;
-        _rotLayer.y = _height/2;
-        _unRotLayer.x = _width/-2;
-        _unRotLayer.y = _height/-2;
-
+        configureMode();
         dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _width, _height ]));
     }
 
@@ -329,17 +314,34 @@ public class EditCanvas extends Canvas
         addChild(_holder);
     }
 
+    protected function configureMode () :void
+    {
+        var fn :Function;
+
+        // PAINT
+        fn = (_mode == PAINT) ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
+        fn(MouseEvent.CLICK, handlePaintPixel);
+        _paintLayer.mouseEnabled = (_mode == PAINT);
+
+        // SELECT
+        fn = (_mode == SELECT) ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
+        fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
+        _hudLayer.mouseEnabled = (_mode == SELECT);
+
+        // MOVE
+        // TODO
+    }
+
     // Editing operations
 
     protected function handlePaintPixel (event :MouseEvent) :void
     {
         const x :int = Math.round(event.localX);
         const y :int = Math.round(event.localY);
-        trace("Got paintpixel: " + x + ", " + y);
 
         // TODO: there doesn't seem to be a way to actually draw just 1 pixel.
         // (If you are zoomed, this 1 pixel is actually larger than a pixel)
-        var g :Graphics = _pixelLayer.graphics;
+        var g :Graphics = _paintLayer.graphics;
         g.lineStyle(1, _color);
         g.drawRect(x, y, 1, 1);
     }
@@ -400,7 +402,7 @@ public class EditCanvas extends Canvas
     /** Layers that contain things. */
     protected var _backgroundLayer :Sprite;
     protected var _imageLayer :Sprite;
-    protected var _pixelLayer :Sprite;
+    protected var _paintLayer :Sprite;
     protected var _hudLayer :Sprite;
 
     /** Layers used to affect the rotation/zoom/etc. */

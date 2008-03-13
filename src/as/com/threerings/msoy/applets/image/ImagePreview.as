@@ -212,11 +212,14 @@ public class ImagePreview extends HBox
         var w :Number = event.value[0];
         var h :Number = event.value[1];
 
-        // at the minimum zoom level we want the longest side to just fit
-        _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
-
         // redispatch
         dispatchEvent(event);
+
+        // at the minimum zoom level we want the longest side to just fit
+        _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
+        _zoomSlider.value = 1;
+        _rotSlider.value = 0;
+        _scaleSlider.value = 1;
     }
 
     protected var _controlBar :VBox;
