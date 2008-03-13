@@ -5,16 +5,13 @@ package client.account;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
@@ -23,8 +20,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -34,9 +34,11 @@ import client.people.SendInvitesPanel;
 import client.shell.Application;
 import client.shell.Page;
 import client.util.DateFields;
+import client.util.MediaUploader;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
+import client.util.ThumbBox;
 
 /**
  * Displays an interface for creating a new account.
@@ -46,11 +48,12 @@ public class CreateAccountPanel extends VerticalPanel
     public CreateAccountPanel ()
     {
         setStyleName("createAccount");
+        setSpacing(10);
 
         add(MsoyUI.createLabel(CAccount.msgs.createIntro(), "Intro"));
 
+        // create the account information section
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
-
         box.add(new LabeledBox(CAccount.msgs.createEmail(),
                                _email = MsoyUI.createTextBox("", -1, 30),
                                CAccount.msgs.createEmailTip()));
@@ -64,38 +67,27 @@ public class CreateAccountPanel extends VerticalPanel
             // provide the invitation email as the default
             _email.setText(Application.activeInvite.inviteeEmail);
         }
-        _email.addKeyboardListener(_validator);
         _email.setFocus(true);
 
         box.add(WidgetUtil.makeShim(10, 10));
-
         box.add(new LabeledBox(CAccount.msgs.createPassword(), _password = new PasswordTextBox(),
+                               CAccount.msgs.createPasswordTip(),
                                CAccount.msgs.createConfirm(), _confirm = new PasswordTextBox(),
-                               CAccount.msgs.createPasswordTip()));
+                               CAccount.msgs.createConfirmTip()));
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _confirm.setFocus(true);
             }
         }));
-        _password.addKeyboardListener(_validator);
         _confirm.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _name.setFocus(true);
             }
         }));
-        _confirm.addKeyboardListener(_validator);
+        add(makeStep(1, "What you need to log in:", box));
 
-        add(box);
-        add(WidgetUtil.makeShim(15, 15));
-
+        // create the real you section
         box = new RoundBox(RoundBox.DARK_BLUE);
-
-        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, 30);
-        _name.addKeyboardListener(_validator);
-        box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
-                               CAccount.msgs.createDisplayNameTip()));
-
-        box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createRealName(),
                                _rname = MsoyUI.createTextBox("", -1, 30),
                                CAccount.msgs.createRealNameTip()));
@@ -103,21 +95,29 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                                CAccount.msgs.createDateOfBirthTip()));
-        add(box);
-        add(WidgetUtil.makeShim(15, 15));
+        add(makeStep(2, "About the real you:", box));
+
+        // create the Whirled you section
+        box = new RoundBox(RoundBox.DARK_BLUE);
+        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, 30);
+        box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
+                               CAccount.msgs.createDisplayNameTip()));
+        box.add(WidgetUtil.makeShim(10, 10));
+        box.add(new LabeledBox(CAccount.msgs.createPhoto(), new PhotoUploader(),
+                               CAccount.msgs.createPhotoTip()));
+        add(makeStep(3, "About the Whirled you:", box));
 
         add(_status = MsoyUI.createLabel("", "Status"));
-        add(WidgetUtil.makeShim(15, 15));
 
-        // setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-        add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createCreate(), new ClickListener() {
+        setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(), new ClickListener() {
             public void onClick (Widget sender) {
                 createAccount();
             }
         }));
 
-        Label slurp = new Label();
-        add(slurp);
+        Label slurp;
+        add(slurp = new Label(""));
         setCellHeight(slurp, "100%");
 
         validateData(false);
@@ -137,29 +137,51 @@ public class CreateAccountPanel extends VerticalPanel
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         String status;
+        FocusWidget toFocus = null;
         if (email.length() == 0) {
             status = CAccount.msgs.createMissingEmail();
+            toFocus = _email;
         } else if (password.length() == 0) {
             status = CAccount.msgs.createMissingPassword();
+            toFocus = _password;
         } else if (confirm.length() == 0) {
             status = CAccount.msgs.createMissingConfirm();
+            toFocus = _confirm;
         } else if (!password.equals(confirm)) {
             status = CAccount.msgs.createPasswordMismatch();
-        } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
-            status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
+            toFocus = _confirm;
         } else if (_dateOfBirth.getDate() == null) {
             status = CAccount.msgs.createMissingDoB();
+            if (forceError) { // this is not a FocusWidget so we have to handle it specially
+                _dateOfBirth.setFocus(true);
+            }
+        } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
+            status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
+            toFocus = _name;
         } else {
             setStatus(CAccount.msgs.createReady());
             return true;
         }
 
         if (forceError) {
+            if (toFocus != null) {
+                toFocus.setFocus(true);
+            }
             setError(status);
         } else {
             setStatus(status);
         }
         return false;
+    }
+
+    protected Widget makeStep (int step, String title, Widget contents)
+    {
+        SmartTable table = new SmartTable("Step", 0, 0);
+        table.setText(0, 0, step + ".", 1, "Number");
+        table.getFlexCellFormatter().setRowSpan(0, 0, 2);
+        table.setText(0, 1, title, 1, "Title");
+        table.setWidget(1, 0, contents, 1, null);
+        return table;
     }
 
     protected void createAccount ()
@@ -221,63 +243,73 @@ public class CreateAccountPanel extends VerticalPanel
         _status.setText(text);
     }
 
+    protected class PhotoUploader extends SmartTable
+    {
+        public PhotoUploader ()
+        {
+            setWidget(0, 0, new ThumbBox(Profile.DEFAULT_PHOTO, null));
+            setWidget(0, 1, new MediaUploader(Item.THUMB_MEDIA, new MediaUploader.Listener() {
+                public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+                    _media = desc;
+                    setWidget(0, 0, new ThumbBox(_media, null));
+                }
+            }));
+        }
+
+        protected MediaDesc _media;
+    }
+
     protected static class LabeledBox extends FlowPanel
-        implements FocusListener
     {
         public LabeledBox (String title, Widget contents, String tip)
         {
             setStyleName("Box");
+            _tip = new SmartTable("Tip", 0, 0);
+            add(title, contents, tip);
+        }
+
+        public LabeledBox (String title1, Widget contents1, String tip1,
+                           String title2, Widget contents2, String tip2)
+        {
+            this(title1, contents1, tip1);
+            add(WidgetUtil.makeShim(3, 3));
+            add(title2, contents2, tip2);
+        }
+
+        public void add (String title, final Widget contents, final String tip)
+        {
             add(MsoyUI.createLabel(title, "Label"));
             add(contents);
             if (contents instanceof SourcesFocusEvents) {
-                ((SourcesFocusEvents)contents).addFocusListener(this);
+                ((SourcesFocusEvents)contents).addFocusListener(new FocusListener() {
+                    public void onFocus (Widget sender) {
+                        // we want contents here not sender because of DateFields
+                        showTip(contents, tip);
+                    }
+                    public void onLostFocus (Widget sender) {
+                        if (_tip.isAttached()) {
+                            remove(_tip);
+                        }
+                    }
+                });
             }
-            _tip = MsoyUI.createLabel(tip, "Tip");
         }
 
-        public LabeledBox (String title1, Widget contents1,
-                           String title2, Widget contents2, String tip)
+        protected void showTip (Widget trigger, String tip)
         {
-            this(title1, contents1, tip);
-            add(WidgetUtil.makeShim(3, 3));
-            add(MsoyUI.createLabel(title2, "Label"));
-            add(contents2);
-            if (contents2 instanceof SourcesFocusEvents) {
-                ((SourcesFocusEvents)contents2).addFocusListener(this);
-            }
-        }
-
-        // from interface FocusListener
-        public void onFocus (Widget sender) {
             if (!_tip.isAttached()) {
+                DOM.setStyleAttribute(_tip.getElement(), "left",
+                                      (trigger.getOffsetWidth()+15) + "px");
+                DOM.setStyleAttribute(_tip.getElement(), "top",
+                                      (trigger.getAbsoluteTop() - getAbsoluteTop() +
+                                       trigger.getOffsetHeight()/2 - 27) + "px");
+                _tip.setText(0, 0, tip);
                 add(_tip);
-                DOM.setStyleAttribute(
-                    _tip.getElement(), "left", (sender.getOffsetWidth()+10) + "px");
-                DOM.setStyleAttribute(
-                    _tip.getElement(), "top", (sender.getOffsetHeight()-20) + "px");
             }
         }
 
-        // from interface FocusListener
-        public void onLostFocus (Widget sender) {
-            if (_tip.isAttached()) {
-                remove(_tip);
-            }
-        }
-
-        protected Label _tip;
+        protected SmartTable _tip;
     }
-
-    protected KeyboardListener _validator = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    validateData(false);
-                }
-            });
-        }
-    };
 
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;

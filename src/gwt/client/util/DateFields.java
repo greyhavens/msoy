@@ -78,6 +78,14 @@ public class DateFields extends HorizontalPanel
         return new int[] { year, _month.getSelectedIndex(), _day.getSelectedIndex() + 1 };
     }
 
+    /**
+     * Focuses the first of our three list boxes.
+     */
+    public void setFocus (boolean focus)
+    {
+        _month.setFocus(focus);
+    }
+
     // from interface SourcesFocusEvents
     public void addFocusListener (FocusListener listener)
     {
