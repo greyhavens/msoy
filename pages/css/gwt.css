@@ -238,20 +238,29 @@ img, embed, applet, object {
   vertical-align: bottom;
 }
 
-.frameHeader .TongueButton {
-  background: url(/images/header/tongue.png) no-repeat bottom;
+.frameHeader .Button {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-  width: 129px;
-  height: 30px;
   padding-top: 5px;
-  cursor: pointer;
+  height: 30px;
 }
 
-.frameHeader .TongueButton-up-hovering, .frameHeader .TongueButton-down-hovering {
+.frameHeader .LogonButton {
+  background: url(/images/header/logon_button.png) no-repeat bottom;
+  width: 129px;
+}
+
+.frameHeader .SignupButton {
+  background: url(/images/header/signup_button.png) no-repeat bottom;
+  width: 155px;
+}
+
+.frameHeader .LogonButton-up-hovering, .frameHeader .LogonButton-down-hovering,
+.frameHeader .SignupButton-up-hovering, .frameHeader .SignupButton-down-hovering {
   padding-top: 10px;
+  cursor: pointer;
 }
 
 .logonPanel .gwt-TextBox,

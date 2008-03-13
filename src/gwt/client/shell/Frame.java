@@ -562,7 +562,8 @@ public class Frame
             PushButton signup = new PushButton(
                 CShell.cmsgs.headerSignup(),
                 Application.createLinkListener(Page.ACCOUNT, "create"));
-            signup.setStyleName("TongueButton");
+            signup.setStyleName("SignupButton");
+            signup.addStyleName("Button");
             setWidget(0, 0, signup);
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
@@ -571,7 +572,8 @@ public class Frame
                     setWidget(0, 2, new LogonPanel(true));
                 }
             });
-            logon.setStyleName("TongueButton");
+            logon.setStyleName("LogonButton");
+            logon.addStyleName("Button");
             setWidget(0, 2, logon);
             getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
