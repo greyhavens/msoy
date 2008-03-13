@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
@@ -91,6 +92,17 @@ public class GroupEdit extends FlexTable
         _bgmode.setSelectedIndex(_extras.backgroundControl);
         addRow(CWhirleds.msgs.editMode(), _bgmode);
 
+        _catalogType = new ListBox();
+        for (int ii = 0; ii < Item.TYPES.length; ii++) {
+            _catalogType.addItem(CWhirleds.dmsgs.getString("itemType" + Item.TYPES[ii]));
+            if (_extras.catalogItemType == Item.TYPES[ii]) {
+                _catalogType.setSelectedIndex(ii);
+            }
+        }
+        addRow(CWhirleds.msgs.editCatalogType(), _catalogType);
+        addRow(CWhirleds.msgs.editCatalogTag(), 
+            _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
+
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(_submit = new Button(CWhirleds.cmsgs.submit(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -129,6 +141,8 @@ public class GroupEdit extends FlexTable
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.backgroundControl = _bgmode.getSelectedIndex();
         _extras.background = _background.getMedia();
+        _extras.catalogItemType = Item.TYPES[_catalogType.getSelectedIndex()];
+        _extras.catalogTag = _catalogTag.getText().trim();
 
         // check that the group name is valid
         if (_group.name.length() < GroupName.LENGTH_MIN ||
@@ -172,9 +186,9 @@ public class GroupEdit extends FlexTable
     protected Group _group;
     protected GroupExtras _extras;
 
-    protected TextBox _name, _blurb, _homepage;
+    protected TextBox _name, _blurb, _homepage, _catalogTag;
     protected PhotoChoiceBox _logo, _background;
-    protected ListBox _policy, _bgmode;
+    protected ListBox _policy, _bgmode, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
 }

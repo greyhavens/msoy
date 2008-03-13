@@ -33,4 +33,10 @@ public class GroupExtras
 
     /** The background image for the group area. */
     public MediaDesc background;
+
+    /** The catalog category to link to. */
+    public byte catalogItemType;
+
+    /** The catalog tag to link to. */
+    public String catalogTag;
 }

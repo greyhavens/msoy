@@ -162,12 +162,26 @@ public class GroupRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #memberCount} field. */
     public static final ColumnExp MEMBER_COUNT_C =
         new ColumnExp(GroupRecord.class, MEMBER_COUNT);
+
+    /** The column identifier for the {@link #catalogItemType} field. */
+    public static final String CATALOG_ITEM_TYPE = "catalogItemType";
+
+    /** The qualified column identifier for the {@link #catalogItemType} field. */
+    public static final ColumnExp CATALOG_ITEM_TYPE_C =
+        new ColumnExp(GroupRecord.class, CATALOG_ITEM_TYPE);
+
+    /** The column identifier for the {@link #catalogTag} field. */
+    public static final String CATALOG_TAG = "catalogTag";
+
+    /** The qualified column identifier for the {@link #catalogTag} field. */
+    public static final ColumnExp CATALOG_TAG_C =
+        new ColumnExp(GroupRecord.class, CATALOG_TAG);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Blurb, Charter */
     public static final String FTS_NBC = "NBC";
 
-    public static final int SCHEMA_VERSION = 16;
+    public static final int SCHEMA_VERSION = 17;
 
     /** The unique id of this group. */
     @Id
@@ -228,6 +242,12 @@ public class GroupRecord extends PersistentRecord
     /** The number of people that are currently members of this group. */
     public int memberCount;
 
+    /** The item type of the catalog page to land on with the browse by tag function. */
+    public byte catalogItemType;
+
+    /** The catalog tag to use with the browse by tag function. */
+    public String catalogTag;
+
     /**
      * Creates a web-safe version of this group.
      */
@@ -261,6 +281,8 @@ public class GroupRecord extends PersistentRecord
             extras.background = new MediaDesc(
                 backgroundHash, backgroundMimeType, backgroundThumbConstraint);
         }
+        extras.catalogItemType = catalogItemType;
+        extras.catalogTag = catalogTag;
         return extras;
     }
 
@@ -326,6 +348,12 @@ public class GroupRecord extends PersistentRecord
             updates.put(BACKGROUND_MIME_TYPE, extrasDef.background.mimeType);
             // the thumbnail instead of photo constraint is stored here - see GroupEdit
             updates.put(BACKGROUND_THUMB_CONSTRAINT, extrasDef.background.constraint);
+        }
+        if (extrasDef.catalogItemType != catalogItemType) {
+            updates.put(CATALOG_ITEM_TYPE, extrasDef.catalogItemType);
+        }
+        if (extrasDef.catalogTag != null && !extrasDef.catalogTag.equals(catalogTag)) {
+            updates.put(CATALOG_TAG, extrasDef.catalogTag);
         }
 
         return updates;

@@ -96,8 +96,9 @@ public class GroupServlet extends MsoyServiceServlet
 
             // load up our popular tags
             List<String> popularTags = Lists.newArrayList();
-            for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().getPopularTags(
-                     GalaxyData.POPULAR_TAG_COUNT)) {
+            for (TagPopularityRecord popRec : 
+                    MsoyServer.groupRepo.getTagRepository().getPopularTags(
+                    GalaxyData.POPULAR_TAG_COUNT)) {
                 popularTags.add(popRec.tag);
             }
             data.popularTags = popularTags;
@@ -382,6 +383,8 @@ public class GroupServlet extends MsoyServiceServlet
                 grec.backgroundMimeType = extras.background.mimeType;
                 grec.backgroundHash = extras.background.hash;
             }
+            grec.catalogItemType = extras.catalogItemType;
+            grec.catalogTag = extras.catalogTag;
 
             // we fill this in ourselves
             grec.creatorId = mrec.memberId;
