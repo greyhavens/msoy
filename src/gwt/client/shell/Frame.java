@@ -68,6 +68,9 @@ public class Frame
 
         // create our header
         _header = new Header();
+
+        // clear out the loading HTML because we're about to show the Whirled
+        DOM.setInnerHTML(RootPanel.get(HEADER).getElement(), "");
     }
 
     /**
