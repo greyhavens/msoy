@@ -246,6 +246,7 @@ public class GroupRecord extends PersistentRecord
     public byte catalogItemType;
 
     /** The catalog tag to use with the browse by tag function. */
+    @Column(nullable=true)
     public String catalogTag;
 
     /**
