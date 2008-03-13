@@ -155,9 +155,8 @@ public class CreateAccountPanel extends VerticalPanel
             toFocus = _confirm;
         } else if (_dateOfBirth.getDate() == null) {
             status = CAccount.msgs.createMissingDoB();
-            if (forceError) { // this is not a FocusWidget so we have to handle it specially
-                _dateOfBirth.setFocus(true);
-            }
+            // this is not a FocusWidget so we have to handle it specially
+            _dateOfBirth.setFocus(true);
         } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
             status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
             toFocus = _name;
