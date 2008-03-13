@@ -15,6 +15,7 @@ import flash.events.IOErrorEvent;
 
 import flash.utils.ByteArray;
 
+import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
 
@@ -25,9 +26,11 @@ import mx.containers.VBox;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 
+import mx.events.ColorPickerEvent;
 import mx.events.FlexEvent;
 import mx.events.SliderEvent;
 
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
@@ -48,7 +51,6 @@ public class ImagePreview extends HBox
     public static const MAX_WIDTH :int = 300;
     public static const MAX_HEIGHT :int = 300;
 
-
     public function ImagePreview (cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
         if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
@@ -65,6 +67,7 @@ public class ImagePreview extends HBox
         addChild(_editor);
         addChild(_controlBar = createControlBar());
         setImage(null);
+        setMode(_editor.getMode());
     }
 
     public function setImage (image :Object) :void
@@ -98,20 +101,36 @@ public class ImagePreview extends HBox
 
         // TODO: add a scrollbox
 
-        bar.addChild(addMode("select", SELECT));
-        bar.addChild(addMode("move", MOVE));
+        var picker :ColorPicker = new ColorPicker();
+        picker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
+        _editor.setPaintColor(picker.selectedColor);
 
-        _rotSlider = addSlider(bar, "Rotation", -180, 180, 0, handleRotChange);
-        _scaleSlider = addSlider(bar, "Scale", .01, 10, 1, handleScaleChange);
-        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, handleZoomChange);
+        bar.addChild(picker);
+        bar.addChild(addMode("paint", EditCanvas.PAINT));
+        bar.addChild(addMode("select", EditCanvas.SELECT));
+        bar.addChild(addMode("move", EditCanvas.MOVE));
+
+        bar.addChild(new CommandButton("Crop", _editor.doCrop));
+
+        _rotSlider = addSlider(bar, "Rotation", -180, 180, 0, _editor.setRotation,
+            [ -180, -90, 0, 90, 180 ]);
+        _scaleSlider = addSlider(bar, "Scale", .01, 10, 1, _editor.setScale);
+        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
+
+        // TEMP:
+        _scaleSlider.enabled = false;
 
         return bar;
     }
 
     protected function addSlider (
         container :Container, name :String, min :Number, max :Number, value :Number,
-        changeHandler :Function) :HSlider
+        changeHandler :Function, tickValues :Array = null) :HSlider
     {
+        if (tickValues == null) {
+            tickValues = [ value ];
+        }
+
         var box :VBox = new VBox();
         box.horizontalScrollPolicy = ScrollPolicy.OFF;
         box.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -129,19 +148,37 @@ public class ImagePreview extends HBox
         slider.minimum = min;
         slider.maximum = max;
         slider.value = value;
-        slider.tickValues = [ value ];
-        slider.addEventListener(SliderEvent.CHANGE, changeHandler);
-        slider.addEventListener(FlexEvent.VALUE_COMMIT, changeHandler);
+        slider.tickValues = tickValues;
+
+        var changeListener :Function = function (event :Event) :void {
+            changeHandler(slider.value);
+        };
+
+        slider.addEventListener(SliderEvent.CHANGE, changeListener);
+        slider.addEventListener(FlexEvent.VALUE_COMMIT, changeListener);
 
         container.addChild(box);
         box.addChild(hbox);
         box.addChild(slider);
 
-        var but :CommandButton = new CommandButton("reset", function () :void {
-            slider.value = value;
+        var but :CommandButton = new CommandButton("Snap", function () :void {
+            // snap it to the closest tickValue
+            var closeValue :Number = value;
+            var closeness :Number = Number.MAX_VALUE;
+
+            const curValue :Number = slider.value;
+            for each (var tickVal :Number in tickValues) {
+                var diff :Number = Math.abs(tickVal - curValue);
+                if (diff < closeness) {
+                    closeness = diff;
+                    closeValue = tickVal;
+                }
+            }
+
+            slider.value = closeValue;
         });
-        but.scaleY = .5;
-        but.scaleX = .5;
+        but.scaleY = .8;
+        but.scaleX = .8;
         hbox.addChild(lbl);
         hbox.addChild(but);
 
@@ -162,21 +199,12 @@ public class ImagePreview extends HBox
         for each (var but :CommandButton in _buttons) {
             but.selected = (mode == but.data);
         }
+        _editor.setMode(mode);
     }
 
-    protected function handleZoomChange (event :Event) :void
+    protected function handleColorPicked (event :ColorPickerEvent) :void
     {
-        _editor.setZoom(HSlider(event.target).value);
-    }
-
-    protected function handleRotChange (event :Event) :void
-    {
-        _editor.setRotation(HSlider(event.target).value);
-    }
-
-    protected function handleScaleChange (event :Event) :void
-    {
-        _editor.setScale(HSlider(event.target).value);
+        _editor.setPaintColor(event.color);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -185,7 +213,7 @@ public class ImagePreview extends HBox
         var h :Number = event.value[1];
 
         // at the minimum zoom level we want the longest side to just fit
-        _zoomSlider.minimum = Math.min(MAX_WIDTH / w, MAX_HEIGHT / h);
+        _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
 
         // redispatch
         dispatchEvent(event);
@@ -202,8 +230,5 @@ public class ImagePreview extends HBox
     protected var _zoomSlider :HSlider;
 
     protected var _buttons :Array = [];
-
-    protected static const SELECT :int = 0;
-    protected static const MOVE :int = 1;
 }
 }

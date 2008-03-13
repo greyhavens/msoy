@@ -6,17 +6,18 @@ package com.threerings.msoy.applets.image {
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.PixelSnapping;
 import flash.display.Shape;
-import flash.display.SpreadMethod;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
+import flash.geom.Matrix;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.net.URLRequest;
@@ -49,6 +50,11 @@ public class EditCanvas extends Canvas
 {
     public static const SIZE_KNOWN :String = "SizeKnown";
 
+    /** Mode constants. */
+    public static const PAINT :int = 0;
+    public static const SELECT :int = 1;
+    public static const MOVE :int = 2;
+
     public function EditCanvas (maxW :int, maxH:int)
     {
         this.maxWidth = maxW;
@@ -59,14 +65,26 @@ public class EditCanvas extends Canvas
         _backgroundLayer = new Sprite();
         _imageLayer = new Sprite();
         _scaleLayer = new Sprite();
+        _rotLayer = new Sprite();
+        _unRotLayer = new Sprite();
         _pixelLayer = new Sprite();
         _hudLayer = new Sprite();
 
+        _cropSprite = new Sprite();
+
         _editor.addChild(_backgroundLayer);
-        _scaleLayer.addChild(_imageLayer);
-        _scaleLayer.addChild(_pixelLayer);
+
+        _rotLayer.addChild(_unRotLayer);
+
+        _unRotLayer.addChild(_imageLayer);
+        _unRotLayer.addChild(_pixelLayer);
+        _scaleLayer.addChild(_rotLayer);
+
         _editor.addChild(_scaleLayer);
         _editor.addChild(_hudLayer);
+
+        _hudLayer.addChild(_cropSprite);
+        _cropSprite.mouseEnabled = false;
 
         _holder = new UIComponent();
         _holder.addChild(_editor);
@@ -79,14 +97,47 @@ public class EditCanvas extends Canvas
 //        _editor.addChild(mask);
     }
 
-    public function setSelection () :void
+    public function setMode (mode :int) :void
     {
-        // TODO: not fake
+        _mode = mode;
 
-        // TEMP: show a fakey McThinger on the hud
-        var g :Graphics = _hudLayer.graphics;
-        g.lineStyle(1);
-        GraphicsUtil.dashRect(g, 50, 50, 100, 100);
+        // configure various listeners and such
+        var fn :Function;
+
+        // PAINT
+        fn = (_mode == PAINT) ? _pixelLayer.addEventListener : _pixelLayer.removeEventListener;
+        fn(MouseEvent.CLICK, handlePaintPixel);
+
+        // SELECT
+        fn = (_mode == SELECT) ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
+        fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
+
+        // MOVE
+        // TODO
+    }
+
+    public function getMode () :int
+    {
+        return _mode;
+    }
+
+    public function setPaintColor (color :uint) :void
+    {
+        _color = color;
+    }
+
+    public function getPaintColor () :uint
+    {
+        return _color;
+    }
+
+    public function doCrop () :void
+    {
+        if (_crop == null) {
+            return; // nothing to crop
+        }
+
+        setImage(getImage());
     }
 
     /**
@@ -100,6 +151,8 @@ public class EditCanvas extends Canvas
         _height = 0;
         _pixelLayer.graphics.clear();
         _hudLayer.graphics.clear();
+        clearSelection();
+
         if (_image != null) {
             _imageLayer.removeChild(_image);
             if (_image is Loader) {
@@ -165,8 +218,6 @@ public class EditCanvas extends Canvas
         } else {
             throw new Error("Unknown image source: " + image);
         }
-
-        setSelection();
     }
 
     /**
@@ -179,13 +230,20 @@ public class EditCanvas extends Canvas
             return _bytes;
         }
 
-        // TODO: cropping!
+        var bmp :BitmapData;
+        if (_bitmapData != null && _crop == null) {
+            bmp = _bitmapData;
 
-        var bmp :BitmapData = _bitmapData;
-        if (bmp == null) {
+        } else {
+            var matrix :Matrix = null;
+            if (_crop == null) {
+                bmp = new BitmapData(_width, _height);
+            } else {
+                bmp = new BitmapData(_crop.width, _crop.height);
+                matrix = new Matrix(0, 0, 0, 0, _crop.x, _crop.y);
+            }
             // screenshot the image
-            bmp = new BitmapData(_width, _height);
-            bmp.draw(_scaleLayer);
+            bmp.draw(_scaleLayer, matrix);
         }
 
         if (asJpg) {
@@ -197,7 +255,7 @@ public class EditCanvas extends Canvas
 
     public function setRotation (rotation :Number) :void
     {
-        // rotate arond the center
+        _rotLayer.rotation = rotation;
     }
 
     public function setZoom (zoom :Number) :void
@@ -224,6 +282,22 @@ public class EditCanvas extends Canvas
         // un-fucking believable
         this.width = Math.min(this.maxWidth, width);
         this.height = Math.min(this.maxHeight, height);
+
+        // color in some of our layers so we can click on them
+        var g :Graphics = _pixelLayer.graphics;
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 0, _width, _height);
+        g.endFill();
+
+        g = _hudLayer.graphics;
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 0, _width, _height);
+        g.endFill();
+
+        _rotLayer.x = _width/2;
+        _rotLayer.y = _height/2;
+        _unRotLayer.x = _width/-2;
+        _unRotLayer.y = _height/-2;
 
         dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _width, _height ]));
     }
@@ -255,19 +329,91 @@ public class EditCanvas extends Canvas
         addChild(_holder);
     }
 
+    // Editing operations
+
+    protected function handlePaintPixel (event :MouseEvent) :void
+    {
+        const x :int = Math.round(event.localX);
+        const y :int = Math.round(event.localY);
+
+        // TODO: there doesn't seem to be a way to actually draw just 1 pixel.
+        // (If you are zoomed, this 1 pixel is actually larger than a pixel)
+        var g :Graphics = _pixelLayer.graphics;
+        g.lineStyle(1, _color);
+        g.drawRect(x, y, 1, 1);
+    }
+
+    protected function handleSelectStart (event :MouseEvent) :void
+    {
+        _cropPoint = new Point(event.localX, event.localY);
+        updateSelection(event.localX, event.localY);
+
+        _hudLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+        _hudLayer.addEventListener(MouseEvent.MOUSE_UP, handleSelectEnd);
+        _hudLayer.addEventListener(MouseEvent.MOUSE_OUT, handleSelectEnd);
+    }
+
+    protected function handleSelectUpdate (event :MouseEvent) :void
+    {
+        updateSelection(event.localX, event.localY);
+    }
+
+    protected function handleSelectEnd (event :MouseEvent) :void
+    {
+        updateSelection(event.localX, event.localY);
+
+        _hudLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+        _hudLayer.removeEventListener(MouseEvent.MOUSE_UP, handleSelectEnd);
+        _hudLayer.removeEventListener(MouseEvent.MOUSE_OUT, handleSelectEnd);
+    }
+
+    protected function updateSelection (x :Number, y :Number) :void
+    {
+        _crop = new Rectangle(Math.min(x, _cropPoint.x), Math.min(y, _cropPoint.y),
+            Math.abs(x - _cropPoint.x), Math.abs(y - _cropPoint.y));
+
+        if (_crop.width == 0 || _crop.height == 0) {
+            clearSelection();
+            return;
+        }
+
+        _cropSprite.x = _crop.x;
+        _cropSprite.y = _crop.y;
+
+        var g :Graphics = _cropSprite.graphics;
+        g.lineStyle(1);
+        GraphicsUtil.dashRect(g, 0, 0, _crop.width, _crop.height)
+    }
+
+    protected function clearSelection () :void
+    {
+        _cropSprite.graphics.clear();
+        _crop = null;
+    }
+
     protected var _holder :UIComponent;
 
     protected var _editor :Sprite;
 
+    /** Layers that contain things. */
     protected var _backgroundLayer :Sprite;
     protected var _imageLayer :Sprite;
-    protected var _scaleLayer :Sprite;
     protected var _pixelLayer :Sprite;
     protected var _hudLayer :Sprite;
+
+    /** Layers used to affect the rotation/zoom/etc. */
+    protected var _scaleLayer :Sprite;
+    protected var _rotLayer :Sprite;
+    protected var _unRotLayer :Sprite;
+
+    /** Sprites used to represent bits. */
+    protected var _cropSprite :Sprite;
 
     protected var _bitmapData :BitmapData;
 
     protected var _crop :Rectangle;
+
+    protected var _cropPoint :Point;
 
     protected var _bytes :ByteArray;
 
@@ -276,5 +422,9 @@ public class EditCanvas extends Canvas
     protected var _width :int;
 
     protected var _height :int;
+
+    protected var _mode :int;
+
+    protected var _color :uint;
 }
 }
