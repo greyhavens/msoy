@@ -53,10 +53,6 @@ public class Application
      * and when we create an account). */
     public static Invitation activeInvite;
 
-    /** Our active guest id if we logged into Whirled as a guest, zero otherwise (for use if and
-     * when we create an account). */
-    public static int activeGuestId;
-
     /**
      * Returns a {@link Hyperlink} that displays the details of a given group.
      */
@@ -307,6 +303,26 @@ public class Application
         }
     }
 
+    /**
+     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
+     * if the guest creates an account we can transfer anything they earned as a guest to their
+     * newly created account. This is also called if a player attempts to play a game without
+     * having first logged into the server.
+     */
+    public static void setGuestId (int guestId)
+    {
+        if (CShell.getMemberId() > 0) {
+            CShell.log("Warning: got guest id but appear to be logged in? " +
+                       "[memberId=" + CShell.getMemberId() + ", guestId=" + guestId + "].");
+        } else {
+            CShell.ident = new WebIdent();
+            CShell.ident.memberId = guestId;
+            // TODO: the code that knows how to do this is in MsoyCredentials which is not
+            // accessible to GWT currently for unrelated technical reasons
+            CShell.ident.token = "G" + guestId;
+        }
+    }
+
     protected void initContext ()
     {
         CShell.app = this;
@@ -390,16 +406,6 @@ public class Application
         }
         link.addStyleName("inline");
         return link;
-    }
-
-    /**
-     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
-     * if the guest creates an account we can transfer anything they earned as a guest to their
-     * newly created account.
-     */
-    protected static void setGuestId (int guestId)
-    {
-        activeGuestId = guestId;
     }
 
     /**

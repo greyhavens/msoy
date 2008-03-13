@@ -58,6 +58,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.toStringBuf(buf);
         buf.append(", ident=").append(ident);
+        buf.append(", token=").append(sessionToken);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
     }
 }

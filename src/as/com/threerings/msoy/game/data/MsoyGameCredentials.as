@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.util.Name;
+import com.threerings.util.StringBuilder;
 
 import com.threerings.presents.net.Credentials;
 
@@ -34,6 +35,13 @@ public class MsoyGameCredentials extends Credentials
     {
         super.writeObject(out);
         out.writeField(sessionToken);
+    }
+
+    // from Credentials
+    override protected function toStringBuf (buf :StringBuilder) :void
+    {
+        super.toStringBuf(buf);
+        buf.append(", token=", sessionToken);
     }
 }
 }

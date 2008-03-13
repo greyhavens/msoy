@@ -53,4 +53,9 @@ public class LaunchConfig
 
     /** If true, the (Java) game requires the signed client that includes the LWJGL libraries. */
     public boolean lwjgl;
+
+    /** If a first-time guest requests a launch config, we assign them a guest id so that they can
+     * log directly into the game server instead of waiting for their authentication with the world
+     * server to complete and result in their being assigned a guest id. */
+    public int guestId;
 }

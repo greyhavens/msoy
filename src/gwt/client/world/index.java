@@ -154,6 +154,11 @@ public class index extends Page
 
     protected void launchGame (final LaunchConfig config, final int gameOid, String action)
     {
+        // if we were assigned a guest id, let the application know about that
+        if (config.guestId != 0) {
+            Application.setGuestId(config.guestId);
+        }
+
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
             WorldClient.displayFlash("worldGame=" + config.gameId);

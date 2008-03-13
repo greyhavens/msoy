@@ -17,6 +17,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
@@ -37,12 +38,12 @@ public class MsoyServiceServlet extends RemoteServiceServlet
 {
     /**
      * Returns the member record for the supplied ident, or null if the ident represents an expired
-     * session or is null.
+     * session, a guest or is null.
      */
     public static MemberRecord getAuthedUser (WebIdent ident)
         throws ServiceException
     {
-        if (ident == null) {
+        if (ident == null || MemberName.isGuest(ident.memberId)) {
             return null;
         }
 

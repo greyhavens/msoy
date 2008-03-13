@@ -330,6 +330,12 @@ public class WorldServlet extends MsoyServiceServlet
         config.server = rhost.left;
         config.port = rhost.right;
 
+        // finally, if they are a guest and have not yet been assigned a guest id, do so now so
+        // that they can log directly into the game server
+        if (ident == null || ident.memberId == 0) {
+            config.guestId = MsoyServer.peerMan.getNextGuestId(); // this method is thread safe
+        }
+
         return config;
     }
 

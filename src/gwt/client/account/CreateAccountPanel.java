@@ -24,6 +24,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
@@ -207,13 +208,15 @@ public class CreateAccountPanel extends VerticalPanel
         String password = _password.getText().trim();
         String inviteId = (Application.activeInvite == null) ?
             null : Application.activeInvite.inviteId;
+        int guestId = (CAccount.ident != null && MemberName.isGuest(CAccount.ident.memberId)) ?
+            CAccount.ident.memberId : 0;
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
 
         setStatus(CAccount.msgs.creatingAccount());
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
-            _photo.getPhoto(), info, 1, inviteId, Application.activeGuestId, new AsyncCallback() {
+            _photo.getPhoto(), info, 1, inviteId, guestId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);

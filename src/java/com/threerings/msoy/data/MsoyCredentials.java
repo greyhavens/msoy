@@ -16,7 +16,7 @@ import com.threerings.presents.net.UsernamePasswordCreds;
 public class MsoyCredentials extends UsernamePasswordCreds
 {
     /** A string prepended to session tokens that represent guest sessions. */
-    public static final String GUEST_SESSION_PREFIX = "G_";
+    public static final String GUEST_SESSION_PREFIX = "G";
 
     /** A session token that identifies a user without requiring username or password. */
     public String sessionToken;
