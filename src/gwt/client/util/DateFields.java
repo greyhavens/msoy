@@ -6,12 +6,15 @@ package client.util;
 import java.util.Date;
 
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DateFields extends HorizontalPanel
+    implements SourcesFocusEvents
 {
     public static Date toDate (int[] datevec)
     {
@@ -20,6 +23,7 @@ public class DateFields extends HorizontalPanel
 
     public DateFields () 
     {
+        setStyleName("dateFields");
         setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
         Label divider;
@@ -72,6 +76,22 @@ public class DateFields extends HorizontalPanel
     {
         int year = Integer.parseInt(_year.getItemText(_year.getSelectedIndex()));
         return new int[] { year, _month.getSelectedIndex(), _day.getSelectedIndex() + 1 };
+    }
+
+    // from interface SourcesFocusEvents
+    public void addFocusListener (FocusListener listener)
+    {
+        _month.addFocusListener(listener);
+        _day.addFocusListener(listener);
+        _year.addFocusListener(listener);
+    }
+
+    // from interface SourcesFocusEvents
+    public void removeFocusListener (FocusListener listener)
+    {
+        _month.removeFocusListener(listener);
+        _day.removeFocusListener(listener);
+        _year.removeFocusListener(listener);
     }
 
     protected void populateDay (int month)

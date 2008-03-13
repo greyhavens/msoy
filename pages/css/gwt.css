@@ -1047,3 +1047,50 @@ img, embed, applet, object {
 .memberStatus {
   font-size: 14px;
 }
+
+.createAccount {
+  width: 100%;
+  height: 100%;
+  background: #1D5884;
+  padding: 10px;
+  color: #FFFFFF;
+}
+
+.createAccount .Intro {
+  font-size: 21px;
+  padding-bottom: 5px;
+}
+
+.createAccount .Label {
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0px 0px 2px 3px;
+}
+
+.createAccount .Box {
+  position: relative;
+}
+
+.createAccount .Tip {
+  background: url(/images/ui/tip_balloon.png) no-repeat;
+  position: absolute;
+  width: 255px;
+  height: 55px;
+  padding-left: 25px;
+  padding-right: 5px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 10px;
+  color: #23678E;
+}
+
+.createAccount .dateFields div {
+  color: #FFFFFF;
+}
+
+.createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox, .createAccount .gwt-ListBox {
+  border: 1px solid black;
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
