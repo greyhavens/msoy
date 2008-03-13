@@ -80,6 +80,7 @@ public class TopPanel extends Canvas
             _controlBar.setStyle("left", 0);
             _controlBar.setStyle("right", 0);
             addChild(_controlBar);
+            _controlBar.setLocation(null, false, false);
 
             // show a subtle build-stamp
             var buildStamp :Label = new Label();

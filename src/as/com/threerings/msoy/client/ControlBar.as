@@ -113,27 +113,18 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Changes the visibility and parameters of the navigation widgets.
+     * Lets the control bar update based on whether or not we're in a room or game or nowhere.
      *
-     * @param visible controls visibility of both the name and the back button
-     * @param name specifies the location name to be displayed on the control bar
-     * @param backEnabled specifies whether the back button should be enabled
+     * @param name specifies the location name to be displayed on the control bar.
+     * @param inRoom true if we're in a room, false if we're in a game or nowhere at all.
+     * @param canGoBack specifies whether the back button should be enabled.
      */
-    public function updateNavigationWidgets (
-        visible :Boolean, name :String, backEnabled :Boolean) :void
+    public function setLocation (name :String, inRoom :Boolean, canGoBack :Boolean) :void
     {
-        // don't do navigation here for now...
-//         _loc.includeInLayout = _bookend.includeInLayout =
-//             _loc.visible = _bookend.visible = visible;
         if (_backBtn != null) {
-            _backBtn.enabled = backEnabled;
+            _backBtn.enabled = canGoBack;
         }
-//         const maxLen :int = 25;
-//         if (name != null) {
-//             _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
-//         } else {
-//             _loc.text = "";
-//         }
+        _zoomBtn.enabled = inRoom;
     }
 
     /**
@@ -363,57 +354,10 @@ public class ControlBar extends HBox
     /** The back-movement button. */
     protected var _backBtn :CommandButton;
 
-    /** Current location label. */
-    protected var _loc :CanvasWithText;
-
     /** Bookend image at the other end of name label. */
     protected var _bookend :SkinnableImage;
 
     /** A spacer to bump the UI bits over to the right if needed */
     protected var _spacer :HBox;
 }
-}
-
-import flash.text.TextFieldAutoSize;
-
-import mx.containers.Canvas;
-import mx.core.ScrollPolicy;
-import mx.core.UITextField;
-
-/** Internal: helper class that extends mx.containers.Canvas with automatic background loading from
- * the style sheet (e.g. via an external style sheet file). */
-internal class CanvasWithText extends Canvas
-{
-    public var textfield :UITextField;
-
-    public function CanvasWithText (height :int)
-    {
-        this.height = height;
-        horizontalScrollPolicy = verticalScrollPolicy = ScrollPolicy.OFF;
-    }
-
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-
-        textfield = new UITextField ();
-        textfield.styleName = "controlBarText";
-        textfield.x = 5;
-        textfield.y = 0;
-        textfield.height = height;
-        textfield.width = width;
-        textfield.autoSize = TextFieldAutoSize.LEFT;
-        addChild(textfield);
-    }
-
-    public function set text (message :String) :void
-    {
-        textfield.text = message;
-        textfield.y = (this.height - textfield.textHeight) / 2;
-    }
-
-    public function get text () :String
-    {
-        return textfield.text;
-    }
 }

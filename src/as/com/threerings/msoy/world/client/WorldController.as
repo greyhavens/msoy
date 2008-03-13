@@ -988,7 +988,7 @@ public class WorldController extends MsoyController
             }
 
             // display location name, modify buttons
-            controlBar.updateNavigationWidgets(true, scene.getName(), backEnabled);
+            controlBar.setLocation(scene.getName(), true, backEnabled);
             (controlBar as WorldControlBar).sceneEditPossible = canEditScene();
             return;
         }
@@ -1002,12 +1002,12 @@ public class WorldController extends MsoyController
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
         if (cfg != null) {
-            controlBar.updateNavigationWidgets(true, cfg.name, true);
+            controlBar.setLocation(cfg.name, false, true);
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
         } else {
-            controlBar.updateNavigationWidgets(false, "", false);
+            controlBar.setLocation(null, false, false);
         }
     }
 

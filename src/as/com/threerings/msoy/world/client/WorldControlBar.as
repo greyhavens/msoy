@@ -66,6 +66,13 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
+    override public function setLocation (name :String, inRoom :Boolean, canGoBack :Boolean) :void
+    {
+        super.setLocation(name, inRoom, canGoBack);
+        _hotZoneBtn.enabled = inRoom;
+    }
+
+    // from ControlBar
     override protected function createControls () :void
     {
         super.createControls();
