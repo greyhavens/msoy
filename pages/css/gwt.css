@@ -240,10 +240,10 @@ img, embed, applet, object {
 
 .frameHeader .Button {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
-  padding-top: 5px;
+  padding: 5px 0px;
   height: 30px;
 }
 
