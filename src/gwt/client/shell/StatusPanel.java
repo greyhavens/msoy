@@ -41,20 +41,21 @@ public class StatusPanel extends SmartTable
             public void statusChanged (StatusChangeEvent event) {
                 switch(event.getType()) {
                 case StatusChangeEvent.LEVEL:
-                    int newLevel = event.getValue();
-                    int oldLevel = event.getOldValue();
-                    _levels.setLevel(newLevel);
-                    // a user's level is never 0, so 0 is used to indicate that this is the first
-                    // update, and the new level popup should not be shown.
-                    if (oldLevel != 0 && oldLevel != newLevel) {
+                    _levels.setLevel(event.getValue());
+                    // keep our global level tracker up to date
+                    CShell.level = event.getValue();
+                    // if our level changed, display some fancy graphics
+                    if (isUpdate(event, 0)) {
                         _levels.showLevelUpPopup();
                     }
-                    // keep our global level tracker up to date
-                    CShell.level = newLevel;
                     break;
 
                 case StatusChangeEvent.FLOW:
                     _levels.setFlow(event.getValue());
+                    // if we earned flow, display some fancy graphics
+                    if (isUpdate(event, -1)) {
+                        _levels.showEarnedFlowPopup();
+                    }
                     break;
 
                 case StatusChangeEvent.GOLD:
@@ -133,6 +134,12 @@ public class StatusPanel extends SmartTable
         CookieUtil.clear("/", name);
     }
 
+    protected static boolean isUpdate (StatusChangeEvent event, int defval)
+    {
+        int oldLevel = event.getOldValue();
+        return (oldLevel != defval && oldLevel != event.getValue());
+    }
+
     protected static class MailDisplay extends SmartTable
     {
         public MailDisplay () {
@@ -199,10 +206,17 @@ public class StatusPanel extends SmartTable
         }
 
         public void showLevelUpPopup () {
+            showPopup("/media/static/levelbling.swf", _levelIdx);
+        }
+
+        public void showEarnedFlowPopup () {
+            showPopup("/media/static/levelbling.swf", _flowIdx);
+        }
+
+        protected void showPopup (String path, int idx) {
             PopupPanel bling = new PopupPanel(true);
-            bling.add(WidgetUtil.createTransparentFlashContainer("levelBling",
-                "/media/static/levelbling.swf", 60, 60, null));
-            Element cell = getFlexCellFormatter().getElement(0, _levelIdx);
+            bling.add(WidgetUtil.createTransparentFlashContainer("levelBling", path, 60, 60, null));
+            Element cell = getFlexCellFormatter().getElement(0, idx);
             bling.setPopupPosition(DOM.getAbsoluteLeft(cell) - 30, DOM.getAbsoluteTop(cell) - 23);
             bling.show();
         }
