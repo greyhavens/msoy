@@ -67,12 +67,14 @@ public class PlaceBox extends LayeredContainer
         }
     }
 
-    public function clearPlaceView (view :PlaceView) :void
+    public function clearPlaceView (view :PlaceView) :Boolean
     {
         if ((_placeView != null) && (view == null || view == _placeView)) {
             clearBaseLayer();
             _placeView = null;
+            return true;
         }
+        return false;
     }
 
     /**

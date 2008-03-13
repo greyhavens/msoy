@@ -52,6 +52,7 @@ public /*abstract*/ class MsoyContext
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
 
+        // the top panel's constructor will add it to the app's UI hierarchy
         _topPanel = new TopPanel(this, createControlBar());
     }
 

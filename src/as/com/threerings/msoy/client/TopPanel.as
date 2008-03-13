@@ -99,11 +99,12 @@ public class TopPanel extends Canvas
         var app :Application = Application(Application.application);
         app.removeAllChildren();
         app.addChild(this);
-        layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
-
         _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
+
+        // display something until someone comes along and sets a real view on us
+        setPlaceView(new BlankPlaceView());
     }
 
     /**
@@ -216,7 +217,9 @@ public class TopPanel extends Canvas
      */
     public function clearPlaceView (view :PlaceView) :void
     {
-        _placeBox.clearPlaceView(view);
+        if (_placeBox.clearPlaceView(view)) {
+            setPlaceView(new BlankPlaceView());
+        }
     }
 
     /**

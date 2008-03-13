@@ -504,6 +504,10 @@ TabNavigator, TabBar {
   paddingBottom: 0;
 }  
 
+.blankPlace {
+  backgroundImage: Embed(source="../../rsrc/media/skins/blank_place_bg.png");
+}
+
 .roomEditPanel {  
   paddingBottom: 0;
   paddingTop: 0;
