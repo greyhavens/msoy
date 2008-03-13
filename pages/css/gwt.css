@@ -1098,12 +1098,16 @@ img, embed, applet, object {
   padding-right: 10px;
 }
 
-.createAccount .Error {
-  font-weight: bold;
+.createAccount .Status {
+  text-align: center;
 }
 
 .createAccount .dateFields div {
   color: #FFFFFF;
+}
+
+.createAccount .roundBox .tipLabel {
+  width: 100px;
 }
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox, .createAccount .gwt-ListBox {

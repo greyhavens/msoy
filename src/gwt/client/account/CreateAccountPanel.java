@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
@@ -84,7 +85,7 @@ public class CreateAccountPanel extends VerticalPanel
                 _name.setFocus(true);
             }
         }));
-        add(makeStep(1, "What you need to log in:", box));
+        add(makeStep(1, CAccount.msgs.createLogonSection(), box));
 
         // create the real you section
         box = new RoundBox(RoundBox.DARK_BLUE);
@@ -95,7 +96,7 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                                CAccount.msgs.createDateOfBirthTip()));
-        add(makeStep(2, "About the real you:", box));
+        add(makeStep(2, CAccount.msgs.createRealSection(), box));
 
         // create the Whirled you section
         box = new RoundBox(RoundBox.DARK_BLUE);
@@ -103,24 +104,26 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
                                CAccount.msgs.createDisplayNameTip()));
         box.add(WidgetUtil.makeShim(10, 10));
-        box.add(new LabeledBox(CAccount.msgs.createPhoto(), new PhotoUploader(),
+        box.add(new LabeledBox(CAccount.msgs.createPhoto(), _photo = new PhotoUploader(),
                                CAccount.msgs.createPhotoTip()));
-        add(makeStep(3, "About the Whirled you:", box));
+        add(makeStep(3, CAccount.msgs.createWhirledSection(), box));
 
-        add(_status = MsoyUI.createLabel("", "Status"));
-
-        setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(), new ClickListener() {
+        HorizontalPanel controls = new HorizontalPanel();
+        controls.setWidth("400px");
+        controls.add(_status = MsoyUI.createLabel("", "Status"));
+        controls.add(WidgetUtil.makeShim(10, 10));
+        controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(),
+                                         new ClickListener() {
             public void onClick (Widget sender) {
                 createAccount();
             }
         }));
+        add(controls);
 
         Label slurp;
         add(slurp = new Label(""));
         setCellHeight(slurp, "100%");
-
-        validateData(false);
     }
 
     // @Override // from Widget
@@ -132,7 +135,7 @@ public class CreateAccountPanel extends VerticalPanel
         }
     }
 
-    protected boolean validateData (boolean forceError)
+    protected boolean validateData ()
     {
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
@@ -163,14 +166,10 @@ public class CreateAccountPanel extends VerticalPanel
             return true;
         }
 
-        if (forceError) {
-            if (toFocus != null) {
-                toFocus.setFocus(true);
-            }
-            setError(status);
-        } else {
-            setStatus(status);
+        if (toFocus != null) {
+            toFocus.setFocus(true);
         }
+        setStatus(status);
         return false;
     }
 
@@ -186,7 +185,7 @@ public class CreateAccountPanel extends VerticalPanel
 
     protected void createAccount ()
     {
-        if (!validateData(true)) {
+        if (!validateData()) {
             return;
         }
 
@@ -202,7 +201,7 @@ public class CreateAccountPanel extends VerticalPanel
 
         Date dob = DateFields.toDate(_dateOfBirth.getDate());
         if (new Date(thirteenYearsAgo).compareTo(dob) < 0) {
-            setError(CAccount.msgs.createNotThirteen());
+            setStatus(CAccount.msgs.createNotThirteen());
             return;
         }
 
@@ -216,7 +215,7 @@ public class CreateAccountPanel extends VerticalPanel
         setStatus(CAccount.msgs.creatingAccount());
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
-            info, 1, inviteId, Application.activeGuestId, new AsyncCallback() {
+            _photo.getPhoto(), info, 1, inviteId, Application.activeGuestId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);
@@ -226,20 +225,13 @@ public class CreateAccountPanel extends VerticalPanel
                 Application.go(Page.ME, "");
             }
             public void onFailure (Throwable caught) {
-                setError(CAccount.serverError(caught));
+                setStatus(CAccount.serverError(caught));
             }
         });
     }
 
     protected void setStatus (String text)
     {
-        _status.removeStyleName("Error");
-        _status.setText(text);
-    }
-
-    protected void setError (String text)
-    {
-        _status.addStyleName("Error");
         _status.setText(text);
     }
 
@@ -248,12 +240,20 @@ public class CreateAccountPanel extends VerticalPanel
         public PhotoUploader ()
         {
             setWidget(0, 0, new ThumbBox(Profile.DEFAULT_PHOTO, null));
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, new MediaUploader(Item.THUMB_MEDIA, new MediaUploader.Listener() {
                 public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
                     _media = desc;
                     setWidget(0, 0, new ThumbBox(_media, null));
                 }
             }));
+            setText(1, 0, CAccount.msgs.createPhotoTip(), 1, "tipLabel");
+
+        }
+
+        public MediaDesc getPhoto ()
+        {
+            return _media;
         }
 
         protected MediaDesc _media;
@@ -314,5 +314,6 @@ public class CreateAccountPanel extends VerticalPanel
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
+    protected PhotoUploader _photo;
     protected Label _status;
 }

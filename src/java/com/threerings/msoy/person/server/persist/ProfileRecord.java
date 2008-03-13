@@ -205,11 +205,7 @@ public class ProfileRecord extends PersistentRecord
             birthday = fromDateVec(profile.birthday);
         }
         showAge = (profile.age != 0);
-        if (profile.photo != null) {
-            photoHash = profile.photo.hash;
-            photoMimeType = profile.photo.mimeType;
-            photoConstraint = profile.photo.constraint;
-        }
+        setPhoto(profile.photo);
     }
 
     /**
@@ -245,6 +241,19 @@ public class ProfileRecord extends PersistentRecord
         profile.lastLogon = (member.lastSession != null) ? member.lastSession.getTime() : 0L;
 
         return profile;
+    }
+
+    /**
+     * Configures our photo data with the supplied media descriptor, which may be null (in which
+     * case this method is a NOOP).
+     */
+    public void setPhoto (MediaDesc photo)
+    {
+        if (photo != null) {
+            photoHash = photo.hash;
+            photoMimeType = photo.mimeType;
+            photoConstraint = photo.constraint;
+        }
     }
 
     /**

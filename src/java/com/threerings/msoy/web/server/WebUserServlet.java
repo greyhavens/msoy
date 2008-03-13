@@ -28,6 +28,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -69,8 +70,8 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public SessionData register (long clientVersion, String username, String password,
-                                 final String displayName, int[] bdayvec, AccountInfo info,
-                                 int expireDays, String inviteId, int guestId)
+                                 final String displayName, int[] bdayvec, MediaDesc photo,
+                                 AccountInfo info, int expireDays, String inviteId, int guestId)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -117,6 +118,7 @@ public class WebUserServlet extends MsoyServiceServlet
         prec.memberId = newAccount.memberId;
         prec.birthday = birthday;
         prec.realName = info.realName;
+        prec.setPhoto(photo);
         try {
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
