@@ -26,7 +26,7 @@ public class PlayPanel extends SmartTable
         setText(0, 0, CGames.msgs.gdpPlay(), 3, "Title");
 
         Widget single = WidgetUtil.makeShim(120, 44);
-        if (minPlayers == 1 && maxPlayers != Integer.MAX_VALUE) {
+        if (minPlayers == 1) {
             single = makePlayButton("SinglePlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", ""+gameId));
