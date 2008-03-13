@@ -74,9 +74,8 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.didLeavePlace(plobj);
 
         _gctx.getMsoyContext().getMsoyChatDirector().clearGameChat();
-        var bar :ControlBar = _gctx.getMsoyContext().getTopPanel().getControlBar();
-        bar.setChatEnabled(true);
 
+        // clear our custom controlbar components
         _rematch.parent.removeChild(_rematch);
         _backToLobby.parent.removeChild(_backToLobby);
         _backToWhirled.parent.removeChild(_backToWhirled);

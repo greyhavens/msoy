@@ -93,16 +93,6 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Enables or disables our chat input.
-     */
-    public function setChatEnabled (enabled :Boolean) :void
-    {
-        if (_chatControl != null) {
-            _chatControl.setEnabled(enabled);
-        }
-    }
-
-    /**
      * Redirects our chat input to the specified chat director.
      */
     public function setChatDirector (chatDtr :ChatDirector) :void
