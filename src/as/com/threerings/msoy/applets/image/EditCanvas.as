@@ -240,7 +240,7 @@ public class EditCanvas extends Canvas
                 bmp = new BitmapData(_width, _height);
             } else {
                 bmp = new BitmapData(_crop.width, _crop.height);
-                matrix = new Matrix(0, 0, 0, 0, _crop.x, _crop.y);
+                matrix = new Matrix(1, 0, 0, 1, -_crop.x, -_crop.y);
             }
             // screenshot the image
             bmp.draw(_scaleLayer, matrix);
@@ -335,6 +335,7 @@ public class EditCanvas extends Canvas
     {
         const x :int = Math.round(event.localX);
         const y :int = Math.round(event.localY);
+        trace("Got paintpixel: " + x + ", " + y);
 
         // TODO: there doesn't seem to be a way to actually draw just 1 pixel.
         // (If you are zoomed, this 1 pixel is actually larger than a pixel)
@@ -381,6 +382,7 @@ public class EditCanvas extends Canvas
         _cropSprite.y = _crop.y;
 
         var g :Graphics = _cropSprite.graphics;
+        g.clear();
         g.lineStyle(1);
         GraphicsUtil.dashRect(g, 0, 0, _crop.width, _crop.height)
     }
