@@ -178,7 +178,9 @@ public class WhatsNextPanel extends SmartTable
             friends.add((FlowPanel)iter.next());
         }
 
-        return new ScrollPanel(friends);
+        ScrollPanel scroller = new ScrollPanel(friends);
+        scroller.setHeight("326px");
+        return scroller;
     }
 
     protected FlowPanel getPlacePanel (Map places, int placeId, String placeName)
