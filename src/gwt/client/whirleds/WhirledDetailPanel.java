@@ -208,7 +208,8 @@ public class WhirledDetailPanel extends VerticalPanel
             if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
                 extras.add(MsoyUI.createActionLabel(
                                CWhirleds.msgs.detailJoin(), new PromptPopup(
-                                   CWhirleds.msgs.detailJoinPrompt(_group.name), joinGroup())));
+                                   CWhirleds.msgs.detailJoinPrompt(), joinGroup()).setContext(
+                                       CWhirleds.msgs.detailJoinContext(_group.name))));
             }
         } else {
             extras.add(MsoyUI.createActionLabel(
