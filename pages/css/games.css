@@ -68,6 +68,12 @@
   background: transparent url(/images/game/play_friends_over.png);
 }
 
+.playPanel .NoSingle {
+  width: 120px;
+  font-size: 12px;
+  text-align: center;
+}
+
 .playPanel .Label {
   font-size: 12px;
   text-align: center;
@@ -273,6 +279,7 @@
 }
 
 .featuredGame .gameName .Descrip {
+  width: 285px;
   height: 65px;
 }
 
