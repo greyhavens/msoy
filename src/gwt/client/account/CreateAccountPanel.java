@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
@@ -59,6 +60,7 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(new LabeledBox(CAccount.msgs.createEmail(),
                                _email = MsoyUI.createTextBox("", -1, 30),
                                CAccount.msgs.createEmailTip()));
+        _email.addKeyboardListener(_onType);
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _password.setFocus(true);
@@ -81,11 +83,13 @@ public class CreateAccountPanel extends VerticalPanel
                 _confirm.setFocus(true);
             }
         }));
+        _password.addKeyboardListener(_onType);
         _confirm.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _name.setFocus(true);
             }
         }));
+        _confirm.addKeyboardListener(_onType);
         add(makeStep(1, box));
 
         // create the real you section
@@ -93,6 +97,7 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(new LabeledBox(CAccount.msgs.createRealName(),
                                _rname = MsoyUI.createTextBox("", -1, 30),
                                CAccount.msgs.createRealNameTip()));
+        _rname.addKeyboardListener(_onType);
 
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
@@ -102,6 +107,7 @@ public class CreateAccountPanel extends VerticalPanel
         // create the Whirled you section
         box = new RoundBox(RoundBox.DARK_BLUE);
         _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, 30);
+        _name.addKeyboardListener(_onType);
         box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
                                CAccount.msgs.createDisplayNameTip()));
         box.add(WidgetUtil.makeShim(10, 10));
@@ -309,6 +315,12 @@ public class CreateAccountPanel extends VerticalPanel
 
         protected SmartTable _tip;
     }
+
+    protected KeyboardListenerAdapter _onType = new KeyboardListenerAdapter() {
+        public void onKeyDown (Widget sender, char keyCode, int modifiers) {
+            setStatus("");
+        }
+    };
 
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
