@@ -94,6 +94,9 @@ public class GameServlet extends MsoyServiceServlet
                     creatorId = item.creatorId;
                 }
             }
+            if (creatorId != 0) {
+                detail.creator = MsoyServer.memberRepo.loadMemberName(creatorId);
+            }
 
             if (gdr.listedItemId != 0) {
                 ItemRecord item = repo.loadItem(gdr.listedItemId);
@@ -106,19 +109,15 @@ public class GameServlet extends MsoyServiceServlet
                 }
             }
 
+            PlaceCard game = MsoyServer.memberMan.getPPSnapshot().getGame(gameId);
+            if (game != null) {
+                detail.playingNow = game.population;
+            }
+
             // determine how many players can play this game
             int[] players = getMinMaxPlayers(detail.getGame());
             detail.minPlayers = players[0];
             detail.maxPlayers = players[1];
-
-            if (creatorId != 0) {
-                MemberRecord crrec = MsoyServer.memberRepo.loadMember(creatorId);
-                if (crrec == null) {
-                    log.warning("Game missing creator " + gdr + ".");
-                } else {
-                    detail.creator = crrec.getName();
-                }
-            }
 
             return detail;
 

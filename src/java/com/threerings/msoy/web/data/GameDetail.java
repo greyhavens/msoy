@@ -55,6 +55,9 @@ public class GameDetail
     /** The maximum number of players for this game or Integer.MAX_VALUE if it's a party game. */
     public int maxPlayers;
 
+    /** The number of people playing this game right now. */
+    public int playingNow;
+
     /**
      * Returns the listed game if we have one, the source if not.
      */

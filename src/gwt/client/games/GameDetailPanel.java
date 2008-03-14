@@ -93,9 +93,8 @@ public class GameDetailPanel extends SmartTable
         setWidget(1, 0, new GameBitsPanel(
                       detail.minPlayers, detail.maxPlayers, detail.getAverageDuration(),
                       detail.singlePlayerGames + detail.multiPlayerGames));
-        int online = 0; // TODO
-        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers, online),
-                  1, "Play");
+        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers,
+                                      detail.playingNow), 1, "Play");
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {
