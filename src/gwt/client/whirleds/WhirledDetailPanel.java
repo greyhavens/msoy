@@ -6,6 +6,7 @@ package client.whirleds;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,12 +36,14 @@ import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
+import client.shop.CShop;
 import client.util.CreatorLabel;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -205,7 +208,24 @@ public class WhirledDetailPanel extends VerticalPanel
                   Application.createLinkListener(Page.WHIRLEDS, Args.compose("f", _group.groupId)));
         bits.add(WidgetUtil.makeShim(10, 10));
         bits.add(buttons);
-        main.add(bits);
+
+        VerticalPanel bitsColumn = new VerticalPanel();
+        bitsColumn.setSpacing(10);
+        bitsColumn.add(bits);
+        if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
+            String label = CWhirleds.msgs.detailBrowseShop(
+                CWhirleds.dmsgs.getString("pItemType" + _extras.catalogItemType));
+            Button browseButton = new Button(label, new ClickListener() {
+                public void onClick (Widget sender) {
+                    CatalogQuery query = new CatalogQuery();
+                    query.itemType = _extras.catalogItemType;
+                    query.tag = _extras.catalogTag;
+                    Application.go(Page.SHOP, CShop.composeArgs(query, 0));
+                }
+            });
+            bitsColumn.add(browseButton);
+        }
+        main.add(bitsColumn);
 
         add(_tabs = new StyledTabPanel());
 
