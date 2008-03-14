@@ -208,6 +208,7 @@
   color: #FFFFFF;
   height: 20px;
   padding-left: 17px;
+  white-space: nowrap;
 }
 
 .whatIsTheWhirled .logonPanel {

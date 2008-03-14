@@ -80,11 +80,6 @@ public class GameDetailPanel extends SmartTable
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         shot.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
-        int online = 0; // TODO
-        if (online > 0) {
-            shot.add(WidgetUtil.makeShim(5, 5));
-            shot.add(MsoyUI.createLabel(CGames.msgs.featuredOnline(""+online), "Online"));
-        }
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
             shot.add(new ItemRating(detail.listedItem, detail.memberRating, false));
@@ -98,7 +93,9 @@ public class GameDetailPanel extends SmartTable
         setWidget(1, 0, new GameBitsPanel(
                       detail.minPlayers, detail.maxPlayers, detail.getAverageDuration(),
                       detail.singlePlayerGames + detail.multiPlayerGames));
-        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers), 1, "Play");
+        int online = 0; // TODO
+        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers, online),
+                  1, "Play");
 
         // note that they're playing the developer version if so
         if (_gameId < 0) {

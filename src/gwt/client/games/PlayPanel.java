@@ -21,11 +21,18 @@ import client.util.MsoyUI;
  */
 public class PlayPanel extends SmartTable
 {
-    public PlayPanel (final int gameId, int minPlayers, int maxPlayers)
+    public PlayPanel (final int gameId, int minPlayers, int maxPlayers, int playersOnline)
     {
         super("playPanel", 0, 0);
 
-        setText(0, 0, CGames.msgs.gdpPlay(), 3, "Title");
+        if (playersOnline > 0) {
+            addWidget(MsoyUI.createLabel(CGames.msgs.featuredOnline(""+playersOnline), "Online"),
+                      3, null);
+            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+        } else {
+            addText(CGames.msgs.gdpPlay(), 3, "Title");
+        }
+        addWidget(WidgetUtil.makeShim(10, 10), 3, null);
 
         Widget single;
         if (minPlayers == 1) {
@@ -45,11 +52,11 @@ public class PlayPanel extends SmartTable
                 }
             });
         }
-        setWidget(1, 0, single);
-        getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_MIDDLE);
-        setWidget(1, 1, WidgetUtil.makeShim(15, 15));
-        setWidget(1, 2, multi);
-        getFlexCellFormatter().setVerticalAlignment(1, 2, HasAlignment.ALIGN_MIDDLE);
+        int row = addWidget(single, 1, null);
+        getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
+        setWidget(row, 1, WidgetUtil.makeShim(15, 15));
+        setWidget(row, 2, multi);
+        getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_MIDDLE);
     }
 
     protected PushButton makePlayButton (String styleName, ClickListener onClick)

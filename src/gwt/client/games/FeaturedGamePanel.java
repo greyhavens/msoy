@@ -53,11 +53,6 @@ public class FeaturedGamePanel extends SmartTable
         sashBox.add(sash);
         sashBox.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
         left.add(sashBox);
-        if (game.playersOnline > 0) {
-            left.add(WidgetUtil.makeShim(5, 5));
-            left.add(MsoyUI.createLabel(
-                         CGames.msgs.featuredOnline(""+game.playersOnline), "Online"));
-        }
         left.add(WidgetUtil.makeShim(5, 5));
         left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0));
 
@@ -80,7 +75,7 @@ public class FeaturedGamePanel extends SmartTable
         VerticalPanel right = new GameNamePanel(
             game.name, game.genre, game.creator, game.description);
         right.add(WidgetUtil.makeShim(5, 10));
-        right.add(new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers));
+        right.add(new PlayPanel(game.gameId, game.minPlayers, game.maxPlayers, game.playersOnline));
         setWidget(0, 1, right);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
     }
