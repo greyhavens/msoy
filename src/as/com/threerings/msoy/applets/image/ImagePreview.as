@@ -54,10 +54,6 @@ public class ImagePreview extends HBox
     public function ImagePreview (
         allowEdit :Boolean = false, cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
-        if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
-            // TODO: set up the cutter-outter
-        }
-
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
@@ -70,7 +66,14 @@ public class ImagePreview extends HBox
             addChild(_controlBar = createControlBar());
         }
         setImage(null);
-        setMode(allowEdit ? EditCanvas.PAINT : EditCanvas.NONE);
+
+        if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
+            _editor.setForcedCrop(cutWidth, cutHeight);
+            disableMode(EditCanvas.SELECT);
+            setMode(EditCanvas.MOVE);
+        } else {
+            setMode(allowEdit ? EditCanvas.PAINT : EditCanvas.NONE);
+        }
     }
 
     public function setImage (image :Object) :void
@@ -209,6 +212,15 @@ public class ImagePreview extends HBox
             but.selected = (mode == but.data);
         }
         _editor.setMode(mode);
+    }
+
+    protected function disableMode (mode :int) :void
+    {
+        for each (var but :CommandButton in _buttons) {
+            if (mode == but.data) {
+                but.enabled = false;
+            }
+        }
     }
 
     protected function handleColorPicked (event :ColorPickerEvent) :void

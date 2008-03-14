@@ -75,7 +75,8 @@ public class EditCanvas extends Canvas
         _fillLayer = new Shape();
         _hudLayer = new Sprite();
 
-        _crop = new Shape();
+        _crop = new Sprite();
+        _crop.mouseEnabled = false;
         _brush = new Shape();
         _brush.visible = false;
 
@@ -95,18 +96,6 @@ public class EditCanvas extends Canvas
 
         _holder = new UIComponent();
         _holder.addChild(_editor);
-
-        // set up mouse listeners
-        _hudLayer.addEventListener(MouseEvent.MOUSE_DOWN, handleSelectStart);
-        _hudLayer.addEventListener(MouseEvent.MOUSE_UP, handleSelectEnd);
-        _hudLayer.addEventListener(MouseEvent.MOUSE_OUT, handleSelectEnd);
-
-        _paintLayer.addEventListener(MouseEvent.ROLL_OVER, handleShowBrush);
-        _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handleShowBrush);
-        _paintLayer.addEventListener(MouseEvent.ROLL_OVER, handlePaintEnter);
-        _paintLayer.addEventListener(MouseEvent.MOUSE_DOWN, handlePaintStart);
-        _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handlePaintMove);
-        _paintLayer.addEventListener(MouseEvent.MOUSE_UP, handlePaintEnd);
 
 
 //        var mask :Shape = new Shape();
@@ -148,6 +137,14 @@ public class EditCanvas extends Canvas
     public function getBrushSize () :Number
     {
         return _brushSize;
+    }
+
+    public function setForcedCrop (wid :Number, hei :Number) :void
+    {
+        _forceCrop = true;
+        _cropPoint = new Point(0, 0);
+        updateSelection(wid, hei);
+        _cropPoint = null;
     }
 
     public function doCrop () :void
@@ -359,13 +356,27 @@ public class EditCanvas extends Canvas
         var fn :Function;
 
         // PAINT
+        fn = (_mode == PAINT) ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
+        fn(MouseEvent.ROLL_OVER, handleShowBrush);
+        fn(MouseEvent.ROLL_OUT, handleShowBrush);
+        fn(MouseEvent.ROLL_OVER, handlePaintEnter);
+        fn(MouseEvent.MOUSE_DOWN, handlePaintStart);
+        fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
+        fn(MouseEvent.MOUSE_UP, handlePaintEnd);
         _paintLayer.mouseEnabled = (_mode == PAINT);
 
         // SELECT
+        fn = (_mode == PAINT) ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
+        fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
+        fn(MouseEvent.MOUSE_UP, handleSelectEnd);
+        fn(MouseEvent.MOUSE_OUT, handleSelectEnd);
         _hudLayer.mouseEnabled = (_mode == SELECT);
 
         // MOVE
-        // TODO
+        fn = (_mode == MOVE) ? _crop.addEventListener : _crop.removeEventListener;
+        fn(MouseEvent.MOUSE_DOWN, handleCropSelect);
+        fn(MouseEvent.MOUSE_UP, handleCropUp);
+        _crop.mouseEnabled = (_mode == MOVE);
     }
 
     protected function updateBrush () :void
@@ -393,6 +404,8 @@ public class EditCanvas extends Canvas
 
     protected function handlePaintStart (event :MouseEvent) :void
     {
+        setPainted();
+
         // paint the brush stamp
         var g :Graphics = _fillLayer.graphics;
         g.beginFill(_color);
@@ -475,12 +488,37 @@ public class EditCanvas extends Canvas
         g.clear();
         g.lineStyle(1);
         GraphicsUtil.dashRect(g, 0, 0, _cropRect.width, _cropRect.height)
+        g.lineStyle(0, 0, 0);
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 0, _cropRect.width, _cropRect.height);
+        g.endFill();
     }
 
     protected function clearSelection () :void
     {
-        _crop.graphics.clear();
-        _cropRect = null;
+        if (_forceCrop) { // just reset it
+            _crop.x = 0;
+            _crop.y = 0;
+            _cropRect.x = 0;
+            _cropRect.y = 0;
+
+        } else { // actually clear it
+            _crop.graphics.clear();
+            _cropRect = null;
+        }
+    }
+
+    protected function handleCropSelect (event :MouseEvent) :void
+    {
+        _crop.startDrag(false,
+            new Rectangle(0, 0, _width - _cropRect.width, _height - _cropRect.height));
+    }
+
+    protected function handleCropUp (event :MouseEvent) :void
+    {
+        _crop.stopDrag();
+        _cropRect.x = _crop.x;
+        _cropRect.y = _crop.y;
     }
 
     /** 
@@ -510,7 +548,7 @@ public class EditCanvas extends Canvas
     protected var _unRotLayer :Sprite;
 
     /** Sprites used to represent bits. */
-    protected var _crop :Shape;
+    protected var _crop :Sprite;
     protected var _brush :Shape;
 
     protected var _cropRect :Rectangle;
@@ -529,5 +567,6 @@ public class EditCanvas extends Canvas
     protected var _mode :int;
     protected var _color :uint;
     protected var _brushSize :Number;
+    protected var _forceCrop :Boolean = false;
 }
 }
