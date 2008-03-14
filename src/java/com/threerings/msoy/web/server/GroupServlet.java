@@ -96,7 +96,7 @@ public class GroupServlet extends MsoyServiceServlet
 
             // load up our popular tags
             List<String> popularTags = Lists.newArrayList();
-            for (TagPopularityRecord popRec : 
+            for (TagPopularityRecord popRec :
                     MsoyServer.groupRepo.getTagRepository().getPopularTags(
                     GalaxyData.POPULAR_TAG_COUNT)) {
                 popularTags.add(popRec.tag);
@@ -230,7 +230,7 @@ public class GroupServlet extends MsoyServiceServlet
                 rooms.add(room);
             }
             result.callerRooms = rooms;
-                    
+
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupRooms failed [groupId=" + groupId + "]", pe);
@@ -246,8 +246,8 @@ public class GroupServlet extends MsoyServiceServlet
 
         try {
             // ensure the caller is a manager of this group
-            GroupMembershipRecord membership = 
-                MsoyServer.groupRepo.getMembership(groupId, ident.memberId); 
+            GroupMembershipRecord membership =
+                MsoyServer.groupRepo.getMembership(groupId, ident.memberId);
             if (membership.rank != GroupMembership.RANK_MANAGER) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
@@ -263,7 +263,7 @@ public class GroupServlet extends MsoyServiceServlet
             MsoyServer.sceneRepo.transferSceneOwnership(
                 sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "transferRoom failed [groupId=" + groupId + ", sceneId=" + 
+            log.log(Level.WARNING, "transferRoom failed [groupId=" + groupId + ", sceneId=" +
                 sceneId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -282,17 +282,17 @@ public class GroupServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
-    
+
     // from interface GroupService
-    public List<Group> searchGroups (WebIdent ident, String searchString) 
+    public List<GroupCard> searchGroups (WebIdent ident, String searchString)
         throws ServiceException
     {
         try {
-            List<Group> groups = Lists.newArrayList();
+            List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord grec : MsoyServer.groupRepo.searchGroups(searchString)) {
-                groups.add(grec.toGroupObject());
+                groups.add(grec.toGroupCard());
             }
-            return groups;
+            return fillInPopulation(groups);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "searchGroups failed [searchString=" + searchString + "]", pe);
@@ -301,15 +301,16 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<Group> searchForTag (WebIdent ident, String tag)
+    public List<GroupCard> searchForTag (WebIdent ident, String tag)
         throws ServiceException
     {
         try {
-            List<Group> groups = Lists.newArrayList();
+            List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord grec : MsoyServer.groupRepo.searchForTag(tag)) {
-                groups.add(grec.toGroupObject());
+                groups.add(grec.toGroupCard());
             }
-            return groups;
+            return fillInPopulation(groups);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "searchForTag failed [tag=" + tag + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -355,7 +356,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (WebIdent ident, Group group, GroupExtras extras) 
+    public Group createGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -413,7 +414,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateGroup (WebIdent ident, Group group, GroupExtras extras) 
+    public void updateGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -533,13 +534,13 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank) 
+    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
         try {
-            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId,
                 mrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
@@ -558,7 +559,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set) 
+    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set)
         throws ServiceException
     {
         String tagName = tag.trim().toLowerCase();
@@ -570,7 +571,7 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(ident);
 
         try {
-            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId,
                 mrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in tagGroup, invalid permissions");
@@ -578,7 +579,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             long now = System.currentTimeMillis();
-                
+
             TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
             TagNameRecord tagRec = tagRepo.getOrCreateTag(tagName);
 
@@ -618,7 +619,7 @@ public class GroupServlet extends MsoyServiceServlet
                 history.tag = tag == null ? null : tag.tag;
                 history.action = record.action;
                 history.time = new Date(record.time.getTime());
-                list.add(history); 
+                list.add(history);
             }
             return list;
 
@@ -644,6 +645,18 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
+    protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
+    {
+        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        for (GroupCard card : groups) {
+            PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
+            if (pcard != null) {
+                card.population = pcard.population;
+            }
+        }
+        return groups;
+    }
+
     protected List<GroupMemberCard> loadGroupMembers (int groupId, byte minRank)
         throws PersistenceException
     {
@@ -662,7 +675,7 @@ public class GroupServlet extends MsoyServiceServlet
         return mlist;
     }
 
-    protected static boolean isValidName (String name) 
+    protected static boolean isValidName (String name)
     {
         return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
     }

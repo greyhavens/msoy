@@ -156,7 +156,7 @@ public class WhirledDetailPanel extends VerticalPanel
                 public void addMenuItems (final String tag, PopupMenu menu) {
                     menu.addMenuItem(CWhirleds.msgs.detailTagLink(), new Command() {
                         public void execute () {
-                            Application.go(Page.WHIRLEDS, Args.compose("tag", tag));
+                            Application.go(Page.WHIRLEDS, Args.compose("tag", "0", tag));
                         }
                     });
                 }
@@ -231,7 +231,9 @@ public class WhirledDetailPanel extends VerticalPanel
 
         String charter = (_extras.charter == null) ?
             CWhirleds.msgs.detailNoCharter() : _extras.charter;
-        _tabs.add(new PrettyTextPanel(charter), CWhirleds.msgs.detailTabCharter());
+        PrettyTextPanel ptp = new PrettyTextPanel(charter);
+        ptp.addStyleName("Charter");
+        _tabs.add(ptp, CWhirleds.msgs.detailTabCharter());
         _tabs.selectTab(0);
 
         _tabs.add(new WhirledMembersPanel(_detail), CWhirleds.msgs.detailTabMembers());

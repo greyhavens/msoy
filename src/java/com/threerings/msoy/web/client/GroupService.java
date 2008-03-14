@@ -90,7 +90,7 @@ public interface GroupService extends RemoteService
     /**
      * Performs a search against the name, blurb and charter fields.
      *
-     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
     public List searchGroups (WebIdent ident, String searchString)
         throws ServiceException;
@@ -98,7 +98,7 @@ public interface GroupService extends RemoteService
     /**
      * Return all groups that are tagged with the given tag.
      *
-     * @gwt.typeArgs <com.threerings.msoy.group.data.Group>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
     public List searchForTag (WebIdent ident, String tag)
         throws ServiceException;
