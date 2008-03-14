@@ -45,7 +45,7 @@ public class StatusPanel extends SmartTable
                     // keep our global level tracker up to date
                     CShell.level = event.getValue();
                     // if our level changed, display some fancy graphics
-                    if (isUpdate(event)) {
+                    if (isIncrease(event)) {
                         _levels.showLevelUpPopup();
                     }
                     break;
@@ -53,7 +53,7 @@ public class StatusPanel extends SmartTable
                 case StatusChangeEvent.FLOW:
                     _levels.setFlow(event.getValue());
                     // if we earned flow, display some fancy graphics
-                    if (isUpdate(event)) {
+                    if (isIncrease(event)) {
                         _levels.showEarnedFlowPopup();
                     }
                     break;
@@ -134,10 +134,10 @@ public class StatusPanel extends SmartTable
         CookieUtil.clear("/", name);
     }
 
-    protected static boolean isUpdate (StatusChangeEvent event)
+    protected static boolean isIncrease (StatusChangeEvent event)
     {
         int oldLevel = event.getOldValue();
-        return (oldLevel != 0 && oldLevel != event.getValue());
+        return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
     protected static class MailDisplay extends SmartTable
