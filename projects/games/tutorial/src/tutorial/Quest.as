@@ -13,8 +13,9 @@ public class Quest
 
     public var questId :String;
     public var status :String;
-    public var enterPage :String;
     public var summary :String;
+    public var reminderLabel :String;
+    public var reminderPage :String;
     public var trigger :String;
 
     public static function getFirstQuest () :Quest
@@ -54,13 +55,14 @@ public class Quest
     }
 
     protected static function makeQuest (
-        questId :String, status :String, enterPage :String, title :String, summary :String,
-        details :Array, footer :String, trigger :String) :Quest
+        questId :String, status :String, title :String, summary :String, details :Array,
+        footer :String, reminderLabel :String, reminderPage :String, trigger :String) :Quest
     {
         var quest :Quest = new Quest();
         quest.questId = questId;
         quest.status = status;
-        quest.enterPage = enterPage;
+        quest.reminderLabel = reminderLabel;
+        quest.reminderPage = reminderPage;
         quest.summary = "<p class='title'>" + title + "</p>" +
             "<p class='message'>" + summary + "</p><br>";
         if (details != null) {
@@ -79,83 +81,82 @@ public class Quest
 
     protected static var _quests :Array = [
         makeQuest(
-            "introDecor",
-            "Introducing Decor",
+            "placeFurni",
+            "Rearranging the Furniture",
+            "Arrange Your Furniture",
+            "First let's learn how to rearrange the furniture.<br>" +
+            "1. Click the [[Edit room]] button below:<br>" +
+            "<img src='/images/tutorial/room_edit.png'><br><br><br>" +
+            "2. Click and drag any of the furniture in your room to move it.",
             null,
-            "Introducing Decor",
-            "The decor is the background image for your room. Everything in your room " +
-            "appears on top of the decor.",
+            "When you're done arranging, close the [[Arranging Room]] window.",
             null,
-            "Click [[Onward]] and we'll take you to the Catalog where you can pick out " +
-            "your first piece of Decor.",
-            NOOP_TRIGGER),
-
-        makeQuest(
-            "buyDecor",
-            "Shopping for Decor",
-            "#shop-9",
-            "Buy Decor",
-            "Browse the catalog and choose one you like.",
-            [ "Click the preview image to see more info about the Decor.", 
-              "Click [[Buy]] when you're ready." ],
-            "We'll give you your first Decor for free but after that you'll have to pay for 'em!",
-            "decorBought"),
-
-        makeQuest(
-            "installDecor",
-            "Changing Decor",
             null,
-            "Use Your New Decor",
-            "Great! Click the 'Add to room' button to use your new Decor in your room:<br>" +
-            "<img src='/images/tutorial/add_to_room.png'><br>",
-            null,
-            "You can view your purchased Decor any time in [[My Stuff]] on the [[Me]] page.",
-            "decorInstalled"),
-
-        makeQuest(
-            "introFurni",
-            "Introducing Furniture",
-            null,
-            "Introducing Furniture",
-            "Now let's put some furniture in your room! Furniture adds personality and " +
-            "really brings a room together.",
-            null,
-            "Click [[Onward]] and we'll head back to the Catalog where you can pick out " +
-            "a piece of Furniture.",
-            NOOP_TRIGGER),
+            "editorClosed"),
 
         makeQuest(
             "buyFurni",
             "Shopping for Furniture",
-            "#shop-3",
             "Shopping for Furniture",
-            "Browse the catalog and choose a piece of Furniture that you like.",
-            [ "Click the preview image to see more info about the Furniture.", 
+            "Great! Now let's buy some new furniture that reflects your tastes.",
+            [ "Click [[Show Catalog]] below to open the catalog.",
+              "Click on any Furniture to see it up close.", 
               "Click [[Buy]] when you're ready." ],
-            "We'll give you your first piece of Furniture for free but after that you'll " +
-            "have to pay for it!",
+            "If you don't have enough money, take a break and play a game to earn some!",
+            "Show Catalog",
+            "#shop-3",
             "furniBought"),
 
         makeQuest(
             "installFurni",
             "Installing Furniture",
-            null,
             "Add Your Furniture",
-            "Great! Click the 'Add to room' button to add that new Furniture to your room:<br>" +
-            "<img src='/images/tutorial/add_to_room.png'><br>",
-            null,
-            "You can view your purchased Furniture any time in [[My Stuff]] on the [[Me]] page.",
+            "Great! Click the [[Add to room]] button to add that new Furniture to your room.",
+            [ "Click [[Show My Stuff]] below to open your stuff.",
+              "Click the [[Add to room]] button to put your Furniture in your room." ],
+            "You can get to your Furniture any time from [[My Stuff]] on the [[Me]] page.",
+            "Show My Stuff",
+            "#stuff-3",
             "furniInstalled"),
 
         makeQuest(
-            "placeFurni",
-            "Rearranging the Furniture",
+            "postFurni",
+            "More Rearranging",
+            "More Rearranging",
+            "When you add a new piece of furniture to your room, you automatically enter " +
+            "[[Arranging Room]] mode so that you can put it right where you want it.",
+            [ "Click and drag your new furniture to position it.",
+              "Close the [[Arranging Room]] window when you're done." ],
+            "Click [[Onward]] and we'll learn about [[Pets]].",
             null,
-            "Arrange Your Furniture",
-            "Click and drag your new furniture to where you want it in your room.",
-            [ "You can scale and rotate it with the buttons in the [[Arranging Room]] window." ],
-            "When you're done arranging, close the [[Arranging Room]] window.",
-            "editorClosed"),
+            null,
+            NOOP_TRIGGER),
+
+        makeQuest(
+            "buyPets",
+            "Shopping for Pets",
+            "Buy a Pet",
+            "Pets are friendly little fellers that can hang out in your room.",
+            [ "Click [[Show Catalog]] below to open the catalog.",
+              "Click on any Pet to read more about them.", 
+              "Click [[Buy]] when you find one you like." ],
+            "If you don't have enough money, take a break and play a game to earn some!",
+            "Show Catalog",
+            "#shop-6",
+            "petBought"),
+
+        makeQuest(
+            "installPet",
+            "Calling Your Pet",
+            "Calling Your Pet",
+            "Great! Click the [[Add to room]] button to call your Pet into your room.",
+            [ "Click [[Me]] then [[Pets]] in the [[My Stuff]] setion.",
+              "Click the [[Add to room]] button to tell your Pet to join you in your room." ],
+            "Click on your Pet to see what sort of things you can do with them. " +
+            "When you're ready, click [[Onward]] below.",
+            null,
+            null,
+            NOOP_TRIGGER),
         ];
 }
 }

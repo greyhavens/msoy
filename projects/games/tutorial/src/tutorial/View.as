@@ -53,9 +53,6 @@ public class View extends Sprite
             return;
         }
 
-        if (quest.enterPage != null) {
-            NetUtil.navigateToURL(quest.enterPage);
-        }
         _textBox.showBox(quest.summary);
         _boxShowing = true;
 
@@ -67,6 +64,10 @@ public class View extends Sprite
         if (quest.trigger == Quest.NOOP_TRIGGER) {
             _textBox.addButton("Onward", true, function () :void {
                 _tutorial.skipQuest();
+            });
+        } else if (quest.reminderPage != null) {
+            _textBox.addButton(quest.reminderLabel, true, function () :void {
+                NetUtil.navigateToURL(quest.reminderPage);
             });
         }
     }

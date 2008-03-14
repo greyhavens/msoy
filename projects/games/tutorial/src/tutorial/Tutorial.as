@@ -118,7 +118,7 @@ public class Tutorial extends Sprite
             "<p class='title'>Decorate Your Room!</p>" +
             "<p class='message'>We're going to show you how to decorate your room in just a " +
             "few simple steps.</p><br>" +
-            "<p class='message'>You'll learn about [[Decor]] and [[Furniture]] in " +
+            "<p class='message'>You'll learn about rearranging your room, furniture and pets in " +
             "this quick intro and personalize your room in the process!</p>",
             "Let's Go!",
             function () :void {
@@ -130,14 +130,8 @@ public class Tutorial extends Sprite
 
     protected function startQuest (quest :Quest) :void
     {
-        // if this step has an entry page, don't save it as our current step; if we stop the
-        // tutorial now, we'll start back at the previous step
-        if (quest.enterPage == null) {
-            _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, quest.questId, true);
-            _control.quests.offerQuest(quest.questId, null, quest.status);
-        } else {
-            _view.displayQuest(_activeQuest = quest);
-        }
+        _control.state.setPlayerProperty(PROP_TUTORIAL_STEP, quest.questId, true);
+        _control.quests.offerQuest(quest.questId, null, quest.status);
     }
 
     protected function displayQuestCompletion () :void
@@ -166,7 +160,7 @@ public class Tutorial extends Sprite
         _view.displayMessage(
             "<p class='message'>That's all there is to it! You're now an expert in " +
             "interior decoration.<br><br>" +
-            "Click the [[Shop]] button above to take a look at all the great stuff " +
+            "Click the [[Shop]] tab above any time to see all the great stuff " +
             "you can get for your room.</p>",
             "Close",
             function () :void {
