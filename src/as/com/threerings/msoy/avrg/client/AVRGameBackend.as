@@ -3,50 +3,41 @@
 
 package com.threerings.msoy.avrg.client {
 
-import flash.display.DisplayObject;
-
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.client.OccupantAdapter;
 import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_InvocationListener;
-
-import com.threerings.presents.dobj.*;
-
-import com.threerings.util.Iterator;
-import com.threerings.util.Log;
-import com.threerings.util.Name;
-
-import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.spot.data.SpotSceneObject;
-
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.QuestState;
-
 import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.layout.RoomLayout;
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.dobj.*;
+import com.threerings.util.Iterator;
+import com.threerings.util.Log;
+import com.threerings.util.Name;
+import com.threerings.whirled.data.Scene;
+import com.threerings.whirled.spot.data.SpotSceneObject;
 
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import flash.display.DisplayObject;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 public class AVRGameBackend extends ControlBackend
 {
@@ -147,6 +138,7 @@ public class AVRGameBackend extends ControlBackend
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
+        o["locationToRoom_v1"] = locationToRoom_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["getRoomId_v1"] = getRoomId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
@@ -218,6 +210,16 @@ public class AVRGameBackend extends ControlBackend
         if (view != null) {
             return view.localToGlobal(new Point(p.x + view.getScrollOffset(), p.y));
         }
+        return null;
+    }
+
+    protected function locationToRoom_v1 (x :Number, y :Number, z :Number)  :Point
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            return view.layout.locationToPoint(new MsoyLocation(x, y, z));
+        }
+
         return null;
     }
 
