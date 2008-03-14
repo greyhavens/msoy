@@ -79,7 +79,8 @@ public class WorldControlBar extends ControlBar
         super.locationDidChange(place);
 
         // if we just moved into a room, we may want to display our "click here to chat" tip
-        if (place is RoomObject && _chatTip == null && _chatControl != null) {
+        if (place is RoomObject && _chatTip == null && _chatControl != null &&
+            (_ctx as WorldContext).getMemberObject().level < CHAT_TIP_GRADUATE_LEVEL) {
             _chatTip = (new CHAT_TIP() as DisplayObject);
             _chatTip.x = x + 5;
             _chatTip.y = y - _chatTip.height - 5;
@@ -184,6 +185,9 @@ public class WorldControlBar extends ControlBar
 
     /** A tip shown when we first enter a room. */
     protected var _chatTip :DisplayObject;
+
+    /** We stop showing the "type here to chat" tip after the user reaches level 5. */
+    protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;
 
     [Embed(source="../../../../../../../rsrc/media/chat_tip.swf")]
     protected static const CHAT_TIP :Class;
