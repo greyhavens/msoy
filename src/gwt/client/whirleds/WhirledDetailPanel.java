@@ -63,6 +63,7 @@ public class WhirledDetailPanel extends VerticalPanel
     public WhirledDetailPanel ()
     {
         setStyleName("whirledDetail");
+        setSpacing(10);
     }
 
     /**
@@ -122,7 +123,6 @@ public class WhirledDetailPanel extends VerticalPanel
         _extras = _detail.extras;
 
         HorizontalPanel main = new HorizontalPanel();
-        main.setSpacing(10);
         main.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
         add(main);
 
@@ -164,6 +164,7 @@ public class WhirledDetailPanel extends VerticalPanel
         }
 
         main.add(window);
+        main.add(WidgetUtil.makeShim(10, 10));
         WorldClient.displayFeaturedPlace(_group.homeSceneId, panel);
 
         RoundBox bits = new RoundBox(RoundBox.BLUE);
@@ -183,34 +184,45 @@ public class WhirledDetailPanel extends VerticalPanel
             bits.add(WidgetUtil.makeShim(10, 10));
             RoundBox blurb = new RoundBox(RoundBox.WHITE);
             blurb.setWidth("100%");
-            blurb.add(MsoyUI.createLabel(_group.blurb, "Blurb"));
+            blurb.add(MsoyUI.createLabel(_group.blurb, null));
             bits.add(blurb);
         }
 
         HorizontalPanel buttons = new HorizontalPanel();
-        if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
-                addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailJoin(),
-                          new PromptPopup(CWhirleds.msgs.detailJoinPrompt(_group.name),
-                                          joinGroup()));
-            }
-        } else {
-            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailLeave(),
-                      new PromptPopup(CWhirleds.msgs.detailLeavePrompt(_group.name),
-                                      removeMember(CWhirleds.getMemberId())));
-        }
-        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
-            addButton(buttons, MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEdit(),
-                      Application.createLinkListener(
-                          Page.WHIRLEDS, Args.compose("edit", _group.groupId)));
-        }
-        addButton(buttons, MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(),
-                  Application.createLinkListener(Page.WHIRLEDS, Args.compose("f", _group.groupId)));
+        buttons.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEnter(),
+                                        Application.createLinkListener(
+                                            Page.WORLD, "s"+_group.homeSceneId)));
+        buttons.add(WidgetUtil.makeShim(10, 10));
+        buttons.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(),
+                                        Application.createLinkListener(
+                                            Page.WHIRLEDS, Args.compose("f", _group.groupId))));
         bits.add(WidgetUtil.makeShim(10, 10));
         bits.add(buttons);
 
+        FlowPanel extras = new FlowPanel();
+        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
+            extras.add(Application.createLink(CWhirleds.msgs.detailEdit(), Page.WHIRLEDS,
+                                              Args.compose("edit", _group.groupId)));
+        }
+        if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
+            if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
+                extras.add(MsoyUI.createActionLabel(
+                               CWhirleds.msgs.detailJoin(), new PromptPopup(
+                                   CWhirleds.msgs.detailJoinPrompt(_group.name), joinGroup())));
+            }
+        } else {
+            extras.add(MsoyUI.createActionLabel(
+                           CWhirleds.msgs.detailLeave(), new PromptPopup(
+                               CWhirleds.msgs.detailLeavePrompt(_group.name),
+                               removeMember(CWhirleds.getMemberId()))));
+        }
+        if (extras.getWidgetCount() > 0) {
+            bits.add(WidgetUtil.makeShim(10, 10));
+            bits.add(MsoyUI.createLabel(CWhirleds.msgs.detailExtras(), null));
+            bits.add(extras);
+        }
+
         VerticalPanel bitsColumn = new VerticalPanel();
-        bitsColumn.setSpacing(10);
         bitsColumn.add(bits);
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
             String label = CWhirleds.msgs.detailBrowseShop(
@@ -223,6 +235,7 @@ public class WhirledDetailPanel extends VerticalPanel
                     Application.go(Page.SHOP, CShop.composeArgs(query, 0));
                 }
             });
+            bitsColumn.add(WidgetUtil.makeShim(10, 10));
             bitsColumn.add(browseButton);
         }
         main.add(bitsColumn);
@@ -231,9 +244,7 @@ public class WhirledDetailPanel extends VerticalPanel
 
         String charter = (_extras.charter == null) ?
             CWhirleds.msgs.detailNoCharter() : _extras.charter;
-        PrettyTextPanel ptp = new PrettyTextPanel(charter);
-        ptp.addStyleName("Charter");
-        _tabs.add(ptp, CWhirleds.msgs.detailTabCharter());
+        _tabs.add(new PrettyTextPanel(charter), CWhirleds.msgs.detailTabCharter());
         _tabs.selectTab(0);
 
         _tabs.add(new WhirledMembersPanel(_detail), CWhirleds.msgs.detailTabMembers());
