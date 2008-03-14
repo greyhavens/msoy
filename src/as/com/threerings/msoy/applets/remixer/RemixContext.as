@@ -29,8 +29,10 @@ public class RemixContext
      *       unmodified if there are no competing filenames.
      * @param bytes if specified, a ByteArray associated with the filename. If any existing file
      * uses the same bytes then that filename will be returned.
+     * @param extension the new filename extension, like "png".
      */
-    public function createFilename (origname :String, bytes :ByteArray = null) :String
+    public function createFilename (
+        origname :String, bytes :ByteArray = null, extension :String = null) :String
     {
         if (bytes != null) {
             // look through the normal files to see if any have the same bytes
@@ -41,6 +43,17 @@ public class RemixContext
             }
         }
 
+        var lastDot :int;
+        if (extension != null) {
+            // alter the extension of the specified filename
+            lastDot = origname.lastIndexOf(".");
+            if (lastDot == -1) {
+                lastDot = origname.length;
+                origname += ".";
+            }
+            origname = origname.substring(0, lastDot + 1) + extension;
+        }
+
         // now check the name against ALL files
         var names :Array = pack.getFilenames(true);
         names.push(EditableDataPack.METADATA_FILENAME);
@@ -49,7 +62,7 @@ public class RemixContext
                 return origname;
             }
 
-            var lastDot :int = origname.lastIndexOf(".");
+            lastDot = origname.lastIndexOf(".");
             var base :String = (lastDot > 0) ? origname.substring(0, lastDot) : origname;
             var ext :String = (lastDot > 0) ? origname.substring(lastDot) : "";
 

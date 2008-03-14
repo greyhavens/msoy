@@ -94,8 +94,11 @@ public class ImagePreview extends HBox
      *
      * @param asJpg if true, encode the image as a JPG if not already encoded.
      * @param quality (only applicable if asJpg is true) the quality setting for jpg encoding.
+     *
+     * @return an Array with the ByteArray as the first element, and if there's a forced
+     * extension then that's the 2nd element.
      */
-    public function getImage (asJpg :Boolean = false, quality :Number = 50) :ByteArray
+    public function getImage (asJpg :Boolean = false, quality :Number = 50) :Array
     {
         return _editor.getImage(asJpg, quality);
     }
@@ -105,7 +108,7 @@ public class ImagePreview extends HBox
         var bar :VBox = new VBox();
         bar.setStyle("paddingLeft", 0);
         bar.setStyle("paddingRight", 0);
-        bar.width = 100;
+        bar.width = 150;
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
         bar.verticalScrollPolicy = ScrollPolicy.OFF;
 
@@ -162,6 +165,7 @@ public class ImagePreview extends HBox
         lbl.text = name;
 
         var slider :HSlider = new HSlider();
+        slider.maxWidth = 130;
         slider.liveDragging = true;
         slider.minimum = min;
         slider.maximum = max;

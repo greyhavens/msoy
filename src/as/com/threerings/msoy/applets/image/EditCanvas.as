@@ -237,19 +237,19 @@ public class EditCanvas extends Canvas
     /**
      * Get the image back out of the editor.
      */
-    public function getImage (asJpg :Boolean = false, quality :Number = 50) :ByteArray
+    public function getImage (asJpg :Boolean = false, quality :Number = 50) :Array
     {
         // see if we can skip re-encoding
         // TODO: this should probably be removed unless we're in preview-only mode?
         if (_bytes != null && _cropRect == null) {
-            return _bytes;
+            return [ _bytes ];
         }
 
         var bmp :BitmapData = getRawImage();
         if (asJpg) {
-            return (new JPGEncoder(quality)).encode(bmp);
+            return [ (new JPGEncoder(quality)).encode(bmp), "jpg" ];
         } else {
-            return PNGEncoder.encode(bmp);
+            return [ PNGEncoder.encode(bmp), "png" ];
         }
     }
 

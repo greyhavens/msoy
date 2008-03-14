@@ -84,7 +84,7 @@ public class PopupFilePreview extends TitleWindow
         previewBox.addChild(makeHeader("Preview"));
         _image = new ImagePreview(true, Number(entry.width), Number(entry.height));
         _image.addEventListener(ImagePreview.SIZE_KNOWN, handleSizeKnown);
-        _image.maxWidth = 400;
+        _image.maxWidth = 450;
         _image.maxHeight = 300;
         _image.minWidth = 200;
         _image.minHeight = 100;
@@ -133,8 +133,10 @@ public class PopupFilePreview extends TitleWindow
     {
         var saved :Boolean = false;
         if (save) {
-            var ba :ByteArray = _image.getImage(true);
+            var array :Array = _image.getImage();
+            var ba :ByteArray = ByteArray(array[0]);
             if (ba != null) {
+                _filename = _ctx.createFilename(_filename, ba, array[1] as String);
                 _parent.updateValue(_filename, ba);
                 saved = true;
             }
