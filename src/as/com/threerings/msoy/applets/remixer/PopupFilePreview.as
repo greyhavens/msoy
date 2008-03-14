@@ -73,7 +73,7 @@ public class PopupFilePreview extends TitleWindow
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
             controlBox.addChild(makeBullet(
-                new CommandLinkButton("Use an existing file from the remix...",
+                new CommandLinkButton("Use a file from the remix...",
                 handleChooseExistingFile, [ filenames ])));
         }
         if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
@@ -200,7 +200,7 @@ public class PopupFilePreview extends TitleWindow
     protected function makeBullet (comp :UIComponent) :UIComponent
     {
         var box :HBox = new HBox();
-        box.setStyle("horizontalGap", 0);
+        box.setStyle("horizontalGap", -10);
 
         var lbl :Label = new Label();
         lbl.text = "-";

@@ -56,8 +56,9 @@ public class EditCanvas extends Canvas
     /** Mode constants. */
     public static const NONE :int = -1;
     public static const PAINT :int = 0;
-    public static const SELECT :int = 1;
-    public static const MOVE :int = 2;
+    public static const ERASE :int = 1;
+    public static const SELECT :int = 2;
+    public static const MOVE :int = 3;
 
     public function EditCanvas (maxW :int, maxH:int)
     {
@@ -66,7 +67,6 @@ public class EditCanvas extends Canvas
 
         _editor = new Sprite();
 
-        _backgroundLayer = new Sprite();
         _imageLayer = new Sprite();
         _scaleLayer = new Sprite();
         _rotLayer = new Sprite();
@@ -86,7 +86,6 @@ public class EditCanvas extends Canvas
         _rotLayer.addChild(_unRotLayer);
         _scaleLayer.addChild(_rotLayer);
 
-        _editor.addChild(_backgroundLayer);
         _editor.addChild(_scaleLayer);
         _editor.addChild(_hudLayer);
 
@@ -94,9 +93,8 @@ public class EditCanvas extends Canvas
 
         _paintLayer.addChild(_brush);
 
-        _holder = new UIComponent();
-        _holder.addChild(_editor);
-
+        _holder = new ImageHolder(_editor);
+        addChild(_holder);
 
 //        var mask :Shape = new Shape();
 //        mask.graphics.beginFill(0xFFFFFF);
@@ -150,7 +148,7 @@ public class EditCanvas extends Canvas
     public function doCrop () :void
     {
         if (_cropRect != null) {
-            setImage(getImage());
+            setImage(getRawImage());
         }
     }
 
@@ -242,36 +240,42 @@ public class EditCanvas extends Canvas
     public function getImage (asJpg :Boolean = false, quality :Number = 50) :ByteArray
     {
         // see if we can skip re-encoding
+        // TODO: this should probably be removed unless we're in preview-only mode?
         if (_bytes != null && _cropRect == null) {
             return _bytes;
         }
 
-        var bmp :BitmapData;
-        if (_bitmapData != null && _cropRect == null) {
-            bmp = _bitmapData;
-
-        } else {
-            var matrix :Matrix = null;
-            if (_cropRect == null) {
-                bmp = new BitmapData(_width, _height);
-            } else {
-                bmp = new BitmapData(_cropRect.width, _cropRect.height);
-                matrix = new Matrix(1, 0, 0, 1, -_cropRect.x, -_cropRect.y);
-            }
-
-            // We have to have the brush on the image layer so that it participates in rotataions
-            var brushVis :Boolean = _brush.visible;
-            _brush.visible = false;
-            // screenshot the image
-            bmp.draw(_scaleLayer, matrix);
-            _brush.visible = brushVis;
-        }
-
+        var bmp :BitmapData = getRawImage();
         if (asJpg) {
             return (new JPGEncoder(quality)).encode(bmp);
         } else {
             return PNGEncoder.encode(bmp);
         }
+    }
+
+    public function getRawImage () :BitmapData
+    {
+        if (_bitmapData != null && _cropRect == null) {
+            return _bitmapData;
+        }
+
+        var bmp :BitmapData;
+        var matrix :Matrix = null;
+        if (_cropRect == null) {
+            bmp = new BitmapData(_width, _height, true, 0);
+        } else {
+            bmp = new BitmapData(_cropRect.width, _cropRect.height, true, 0);
+            matrix = new Matrix(1, 0, 0, 1, -_cropRect.x, -_cropRect.y);
+        }
+
+        // We have to have the brush on the image layer so that it participates in rotataions
+        var brushVis :Boolean = _brush.visible;
+        _brush.visible = false;
+        // screenshot the image
+        bmp.draw(_scaleLayer, matrix);
+        _brush.visible = brushVis;
+
+        return bmp;
     }
 
     public function setRotation (rotation :Number) :void
@@ -330,53 +334,36 @@ public class EditCanvas extends Canvas
         sizeKnown(li.width, li.height);
     }
 
-    override protected function createChildren () :void
-    {
-//        var g :Graphics = _backgroundLayer.graphics;
-//        var dark :Boolean;
-//        const GRID_SIZE :int = 10;
-//        for (var yy :int = 0; yy < maxHeight; yy += GRID_SIZE) {
-//            dark = ((yy % (GRID_SIZE * 2)) == 0);
-//            for (var xx :int = 0; xx < maxWidth; xx += GRID_SIZE) {
-//                g.beginFill(dark ? 0x666666 : 0x999999);
-//                g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
-//                g.endFill();
-//                dark = !dark;
-//            }
-//        }
-//        rawChildren.addChildAt(_backgroundLayer, 0);
-
-        super.createChildren();
-
-        addChild(_holder);
-    }
-
     protected function configureMode () :void
     {
         var fn :Function;
+        var on :Boolean;
 
-        // PAINT
-        fn = (_mode == PAINT) ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
+        // PAINT || ERASE
+        on = (_mode == PAINT) || (_mode == ERASE);
+        fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
         fn(MouseEvent.ROLL_OVER, handleShowBrush);
         fn(MouseEvent.ROLL_OUT, handleShowBrush);
         fn(MouseEvent.ROLL_OVER, handlePaintEnter);
         fn(MouseEvent.MOUSE_DOWN, handlePaintStart);
         fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
         fn(MouseEvent.MOUSE_UP, handlePaintEnd);
-        _paintLayer.mouseEnabled = (_mode == PAINT);
+        _paintLayer.mouseEnabled = on;
 
         // SELECT
-        fn = (_mode == PAINT) ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
+        on = (_mode == SELECT);
+        fn = on ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
         fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
         fn(MouseEvent.MOUSE_UP, handleSelectEnd);
         fn(MouseEvent.MOUSE_OUT, handleSelectEnd);
-        _hudLayer.mouseEnabled = (_mode == SELECT);
+        _hudLayer.mouseEnabled = on;
 
         // MOVE
-        fn = (_mode == MOVE) ? _crop.addEventListener : _crop.removeEventListener;
+        on = (_mode == MOVE);
+        fn = on ? _crop.addEventListener : _crop.removeEventListener;
         fn(MouseEvent.MOUSE_DOWN, handleCropSelect);
         fn(MouseEvent.MOUSE_UP, handleCropUp);
-        _crop.mouseEnabled = (_mode == MOVE);
+        _crop.mouseEnabled = on;
     }
 
     protected function updateBrush () :void
@@ -531,12 +518,11 @@ public class EditCanvas extends Canvas
         _bytes = null;
     }
 
-    protected var _holder :UIComponent;
+    protected var _holder :ImageHolder;
 
     protected var _editor :Sprite;
 
     /** Layers that contain things. */
-    protected var _backgroundLayer :Sprite;
     protected var _imageLayer :Sprite;
     protected var _paintLayer :Sprite;
     protected var _fillLayer :Shape; // an additional paintLayer just for fills
@@ -569,4 +555,41 @@ public class EditCanvas extends Canvas
     protected var _brushSize :Number;
     protected var _forceCrop :Boolean = false;
 }
+}
+
+import flash.display.DisplayObject;
+import flash.display.Graphics;
+import flash.display.Sprite;
+
+import mx.core.UIComponent;
+
+class ImageHolder extends UIComponent
+{
+    public function ImageHolder (toBeHeld :DisplayObject)
+    {
+        _background = new Sprite();
+        addChild(_background);
+        addChild(toBeHeld);
+    }
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
+        super.setActualSize(w, h);
+
+        var g :Graphics = _background.graphics;
+        g.clear();
+        var dark :Boolean;
+        const GRID_SIZE :int = 10;
+        for (var yy :int = 0; yy < w; yy += GRID_SIZE) {
+            dark = ((yy % (GRID_SIZE * 2)) == 0);
+            for (var xx :int = 0; xx < h; xx += GRID_SIZE) {
+                g.beginFill(dark ? 0x666666 : 0x999999);
+                g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
+                g.endFill();
+                dark = !dark;
+            }
+        }
+    }
+
+    protected var _background :Sprite;
 }

@@ -20,6 +20,7 @@ import mx.controls.HSlider;
 import mx.controls.Label;
 
 import mx.containers.Canvas;
+import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
@@ -34,6 +35,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.GridUtil;
 import com.threerings.flex.ScrollBox;
 
 /**
@@ -113,11 +115,15 @@ public class ImagePreview extends HBox
         picker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
 
         bar.addChild(picker);
-        bar.addChild(addMode("paint", EditCanvas.PAINT));
-        bar.addChild(addMode("select", EditCanvas.SELECT));
-        bar.addChild(addMode("move", EditCanvas.MOVE));
 
-        bar.addChild(new CommandButton("Crop", _editor.doCrop));
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid,
+            addMode("paint", EditCanvas.PAINT), addMode("erase", EditCanvas.ERASE));
+        GridUtil.addRow(grid,
+            addMode("select", EditCanvas.SELECT), addMode("move", EditCanvas.MOVE));
+        GridUtil.addRow(grid, new CommandButton("Crop", _editor.doCrop), [2, 1]);
+
+        bar.addChild(grid);
 
         _rotSlider = addSlider(bar, "Rotation", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
