@@ -89,7 +89,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         if (_item.ownerId == CShell.getMemberId() && FlashClients.clientExists()) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new ItemActivator(_item));
+            _details.add(new ItemActivator(_item, false));
         }
 
         int gap = 10;

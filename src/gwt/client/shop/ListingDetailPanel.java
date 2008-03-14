@@ -144,7 +144,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel.add(MsoyUI.createLabel(CShop.msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists() && !(item instanceof SubItem)) {
-            _buyPanel.add(new ItemActivator(item));
+            _buyPanel.add(new ItemActivator(item, true));
             _buyPanel.add(new Label(getUsageMessage(itype)));
         } else {
             _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));

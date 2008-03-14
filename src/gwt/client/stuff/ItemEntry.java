@@ -28,7 +28,7 @@ public class ItemEntry extends ItemBox
         }
 
         if (!(item instanceof SubItem) && FlashClients.clientExists()) {
-            addWidget(new ItemActivator(item), getColumns(), "Activator");
+            addWidget(new ItemActivator(item, false), getColumns(), "Activator");
         }
     }
 }

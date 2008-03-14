@@ -33,9 +33,10 @@ import client.util.MsoyUI;
  */
 public class ItemActivator extends FlowPanel
 {
-    public ItemActivator (Item item)
+    public ItemActivator (Item item, boolean bigAss)
     {
         setStyleName("itemActivator");
+        _bigAss = bigAss;
         setItem(item);
     }
 
@@ -65,11 +66,14 @@ public class ItemActivator extends FlowPanel
     {
         clear();
 
-        String suff = (active ? "active.png" : "inactive.png");
-        String tip;
+        String suff = (active ? "active.png" : "inactive.png"), tip, path;
+        ClickListener onClick;
+
         byte type = _item.getType();
         if (type == Item.AVATAR) {
-            add(MsoyUI.createActionImage("/images/ui/checkbox_avatar_" + suff, new ClickListener () {
+            tip = active ? CShell.imsgs.removeAvatar() : CShell.imsgs.wearAvatar();
+            path = "/images/ui/checkbox_avatar_" + suff;
+            onClick = new ClickListener () {
                 public void onClick (Widget sender) {
                     if (active) {
                         FlashClients.useAvatar(0, 0);
@@ -78,11 +82,12 @@ public class ItemActivator extends FlowPanel
                         Frame.closeContent();
                     }
                 }
-            }));
-            tip = active ? CShell.imsgs.removeAvatar() : CShell.imsgs.wearAvatar();
+            };
 
         } else {
-            add(MsoyUI.createActionImage("/images/ui/checkbox_room_" + suff, new ClickListener () {
+            tip = active ? CShell.imsgs.removeFromRoom() : CShell.imsgs.addToRoom();
+            path = "/images/ui/checkbox_room_" + suff;
+            onClick = new ClickListener () {
                 public void onClick (Widget sender) {
                     if (active) {
                         FlashClients.clearItem(_item.getType(), _item.itemId);
@@ -91,11 +96,15 @@ public class ItemActivator extends FlowPanel
                         Frame.closeContent();
                     }
                 }
-            }));
-            tip = active ? CShell.imsgs.removeFromRoom() : CShell.imsgs.addToRoom();
+            };
         }
 
-        add(MsoyUI.createLabel(tip, "Tip"));
+        if (_bigAss) {
+            add(MsoyUI.createButton(MsoyUI.LONG_THIN, tip, onClick));
+        } else {
+            add(MsoyUI.createActionImage(path, onClick));
+            add(MsoyUI.createLabel(tip, "Tip"));
+        }
     }
 
     protected void setupListener ()
@@ -158,6 +167,7 @@ public class ItemActivator extends FlowPanel
         }
     }
 
+    protected boolean _bigAss;
     protected Item _item;
     protected FlashEventListener _listener;
 }
