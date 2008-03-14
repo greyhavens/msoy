@@ -135,6 +135,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             FlashClients.tutorialEvent("decorBought");
         } else if (itype == Item.FURNITURE) {
             FlashClients.tutorialEvent("furniBought");
+        } else if (itype == Item.PET) {
+            FlashClients.tutorialEvent("petBought");
         } else if (itype == Item.AVATAR) {
             FlashClients.tutorialEvent("avatarBought");
         }
