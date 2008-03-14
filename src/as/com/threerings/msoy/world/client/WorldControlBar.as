@@ -3,13 +3,21 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.util.Log;
+
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+
+import com.threerings.msoy.world.data.RoomObject;
 
 /**
  * Configures the control bar with World-specific stuff.
@@ -63,6 +71,39 @@ public class WorldControlBar extends ControlBar
     {
         _isEditing = (_isEditing && !_ctx.getTopPanel().isMinimized());
         super.miniChanged();
+    }
+
+    // from ControlBar
+    override public function locationDidChange (place :PlaceObject) :void
+    {
+        super.locationDidChange(place);
+
+        // if we just moved into a room, we may want to display our "click here to chat" tip
+        if (place is RoomObject && _chatTip == null && _chatControl != null) {
+            _chatTip = (new CHAT_TIP() as DisplayObject);
+            _chatTip.x = x + 5;
+            _chatTip.y = y - _chatTip.height - 5;
+            stage.addChild(_chatTip);
+
+            // when they click or type in the chat entry, we want to clear out the tip
+            var onAction :Function = function (event :*) :void {
+                _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
+                _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
+                // can't use fancy Dissolve effect here so we use the poor man's dissolve
+                _chatTip.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
+                    if (_chatTip.alpha == 0) {
+                        if (_chatTip.parent != null) {
+                            _chatTip.parent.removeChild(_chatTip);
+                        }
+                        _chatTip.removeEventListener(Event.ENTER_FRAME, arguments.callee);
+                    } else {
+                        _chatTip.alpha -= 0.05;
+                    }
+                });
+            };
+            _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
+            _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);
+        }
     }
 
     // from ControlBar
@@ -140,5 +181,11 @@ public class WorldControlBar extends ControlBar
 
     /** Button for room snapshots. */
     protected var _snapBtn :CommandButton;
+
+    /** A tip shown when we first enter a room. */
+    protected var _chatTip :DisplayObject;
+
+    [Embed(source="../../../../../../../rsrc/media/chat_tip.swf")]
+    protected static const CHAT_TIP :Class;
 }
 }

@@ -156,6 +156,9 @@ public class TopPanel extends Canvas
     // from LocationObserver
     public function locationDidChange (place :PlaceObject) :void
     {
+        if (_controlBar != null) {
+            _controlBar.locationDidChange(place);
+        }
     }
 
     // from LocationObserver
