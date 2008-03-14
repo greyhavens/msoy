@@ -51,7 +51,8 @@ public class ImagePreview extends HBox
     public static const MAX_WIDTH :int = 300;
     public static const MAX_HEIGHT :int = 300;
 
-    public function ImagePreview (cutWidth :Number = NaN, cutHeight :Number = NaN)
+    public function ImagePreview (
+        allowEdit :Boolean = false, cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
         if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
             // TODO: set up the cutter-outter
@@ -65,18 +66,22 @@ public class ImagePreview extends HBox
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
         addChild(_editor);
-        addChild(_controlBar = createControlBar());
+        if (allowEdit) {
+            addChild(_controlBar = createControlBar());
+        }
         setImage(null);
-        setMode(_editor.getMode());
+        setMode(allowEdit ? EditCanvas.PAINT : EditCanvas.NONE);
     }
 
     public function setImage (image :Object) :void
     {
         _editor.setImage(image);
 
-        var showControls :Boolean = (image != null);
-        _controlBar.includeInLayout = showControls;
-        _controlBar.visible = showControls;
+        if (_controlBar != null) {
+            var showControls :Boolean = (image != null);
+            _controlBar.includeInLayout = showControls;
+            _controlBar.visible = showControls;
+        }
     }
 
     /**
@@ -103,7 +108,6 @@ public class ImagePreview extends HBox
 
         var picker :ColorPicker = new ColorPicker();
         picker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
-        _editor.setPaintColor(picker.selectedColor);
 
         bar.addChild(picker);
         bar.addChild(addMode("paint", EditCanvas.PAINT));
@@ -116,6 +120,11 @@ public class ImagePreview extends HBox
             [ -180, -90, 0, 90, 180 ]);
         _scaleSlider = addSlider(bar, "Scale", .01, 10, 1, _editor.setScale);
         _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
+        _brushSlider = addSlider(bar, "Brush", 1, 40, 10, _editor.setBrushSize,
+            [ 1, 2, 5, 10, 20, 40 ]);
+
+        _editor.setBrushSize(10);
+        _editor.setPaintColor(picker.selectedColor);
 
         // TEMP:
         _scaleSlider.enabled = false;
@@ -209,17 +218,19 @@ public class ImagePreview extends HBox
 
     protected function handleSizeKnown (event :ValueEvent) :void
     {
-        var w :Number = event.value[0];
-        var h :Number = event.value[1];
 
         // redispatch
         dispatchEvent(event);
 
         // at the minimum zoom level we want the longest side to just fit
-        _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
-        _zoomSlider.value = 1;
-        _rotSlider.value = 0;
-        _scaleSlider.value = 1;
+        if (_controlBar != null) {
+            var w :Number = event.value[0];
+            var h :Number = event.value[1];
+            _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
+            _zoomSlider.value = 1;
+            _rotSlider.value = 0;
+            _scaleSlider.value = 1;
+        }
     }
 
     protected var _controlBar :VBox;
@@ -231,6 +242,7 @@ public class ImagePreview extends HBox
     protected var _rotSlider :HSlider;
     protected var _scaleSlider :HSlider;
     protected var _zoomSlider :HSlider;
+    protected var _brushSlider :HSlider;
 
     protected var _buttons :Array = [];
 }

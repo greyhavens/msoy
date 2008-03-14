@@ -82,7 +82,7 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new ImagePreview(Number(entry.width), Number(entry.height));
+        _image = new ImagePreview(true, Number(entry.width), Number(entry.height));
         _image.addEventListener(ImagePreview.SIZE_KNOWN, handleSizeKnown);
         _image.maxWidth = 400;
         _image.maxHeight = 300;
