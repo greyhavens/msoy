@@ -6,6 +6,7 @@ package client.shop;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,10 +17,12 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
+import client.item.ItemActivator;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
@@ -67,7 +70,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return false; // don't reenable buy button
             }
         };
-        _details.add(purchase);
+        _buyPanel = new FlowPanel();
+        _buyPanel.add(purchase);
+        _details.add(_buyPanel);
 
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
@@ -119,22 +124,55 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected void itemPurchased (Item item)
     {
+        byte itype = item.getType();
+
+        // clear out the buy button
+        _buyPanel.clear();
+        _buyPanel.addStyleName("Bought");
+
         // report to the client that we generated a tutorial event
-        if (item.getType() == Item.DECOR) {
+        if (itype == Item.DECOR) {
             FlashClients.tutorialEvent("decorBought");
-        } else if (item.getType() == Item.FURNITURE) {
+        } else if (itype == Item.FURNITURE) {
             FlashClients.tutorialEvent("furniBought");
-        } else if (item.getType() == Item.AVATAR) {
+        } else if (itype == Item.AVATAR) {
             FlashClients.tutorialEvent("avatarBought");
         }
 
-        // display the "you bought an item" dialog
-        String type = CShop.dmsgs.getString("itemType" + item.getType());
-        Frame.showDialog(CShop.msgs.bipTitle(type), new BoughtItemPanel(item));
+        // change the buy button into a "you bought it" display
+        String type = CShop.dmsgs.getString("itemType" + itype);
+        _buyPanel.add(MsoyUI.createLabel(CShop.msgs.boughtTitle(type), "Title"));
+
+        if (FlashClients.clientExists() && !(item instanceof SubItem)) {
+            _buyPanel.add(new ItemActivator(item));
+            _buyPanel.add(new Label(getUsageMessage(itype)));
+        } else {
+            _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));
+            String ptype = CShop.dmsgs.getString("pItemType" + itype);
+            _buyPanel.add(Application.createLink(
+                              CShop.msgs.boughtGoNow(ptype), Page.STUFF, ""+itype));
+        }
+    }
+
+    protected static String getUsageMessage (byte itemType)
+    {
+        if (itemType == Item.AVATAR) {
+            return CShop.msgs.boughtAvatarUsage();
+        } else if (itemType == Item.DECOR) {
+            return CShop.msgs.boughtDecorUsage();
+        } else if (itemType == Item.AUDIO) {
+            return CShop.msgs.boughtAudioUsage();
+        } else if (itemType == Item.PET) {
+            return CShop.msgs.boughtPetUsage();
+        } else {
+            return CShop.msgs.boughtOtherUsage();
+        }
     }
 
     protected CatalogModels _models;
     protected CatalogListing _listing;
+
+    protected FlowPanel _buyPanel;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }
