@@ -5,10 +5,14 @@ package client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.images.stuff.StuffImages;
@@ -22,27 +26,39 @@ import client.shell.Page;
  */
 public class StuffNaviBar extends SmartTable
 {
-    public StuffNaviBar (byte selectedType) // TODO
+    public StuffNaviBar (byte selectedType)
     {
         super("stuffNaviBar", 0, 0);
 
         int col = 0;
-        setHTML(0, col, "&nbsp;");
-        getFlexCellFormatter().setStyleName(0, col++, "Edge");
+        setWidget(0, col++, WidgetUtil.makeShim(55, 10));
+
         for (int ii = 0; ii < Item.TYPES.length; ii++) {
             byte type = Item.TYPES[ii];
-            String tip = CShell.dmsgs.getString("pItemType" + type);
-            Widget link;
+            final String tip = CShell.dmsgs.getString("pItemType" + type);
+            final FocusPanel link = new FocusPanel();
             if (selectedType == type) {
-                link = SELECTED[ii].createImage();
+                link.setWidget(SELECTED[ii].createImage());
             } else {
-                link = Application.createImageLink(NORMAL[ii], tip, Page.STUFF, ""+type);
+                final Image hover = SELECTED[ii].createImage();
+                hover.addClickListener(Application.createLinkListener(Page.STUFF, ""+type));
+                final Image normal = NORMAL[ii].createImage();
+                link.setWidget(normal);
+                link.addMouseListener(new MouseListenerAdapter() {
+                    public void onMouseEnter (Widget sender) {
+                        setText(1, 0, tip);
+                        link.setWidget(hover);
+                    }
+                    public void onMouseLeave (Widget sender) {
+                        setText(1, 0, CShell.cmsgs.snbTitle());
+                        link.setWidget(normal);
+                    }
+                });
             }
-            setWidget(0, col, link, 1, "Link");
-            getFlexCellFormatter().setHorizontalAlignment(0, col++, HasAlignment.ALIGN_CENTER);
+            setWidget(0, col++, link, 1, "Link");
         }
-        setHTML(0, col, "&nbsp;");
-        getFlexCellFormatter().setStyleName(0, col++, "Edge");
+
+        setWidget(0, col++, WidgetUtil.makeShim(55, 10));
 
         setText(1, 0, CShell.cmsgs.snbTitle(), col, "Label");
     }

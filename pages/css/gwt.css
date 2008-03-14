@@ -1038,10 +1038,6 @@ img, embed, applet, object {
   background-image: url(/images/me/stuff_bg.png);
 }
 
-.stuffNaviBar .Edge {
-  width: 55px;
-}
-
 .stuffNaviBar .Link {
   width: 64px;
 }
