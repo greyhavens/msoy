@@ -350,7 +350,7 @@ public class WorldController extends MsoyController
     public function handleViewItem (ident :ItemIdent) :void
     {
         // TODO: use a proper item info page
-        displayPage("stuff", ident.type + "_0_" + ident.itemId);
+        displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
     }
 
     /**
