@@ -86,7 +86,7 @@ public class CreateAccountPanel extends VerticalPanel
                 _name.setFocus(true);
             }
         }));
-        add(makeStep(1, CAccount.msgs.createLogonSection(), box));
+        add(makeStep(1, box));
 
         // create the real you section
         box = new RoundBox(RoundBox.DARK_BLUE);
@@ -97,7 +97,7 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                                CAccount.msgs.createDateOfBirthTip()));
-        add(makeStep(2, CAccount.msgs.createRealSection(), box));
+        add(makeStep(2, box));
 
         // create the Whirled you section
         box = new RoundBox(RoundBox.DARK_BLUE);
@@ -107,7 +107,7 @@ public class CreateAccountPanel extends VerticalPanel
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(new LabeledBox(CAccount.msgs.createPhoto(), _photo = new PhotoUploader(),
                                CAccount.msgs.createPhotoTip()));
-        add(makeStep(3, CAccount.msgs.createWhirledSection(), box));
+        add(makeStep(3, box));
 
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("400px");
@@ -172,16 +172,6 @@ public class CreateAccountPanel extends VerticalPanel
         return false;
     }
 
-    protected Widget makeStep (int step, String title, Widget contents)
-    {
-        SmartTable table = new SmartTable("Step", 0, 0);
-        table.setText(0, 0, step + ".", 1, "Number");
-        table.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        table.setText(0, 1, title, 1, "Title");
-        table.setWidget(1, 0, contents, 1, null);
-        return table;
-    }
-
     protected void createAccount ()
     {
         if (!validateData()) {
@@ -234,6 +224,14 @@ public class CreateAccountPanel extends VerticalPanel
     protected void setStatus (String text)
     {
         _status.setText(text);
+    }
+
+    protected static Widget makeStep (int step, Widget contents)
+    {
+        SmartTable table = new SmartTable("Step", 0, 0);
+        table.setText(0, 0, step + ".", 1, "Number");
+        table.setWidget(0, 1, contents, 1, null);
+        return table;
     }
 
     protected class PhotoUploader extends SmartTable
