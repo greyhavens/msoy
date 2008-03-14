@@ -239,8 +239,8 @@
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
-      <dependency groupId="com.threerings.underwire.${maven.dist}" artifactId="underwire"
-                  version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.underwire.${ooo.maven.distribution}"
+                  artifactId="underwire" version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
