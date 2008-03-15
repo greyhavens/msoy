@@ -3,17 +3,20 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.system.Security;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import mx.core.Container;
+
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.flash.path.Path;
 import com.threerings.util.Log;
@@ -33,6 +36,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -188,6 +192,11 @@ public class GameLiaison
             event.getName() == MsoyGameCodes.PRIZE_AWARDED) {
             _pendingAwards.push(event.getArgs()[0]);
             checkPendingAwards();
+
+        } else if (event.getName() == WhirledGameObject.FLOW_AWARDED_MESSAGE &&
+                   _gctx.getPlayerObject().isGuest()) {
+            // if a guest earns flow, we want to show them the "please register" dialog
+            displayGuestFlowEarnage(int(event.getArgs()[0]));
         }
     }
 
@@ -195,13 +204,13 @@ public class GameLiaison
     {
         // if we haven't yet loaded our trophy panel, do that
         if (_awardPanel == null) {
-            _awardPanel = AWARD_LOADING;
+            _awardPanel = LOADING;
             MultiLoader.getContents(AWARD_PANEL, function (result :DisplayObjectContainer) :void {
                 _awardPanel = result;
                 checkPendingAwards();
             });
 
-        } else if (_awardPanel == AWARD_LOADING || _awardPanel.stage != null ||
+        } else if (_awardPanel == LOADING || _awardPanel.stage != null ||
                    _pendingAwards.length == 0) {
             // we're loading the award panel or it's being used or we're done
 
@@ -270,6 +279,50 @@ public class GameLiaison
         });
     }
 
+    protected function displayGuestFlowEarnage (amount :int) :void
+    {
+        if (_guestFlowPanel == null) {
+            MultiLoader.getContents(
+                GUEST_FLOW_PANEL, function (result :DisplayObjectContainer) :void {
+                _guestFlowPanel = result;
+                displayGuestFlowEarnage(amount);
+            });
+
+        } else if (_guestFlowPanel == LOADING || _guestFlowPanel.stage != null) {
+            return; // we're loading it or already showing it
+
+        } else {
+            var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
+            field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
+            field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
+            field.text = Msgs.GAME.get("l.guest_flow_note");
+
+            var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
+            later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
+
+            var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
+            signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                _wctx.getWorldController().handleShowSignUp();
+                clearGuestFlow();
+            });
+
+            // slide the panel onto the screen, and wait for a click
+            var path :Path = Path.move(_guestFlowPanel, 150, -_guestFlowPanel.height, 150, 0, 500);
+            path.start();
+            _wctx.getTopPanel().getPlaceContainer().addOverlay(
+                _guestFlowPanel, PlaceBox.LAYER_TROPHY);
+        }
+    }
+
+    protected function clearGuestFlow (event :MouseEvent = null) :void
+    {
+        var path :Path = Path.move(_guestFlowPanel, 150, 0, 150, -_guestFlowPanel.height, 500);
+        path.setOnComplete(function (path :Path) :void {
+            _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
+        });
+        path.start();
+    }
+
     /** Provides access to main client services. */
     protected var _wctx :WorldContext;
 
@@ -279,17 +332,24 @@ public class GameLiaison
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
 
+    /** The "guest earned flow" popup. */
+    protected var _guestFlowPanel :DisplayObjectContainer;
+
     /** The award display movie. */
     protected var _awardPanel :DisplayObjectContainer;
 
     /** Awards waiting to be displayed. Either Trophy or Item. */
     protected var _pendingAwards :Array = [];
 
-    /** Used to note that we're loading the award display SWF. */
-    protected const AWARD_LOADING :Sprite = new Sprite();
+    /** Used to note that we're loading an embedded SWF. */
+    protected const LOADING :Sprite = new Sprite();
 
     [Embed(source="../../../../../../../rsrc/media/award_panel.swf",
            mimeType="application/octet-stream")]
     protected static const AWARD_PANEL :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/guest_flow_panel.swf",
+           mimeType="application/octet-stream")]
+    protected static const GUEST_FLOW_PANEL :Class;
 }
 }

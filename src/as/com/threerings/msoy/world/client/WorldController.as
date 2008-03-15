@@ -414,6 +414,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the SHOW_SIGN_UP command.
+     */
+    public function handleShowSignUp () :void
+    {
+        displayPage("account", "create");
+    }
+
+    /**
      * Handles the GO_SCENE command.
      */
     public function handleGoScene (sceneId :int) :void
