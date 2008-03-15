@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.StringUtil;
 import com.samskivert.net.MailUtil;
 import org.apache.velocity.VelocityContext;
 
@@ -273,7 +274,9 @@ public class MemberServlet extends MsoyServiceServlet
                 ctx.put("friend", fromName);
                 ctx.put("email", inviter.accountName);
             }
-            ctx.put("custom_message", customMessage);
+            if (!StringUtil.isBlank(customMessage)) {
+                ctx.put("custom_message", customMessage);
+            }
             ctx.put("invite_id", inviteId);
             ctx.put("server_url", ServerConfig.getServerURL());
 

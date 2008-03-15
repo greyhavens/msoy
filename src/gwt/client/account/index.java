@@ -30,20 +30,26 @@ public class index extends Page
     // @Override from Page
     public void onHistoryChanged (Args args)
     {
-        _onLogonRedirect = false;
+        _onLogonPage = null;
 
         String action = args.get(0, "");
         if (action.equals("create")) {
-            _onLogonRedirect = true;
+            _onLogonPage = ACCOUNT;
+            _onLogonArgs = "welcome";
             setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("optout")) {
-            _onLogonRedirect = true;
+            _onLogonPage = ME;
+            _onLogonArgs = "";
             setContent(new OptOutPanel(args.get(1, "")));
 
         } else if (action.equals("resetpw")) {
-            _onLogonRedirect = true;
+            _onLogonPage = ME;
+            _onLogonArgs = "";
             setContent(new ResetPasswordPanel(args));
+
+        } else if (action.equals("welcome")) {
+            setContent(new WelcomePanel());
 
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
@@ -53,8 +59,8 @@ public class index extends Page
     // @Override // from Page
     protected void didLogon (WebCreds creds)
     {
-        if (_onLogonRedirect) {
-            Application.go(Page.ME, "");
+        if (_onLogonPage != null) {
+            Application.go(_onLogonPage, _onLogonArgs);
         } else {
             super.didLogon(creds);
         }
@@ -75,5 +81,5 @@ public class index extends Page
         CAccount.msgs = (AccountMessages)GWT.create(AccountMessages.class);
     }
 
-    protected boolean _onLogonRedirect;
+    protected String _onLogonPage, _onLogonArgs;
 }

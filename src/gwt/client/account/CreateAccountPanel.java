@@ -216,10 +216,8 @@ public class CreateAccountPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);
-                // pass our credentials into the application
+                // pass our credentials into the application (which will trigger a redirect)
                 CAccount.app.didLogon((SessionData)result);
-                // then head to our me page
-                Application.go(Page.ME, "");
             }
             public void onFailure (Throwable caught) {
                 setStatus(CAccount.serverError(caught));

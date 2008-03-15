@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -59,28 +60,28 @@ public class SendInvitesPanel extends VerticalPanel
         clear();
         _invites = invites;
 
-        String header = CPeople.msgs.sendInvitesSendHeader("" + invites.availableInvitations);
+        String header = CPeople.msgs.inviteSendHeader("" + invites.availableInvitations);
         add(MsoyUI.createLabel(header, "Header"));
 
         if (_invites.availableInvitations > 0) {
-            add(makeRow(CPeople.msgs.sendInvitesAddresses(),
-                        _emailAddresses = MsoyUI.createTextArea("", 40, 4)));
+            FlowPanel box = new FlowPanel();
+            box.add(_emailAddresses = MsoyUI.createTextArea("", 40, 4));
+            String tip = CPeople.msgs.inviteSendTip("" + _invites.availableInvitations);
+            box.add(MsoyUI.createLabel(tip, "tipLabel"));
+            add(makeRow(CPeople.msgs.inviteAddresses(), box));
 
-            String tip = CPeople.msgs.sendInvitesSendTip("" + _invites.availableInvitations);
-            add(MsoyUI.createLabel(tip, "tipLabel"));
-
-            add(makeRow(CPeople.msgs.sendInvitesFrom(), _fromName = MsoyUI.createTextBox(
+            add(makeRow(CPeople.msgs.inviteFrom(), _fromName = MsoyUI.createTextBox(
                             CPeople.creds.name.toString(), MAX_FROM_LEN, MAX_FROM_LEN)));
 
-            add(_customMessage = MsoyUI.createTextArea(
-                    CPeople.msgs.sendInvitesCustomDefault(), 80, 6));
+            add(MsoyUI.createLabel(CPeople.msgs.inviteCustomTip(), "tipLabel"));
+            add(_customMessage = MsoyUI.createTextArea("", 80, 6));
 
             setHorizontalAlignment(ALIGN_RIGHT);
-            _anonymous = new CheckBox(CPeople.msgs.sendInvitesAnonymous());
-            Button send = new Button(CPeople.msgs.sendInvitesSendEmail(), new ClickListener() {
+            _anonymous = new CheckBox(CPeople.msgs.inviteAnonymous());
+            Button send = new Button(CPeople.msgs.inviteSendEmail(), new ClickListener() {
                 public void onClick (Widget widget) {
                     if ("".equals(_emailAddresses.getText())) {
-                        MsoyUI.info(CPeople.msgs.sendInvitesEnterAddresses());
+                        MsoyUI.info(CPeople.msgs.inviteEnterAddresses());
                     } else {
                         checkAndSend();
                     }
@@ -93,17 +94,17 @@ public class SendInvitesPanel extends VerticalPanel
             }
 
         } else {
-            add(MsoyUI.createLabel(CPeople.msgs.sendInvitesNoneAvailable(), "tipLabel"));
+            add(MsoyUI.createLabel(CPeople.msgs.inviteNoneAvailable(), "tipLabel"));
         }
 
         setHorizontalAlignment(ALIGN_LEFT);
-        add(MsoyUI.createLabel(CPeople.msgs.sendInvitesPendingHeader(), "Header"));
+        add(MsoyUI.createLabel(CPeople.msgs.invitePendingHeader(), "Header"));
 
         if (_invites.pendingInvitations.isEmpty()) {
-            add(new Label(CPeople.msgs.sendInvitesNoPending()));
+            add(new Label(CPeople.msgs.inviteNoPending()));
 
         } else {
-            add(new Label(CPeople.msgs.sendInvitesPendingTip()));
+            add(new Label(CPeople.msgs.invitePendingTip()));
 
             int prow = 0;
             FlexTable penders = new FlexTable();
@@ -140,12 +141,12 @@ public class SendInvitesPanel extends VerticalPanel
             addresses[ii] = addresses[ii].trim();
             if (addresses[ii].matches(EMAIL_REGEX)) {
                 if (valid.contains(addresses[ii])) {
-                    MsoyUI.info(CPeople.msgs.sendInvitesDuplicateAddress(addresses[ii]));
+                    MsoyUI.info(CPeople.msgs.inviteDuplicateAddress(addresses[ii]));
                     break;
                 }
                 valid.add(addresses[ii]);
             } else {
-                MsoyUI.info(CPeople.msgs.sendInvitesInvalidAddress(addresses[ii]));
+                MsoyUI.info(CPeople.msgs.inviteInvalidAddress(addresses[ii]));
                 break;
             }
         }
@@ -154,7 +155,7 @@ public class SendInvitesPanel extends VerticalPanel
         }
 
         if (!CPeople.isAdmin() && (valid.size() > _invites.availableInvitations)) {
-            MsoyUI.error(CPeople.msgs.sendInvitesTooMany(
+            MsoyUI.error(CPeople.msgs.inviteTooMany(
                              "" + valid.size(), "" + _invites.availableInvitations));
             return;
         }
@@ -177,7 +178,7 @@ public class SendInvitesPanel extends VerticalPanel
             VerticalPanel top = new VerticalPanel();
             top.setStyleName("sendInvitesResultsPopup");
             top.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-            top.add(MsoyUI.createLabel(CPeople.msgs.sendInvitesResults(), "ResultsHeader"));
+            top.add(MsoyUI.createLabel(CPeople.msgs.inviteResults(), "ResultsHeader"));
 
             FlexTable contents = new FlexTable();
             contents.setCellSpacing(10);
@@ -187,12 +188,12 @@ public class SendInvitesPanel extends VerticalPanel
             for (int ii = 0; ii < invRes.results.length; ii++) {
                 String addr = (String)addrs.get(ii);
                 if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null
-                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsSuccessful(addr));
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful(addr));
                 } else if (invRes.results[ii].startsWith("e.")) {
-                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsFailed(
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed(
                                          addr, CPeople.serverError(invRes.results[ii])));
                 } else {
-                    contents.setText(row++, 0, CPeople.msgs.sendInvitesResultsFailed(
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed(
                                          addr, invRes.results[ii]));
                 }
             }
