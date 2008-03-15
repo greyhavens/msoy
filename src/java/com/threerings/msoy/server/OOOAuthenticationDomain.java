@@ -37,12 +37,20 @@ public class OOOAuthenticationDomain
         _authrep = new MsoyOOOUserRepository(MsoyServer.userCtx);
     }
 
+    /**
+     * Returns the repository needed for the internal support tools.
+     */
+    public MsoyOOOUserRepository getRepository ()
+    {
+        return _authrep;
+    }
+
     // from interface MsoyAuthenticator.Domain
     public MsoyAuthenticator.Account createAccount (String accountName, String password)
         throws ServiceException, PersistenceException
     {
         // make sure this account is not already in use
-        if (_authrep.loadUserByEmail(accountName) != null) {
+        if (_authrep.loadUserRecordByEmail(accountName) != null) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
 
@@ -57,7 +65,7 @@ public class OOOAuthenticationDomain
         }
 
         // load up our newly created record
-        OOOUserRecord user = _authrep.loadUser(userId);
+        OOOUserRecord user = _authrep.loadUserRecord(userId);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
@@ -76,7 +84,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
+        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -107,7 +115,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
+        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -185,7 +193,7 @@ public class OOOAuthenticationDomain
     public String generatePasswordResetCode (String accountName)
         throws ServiceException, PersistenceException
     {
-        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
+        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
     }
 

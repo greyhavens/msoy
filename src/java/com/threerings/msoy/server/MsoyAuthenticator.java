@@ -159,6 +159,14 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
+     * Returns the default domain used for the internal support tools.
+     */
+    public Domain getDefaultDomain ()
+    {
+        return _defaultDomain;
+    }
+
+    /**
      * Creates a new account with the supplied credentials.
      *
      * @param email the email address of the to-be-created account.
@@ -462,7 +470,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // log.info("User logged on [user=" + user.username + "].");
         rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(member.memberId, account.firstLogon, 
+        _eventLog.userLoggedIn(member.memberId, account.firstLogon,
                                member.created.getTime(), creds.sessionToken);
 
         return account;

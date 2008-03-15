@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -158,7 +159,7 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class, 
+        return load(MemberRecord.class,
                     new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()));
     }
 
@@ -236,6 +237,23 @@ public class MemberRepository extends DepotRepository
             }
         }
         return names;
+    }
+
+    /**
+     * Looks up some members' names by username.
+     */
+    public HashMap<String,String> loadMemberNameAssociations (Set<String> usernames)
+        throws PersistenceException
+    {
+        HashMap<String,String> nameMap = new HashMap<String,String>();
+        if (usernames.size() > 0) {
+            for (MemberNameRecord name : findAll(
+                        MemberNameRecord.class,
+                        new Where(new In(MemberRecord.ACCOUNT_NAME_C, usernames)))) {
+                nameMap.put(name.accountName, name.name);
+            }
+        }
+        return nameMap;
     }
 
     /**
@@ -475,7 +493,7 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: Cache Invalidation
         int mods = updatePartial(
-            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()), 
+            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()),
             null, MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:

@@ -25,6 +25,13 @@ public class MemberNameRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(MemberNameRecord.class, MEMBER_ID);
 
+    /** The column identifier for the {@link #accountName} field. */
+    public static final String ACCOUNT_NAME = "accountName";
+
+    /** The qualified column identifier for the {@link #accountName} field. */
+    public static final ColumnExp ACCOUNT_NAME_C =
+        new ColumnExp(MemberNameRecord.class, ACCOUNT_NAME);
+
     /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
 
@@ -36,6 +43,9 @@ public class MemberNameRecord extends PersistentRecord
     /** This member's unique id. */
     @Id
     public int memberId;
+
+    /** The authentication account associated with this member. */
+    public String accountName;
 
     /** The name by which this member is known in MetaSOY. */
     public String name;

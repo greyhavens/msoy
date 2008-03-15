@@ -17,6 +17,8 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.user.OOOUser;
+
 /**
  * Emulates {@link OOOUser} for the Depot.
  */
@@ -168,6 +170,28 @@ public class OOOUserRecord extends PersistentRecord
     /** The amount of time remaining on the users shun, in minutes. */
     public int shunLeft;
 
+    /**
+     * Creates a OOOUserRecord from a OOOUser.
+     */
+    public static OOOUserRecord fromUser (OOOUser user)
+    {
+        OOOUserRecord record = new OOOUserRecord();
+        record.userId = user.userId;
+        record.username = user.username;
+        record.created = user.created;
+        record.realname = user.realname;
+        record.password = user.password;
+        record.email = user.email;
+        record.siteId = user.siteId;
+        record.flags = user.flags;
+        record.tokens = user.tokens;
+        record.yohoho = user.yohoho;
+        record.spots = user.spots;
+        record.shunLeft = user.shunLeft;
+        record.affiliateTagId = user.affiliateTagId;
+        return record;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #OOOUserRecord}
@@ -196,5 +220,27 @@ public class OOOUserRecord extends PersistentRecord
             }
         }
         return false;
+    }
+
+    /**
+     * Returns a OOOUser version of this record.
+     */
+    public OOOUser toUser ()
+    {
+        OOOUser user = new OOOUser();
+        user.userId = userId;
+        user.username = username;
+        user.created = created;
+        user.realname = realname;
+        user.password = password;
+        user.email = email;
+        user.siteId = siteId;
+        user.flags = flags;
+        user.tokens = tokens;
+        user.yohoho = yohoho;
+        user.spots = spots;
+        user.shunLeft = shunLeft;
+        user.affiliateTagId = affiliateTagId;
+        return user;
     }
 }
