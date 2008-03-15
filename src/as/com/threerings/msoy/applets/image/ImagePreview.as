@@ -138,9 +138,6 @@ public class ImagePreview extends HBox
         _editor.setBrushSize(10);
         _editor.setPaintColor(picker.selectedColor);
 
-        // TEMP:
-        _scaleSlider.enabled = false;
-
         return bar;
     }
 

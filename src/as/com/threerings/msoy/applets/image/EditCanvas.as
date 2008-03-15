@@ -94,6 +94,11 @@ public class EditCanvas extends Canvas
         _paintLayer.addChild(_brush);
 
         _holder = new ImageHolder(_editor);
+
+        var ho :UIComponent = new UIComponent();
+        ho.addChild(_holder.background);
+        ho.includeInLayout = false;
+        addChild(ho);
         addChild(_holder);
 
 //        var mask :Shape = new Shape();
@@ -260,12 +265,13 @@ public class EditCanvas extends Canvas
         }
 
         var bmp :BitmapData;
-        var matrix :Matrix = null;
+        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY);
         if (_cropRect == null) {
             bmp = new BitmapData(_width, _height, true, 0);
         } else {
             bmp = new BitmapData(_cropRect.width, _cropRect.height, true, 0);
-            matrix = new Matrix(1, 0, 0, 1, -_cropRect.x, -_cropRect.y);
+            matrix.tx = -_cropRect.x;
+            matrix.ty = -_cropRect.y;
         }
 
         // We have to have the brush on the image layer so that it participates in rotataions
@@ -497,8 +503,8 @@ public class EditCanvas extends Canvas
 
     protected function handleCropSelect (event :MouseEvent) :void
     {
-        _crop.startDrag(false,
-            new Rectangle(0, 0, _width - _cropRect.width, _height - _cropRect.height));
+        _crop.startDrag(false, new Rectangle(0, 0,
+            Math.max(0, _width - _cropRect.width), Math.max(0, _height - _cropRect.height)));
     }
 
     protected function handleCropUp (event :MouseEvent) :void
@@ -559,7 +565,7 @@ public class EditCanvas extends Canvas
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.Sprite;
+import flash.display.Shape;
 
 import mx.core.UIComponent;
 
@@ -567,9 +573,13 @@ class ImageHolder extends UIComponent
 {
     public function ImageHolder (toBeHeld :DisplayObject)
     {
-        _background = new Sprite();
-        addChild(_background);
+        _background = new Shape();
         addChild(toBeHeld);
+    }
+
+    public function get background () :DisplayObject
+    {
+        return _background;
     }
 
     override public function setActualSize (w :Number, h :Number) :void
@@ -580,9 +590,9 @@ class ImageHolder extends UIComponent
         g.clear();
         var dark :Boolean;
         const GRID_SIZE :int = 10;
-        for (var yy :int = 0; yy < w; yy += GRID_SIZE) {
+        for (var yy :int = 0; yy < h; yy += GRID_SIZE) {
             dark = ((yy % (GRID_SIZE * 2)) == 0);
-            for (var xx :int = 0; xx < h; xx += GRID_SIZE) {
+            for (var xx :int = 0; xx < w; xx += GRID_SIZE) {
                 g.beginFill(dark ? 0x666666 : 0x999999);
                 g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
                 g.endFill();
@@ -591,5 +601,5 @@ class ImageHolder extends UIComponent
         }
     }
 
-    protected var _background :Sprite;
+    protected var _background :Shape;
 }
