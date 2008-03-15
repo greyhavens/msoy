@@ -7,30 +7,18 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
@@ -45,7 +33,6 @@ import client.shell.Page;
 import client.shell.WorldClient;
 import client.shop.CShop;
 import client.util.CreatorLabel;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
@@ -228,14 +215,11 @@ public class WhirledDetailPanel extends VerticalPanel
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
             String label = CWhirleds.msgs.detailBrowseShop(
                 CWhirleds.dmsgs.getString("pItemType" + _extras.catalogItemType));
-            Button browseButton = new Button(label, new ClickListener() {
-                public void onClick (Widget sender) {
-                    CatalogQuery query = new CatalogQuery();
-                    query.itemType = _extras.catalogItemType;
-                    query.tag = _extras.catalogTag;
-                    Application.go(Page.SHOP, CShop.composeArgs(query, 0));
-                }
-            });
+            CatalogQuery query = new CatalogQuery();
+            query.itemType = _extras.catalogItemType;
+            query.tag = _extras.catalogTag;
+            Button browseButton = new Button(
+                label, Application.createLinkListener(Page.SHOP, CShop.composeArgs(query, 0)));
             bitsColumn.add(WidgetUtil.makeShim(10, 10));
             bitsColumn.add(browseButton);
         }
@@ -256,14 +240,6 @@ public class WhirledDetailPanel extends VerticalPanel
 
 //         setBackgroundImage(
 //             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
-    }
-
-    protected void addButton (HorizontalPanel panel, String type, String label, ClickListener click)
-    {
-        if (panel.getWidgetCount() > 0) {
-            panel.add(WidgetUtil.makeShim(5, 5));
-        }
-        panel.add(MsoyUI.createButton(type, label, click));
     }
 
     protected String getPolicyName (int policy)
@@ -318,8 +294,8 @@ public class WhirledDetailPanel extends VerticalPanel
     }
 
     protected Group _group;
-    protected GroupExtras _extras;
     protected GroupDetail _detail;
+    protected GroupExtras _extras;
     protected StyledTabPanel _tabs;
 
     protected static SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
