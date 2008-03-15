@@ -280,7 +280,7 @@ public class FeedPanel extends TongueBox
                 return CMe.msgs.descCombine(
                             CShell.dmsgs.getString("itemType" + message.data[1]),
                             Application.createLinkHtml(message.data[0], Page.SHOP,
-                                Args.compose(message.data[1], "i", message.data[2])));
+                                Args.compose("l", message.data[1], message.data[2])));
 
             case 104: // FRIEND_GAINED_LEVEL
                 return message.data[0];
