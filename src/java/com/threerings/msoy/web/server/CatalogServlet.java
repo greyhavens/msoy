@@ -161,14 +161,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // determine the flow cost for this item
             int flowCost = listing.flowCost;
-
-            // if this member has not yet received their freebie for this item type, drop the cost
-            // to zero: "the first one's free kid!"
-            MemberRecord.Experience freeExp = getFreebieExperience(itemType);
-            if (freeExp != null && !mrec.isSet(freeExp)) {
-                log.info("Giving " + mrec.who() + " their free " + Item.getTypeName(itemType) + ".");
-                flowCost = 0;
-            } else if (mrec.isAdmin()) {
+            if (mrec.isAdmin()) {
                 // let admins spend flow they have before they get stuff for free
                 flowCost = Math.min(listing.flowCost, mrec.flow);
             }
@@ -210,8 +203,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
                 // take flow from purchaser
                 MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
-                    new UserActionDetails(mrec.memberId, UserAction.BOUGHT_ITEM, itemType, catalogId),
-                    flowCost);
+                    new UserActionDetails(mrec.memberId, UserAction.BOUGHT_ITEM, itemType,
+                                          catalogId), flowCost);
                 // update member's new flow
                 MemberNodeActions.flowUpdated(flowRec);
 
@@ -224,12 +217,6 @@ public class CatalogServlet extends MsoyServiceServlet
                         creatorPortion);
                     MemberNodeActions.flowUpdated(flowRec);
                 }
-            }
-
-            // if we gave this item to the user for free, mark them as such
-            if (freeExp != null && !mrec.isSet(freeExp)) {
-                mrec.setExperience(freeExp, true);
-                MsoyServer.memberRepo.storeExperiences(mrec);
             }
 
             // update their runtime inventory as appropriate
@@ -695,23 +682,6 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Access denied for catalog action [who=" + who + ", wanted=" + targetId +
                         ", action=" + action + ", item=" + item + "].");
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-        }
-    }
-
-    protected MemberRecord.Experience getFreebieExperience (byte itemType)
-    {
-        if (itemType == Item.DECOR) {
-            return MemberRecord.Experience.GOT_FREE_DECOR;
-        } else if (itemType == Item.FURNITURE) {
-            return MemberRecord.Experience.GOT_FREE_FURNITURE;
-// disabled until we add the whirleds tutorial
-//         } else if (itemType == Item.AVATAR) {
-//             return MemberRecord.Experience.GOT_FREE_AVATAR;
-// disabled until we add toys to the tutorial
-//         } else if (itemType == Item.TOY) {
-//             return MemberRecord.Experience.GOT_FREE_TOY;
-        } else {
-            return null;
         }
     }
 

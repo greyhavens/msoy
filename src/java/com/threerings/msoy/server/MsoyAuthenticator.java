@@ -23,6 +23,8 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -538,8 +540,13 @@ public class MsoyAuthenticator extends Authenticator
             mrec.memberId, name, portalAction, true);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
-        // finally note that we created a new account
+        // record to the event log that we created a new account
         _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
+
+        // lastly, emit a created_account action which will grant them some starting flow
+        MsoyServer.memberRepo.getFlowRepository().logUserAction(
+            new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
+
         return mrec;
     }
 

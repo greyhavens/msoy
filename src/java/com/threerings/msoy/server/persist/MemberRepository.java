@@ -103,6 +103,24 @@ public class MemberRepository extends DepotRepository
             }
         });
 
+        // TEMP added 2008.3.15
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration(15) {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tName = liaison.tableSQL("MemberRecord");
+                String cName = liaison.columnSQL(MemberRecord.EXPERIENCES);
+                Statement stmt = conn.createStatement();
+                try {
+                    int rows = stmt.executeUpdate(
+                        "UPDATE " + tName + " set " + cName + " = 0");
+                    log.info("Cleared experiences from " + rows + " members.");
+                    return rows;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+        // END TEMP
+
         // TEMP added 2008.2.13
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(12) {
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {

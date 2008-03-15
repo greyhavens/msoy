@@ -60,26 +60,14 @@ public class MemberRecord extends PersistentRecord
     /** Experiences used in the {@link #experiences} field. */
     public static enum Experience
     {
-        /** Indicates whether this user has received their one free avatar item. */
-        GOT_FREE_AVATAR(1 << 0),
-
-        /** Indicates whether this user has received their one free decor item. */
-        GOT_FREE_DECOR(1 << 1),
-
-        /** Indicates whether this user has received their one free furniture item. */
-        GOT_FREE_FURNITURE(1 << 2),
-
-        /** Indicates whether this user has received their one free toy item. */
-        GOT_FREE_TOY(1 << 3),
-
         /** Indicates whether this user has played a game. */
-        PLAYED_GAME(1 << 4),
+        PLAYED_GAME(1 << 0),
 
         /** Indicates whether this user has entered a Whirled. */
-        EXPLORED_WHIRLED(1 << 5),
+        EXPLORED_WHIRLED(1 << 1),
 
         /** Indicates whether this user has decorated their home. */
-        DECORATED_HOME(1 << 6),
+        DECORATED_HOME(1 << 2),
 
         /** A place holder experience that is not used and reminds us that we can't have more than
          * 32 experiences. */
@@ -226,7 +214,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 14;
+    public static final int SCHEMA_VERSION = 15;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
