@@ -107,6 +107,7 @@ import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.RadialMenu;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
@@ -592,6 +593,10 @@ public class RoomController extends SceneController
             menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
             menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
+
+//            var menu :RadialMenu = new RadialMenu(100);
+//            menu.dataProvider = menuItems;
+//            menu.popUp(Application(Application.application));
         }
     }
 
