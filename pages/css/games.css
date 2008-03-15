@@ -58,8 +58,8 @@
 }
 
 .playPanel .Button {
-  width: 120px;
-  height: 44px;
+  width: 126px;
+  height: 50px;
   border: none;
   cursor: pointer;
   text-align: center;
@@ -79,7 +79,7 @@
 }
 
 .playPanel .NoSingle {
-  width: 120px;
+  width: 126px;
   font-size: 12px;
   text-align: center;
 }
