@@ -62,39 +62,89 @@
 
 /* GroupList specific formattting */
 .galaxy {
-  padding: 0px 5px;
-  width: 680px;
+  width: 685px;
 }
 
-.galaxy .Intro {
-  font-size: 16px;
-  padding: 10px;
+.galaxy .Title, .galaxy .FeaturedWhirled .Name {
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+
+.galaxy .Features {
+  background: url(/images/group/featured_bg.png) no-repeat top left;
+  width: 100%;
+  height: 284px;
+}
+
+.galaxy .Features .Intro {
+  width: 142px;
+  font-size: 14px;
   vertical-align: top;
+  color: #FFFFFF;
+  padding: 45px 25px 0px 25px;
 }
 
-.galaxy .Title {
-  font-size: 16px;
+.galaxy .Features .FeaturedWhirled {
+  color: #FFFFFF;
+}
+
+.galaxy .Features .FeaturedWhirled div {
+  text-align: center;
+}
+
+.galaxy .Features .FeaturedWhirled .Title {
+  height: 25px;
+  padding-top: 5px;
+}
+
+.galaxy .Features .FeaturedWhirled table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.galaxy .Features .FeaturedWhirled .Flash {
+  padding-left: 55px;
+}
+
+.galaxy .Features .FeaturedWhirled .Name {
+  width: 100%;
   font-weight: bold;
-  padding-top: 10px;
+  font-size: 16px;
+  text-align: center;
 }
 
-.galaxy .PopularTags {
-  vertical-align: top;
-  padding-right: 10px;
+.galaxy .Features .FeaturedWhirled .Name a {
+  color: #FFFFFF;
+}
+
+.galaxy .Features .FeaturedWhirled .Online {
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.galaxy .Features .FeaturedWhirled .Blurb {
+  font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
+  color: #5FA5D8;
+  text-align: center;
 }
 
-.galaxy .PopularTags a {
-  font-style: italic;
-  color: #696969;
+.galaxy .Browse {
+  width: 100%;
+  margin-left: 5px;
 }
 
-.galaxy .PopularTags .Label {
-  font-weight: bold;
+.galaxy .Browse .Title {
+  font-size: 18px;
+  color: #316C94;
 }
 
-.galaxy .PopularTags #moreLink {
-  color: #CD853F;
+.galaxy .Browse .Search {
+  padding-right: 10px;
+}
+
+.galaxy .Contents {
+  width: 100%;
+  margin: 0px 10px;
 }
 
 .galaxy .itemBox .Name {
@@ -105,16 +155,26 @@
   font-size: 12px;
 }
 
-.featuredWhirled {
-  width: 424px;
+.galaxy .Create {
+  background: url(/images/item/upload_bg.png) no-repeat top;
+  margin-left: 10px;
+  width: 655px;
+  height: 89px;
 }
 
-.featuredWhirled .Name {
+.galaxy .Create .Header {
+  height: 40px;
+  color: #FFFFFF;
   font-weight: bold;
-  font-size: 16px;
+  padding: 2px 0px 0px 65px;
 }
 
-.featuredWhirled .MoreInfo {
-  font-size: 12px;
-  text-align: center;
+.galaxy .Create .Pitch {
+  padding-left: 20px;
+  font-size: 14px;
+  color: #2E729F;
+}
+
+.galaxy .Create .Button {
+  padding-right: 20px;
 }

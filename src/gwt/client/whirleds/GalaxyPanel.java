@@ -10,8 +10,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
@@ -37,37 +39,45 @@ import client.util.ThumbBox;
  * Display the public groups in a sensical manner, including a sorted list of characters that
  * start the groups, allowing people to select a subset of the public groups to view.
  */
-public class GalaxyPanel extends SmartTable
+public class GalaxyPanel extends VerticalPanel
 {
     public GalaxyPanel ()
     {
-        super("galaxy", 0, 5);
+        setStyleName("galaxy");
 
-        // add our intro first; the featured Whirled will go next to this
-        addText(CWhirleds.msgs.galaxyIntro(), 1, "Intro");
+        // add our favorites and featured whirled
+        SmartTable features = new SmartTable("Features", 0, 0);
+        features.setText(0, 0, CWhirleds.msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
+        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel());
+        features.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        add(features);
+        add(WidgetUtil.makeShim(10, 10));
 
         // now add a UI for browsing and searching Whirleds
-        addText(CWhirleds.msgs.galaxyBrowseTitle(), 2, "Title");
+        SmartTable browse = new SmartTable("Browse", 0, 0);
+        browse.setText(0, 0, CWhirleds.msgs.galaxyBrowseTitle(), 1, "Title");
+        browse.setWidget(0, 1, _currentTag = new FlowPanel(), 1, "Current");
 
-        SmartTable filter = new SmartTable(0, 0);
-        filter.setWidth("100%");
-        filter.setWidget(0, 0, _popularTags = new FlowPanel(), 1, "PopularTags");
-
-        RowPanel search = new RowPanel();
-        _searchInput = MsoyUI.createTextBox("", 255, 20);
+        HorizontalPanel search = new HorizontalPanel();
+        search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
                 Application.go(Page.WHIRLEDS, Args.compose("search", "0", _searchInput.getText()));
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
-        search.add(_searchInput);
-        search.add(new Button(CWhirleds.msgs.galaxySearch(), doSearch), HasAlignment.ALIGN_MIDDLE);
-        filter.setWidget(0, 1, search);
-        filter.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        addWidget(filter, 2, null);
+        search.add(WidgetUtil.makeShim(5, 5));
+        search.add(new Button(CWhirleds.msgs.galaxySearch(), doSearch));
+        browse.setWidget(0, 2, search, 1, "Search");
+        browse.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+        add(browse);
+        add(WidgetUtil.makeShim(5, 5));
 
-        _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
+        SmartTable contents = new SmartTable("Contents", 0, 0);
+        contents.setWidget(0, 0, _popularTags = new FlowPanel(), 1, "tagCloud");
+        contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        contents.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+        contents.setWidget(0, 2, _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Application.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
@@ -77,29 +87,22 @@ public class GalaxyPanel extends SmartTable
             protected String getEmptyMessage () {
                 return CWhirleds.msgs.galaxyNoGroups();
             }
-        };
+        });
         _groupGrid.setWidth("100%");
-        addWidget(_groupGrid, 2, null);
+        contents.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+        add(contents);
 
         // if they're high level, add info on creating a Whirled
         if (CWhirleds.level >= MIN_WHIRLED_CREATE_LEVEL) {
-            addText(CWhirleds.msgs.galaxyCreateTitle(), 2, "Title");
-            SmartTable create = new SmartTable(0, 0);
-            create.setText(0, 0, CWhirleds.msgs.galaxyCreateBlurb());
-            create.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            create.setWidget(0, 2, new Button(CWhirleds.msgs.galaxyCreate(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, "edit");
-                }
-            }));
-            addWidget(create, 2, null);
+            add(WidgetUtil.makeShim(10, 10));
+            SmartTable create = new SmartTable("Create", 0, 0);
+            create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");
+            create.setText(1, 0, CWhirleds.msgs.galaxyCreateBlurb(), 1, "Pitch");
+            create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
+            ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "edit");
+            create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
+            add(create);
         }
-
-        _currentTag = new FlowPanel();
-        _popularTags.clear();
-        InlineLabel popularTagsLabel = new InlineLabel(CWhirleds.msgs.galaxyPopularTags() + " ");
-        popularTagsLabel.addStyleName("Label");
-        _popularTags.add(popularTagsLabel);
 
         CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback() {
             public void onSuccess (Object result) {
@@ -139,23 +142,19 @@ public class GalaxyPanel extends SmartTable
     protected void init (GalaxyData data)
     {
         // set up our featured whirled
-        setWidget(0, 1, new FeaturedWhirledPanel(data.featuredWhirleds));
+        _featured.setWhirleds(data.featuredWhirleds);
 
         // set up our popular tags
         if (data.popularTags.size() == 0) {
-            _popularTags.add(new InlineLabel(CWhirleds.msgs.galaxyNoPopularTags()));
+            _popularTags.add(MsoyUI.createLabel(CWhirleds.msgs.galaxyNoPopularTags(), "Link"));
         } else {
             for (int ii = 0; ii < data.popularTags.size(); ii++) {
-                if (ii > 0) {
-                    _popularTags.add(new InlineLabel(", "));
-                }
                 String tag = (String)data.popularTags.get(ii);
                 Widget link = Application.createLink(
                     tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
-                link.addStyleName("inline");
+                link.addStyleName("Link");
                 _popularTags.add(link);
             }
-            _popularTags.add(_currentTag);
         }
     }
 
@@ -165,7 +164,7 @@ public class GalaxyPanel extends SmartTable
             return false;
         }
 
-        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.galaxyCurrentTag() + " " + tag + " ");
+        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.galaxyCurrentTag(tag) + " ");
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
@@ -234,13 +233,14 @@ public class GalaxyPanel extends SmartTable
 
     protected String _action, _arg;
 
+    protected FeaturedWhirledPanel _featured;
     protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
     protected PagedGrid _groupGrid;
 
     protected static final int POP_TAG_COUNT = 9;
     protected static final int GRID_ROWS = 2;
-    protected static final int GRID_COLUMNS = 5;
+    protected static final int GRID_COLUMNS = 4;
 
     protected static final int MIN_WHIRLED_CREATE_LEVEL = 10;
 }
