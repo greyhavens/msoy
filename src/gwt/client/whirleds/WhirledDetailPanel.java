@@ -117,7 +117,7 @@ public class WhirledDetailPanel extends VerticalPanel
         SimplePanel panel = new SimplePanel();
         panel.setStyleName("Whirled");
         window.add(panel);
-        window.add(MsoyUI.createLabel(CWhirleds.msgs.detailEnter(), "Enter"));
+        window.add(MsoyUI.createLabel(CWhirleds.msgs.detailEnterTip(), "Enter"));
 
         if (_group.policy != Group.POLICY_EXCLUSIVE) {
             window.add(WidgetUtil.makeShim(10, 10));
