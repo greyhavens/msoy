@@ -60,6 +60,8 @@ import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -972,8 +974,10 @@ public class RoomController extends SceneController
             _music.close();
             _music = null;
         }
+        // TODO: temporary hack to disable even the downloading of room music if sound is off
+        const shouldEvenTry :Boolean = (Prefs.getSoundVolume() > 0);
         // set up new music, if needed
-        if (_music == null && isPathValid) {
+        if (shouldEvenTry && _music == null && isPathValid) {
             _music = new SoundPlayer(path);
             _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
             // TODO: we probably need to wait for COMPLETE
