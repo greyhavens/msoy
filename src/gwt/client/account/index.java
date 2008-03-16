@@ -49,7 +49,7 @@ public class index extends Page
             setContent(new ResetPasswordPanel(args));
 
         } else if (action.equals("welcome")) {
-            setContent(new WelcomePanel());
+            setContent(CAccount.msgs.welcomeTitle(), new WelcomePanel());
 
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));

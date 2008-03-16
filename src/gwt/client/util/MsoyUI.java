@@ -7,6 +7,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -54,6 +55,19 @@ public class MsoyUI
         Label label = new Label(text);
         if (styleName != null) {
             label.setStyleName(styleName);
+        }
+        return label;
+    }
+
+    /**
+     * Creates an HTML label with the supplied text and style. <em>Warning:</em> never pass user
+     * supplied text into an HTML label. Cross-site-scripting-o-rama!
+     */
+    public static HTML createHTML (String text, String styleName)
+    {
+        HTML label = new HTML(text);
+        if (styleName != null) {
+            label.addStyleName(styleName);
         }
         return label;
     }
@@ -203,6 +217,18 @@ public class MsoyUI
     public static Image createBackArrow (ClickListener callback)
     {
         return createActionImage("/images/ui/back_arrow.png", callback);
+    }
+
+    /**
+     * Creates an image with the supplied path and style.
+     */
+    public static Image createImage (String path, String styleName)
+    {
+        Image image = new Image(path);
+        if (styleName != null) {
+            image.addStyleName(styleName);
+        }
+        return image;
     }
 
     /**
