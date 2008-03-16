@@ -173,6 +173,25 @@
   height: 630px;
 }
 
+.whatIsTheWhirled .Video {
+  width: 360px;
+  text-align: center;
+}
+
+.whatIsTheWhirled .Video .Title {
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  height: 26px;
+}
+
+.whatIsTheWhirled .Video .ComingSoon {
+  height: 150px;
+  font-size: 26px;
+  padding-top: 110px;
+  background: #000000;
+  color: #65A8DC;
+}
+
 .whatIsTheWhirled .Stats {
   color: #FFFFFF;
   width: 75px;

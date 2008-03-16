@@ -36,6 +36,12 @@ public class WhatIsTheWhirled extends AbsolutePanel
     {
         setStyleName("whatIsTheWhirled");
 
+        FlowPanel video = new FlowPanel();
+        video.setStyleName("Video");
+        video.add(MsoyUI.createLabel(CMe.msgs.whatVideo(), "Title"));
+        video.add(MsoyUI.createLabel(CMe.msgs.whatComingSoon(), "ComingSoon"));
+        add(video, 40, 225);
+
         FlowPanel right = new FlowPanel();
         right.setStyleName("Right");
         right.setWidth(RIGHT_COLUMN_WIDTH + "px");
