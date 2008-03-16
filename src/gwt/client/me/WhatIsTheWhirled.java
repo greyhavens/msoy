@@ -3,6 +3,8 @@
 
 package client.me;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -16,6 +18,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.WhatIsWhirledData;
@@ -72,6 +75,20 @@ public class WhatIsTheWhirled extends AbsolutePanel
         login.getUpHoveringFace().setImage(_images.login_over().createImage());
         right.add(new LogonPanel(false, login));
         right.add(login);
+
+        FlowPanel bits = new FlowPanel();
+        bits.setStyleName("Bits");
+        int year = 1900 + new Date().getYear();
+        bits.add(MsoyUI.createHTML(CMe.msgs.whatCopyright(""+year), "inline"));
+        bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
+        bits.add(new Anchor("http://www.threerings.net", CMe.msgs.whatAbout(), "_blank"));
+        bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
+        bits.add(MsoyUI.createLabel(CMe.msgs.whatTerms(), "inline"));
+        bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
+        bits.add(MsoyUI.createLabel(CMe.msgs.whatPrivacy(), "inline"));
+        bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
+        bits.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
+        add(bits, 0, 600);
 
         CMe.worldsvc.getWhatIsWhirled(new AsyncCallback() {
             public void onSuccess (Object result) {

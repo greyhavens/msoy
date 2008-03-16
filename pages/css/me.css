@@ -247,6 +247,18 @@
   margin-left: 115px;
 }
 
+.whatIsTheWhirled .Bits {
+  width: 800px;
+  font-size: 14px;
+  text-align: center;
+  color: #6BA8C5;
+  padding-top: 7px;
+}
+
+.whatIsTheWhirled .Bits a {
+  color: #3E789D;
+}
+
 .editAccount .Header {
   font-weight: bold;
 }
