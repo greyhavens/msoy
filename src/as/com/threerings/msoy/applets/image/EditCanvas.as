@@ -5,6 +5,7 @@ package com.threerings.msoy.applets.image {
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.BlendMode;
 import flash.display.CapsStyle;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -46,12 +47,19 @@ import com.threerings.flash.GraphicsUtil;
  */
 [Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
 
+/** 
+ * Dispatched when the undo/redo status has changed.
+ */
+[Event(name="UndoRedoChange", type="com.threerings.util.ValueEvent")]
+
 /**
  * Allows primitive editing of an image.
  */
 public class EditCanvas extends Canvas
 {
     public static const SIZE_KNOWN :String = "SizeKnown";
+
+    public static const UNDO_REDO_CHANGE :String = "UndoRedoChange";
 
     /** Mode constants. */
     public static const NONE :int = -1;
@@ -67,12 +75,10 @@ public class EditCanvas extends Canvas
 
         _editor = new Sprite();
 
-        _imageLayer = new Sprite();
+        _paintLayer = new Sprite();
         _scaleLayer = new Sprite();
         _rotLayer = new Sprite();
         _unRotLayer = new Sprite();
-        _paintLayer = new Sprite();
-        _fillLayer = new Shape();
         _hudLayer = new Sprite();
 
         _crop = new Sprite();
@@ -80,8 +86,8 @@ public class EditCanvas extends Canvas
         _brush = new Shape();
         _brush.visible = false;
 
-        _unRotLayer.addChild(_imageLayer);
-        _unRotLayer.addChild(_fillLayer);
+        _paintLayer.blendMode = BlendMode.LAYER;
+
         _unRotLayer.addChild(_paintLayer);
         _rotLayer.addChild(_unRotLayer);
         _scaleLayer.addChild(_rotLayer);
@@ -101,12 +107,61 @@ public class EditCanvas extends Canvas
         addChild(ho);
         addChild(_holder);
 
+
+//        _rotLayer.blendMode = BlendMode.LAYER;
+//
+//        var bigRed :Shape = new Shape();
+//        bigRed.graphics.beginFill(0xFF0000);
+//        bigRed.graphics.drawCircle(0, 0, 50);
+//        bigRed.graphics.endFill();
+//        _rotLayer.addChild(bigRed);
+//
+//        var medBlue :Shape = new Shape();
+//        medBlue.graphics.beginFill(0x000099);
+//        medBlue.graphics.drawCircle(0, 0, 30);
+//        medBlue.graphics.endFill();
+//        _rotLayer.addChild(medBlue);
+//
+//        var lilErase :Shape = new Shape();
+//        lilErase.graphics.beginFill(0xFFFFFF);
+//        lilErase.graphics.drawCircle(0, 0, 15);
+//        lilErase.graphics.endFill();
+//        lilErase.blendMode = BlendMode.ERASE;
+//        _rotLayer.addChild(lilErase);
+
+
 //        var mask :Shape = new Shape();
 //        mask.graphics.beginFill(0xFFFFFF);
 //        mask.graphics.drawRect(0, 0, maxWidth, maxHeight);
 //        mask.graphics.endFill();
 //        _editor.mask = mask;
 //        _editor.addChild(mask);
+    }
+
+    public function canUndo () :Boolean
+    {
+        return _undoStack.length > 0;
+    }
+
+    public function canRedo () :Boolean
+    {
+        return _redoStack.length > 0;
+    }
+
+    public function doUndo () :void
+    {
+        var layer :Shape = _undoStack.pop() as Shape;
+        _paintLayer.removeChild(layer);
+        _redoStack.push(layer);
+        fireUndoRedoChange();
+    }
+
+    public function doRedo () :void
+    {
+        var layer :Shape = _redoStack.pop() as Shape;
+        _paintLayer.addChildAt(layer, _undoStack.numChildren - 1);
+        _undoStack.push(layer);
+        fireUndoRedoChange();
     }
 
     public function setMode (mode :int) :void
@@ -166,13 +221,22 @@ public class EditCanvas extends Canvas
         _bitmapData = null;
         _width = 0;
         _height = 0;
+        _paintPoint = null;
+
+        // remove all paint layers
+        for each (var layer :Shape in _undoStack) {
+            _paintLayer.removeChild(layer);
+        }
+        _undoStack.length = 0;
+        _redoStack.length = 0;
+        fireUndoRedoChange();
+
         _paintLayer.graphics.clear();
-        _fillLayer.graphics.clear();
         _hudLayer.graphics.clear();
         clearSelection();
 
         if (_image != null) {
-            _imageLayer.removeChild(_image);
+            _paintLayer.removeChild(_image);
             if (_image is Loader) {
                 var loader :Loader = _image as Loader;
                 try {
@@ -233,7 +297,7 @@ public class EditCanvas extends Canvas
         }
         if (image is DisplayObject) {
             _image = image as DisplayObject;
-            _imageLayer.addChild(_image);
+            _paintLayer.addChildAt(_image, 0);
         } else {
             throw new Error("Unknown image source: " + image);
         }
@@ -355,6 +419,7 @@ public class EditCanvas extends Canvas
         fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
         fn(MouseEvent.MOUSE_UP, handlePaintEnd);
         _paintLayer.mouseEnabled = on;
+        _brush.blendMode = (_mode == ERASE) ? BlendMode.ERASE : BlendMode.NORMAL;
 
         // SELECT
         on = (_mode == SELECT);
@@ -385,7 +450,14 @@ public class EditCanvas extends Canvas
 
     protected function handleShowBrush (event :MouseEvent) :void
     {
-        _brush.visible = (event.type == MouseEvent.ROLL_OVER) && (_mode == PAINT);
+        _brush.visible = (event.type == MouseEvent.ROLL_OVER) &&
+            ((_mode == PAINT) || (_mode == ERASE));
+    }
+
+    protected function handlePaintMove (event :MouseEvent) :void
+    {
+        _brush.x = event.localX;
+        _brush.y = event.localY;
     }
 
     protected function handlePaintEnter (event :MouseEvent) :void
@@ -399,46 +471,51 @@ public class EditCanvas extends Canvas
     {
         setPainted();
 
-        // paint the brush stamp
-        var g :Graphics = _fillLayer.graphics;
-        g.beginFill(_color);
-        g.drawCircle(event.localX, event.localY, _brushSize/2);
-        g.endFill();
+        // create a new paintlayer
+        _curPaint =  new Shape();
+        if (_mode == ERASE) {
+            _curPaint.blendMode = BlendMode.ERASE;
+        }
+        _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - 1);
 
-        // set up lining
-        g = _paintLayer.graphics;
-        g.lineStyle(_brushSize, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.ROUND,
-            JointStyle.ROUND);
-        g.moveTo(event.localX, event.localY);
+        _paintPoint = new Point(event.localX, event.localY);
         _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
         _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handlePaintEnd);
-
-//        const x :int = Math.round(event.localX);
-//        const y :int = Math.round(event.localY);
-//
-//        // TODO: there doesn't seem to be a way to actually draw just 1 pixel.
-//        // (If you are zoomed, this 1 pixel is actually larger than a pixel)
-//        var g :Graphics = _paintLayer.graphics;
-//        g.lineStyle(1, _color);
-//        g.drawRect(x, y, 1, 1);
-    }
-
-    protected function handlePaintMove (event :MouseEvent) :void
-    {
-        _brush.x = event.localX;
-        _brush.y = event.localY;
     }
 
     protected function handlePaintLine (event :MouseEvent) :void
     {
-        _paintLayer.graphics.lineTo(event.localX, event.localY);
+        var g :Graphics = _curPaint.graphics;
+        if (_paintPoint != null) {
+            g.lineStyle(_brushSize, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.ROUND,
+                JointStyle.ROUND);
+            g.moveTo(_paintPoint.x, _paintPoint.y);
+            _paintPoint = null;
+        }
+
+        g.lineTo(event.localX, event.localY);
     }
 
     protected function handlePaintEnd (event :MouseEvent) :void
     {
-        handlePaintLine(event);
+        if (_paintPoint == null) {
+            handlePaintLine(event);
+
+        } else {
+            // there was never any line drawn, so we just stamp the brush
+            var g :Graphics = _curPaint.graphics;
+            g.beginFill(_color);
+            g.drawCircle(event.localX, event.localY, _brushSize/2);
+            g.endFill();
+            _paintPoint = null;
+        }
         _paintLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
         _paintLayer.removeEventListener(MouseEvent.ROLL_OUT, handlePaintEnd);
+
+        // at the end of the paint 
+        _undoStack.push(_curPaint);
+        _redoStack.length = 0;
+        fireUndoRedoChange();
     }
 
     protected function handleSelectStart (event :MouseEvent) :void
@@ -524,15 +601,26 @@ public class EditCanvas extends Canvas
         _bytes = null;
     }
 
+    protected function fireUndoRedoChange () :void
+    {
+        dispatchEvent(new ValueEvent(UNDO_REDO_CHANGE, null));
+    }
+
     protected var _holder :ImageHolder;
 
     protected var _editor :Sprite;
 
     /** Layers that contain things. */
-    protected var _imageLayer :Sprite;
     protected var _paintLayer :Sprite;
-    protected var _fillLayer :Shape; // an additional paintLayer just for fills
     protected var _hudLayer :Sprite;
+
+    /** Paint layers. */
+    protected var _undoStack :Array = [];
+
+    protected var _redoStack :Array = [];
+
+    /** The current paint layer. */
+    protected var _curPaint :Shape;
 
     /** Layers used to affect the rotation/zoom/etc. */
     protected var _scaleLayer :Sprite;
@@ -560,6 +648,9 @@ public class EditCanvas extends Canvas
     protected var _color :uint;
     protected var _brushSize :Number;
     protected var _forceCrop :Boolean = false;
+
+    /** The maximum number of undos. */
+    protected static const MAX_UNDOS :int = 1000;
 }
 }
 

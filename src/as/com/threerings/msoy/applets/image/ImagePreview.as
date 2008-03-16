@@ -120,11 +120,14 @@ public class ImagePreview extends HBox
         bar.addChild(picker);
 
         var grid :Grid = new Grid();
+
         GridUtil.addRow(grid,
             addMode("paint", EditCanvas.PAINT), addMode("erase", EditCanvas.ERASE));
         GridUtil.addRow(grid,
             addMode("select", EditCanvas.SELECT), addMode("move", EditCanvas.MOVE));
         GridUtil.addRow(grid, new CommandButton("Crop", _editor.doCrop), [2, 1]);
+        GridUtil.addRow(grid, _undo = new CommandButton("Undo", _editor.doUndo),
+            _redo = new CommandButton("Redo", _editor.doRedo));
 
         bar.addChild(grid);
 
@@ -138,7 +141,16 @@ public class ImagePreview extends HBox
         _editor.setBrushSize(10);
         _editor.setPaintColor(picker.selectedColor);
 
+        _editor.addEventListener(EditCanvas.UNDO_REDO_CHANGE, handleUndoRedoChange);
+        handleUndoRedoChange(null); // check now
+
         return bar;
+    }
+
+    protected function handleUndoRedoChange (event :Event) :void
+    {
+        _undo.enabled = _editor.canUndo();
+        _redo.enabled = _editor.canRedo();
     }
 
     protected function addSlider (
@@ -262,6 +274,9 @@ public class ImagePreview extends HBox
     protected var _scaleSlider :HSlider;
     protected var _zoomSlider :HSlider;
     protected var _brushSlider :HSlider;
+
+    protected var _undo :CommandButton;
+    protected var _redo :CommandButton;
 
     protected var _buttons :Array = [];
 }
