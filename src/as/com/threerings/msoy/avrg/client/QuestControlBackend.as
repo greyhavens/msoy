@@ -97,7 +97,7 @@ public class QuestControlBackend
         return true;
     }
 
-    protected function completeQuest_v1 (questId :String, outro :String, payout :int) :Boolean
+    protected function completeQuest_v1 (questId :String, outro :String, payout :Number) :Boolean
     {
         if (!_backend.isPlaying()) {
             return false;
