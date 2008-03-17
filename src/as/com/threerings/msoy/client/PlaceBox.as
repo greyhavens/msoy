@@ -41,8 +41,8 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the AVRG panel. */
     public static const LAYER_AVRG_PANEL :int = 40;
 
-    /** The layer priority of the AVRG panel. */
-    public static const LAYER_TROPHY :int = 50;
+    /** The layer priority of the trophy award, avatar intro, and chat tip. */
+    public static const LAYER_TRANSIENT :int = 50;
 
     public function PlaceBox ()
     {

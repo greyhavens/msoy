@@ -275,7 +275,7 @@ public class GameLiaison
                 checkPendingAwards();
             });
             path.start();
-            container.addOverlay(_awardPanel, PlaceBox.LAYER_TROPHY);
+            container.addOverlay(_awardPanel, PlaceBox.LAYER_TRANSIENT);
         });
     }
 
@@ -310,7 +310,7 @@ public class GameLiaison
             var path :Path = Path.move(_guestFlowPanel, 150, -_guestFlowPanel.height, 150, 0, 500);
             path.start();
             _wctx.getTopPanel().getPlaceContainer().addOverlay(
-                _guestFlowPanel, PlaceBox.LAYER_TROPHY);
+                _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
         }
     }
 

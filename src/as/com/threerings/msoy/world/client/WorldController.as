@@ -394,7 +394,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewMyAvatars () :void
     {
-        displayPage("stuff", "" + Item.AVATAR);
+        displayPage("stuff", ""+Item.AVATAR);
     }
 
     /**
@@ -403,6 +403,14 @@ public class WorldController extends MsoyController
     public function handleViewMyFurniture () :void
     {
         displayPage("stuff", "" + Item.FURNITURE);
+    }
+
+    /**
+     * Handles the VIEW_AVATAR_CATALOG command.
+     */
+    public function handleViewAvatarCatalog () :void
+    {
+        displayPage("catalog", ""+Item.AVATAR);
     }
 
     /**
@@ -671,12 +679,10 @@ public class WorldController extends MsoyController
         if (null != params["memberHome"]) {
             _sceneIdString = null;
             handleGoMemberHome(int(params["memberHome"]), true);
-            updateInviteOverlay(params["invite"], int(params["memberHome"]));
 
         } else if (null != params["groupHome"]) {
             _sceneIdString = null;
             handleGoGroupHome(int(params["groupHome"]), true);
-            updateInviteOverlay(params["invite"], 0);
 
         } else if (null != params["memberScene"]) {
             _sceneIdString = null;
@@ -1030,19 +1036,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    protected function updateInviteOverlay (inviteId :String, inviterId :int) :void
-    {
-        if (_inviteOverlay != null) {
-            _topPanel.getPlaceContainer().removeOverlay(_inviteOverlay);
-            _inviteOverlay = null;
-        }
-        if (inviteId != null && inviteId.length > 0) {
-            _topPanel.getPlaceContainer().addOverlay(
-                _inviteOverlay = new InviteOverlay(_wctx, inviteId, inviterId),
-                PlaceBox.LAYER_TROPHY);
-        }
-    }
-
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
 
@@ -1061,9 +1054,6 @@ public class WorldController extends MsoyController
 
     /** The current AVRG display, if any. */
     protected var _avrGamePanel :AVRGamePanel;
-
-    /** Displays an exhortation to join Whirled to invited guests. */
-    protected var _inviteOverlay :InviteOverlay;
 
     /** Back-stack of previously visited scenes. */
     protected var _backstack :Array = [];
