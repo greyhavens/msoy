@@ -415,11 +415,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function mouseClick (event :MouseEvent) :void
     {
-        if ((parent as RoomView).getRoomController().isEditMode()) {
-            CommandEvent.dispatch(this, RoomController.EDIT_CLICKED, this);
-        } else {
-            postClickAction();
-        }
+        postClickAction();
     }
 
     /**

@@ -338,7 +338,7 @@ public class AvatarViewerComp extends VBox
             menuItems.push({ label: "No actions" });
         }
 
-        CommandMenu.createMenu(menuItems).popUpIn(getBounds(stage));
+        CommandMenu.createMenu(menuItems).popUpAtMouse();
     }
 
     /** The container that holds our non-flex children. */

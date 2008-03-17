@@ -276,7 +276,7 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        CommandMenu.createMenu(menuData.reverse()).popUpIn(Application.application.screen);
+        CommandMenu.createMenu(menuData.reverse()).popUpAtMouse();
     }
 
     /**

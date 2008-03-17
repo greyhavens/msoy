@@ -123,7 +123,6 @@ public class RoomController extends SceneController
     private const log :Log = Log.getLog(RoomController);
 
     public static const EDIT_DOOR :String = "EditDoor";
-    public static const EDIT_CLICKED :String = "EditClicked";
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
     public static const PET_CLICKED :String = "PetClicked";
@@ -409,27 +408,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles EDIT_CLICKED.
-     */
-    public function handleEditClicked (sprite :MsoySprite) :void
-    {
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident == null || !(sprite is FurniSprite)) {
-            return; // only furni sprites can be edited
-        }
-
-        var furni :FurniSprite = sprite as FurniSprite;
-        var menuItems :Array = []; // this should be filled in as necessary
-
-        // pop up the menu where the mouse is
-        if (menuItems.length > 0) {
-            var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-            menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
-        }
-    }
-
-    /**
      * Handles FURNI_CLICKED.
      */
     public function handleFurniClicked (furni :FurniData) :void
@@ -594,7 +572,7 @@ public class RoomController extends SceneController
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
+            menu.popUpAtMouse();
 
 //            var menu :RadialMenu = new RadialMenu(100);
 //            menu.dataProvider = menuItems;
@@ -637,7 +615,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
             menu.setDispatcher(_roomView);
-            menu.popUpIn(_roomView.parent.getBounds(_roomView.stage));
+            menu.popUpAtMouse();
         }
     }
 
