@@ -27,6 +27,7 @@
 
 .profile .Profile .Detail {
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .profile .Friend, .profile .Group {
