@@ -24,6 +24,7 @@ import mx.validators.ValidationResult;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+import com.threerings.flex.PopUpUtil;
 
 public class PopupEditor extends TitleWindow
 {
@@ -83,7 +84,7 @@ public class PopupEditor extends TitleWindow
         }
 
         PopUpManager.addPopUp(this, parent, true);
-        PopUpManager.centerPopUp(this);
+        PopUpUtil.center(this);
     }
 
     protected function checkValid (event :ValidationResultEvent) :void

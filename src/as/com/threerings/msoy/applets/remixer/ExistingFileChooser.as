@@ -52,7 +52,10 @@ public class ExistingFileChooser extends TitleWindow
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
-        PopUpManager.centerPopUp(this);
+        // fuck centering, let's just be in the upper-left, since it resizes
+        // as each image is added
+        x = 0;
+        y = 0;
     }
 
     protected function addFile (grid :Grid, pack :EditableDataPack, filename :String) :void

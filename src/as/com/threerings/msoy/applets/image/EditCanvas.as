@@ -653,7 +653,7 @@ public class EditCanvas extends Canvas
 
     protected var _mode :int;
     protected var _color :uint;
-    protected var _brushSize :Number;
+    protected var _brushSize :Number = 1;
     protected var _forceCrop :Boolean = false;
 
     /** The maximum number of undos. */

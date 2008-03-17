@@ -30,6 +30,7 @@ import com.threerings.flash.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.PopUpUtil;
 
 import com.whirled.remix.data.EditableDataPack;
 
@@ -106,7 +107,7 @@ public class PopupFilePreview extends TitleWindow
         setImage(entry.value, ctx.pack.getFile(name));
 
         PopUpManager.addPopUp(this, parent, true);
-        PopUpManager.centerPopUp(this);
+        PopUpUtil.center(this);
     }
 
     public function setImage (filename :String, bytes :ByteArray) :void
@@ -127,6 +128,7 @@ public class PopupFilePreview extends TitleWindow
     {
         // append the size to the name label
         _label.text = _filename + " (" + event.value[0] + "x" + event.value[1] + ")";
+        callLater(PopUpUtil.center, [ this ]);
     }
 
     protected function close (save :Boolean) :void
