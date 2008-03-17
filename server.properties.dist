@@ -26,7 +26,7 @@ socket_policy_port = 47623
 #
 # The port on which the server listens for client and HTTP connections.
 
-# server_ports = 47624, 443
+server_ports = 47624
 http_port = 8080
 
 #
