@@ -46,33 +46,33 @@ public class RoundBox extends SmartTable
             setWidget(0, 0, _images.white_upper_left().createImage(), 1, "Corner");
             setWidget(0, 2, _images.white_upper_right().createImage(), 1, "Corner");
             setWidget(2, 0, _images.white_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 1, _images.white_lower_right().createImage(), 1, "Corner");
+            setWidget(2, 2, _images.white_lower_right().createImage(), 1, "Corner");
         } else if (color.equals(BLUE)) {
             setWidget(0, 0, _images.blue_upper_left().createImage(), 1, "Corner");
             setWidget(0, 2, _images.blue_upper_right().createImage(), 1, "Corner");
             setWidget(2, 0, _images.blue_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 1, _images.blue_lower_right().createImage(), 1, "Corner");
+            setWidget(2, 2, _images.blue_lower_right().createImage(), 1, "Corner");
         } else if (color.equals(DARK_BLUE)) {
             setWidget(0, 0, _images.darkblue_upper_left().createImage(), 1, "Corner");
             setWidget(0, 2, _images.darkblue_upper_right().createImage(), 1, "Corner");
             setWidget(2, 0, _images.darkblue_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 1, _images.darkblue_lower_right().createImage(), 1, "Corner");
+            setWidget(2, 2, _images.darkblue_lower_right().createImage(), 1, "Corner");
         }
 
-        setWidget(0, 1, _contents = new FlowPanel(), 1, "Center");
-        getFlexCellFormatter().addStyleName(0, 1, color + "Center");
-        getFlexCellFormatter().setRowSpan(0, 1, 3);
+        setWidget(1, 1, _contents = new FlowPanel(), 1, "Center");
+        getFlexCellFormatter().addStyleName(1, 1, color + "Center");
 
-        setHTML(1, 0, "&nbsp;");
         getFlexCellFormatter().setStyleName(1, 0, color + "Side");
-        setHTML(1, 1, "&nbsp;");
-        getFlexCellFormatter().setStyleName(1, 1, color + "Side");
+        getFlexCellFormatter().setStyleName(1, 2, color + "Side");
+
+        getFlexCellFormatter().setStyleName(0, 1, color + "Center");
+        getFlexCellFormatter().setStyleName(2, 1, color + "Center");
     }
 
     public void setHorizontalAlignment (
         HasHorizontalAlignment.HorizontalAlignmentConstant horizAlign)
     {
-        getFlexCellFormatter().setHorizontalAlignment(0, 1, horizAlign);
+        getFlexCellFormatter().setHorizontalAlignment(1, 1, horizAlign);
     }
 
     public void add (Widget widget)

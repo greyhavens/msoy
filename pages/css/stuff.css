@@ -43,6 +43,7 @@
 }
 
 .itemPanel .Upload .Pitch {
+  background-image: none;
   padding-left: 20px;
   font-size: 14px;
 }

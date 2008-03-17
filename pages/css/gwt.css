@@ -418,7 +418,7 @@ img, embed, applet, object {
 }
 
 .roundBox .Center {
-  padding: 10px 0px;
+  padding: 0px 0px 0px 0px;
 }
 
 .roundBox .WhiteCenter, .roundBox .WhiteSide {
@@ -1043,6 +1043,7 @@ img, embed, applet, object {
 }
 
 .stuffNaviBar .Label {
+  background-image: none;
   text-align: center;
   font-weight: bold;
   color: #FFFFFF;
