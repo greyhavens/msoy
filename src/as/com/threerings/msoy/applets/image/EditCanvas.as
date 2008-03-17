@@ -159,7 +159,7 @@ public class EditCanvas extends Canvas
     public function doRedo () :void
     {
         var layer :Shape = _redoStack.pop() as Shape;
-        _paintLayer.addChildAt(layer, _undoStack.numChildren - 1);
+        _paintLayer.addChildAt(layer, _paintLayer.numChildren - 1);
         _undoStack.push(layer);
         fireUndoRedoChange();
     }
@@ -222,6 +222,9 @@ public class EditCanvas extends Canvas
         _width = 0;
         _height = 0;
         _paintPoint = null;
+        setScale(1);
+        setZoom(1);
+        setRotation(0);
 
         // remove all paint layers
         for each (var layer :Shape in _undoStack) {
@@ -362,8 +365,10 @@ public class EditCanvas extends Canvas
 
     public function setScale (scale :Number) :void
     {
+        _scale = scale;
         _scaleLayer.scaleX = scale;
         _scaleLayer.scaleY = scale;
+        updateBrush();
     }
 
     protected function sizeKnown (width :Number, height :Number) :void
@@ -442,7 +447,7 @@ public class EditCanvas extends Canvas
         var g :Graphics = _brush.graphics;
         g.clear();
         g.beginFill(_color);
-        g.drawCircle(0, 0, _brushSize/2);
+        g.drawCircle(0, 0, (_brushSize/2) / _scale);
         g.endFill();
     }
 
@@ -487,7 +492,7 @@ public class EditCanvas extends Canvas
     {
         var g :Graphics = _curPaint.graphics;
         if (_paintPoint != null) {
-            g.lineStyle(_brushSize, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.ROUND,
+            g.lineStyle(_brushSize / _scale, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.ROUND,
                 JointStyle.ROUND);
             g.moveTo(_paintPoint.x, _paintPoint.y);
             _paintPoint = null;
@@ -505,7 +510,7 @@ public class EditCanvas extends Canvas
             // there was never any line drawn, so we just stamp the brush
             var g :Graphics = _curPaint.graphics;
             g.beginFill(_color);
-            g.drawCircle(event.localX, event.localY, _brushSize/2);
+            g.drawCircle(event.localX, event.localY, (_brushSize/2) / _scale);
             g.endFill();
             _paintPoint = null;
         }
@@ -643,6 +648,8 @@ public class EditCanvas extends Canvas
 
     protected var _width :int;
     protected var _height :int;
+
+    protected var _scale :Number = 1;
 
     protected var _mode :int;
     protected var _color :uint;
