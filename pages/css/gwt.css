@@ -319,7 +319,7 @@ img, embed, applet, object {
 
 /** Page styles */
 .pageTitle {
-  background: #000000 url(/images/header/titlebar.png) no-repeat bottom;
+  background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
 }
 
 .pageTitle .SubNavi {
