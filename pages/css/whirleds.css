@@ -62,7 +62,7 @@
 
 /* GroupList specific formattting */
 .galaxy {
-  width: 685px;
+  width: 683px;
 }
 
 .galaxy .Title, .galaxy .FeaturedWhirled .Name {
@@ -87,22 +87,9 @@
   color: #FFFFFF;
 }
 
-.galaxy .Features .FeaturedWhirled div {
-  text-align: center;
-}
-
 .galaxy .Features .FeaturedWhirled .Title {
   height: 25px;
   padding-top: 5px;
-}
-
-.galaxy .Features .FeaturedWhirled table {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.galaxy .Features .FeaturedWhirled .Flash {
-  padding-left: 55px;
 }
 
 .galaxy .Features .FeaturedWhirled .Name {
