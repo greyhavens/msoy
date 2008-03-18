@@ -114,20 +114,12 @@
   height: 17px;
 }
 
-.friendsPanel, .friendsPanel .roundBox {
-  width: 100%;
-}
-
 .friendsPanel .Grid {
   border-bottom: 1px solid #DADADA;
 }
 
 .searchControls {
   font-size: 14px;
-}
-
-.searchPanel, .searchPanel .roundBox {
-  width: 100%;
 }
 
 .sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {
