@@ -6,7 +6,6 @@ package client.util;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,7 +18,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
@@ -268,37 +266,6 @@ public class MsoyUI
         Image image = new Image(path);
         image.setStyleName("inline");
         return image;
-    }
-
-    /**
-     * Creates a box with a rounded header. Additional bits can be added as long as they are
-     * colspan 3.
-     */
-    public static SmartTable createHeaderBox (String icon, String title)
-    {
-        SmartTable box = new SmartTable("headerBox", 0, 0);
-        box.setWidget(0, 0, new Image("/images/ui/box/header_left.png"), 1, "Corner");
-        if (icon != null) {
-            FlowPanel tbox = new FlowPanel();
-            tbox.add(new Image(icon));
-            tbox.add(new Label(title));
-            box.setWidget(0, 1, tbox, 1, "Title");
-        } else {
-            box.setText(0, 1, title, 1, "Title");
-        }
-        box.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-        box.setWidget(0, 2, new Image("/images/ui/box/header_right.png"), 1, "Corner");
-        return box;
-    }
-
-    /**
-     * Creates a box with a rounded header.
-     */
-    public static SmartTable createHeaderBox (String icon, String title, Widget contents)
-    {
-        SmartTable box = createHeaderBox(icon, title);
-        box.addWidget(contents, 3, "Contents");
-        return box;
     }
 
     /**

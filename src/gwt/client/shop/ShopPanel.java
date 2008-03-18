@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -20,6 +21,7 @@ import com.threerings.msoy.web.data.ShopData;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.HeaderBox;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
@@ -82,17 +84,16 @@ public class ShopPanel extends HorizontalPanel
         _contents.add(boxes);
     }
 
-    protected SmartTable createTop (String icon, String title, ListingCard[] listings)
+    protected Widget createTop (String icon, String title, ListingCard[] listings)
     {
-        SmartTable box = MsoyUI.createHeaderBox("/images/shop/icon_" + icon + ".png", title);
+        HeaderBox box = new HeaderBox("/images/shop/icon_" + icon + ".png", title);
         for (int ii = 0; ii < listings.length; ii++) {
-            box.addWidget(new TopListingBox(ii+1, listings[ii]), 3, "Contents");
+            box.add(new TopListingBox(ii+1, listings[ii]));
         }
-        RoundBox.makeRoundBottom(box);
-        return box;
+        return box.makeRoundBottom();
     }
 
-    protected SmartTable createFeatured (String icon, String title, ListingCard card)
+    protected Widget createFeatured (String icon, String title, ListingCard card)
     {
         FlowPanel left = new FlowPanel();
         left.add(MsoyUI.createLabel(card.name, "Name"));
@@ -115,10 +116,8 @@ public class ShopPanel extends HorizontalPanel
         contents.setWidget(2, 0, new PriceLabel(card.flowCost, card.goldCost));
         contents.setWidget(2, 1, new Stars(card.rating, true, false, null));
 
-        SmartTable box = MsoyUI.createHeaderBox(
-            "/images/shop/icon_" + icon + ".png", title, contents);
-        RoundBox.makeRoundBottom(box);
-        return box;
+        String ipath = "/images/shop/icon_" + icon + ".png";
+        return new HeaderBox(ipath, title, contents).makeRoundBottom();
     }
 
     protected static ClickListener makeClick (ListingCard card)

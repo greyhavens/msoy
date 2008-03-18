@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.shell.Args;
+import client.util.HeaderBox;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 public class SearchPanel extends VerticalPanel
 {
@@ -64,7 +64,7 @@ public class SearchPanel extends VerticalPanel
     {
         _searchString = search;
         _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));
-        add(MsoyUI.createHeaderBox(null, CPeople.msgs.searchResultsTitle(search), _members));
+        add(new HeaderBox(CPeople.msgs.searchResultsTitle(search), _members));
         _members.setModel(new SimpleDataModel(cards), page);
     }
 

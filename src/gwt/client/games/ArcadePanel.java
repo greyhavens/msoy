@@ -20,9 +20,9 @@ import com.threerings.msoy.web.data.GameInfo;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.HeaderBox;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Main game display.
@@ -55,10 +55,9 @@ public class ArcadePanel extends VerticalPanel
 
         for (int ii = 0; ii < data.genres.size(); ii++) {
             ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
-            Widget gbox = MsoyUI.createHeaderBox("/images/game/genre/" + genre.genre + ".png",
-                                                 CGames.dmsgs.getString("genre" + genre.genre),
-                                                 new GenreSummaryPanel(genre));
-            grid.setWidget(ii/3, ii%3, gbox);
+            grid.setWidget(ii/3, ii%3, new HeaderBox("/images/game/genre/" + genre.genre + ".png",
+                                                     CGames.dmsgs.getString("genre" + genre.genre),
+                                                     new GenreSummaryPanel(genre)));
         }
     }
 

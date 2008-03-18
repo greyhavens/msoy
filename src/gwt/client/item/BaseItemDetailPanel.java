@@ -7,9 +7,11 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -29,6 +31,7 @@ import client.shell.Page;
 import client.shop.CShop;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
+import client.util.HeaderBox;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -50,11 +53,16 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _detail = detail;
         _item = detail.item;
 
-        SmartTable bits = MsoyUI.createHeaderBox(null, _item.name);
+        HeaderBox bits = new HeaderBox(null, _item.name);
         bits.addStyleName("Box");
-        bits.addWidget(createPreview(_item), 3, "Preview");
+        SimplePanel preview = new SimplePanel();
+        preview.setStyleName("Preview");
+        preview.setWidget(createPreview(_item));
+        bits.add(preview);
         if (_item.isRatable()) {
-            bits.addWidget(new ItemRating(_detail.item, _detail.memberRating, true), 3, "Rating");
+            ItemRating rating = new ItemRating(_detail.item, _detail.memberRating, true);
+            rating.addStyleName("Rating");
+            bits.add(rating);
         }
         setWidget(0, 0, bits);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
