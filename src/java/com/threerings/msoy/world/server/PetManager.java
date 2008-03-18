@@ -239,7 +239,6 @@ public class PetManager
         listener.requestProcessed();
     }
 
-
     /**
      * Called after {@link #loadRoomPets} has loaded our persistent pet data to finish the job of
      * pet resolution.

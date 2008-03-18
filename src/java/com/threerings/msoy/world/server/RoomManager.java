@@ -956,7 +956,7 @@ public class RoomManager extends SpotSceneManager
             public boolean invoke () {
                 try {
                     _mems = MsoyServer.memoryRepo.loadMemories(idents);
-                    return true;
+                    return !_mems.isEmpty();
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to load memories [where=" + where() +
                             ", ids=" + idents + "].", pe);
@@ -982,7 +982,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Flush any modified memories contained within the specified Iterable.
      */
-    protected void flushMemories (Iterable<EntityMemoryEntry> entries)
+    public static void flushMemories (Iterable<EntityMemoryEntry> entries)
     {
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
         for (EntityMemoryEntry entry : entries) {
@@ -996,8 +996,8 @@ public class RoomManager extends SpotSceneManager
                     try {
                         MsoyServer.memoryRepo.storeMemories(memrecs);
                     } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
-                                ", memrecs=" + memrecs + "].", pe);
+                        log.log(Level.WARNING, "Failed to update memories [" +
+                                "memrecs=" + memrecs + "].", pe);
                     }
                     return false;
                 }

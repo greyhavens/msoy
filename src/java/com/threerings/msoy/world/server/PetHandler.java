@@ -51,7 +51,7 @@ public class PetHandler
         if (!roomDidShutdown && _roomObj != null) {
             // we need to leave the room (and extract our memory from it)
             List<EntityMemoryEntry> memories = leaveRoom();
-            // TODO: save any modified memory entries
+            RoomManager.flushMemories(memories);
         }
 
         // finally, destroy our pet object
@@ -115,7 +115,7 @@ public class PetHandler
         try {
             _roomObj.startTransaction();
             for (EntityMemoryEntry entry : memories) {
-                _roomObj.removeFromMemories(entry.getKey());
+                _roomObj.removeFromMemories(entry.getRemoveKey());
             }
         } finally {
             _roomObj.commitTransaction();
