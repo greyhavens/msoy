@@ -324,9 +324,14 @@ img, embed, applet, object {
 /** Page styles */
 .pageTitle {
   background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
+  width: 700px;
 }
 
-.pageTitle .SubNavi {
+.pageTitle .TextBar { 
+  width: 100%;
+}
+
+.pageTitle .TextBar .SubNavi {
   font-size: 12px;
   color: white;
   white-space: nowrap;
@@ -335,28 +340,30 @@ img, embed, applet, object {
   padding: 0px 15px 5px 0px;
 }
 
-.pageTitle .SubNavi a {
+.pageTitle .TextBar .SubNavi a {
   color: white;
 }
 
-.pageTitle .SubNavi img {
+.pageTitle .TextBar .SubNavi img {
   display: inline;
   vertical-align: bottom;
 }
 
-.pageTitle .SubNavi .gwt-HTML {
+.pageTitle .TextBar .SubNavi .gwt-HTML {
   display: inline;
 }
 
-.pageTitle .Title {
+.pageTitle .TextBar .Title {
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
-  height: 34px;
+  height: 30px;
+  width: 100%;
   color: white;
   padding: 0px 0px 0px 15px;
   white-space: nowrap;
-  opacity: 0.6;
+  opacity: 0.6;             /* Firefox and Safari */
+  filter:alpha(opacity=60); /* IE */
 }
 
 .pageDialog {

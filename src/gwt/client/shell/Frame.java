@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
@@ -455,26 +456,32 @@ public class Frame
         }
     }
 
-    protected static class TitleBar extends SmartTable
+    protected static class TitleBar extends SmartGrid
     {
         public TitleBar (String pageId, String title, Widget subnavi) {
-            super("pageTitle", 0, 0);
+            super(2, 1, "pageTitle", 0, 0);
 
-            setWidget(0, 0, createImage(pageId), 3, null);
-            setText(1, 0, _deftitle = title, 1, "Title");
-            setWidget(1, 1, subnavi, 1, "SubNavi");
+            // image that links with tabs
+            setWidget(0, 0, createImage(pageId), null);
+            
+            // now create title bar test
+            _textbox = new SmartGrid(1, 3);
+            _textbox.setText(0, 0, _deftitle = title, "Title");
+            _textbox.setWidget(0, 1, subnavi, "SubNavi");
 
             _closeBox = MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
             });
-            setWidget(1, 2, _closeBox, 1, "Close");
+            _textbox.setWidget(0, 2, _closeBox, "Close");
+            setWidget(1, 0, _textbox, "TextBar");
+
             setCloseVisible(false);
         }
 
         public void setTitle (String title) {
-            setText(1, 0, title == null ? _deftitle : title);
+            _textbox.setText(0, 0, title == null ? _deftitle : title);
         }
 
         public void setCloseVisible (boolean visible) {
@@ -490,6 +497,7 @@ public class Frame
 
         protected String _deftitle;
         protected Widget _closeBox;
+        protected SmartGrid _textbox;
     }
 
     protected static class Header extends SmartTable
