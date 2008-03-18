@@ -156,23 +156,26 @@
 }
 
 .galaxy .Create {
-  background: url(/images/item/upload_bg.png) no-repeat top;
+  background: url(/images/item/upload_bg.png) no-repeat top left;
   margin-left: 10px;
   width: 655px;
   height: 89px;
 }
 
 .galaxy .Create .Header {
-  height: 40px;
+  height: 28px;
   color: #FFFFFF;
   font-weight: bold;
-  padding: 2px 0px 0px 65px;
+  padding: 12px 0px 0px 65px;
+  background: none;
+  vertical-align: top;
 }
 
 .galaxy .Create .Pitch {
   padding-left: 20px;
   font-size: 14px;
   color: #2E729F;
+  background: none;
 }
 
 .galaxy .Create .Button {
