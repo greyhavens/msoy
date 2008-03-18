@@ -83,7 +83,8 @@
 
 .shopPanel .TopListingBox {
   font-size: 12px;
-  margin: 10px 10px 0px 10px;
+  border-top: solid 10px white;
+  margin: 0px 10px;
   width: 150px;
 }
 
@@ -106,7 +107,8 @@
 
 .shopPanel .FeatListingBox {
   font-size: 12px;
-  margin: 10px 10px 0px 10px;
+  border-top: solid 10px white;
+  margin: 0px 10px;
 }
 
 .shopPanel .FeatListingBox .Name {
