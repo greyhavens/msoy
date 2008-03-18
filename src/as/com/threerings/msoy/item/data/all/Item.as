@@ -56,7 +56,8 @@ public /*abstract*/ class Item
     /** A 'used' constant value to indicate that the item is used as an avatar. */
     public static const USED_AS_AVATAR :int = 2;
 
-    /** A 'used' constant value to indicate that the item is used as a pet let out in a room. */
+    /** A 'used' constant value to indicate that the item is used as a pet let out in a room.
+     * The 'location' field will contain the sceneId. */
     public static const USED_AS_PET :int = 3;
 
     /** A 'used' constant value to indicate that the item is used in a scene as background

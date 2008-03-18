@@ -69,7 +69,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** A 'used' constant value to indicate that the item is used as an avatar. */
     public static final byte USED_AS_AVATAR = (byte) 2;
 
-    /** A 'used' constant value to indicate that the item is used as a pet let out in a room. */
+    /** A 'used' constant value to indicate that the item is used as a pet let out in a room.
+     * The 'location' field will contain the sceneId. */
     public static final byte USED_AS_PET = (byte) 3;
 
     /** A 'used' constant value to indicate that the item is used in a scene as background

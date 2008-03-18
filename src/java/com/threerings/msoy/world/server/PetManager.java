@@ -255,7 +255,7 @@ public class PetManager
 
             // create a handler for this pet and start them in this room
             PetHandler handler = new PetHandler(this, pet);
-            handler.enterRoom(sceneId, roomObj, memories.get(pet.itemId));
+            handler.enterRoom(sceneId, roomObj, memories.get(pet.itemId), false);
         }
     }
 

@@ -6,14 +6,21 @@ package com.threerings.msoy.world.server;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.data.PlaceConfig;
+
 import com.threerings.whirled.client.SceneMoveAdapter;
+import com.threerings.whirled.data.SceneModel;
+import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
@@ -62,7 +69,9 @@ public class PetHandler
      * Enters the pet into the supplied room. The supplied memory should come from having loaded
      * the pet for the first time or from extracting it from the room the pet just left.
      */
-    public void enterRoom (final int sceneId, RoomObject roomObj, List<EntityMemoryEntry> memories)
+    public void enterRoom (
+        final int sceneId, RoomObject roomObj, List<EntityMemoryEntry> memories,
+        final boolean updateUsage)
     {
         log.info("Entering room [pet=" + _petobj.pet.getIdent() +
                  ", room=" + roomObj.getOid() + "].");
@@ -86,6 +95,25 @@ public class PetHandler
                 log.warning("Pet failed to enter scene [pet=" + _petobj.pet + ", scene=" + sceneId +
                             ", reason=" + reason + "].");
                 // TODO: shutdown? freakout? call the Elite Beat Agents?
+            }
+
+            public void moveSucceeded (int placeId, PlaceConfig config) {
+                updateUsage();
+            }
+
+            public void moveSucceededWithUpdates (
+                int placeId, PlaceConfig config, SceneUpdate[] updates) {
+                updateUsage();
+            }
+
+            public void moveSucceededWithScene (int placeId, PlaceConfig config, SceneModel model) {
+                updateUsage();
+            }
+
+            protected void updateUsage () {
+                if (updateUsage) {
+                    PetHandler.this.updateUsage(Item.USED_AS_PET, sceneId);
+                }
             }
         });
     }
@@ -165,7 +193,7 @@ public class PetHandler
         _petobj.setFollowId(owner.getMemberId());
 
         // head to our destination
-        enterRoom(owner.getSceneId(), (RoomObject)dobj, memory);
+        enterRoom(owner.getSceneId(), (RoomObject)dobj, memory, true);
     }
 
     /**
@@ -178,6 +206,7 @@ public class PetHandler
 
         switch (order) {
         case Pet.ORDER_SLEEP:
+            updateUsage(Item.UNUSED, 0);
             shutdown(false);
             break;
 
@@ -200,6 +229,26 @@ public class PetHandler
                         ", ownerId=" + _petobj.pet.ownerId + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * Update the marked usage and location of the pet we handle.
+     */
+    protected void updateUsage (final byte usageType, final int location)
+    {
+        final int itemId = _petobj.pet.itemId;
+        MsoyServer.invoker.postUnit(new Invoker.Unit("updatePetUsage(" + itemId + ")") {
+            public boolean invoke () {
+                try {
+                    MsoyServer.itemMan.getPetRepository().markItemUsage(
+                        new int[] { itemId }, usageType, location);
+                } catch (Exception e) {
+                    log.warning("Unable to update pet usage [petId=" + itemId +
+                        ", cause=" + e + "].");
+                }
+                return false;
+            }
+        });
     }
 
     protected PetManager _petmgr;
