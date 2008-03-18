@@ -264,7 +264,6 @@ public class Frame
 
         // note that this is our current content
         _contlist = new FlowPanel();
-        _contlist.setWidth("100%");
         _contlist.setHeight("100%");
         _contlist.add(pageContent);
 
