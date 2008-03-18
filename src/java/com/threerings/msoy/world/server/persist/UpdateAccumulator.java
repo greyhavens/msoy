@@ -71,9 +71,6 @@ public class UpdateAccumulator
         } else {
             wrapper.accumulate((ModifyFurniUpdate)update);
         }
-
-        // TODO: remove this logging after we've tested lots
-        log.info("Accumulating update " + update + ".");
     }
 
     // from interface MsoyServer.Shutdowner
