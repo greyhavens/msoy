@@ -836,8 +836,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         MsoyGameServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
             public boolean invoke () {
                 UserActionDetails action = new UserActionDetails(
-                        record.memberId, UserAction.PLAYED_GAME, 
-                        _content.game.getType(), _content.game.itemId);
+                        record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
+                        _content.game.getType(), _content.game.itemId, details);
                 try {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(action, record.awarded);
                     MsoyGameServer.gameReg.gamePayout(
