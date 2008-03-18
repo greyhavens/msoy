@@ -138,6 +138,14 @@ public class ImageChooserPopup extends VerticalPanel
             setWidget(0, 0, _preview = new SimplePanel(), 2, "Preview");
             setWidget(1, 0, new MediaUploader(mediaId, new MediaUploader.Listener() {
                 public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+                    // photos must be images because they are used as headshots in games
+                    // and we don't want any SWF running other than the game.
+                    if (!desc.isImage()) {
+                        _upload.setEnabled(false);
+                        _preview.setWidget(null);
+                        MsoyUI.error(CShell.emsgs.errPhotoNotImage());
+                        return;
+                    }
                     _media = desc;
                     _upload.setEnabled(true);
                     int size = thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;

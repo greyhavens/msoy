@@ -38,8 +38,8 @@ public class PhotoEditor extends ItemEditor
 
         addRow(CShell.emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
-                    return CShell.emsgs.errPhotoNotFlash();
+                if (!desc.isImage()) {
+                    return CShell.emsgs.errPhotoNotImage();
                 }
                 _photo.photoMedia = desc;
                 _photo.photoWidth = width;
