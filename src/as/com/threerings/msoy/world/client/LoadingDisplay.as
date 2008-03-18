@@ -24,6 +24,9 @@ public class LoadingDisplay extends Sprite
     {
         _box = box;
 
+        x = 10;
+        y = 10;
+
         _spinner = DisplayObject(new SPINNER());
         _spinner.scaleX = .25;
         _spinner.scaleY = .25;
