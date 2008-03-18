@@ -64,7 +64,6 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberObject;
@@ -102,7 +101,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  */
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, MessageListener,
-               ChatDisplay, ChatInfoProvider, LoadingWatcher
+               ChatDisplay, ChatInfoProvider
 {
     /**
      * Create a roomview.
@@ -112,9 +111,6 @@ public class RoomView extends AbstractRoomView
         super(ctx);
         _ctrl = ctrl;
         _chatOverlay = new ComicOverlay(ctx);
-
-        _loadingSpinner = DisplayObject(new LOADING_SPINNER());
-        FurniSprite.setLoadingWatcher(this);
 
         // listen for preferences changes, update zoom
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
@@ -293,25 +289,6 @@ public class RoomView extends AbstractRoomView
             return avatar.getLocation();
         } else {
             return new MsoyLocation(-1, -1, -1);
-        }
-    }
-
-    // from LoadingWatcher
-    public function setLoading (loading :Boolean, loadingDecor :Boolean) :void
-    {
-        var box :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
-        if (loading != (_loadingSpinner.parent != null)) {
-            if (loading) {
-                box.addOverlay(_loadingSpinner, PlaceBox.LAYER_ROOM_SPINNER);
-            } else {
-                box.removeOverlay(_loadingSpinner);
-            }
-        }
-
-        if (loading) {
-            var scale :Number = loadingDecor ? 1 : .25;
-            _loadingSpinner.scaleX = scale;
-            _loadingSpinner.scaleY = scale;
         }
     }
 
@@ -548,6 +525,7 @@ public class RoomView extends AbstractRoomView
     {
         // set load-all to false, as we're going to just load the decor item first.
         _loadAllMedia = false;
+        FurniSprite.setLoadingWatcher(new LoadingDisplay(_ctx.getTopPanel().getPlaceContainer()));
 
         super.willEnterPlace(plobj);
 
@@ -594,7 +572,7 @@ public class RoomView extends AbstractRoomView
 
         recheckChatOverlay();
 
-        setLoading(false, false);
+        FurniSprite.setLoadingWatcher(null);
     }
 
     // from AbstractRoomView
@@ -1166,8 +1144,5 @@ public class RoomView extends AbstractRoomView
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
-
-    [Embed(source="../../../../../../../rsrc/media/loading.swf")]
-    protected static const LOADING_SPINNER :Class;
 }
 }

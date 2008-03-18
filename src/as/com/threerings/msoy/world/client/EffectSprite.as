@@ -68,11 +68,5 @@ public class EffectSprite extends FurniSprite
         mouseChildren = false;
         mouseEnabled = false;
     }
-
-    // from FurniSprite
-    override protected function isLoadingWatched () :Boolean
-    {
-        return false; // Effects are not watched.
-    }
 }
 }

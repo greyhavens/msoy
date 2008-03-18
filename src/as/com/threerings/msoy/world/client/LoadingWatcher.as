@@ -3,11 +3,13 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.LoaderInfo;
+
 public interface LoadingWatcher
 {
     /**
-     * Update whether we're loading or not.
+     * Called to hand us a tasty loaderinfo in which to sink our tendrils.
      */
-    function setLoading (loading :Boolean, loadingDecor :Boolean) :void;
+    function watchLoader (info :LoaderInfo, isDecor :Boolean = false) :void;
 }
 }
