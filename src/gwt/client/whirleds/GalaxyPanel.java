@@ -153,6 +153,7 @@ public class GalaxyPanel extends VerticalPanel
                 Widget link = Application.createLink(
                     tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
                 link.addStyleName("Link");
+                link.removeStyleName("inline");
                 _popularTags.add(link);
             }
         }
