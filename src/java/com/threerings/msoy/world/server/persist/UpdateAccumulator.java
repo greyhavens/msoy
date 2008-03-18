@@ -3,34 +3,33 @@
 
 package com.threerings.msoy.world.server.persist;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
+import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-import com.threerings.whirled.data.SceneUpdate;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Converts sequences of related scene updates into a single large update, which is then
+ * Converts sequences of furniture modification updates into a single large update, which is then
  * committed to the database.
  */
 public class UpdateAccumulator
     implements MsoyServer.Shutdowner
 {
-    // Current implementation of the accumulator only collapses ModifyFurniUpdate instances, since
-    // those happen frequently enough to demand optimization. SceneAttrUpdates are passed right
-    // through (and also cause the accumulated furni updates to get flushed).
-
     public UpdateAccumulator (MsoySceneRepository repo)
     {
         _repo = repo;
@@ -50,29 +49,31 @@ public class UpdateAccumulator
      * Adds a new update to the accumulator; if the update cannot be accumulated, we write out
      * whatever we had so far for this scene into the repository, followed by the new update.
      */
-    public void add (int sceneId, SceneUpdate update)
+    public void add (SceneUpdate update)
         throws PersistenceException
     {
-        // if this update doesn't support accumulation, flush whatever we've accumulated
-        // for this scene so far, and send the new update over as well.
-        if (! (update instanceof ModifyFurniUpdate)) {
-            commitUpdates(sceneId);
-            _repo.persistUpdate(sceneId, update);
+        int sceneId = update.getSceneId();
+        UpdateWrapper wrapper = _pending.get(sceneId);
+
+        // if we can't accumulate this update, just write it to the repository
+        if (!(update instanceof ModifyFurniUpdate)) {
+            _repo.persistUpdate(update);
+            // but let any accumulator know that the version just got incremented
+            if (wrapper != null) {
+                wrapper.note(update);
+            }
             return;
         }
 
-        // this update can be accumulated. let's save it.
-        UpdateWrapper acc = _pending.get(sceneId);
-        if (acc == null) {
-            // there's nothing pending - just add the new one to the map
-            _pending.put(sceneId, acc = new UpdateWrapper((ModifyFurniUpdate)update));
+        // if we can accumulate this update, pass it to the accumulator
+        if (wrapper == null) {
+            _pending.put(sceneId, new UpdateWrapper((ModifyFurniUpdate)update));
         } else {
-            // something is pending already. collapse the existing and the new update into one.
-            acc.accumulate((ModifyFurniUpdate)update);
+            wrapper.accumulate((ModifyFurniUpdate)update);
         }
 
         // TODO: remove this logging after we've tested lots
-        log.info("Accumulating updates for scene " + sceneId + ", version " + acc.targetVersion);
+        log.info("Accumulating update " + update + ".");
     }
 
     // from interface MsoyServer.Shutdowner
@@ -87,41 +88,21 @@ public class UpdateAccumulator
     }
 
     /**
-     * If any updates are being accumulated for this scene, force a repository write.
-     */
-    protected void commitUpdates (int sceneId)
-        throws PersistenceException
-    {
-        UpdateWrapper update = _pending.remove(sceneId);
-        if (update != null) {
-            persistUpdate(update);
-        }
-    }
-
-    /**
-     * Actually persist accumulated updates.
-     */
-    protected void persistUpdate (UpdateWrapper update)
-        throws PersistenceException
-    {
-        _repo.persistUpdate(update.targetId, update.unwrap());
-    }
-
-    /**
-     * Commits accumulated updates that are either old enough or contain enough modifications.
-     * This gets scheduled to run on the invoker thread.
+     * Commits accumulated updates that have been around long enough.  This is invoked on the
+     * invoker thread.
      */
     protected void checkAll (boolean forceFlushAll)
     {
+        long now = System.currentTimeMillis();
         for (Iterator<UpdateWrapper> itr = _pending.values().iterator(); itr.hasNext(); ) {
             UpdateWrapper update = itr.next();
-            if (forceFlushAll || update.isCommitDesired()) {
+            if (forceFlushAll || update.isCommitDesired(now)) {
                 itr.remove(); // go ahead and remove it, even if the persist fails
                 try {
-                    persistUpdate(update);
+                    _repo.persistUpdate(update.unwrap());
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to commit an accumulated update " +
-                        "[sceneId=" + update.targetId+ ", exception=" + pe + "]");
+                    log.warning("Failed to commit an accumulated update [sceneId=" + update +
+                                ", exception=" + pe + "]");
                 }
             }
         }
@@ -133,65 +114,48 @@ public class UpdateAccumulator
      */
     protected class UpdateWrapper
     {
-        /**
-         * Max delay, in milliseconds, between when an accumulated update was last modified, and
-         * when it should be commited.
-         */
-        public static final long TARGET_AGE = 10000;
-
-        /**
-         * Max number of updates that can be accumulated before a commit is triggered.
-         */
-        public static final int TARGET_COUNT = 10;
-
-        public int targetId;
-        public int targetVersion;
-        public ArrayList<FurniData> furniRemoved;
-        public ArrayList<FurniData> furniAdded;
-
-        public long lastUpdate;
-        public int modificationCount;
-
         public UpdateWrapper (ModifyFurniUpdate update)
         {
-            targetId = update.getSceneId();
-            targetVersion = update.getSceneVersion();
-            furniAdded = new ArrayList<FurniData>();
-            furniRemoved = new ArrayList<FurniData>();
-            lastUpdate = System.currentTimeMillis();
+            _targetId = update.getSceneId();
+            _targetVersion = update.getSceneVersion();
+            _versionIncrement = update.getVersionIncrement();
+            _furniAdded = Lists.newArrayList();
+            _furniRemoved = Lists.newArrayList();
+            _lastUpdate = System.currentTimeMillis();
 
             if (update.furniAdded != null) {
-                Collections.addAll(furniAdded, update.furniAdded);
+                Collections.addAll(_furniAdded, update.furniAdded);
             }
             if (update.furniRemoved != null) {
-                Collections.addAll(furniRemoved, update.furniRemoved);
+                Collections.addAll(_furniRemoved, update.furniRemoved);
             }
+        }
+
+        /**
+         * Accumulates the version increment for this update into our increment. We have to do this
+         * for all updates in between our starting update and our final update regardless of
+         * whether we accumulate those updates or not.
+         */
+        public void note (SceneUpdate update)
+        {
+            _versionIncrement += update.getVersionIncrement();
         }
 
         /**
          * Destructively merges the contents of the newer update into this accumulated update.
          */
-        protected void accumulate (ModifyFurniUpdate update)
+        public void accumulate (ModifyFurniUpdate update)
         {
-            if (targetVersion >= update.getSceneVersion()) {
-                log.warning("Merged update should have a higher version number! " +
-                    "[Got=" + update.getSceneVersion() + ", expected>=" + targetVersion + "].");
-                return;
-            }
-
-            // vector of item ids to be removed from the accumulator, and not copied over from
-            // update
-            ArrayList<FurniData> redundantAdditions = new ArrayList<FurniData>();
-            ArrayList<FurniData> redundantRemovals = new ArrayList<FurniData>();
-
-            // update version
-            targetVersion = update.getSceneVersion();
+            // update our version increment to account for this update
+            note(update);
 
             // find and mark any items that were being added before, but are now getting removed.
-            // this pair of actions is redundant, and we get rid of them both.
+            // this pair of actions is redundant, and we get rid of them both
+            List<FurniData> redundantAdditions = Lists.newArrayList();
+            List<FurniData> redundantRemovals = Lists.newArrayList();
             if (update.furniRemoved != null) {
                 for (FurniData removed : update.furniRemoved) {
-                    for (FurniData added : furniAdded) {
+                    for (FurniData added : _furniAdded) {
                         if (removed.getItemIdent().equals(added.getItemIdent())) {
                             // remember it for later removal, after we're done iterating
                             redundantAdditions.add(added);
@@ -202,43 +166,64 @@ public class UpdateAccumulator
             }
 
             // remove any redundant additions from the accumulator
-            furniAdded.removeAll(redundantAdditions);
+            _furniAdded.removeAll(redundantAdditions);
 
             // copy from the update into this accumulator, ignoring redundant removals
             if (update.furniAdded != null) {
-                Collections.addAll(furniAdded, update.furniAdded);
+                Collections.addAll(_furniAdded, update.furniAdded);
             }
             if (update.furniRemoved != null) {
                 for (FurniData removed : update.furniRemoved) {
-                    if (! redundantRemovals.contains(removed)) {
-                        furniRemoved.add(removed);
+                    if (!redundantRemovals.contains(removed)) {
+                        _furniRemoved.add(removed);
                     }
                 }
             }
 
-            lastUpdate = System.currentTimeMillis();
-            modificationCount++;
+            _lastUpdate = System.currentTimeMillis();
         }
 
-        /** Returns true if the update hasn't been modified in a while, or has been changed more
-         *  than the desired number of times. */
-        public boolean isCommitDesired ()
+        /** Returns true if the update hasn't been modified in sufficiently long that we should
+         * write it to the database. */
+        public boolean isCommitDesired (long now)
         {
-            return (lastUpdate + TARGET_AGE < System.currentTimeMillis() ||
-                    modificationCount >= TARGET_COUNT);
+            return (_lastUpdate + TARGET_AGE < now);
         }
 
         /** Create a real update object from this wrapper. */
         public ModifyFurniUpdate unwrap ()
         {
-            ModifyFurniUpdate update = new ModifyFurniUpdate();
-            update.initialize(targetId, targetVersion,
-                              new FurniData[furniRemoved.size()],
-                              new FurniData[furniAdded.size()]);
-            furniRemoved.toArray(update.furniRemoved);
-            furniAdded.toArray(update.furniAdded);
+            ModifyFurniUpdate update = new ModifyFurniUpdate() {
+                public int getVersionIncrement () {
+                    return _versionIncrement;
+                }
+            };
+            update.initialize(_targetId, _targetVersion,
+                              _furniRemoved.toArray(new FurniData[_furniRemoved.size()]),
+                              _furniAdded.toArray(new FurniData[_furniAdded.size()]));
             return update;
         }
+
+        @Override // from Object
+        public String toString ()
+        {
+            return "[tid=" + _targetId + ", tvers=" + _targetVersion +
+                ", vinc=" + _versionIncrement + ", removed=" + _furniRemoved.size() +
+                ", added=" + _furniAdded.size() + "]";
+        }
+
+        protected int _targetId;
+        protected int _targetVersion;
+        protected int _versionIncrement;
+
+        protected List<FurniData> _furniRemoved;
+        protected List<FurniData> _furniAdded;
+
+        protected long _lastUpdate;
+
+        /** Max delay, in milliseconds, between when an accumulated update was last modified, and
+         * when it should be commited. */
+        protected static final long TARGET_AGE = 10000;
     }
 
     /**

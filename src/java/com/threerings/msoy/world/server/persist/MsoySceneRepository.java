@@ -140,14 +140,13 @@ public class MsoySceneRepository extends DepotRepository
         throws PersistenceException
     {
         // ensure that the update has been applied
-        if (model.version != update.getSceneVersion() + 1) {
+        if (model.version != update.getSceneVersion() + update.getVersionIncrement()) {
             log.warning("Refusing to apply update " + update +
                         ", wrong version " + model.version + ".");
             return;
         }
-
-        // push the update to the accumulator, it will eventually be saved.
-        _accumulator.add(model.sceneId, update);
+        // now pass it to the accumulator who will take it from here
+        _accumulator.add(update);
     }
 
     // from interface SceneRepository
@@ -215,51 +214,39 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Saves the specified update to the database.
      */
-    protected void persistUpdate (int sceneId, SceneUpdate update)
+    protected void persistUpdate (SceneUpdate update)
         throws PersistenceException
     {
         if (update instanceof ModifyFurniUpdate) {
-            applyFurniUpdate(sceneId, (ModifyFurniUpdate) update);
-
+            applyFurniUpdate((ModifyFurniUpdate) update);
         } else if (update instanceof SceneAttrsUpdate) {
-            applySceneAttrsUpdate(sceneId, (SceneAttrsUpdate) update);
-
+            applySceneAttrsUpdate((SceneAttrsUpdate) update);
         } else {
-            log.warning(
-                "Requested to apply unknown update to scene repo [update=" + update + "].");
+            log.warning("Requested to apply unknown update " + update + ".");
         }
 
         // update the scene version (which will already be the new version because the update has
         // been applied)
-        int newversion = update.getSceneVersion() + 1;
-        updateVersion(sceneId, newversion);
-        log.info("Updated version of " + sceneId + " to " + newversion + ".");
-    }
-
-    /**
-     * Updates the version of the specified scene in the database.
-     */
-    protected void updateVersion (int sceneId, int version)
-        throws PersistenceException
-    {
-        updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, version);
+        int newVersion = update.getSceneVersion() + update.getVersionIncrement();
+        updatePartial(SceneRecord.class, update.getSceneId(), SceneRecord.VERSION, newVersion);
+        log.info("Updated version of " + update.getSceneId() + " to " + newVersion + ".");
     }
 
     /**
      * Apply a furniture changing update.
      */
-    protected void applyFurniUpdate (int sceneId, ModifyFurniUpdate update)
+    protected void applyFurniUpdate (ModifyFurniUpdate update)
         throws PersistenceException
     {
         if (update.furniRemoved != null) {
             for (FurniData data : update.furniRemoved) {
                 delete(SceneFurniRecord.class,
-                       SceneFurniRecord.getKey(sceneId, data.id));
+                       SceneFurniRecord.getKey(update.getSceneId(), data.id));
             }
         }
         if (update.furniAdded != null) {
             for (FurniData data : update.furniAdded) {
-                insert(new SceneFurniRecord(sceneId, data));
+                insert(new SceneFurniRecord(update.getSceneId(), data));
             }
         }
     }
@@ -267,11 +254,11 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Apply an update that changes the basic scene attributes.
      */
-    protected void applySceneAttrsUpdate (int sceneId, SceneAttrsUpdate update)
+    protected void applySceneAttrsUpdate (SceneAttrsUpdate update)
         throws PersistenceException
     {
         updatePartial(
-            SceneRecord.class, sceneId,
+            SceneRecord.class, update.getSceneId(),
             SceneRecord.NAME, update.name,
             SceneRecord.ACCESS_CONTROL, update.accessControl,
             SceneRecord.DECOR_ID, update.decor.itemId,
