@@ -234,6 +234,10 @@ img, embed, applet, object {
   height: 50px;
 }
 
+.frameHeader .Logo .gwt-Image { 
+  width: 126px;
+}
+
 .frameHeader .NaviButton {
   height: 32px;
   margin-left: 0px;
