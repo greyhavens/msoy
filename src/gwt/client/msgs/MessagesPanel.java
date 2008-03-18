@@ -5,11 +5,13 @@ package client.msgs;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,6 +25,9 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
+import client.images.msgs.MsgsImages;
+import client.shell.Application;
+import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyCallback;
@@ -137,6 +142,14 @@ public class MessagesPanel extends PagedGrid
         };
     }
 
+    protected static Widget makeInfoImage (
+        AbstractImagePrototype iproto, String tip, ClickListener onClick)
+    {
+        Widget image = MsoyUI.makeActionImage(iproto.createImage(), tip, onClick);
+        image.addStyleName("ActionIcon");
+        return image;
+    }
+
     protected static InlineLabel makeInfoLabel (String text, ClickListener listener)
     {
         InlineLabel label = new InlineLabel(text, false, true, false);
@@ -176,12 +189,14 @@ public class MessagesPanel extends PagedGrid
             }
 
             if (_postReply.isEnabled()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineReply(), new ClickListener() {
+                info.add(makeInfoImage(_images.reply_post(),
+                                                CMsgs.mmsgs.inlineReply(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.postReply(_message, false);
                     }
                 }));
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineQReply(), new ClickListener() {
+                info.add(makeInfoImage(_images.reply_post_quote(),
+                                                CMsgs.mmsgs.inlineQReply(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.postReply(_message, true);
                     }
@@ -189,7 +204,8 @@ public class MessagesPanel extends PagedGrid
             }
 
             if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineEdit(), new ClickListener() {
+                info.add(makeInfoImage(_images.edit_post(),
+                                                CMsgs.mmsgs.inlineEdit(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.editPost(_message, new MsoyCallback() {
                             public void onSuccess (Object result) {
@@ -200,30 +216,32 @@ public class MessagesPanel extends PagedGrid
                 }));
             }
 
-            // TODO: also if forum admin
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineDelete(),
-                                       new PromptPopup(CMsgs.mmsgs.confirmDelete(),
-                                                       deletePost(_message))));
+            // TODO: if whirled manager, also allow forum moderation
+            if (CMsgs.getMemberId() == _message.poster.name.getMemberId() || CMsgs.isAdmin()) {
+                info.add(makeInfoImage(_images.delete_post(),
+                                                CMsgs.mmsgs.inlineDelete(),
+                                                new PromptPopup(CMsgs.mmsgs.confirmDelete(),
+                                                                deletePost(_message))));
             }
 
             if (_message.issueId > 0) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineIssue(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        CMsgs.app.go(Page.WHIRLEDS, "i_" + _message.issueId);
-                    }
-                }));
+                ClickListener viewClick = Application.createLinkListener(
+                    Page.WHIRLEDS, Args.compose("i", _message.issueId));
+                info.add(makeInfoImage(_images.view_issue(),
+                                                CMsgs.mmsgs.inlineIssue(), viewClick));
+
             } else if (CMsgs.isAdmin()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineNewIssue(), new ClickListener() {
+                ClickListener newClick = new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.newIssue(_message);
                     }
-                }));
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineAssignIssue(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        CMsgs.app.go(Page.WHIRLEDS, "assign_" + _message.messageId + "_" + _page);
-                    }
-                }));
+                };
+                info.add(makeInfoImage(_images.new_issue(),
+                                                CMsgs.mmsgs.inlineNewIssue(), newClick));
+                info.add(makeInfoImage(_images.assign_issue(), CMsgs.mmsgs.inlineAssignIssue(),
+                                       Application.createLinkListener(
+                                           Page.WHIRLEDS, Args.compose(
+                                               "assign", ""+_message.messageId, ""+_page))));
             }
         }
 
@@ -249,6 +267,9 @@ public class MessagesPanel extends PagedGrid
 
     /** A button for editing this thread's flags. */
     protected Button _editFlags;
+
+    /** Our action icon images. */
+    protected static MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
 
     protected static final int MESSAGES_PER_PAGE = 10;
 }

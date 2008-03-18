@@ -948,10 +948,17 @@ img, embed, applet, object {
   font-size: 12px;
 }
 
-.messagePanel .Icon {
+.messagePanel .Icon, .messagePanel .ActionIcon {
   vertical-align: middle;
-  padding-right: 5px;
   display: inline;
+}
+
+.messagePanel .Icon {
+  margin-right: 5px;
+}
+
+.messagePanel .ActionIcon {
+  margin-left: 5px;
 }
 
 .messagePanel .Posted {
