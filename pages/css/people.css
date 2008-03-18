@@ -36,6 +36,11 @@
   padding: 5px;
 }
 
+.profile .Group div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .ratingWidget {
   height: 44px;
 }
