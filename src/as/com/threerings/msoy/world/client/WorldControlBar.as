@@ -5,7 +5,9 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.system.ApplicationDomain;
 import flash.text.TextField;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -170,6 +172,7 @@ public class WorldControlBar extends ControlBar
         _chatTip = (new CHAT_TIP() as DisplayObject);
         _chatTip.x = x + 5;
         _chatTip.y = y - _chatTip.height - 5;
+        fadeIn(_chatTip);
         _ctx.getTopPanel().getPlaceContainer().addOverlay(_chatTip, PlaceBox.LAYER_TRANSIENT);
 
         // when they click or type in the chat entry, we want to remove the sprite
@@ -184,38 +187,51 @@ public class WorldControlBar extends ControlBar
 
     protected function maybeDisplayAvatarIntro () :void
     {
-//         // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
-//         // or have ever worn any non-tofu avatar, don't show the avatar intro
-//         var mobj :MemberObject = (_ctx as WorldContext).getMemberObject();
-//         if (_avatarIntro != null /* || mobj.isGuest() || mobj.avatar != null ||
-//             mobj.avatarCache.size() > 0 */) {
-//             return;
-//         }
+        // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
+        // or have ever worn any non-tofu avatar, don't show the avatar intro
+        var mobj :MemberObject = (_ctx as WorldContext).getMemberObject();
+        if (_avatarIntro != null || mobj.isGuest() || mobj.avatar != null ||
+            mobj.avatarCache.size() > 0) {
+            return;
+        }
 
-//         MultiLoader.getContents(AVATAR_INTRO, function (result :DisplayObjectContainer) :void {
-//             _avatarIntro = result;
-//             _avatarIntro.x = 15;
+        MultiLoader.getContents(AVATAR_INTRO, function (result :DisplayObjectContainer) :void {
+            _avatarIntro = result;
+            _avatarIntro.x = 15;
 
-//             var title :TextField = (_avatarIntro.getChildByName("txt_welcome") as TextField);
-//             title.text = Msgs.GENERAL.get("t.avatar_intro");
+            var title :TextField = (_avatarIntro.getChildByName("txt_welcome") as TextField);
+            title.text = Msgs.GENERAL.get("t.avatar_intro");
 
-//             var info :TextField = (_avatarIntro.getChildByName("txt_description") as TextField);
-//             info.text = Msgs.GENERAL.get("m.avatar_intro");
+            var info :TextField = (_avatarIntro.getChildByName("txt_description") as TextField);
+            info.text = Msgs.GENERAL.get("m.avatar_intro");
 
-//             var close :SimpleButton = (_avatarIntro.getChildByName("btn_nothanks") as SimpleButton);
-//             close.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-//                 fadeOutAndRemove(_avatarIntro);
-//             });
+            var close :SimpleButton = (_avatarIntro.getChildByName("btn_nothanks") as SimpleButton);
+            close.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                fadeOutAndRemove(_avatarIntro);
+            });
 
-//             var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
-//             go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-//                 (_ctx as WorldContext).getWorldController().handleViewAvatarCatalog();
-//                 fadeOutAndRemove(_avatarIntro);
-//             });
+            var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
+            go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                (_ctx as WorldContext).getWorldController().handleViewAvatarCatalog();
+                fadeOutAndRemove(_avatarIntro);
+            });
 
-//             _ctx.getTopPanel().getPlaceContainer().addOverlay(
-//                 _avatarIntro, PlaceBox.LAYER_TRANSIENT);
-//         });
+            fadeIn(_avatarIntro);
+            _ctx.getTopPanel().getPlaceContainer().addOverlay(
+                _avatarIntro, PlaceBox.LAYER_TRANSIENT);
+        });
+    }
+
+    protected function fadeIn (thing :DisplayObject) :void
+    {
+        thing.alpha = 0;
+        thing.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
+            if (thing.alpha >= 1) {
+                thing.removeEventListener(Event.ENTER_FRAME, arguments.callee);
+            } else {
+                thing.alpha += 0.05;
+            }
+        });
     }
 
     protected function fadeOutAndRemove (thing :DisplayObject) :void
