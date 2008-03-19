@@ -118,6 +118,9 @@ public class MemberRepository extends DepotRepository
                     JDBCUtil.close(stmt);
                 }
             }
+            public boolean runBeforeDefault () {
+                return false;
+            }
         });
         // END TEMP
 
