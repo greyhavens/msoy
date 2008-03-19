@@ -8,9 +8,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import java.util.logging.Level;
 
+import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
@@ -671,8 +673,11 @@ public class GroupServlet extends MsoyServiceServlet
             mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));
         }
         if (mlist.size() < members.size()) {
-            log.warning("Group has stale members [groupId=" + groupId +
-                        ", count=" + (members.size() - mlist.size()) + "].");
+            Set<Integer> stale = Sets.newHashSet(members.keySet());
+            for (GroupMemberCard gmc : mlist) {
+                stale.remove(gmc.name.getMemberId());
+            }
+            log.warning("Group has stale members [groupId=" + groupId + ", ids=" + stale + "].");
         }
         Collections.sort(mlist, ServletUtil.SORT_BY_LAST_ONLINE);
         return mlist;
