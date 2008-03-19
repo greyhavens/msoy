@@ -23,6 +23,7 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.RoomObject;
@@ -164,7 +165,8 @@ public class WorldControlBar extends ControlBar
         // if we've already shown the tip, have no chat control or they have been a member for a
         // while, don't show the chat tip
         var mobj :MemberObject = (_ctx as WorldContext).getMemberObject();
-        if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL) {
+        if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL ||
+            Prefs.getSlidingChatHistory()) {
             return;
         }
 
