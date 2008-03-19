@@ -193,7 +193,7 @@ public class GameLiaison
             _pendingAwards.push(event.getArgs()[0]);
             checkPendingAwards();
 
-        } else if (event.getName() == WhirledGameObject.FLOW_AWARDED_MESSAGE &&
+        } else if (event.getName() == WhirledGameObject.COINS_AWARDED_MESSAGE &&
                    _gctx.getPlayerObject().isGuest()) {
             // if a guest earns flow, we want to show them the "please register" dialog
             displayGuestFlowEarnage(int(event.getArgs()[0]));

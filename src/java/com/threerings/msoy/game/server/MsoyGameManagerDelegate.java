@@ -664,7 +664,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             // report to the game that this player earned some flow
             DObject user = MsoyGameServer.omgr.getObject(player.playerOid);
             if (user != null) {
-                user.postMessage(WhirledGameObject.FLOW_AWARDED_MESSAGE,
+                user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile);
             }
         }
