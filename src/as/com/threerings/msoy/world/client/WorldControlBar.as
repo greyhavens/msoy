@@ -5,13 +5,13 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.MovieClip;
 import flash.display.SimpleButton;
-import flash.system.ApplicationDomain;
-import flash.text.TextField;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+import flash.text.TextField;
+import flash.utils.Timer;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.util.Log;
@@ -170,19 +170,22 @@ public class WorldControlBar extends ControlBar
 
         // create, position and add our chat tip sprite
         _chatTip = (new CHAT_TIP() as DisplayObject);
-        _chatTip.x = x + 5;
-        _chatTip.y = y - _chatTip.height - 5;
+        _chatTip.x = 5;
+        _chatTip.y = _ctx.getTopPanel().getPlaceContainer().height - _chatTip.height - 5;
         fadeIn(_chatTip);
         _ctx.getTopPanel().getPlaceContainer().addOverlay(_chatTip, PlaceBox.LAYER_TRANSIENT);
 
         // when they click or type in the chat entry, we want to remove the sprite
-        var onAction :Function = function (event :*) :void {
+        var onAction :Function = function (... ignored) :void {
             _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
             _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
             fadeOutAndRemove(_chatTip);
         };
         _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
         _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);
+
+        // or clear it out if they haven't already after ten seconds
+        new Timer(10000, 1).addEventListener(TimerEvent.TIMER, onAction);
     }
 
     protected function maybeDisplayAvatarIntro () :void
