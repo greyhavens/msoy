@@ -47,7 +47,7 @@ public class FileEditor extends FieldEditor
     {
         if (filename == null) {
             if (_bytes == null) {
-                _used.selected = false;
+                _used.selected = (_ctx.pack.getFileEntry(_name).value != null);
             }
             return;
         }
