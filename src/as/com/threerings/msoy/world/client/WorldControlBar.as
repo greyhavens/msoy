@@ -179,7 +179,7 @@ public class WorldControlBar extends ControlBar
         var onAction :Function = function (event :*) :void {
             _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
             _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
-            fadeOutAndRemove(_chatControl);
+            fadeOutAndRemove(_chatTip);
         };
         _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
         _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);

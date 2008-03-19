@@ -410,7 +410,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewAvatarCatalog () :void
     {
-        displayPage("catalog", ""+Item.AVATAR);
+        displayPage("shop", ""+Item.AVATAR);
     }
 
     /**
