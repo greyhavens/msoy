@@ -67,9 +67,7 @@ case "$1" in
             LOGFILE=$MSOY_HOME/log/respawn-$NODE.log
             echo -n "Starting $DAEMON: "
             touch $RESPAWN_PIDFILE $LOGFILE
-            chown $MSOY_USER $RESPAWN_PIDFILE $LOGFILE
-            su -m $MSOY_USER -c "$DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE" \
-                >>$LOGFILE 2>&1 </dev/null &
+            $DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE >>$LOGFILE 2>&1 </dev/null &
             echo "started."
         done
         ;;
