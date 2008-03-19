@@ -171,16 +171,20 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
+        // if they're requesting anonymous invites and are not an admin, rejecto!
+        if (anonymous && !mrec.isAdmin()) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
         try {
             // make sure this user still has available invites; we already check this value in GWT
             // land, and deal with it sensibly there
-            if (MsoyServer.memberRepo.getInvitesGranted(mrec.memberId) < addresses.size()) {
+            int availInvites = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
+            if (availInvites < addresses.size()) {
+                log.warning("Member requested to grant more invites than they have " +
+                            "[who=" + mrec.who() + ", tried=" + addresses.size() +
+                            ", have=" + availInvites + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            // if they're requesting anonymous invites and are not an admin, rejecto!
-            if (anonymous && !mrec.isAdmin()) {
-                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
 
         } catch (PersistenceException pe) {
