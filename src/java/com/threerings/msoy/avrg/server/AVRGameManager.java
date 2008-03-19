@@ -18,6 +18,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
@@ -313,6 +314,12 @@ public class AVRGameManager
                 // if we paid out flow, let any logged-on member objects know
                 if (_payout > 0) {
                     MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), _payout);
+
+                    // report to the game that this player earned some flow
+                    DObject user = MsoyGameServer.omgr.getObject(player.getOid());
+                    if (user != null) {
+                        user.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, _payout, -1);
+                    }
                 }
                 
                 // if we updated the payout factor in the db, do it in dobj land too

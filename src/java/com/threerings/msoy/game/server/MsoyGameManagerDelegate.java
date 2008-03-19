@@ -645,7 +645,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                  ", to=" + players + "].");
 
         // actually award flow and report it to the player
-        int now = now();
         for (Player player : players.values()) {
             FlowRecord record = _flowRecords.get(player.playerOid);
             if (record == null) {

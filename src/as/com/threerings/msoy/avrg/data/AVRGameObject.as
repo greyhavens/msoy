@@ -27,6 +27,9 @@ public class AVRGameObject extends DObject
     /** The identifier for a MessageEvent containing ticker notifications. */
     public static const TICKER :String = "Utick";
 
+    /** A message dispatched to each player's client object when coins are awarded. */
+    public static const COINS_AWARDED_MESSAGE :String = "FlowAwarded";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameMedia</code> field. */
     public static const GAME_MEDIA :String = "gameMedia";

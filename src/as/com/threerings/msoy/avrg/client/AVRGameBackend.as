@@ -53,6 +53,7 @@ public class AVRGameBackend extends ControlBackend
 
         _gameObj = gameObj;
         _gameObj.addListener(_gameListener);
+        _gctx.getClient().getClientObject().addListener(_playerListener);
 
         _wctx.getLocationDirector().addLocationObserver(_locationObserver);
         _wctx.getOccupantDirector().addOccupantObserver(_occupantObserver);
@@ -81,6 +82,7 @@ public class AVRGameBackend extends ControlBackend
          _wctx.getLocationDirector().removeLocationObserver(_locationObserver);
          _wctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
 
+         _gctx.getClient().getClientObject().removeListener(_playerListener);
          _gameObj.removeListener(_gameListener);
 
          super.shutdown();
@@ -507,6 +509,14 @@ public class AVRGameBackend extends ControlBackend
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
     protected var _roomObj :RoomObject;
+
+    protected var _playerListener :MessageAdapter = new MessageAdapter(
+        function (event :MessageEvent) :void {
+            var name :String = event.getName();
+            if (name == AVRGameObject.COINS_AWARDED_MESSAGE) {
+                callUserCode("coinsAwarded_v1", int(event.getArgs()[0]));
+            }
+    });
 
     protected var _gameListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
