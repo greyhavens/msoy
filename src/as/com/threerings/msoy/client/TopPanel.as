@@ -395,9 +395,7 @@ public class TopPanel extends Canvas
         
         // add this on the next frame, so that we don't accidentally register ourselves
         // to receive the very click that causes this minimize action...
-        MethodQueue.callLater(function() :void {
-                _placeBox.addEventListener(MouseEvent.CLICK, placeBoxClicked);
-            });
+        MethodQueue.callLater(_placeBox.addEventListener, [ MouseEvent.CLICK, placeBoxClicked ]);
 
         _headerBar.miniChanged();
         _controlBar.miniChanged();
