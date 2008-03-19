@@ -517,30 +517,15 @@ TabNavigator, TabBar {
   verticalGap: 1;
 } 
 
-.roomEditPanelContainer { 
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/button_bar_tile.png");
-  backgroundSize: "100%";
-  borderStyle: "none";
-  borderThickness: 0;
-  borderThicknessLeft: 0;
-  borderThicknessRight: 0;
-  borderThicknessTop: 0;
-  borderThicknessBottom: 0;
-  paddingBottom: 0;
-  paddingTop: 0;
-  paddingLeft: 0;
-  paddingRight: 0;
-  horizontalGap: 0;
-  verticalGap: 0;
-}
-
 .roomEditDetailsPanelGrid { 
   horizontalGap: 1;
   verticalGap: 2;
 }
 
 .roomEditNameBar {  
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png",
+          scaleGridTop="10", scaleGridBottom="13",
+          scaleGridLeft="10", scaleGridRight="20");
   backgroundSize: "100%";
   borderStyle: "none";
   paddingBottom: 5;
