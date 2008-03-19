@@ -51,8 +51,11 @@ import com.threerings.msoy.game.data.PlayerObject;
 public class LobbyPanel extends TitleWindow
     implements TableObserver, SeatednessObserver
 {
-    /** The width of the lobby panel. */
+    /** The maximum width of the lobby panel. */
     public static const LOBBY_PANEL_MAX_WIDTH :int = 600; // in px
+
+    /** The maximum height of the lobby panel. */
+    public static const LOBBY_PANEL_MAX_HEIGHT :int = 500; // in px
 
     /**
      * Returns the count of friends of the specified member that are seated at this table.
@@ -83,6 +86,7 @@ public class LobbyPanel extends TitleWindow
 
         styleName = "lobbyPanel";
         maxWidth = LOBBY_PANEL_MAX_WIDTH;
+        maxHeight = LOBBY_PANEL_MAX_HEIGHT;
         showCloseButton = true;
 
         // TODO: wrap this up in some useful reusable utility so that others don't have to go
