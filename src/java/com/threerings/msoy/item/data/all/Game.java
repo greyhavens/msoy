@@ -37,7 +37,7 @@ public class Game extends Item
 
     /** All game genres, in display order. */
     public static final byte[] GENRES = {
-        GENRE_WORD, GENRE_CARD_BOARD, GENRE_PUZZLE, GENRE_STRATEGY, GENRE_ACTION_ARCADE,
+        GENRE_WORD, GENRE_STRATEGY, GENRE_ACTION_ARCADE, GENRE_CARD_BOARD, GENRE_PUZZLE,
         GENRE_ADVENTURE_RPG, GENRE_SPORTS_RACING, GENRE_MMO_WHIRLED, GENRE_OTHER
     };
 
