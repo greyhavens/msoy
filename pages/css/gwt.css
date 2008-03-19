@@ -407,6 +407,7 @@ img, embed, applet, object {
   color: #FFFFFF;
   font-size: 14px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .headerBox .Title img, .headerBox .Title div {
