@@ -10,7 +10,7 @@
     Description Come, roll around in the tofu with me.
     # Maintainer Scripts
     # See http://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
-    PreInstall      @SCRIPTPATH@/msoy-server-preinst
+    # PreInstall      @SCRIPTPATH@/msoy-server-preinst
     PostInstall     @SCRIPTPATH@/msoy-server-postinst
     # PreUninstall    path/to/preuninstall/script
     PostUninstall   @SCRIPTPATH@/msoy-server-postrm
