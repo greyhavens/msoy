@@ -336,8 +336,8 @@ public class MsoyAuthenticator extends Authenticator
 
             if (creds.sessionToken != null) {
                 if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
-                    authenticateGuest(
-                        creds, rdata, MsoyCredentials.getGuestMemberId(creds.sessionToken));
+                    authenticateGuest(conn, creds, rdata,
+                                      MsoyCredentials.getGuestMemberId(creds.sessionToken));
 
                 } else {
                     MemberRecord member =
@@ -357,7 +357,7 @@ public class MsoyAuthenticator extends Authenticator
                 // if this is not just a "featured whirled" client; assign this guest a member id
                 // for the duration of their session
                 int memberId = creds.featuredPlaceView ? 0 : MsoyServer.peerMan.getNextGuestId();
-                authenticateGuest(creds, rdata, memberId);
+                authenticateGuest(conn, creds, rdata, memberId);
             }
 
         } catch (ServiceException se) {
@@ -366,23 +366,24 @@ public class MsoyAuthenticator extends Authenticator
         }
     }
 
-    protected void authenticateGuest (MsoyCredentials creds, MsoyAuthResponseData rdata,
-                                      int memberId)
+    protected void authenticateGuest (AuthingConnection conn, MsoyCredentials creds,
+                                      MsoyAuthResponseData rdata, int memberId)
         throws ServiceException, PersistenceException
     {
         if (!RuntimeConfig.server.nonAdminsAllowed) {
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
         }
 
-        // if they supplied a name with their credentials, use that; if they're not a "featured
-        // whirled" client, generate a guest name for them; otherwise blank is fine
-        String name = "";
-        if (creds.getUsername() != null) {
-            name = creds.getUsername().toString();
-        } else if (!creds.featuredPlaceView) {
-            name = generateGuestName();
+        // if they're a "featured whirled" client, create a unique name for them
+        if (creds.featuredPlaceView) {
+            String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
+            creds.setUsername(new Name(name));
+        } else {
+            // if they supplied a name with their credentials, use that, otherwise generate one
+            String name = (creds.getUsername() == null) ?
+                generateGuestName() : creds.getUsername().toString();
+            creds.setUsername(new MemberName(name, memberId));
         }
-        creds.setUsername(new MemberName(name, memberId));
         rdata.sessionToken = MsoyCredentials.makeGuestSessionToken(memberId);
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(memberId, false, System.currentTimeMillis(), creds.sessionToken);
