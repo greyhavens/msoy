@@ -133,11 +133,13 @@ public class IssueListPanel extends PagedGrid
             if (issue.state == Issue.STATE_OPEN) {
                 created.add(new Label(_pdate.format(issue.createdTime)));
                 creator = Application.createLink(
-                        issue.creator.toString(), Page.PEOPLE, "" + issue.creator.getMemberId());
+                    issue.creator.toString(), Page.PEOPLE, "" + issue.creator.getMemberId());
             } else {
-                created.add(new Label(_pdate.format(issue.closedTime)));
+                if (issue.closedTime != null) {
+                    created.add(new Label(_pdate.format(issue.closedTime)));
+                }
                 creator = Application.createLink(
-                        issue.owner.toString(), Page.PEOPLE, "" + issue.owner.getMemberId());
+                    issue.owner.toString(), Page.PEOPLE, "" + issue.owner.getMemberId());
             }
             created.add(creator);
             setWidget(0, col, created);

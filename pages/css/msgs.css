@@ -189,6 +189,15 @@
 }
 
 .issueSummaryPanel .Description {
+  padding-left: 5px;
+}
+
+.issueSummaryPanel .Description a {
+  text-decoration: none;
+}
+
+.issueSummaryPanel .Description a:hover {
+  text-decoration: underline;
 }
 
 .issueSummaryPanel .State {
