@@ -220,7 +220,7 @@ public class UpdateAccumulator
 
         /** Max delay, in milliseconds, between when an accumulated update was last modified, and
          * when it should be commited. */
-        protected static final long TARGET_AGE = 10000;
+        protected static final long TARGET_AGE = 60000;
     }
 
     /**
