@@ -399,8 +399,10 @@ public class RoomEditorPanel extends FloatingPanel
         var undoall :UIComponent = makeActionButton(
             _controller.actionUndo, "roomEditUndoAll", "b.undo_all", null, true);
         undoall.enabled = false;
-        right.addChild(undoall);
-
+        // commented out for beta - rz, 3/19/08
+        //   the "undo all" functionality requires some way to consolidate all undo updates
+        //   into one, so that we don't flood the server with a ton of messages
+        // right.addChild(undoall);
         
         updateTargetSelected(null); // disable most buttons
 
