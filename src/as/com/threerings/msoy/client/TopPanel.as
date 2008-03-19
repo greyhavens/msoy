@@ -22,6 +22,7 @@ import mx.controls.scrollClasses.ScrollBar;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
@@ -391,7 +392,12 @@ public class TopPanel extends Canvas
         _placeBox.mouseChildren = false;
         _placeBox.buttonMode = true;
         _placeBox.useHandCursor = true;
-        _placeBox.addEventListener(MouseEvent.CLICK, placeBoxClicked);
+        
+        // add this on the next frame, so that we don't accidentally register ourselves
+        // to receive the very click that causes this minimize action...
+        MethodQueue.callLater(function() :void {
+                _placeBox.addEventListener(MouseEvent.CLICK, placeBoxClicked);
+            });
 
         _headerBar.miniChanged();
         _controlBar.miniChanged();
