@@ -188,13 +188,13 @@ public class GameLiaison
     // from interface MessageListener
     public function messageReceived (event :MessageEvent) :void
     {
-        if (event.getName() == MsoyGameCodes.TROPHY_AWARDED ||
-            event.getName() == MsoyGameCodes.PRIZE_AWARDED) {
+        const name :String = event.getName();
+        if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
             _pendingAwards.push(event.getArgs()[0]);
             checkPendingAwards();
 
-        } else if (event.getName() == WhirledGameObject.COINS_AWARDED_MESSAGE &&
-                   _gctx.getPlayerObject().isGuest()) {
+        } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE &&
+                _gctx.getPlayerObject().isGuest()) {
             // if a guest earns flow, we want to show them the "please register" dialog
             displayGuestFlowEarnage(int(event.getArgs()[0]));
         }
