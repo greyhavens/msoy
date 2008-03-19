@@ -666,11 +666,14 @@ public class GroupServlet extends MsoyServiceServlet
                 members.put(gmrec.memberId, gmrec.toGroupMemberCard());
             }
         }
-        for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
-            mcr.toMemberCard(members.get(mcr.memberId));
-        }
         List<GroupMemberCard> mlist = Lists.newArrayList();
-        mlist.addAll(members.values());
+        for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
+            mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));
+        }
+        if (mlist.size() < members.size()) {
+            log.warning("Group has stale members [groupId=" + groupId +
+                        ", count=" + (members.size() - mlist.size()) + "].");
+        }
         Collections.sort(mlist, ServletUtil.SORT_BY_LAST_ONLINE);
         return mlist;
     }

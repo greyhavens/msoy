@@ -114,7 +114,7 @@ public class MemberCardRecord extends PersistentRecord
     /**
      * Fills in the supplied runtime record with information from this persistent record.
      */
-    public MemberCard toMemberCard (MemberCard card)
+    public <T extends MemberCard> T toMemberCard (T card)
     {
         card.name = new MemberName(name, memberId);
         if (photoHash != null) {
