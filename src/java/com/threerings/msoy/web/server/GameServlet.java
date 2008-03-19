@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -394,17 +395,25 @@ public class GameServlet extends MsoyServiceServlet
 
             // determine the "featured" games
             List<FeaturedGameInfo> featured = Lists.newArrayList();
+            ArrayIntSet have = new ArrayIntSet();
             for (PlaceCard card : pps.getTopGames()) {
                 GameDetailRecord detail = grepo.loadGameDetail(card.placeId);
                 GameRecord game = grepo.loadGameRecord(card.placeId, detail);
                 if (game != null) {
                     featured.add(toFeaturedGameInfo(game, detail, card.population));
+                    have.add(game.gameId);
                 }
             }
-            int need = ArcadeData.FEATURED_GAME_COUNT - featured.size();
-            for (GameRecord game : grepo.loadGenre((byte)-1, need)) {
-                GameDetailRecord detail = grepo.loadGameDetail(game.gameId);
-                featured.add(toFeaturedGameInfo(game, detail, 0));
+            if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
+                for (GameRecord game : grepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+                    if (!have.contains(game.gameId)) {
+                        GameDetailRecord detail = grepo.loadGameDetail(game.gameId);
+                        featured.add(toFeaturedGameInfo(game, detail, 0));
+                    }
+                    if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                        break;
+                    }
+                }
             }
             data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
