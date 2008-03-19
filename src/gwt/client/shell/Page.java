@@ -39,6 +39,7 @@ public abstract class Page
     public static final String PEOPLE = "people";
     public static final String SHOP = "shop";
     public static final String STUFF = "stuff";
+    public static final String SUPPORT = "support";
     public static final String SWIFTLY = "swiftly";
     public static final String WHIRLEDS = "whirleds";
     public static final String WORLD = "world";

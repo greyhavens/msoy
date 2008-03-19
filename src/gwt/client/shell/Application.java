@@ -393,6 +393,7 @@ public class Application
         _creators.put(Page.PEOPLE, client.people.index.getCreator());
         _creators.put(Page.SHOP, client.shop.index.getCreator());
         _creators.put(Page.STUFF, client.stuff.index.getCreator());
+        _creators.put(Page.SUPPORT, client.support.index.getCreator());
         _creators.put(Page.SWIFTLY, client.swiftly.index.getCreator());
         _creators.put(Page.WHIRLEDS, client.whirleds.index.getCreator());
         _creators.put(Page.WORLD, client.world.index.getCreator());

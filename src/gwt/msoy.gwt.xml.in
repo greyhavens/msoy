@@ -21,6 +21,9 @@
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/underwire/web/client"/>
+  <source path="com/threerings/underwire/web/data"/>
+  <source path="com/threerings/underwire/gwt/client"/>
 
   <entry-point class="client.shell.Application"/>
 

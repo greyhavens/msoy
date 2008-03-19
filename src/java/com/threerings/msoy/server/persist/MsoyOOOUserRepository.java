@@ -46,6 +46,7 @@ public class MsoyOOOUserRepository extends DepotRepository
     {
         super(ctx);
     }
+
     /**
      * Looks up a user by userid.
      *
@@ -57,7 +58,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(OOOUserRecord.class, userId);
     }
 
-    // documentation inherited by SupportRepository
+    // documentation inherited from SupportRepository
     public User loadUser (int userId)
         throws PersistenceException
     {
@@ -75,11 +76,11 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(OOOUserRecord.class, new Where(OOOUserRecord.USERNAME_C, username));
     }
 
-    // documentation inherited by SupportRepository
+    // documentation inherited from SupportRepository
     public OOOUser loadUser (String username, boolean loadIdents)
         throws PersistenceException
     {
-        OOOUser user = toUser(loadUserRecord(username));
+        OOOUser user = loadUserByEmail(username);
         if (user == null || !loadIdents) {
             return user;
         }
@@ -87,7 +88,23 @@ public class MsoyOOOUserRepository extends DepotRepository
         return user;
     }
 
-    // documentation inherited by SupportRepository
+    // documentation inherited from SupportRepository
+    public OOOUser loadUserByAccountName (String accountName)
+        throws PersistenceException
+    {
+        int memberId;
+        try {
+            memberId = Integer.valueOf(accountName);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+        SQLOperator joinCondition = new And(
+                new Equals(MemberRecord.MEMBER_ID_C, memberId),
+                new Equals(OOOUserRecord.EMAIL_C, MemberRecord.ACCOUNT_NAME_C));
+        return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
+    }
+
+    // documentation inherited from SupportRepository
     public User loadUserBySession (String sessionKey)
         throws PersistenceException
     {
@@ -106,6 +123,15 @@ public class MsoyOOOUserRepository extends DepotRepository
         throws PersistenceException
     {
         return load(OOOUserRecord.class, new Where(OOOUserRecord.EMAIL_C, email));
+    }
+
+    /**
+     * Looks up a user by email address.
+     */
+    public OOOUser loadUserByEmail (String email)
+        throws PersistenceException
+    {
+        return toUser(loadUserRecordByEmail(email));
     }
 
     // documentation inherited from SupportRepository
@@ -127,7 +153,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         // We're doing a manual token check after loading the users, however ideally having the
         // depot support for a regexp comparison on a hex converted tokens field would be faster
         ArrayList<String> retnames = new ArrayList<String>();
-        Where where = new Where(new In(OOOUserRecord.USERNAME_C, usernames));
+        Where where = new Where(new In(OOOUserRecord.EMAIL_C, usernames));
         for (OOOUserRecord record : findAll(OOOUserRecord.class, where)) {
             if (record.holdsToken(token)) {
                 retnames.add(record.username);
@@ -168,7 +194,7 @@ public class MsoyOOOUserRepository extends DepotRepository
                 new Equals(OOOUserRecord.USER_ID_C, UserIdentRecord.USER_ID_C),
                 new Equals(UserIdentRecord.MACH_IDENT_C, machIdent)));
         for (OOOUserRecord record : findAll(OOOUserRecord.class, join)) {
-            users.add(new Tuple<Integer,String>(record.userId, record.username));
+            users.add(new Tuple<Integer,String>(record.userId, record.email));
         }
         return users;
     }

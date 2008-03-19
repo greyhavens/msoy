@@ -23,6 +23,8 @@ import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.underwire.server.MsoyGameActionHandler;
 import com.threerings.msoy.underwire.server.MsoyGameInfoProvider;
 
@@ -34,7 +36,13 @@ import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.server.persist.SupportRepository;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 
+import com.threerings.underwire.web.client.UnderwireException;
+
 import com.threerings.underwire.web.server.UnderwireServlet;
+
+import com.threerings.user.OOOUser;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * An underwire servlet which uses a the msoy connection provider and user manager.
@@ -65,7 +73,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     {
         try {
             MemberRecord member = MsoyServer.author.authenticateSession(username, password);
-            User user = _supportrepo.loadUser(member.memberId);
+            User user = ((MsoyOOOUserRepository)_supportrepo).loadUserByEmail(member.accountName);
 
             String token = ((MsoyOOOUserRepository)_supportrepo).registerSession(user, expireDays);
 
@@ -82,6 +90,36 @@ public class MsoyUnderwireServlet extends UnderwireServlet
                 throw new AuthenticationFailedException(message);
             }
         }
+    }
+
+    @Override // documentation inherited from UnderwireServlet
+    public boolean allowEmailUpdate ()
+    {
+        return false;
+    }
+
+    @Override // documnetation inherited from UnderwireServlet
+    public String getUsername (OOOUser user)
+        throws UnderwireException
+    {
+        return getUsername(user.email);
+    }
+
+    @Override // documentation inherited from UnderwireServlet
+    public String getUsername (String username)
+        throws UnderwireException
+    {
+        MemberName name = null;
+        try {
+            name = MsoyServer.memberRepo.loadMemberName(username);
+        } catch (PersistenceException pe) {
+            // handled with the next check
+        }
+        if (name == null) {
+            log.warning("Unable to find member information [email=" + username + "].");
+            throw new UnderwireException("m.internal_error");
+        }
+        return Integer.toString(name.getMemberId());
     }
 
     // documentation inherited from UnderwireServlet

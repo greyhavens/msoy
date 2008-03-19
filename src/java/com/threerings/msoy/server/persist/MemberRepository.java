@@ -261,20 +261,14 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Looks up some members' names by username.
+     * Looks up a member name and id from by username.
      */
-    public HashMap<String,String> loadMemberNameAssociations (Set<String> usernames)
+    public MemberName loadMemberName (String username)
         throws PersistenceException
     {
-        HashMap<String,String> nameMap = new HashMap<String,String>();
-        if (usernames.size() > 0) {
-            for (MemberNameRecord name : findAll(
-                        MemberNameRecord.class,
-                        new Where(new In(MemberRecord.ACCOUNT_NAME_C, usernames)))) {
-                nameMap.put(name.accountName, name.name);
-            }
-        }
-        return nameMap;
+        MemberNameRecord record = load(MemberNameRecord.class,
+                new Where(MemberRecord.ACCOUNT_NAME_C, username));
+        return (record == null ? null : record.toMemberName());
     }
 
     /**
