@@ -51,6 +51,9 @@ public class DoListItemPopup extends VerticalPanel
         _status = new Label("");
         _status.addStyleName("Status");
 
+        // determine whether or not this item is salable
+        boolean salableItem = !(_item instanceof SubItem) || ((SubItem)_item).isSalable();
+
         // note whether we are listing this item for the first time or updating its listing or
         // whether or not we're repricing an existing listing
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
@@ -59,13 +62,14 @@ public class DoListItemPopup extends VerticalPanel
         } else if (repricing) {
             add(MsoyUI.createLabel(CStuff.msgs.doUppriceBlurb(), "Blurb"));
         } else {
-            HTML update = new HTML(CStuff.msgs.doUpdateBlurb());
+            String message = CStuff.msgs.doUpdateBlurb();
+            if (salableItem) {
+                message += CStuff.msgs.doUpdateSalableNote();
+            }
+            HTML update = new HTML(message);
             update.setStyleName("Blurb");
             add(update);
         }
-
-        // determine whether or not this item is salable
-        boolean salableItem = !(_item instanceof SubItem) || ((SubItem)_item).isSalable();
 
         // only add the description if we're not repricing
         if (!repricing) {
