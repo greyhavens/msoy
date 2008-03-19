@@ -54,7 +54,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _item = detail.item;
 
         HeaderBox bits = new HeaderBox(null, _item.name);
-        bits.addStyleName("Box");
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("Preview");
         preview.setWidget(createPreview(_item));
