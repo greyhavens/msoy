@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -114,7 +115,9 @@ public class Application
      */
     public static String createLinkHtml (String label, String page, String args)
     {
-        return "<a href=\"#" + createLinkToken(page, args) + "\">" + label + "</a>";
+        HTML escaper = new HTML();
+        escaper.setText(label);
+        return "<a href=\"#" + createLinkToken(page, args) + "\">" + escaper.getHTML() + "</a>";
     }
 
     /**
