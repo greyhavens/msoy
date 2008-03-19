@@ -19,6 +19,7 @@ import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.whirled.util.NoSuchSceneException;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -377,7 +378,7 @@ public class MsoyAuthenticator extends Authenticator
         // if they're a "featured whirled" client, create a unique name for them
         if (creds.featuredPlaceView) {
             String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
-            creds.setUsername(new Name(name));
+            creds.setUsername(new LurkerName(name));
         } else {
             // if they supplied a name with their credentials, use that, otherwise generate one
             String name = (creds.getUsername() == null) ?

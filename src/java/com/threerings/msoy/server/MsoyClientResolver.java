@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
+import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -65,7 +66,15 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // guests have MemberName as an auth username, members have Name
         if (_username instanceof MemberName) {
-            resolveGuest(userObj);
+            // our auth username has our assigned name and member id, so use those
+            MemberName aname = (MemberName)_username;
+            userObj.memberName = new VizMemberName(
+                aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
+
+        } else if (_username instanceof LurkerName) {
+            // we are lurker, we have no visible name to speak of
+            userObj.memberName = new VizMemberName("", 0, Profile.DEFAULT_PHOTO);
+
         } else {
             resolveMember(userObj);
         }
@@ -136,18 +145,6 @@ public class MsoyClientResolver extends CrowdClientResolver
                 userObj.avatar = (Avatar)avatar.toItem();
             }
         }
-    }
-
-    /**
-     * Resolve a lowly guest. This is called on the invoker thread.
-     */
-    protected void resolveGuest (MemberObject userObj)
-        throws Exception
-    {
-        // our auth username has our assigned name and member id, so use those
-        MemberName aname = (MemberName)_username;
-        userObj.memberName = new VizMemberName(
-            aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
     }
 
     @Override // from ClientResolver
