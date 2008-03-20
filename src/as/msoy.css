@@ -890,7 +890,7 @@ BasePanel {
   textAlign: center;
 }
 
-.ownerNameBox, .headerEmbedBox {
+.headerBox {
   paddingBottom: 2px;
   paddingLeft: 5px;
   verticalAlign: bottom;

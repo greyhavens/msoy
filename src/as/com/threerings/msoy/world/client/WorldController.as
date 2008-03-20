@@ -390,6 +390,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_GAME_COMMENTS command.
+     */
+    public function handleViewGameComments (gameId :int) :void
+    {
+        displayPage("games", "d_" + gameId + "_c");
+    }
+
+    /**
      * Handles the VIEW_MY_AVATARS command.
      */
     public function handleViewMyAvatars () :void
@@ -953,7 +961,7 @@ public class WorldController extends MsoyController
         if (scene != null) {
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
-            headerBar.setEmbedLinkButtonVisible(!_wctx.getMsoyClient().isEmbedded());
+            headerBar.setEmbedVisible(!_wctx.getMsoyClient().isEmbedded());
             headerBar.getChatTabs().clearUncheckedRooms();
 
             // subscribe to the new scene's channel, if we haven't already
@@ -972,11 +980,8 @@ public class WorldController extends MsoyController
                             headerBar.setOwnerLink("");
                         },
                         function (res :Object) :void {
-                            headerBar.setOwnerLink(res as String, function () :void {
-                                handleViewRoom(model.sceneId);
-                            });
+                            headerBar.setOwnerLink(res as String, handleViewMember, model.ownerId);
                         }));
-
                 } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                     svc.getGroupName(_wctx.getClient(), model.ownerId, new ResultWrapper(
                         function (cause :String) :void {
@@ -984,14 +989,13 @@ public class WorldController extends MsoyController
                             headerBar.setOwnerLink("");
                         },
                         function (res :Object) :void {
-                            headerBar.setOwnerLink(res as String, function () :void {
-                                handleViewRoom(model.sceneId);
-                            });
+                            headerBar.setOwnerLink(res as String, handleViewGroup, model.ownerId);
                         }));
 
                 } else {
                     headerBar.setOwnerLink("");
                 }
+                headerBar.setCommentLink(handleViewRoom, model.sceneId);
             }
 
             // update the stack; also, if this is not the first scene, enable the back button
@@ -1010,7 +1014,7 @@ public class WorldController extends MsoyController
         // For now we can embed scenes with game lobbies attached, but not game instances - when we
         // have a unique URL for game instance locations, then we can embed those locations as
         // well, and have the embedded page bring the game lobby attached to the default game room.
-        headerBar.setEmbedLinkButtonVisible(false);
+        headerBar.setEmbedVisible(false);
         (controlBar as WorldControlBar).sceneEditPossible = false;
 
         // if we're in a game, display the game name and activate the back button
@@ -1020,6 +1024,7 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
+            headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
         } else {
             controlBar.setLocation(null, false, false);
         }

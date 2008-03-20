@@ -66,24 +66,38 @@ public class HeaderBar extends HBox
         }
     }
 
-    public function setOwnerLink (owner :String, onClick :Function = null) :void 
+    /**
+     * Shows or clears the owner link. Passing "" for the owner will clear the link.
+     */
+    public function setOwnerLink (owner :String, onClick :Function = null, arg :Object = null) :void 
     {
         while (_owner.numChildren > 0) {
             _owner.removeChildAt(0);
         }
         if (owner != "") {
             var nameLink :CommandLinkButton = new CommandLinkButton(
-                Msgs.GENERAL.get("m.room_owner", owner), onClick);
+                Msgs.GENERAL.get("m.room_owner", owner), onClick, arg);
             nameLink.styleName = "headerLink";
             nameLink.enabled = !_ctx.getMsoyClient().isEmbedded();
             _owner.addChild(nameLink);
         }
     }
 
-    public function setEmbedLinkButtonVisible (visible :Boolean) :void
+    /**
+     * Shows or clears the comment link. Passing null for the onClick function will clear the link.
+     */
+    public function setCommentLink (onClick :Function, arg :Object = null) :void
+    {
+        _commentLink.setCallback(onClick, arg);
+        _commentVisible = (onClick != null);
+        _commentLink.visible = _commentVisible;
+        _commentLink.includeInLayout = _commentVisible;
+    }
+
+    public function setEmbedVisible (visible :Boolean) :void
     {
         _embedVisible = visible;
-        _embedLinkButton.includeInLayout = _embedLinkButton.visible = visible;
+        _embedLink.includeInLayout = _embedLink.visible = visible;
     }
 
     public function miniChanged () :void
@@ -95,8 +109,10 @@ public class HeaderBar extends HBox
             stretchSpacer(false);
         } else {
             for each (comp in _extras) {
-                if (comp == _embedLinkButton) {
+                if (comp == _embedLink) {
                     comp.includeInLayout = comp.visible = _embedVisible;
+                } else if (comp == _commentLink) {
+                    comp.includeInLayout = comp.visible = _commentVisible;
                 } else {
                     comp.includeInLayout = comp.visible = true;
                 }
@@ -165,7 +181,7 @@ public class HeaderBar extends HBox
         _tabsContainer.addChild(_tabs);
 
         _owner = new HBox();
-        _owner.styleName = "ownerNameBox";
+        _owner.styleName = "headerBox";
         _owner.percentHeight = 100;
         addChild(_owner);
         _extras.push(_owner);
@@ -174,17 +190,23 @@ public class HeaderBar extends HBox
         addChild(_spacer);
 
         var controlBox :HBox = new HBox();
-        controlBox.styleName = "headerEmbedBox";
+        controlBox.styleName = "headerBox";
         controlBox.percentHeight = 100;
         addChild(controlBox);
 
-        _embedLinkButton = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
+        _commentLink = new CommandLinkButton(Msgs.GENERAL.get("b.comment"));
+        _commentLink.styleName = "headerLink";
+        controlBox.addChild(_commentLink);
+        setCommentLink(null);
+        _extras.push(_commentLink);
+
+        _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
                 new EmbedDialog(_ctx);
             });
-        _embedLinkButton.styleName = "headerLink";
-        controlBox.addChild(_embedLinkButton);
-        setEmbedLinkButtonVisible(false);
-        _extras.push(_embedLinkButton);
+        _embedLink.styleName = "headerLink";
+        controlBox.addChild(_embedLink);
+        setEmbedVisible(false);
+        _extras.push(_embedLink);
 
         var closeBox :VBox = new VBox();
         closeBox.styleName = "headerCloseBox";
@@ -203,15 +225,18 @@ public class HeaderBar extends HBox
 
     protected var _loc :Label;
     protected var _owner :HBox;
-    protected var _embedLinkButton :CommandLinkButton;
     protected var _spacer :HBox;
+
+    protected var _commentVisible :Boolean;
+    protected var _commentLink :CommandLinkButton;
+
+    protected var _embedVisible :Boolean;
+    protected var _embedLink :CommandLinkButton;
 
     protected var _tabs :ChatTabBar;
 
     /** Bits that get removed when in minimized view */
     protected var _extras :Array = [];
-
-    protected var _embedVisible :Boolean;
 
     protected var _tabsContainer :TabsContainer;
 }
