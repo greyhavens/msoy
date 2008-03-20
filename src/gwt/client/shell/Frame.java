@@ -147,7 +147,7 @@ public class Frame
         WorldClient.clientWillClose();
         _closeToken = null;
         RootPanel.get(CLIENT).clear();
-        RootPanel.get(CLIENT).setWidth("100%");
+        RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         RootPanel.get(CONTENT).setVisible(true);
         if (_bar != null) {
@@ -278,7 +278,8 @@ public class Frame
 
         // let the client know it about to be minimized
         WorldClient.setMinimized(true);
-        RootPanel.get(CLIENT).setWidth("100%");
+        int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
+        RootPanel.get(CLIENT).setWidth(clientWidth + "px");
 
         // if we're not showing a Page.Content page or the browser is too short; don't try to do
         // our own custom scrolling, just let everything scroll
