@@ -118,7 +118,8 @@ public class CatalogPanel extends SmartTable
                     row, col, HasAlignment.ALIGN_RIGHT);
             }
             protected void addCustomControls (FlexTable controls) {
-                controls.setText(0, 0, CShop.msgs.catalogSortBy());
+                controls.setWidget(
+                    0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
                 controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
                 controls.setWidget(0, 1, _sortBox);
             }

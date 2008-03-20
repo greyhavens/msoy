@@ -153,8 +153,7 @@
 }
 
 .catalogPanel .pagedGrid .Header .SortBy {
-  white-space: nowrap;
-  width: 4em;
+  width: 50px;
   padding-right: 5px;
 }
 
