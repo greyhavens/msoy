@@ -121,6 +121,7 @@ public class Frame
         // clear out our content and the expand/close controls
         RootPanel.get(CONTENT).clear();
         RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CONTENT).setVisible(false);
 
         // have the client take up all the space
         RootPanel.get(CLIENT).setWidth("100%");
@@ -147,8 +148,9 @@ public class Frame
         WorldClient.clientWillClose();
         _closeToken = null;
         RootPanel.get(CLIENT).clear();
-        RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
+        RootPanel.get(CLIENT).setWidth("100%");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+        RootPanel.get(CONTENT).setVisible(true);
         if (_bar != null) {
             _bar.setCloseVisible(false);
         }
@@ -178,6 +180,7 @@ public class Frame
         // restore the client to the full glorious browser width
         RootPanel.get(CONTENT).clear();
         RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CONTENT).setVisible(false);
         RootPanel.get(CLIENT).setWidth("100%");
 
         // clear out our bits
@@ -276,8 +279,7 @@ public class Frame
 
         // let the client know it about to be minimized
         WorldClient.setMinimized(true);
-        int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
-        RootPanel.get(CLIENT).setWidth(clientWidth + "px");
+        RootPanel.get(CLIENT).setWidth("100%");
 
         // if we're not showing a Page.Content page or the browser is too short; don't try to do
         // our own custom scrolling, just let everything scroll
@@ -299,6 +301,7 @@ public class Frame
         // stuff the content into the page and size it properly
         RootPanel.get(CONTENT).add(content);
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+        RootPanel.get(CONTENT).setVisible(true);
 
         int ccount = RootPanel.get(CLIENT).getWidgetCount();
         if (ccount == 0) {
