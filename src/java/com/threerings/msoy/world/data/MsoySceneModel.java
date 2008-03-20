@@ -90,6 +90,21 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
+     * Updates a piece of furniture in this model.
+     */
+    public void updateFurni (FurniData furni)
+    {
+        int idx = ListUtil.indexOf(furnis, furni);
+        if (idx != -1) {
+            furnis[idx] = furni;
+            invalidatePortalInfo(furni);
+        } else {
+            log.warning("Requested to update furni not in scene [id=" + sceneId + ", name=" + name +
+                        ", furni=" + furni + "].");
+        }
+    }
+
+    /**
      * Get the next available furni id.
      */
     public short getNextFurniId (short aboveId)

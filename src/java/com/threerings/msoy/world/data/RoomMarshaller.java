@@ -157,7 +157,7 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_ROOM = 12;
 
     // from interface RoomService
-    public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)
+    public void updateRoom (Client arg1, SceneUpdate arg2, InvocationService.InvocationListener arg3)
     {
         ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;

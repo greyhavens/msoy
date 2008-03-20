@@ -25,7 +25,6 @@ import com.samskivert.util.IntMaps;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
@@ -38,7 +37,7 @@ import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.FurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
@@ -217,58 +216,64 @@ public class MsoySceneRepository extends DepotRepository
     protected void persistUpdate (SceneUpdate update)
         throws PersistenceException
     {
-        if (update instanceof ModifyFurniUpdate) {
-            applyFurniUpdate((ModifyFurniUpdate) update);
+        int finalVersion = update.getSceneVersion() + update.getVersionIncrement();
+        persistUpdates(Collections.singleton(update), finalVersion);
+    }
+
+    /**
+     * Saves the provided set of updates to the database.
+     */
+    protected void persistUpdates (Iterable<? extends SceneUpdate> updates, int finalVersion)
+        throws PersistenceException
+    {
+        int sceneId = 0;
+        for (SceneUpdate update : updates) {
+            sceneId = update.getSceneId();
+            applyUpdate(update);
+        }
+        if (sceneId != 0) {
+            updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
+            log.info("Updated version of " + sceneId + " to " + finalVersion + ".");
+        }
+    }
+
+    /**
+     * Applies an update that adds, removes or changes furni.
+     */
+    protected void applyUpdate (SceneUpdate update)
+        throws PersistenceException
+    {
+        log.info("Storing update " + update + ".");
+
+        if (update instanceof FurniUpdate.Add) {
+            insert(new SceneFurniRecord(update.getSceneId(), ((FurniUpdate)update).data));
+
+        } else if (update instanceof FurniUpdate.Change) {
+            update(new SceneFurniRecord(update.getSceneId(), ((FurniUpdate)update).data));
+
+        } else if (update instanceof FurniUpdate.Remove) {
+            delete(SceneFurniRecord.class,
+                   SceneFurniRecord.getKey(update.getSceneId(), ((FurniUpdate)update).data.id));
+
         } else if (update instanceof SceneAttrsUpdate) {
-            applySceneAttrsUpdate((SceneAttrsUpdate) update);
+            SceneAttrsUpdate scup = (SceneAttrsUpdate)update;
+            updatePartial(
+                SceneRecord.class, update.getSceneId(),
+                SceneRecord.NAME, scup.name,
+                SceneRecord.ACCESS_CONTROL, scup.accessControl,
+                SceneRecord.DECOR_ID, scup.decor.itemId,
+                SceneRecord.AUDIO_ID, scup.audioData.itemId,
+                SceneRecord.AUDIO_MEDIA_HASH, SceneUtil.flattenMediaDesc(scup.audioData.media),
+                SceneRecord.AUDIO_MEDIA_TYPE, scup.audioData.media.mimeType,
+                SceneRecord.AUDIO_VOLUME, scup.audioData.volume,
+                SceneRecord.ENTRANCE_X, scup.entrance.x,
+                SceneRecord.ENTRANCE_Y, scup.entrance.y,
+                SceneRecord.ENTRANCE_Z, scup.entrance.z);
+
         } else {
-            log.warning("Requested to apply unknown update " + update + ".");
+            log.warning("Unable to apply unknown furni update [class=" + update.getClass() +
+                        ", update=" + update + "].");
         }
-
-        // update the scene version (which will already be the new version because the update has
-        // been applied)
-        int newVersion = update.getSceneVersion() + update.getVersionIncrement();
-        updatePartial(SceneRecord.class, update.getSceneId(), SceneRecord.VERSION, newVersion);
-        log.info("Updated version of " + update.getSceneId() + " to " + newVersion + ".");
-    }
-
-    /**
-     * Apply a furniture changing update.
-     */
-    protected void applyFurniUpdate (ModifyFurniUpdate update)
-        throws PersistenceException
-    {
-        if (update.furniRemoved != null) {
-            for (FurniData data : update.furniRemoved) {
-                delete(SceneFurniRecord.class,
-                       SceneFurniRecord.getKey(update.getSceneId(), data.id));
-            }
-        }
-        if (update.furniAdded != null) {
-            for (FurniData data : update.furniAdded) {
-                insert(new SceneFurniRecord(update.getSceneId(), data));
-            }
-        }
-    }
-
-    /**
-     * Apply an update that changes the basic scene attributes.
-     */
-    protected void applySceneAttrsUpdate (SceneAttrsUpdate update)
-        throws PersistenceException
-    {
-        updatePartial(
-            SceneRecord.class, update.getSceneId(),
-            SceneRecord.NAME, update.name,
-            SceneRecord.ACCESS_CONTROL, update.accessControl,
-            SceneRecord.DECOR_ID, update.decor.itemId,
-            SceneRecord.AUDIO_ID, update.audioData.itemId,
-            SceneRecord.AUDIO_MEDIA_HASH, SceneUtil.flattenMediaDesc(update.audioData.media),
-            SceneRecord.AUDIO_MEDIA_TYPE, update.audioData.media.mimeType,
-            SceneRecord.AUDIO_VOLUME, update.audioData.volume,
-            SceneRecord.ENTRANCE_X, update.entrance.x,
-            SceneRecord.ENTRANCE_Y, update.entrance.y,
-            SceneRecord.ENTRANCE_Z, update.entrance.z);
     }
 
     /**
@@ -394,22 +399,9 @@ public class MsoySceneRepository extends DepotRepository
         classes.add(SceneFurniRecord.class);
     }
 
-    /** The marshaller that assists us in managing scene updates. */
-    protected SceneUpdateMarshaller _updateMarshaller = new SceneUpdateMarshaller(
-        // register the update classes
-        // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
-        ModifyFurniUpdate.class,
-        null,                           // previously: ModifyPortalsUpdate
-        SceneAttrsUpdate.class
-        // end of update class registration (DO NOT CHANGE ORDER)
-        );
-
     /** Utility class that compresses related scene updates. */
     protected UpdateAccumulator _accumulator;
     
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     protected DecorRepository _decorRepo;
-
-    /** The maximum number of updates to store for each scene. */
-    protected static final int MAX_UPDATES_PER_SCENE = 16;
 }

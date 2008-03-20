@@ -11,7 +11,10 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.FurniUpdate;
+import com.threerings.msoy.world.data.FurniUpdate_Add;
+import com.threerings.msoy.world.data.FurniUpdate_Change;
+import com.threerings.msoy.world.data.FurniUpdate_Remove;
 
 /**
  * Generates a command to update a single piece of furni.
@@ -44,20 +47,23 @@ public class FurniUpdateAction
      */
     protected function makeUpdate (toRemove :FurniData, toAdd :FurniData) :SceneUpdate
     {
-        var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
+        var furniUpdate :FurniUpdate = null;
         if (toAdd != null) {
-            furniUpdate.furniAdded = TypedArray.create(FurniData);
-            furniUpdate.furniAdded.push(toAdd);
-        }
-        if (toRemove != null) {
-            furniUpdate.furniRemoved = TypedArray.create(FurniData);
-            furniUpdate.furniRemoved.push(toRemove);
+            if (toRemove != null) {
+                furniUpdate = new FurniUpdate_Change();
+            } else {
+                furniUpdate = new FurniUpdate_Add();
+            }
+            furniUpdate.data = toAdd;
+        } else if (toRemove != null) {
+            furniUpdate = new FurniUpdate_Remove();
+            furniUpdate.data = toRemove;
         }
         return furniUpdate;
     }
 
+    protected var _ctx :WorldContext;
     protected var _oldData :FurniData;
     protected var _newData :FurniData;
-    protected var _ctx :WorldContext;
 }
 }

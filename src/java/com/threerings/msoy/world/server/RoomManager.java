@@ -3,24 +3,29 @@
 
 package com.threerings.msoy.world.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Comparators;
+import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+import com.threerings.util.Name;
+
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -29,14 +34,13 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.util.Name;
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneUpdate;
-
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
@@ -52,26 +56,26 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.ActorInfo;
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.Controllable;
 import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
-import com.threerings.msoy.world.data.EntityControl;
-import com.threerings.msoy.world.data.ActorInfo;
-import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.FurniUpdate;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MobObject;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
-import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.world.server.persist.MemoryRecord;
@@ -303,7 +307,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void updateRoom (ClientObject caller, SceneUpdate[] updates,
+    public void updateRoom (ClientObject caller, SceneUpdate update,
                             RoomService.InvocationListener listener)
         throws InvocationException
     {
@@ -311,7 +315,7 @@ public class RoomManager extends SpotSceneManager
         if (!((MsoyScene) _scene).canEdit(user)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
-        doRoomUpdate(updates, user);
+        doRoomUpdate(update, user);
     }
 
     // from interface RoomProvider
@@ -370,23 +374,22 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
-     * reclaim an item from this room.
+     * Reclaims an item from this room.
      */
     public void reclaimItem (ItemIdent item, MemberObject user)
     {
         for (FurniData furni : ((MsoyScene)_scene).getFurni()) {
             if (item.equals(furni.getItemIdent())) {
-                ModifyFurniUpdate update = new ModifyFurniUpdate();
-                update.initialize(_scene.getId(), _scene.getVersion(), new FurniData[] { furni },
-                    null);
-                doRoomUpdate(new SceneUpdate[] { update }, user);
+                FurniUpdate.Remove update = new FurniUpdate.Remove();
+                update.data = furni;
+                doRoomUpdate(update, user);
                 break;
             }
         }
     }
 
     /**
-     * Reclaim this room's decor.
+     * Reclaims this room's decor.
      */
     public void reclaimDecor (MemberObject user)
     {
@@ -398,7 +401,7 @@ public class RoomManager extends SpotSceneManager
         update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
         update.audioData = scene.getAudioData();
         update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(new SceneUpdate[] { update }, user);
+        doRoomUpdate(update, user);
     }
 
     /**
@@ -415,7 +418,7 @@ public class RoomManager extends SpotSceneManager
         update.decor = scene.getDecor();
         update.audioData = ad;
         update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(new SceneUpdate[] { update }, user);
+        doRoomUpdate(update, user);
     }
 
     // documentation inherited from RoomProvider
@@ -613,7 +616,7 @@ public class RoomManager extends SpotSceneManager
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
-        ArrayList<ItemIdent> memoryIds = new ArrayList<ItemIdent>();
+        List<ItemIdent> memoryIds = Lists.newArrayList();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
             if (furni.itemType != Item.NOT_A_TYPE) {
                 memoryIds.add(furni.getItemIdent());
@@ -716,125 +719,95 @@ public class RoomManager extends SpotSceneManager
     /**
      * Performs the given updates.
      */
-    protected void doRoomUpdate (SceneUpdate[] updates, MemberObject user)
+    protected void doRoomUpdate (SceneUpdate update, MemberObject user)
     {
-        // track memory comings and goings
-        ArrayList<ItemIdent> oldIdents = new ArrayList<ItemIdent>();
-        ArrayList<ItemIdent> newIdents = new ArrayList<ItemIdent>();
+        log.info("Processing room update " + update + ".");
 
-        for (SceneUpdate update : updates) {
-            // TODO: complicated verification of changes, including verifying that the user owns
-            // the items they're adding (and that they don't add any props)
+        // TODO: complicated verification of changes, including verifying that the user owns any
+        // item they're adding, etc.
 
-            if (update instanceof SceneAttrsUpdate) {
-                SceneAttrsUpdate up = (SceneAttrsUpdate) update;
-                MsoyScene msoyScene = (MsoyScene) _scene;
-                ResultListener<Object> defaultListener =
-                    new ResultListener<Object>() {
-                    public void requestCompleted (Object result) {}
-                    public void requestFailed (Exception cause) {
-                        log.warning("Unable to update decor usage [e=" + cause + "].");
-                    }
-                };
+        if (update instanceof SceneAttrsUpdate) {
+            SceneAttrsUpdate up = (SceneAttrsUpdate) update;
+            MsoyScene msoyScene = (MsoyScene) _scene;
 
-                // if decor was modified, we should mark new decor as used, and clear the old one
-                Decor decor = msoyScene.getDecor();
-                if (decor != null && decor.itemId != up.decor.itemId) { // modified?
-                    MsoyServer.itemMan.updateItemUsage(
-                        Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
-                        decor.itemId, up.decor.itemId, defaultListener);
-                }
-
-                // same with background audio - mark new one as used, unmark old one
-                AudioData audioData = msoyScene.getAudioData();
-                if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
-                    MsoyServer.itemMan.updateItemUsage(
-                        Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
-                        audioData.itemId, up.audioData.itemId, defaultListener);
-                }
-
-                // if the name or access controls were modified, we need to update our HostedPlace
-                if (msoyScene.getAccessControl() != up.accessControl ||
-                    !msoyScene.getName().equals(up.name)) {
-                    MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name, 
-                                                   msoyScene.getOwnerId(), msoyScene.getOwnerType(),
-                                                   up.accessControl);
-                }
-            }
-
-            // furniture modification updates require us to mark item usage
-            if (update instanceof ModifyFurniUpdate) {
-                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
+            // if decor was modified, we should mark new decor as used, and clear the old one
+            Decor decor = msoyScene.getDecor();
+            if (decor != null && decor.itemId != up.decor.itemId) { // modified?
                 MsoyServer.itemMan.updateItemUsage(
-                    user.getMemberId(), _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
-                    new ResultListener<Object>() {
-                    public void requestCompleted (Object result) {}
-                    public void requestFailed (Exception cause) {
-                        log.warning("Unable to update item usage [e=" + cause + "].");
-                    }
-                });
+                    Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                    decor.itemId, up.decor.itemId, new ComplainingListener<Object>(
+                        log, "Unable to update decor usage"));
+            }
 
-                // note memory comings and goings
-                if (mfu.furniRemoved != null) {
-                    for (FurniData furni : mfu.furniRemoved) {
-                        if (furni.itemType != Item.NOT_A_TYPE) {
-                            oldIdents.add(furni.getItemIdent());
-                        }
-                    }
-                }
-                if (mfu.furniAdded != null) {
-                    for (FurniData furni : mfu.furniAdded) {
-                        if (furni.itemType != Item.NOT_A_TYPE) {
-                            newIdents.add(furni.getItemIdent());
-                        }
-                    }
-                }
+            // same with background audio - mark new one as used, unmark old one
+            AudioData audioData = msoyScene.getAudioData();
+            if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
+                MsoyServer.itemMan.updateItemUsage(
+                    Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                    audioData.itemId, up.audioData.itemId, new ComplainingListener<Object>(
+                        log, "Unable to update audio usage"));
+            }
+
+            // if the name or access controls were modified, we need to update our HostedPlace
+            if (msoyScene.getAccessControl() != up.accessControl ||
+                !msoyScene.getName().equals(up.name)) {
+                MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name, 
+                                               msoyScene.getOwnerId(), msoyScene.getOwnerType(),
+                                               up.accessControl);
             }
         }
 
-        // record our updates
-        for (SceneUpdate update : updates) {
-            update.init(_scene.getId(), _scene.getVersion());
-            recordUpdate(update);
-        }
+        // furniture modification updates require us to mark item usage
+        if (update instanceof FurniUpdate.Remove) {
+            // mark this item as no longer in use
+            FurniData data = ((FurniUpdate)update).data;
+            MsoyServer.itemMan.updateItemUsage(
+                data.itemType, Item.UNUSED, user.getMemberId(), _scene.getId(),
+                data.itemId, 0, new ComplainingListener<Object>(
+                    log, "Unable to clear furni item usage"));
 
-        // now fix up the lists: any ItemIdent that appears in both lists should be in neither.
-        ArrayList<EntityMemoryEntry> oldMemories = new ArrayList<EntityMemoryEntry>();
-        for (Iterator<ItemIdent> itr = oldIdents.iterator(); itr.hasNext(); ) {
-            ItemIdent ident = itr.next();
-            if (newIdents.remove(ident)) {
-                itr.remove();
-            } else {
-                // ah, this is an item that's actually being removed. Locate any memories.
+            // clear out any memories that were loaded for this item
+            List<EntityMemoryEntry> toRemove = Lists.newArrayList();
+            if (data.itemType != Item.NOT_A_TYPE) {
+                ItemIdent ident = data.getItemIdent();
                 for (EntityMemoryEntry entry : _roomObj.memories) {
                     if (ident.equals(entry.item)) {
-                        oldMemories.add(entry);
+                        toRemove.add(entry);
                     }
                 }
             }
-        }
-
-        // now remove any old memories from the room object and persist them
-        if (!oldMemories.isEmpty()) {
-            _roomObj.startTransaction();
-            try {
-                for (EntityMemoryEntry entry : oldMemories) {
-                    _roomObj.removeFromMemories(entry.getRemoveKey());
+            if (!toRemove.isEmpty()) {
+                _roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : toRemove) {
+                        _roomObj.removeFromMemories(entry.getRemoveKey());
+                    }
+                } finally {
+                    _roomObj.commitTransaction();
                 }
-            } finally {
-                _roomObj.commitTransaction();
+                // persist any of the old memories that were modified
+                flushMemories(toRemove);
             }
 
-            // persist any of the old memories that were modified
-            flushMemories(oldMemories);
+        } else if (update instanceof FurniUpdate.Add) {
+            // mark this item as in use
+            FurniData data = ((FurniUpdate)update).data;
+            MsoyServer.itemMan.updateItemUsage(
+                data.itemType, Item.USED_AS_FURNITURE, user.getMemberId(), _scene.getId(),
+                0, data.itemId, new ComplainingListener<Object>(
+                    log, "Unable to set furni item usage"));
+
+            // and resolve any memories it may have
+            resolveMemories(Collections.singleton(data.getItemIdent()));
         }
 
-        // finally, load any new memories
-        if (!newIdents.isEmpty()) {
-            resolveMemories(newIdents);
-        }
+        // initialize and record this update to the scene management system (which will persist it,
+        // send it to the client for application to the scene, etc.)
+        update.init(_scene.getId(), _scene.getVersion());
+        recordUpdate(update);
 
-        // let the registry know that rooms be gettin' updated
+        // let the registry know that rooms be gettin' updated (TODO: don't do this on every
+        // fucking update, it's super expensive)
         ((MsoySceneRegistry)MsoyServer.screg).memberUpdatedRoom(user, (MsoyScene)_scene);
     }
 
@@ -870,7 +843,7 @@ public class RoomManager extends SpotSceneManager
     protected void reassignControllers (int bodyOid, boolean avrgOnly)
     {
         // determine which items were under the control of this user
-        List<Controllable> items = new ArrayList<Controllable>();
+        List<Controllable> items = Lists.newArrayList();
         for (EntityControl ctrl : _roomObj.controllers) {
             if (ctrl.controllerOid == bodyOid &&
                 (!avrgOnly || (ctrl.controlled instanceof ControllableAVRGame))) {
@@ -898,7 +871,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Handles a request to select a controller for the supplied set of items.
      */
-    protected boolean assignControllers (Collection<Controllable> controllables)
+    protected boolean assignControllers (Collection<Controllable> ctrlables)
     {
         // determine the available controllers
         HashIntMap<Controller> controllers = new HashIntMap<Controller>();
@@ -928,15 +901,15 @@ public class RoomManager extends SpotSceneManager
         try {
             _roomObj.startTransaction();
             TreeSet<Controller> set = new TreeSet<Controller>(controllers.values());
-            for (Controllable controllable : controllables) {
+            for (Controllable ctrlable : ctrlables) {
                 for (Controller ctrl : set) {
-                    if (!controllable.isControllableBy(ctrl.bodyOid)) {
+                    if (!ctrlable.isControllableBy(ctrl.bodyOid)) {
                         continue;
                     }
                     set.remove(ctrl);
                     ctrl.load++;
-                    log.info("Assigning control [item=" + controllable + ", to=" + ctrl.bodyOid + "].");
-                    _roomObj.addToControllers(new EntityControl(controllable, ctrl.bodyOid));
+                    log.info("Assigning control [item=" + ctrlable + ", to=" + ctrl.bodyOid + "].");
+                    _roomObj.addToControllers(new EntityControl(ctrlable, ctrl.bodyOid));
                     set.add(ctrl);
                     break;
                 }
@@ -985,7 +958,7 @@ public class RoomManager extends SpotSceneManager
      */
     public static void flushMemories (Iterable<EntityMemoryEntry> entries)
     {
-        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
+        final List<MemoryRecord> memrecs = Lists.newArrayList();
         for (EntityMemoryEntry entry : entries) {
             if (entry.modified) {
                 memrecs.add(new MemoryRecord(entry));

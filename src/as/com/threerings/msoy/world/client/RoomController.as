@@ -22,8 +22,6 @@ import mx.core.UIComponent;
 import mx.managers.ISystemManager;
 import mx.managers.ToolTipManager;
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
@@ -96,16 +94,17 @@ import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.FurniUpdate_Add;
+import com.threerings.msoy.world.data.FurniUpdate_Remove;
+import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.PetInfo;
-import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
@@ -1194,13 +1193,11 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Sends the entire array of room edits to the server.
-     *
-     * @param updates a TypedArray containing instances of SceneUpdate object.
+     * Sends a room update to the server.
      */
-    protected function updateRoom (updates :TypedArray /* of SceneUpdate */) :void
+    protected function updateRoom (update :SceneUpdate) :void
     {
-        _roomObj.roomService.updateRoom(_wdctx.getClient(), updates, new ReportingListener(_wdctx));
+        _roomObj.roomService.updateRoom(_wdctx.getClient(), update, new ReportingListener(_wdctx));
     }
 
     /**
@@ -1645,6 +1642,7 @@ public class RoomController extends SceneController
 
    override protected function sceneUpdated (update :SceneUpdate) :void
     {
+        var data :FurniData;
         if (update is SceneAttrsUpdate) {
             var attrsUpdate :SceneAttrsUpdate = update as SceneAttrsUpdate;
             var newId :int = attrsUpdate.decor.itemId;
@@ -1659,16 +1657,16 @@ public class RoomController extends SceneController
                 _wdctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
                     [ Item.AUDIO, newId, oldId ]);
             }
-        } else if (update is ModifyFurniUpdate) {
-            var args :Array = [ [], [] ];
-            var updates :Array = [ (update as ModifyFurniUpdate).furniAdded,
-                (update as ModifyFurniUpdate).furniRemoved ];
-            for (var ii :int = 0; ii < updates.length; ii++) {
-                for each (var furni :FurniData in updates[ii]) {
-                    args[ii].push([ furni.itemType, furni.itemId ]);
-                }
-            }
-            _wdctx.getWorldClient().dispatchEventToGWT(FURNI_CHANGED_EVENT, args);
+
+        } else if (update is FurniUpdate_Add) {
+            data = (update as FurniUpdate_Add).data;
+            _wdctx.getWorldClient().dispatchEventToGWT(
+                FURNI_CHANGED_EVENT, [[[ data.itemType, data.itemId ]], []]);
+
+        } else if (update is FurniUpdate_Remove) {
+            data = (update as FurniUpdate_Remove).data;
+            _wdctx.getWorldClient().dispatchEventToGWT(
+                FURNI_CHANGED_EVENT, [[], [[ data.itemType, data.itemId ]]]);
         }
 
         super.sceneUpdated(update);

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.world.client.updates {
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.whirled.data.SceneUpdate;
 
 /**
@@ -18,7 +16,7 @@ public class UpdateStack
 
     /**
      * Creates a new update stack. The updateFn is a function that performs server access, of type:
-     *   function (array :TypedArray of SceneUpdates) :void
+     *   function (update :SceneUpdate) :void
      * Whenever an action is pushed or popped off the stack, its SceneUpdate object will be
      * recreated, and passed to updateFn, which will notify the server.
      */
@@ -77,11 +75,8 @@ public class UpdateStack
      */
     protected function update (sceneUpdate :SceneUpdate) :void
     {
-        var edits :TypedArray = TypedArray.create(SceneUpdate);
-        edits.push(sceneUpdate);
-        _updateFn(edits);
+        _updateFn(sceneUpdate);
     }
-
 
     protected var _maxLength :int;
     protected var _stack :Array;

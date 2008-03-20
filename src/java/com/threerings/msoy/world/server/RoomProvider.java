@@ -82,6 +82,6 @@ public interface RoomProvider extends InvocationProvider
     /**
      * Handles a {@link RoomService#updateRoom} request.
      */
-    public void updateRoom (ClientObject caller, SceneUpdate[] arg1, InvocationService.InvocationListener arg2)
+    public void updateRoom (ClientObject caller, SceneUpdate arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 }

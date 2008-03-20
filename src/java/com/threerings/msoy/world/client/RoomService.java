@@ -61,12 +61,12 @@ public interface RoomService extends InvocationService
     public void editRoom (Client client, ResultListener listener);
 
     /**
-     * Request to apply the specified scene updates to the room.
+     * Requests to apply the specified scene update to the room.
      */
-    public void updateRoom (Client client, SceneUpdate[] updates, InvocationListener listener);
+    public void updateRoom (Client client, SceneUpdate update, InvocationListener listener);
 
     /**
-     * Request to purchase a new room.
+     * Requests to purchase a new room.
      */
     public void purchaseRoom (Client client, ResultListener listener);
 

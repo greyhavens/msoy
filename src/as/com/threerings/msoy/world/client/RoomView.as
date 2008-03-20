@@ -84,9 +84,9 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.FurniUpdate_Remove;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MobInfo;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -198,17 +198,15 @@ public class RoomView extends AbstractRoomView
      */
     public function processUpdate (update :SceneUpdate) :void
     {
-        if (update is ModifyFurniUpdate) {
-            for each (var furni :FurniData in (update as ModifyFurniUpdate).furniRemoved) {
-                removeFurni(furni);
-            }
+        log.info("Processing update " + update + ".");
+
+        if (update is FurniUpdate_Remove) {
+            removeFurni((update as FurniUpdate_Remove).data);
 
         } else if (update is SceneAttrsUpdate) {
             rereadScene(); // re-read our scene
             updateBackground();
             updateBackgroundAudio();
-        } else {
-            throw new Error();
         }
 
         // this will take care of anything added

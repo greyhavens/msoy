@@ -56,6 +56,6 @@ public interface RoomService extends InvocationService
     function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void;
 
     // from Java interface RoomService
-    function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void;
+    function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void;
 }
 }

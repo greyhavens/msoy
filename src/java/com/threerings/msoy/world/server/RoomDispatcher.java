@@ -124,7 +124,7 @@ public class RoomDispatcher extends InvocationDispatcher
         case RoomMarshaller.UPDATE_ROOM:
             ((RoomProvider)provider).updateRoom(
                 source,
-                (SceneUpdate[])args[0], (InvocationService.InvocationListener)args[1]
+                (SceneUpdate)args[0], (InvocationService.InvocationListener)args[1]
             );
             return;
 

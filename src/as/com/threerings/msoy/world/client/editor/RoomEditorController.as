@@ -41,12 +41,13 @@ import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.FurniUpdate_Add;
+import com.threerings.msoy.world.data.FurniUpdate_Change;
+import com.threerings.msoy.world.data.FurniUpdate_Remove;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-
 
 /**
  * Controller for the room editing panel. It starts up two different types of UI: one is
@@ -146,45 +147,24 @@ public class RoomEditorController
         }
 
         if (update is SceneAttrsUpdate) {
-            var up :SceneAttrsUpdate = update as SceneAttrsUpdate;
+            var up :SceneAttrsUpdate = (update as SceneAttrsUpdate);
             // update sprite data
             _entranceSprite.getFurniData().loc.set(up.entrance);
             _entranceSprite.update(_entranceSprite.getFurniData());
             refreshTarget();
-            return;
-        }
 
-        if (update is ModifyFurniUpdate) {
-            var mod :ModifyFurniUpdate = update as ModifyFurniUpdate;
-
-            // special case: most of the time the player will just move furnis around, which
-            // results in an update that removes and re-adds the same object.
-            // if that's what's going on, just do a simple refresh.
-            if (mod.furniRemoved != null && mod.furniRemoved.length == 1 &&
-                mod.furniAdded != null && mod.furniAdded.length == 1) {
-
-                var added :FurniData = mod.furniAdded[0] as FurniData;
-                var removed :FurniData = mod.furniRemoved[0] as FurniData;
-                if (added.getItemIdent().equals(removed.getItemIdent())) {
-                    refreshTarget();
-                    return;
-                }
-            }
-
-            // this is a different kind of an update. refresh the name cache appropriately.
-            queryServerForNames(mod.furniAdded);
+        } else if (update is FurniUpdate_Add) {
+            queryServerForNames([ (update as FurniUpdate_Add).data ]);
             updateNameDisplay();
 
-            // finally, if the target furni just got removed, we should lose focus.
-            if (mod.furniRemoved != null && _edit.target != null) {
-                var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
-                var targetRemoved :Boolean = mod.furniRemoved.some(
-                    function (furni :FurniData, ... rest) :Boolean {
-                        return furni.getItemIdent().equals(targetIdent);
-                    });
-                if (targetRemoved) {
-                    setTarget(null, null);
-                }
+        } else if (update is FurniUpdate_Change) {
+            refreshTarget();
+
+        } else if (update is FurniUpdate_Remove) {
+            // if the target furni just got removed, we should lose focus.
+            if (_edit.target != null && (_edit.target.getFurniData().getItemIdent() ==
+                                         (update as FurniUpdate_Remove).data.getItemIdent())) {
+                setTarget(null, null);
             }
         }
     }
