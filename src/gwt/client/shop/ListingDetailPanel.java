@@ -101,7 +101,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
-                String args = Args.compose(""+_item.getType(), "0", ""+_listing.originalItemId);
+                String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
                 info.addWidget(Application.createLink(CShop.msgs.listingViewOrig(),
                                                       Page.STUFF, args), 2, null);
             }
