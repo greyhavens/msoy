@@ -13,6 +13,8 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 
+import flash.ui.Keyboard;
+
 import flash.utils.ByteArray;
 
 import mx.controls.ColorPicker;
@@ -36,6 +38,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+import com.threerings.flex.KeyboardManager;
 import com.threerings.flex.ScrollBox;
 
 /**
@@ -128,6 +131,9 @@ public class ImagePreview extends HBox
         GridUtil.addRow(grid, new CommandButton("Crop", _editor.doCrop), [2, 1]);
         GridUtil.addRow(grid, _undo = new CommandButton("Undo", _editor.doUndo),
             _redo = new CommandButton("Redo", _editor.doRedo));
+
+        KeyboardManager.setShortcut(_undo, 26/*should be: Keyboard.Z*/, Keyboard.CONTROL);
+        KeyboardManager.setShortcut(_redo, 25/*should be: Keyboard.Y*/, Keyboard.CONTROL);
 
         bar.addChild(grid);
 
