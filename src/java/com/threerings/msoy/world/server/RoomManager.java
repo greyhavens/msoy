@@ -794,6 +794,7 @@ public class RoomManager extends SpotSceneManager
 
         // record our updates
         for (SceneUpdate update : updates) {
+            update.init(_scene.getId(), _scene.getVersion());
             recordUpdate(update);
         }
 
