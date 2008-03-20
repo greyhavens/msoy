@@ -198,8 +198,6 @@ public class RoomView extends AbstractRoomView
      */
     public function processUpdate (update :SceneUpdate) :void
     {
-        log.info("Processing update " + update + ".");
-
         if (update is FurniUpdate_Remove) {
             removeFurni((update as FurniUpdate_Remove).data);
 

@@ -145,8 +145,6 @@ public class UpdateAccumulator
          */
         public void filterAndStore (MsoySceneRepository repo)
         {
-            log.info("Filtering and storing " + size() + " events.");
-
             // look backwards for remove events and filter all events for that furni prior; also
             // look for change events and filter all changes prior to the last change
             Set<ItemIdent> removed = Sets.newHashSet(), changed = Sets.newHashSet();
@@ -154,11 +152,9 @@ public class UpdateAccumulator
                 FurniUpdate update = get(ii);
                 ItemIdent ident = update.data.getItemIdent();
                 if (removed.contains(ident)) {
-                    log.info("Filtering event for removed item " + update + ".");
                     remove(ii);
                 } else if (update instanceof FurniUpdate.Change) {
                     if (changed.contains(ident)) {
-                        log.info("Filtering redundant change " + update + ".");
                         remove(ii);
                     } else {
                         changed.add(ident);

@@ -233,7 +233,6 @@ public class MsoySceneRepository extends DepotRepository
         }
         if (sceneId != 0) {
             updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
-            log.info("Updated version of " + sceneId + " to " + finalVersion + ".");
         }
     }
 
@@ -243,8 +242,6 @@ public class MsoySceneRepository extends DepotRepository
     protected void applyUpdate (SceneUpdate update)
         throws PersistenceException
     {
-        log.info("Storing update " + update + ".");
-
         if (update instanceof FurniUpdate.Add) {
             insert(new SceneFurniRecord(update.getSceneId(), ((FurniUpdate)update).data));
 

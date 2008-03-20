@@ -721,8 +721,6 @@ public class RoomManager extends SpotSceneManager
      */
     protected void doRoomUpdate (SceneUpdate update, MemberObject user)
     {
-        log.info("Processing room update " + update + ".");
-
         // TODO: complicated verification of changes, including verifying that the user owns any
         // item they're adding, etc.
 
