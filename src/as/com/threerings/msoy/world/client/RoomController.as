@@ -563,6 +563,13 @@ public class RoomController extends SceneController
                         { label: Msgs.GENERAL.get("l.add_as_friend"),
                           command: WorldController.INVITE_FRIEND, arg: [memId] });
                 }
+                if (avatar.isBlockable()) {
+                    var kind :String = Msgs.GENERAL.get(avatar.getDesc());
+                    var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
+                    menuItems.push(
+                        { label: Msgs.GENERAL.get(key, kind),
+                          callback: avatar.toggleBlocked, arg: _wdctx });
+                }
             }
         }
 
