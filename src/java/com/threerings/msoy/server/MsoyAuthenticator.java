@@ -448,7 +448,7 @@ public class MsoyAuthenticator extends Authenticator
                 member = createMember(account, account.accountName, null);
                 account.firstLogon = true;
             } else {
-                account.firstLogon = (mrec.sessions == 0);
+                account.firstLogon = (member.sessions == 0);
             }
             rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
         }
