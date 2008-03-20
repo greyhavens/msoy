@@ -73,8 +73,8 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     {
         try {
             MemberRecord member = MsoyServer.author.authenticateSession(username, password);
-            User user = ((MsoyOOOUserRepository)_supportrepo).loadUserByEmail(member.accountName);
-
+            User user = ((MsoyOOOUserRepository)_supportrepo).loadUserByEmail(
+                    member.accountName, false);
             String token = ((MsoyOOOUserRepository)_supportrepo).registerSession(user, expireDays);
 
             return new Tuple<User,String>(user, token);

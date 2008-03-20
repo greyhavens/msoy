@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.underwire.server;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 
@@ -53,12 +55,16 @@ public class MsoyGameInfoProvider extends GameInfoProvider
     }
 
     @Override // from GameInfoProvider
-    public String lookupAccountName (String gameName)
+    public String[] lookupAccountNames (String gameName)
         throws PersistenceException
     {
-        // this will require some refacting since display names aren't unique
-        // and perma names aren't required
-        return null;
+        List<Integer> memberIds =
+            MsoyBaseServer.memberRepo.findMembersByDisplayName(gameName, LOOKUP_LIMIT);
+        ArrayList<String> names = new ArrayList<String>(memberIds.size());
+        for (Integer memberId : memberIds) {
+            names.add(memberId.toString());
+        }
+        return names.toArray(new String[names.size()]);
     }
 
     @Override // from GameInfoProvider
@@ -69,6 +75,10 @@ public class MsoyGameInfoProvider extends GameInfoProvider
         if (member != null) {
             account.firstSession = new Date(member.created.getTime());
             account.lastSession = new Date(member.lastSession.getTime());
+            account.altName = member.permaName;
         }
     }
+
+    // maximum number of display names to return
+    protected static final int LOOKUP_LIMIT = 50;
 }

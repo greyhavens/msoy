@@ -37,6 +37,8 @@ import com.threerings.underwire.server.persist.SupportRepository;
 import com.threerings.user.OOOUser;
 import com.threerings.user.OOOUserRepository;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Whirled-specific table-compatible simulation of the parts of {@link OOOUserRepository} we want.
  */
@@ -81,7 +83,7 @@ public class MsoyOOOUserRepository extends DepotRepository
     public OOOUser loadUser (String username, boolean loadIdents)
         throws PersistenceException
     {
-        OOOUser user = loadUserByEmail(username);
+        OOOUser user = toUser(loadUserRecord(username));
         if (user == null || !loadIdents) {
             return user;
         }
@@ -129,10 +131,15 @@ public class MsoyOOOUserRepository extends DepotRepository
     /**
      * Looks up a user by email address.
      */
-    public OOOUser loadUserByEmail (String email)
+    public OOOUser loadUserByEmail (String email, boolean loadIdents)
         throws PersistenceException
     {
-        return toUser(loadUserRecordByEmail(email));
+        OOOUser user = toUser(loadUserRecordByEmail(email));
+        if (user == null || !loadIdents) {
+            return user;
+        }
+        loadMachineIdents(user);
+        return user;
     }
 
     // documentation inherited from SupportRepository
@@ -142,7 +149,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         ArrayList<String> usernames = new ArrayList<String>();
         Where where = new Where(OOOUserRecord.EMAIL_C, email);
         for (OOOUserRecord record : findAll(OOOUserRecord.class, where)) {
-            usernames.add(record.username);
+            usernames.add(record.email);
         }
         return usernames.toArray(new String[usernames.size()]);
     }
@@ -154,10 +161,12 @@ public class MsoyOOOUserRepository extends DepotRepository
         // We're doing a manual token check after loading the users, however ideally having the
         // depot support for a regexp comparison on a hex converted tokens field would be faster
         ArrayList<String> retnames = new ArrayList<String>();
-        Where where = new Where(new In(OOOUserRecord.EMAIL_C, usernames));
-        for (OOOUserRecord record : findAll(OOOUserRecord.class, where)) {
-            if (record.holdsToken(token)) {
-                retnames.add(record.username);
+        if (usernames.size() > 0) {
+            Where where = new Where(new In(OOOUserRecord.EMAIL_C, usernames));
+            for (OOOUserRecord record : findAll(OOOUserRecord.class, where)) {
+                if (record.holdsToken(token)) {
+                    retnames.add(record.username);
+                }
             }
         }
         return retnames;
@@ -173,6 +182,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         Where where = new Where(UserIdentRecord.USER_ID_C, userId);
         for (UserIdentRecord record : findAll(UserIdentRecord.class, where)) {
             if (!StringUtil.isBlank(record.machIdent)) {
+                log.info("Adding machine ident [userId=" + userId + " machIdent=" + record.machIdent + "].");
                 idents.add(record.machIdent);
             }
         }
@@ -232,7 +242,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         throws PersistenceException
     {
         ArrayList<String> tainted = new ArrayList<String>();
-        if (idents != null && idents.length >= 0) {
+        if (idents != null && idents.length > 0) {
             Where where = new Where(new In(TaintedIdentRecord.MACH_IDENT_C, Arrays.asList(idents)));
             for (TaintedIdentRecord record : findAll(TaintedIdentRecord.class, where)) {
                 tainted.add(record.machIdent);
@@ -278,7 +288,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         throws PersistenceException
     {
         ArrayList<String> banned = new ArrayList<String>();
-        if (idents != null && idents.length >= 0) {
+        if (idents != null && idents.length > 0) {
             Where where = new Where(new And(
                         new Equals(BannedIdentRecord.SITE_ID_C, siteId),
                         new In(BannedIdentRecord.MACH_IDENT_C, Arrays.asList(idents))));
