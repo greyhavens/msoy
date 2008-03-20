@@ -368,7 +368,7 @@ public class RoomController extends SceneController
     public function takeSnapshot () :void
     {
         _snap.takeScreenshot(_roomView);
-    };   
+    };
 
     /**
      * Handles EDIT_DOOR.
@@ -729,7 +729,7 @@ public class RoomController extends SceneController
 
         if (itemType == Item.PET) {
             var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
-            svc.callPet(_wdctx.getClient(), itemId, 
+            svc.callPet(_wdctx.getClient(), itemId,
                         new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_called"));
             return;
         }
@@ -876,7 +876,6 @@ public class RoomController extends SceneController
         _editor.endEditing();
     }
 
-
     /**
      * Applies a specified room update object to the current room.
      */
@@ -1001,7 +1000,7 @@ public class RoomController extends SceneController
         _editor = new RoomEditorController(_wdctx, _roomView);
 
         if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
-            // show the pointer cursor 
+            // show the pointer cursor
             _roomView.buttonMode = true;
             _roomView.mouseChildren = false;
             _roomView.useHandCursor = true;
@@ -1028,7 +1027,7 @@ public class RoomController extends SceneController
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
         _snap = new SnapshotController(_wdctx, _scene.getId());
-        
+
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         _roomView.addChildAt(_flyTarget, _roomView.numChildren);

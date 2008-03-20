@@ -15,7 +15,7 @@ public class UpdateStack
 {
     /** Default max length of the undo stack. */
     public static const DEFAULT_MAX_LENGTH :int = 100;
-    
+
     /**
      * Creates a new update stack. The updateFn is a function that performs server access, of type:
      *   function (array :TypedArray of SceneUpdates) :void
@@ -37,7 +37,7 @@ public class UpdateStack
         if (length >= _maxLength) {
             _stack.shift(); // drop the oldest one
         }
-        
+
         _stack.push(action);
         update(action.makeApply());
     }
@@ -53,7 +53,7 @@ public class UpdateStack
             update(action.makeUndo());
         }
 
-        return action;        
+        return action;
     }
 
     /**

@@ -14,7 +14,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
-
 /**
  * Generates a command to update scene attributes.
  */
@@ -32,13 +31,13 @@ public class SceneUpdateAction
         copySceneAttributes(newScene.getSceneModel(), _newSceneData);
     }
 
-    // documentation inherited 
+    // documentation inherited
     public function makeApply () :SceneUpdate
     {
         return makeUpdate(_newSceneData);
     }
 
-    // documentation inherited 
+    // documentation inherited
     public function makeUndo () :SceneUpdate
     {
         return makeUpdate(_oldSceneData);
@@ -48,23 +47,20 @@ public class SceneUpdateAction
     protected function copySceneAttributes (from :Object, to :Object) :void
     {
         for each (var attribute :String in ATTRS_TO_COPY) {
-            // sanity check, since we're circumventing model definitions 
-            if (! from.hasOwnProperty(attribute)) {
+            // sanity check, since we're circumventing model definitions
+            if (from.hasOwnProperty(attribute)) {
+                to[attribute] = from[attribute];
+            } else {
                 Log.getLog(this).warning("UpdateAction: trying to copy absent attribute " +
                                          "[attribute=" + attribute + "]");
             }
-                                         
-            to[attribute] = from[attribute];
         }
     }
-    
+
     /** Creates a SceneUpdate to send to the server. */
     protected function makeUpdate (sceneData :Object) :SceneUpdate
     {
-        var currentScene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
         var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
-
-        attrUpdate.init(currentScene.getId(), currentScene.getVersion());
         copySceneAttributes(sceneData, attrUpdate);
         return attrUpdate;
     }

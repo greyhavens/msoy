@@ -131,7 +131,7 @@ public class RoomEditorController
         _panel.close();
 
         // note: this function does *not* get called when the player closes the editor by
-        // clicking on the close button. all significant editor cleanup should happen in 
+        // clicking on the close button. all significant editor cleanup should happen in
         // actionEditorClosed()
     }
 
@@ -144,7 +144,7 @@ public class RoomEditorController
             // don't care about updates if we're not actually editing.
             return;
         }
-        
+
         if (update is SceneAttrsUpdate) {
             var up :SceneAttrsUpdate = update as SceneAttrsUpdate;
             // update sprite data
@@ -153,7 +153,7 @@ public class RoomEditorController
             refreshTarget();
             return;
         }
-        
+
         if (update is ModifyFurniUpdate) {
             var mod :ModifyFurniUpdate = update as ModifyFurniUpdate;
 
@@ -174,7 +174,7 @@ public class RoomEditorController
             // this is a different kind of an update. refresh the name cache appropriately.
             queryServerForNames(mod.furniAdded);
             updateNameDisplay();
-            
+
             // finally, if the target furni just got removed, we should lose focus.
             if (mod.furniRemoved != null && _edit.target != null) {
                 var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
@@ -213,7 +213,7 @@ public class RoomEditorController
             newmodel.entrance = toAdd.loc;
             updateScene(scene, newscene);
         } else {
-            // it's a genuine furni update - apply it 
+            // it's a genuine furni update - apply it
             _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
         }
         updateUndoStatus(true);
@@ -240,7 +240,7 @@ public class RoomEditorController
             setTarget(_entranceSprite, null);
             return;
         }
-        
+
         // it's a bona fide selection. if the new target is different, let's select it
         if (_edit.target == null || ! _edit.target.getFurniData().getItemIdent().equals(ident)) {
             var sprites :Array = _view.getFurniSprites().values();
@@ -250,7 +250,7 @@ public class RoomEditorController
                 });
             setTarget(index == -1 ? null : sprites[index], null);
         }
-    }        
+    }
 
     /**
      * Called by the room controller, to query whether the user should be allowed to move
@@ -281,11 +281,11 @@ public class RoomEditorController
     public function actionAdjustScale (multiplierX :Number, multiplierY :Number) :void
     {
         withFurniUpdate(function () :void {
-                if (multiplierX != 1 || multiplierY != 1) {
-                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
-                    _edit.updateTargetScale(multiplierX * f.scaleX, multiplierY * f.scaleY);
-                }
-            });
+            if (multiplierX != 1 || multiplierY != 1) {
+                var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                _edit.updateTargetScale(multiplierX * f.scaleX, multiplierY * f.scaleY);
+            }
+        });
     }
 
     /** Adjusts furni size from a panel button action. */
@@ -293,53 +293,51 @@ public class RoomEditorController
         rotationDelta :Number, snap :Boolean = false, snapIncrement :Number = 0) :void
     {
         withFurniUpdate(function () :void {
-                if (rotationDelta != 0) {
-                    
-                    // rotate the furni
-                    var f :FurniData = _edit.target.getFurniData();
-                    var newrotation :Number = f.rotation + rotationDelta;
+            if (rotationDelta != 0) {
+                // rotate the furni
+                var f :FurniData = _edit.target.getFurniData();
+                var newrotation :Number = f.rotation + rotationDelta;
 
-                    // only do this calculation if we're not already snapped
-                    if (snap && (f.rotation % snapIncrement != 0)) {
-                        // use delta to snap to the specified increment
-                        var snapfn :Function = (rotationDelta > 0) ? Math.ceil : Math.floor;
-                        newrotation = snapIncrement * snapfn(f.rotation / snapIncrement);
-                    }
-                    
-                    _edit.updateTargetRotation(newrotation);
+                // only do this calculation if we're not already snapped
+                if (snap && (f.rotation % snapIncrement != 0)) {
+                    // use delta to snap to the specified increment
+                    var snapfn :Function = (rotationDelta > 0) ? Math.ceil : Math.floor;
+                    newrotation = snapIncrement * snapfn(f.rotation / snapIncrement);
                 }
-            });
+
+                _edit.updateTargetRotation(newrotation);
+            }
+        });
     }
 
     /** Adjusts furni location from a panel button action. */
     public function actionAdjustYPosition (yDelta :Number) :void
     {
         withFurniUpdate(function () :void {
-                if (yDelta != 0) {
-                    var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
-                    _edit.updateTargetLocation(
-                        new MsoyLocation(f.loc.x, f.loc.y + yDelta, f.loc.z));
-                }
-            });
-    }        
-    
+            if (yDelta != 0) {
+                var f :FurniData = _edit.target.getFurniData().clone() as FurniData;
+                _edit.updateTargetLocation(
+                    new MsoyLocation(f.loc.x, f.loc.y + yDelta, f.loc.z));
+            }
+        });
+    }
+
     /** Resets the edited furni to the base location, or size, or both. */
     public function actionResetTarget (
         resetLocation :Boolean, resetSize :Boolean, resetRotation :Boolean) :void
     {
         withFurniUpdate(function () :void {
-                if (resetLocation) {
-                    _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
-                }
-                if (resetSize) {
-                    _edit.updateTargetScale(1.0, 1.0);
-                }
-                if (resetRotation) {
-                    _edit.updateTargetRotation(0);
-                }
-            });
+            if (resetLocation) {
+                _edit.updateTargetLocation(new MsoyLocation(0.5, 0.5, 0.5));
+            }
+            if (resetSize) {
+                _edit.updateTargetScale(1.0, 1.0);
+            }
+            if (resetRotation) {
+                _edit.updateTargetRotation(0);
+            }
+        });
     }
-
 
     /** Tells the room controller to start editing the target as a door. */
     public function actionTargetDoor () :void
@@ -352,8 +350,8 @@ public class RoomEditorController
 
         // make the furni's type to a portal, and save on the server
         withFurniUpdate(function () :void {
-                data.actionType = FurniData.ACTION_PORTAL;
-            });
+            data.actionType = FurniData.ACTION_PORTAL;
+        });
 
         // now open up the door creation wizard. note: we're not wrapping this
         // in a furni update, because the room controller code will do that for us.
@@ -376,7 +374,7 @@ public class RoomEditorController
     {
         setTargetAction(FurniData.ACTION_NONE, null);
     }
-    
+
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close
@@ -437,7 +435,7 @@ public class RoomEditorController
         _panel.setHomeButtonEnabled(false);
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         svc.setHomeSceneId(_ctx.getClient(), scene.getId(), new ConfirmAdapter(
-            // failed function 
+            // failed function
             function (cause :String) :void {
                 _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
             },
@@ -472,17 +470,16 @@ public class RoomEditorController
         if (_edit.target == null) {
             return;
         }
-        
+
         var original :FurniData = _edit.target.getFurniData().clone() as FurniData;
-        
         thunk();
-        
+
         var current :FurniData = _edit.target.getFurniData();
         if (! original.equivalent(current)) {
             updateFurni(original, current);
         }
     }
-    
+
     /**
      * Helper function, returns an array of ItemIdents of pieces of furniture from the specified
      * /furnis/ array, whose names are not stored in the cache.
@@ -500,7 +497,7 @@ public class RoomEditorController
         }
         return idents;
     }
-        
+
     /**
      * Given a list of furnis, retrieves names of furnis we don't yet know about.
      */
@@ -509,14 +506,14 @@ public class RoomEditorController
         if (furnis == null) {
             return; // nothing to do
         }
-        
+
         // find which furni names we're missing
         var idents :TypedArray = findNamelessFurnis(furnis);
 
         if (idents.length == 0) {
             return; // no names are missing - we're done!
         }
-        
+
         // now ask the server for ids
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
         svc.getItemNames(
@@ -602,17 +599,17 @@ public class RoomEditorController
     /** Sets the currently edited target's action (if applicable). */
     protected function setTargetAction (actionType :int, actionData :String) :void
     {
-        withFurniUpdate(function () :void {   
-                if (_edit.target == null || ! _edit.target.isActionModifiable()) {
-                    return;
-                }
-                
-                var data :FurniData = _edit.target.getFurniData();
-                data.actionType = actionType;
-                data.actionData = actionData;
-            });
+        withFurniUpdate(function () :void {
+            if (_edit.target == null || ! _edit.target.isActionModifiable()) {
+                return;
+            }
+
+            var data :FurniData = _edit.target.getFurniData();
+            data.actionType = actionType;
+            data.actionData = actionData;
+        });
     }
-    
+
     /** Forces the target sprite to be re-read from the room. */
     protected function refreshTarget () :void
     {
@@ -631,21 +628,19 @@ public class RoomEditorController
         }
     }
 
-    private static const log :Log = Log.getLog(RoomEditorController);
-
-    /**
-     * Mapping from ItemIdents to combo box entries that contain both names and ItemIdents.
-     * This cache is updated once when the editor is opened, and then following each furni update. 
-     */
-    protected var _names :HashMap = new HashMap();
-
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;
     protected var _wrapupFn :Function;   // will be called when ending editing
-    
+
+    /** Mapping from ItemIdents to combo box entries that contain both names and ItemIdents.  This
+     * cache is updated once when the editor is opened, and then following each furni update. */
+    protected var _names :HashMap = new HashMap();
+
     protected var _entranceSprite :EntranceSprite;
+
+    private static const log :Log = Log.getLog(RoomEditorController);
 }
 }
