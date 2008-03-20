@@ -122,6 +122,12 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         return Integer.toString(name.getMemberId());
     }
 
+    @Override //documentation inherited from UnderwireServlet
+    protected int getSiteId ()
+    {
+        return OOOUser.METASOY_SITE_ID;
+    }
+
     // documentation inherited from UnderwireServlet
     protected GameInfoProvider getInfoProvider ()
     {
