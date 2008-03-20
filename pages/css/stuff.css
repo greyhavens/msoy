@@ -48,6 +48,10 @@
   padding-right: 20px;
 }
 
+.itemPanel .itemBox .Name {
+  text-align: center;
+}
+
 .itemPanel .itemBox .Original {
   font-style: italic;
 }
