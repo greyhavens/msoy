@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
@@ -458,36 +457,38 @@ public class Frame
         }
     }
 
-    protected static class TitleBar extends SmartGrid
+    protected static class TitleBar extends SmartTable
     {
-        public TitleBar (String pageId, String title, Widget subnavi) {
-            super(2, 1, "pageTitle", 0, 0);
+        public TitleBar (String pageId, String title, SubNaviPanel subnavi) {
+            super("pageTitle", 0, 0);
 
-            // image that links with tabs
-            setWidget(0, 0, createImage(pageId), null);
-            
-            // now create title bar test
-            _textbox = new SmartGrid(1, 3);
-            _textbox.setText(0, 0, _deftitle = title, "Title");
-            _textbox.setWidget(0, 1, subnavi, "SubNavi");
+            setWidget(0, 0, createImage(pageId), 3, null);
+            setText(1, 0, _deftitle = title, 1, "Title");
+            setWidget(1, 1, _subnavi = subnavi, 1, "SubNavi");
+            getFlexCellFormatter().setVerticalAlignment(1, 1, HasAlignment.ALIGN_BOTTOM);
 
-            _closeBox = MsoyUI.createCloseButton(new ClickListener() {
+            _closeBox = MsoyUI.createActionImage("/images/ui/close.png", new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
             });
-            _textbox.setWidget(0, 2, _closeBox, "Close");
-            setWidget(1, 0, _textbox, "TextBar");
-
+            _closeBox.addStyleName("Close");
+            _closeShim = MsoyUI.createHTML("&nbsp;", "Shim");
             setCloseVisible(false);
         }
 
         public void setTitle (String title) {
-            _textbox.setText(0, 0, title == null ? _deftitle : title);
+            setText(1, 0, title == null ? _deftitle : title);
         }
 
         public void setCloseVisible (boolean visible) {
-            _closeBox.setVisible(visible);
+            _subnavi.remove(_closeBox);
+            _subnavi.remove(_closeShim);
+            if (visible) {
+                _subnavi.add(_closeBox);
+            } else {
+                _subnavi.add(_closeShim);
+            }
         }
 
         protected Image createImage (String page) {
@@ -498,8 +499,8 @@ public class Frame
         }
 
         protected String _deftitle;
-        protected Widget _closeBox;
-        protected SmartGrid _textbox;
+        protected SubNaviPanel _subnavi;
+        protected Widget _closeBox, _closeShim;
     }
 
     protected static class Header extends SmartTable
