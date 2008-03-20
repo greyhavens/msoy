@@ -162,8 +162,8 @@ public class RoomEditorController
 
         } else if (update is FurniUpdate_Remove) {
             // if the target furni just got removed, we should lose focus.
-            if (_edit.target != null && (_edit.target.getFurniData().getItemIdent() ==
-                                         (update as FurniUpdate_Remove).data.getItemIdent())) {
+            if (_edit.target != null && _edit.target.getFurniData().getItemIdent().equals(
+                    (update as FurniUpdate_Remove).data.getItemIdent())) {
                 setTarget(null, null);
             }
         }
