@@ -522,6 +522,11 @@ TabNavigator, TabBar {
   verticalGap: 2;
 }
 
+BasePanel { 
+  backgroundDisabledColor: #e0eaeb;
+  disabledColor: #e0eaeb;
+}
+
 .roomEditNameBar {  
   backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png",
           scaleGridTop="10", scaleGridBottom="13",
