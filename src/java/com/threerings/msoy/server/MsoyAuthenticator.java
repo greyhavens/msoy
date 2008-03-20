@@ -279,6 +279,8 @@ public class MsoyAuthenticator extends Authenticator
                 // if this is their first logon, insert a skeleton member record
                 mrec = createMember(account, email, null);
                 account.firstLogon = true;
+            } else {
+                account.firstLogon = (mrec.sessions == 0);
             }
 
             // validate that they can logon
@@ -445,6 +447,8 @@ public class MsoyAuthenticator extends Authenticator
             if (member == null) {
                 member = createMember(account, account.accountName, null);
                 account.firstLogon = true;
+            } else {
+                account.firstLogon = (mrec.sessions == 0);
             }
             rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
         }
