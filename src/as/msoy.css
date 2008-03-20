@@ -110,16 +110,16 @@ ComboBox {
   fontSize: 9;
   upSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
-          scaleGridLeft="5", scaleGridRight="45");
+          scaleGridLeft="5", scaleGridRight="40");
   overSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
-          scaleGridLeft="5", scaleGridRight="45");
+          scaleGridLeft="5", scaleGridRight="40");
   downSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
-          scaleGridLeft="5", scaleGridRight="45");
+          scaleGridLeft="5", scaleGridRight="40");
   disabledSkin: Embed(source="../../rsrc/media/skins/combobox/disabled.png",
-          scaleGridTop="5", scaleGridBottom="45",
-          scaleGridLeft="5", scaleGridRight="13");
+          scaleGridTop="5", scaleGridBottom="13",
+          scaleGridLeft="5", scaleGridRight="40");
 }
 
 CheckBox {
