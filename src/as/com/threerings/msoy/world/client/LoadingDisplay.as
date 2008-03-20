@@ -37,6 +37,7 @@ public class LoadingDisplay extends Sprite
     public function watchLoader (info :LoaderInfo, isDecor :Boolean = false) :void
     {
         info.addEventListener(Event.COMPLETE, handleComplete);
+        info.addEventListener(Event.UNLOAD, handleComplete);
         info.addEventListener(IOErrorEvent.IO_ERROR, handleIOError);
 
         if (isDecor) {
@@ -59,6 +60,7 @@ public class LoadingDisplay extends Sprite
     protected function unwatchLoader (info :LoaderInfo) :void
     {
         info.removeEventListener(Event.COMPLETE, handleComplete);
+        info.removeEventListener(Event.UNLOAD, handleComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, handleIOError);
 
         if (info == _decor) {
