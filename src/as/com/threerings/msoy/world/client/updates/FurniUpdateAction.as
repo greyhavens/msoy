@@ -44,23 +44,15 @@ public class FurniUpdateAction
      */
     protected function makeUpdate (toRemove :FurniData, toAdd :FurniData) :SceneUpdate
     {
-        var addedData :TypedArray;
-        var removedData :TypedArray;
-
-        if (toAdd != null) {
-            addedData = TypedArray.create(FurniData);
-            addedData.push(toAdd);
-        }
-
-        if (toRemove != null) {
-            removedData = TypedArray.create(FurniData);
-            removedData.push(toRemove);
-        }
-
-        var scene :Scene = _ctx.getSceneDirector().getScene();
         var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
-        furniUpdate.initialize(scene.getId(), scene.getVersion(), removedData, addedData);
-
+        if (toAdd != null) {
+            furniUpdate.furniAdded = TypedArray.create(FurniData);
+            furniUpdate.furniAdded.push(toAdd);
+        }
+        if (toRemove != null) {
+            furniUpdate.furniRemoved = TypedArray.create(FurniData);
+            furniUpdate.furniRemoved.push(toRemove);
+        }
         return furniUpdate;
     }
 

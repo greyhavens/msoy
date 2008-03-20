@@ -16,17 +16,6 @@ public class ModifyFurniUpdate extends SceneUpdate
 
     public var furniAdded :TypedArray;
 
-    public function initialize (
-            targetId :int, targetVersion :int, removed :TypedArray,
-            added :TypedArray)
-            :void
-    {
-        init(targetId, targetVersion);
-
-        furniRemoved = removed;
-        furniAdded = added;
-    }
-
     // documentation inherited
     override public function apply (model :SceneModel) :void
     {
