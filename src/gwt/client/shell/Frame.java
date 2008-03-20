@@ -473,7 +473,7 @@ public class Frame
                 }
             });
             _closeBox.addStyleName("Close");
-            _closeShim = MsoyUI.createHTML("&nbsp;", "Shim");
+            _closeShim = MsoyUI.createHTML("&nbsp;", "Close");
             setCloseVisible(false);
         }
 
