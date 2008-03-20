@@ -239,7 +239,12 @@ HScrollBar {
 
 Menu {
   openDuration: 0;
-  checkIcon: Embed(source="../../rsrc/media/skins/selected_menu_icon.png");
+  checkIcon: Embed(source="../../rsrc/media/skins/menu/selected_icon.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/menu/background.png");
+  backgroundSize: "100%";
+  borderColor: #ffffff;
+  rollOverColor: #7DBFF8;
+  dropShadowEnabled: true;
 }
 
 MenuBar {
