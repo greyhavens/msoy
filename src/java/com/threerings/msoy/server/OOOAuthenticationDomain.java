@@ -160,7 +160,8 @@ public class OOOAuthenticationDomain
         }
 
         // if this is a banned user, mark that ident
-        if (user.holdsToken(OOOUser.MSOY_BANNED)) {
+        if (user.holdsToken(OOOUser.MSOY_BANNED) ||
+                _authrep.isBannedIdent(machIdent, OOOUser.METASOY_SITE_ID)) {
             _authrep.addTaintedIdent(machIdent);
             throw new ServiceException(MsoyAuthCodes.BANNED);
         }

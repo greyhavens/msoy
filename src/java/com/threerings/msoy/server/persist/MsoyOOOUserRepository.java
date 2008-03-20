@@ -25,6 +25,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.user.User;
 import com.samskivert.servlet.user.UserExistsException;
@@ -171,7 +172,9 @@ public class MsoyOOOUserRepository extends DepotRepository
         ArrayList<String> idents = new ArrayList<String>();
         Where where = new Where(UserIdentRecord.USER_ID_C, userId);
         for (UserIdentRecord record : findAll(UserIdentRecord.class, where)) {
-            idents.add(record.machIdent);
+            if (!StringUtil.isBlank(record.machIdent)) {
+                idents.add(record.machIdent);
+            }
         }
         String[] machIdents = idents.toArray(new String[idents.size()]);
         Arrays.sort(machIdents); // sort the idents in java to ensure correct collation
@@ -205,7 +208,10 @@ public class MsoyOOOUserRepository extends DepotRepository
     public void addUserIdent (int userId, String machIdent)
         throws PersistenceException
     {
-        insert(new UserIdentRecord(userId, machIdent));
+        // don't add blank or null idents
+        if (!StringUtil.isBlank(machIdent)) {
+            insert(new UserIdentRecord(userId, machIdent));
+        }
     }
 
     /**
@@ -214,6 +220,10 @@ public class MsoyOOOUserRepository extends DepotRepository
     public boolean isTaintedIdent (String machIdent)
         throws PersistenceException
     {
+        // blank or null idents can't be tainted
+        if (StringUtil.isBlank(machIdent)) {
+            return false;
+        }
         return load(TaintedIdentRecord.class, machIdent) != null;
     }
 
@@ -237,7 +247,10 @@ public class MsoyOOOUserRepository extends DepotRepository
     public void addTaintedIdent (String machIdent)
         throws PersistenceException
     {
-        insert(new TaintedIdentRecord(machIdent));
+        // don't taint blank or null idents
+        if (!StringUtil.isBlank(machIdent)) {
+            insert(new TaintedIdentRecord(machIdent));
+        }
     }
 
     // documentation inherited from SupportRepository
@@ -245,6 +258,19 @@ public class MsoyOOOUserRepository extends DepotRepository
         throws PersistenceException
     {
         delete(TaintedIdentRecord.class, machIdent);
+    }
+
+    /**
+     * Checks to see if the specified machine identifier is banned.
+     */
+    public boolean isBannedIdent (String machIdent, int siteId)
+        throws PersistenceException
+    {
+        // blank or null idents can't be tainted
+        if (StringUtil.isBlank(machIdent)) {
+            return false;
+        }
+        return load(BannedIdentRecord.class, BannedIdentRecord.getKey(machIdent, siteId)) != null;
     }
 
     // documentation inherited from SupportRepository
