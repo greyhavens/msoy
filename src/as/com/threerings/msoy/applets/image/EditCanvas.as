@@ -48,6 +48,11 @@ import com.threerings.flash.GraphicsUtil;
 [Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
 
 /** 
+ * Dispatched when a color is selected.
+ */
+[Event(name="ColorSelected", type="com.threerings.util.ValueEvent")]
+
+/** 
  * Dispatched when the undo/redo status has changed.
  */
 [Event(name="UndoRedoChange", type="com.threerings.util.ValueEvent")]
@@ -59,14 +64,17 @@ public class EditCanvas extends Canvas
 {
     public static const SIZE_KNOWN :String = "SizeKnown";
 
+    public static const COLOR_SELECTED :String = "ColorSelected";
+
     public static const UNDO_REDO_CHANGE :String = "UndoRedoChange";
 
     /** Mode constants. */
     public static const NONE :int = -1;
     public static const PAINT :int = 0;
     public static const ERASE :int = 1;
-    public static const SELECT :int = 2;
-    public static const MOVE :int = 3;
+    public static const SELECT_COLOR :int = 2;
+    public static const SELECT :int = 3;
+    public static const MOVE :int = 4;
 
     public function EditCanvas (maxW :int, maxH:int)
     {
@@ -106,36 +114,6 @@ public class EditCanvas extends Canvas
         ho.includeInLayout = false;
         addChild(ho);
         addChild(_holder);
-
-
-//        _rotLayer.blendMode = BlendMode.LAYER;
-//
-//        var bigRed :Shape = new Shape();
-//        bigRed.graphics.beginFill(0xFF0000);
-//        bigRed.graphics.drawCircle(0, 0, 50);
-//        bigRed.graphics.endFill();
-//        _rotLayer.addChild(bigRed);
-//
-//        var medBlue :Shape = new Shape();
-//        medBlue.graphics.beginFill(0x000099);
-//        medBlue.graphics.drawCircle(0, 0, 30);
-//        medBlue.graphics.endFill();
-//        _rotLayer.addChild(medBlue);
-//
-//        var lilErase :Shape = new Shape();
-//        lilErase.graphics.beginFill(0xFFFFFF);
-//        lilErase.graphics.drawCircle(0, 0, 15);
-//        lilErase.graphics.endFill();
-//        lilErase.blendMode = BlendMode.ERASE;
-//        _rotLayer.addChild(lilErase);
-
-
-//        var mask :Shape = new Shape();
-//        mask.graphics.beginFill(0xFFFFFF);
-//        mask.graphics.drawRect(0, 0, maxWidth, maxHeight);
-//        mask.graphics.endFill();
-//        _editor.mask = mask;
-//        _editor.addChild(mask);
     }
 
     public function canUndo () :Boolean
@@ -195,6 +173,12 @@ public class EditCanvas extends Canvas
     public function getBrushSize () :Number
     {
         return _brushSize;
+    }
+
+    public function setBrushShape (circle :Boolean) :void
+    {
+        _brushCircle = circle;
+        updateBrush();
     }
 
     public function setForcedCrop (wid :Number, hei :Number) :void
@@ -423,7 +407,6 @@ public class EditCanvas extends Canvas
         fn(MouseEvent.MOUSE_DOWN, handlePaintStart);
         fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
         fn(MouseEvent.MOUSE_UP, handlePaintEnd);
-        _paintLayer.mouseEnabled = on;
         _brush.blendMode = (_mode == ERASE) ? BlendMode.ERASE : BlendMode.NORMAL;
 
         // SELECT
@@ -440,6 +423,14 @@ public class EditCanvas extends Canvas
         fn(MouseEvent.MOUSE_DOWN, handleCropSelect);
         fn(MouseEvent.MOUSE_UP, handleCropUp);
         _crop.mouseEnabled = on;
+
+        // SELECT_COLOR
+        on = (_mode == SELECT_COLOR);
+        fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
+        fn(MouseEvent.CLICK, handleSelectColor);
+
+        // and finally:
+        _paintLayer.mouseEnabled = (_mode == PAINT) || (_mode == ERASE) || (_mode == SELECT_COLOR);
     }
 
     protected function updateBrush () :void
@@ -447,11 +438,34 @@ public class EditCanvas extends Canvas
         var g :Graphics = _brush.graphics;
         g.clear();
         g.beginFill(_color);
-        g.drawCircle(0, 0, (_brushSize/2) / _scale);
+        const radius :Number = (_brushSize/2) / _scale;
+        if (_brushCircle) {
+            g.drawCircle(0, 0, radius);
+        } else {
+            g.drawRect(-radius, -radius, radius * 2, radius * 2);
+        }
         g.endFill();
     }
 
     // Editing operations
+
+    protected function handleSelectColor (event :MouseEvent) :void
+    {
+        // paint into a 1x1 bitmapdata and see what color we get
+        var bmp :BitmapData = new BitmapData(1, 1, true, 0)
+        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY,
+            -event.localX, -event.localY)
+        bmp.draw(_scaleLayer, matrix);
+
+        var value :uint = bmp.getPixel32(0, 0);
+        var alpha :uint = (value >> 24) & 0xFF;
+
+        if (alpha != 0) {
+            var newColor :uint = value & 0xFFFFFF;
+            setPaintColor(newColor);
+            dispatchEvent(new ValueEvent(COLOR_SELECTED, newColor));
+        }
+    }
 
     protected function handleShowBrush (event :MouseEvent) :void
     {
@@ -492,8 +506,9 @@ public class EditCanvas extends Canvas
     {
         var g :Graphics = _curPaint.graphics;
         if (_paintPoint != null) {
-            g.lineStyle(_brushSize / _scale, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.ROUND,
-                JointStyle.ROUND);
+            g.lineStyle(_brushSize / _scale, _color, 1, false, LineScaleMode.NORMAL,
+                _brushCircle ? CapsStyle.ROUND : CapsStyle.SQUARE,
+                _brushCircle ? JointStyle.ROUND : JointStyle.BEVEL);
             g.moveTo(_paintPoint.x, _paintPoint.y);
             _paintPoint = null;
         }
@@ -510,7 +525,12 @@ public class EditCanvas extends Canvas
             // there was never any line drawn, so we just stamp the brush
             var g :Graphics = _curPaint.graphics;
             g.beginFill(_color);
-            g.drawCircle(event.localX, event.localY, (_brushSize/2) / _scale);
+            const radius :Number = (_brushSize/2) / _scale;
+            if (_brushCircle) {
+                g.drawCircle(event.localX, event.localY, radius);
+            } else {
+                g.drawRect(event.localX - radius, event.localY - radius, radius * 2, radius * 2);
+            }
             g.endFill();
             _paintPoint = null;
         }
@@ -654,6 +674,7 @@ public class EditCanvas extends Canvas
     protected var _mode :int;
     protected var _color :uint;
     protected var _brushSize :Number = 1;
+    protected var _brushCircle :Boolean = true;
     protected var _forceCrop :Boolean = false;
 
     /** The maximum number of undos. */
