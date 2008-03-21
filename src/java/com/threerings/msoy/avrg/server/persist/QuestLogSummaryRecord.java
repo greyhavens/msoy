@@ -20,6 +20,13 @@ public class QuestLogSummaryRecord extends PersistentRecord
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(QuestLogSummaryRecord.class, GAME_ID);
 
+    /** The column identifier for the {@link #payoutCount} field. */
+    public static final String PAYOUT_COUNT = "payoutCount";
+
+    /** The qualified column identifier for the {@link #payoutCount} field. */
+    public static final ColumnExp PAYOUT_COUNT_C =
+        new ColumnExp(QuestLogSummaryRecord.class, PAYOUT_COUNT);
+
     /** The column identifier for the {@link #payoutFactorTotal} field. */
     public static final String PAYOUT_FACTOR_TOTAL = "payoutFactorTotal";
 
@@ -31,6 +38,9 @@ public class QuestLogSummaryRecord extends PersistentRecord
     /** The id of the game that did the flow granting. */
     public int gameId;
 
-    /** The sum of payout factors this AVRG has granted. */
+    /** The number of payouts in this summary. */
+    public int payoutCount;
+    
+    /** The sum of payout factors this AVRG has granted for this summary. */
     public int payoutFactorTotal;
 }

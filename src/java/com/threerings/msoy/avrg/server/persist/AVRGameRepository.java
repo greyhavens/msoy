@@ -15,6 +15,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
@@ -113,6 +114,7 @@ public class AVRGameRepository extends DepotRepository
     public void noteQuestCompleted (int gameId, int memberId, String questId, float payoutFactor)
         throws PersistenceException
     {
+        gameId = Math.abs(gameId); // how to handle playing the original?
         setQuestState(gameId, memberId, questId, QuestState.STEP_COMPLETED, null, 0);
         insert(new QuestLogRecord(gameId, memberId, questId, payoutFactor));
     }
@@ -120,6 +122,7 @@ public class AVRGameRepository extends DepotRepository
     public QuestLogSummaryRecord summarizeQuestLogRecords (int gameId)
         throws PersistenceException
     {
+        gameId = Math.abs(gameId); // how to handle playing the original?
         return load(
             QuestLogSummaryRecord.class,
             new Where(QuestLogRecord.GAME_ID_C, gameId),
@@ -128,6 +131,8 @@ public class AVRGameRepository extends DepotRepository
                                 QuestLogRecord.GAME_ID_C),
             new FieldDefinition(QuestLogSummaryRecord.PAYOUT_FACTOR_TOTAL,
                                 new FunctionExp("sum", QuestLogRecord.PAYOUT_FACTOR_C)),
+            new FieldDefinition(QuestLogSummaryRecord.PAYOUT_COUNT,
+                                new LiteralExp("count(*)")),
             new GroupBy(QuestLogRecord.GAME_ID_C));
     }
     
