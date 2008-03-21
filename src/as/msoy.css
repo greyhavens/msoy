@@ -323,15 +323,15 @@ TabNavigator, TabBar {
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
 }
 
-.unselectedRoomTab {
+.unselectedRoomTab, .attentionRoomTab {
   color: #8BA1AF;
 }
 
-.unselectedTellTab {
+.unselectedTellTab, .attentionTellTab {
   color: #B2A696;
 }
 
-.unselectedGroupTab {
+.unselectedGroupTab, .attentionGroupTab {
   color: #8E969D;
 }
 
