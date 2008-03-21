@@ -134,7 +134,7 @@ public class ShopPanel extends HorizontalPanel
             setWidget(0, 1, new ThumbBox(card.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE,
                                          makeClick(card)), 1, "Thumb");
             setText(1, 0, CShop.msgs.shopRank(""+rank), 1, "Ranking");
-            setText(1, 1, card.name, 1, "Name");
+            setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden
             setText(2, 1, CShop.msgs.itemBy(card.creator.toString()), 1, "Creator");
         }
     }
