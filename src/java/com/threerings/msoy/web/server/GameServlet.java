@@ -116,7 +116,7 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // determine how many players can play this game
-            int[] players = getMinMaxPlayers(detail.getGame());
+            int[] players = getMinMaxPlayers((gameId < 0) ? detail.sourceItem : detail.listedItem);
             detail.minPlayers = players[0];
             detail.maxPlayers = players[1];
 
