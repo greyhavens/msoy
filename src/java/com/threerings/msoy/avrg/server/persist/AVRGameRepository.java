@@ -12,6 +12,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -124,9 +125,10 @@ public class AVRGameRepository extends DepotRepository
             new Where(QuestLogRecord.GAME_ID_C, gameId),
             new FromOverride(QuestLogRecord.class),
             new FieldDefinition(QuestLogSummaryRecord.GAME_ID,
-                               QuestLogRecord.GAME_ID_C),
+                                QuestLogRecord.GAME_ID_C),
             new FieldDefinition(QuestLogSummaryRecord.PAYOUT_FACTOR_TOTAL,
-                               new FunctionExp("sum", QuestLogRecord.PAYOUT_FACTOR_C)));
+                                new FunctionExp("sum", QuestLogRecord.PAYOUT_FACTOR_C)),
+            new GroupBy(QuestLogRecord.GAME_ID_C));
     }
     
     public void deleteQuestLogRecords (int gameId)
