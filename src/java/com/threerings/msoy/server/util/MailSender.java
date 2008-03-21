@@ -70,6 +70,10 @@ public class MailSender
             return false;
         }
 
+        public long getLongThreshold () {
+            return 10000L; // mail sending takes a long time sometimes
+        }
+
         protected abstract void populateContext (VelocityContext ctx);
 
         protected String _recipient, _sender, _template;
