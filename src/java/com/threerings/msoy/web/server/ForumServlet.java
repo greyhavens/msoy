@@ -41,6 +41,7 @@ import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 import com.threerings.msoy.web.client.ForumService;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.MessageTooLongException;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -242,9 +243,9 @@ public class ForumServlet extends MsoyServiceServlet
             // make sure they're allowed to create a thread in this group
             Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
 
-            // make sure the user is not doing anything nefarious in their HTML (note: we never
-            // display the subject as raw HTML so we don't need to sanitize it)
-            message = HTMLSanitizer.sanitize(message);
+            // sanitize and recheck the length of the message (note: we never display the subject
+            // as raw HTML so we don't need to sanitize it)
+            message = sanitizeMessage(message);
 
             // create the thread (and first post) in the database and return its runtime form
             ForumThread thread = MsoyServer.forumRepo.createThread(
@@ -313,7 +314,7 @@ public class ForumServlet extends MsoyServiceServlet
             checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
 
             // make sure the user is not doing anything nefarious in their HTML
-            message = HTMLSanitizer.sanitize(message);
+            message = sanitizeMessage(message);
 
             // create the message in the database and return its runtime form
             ForumMessageRecord fmr = MsoyServer.forumRepo.postMessage(
@@ -353,7 +354,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // make sure the user is not doing anything nefarious in their HTML
-            message = HTMLSanitizer.sanitize(message);
+            message = sanitizeMessage(message);
 
             // if all is well then do the deed
             MsoyServer.forumRepo.updateMessage(messageId, message);
@@ -504,5 +505,19 @@ public class ForumServlet extends MsoyServiceServlet
             }
         }
         return names;
+    }
+
+    /**
+     * Runs the supplied HTML message through our sanitizer and rechecks that the length of the
+     * message is within our limits. The sanitizer might make the message slightly longer.
+     */
+    protected String sanitizeMessage (String message)
+        throws ServiceException
+    {
+        String sanitized = HTMLSanitizer.sanitize(message);
+        if (sanitized.length() > ForumMessage.MAX_MESSAGE_LENGTH) {
+            throw new MessageTooLongException(sanitized.length());
+        }
+        return sanitized;
     }
 }

@@ -127,11 +127,6 @@ public class ThreadPanel extends TitledListPanel
             MsoyUI.error(CMsgs.mmsgs.errMissingReply());
             return false;
         }
-        int extra = text.length() - ForumMessage.MAX_MESSAGE_LENGTH;
-        if (extra > 0) {
-            MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
-            return false;
-        }
         return true;
     }
 
@@ -175,7 +170,7 @@ public class ThreadPanel extends TitledListPanel
             }));
             Button submit = new Button(CMsgs.cmsgs.submit());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
-            new ClickCallback(submit) {
+            new ForumCallback(submit) {
                 public boolean callService () {
                     String text = _editor.getHTML();
                     if (!checkMessageText(text)) {
@@ -219,7 +214,7 @@ public class ThreadPanel extends TitledListPanel
             }));
 
             Button submit = new Button(CMsgs.cmsgs.submit());
-            new ClickCallback(submit) {
+            new ForumCallback(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
                     if (!checkMessageText(_text)) {

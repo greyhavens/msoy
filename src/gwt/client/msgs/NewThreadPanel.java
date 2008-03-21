@@ -14,7 +14,6 @@ import com.threerings.msoy.fora.data.ForumThread;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -53,7 +52,7 @@ public class NewThreadPanel extends TableFooterPanel
             }
         }));
         Button submit = new Button(CMsgs.cmsgs.submit());
-        new ClickCallback(submit) {
+        new ForumCallback(submit) {
             public boolean callService () {
                 return submitNewThread(this);
             }
@@ -65,7 +64,7 @@ public class NewThreadPanel extends TableFooterPanel
         _footer.add(submit);
     }
 
-    protected boolean submitNewThread (ClickCallback callback)
+    protected boolean submitNewThread (ForumCallback callback)
     {
         String subject = _subject.getText().trim();
         if (subject.length() == 0) {
@@ -76,11 +75,6 @@ public class NewThreadPanel extends TableFooterPanel
         String message = _message.getHTML();
         if (message.length() == 0) {
             MsoyUI.error(CMsgs.mmsgs.errNoMessage());
-            return false;
-        }
-        int extra = message.length() - ForumMessage.MAX_MESSAGE_LENGTH;
-        if (extra > 0) {
-            MsoyUI.error(CMsgs.mmsgs.errMessageTooLong(""+extra));
             return false;
         }
 

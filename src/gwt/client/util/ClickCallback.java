@@ -72,7 +72,15 @@ public abstract class ClickCallback
     {
         CShell.log("Callback failure [for=" + _trigger + "]", cause);
         setEnabled(true);
-        MsoyUI.error(CShell.serverError(cause));
+        MsoyUI.error(convertError(cause));
+    }
+
+    /**
+     * Converts an exception returned by the server into a readable message.
+     */
+    protected String convertError (Throwable cause)
+    {
+        return CShell.serverError(cause);
     }
 
     protected void takeAction (boolean confirmed)
