@@ -200,6 +200,7 @@ public class CatalogPanel extends SmartTable
             filter.add(new InlineLabel(text, false, false, true));
             CatalogQuery query = new CatalogQuery();
             query.itemType = _query.itemType;
+            query.sortBy = _query.sortBy;
             filter.add(Application.createLink(CShop.msgs.catalogClearFilter(),
                                               Page.SHOP, CShop.composeArgs(query, 0)));
             _listings.setWidget(0, 0, filter, 1, "Blurb");

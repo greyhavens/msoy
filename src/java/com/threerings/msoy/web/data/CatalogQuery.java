@@ -49,8 +49,8 @@ public class CatalogQuery
     {
         this.itemType = source.itemType;
         this.sortBy = source.sortBy;
-        this.tag = new String(source.tag);
-        this.search = new String(source.search);
+        this.tag = source.tag;
+        this.search = source.search;
         this.creatorId = source.creatorId;
     }
     

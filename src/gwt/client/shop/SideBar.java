@@ -45,21 +45,20 @@ public class SideBar extends SmartTable
                 if (query.itemType == type) {
                     add(MsoyUI.createLabel(name, "Selected"));
                 } else {
-                    // make a new url, preserving search terms (if any)
-                    String args;
-                    if (query.tag != null || query.search != null || query.creatorId != 0) {
-                        CatalogQuery newQuery = new CatalogQuery(query);
-                        newQuery.itemType = type; 
-                        args = CShop.composeArgs(newQuery, 0);
-                    } else {
-                        args = "" + type;
-                    }
-                        
-                    Widget link = Application.createLink(name, Page.SHOP, args);
+                    Widget link = Application.createLink(
+                        name, Page.SHOP, toLinkArguments(query, type, 0));
                     link.removeStyleName("inline");
                     add(link);
                 }
             }
+        }
+
+        /** Makes a search argument string, preserving constraints. */
+        protected String toLinkArguments (CatalogQuery query, byte newtype, int page)
+        {
+            CatalogQuery copy = new CatalogQuery(query);
+            copy.itemType = newtype;
+            return CShop.composeArgs(copy, page);
         }
     }
 }
