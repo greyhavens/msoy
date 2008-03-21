@@ -41,6 +41,19 @@ public class CatalogQuery
     /** The member id of the creator whose listings we want exclusively to see, or 0. */
     public int creatorId;
 
+    public CatalogQuery ()
+    {
+    }
+
+    public CatalogQuery (CatalogQuery source)
+    {
+        this.itemType = source.itemType;
+        this.sortBy = source.sortBy;
+        this.tag = new String(source.tag);
+        this.search = new String(source.search);
+        this.creatorId = source.creatorId;
+    }
+    
     // @Override // from Object
     public int hashCode ()
     {

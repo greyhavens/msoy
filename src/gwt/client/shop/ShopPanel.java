@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ShopData;
 
@@ -38,7 +39,7 @@ public class ShopPanel extends HorizontalPanel
         setStyleName("shopPanel");
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
-        add(new SideBar(Item.NOT_A_TYPE, null));
+        add(new SideBar(new CatalogQuery(), null));
         add(WidgetUtil.makeShim(10, 10));
         add(_contents = new FlowPanel());
         add(WidgetUtil.makeShim(10, 10));

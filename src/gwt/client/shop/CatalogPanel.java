@@ -107,6 +107,8 @@ public class CatalogPanel extends SmartTable
                     return CShop.msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {
                     return CShop.msgs.catalogNoMatch(name, _query.search);
+                } else if (_query.creatorId != 0) {
+                    return CShop.msgs.catalogNoCreator(name);
                 } else {
                     return CShop.msgs.catalogNoList(name);
                 }
@@ -175,7 +177,7 @@ public class CatalogPanel extends SmartTable
         if (cloud == null) {
             _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
         }
-        setWidget(0, 0, new SideBar(_query.itemType, cloud));
+        setWidget(0, 0, new SideBar(_query, cloud));
 
         // set up our page title
         Frame.setTitle(CShop.dmsgs.getString("pItemType" + _query.itemType));
