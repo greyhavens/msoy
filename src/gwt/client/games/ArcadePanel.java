@@ -4,6 +4,7 @@
 package client.games;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,11 +43,11 @@ public class ArcadePanel extends VerticalPanel
 
     protected void init (ArcadeData data)
     {
-        HorizontalPanel row = new HorizontalPanel();
-        row.setStyleName("Features");
-        row.add(new WhyPlayPanel());
-        row.add(new FeaturedGamePanel(data.featuredGames));
-        add(row);
+        HorizontalPanel top = new HorizontalPanel();
+        top.setStyleName("Features");
+        top.add(new WhyPlayPanel());
+        top.add(new FeaturedGamePanel(data.featuredGames));
+        add(top);
 
         Grid grid = new Grid(3, 3);
         grid.setCellSpacing(5);
@@ -55,9 +56,11 @@ public class ArcadePanel extends VerticalPanel
 
         for (int ii = 0; ii < data.genres.size(); ii++) {
             ArcadeData.Genre genre = (ArcadeData.Genre)data.genres.get(ii);
-            grid.setWidget(ii/3, ii%3, new HeaderBox("/images/game/genre/" + genre.genre + ".png",
-                                                     CGames.dmsgs.getString("genre" + genre.genre),
-                                                     new GenreSummaryPanel(genre)));
+            int row = ii/3, col = ii%3;
+            grid.setWidget(row, col, new HeaderBox("/images/game/genre/" + genre.genre + ".png",
+                                                   CGames.dmsgs.getString("genre" + genre.genre),
+                                                   new GenreSummaryPanel(genre)));
+            grid.getCellFormatter().setVerticalAlignment(row, col, HasAlignment.ALIGN_TOP);
         }
     }
 
