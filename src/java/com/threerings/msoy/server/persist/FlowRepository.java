@@ -159,12 +159,12 @@ public class FlowRepository extends DepotRepository
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", action=" + action + "]");
         }
-        
+
         final UserActionDetails newInfo = new UserActionDetails(
             record.memberId, action.action, action.otherMemberId, action.itemType, action.itemId);
         return grantFlow(newInfo, amount).flow;
     }
-    
+
     /**
      * Expire a member's flow given that dMin minute passed since last we did so.  The flow field
      * of the supplied MemberRecord is modified by this method: the expired flow is subtracted from
@@ -308,7 +308,6 @@ public class FlowRepository extends DepotRepository
         } while (again);
 
         // record the associated user action
-        // TODO (RZ): is this necessary anymore?
         recordUserAction(info);
 
         // TODO: can we magically get the updated value from the database? stored procedure?
