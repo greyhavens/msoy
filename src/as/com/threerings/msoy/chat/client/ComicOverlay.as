@@ -27,8 +27,8 @@ import com.threerings.flash.ColorUtil;
 
 import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.LayeredContainer;
+import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.all.RoomName;
 
@@ -40,7 +40,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 /**
  * Implements comic chat in the metasoy client.
  */
-public class ComicOverlay extends ChatOverlay
+public class ComicOverlay extends ChatOverlay 
 {
     /**
      * Construct a comic chat overlay.
@@ -108,16 +108,10 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    override public function setHistorySliding (sliding :Boolean) :void
+    override public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
-        super.setHistorySliding(sliding);
-
-        if (_target != null) {
-            _target.callLater(function () :void {
-                for each (var cloud :BubbleCloud in _bubbles.values()) {
-                    cloud.viewWidth = _target.width;
-                }
-            });
+        for each (var cloud :BubbleCloud in _bubbles.values()) {
+            cloud.viewWidth = unscaledWidth;
         }
     }
 
@@ -670,11 +664,7 @@ class BubbleCloud
                 var placer :Rectangle = bubble.getBubbleBounds();
                 placer.x = _viewWidth - placer.width - BUBBLE_SPACING;
                 placer.y = BUBBLE_SPACING;
-                if (!DisplayUtil.positionRect(placer, vpos, avoidList)) {
-                    // DANGER! DANGER!
-                    Log.getLog(this).warning(
-                        "Failed to place notification bubble [avoids=" + avoidList.length + "]");
-                }
+                DisplayUtil.positionRect(placer, vpos, avoidList);
                 bubble.x = placer.x;
                 bubble.y = placer.y;
                 avoidList.push(placer);

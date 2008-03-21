@@ -89,7 +89,7 @@ public class ChatOverlay
         _scrollOverlay.blendMode = BlendMode.LAYER;
 
         // overlay for chat that stays in a given place on the screen.
-        _staticOverlay = new Sprite();
+        _staticOverlay = new StaticOverlay(this);
         _staticOverlay.mouseEnabled = false;
         _staticOverlay.blendMode = BlendMode.LAYER;
 
@@ -430,6 +430,11 @@ public class ChatOverlay
             glyph.parent.removeChild(glyph);
         }
         glyph.wasRemoved();
+    }
+
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // NOOP
     }
 
     protected function removeOccupantList () :void
@@ -1671,7 +1676,10 @@ import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.PlaceLayer;
+
 import com.threerings.msoy.chat.client.ChannelOccupantList;
+import com.threerings.msoy.chat.client.ChatOverlay;
 
 class ChatContainer extends Container
 {
@@ -1704,4 +1712,22 @@ class ChatContainer extends Container
     private static const log :Log = Log.getLog(ChatContainer);
 
     protected var _occList :ChannelOccupantList;
+}
+
+class StaticOverlay extends Sprite
+    implements PlaceLayer
+{
+    public function StaticOverlay (chatOverlay :ChatOverlay)
+    {
+        _chatOverlay = chatOverlay;
+    }
+
+    // from PlaceLayer
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        _chatOverlay.setPlaceSize(unscaledWidth, unscaledHeight);
+    }
+
+    protected var _chatOverlay :ChatOverlay;
+
 }
