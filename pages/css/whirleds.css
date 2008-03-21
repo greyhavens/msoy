@@ -90,6 +90,7 @@
 .galaxy .Features .FeaturedWhirled .Title {
   height: 25px;
   padding-top: 5px;
+  font-weight: bold;
 }
 
 .galaxy .Features .FeaturedWhirled .Name {
