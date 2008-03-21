@@ -213,7 +213,7 @@ public class Prefs
      */
     public static function getShowingOccupantList () :Boolean
     {
-        return (config.getValue(OCCUPANT_LIST, true) as Boolean);
+        return (config.getValue(OCCUPANT_LIST, false) as Boolean);
     }
 
     public static function setShowingOccupantList (showing :Boolean) :void
