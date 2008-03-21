@@ -143,20 +143,30 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
-    public void validateAccount (MsoyAuthenticator.Account account, String machIdent)
+    public void validateAccount (
+            MsoyAuthenticator.Account account, String machIdent, boolean newIdent)
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         OOOUserRecord user = oooacc.record;
-        String[] machIdents = _authrep.loadMachineIdents(user.userId);
 
-        // if we have never seen them before...
-        if (machIdents == null) {
-            _authrep.addUserIdent(user.userId, machIdent);
+        // if they gave us an invalid machIdent, ban them
+        if (!newIdent && !StringUtil.isBlank(machIdent) &&
+                !MsoyAuthenticator.isValidIdent(machIdent)) {
+            _authrep.ban(OOOUser.METASOY_SITE_ID, user.username);
 
-        } else if (Arrays.binarySearch(machIdents, machIdent) < 0) {
-            // and slap it in the db
-            _authrep.addUserIdent(user.userId, machIdent);
+        // otherwire add the ident if necessary
+        } else {
+            String[] machIdents = _authrep.loadMachineIdents(user.userId);
+
+            // if we have never seen them before...
+            if (machIdents == null) {
+                _authrep.addUserIdent(user.userId, machIdent);
+
+            } else if (Arrays.binarySearch(machIdents, machIdent) < 0) {
+                // and slap it in the db
+                _authrep.addUserIdent(user.userId, machIdent);
+            }
         }
 
         // if this is a banned user, mark that ident
@@ -203,6 +213,13 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         return code.equals(generatePasswordResetCode(accountName));
+    }
+
+    // from interface MsoyAuthenticator.Domain
+    public boolean isUniqueIdent (String machIdent)
+        throws PersistenceException
+    {
+        return _authrep.getMachineIdentCount(machIdent) == 0;
     }
 
     protected static class OOOAccount extends MsoyAuthenticator.Account

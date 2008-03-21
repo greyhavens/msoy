@@ -109,12 +109,13 @@ public class MsoyAuthenticator extends Authenticator
          *
          * @param machIdent a unique identifier assigned to the machine from which this account is
          * logging in.
+         * @param newIdent if the machIdent was generated on the server
          *
          * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
          * banned or {@link MsoyAuthCodes#MACHINE_TAINTED} if the machine identifier provided is
          * associated with a banned account and this is the account's first logon.
          */
-        public void validateAccount (Account account, String machIdent)
+        public void validateAccount (Account account, String machIdent, boolean newIdent)
             throws ServiceException, PersistenceException;
 
         /**
@@ -146,6 +147,23 @@ public class MsoyAuthenticator extends Authenticator
          */
         public boolean validatePasswordResetCode (String accountName, String code)
             throws ServiceException, PersistenceException;
+
+        /**
+         * Validates that this is a unique machine identifier.
+         */
+        public boolean isUniqueIdent (String machIdent)
+            throws PersistenceException;
+    }
+
+    /**
+     * Verifies that an ident is valid.
+     */
+    public static boolean isValidIdent (String ident)
+    {
+        if (ident == null || ident.length() != 48) {
+            return false;
+        }
+        return ident.substring(40, 48).equals(generateIdentChecksum(ident.substring(0, 40)));
     }
 
     /**
@@ -427,14 +445,24 @@ public class MsoyAuthenticator extends Authenticator
 //                             ", err=" + e.getMessage() + "].");
 //                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
 //             }
-
-        // TODO: sort out the above
-        if (creds.ident == null) {
-            creds.ident = "";
-        }
-
         // obtain the authentication domain appropriate to their account name
         Domain domain = getDomain(accountName);
+
+        boolean newIdent = false;
+        // see if we need to generate a new ident
+        for (int ii = 0; ii < MAX_TRIES && StringUtil.isBlank(creds.ident); ii++) {
+            String ident = generateIdent(accountName, ii);
+            if (domain.isUniqueIdent(ident)) {
+                creds.ident = ident;
+                newIdent = true;
+                rdata.ident = creds.ident;
+            }
+        }
+        if (StringUtil.isBlank(creds.ident)) {
+            log.warning("Unable to generate unique machIdent for user [accountName=" +
+                    accountName + "].");
+            creds.ident = "";
+        }
 
         // load up and authenticate their domain account record
         Account account = domain.authenticateAccount(accountName, password);
@@ -455,7 +483,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // check to see whether this account has been banned or if this is a first time user
         // logging in from a tainted machine
-        domain.validateAccount(account, creds.ident);
+        domain.validateAccount(account, creds.ident, newIdent);
 
         // replace the tokens provided by the Domain with tokens derived from their member
         // record (a newly created record will have its bits set from the Domain values)
@@ -556,6 +584,25 @@ public class MsoyAuthenticator extends Authenticator
         return mrec;
     }
 
+    /**
+     * Generate a new unique ident for this flash client.
+     */
+    protected static String generateIdent (String accountName, int offset)
+    {
+        String seed = StringUtil.sha1hex(
+                Long.toHexString(System.currentTimeMillis() + (long)offset*1000L) + accountName);
+        return seed + generateIdentChecksum(seed);
+    }
+
+    /**
+     * Generates a checksum for an ident.
+     */
+    protected static String generateIdentChecksum (String seed)
+    {
+        return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
+            seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
+    }
+
     protected static synchronized String generateGuestName ()
     {
         _nextGuestNumber = (_nextGuestNumber % 1000) + 1;
@@ -570,4 +617,7 @@ public class MsoyAuthenticator extends Authenticator
 
     /** Used to assign display names to guests. */
     protected static int _nextGuestNumber;
+
+    /** The number of times we'll try generate a unique ident before failing. */
+    protected static final int MAX_TRIES = 100;
 }

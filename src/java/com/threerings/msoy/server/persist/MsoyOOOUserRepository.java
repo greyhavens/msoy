@@ -19,6 +19,7 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
@@ -222,6 +223,16 @@ public class MsoyOOOUserRepository extends DepotRepository
         if (!StringUtil.isBlank(machIdent)) {
             insert(new UserIdentRecord(userId, machIdent));
         }
+    }
+
+    /**
+     * Returns the number of times this machIdent appears.
+     */
+    public int getMachineIdentCount (String machIdent)
+        throws PersistenceException
+    {
+        return load(CountRecord.class, new FromOverride(UserIdentRecord.class),
+                new Where(UserIdentRecord.MACH_IDENT_C, machIdent)).count;
     }
 
     /**

@@ -16,6 +16,7 @@ import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.jora.FieldMask;
 
 import com.threerings.user.OOOUser;
 
@@ -227,7 +228,7 @@ public class OOOUserRecord extends PersistentRecord
      */
     public OOOUser toUser ()
     {
-        OOOUser user = new OOOUser();
+        OOOUser user = new MsoyOOOUser();
         user.userId = userId;
         user.username = username;
         user.created = created;
@@ -242,5 +243,18 @@ public class OOOUserRecord extends PersistentRecord
         user.shunLeft = shunLeft;
         user.affiliateTagId = affiliateTagId;
         return user;
+    }
+
+    /**
+     * A OOOUser with a dummy dirty mask.
+     */
+    protected class MsoyOOOUser extends OOOUser
+    {
+        public MsoyOOOUser ()
+        {
+            _dirty = new FieldMask(null) {
+                public void setModified (String fieldName) { }
+            };
+        }
     }
 }
