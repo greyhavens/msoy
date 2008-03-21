@@ -84,10 +84,19 @@ public class MsoyGameManager extends WhirledGameManager
             "(" + StringUtil.toString(_gameobj.players) + ")";
     }
 
-    @Override
+    @Override // from WhirledGameManager
     protected GameCookieManager createCookieManager ()
     {
         return new GameCookieManager(MsoyGameServer.gameCookieRepo);
+    }
+
+    @Override // from GameManager
+    protected long getNoShowTime ()
+    {
+        // because in Whirled we start the game before the client begins downloading the game
+        // media, we have to be much more lenient about noshow timing (or revamp a whole bunch of
+        // other shit which maybe we'll do later)
+        return 1000L * ((getPlayerSlots() == 1) ? 180 : 90);
     }
 
     /** A delegate that takes care of flow, ratings, trophy, prizes.. */
