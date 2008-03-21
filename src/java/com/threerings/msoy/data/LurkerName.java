@@ -14,4 +14,8 @@ public class LurkerName extends Name
     {
         super(name);
     }
+
+    public LurkerName ()
+    {
+    }
 }
