@@ -428,9 +428,16 @@ public class GameServlet extends MsoyServiceServlet
                 if (genre.gameCount == 0) {
                     continue;
                 }
-                int fcount = Math.min(genre.gameCount, ArcadeData.Genre.HIGHLIGHTED_GAMES);
-                genre.games = new GameInfo[fcount];
-                for (int ii = 0; ii < fcount; ii++) {
+
+                // we want to show N games, take the top 3*N and shuffle them
+                games = games.subList(
+                    0, Math.min(games.size(), 3*ArcadeData.Genre.HIGHLIGHTED_GAMES));
+                Collections.shuffle(games);
+
+                // then take N from that shuffled list as the games to show
+                games = games.subList(0, Math.min(games.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
+                genre.games = new GameInfo[games.size()];
+                for (int ii = 0; ii < genre.games.length; ii++) {
                     genre.games[ii] = games.get(ii).toGameInfo();
                     PlaceCard ppg = pps.getGame(genre.games[ii].gameId);
                     if (ppg != null) {
