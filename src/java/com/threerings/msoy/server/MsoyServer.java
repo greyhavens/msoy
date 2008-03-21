@@ -71,6 +71,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -109,6 +110,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime jabber manager. */
     public static JabberManager jabberMan = new JabberManager();
+
+    /** Our runtime support manager. */
+    public static MsoyUnderwireManager supportMan = new MsoyUnderwireManager();
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
@@ -375,6 +379,7 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         gameReg.init(invmgr, itemMan.getGameRepository());
+        supportMan.init(perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {

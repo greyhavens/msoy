@@ -414,37 +414,6 @@ public class MsoyAuthenticator extends Authenticator
                                           MemberRecord member, String accountName, String password)
         throws ServiceException, PersistenceException
     {
-        // TODO: if they provide no client identifier, determine whether one has been assigned
-        // to the account in question and provide that to them if so, otherwise assign them a
-        // new one
-//             if (StringUtil.isBlank(creds.ident)) {
-//                 log.warning("Received blank ident, refusing [creds=" + req.getCredentials() +
-//                             ", ip=" + conn.getInetAddress() + "].");
-//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-//             }
-
-//             // if they supplied a known non-unique machine identifier, create
-//             // one for them
-//             if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
-//                 String sident = StringUtil.md5hex(
-//                     "" + Math.random() + System.currentTimeMillis());
-//                 creds.ident = "S" + IdentUtil.encodeIdent(sident);
-//                 Log.info("Creating ident [for=" + username + ", ip=" + conn.getInetAddress() +
-//                          " id=" + creds.ident + "].");
-//                 rdata.ident = creds.ident;
-//             }
-
-//             // convert the encrypted ident to the original MD5 hash
-//             try {
-//                 String prefix = creds.ident.substring(0, 1);
-//                 creds.ident = prefix +
-//                     IdentUtil.decodeIdent(creds.ident.substring(1));
-//             } catch (Exception e) {
-//                 log.warning("Received spoofed ident, refusing [who=" + username +
-//                             ", ip=" + conn.getInetAddress() + ", id=" + cred.sident +
-//                             ", err=" + e.getMessage() + "].");
-//                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-//             }
         // obtain the authentication domain appropriate to their account name
         Domain domain = getDomain(accountName);
 
