@@ -13,6 +13,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
 /**
@@ -43,9 +44,13 @@ public class AvatarActionHandler extends CommandHandler
         var actions :Array = _states ? roomView.getMyStates() : roomView.getMyActions();
         var match :String = findBestMatch(args, actions);
         if (match == null) {
+            var choices :String = "";
+            if (actions.length > 0) {
+                choices = " " + Msgs.CHAT.get("m.choices", "\"" + actions.join("\", \"") + "\"");
+            }
+
             return MessageBundle.tcompose(
-                _states ? "e.no_matching_states" : "e.no_matching_actions",
-                "\"" + actions.join("\", \"") + "\"");
+                _states ? "e.no_matching_states" : "e.no_matching_actions", choices);
         }
 
         if (_states) {
