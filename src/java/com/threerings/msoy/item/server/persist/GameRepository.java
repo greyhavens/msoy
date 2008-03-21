@@ -164,6 +164,7 @@ public class GameRepository extends ItemRepository<
     public boolean updatePayoutFactor (int gameId, int factor)
         throws PersistenceException
     {
+        gameId = Math.abs(gameId); // how to handle playing the original?
         return 0 < updatePartial(GameDetailRecord.class, gameId,
                                  GameDetailRecord.PAYOUT_FACTOR, factor);
     }

@@ -130,8 +130,7 @@ public class AVRGameManager
                 for (GameStateRecord rec : recs) {
                     _repo.storeState(rec);
                 }
-                // TODO: Cut up noteGamePlayed() so we don't have to pass in a 1
-                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 1, totalMinutes);
+                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 0, totalMinutes);
             }
             public void handleSuccess () {
             }
@@ -244,6 +243,10 @@ public class AVRGameManager
                                final ConfirmListener listener)
         throws InvocationException
     {
+        if (payoutLevel < 0 || payoutLevel > 1) {
+            throw new IllegalArgumentException(
+                "Payout level must lie in [0, 1] [payoutLevel=" + payoutLevel + "]");
+        }
         final PlayerObject player = (PlayerObject) caller;
 
         final QuestState oldState = player.questState.get(questId);
@@ -256,48 +259,56 @@ public class AVRGameManager
         final int recalcMinutes;
         final int oldPayoutFactor;
         
-        log.info("Completing quest: " + questId);
-        
         // the tutorial gets to pay out fixed amounts of flow; all other games are dynamic
         if (_gameId == Game.TUTORIAL_GAME_ID) {
             oldPayoutFactor = 1;
             recalcMinutes = 0;
             
-        } else if (_content.detail.payoutFactor == 0) {
-            // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
-            oldPayoutFactor = Math.round(flowPerHour * (5 / 3600f));
-            recalcMinutes = 0;
-
         } else {
-            oldPayoutFactor = _content.detail.payoutFactor;
-            
+            if (_content.detail.payoutFactor == 0) {
+                // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
+                oldPayoutFactor = Math.round(flowPerHour * (5 / 3600f));
+            } else {
+                oldPayoutFactor = _content.detail.payoutFactor;
+            }
+            log.info("singlePlayerGames: " + _content.detail.singlePlayerGames);
             // TODO: Change the "100" into a runtime configuration value
             if (((_content.detail.singlePlayerGames + 1) % 100) == 0) {
                 recalcMinutes = Math.round(getTotalTrackedSeconds() / 60f) +
                     (_content.detail.singlePlayerMinutes -  _content.detail.lastPayoutRecalc);
-
+                log.info("Recalculation mins: " +  Math.round(getTotalTrackedSeconds()) +
+                    " + (" + _content.detail.singlePlayerMinutes + " - " +
+                    _content.detail.lastPayoutRecalc + ") = " + recalcMinutes);
             } else {
                 recalcMinutes = 0;
             }
         }
-
+        
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
+                GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
+
                 _payoutFactor = oldPayoutFactor;
                 // see if it's time to recalculate the payout factor
                 if (recalcMinutes > 0) {
                     QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
-                    _payoutFactor = (flowPerHour * recalcMinutes) / 60 / record.payoutFactorTotal;
+                    if (record.payoutFactorTotal > 0) {
+                        _payoutFactor = (flowPerHour * recalcMinutes) / 60 / record.payoutFactorTotal;
+                        log.info("new payout factor = (" + flowPerHour + " *" + recalcMinutes +
+                            ") / 60 / " + record.payoutFactorTotal + " = " + _payoutFactor);
+                    }
 
-                    GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
                     gameRepo.updatePayoutFactor(_gameId, _payoutFactor);
                 }
-                
+
                 // mark the quest completed and create a log record
-                _repo.noteQuestCompleted(_gameId, player.getMemberId(), questId, _payoutFactor);
+                _repo.noteQuestCompleted(_gameId, player.getMemberId(), questId, payoutLevel);
+
+                // bump the "games played" count by one
+                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 1, 0);
 
                 // now award the flow
-                _payout = Math.round(_payoutFactor * Math.max(0, Math.min(payoutLevel, 1.0f)));
+                _payout = Math.round(_payoutFactor * payoutLevel); 
                 if (_payout > 0) {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
                         new UserActionDetails(player.getMemberId(), UserAction.COMPLETED_QUEST,
@@ -321,6 +332,9 @@ public class AVRGameManager
                         user.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, _payout, -1);
                     }
                 }
+
+                // note the completion in our runtime data structure
+                _content.detail.singlePlayerGames ++;
                 
                 // if we updated the payout factor in the db, do it in dobj land too
                 if (_payoutFactor != oldPayoutFactor) {
