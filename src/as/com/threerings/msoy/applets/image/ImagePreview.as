@@ -253,6 +253,7 @@ public class ImagePreview extends HBox
     protected function handleEyeDropper (event :ValueEvent) :void
     {
         _colorPicker.selectedColor = uint(event.value);
+        setMode(EditCanvas.PAINT);
     }
 
     protected function handleColorPicked (event :ColorPickerEvent) :void

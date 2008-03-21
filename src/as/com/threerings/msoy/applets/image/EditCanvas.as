@@ -93,6 +93,7 @@ public class EditCanvas extends Canvas
         _crop.mouseEnabled = false;
         _brush = new Shape();
         _brush.visible = false;
+        _dropper.visible = false;
 
         _paintLayer.blendMode = BlendMode.LAYER;
 
@@ -106,6 +107,7 @@ public class EditCanvas extends Canvas
         _hudLayer.addChild(_crop);
 
         _paintLayer.addChild(_brush);
+        _paintLayer.addChild(_dropper);
 
         _holder = new ImageHolder(_editor);
 
@@ -327,10 +329,13 @@ public class EditCanvas extends Canvas
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brush.visible;
+        var dropperVis :Boolean = _dropper.visible;
         _brush.visible = false;
+        _dropper.visible = false;
         // screenshot the image
         bmp.draw(_scaleLayer, matrix);
         _brush.visible = brushVis;
+        _dropper.visible = dropperVis;
 
         return bmp;
     }
@@ -408,6 +413,13 @@ public class EditCanvas extends Canvas
         fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
         fn(MouseEvent.MOUSE_UP, handlePaintEnd);
         _brush.blendMode = (_mode == ERASE) ? BlendMode.ERASE : BlendMode.NORMAL;
+        // special hack to go to painting directly from eyedropping
+        if (on && _dropper.visible) {
+            _dropper.visible = false;
+            _brush.visible = true;
+            _brush.x = _dropper.x;
+            _brush.y = _dropper.y;
+        }
 
         // SELECT
         on = (_mode == SELECT);
@@ -427,7 +439,10 @@ public class EditCanvas extends Canvas
         // SELECT_COLOR
         on = (_mode == SELECT_COLOR);
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
-        fn(MouseEvent.CLICK, handleSelectColor);
+        fn(MouseEvent.CLICK, handleDropperClick);
+        fn(MouseEvent.MOUSE_MOVE, handleDropperMove)
+        fn(MouseEvent.ROLL_OVER, handleShowDropper);
+        fn(MouseEvent.ROLL_OUT, handleShowDropper);
 
         // and finally:
         _paintLayer.mouseEnabled = (_mode == PAINT) || (_mode == ERASE) || (_mode == SELECT_COLOR);
@@ -449,15 +464,30 @@ public class EditCanvas extends Canvas
 
     // Editing operations
 
-    protected function handleSelectColor (event :MouseEvent) :void
+    protected function handleShowDropper (event :MouseEvent) :void
     {
-        // paint into a 1x1 bitmapdata and see what color we get
-        var bmp :BitmapData = new BitmapData(1, 1, true, 0)
-        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY,
-            -event.localX, -event.localY)
-        bmp.draw(_scaleLayer, matrix);
+        _dropper.visible = (event.type == MouseEvent.ROLL_OVER) && (_mode == SELECT_COLOR);
+    }
 
-        var value :uint = bmp.getPixel32(0, 0);
+    protected function handleDropperMove (event :MouseEvent) :void
+    {
+        handleDropperMoveXY(event.localX, event.localY);
+    }
+
+    protected function handleDropperMoveXY (xx :Number, yy :Number) :void
+    {
+        _dropper.x = xx;
+        _dropper.y = yy;
+
+        var value :uint = getDropperColor(xx, yy);
+        var color :uint = (value & 0xFFFFFF);
+        var alpha :Number = ((value >> 24) & 0xFF) / 255;
+        _dropper.setColor(color, alpha);
+    }
+
+    protected function handleDropperClick (event :MouseEvent) :void
+    {
+        var value :uint = getDropperColor(event.localX, event.localY);
         var alpha :uint = (value >> 24) & 0xFF;
 
         if (alpha != 0) {
@@ -465,6 +495,16 @@ public class EditCanvas extends Canvas
             setPaintColor(newColor);
             dispatchEvent(new ValueEvent(COLOR_SELECTED, newColor));
         }
+    }
+
+    protected function getDropperColor (xx :Number, yy :Number) :uint
+    {
+        // paint into a 1x1 bitmapdata and see what color we get
+        var bmp :BitmapData = new BitmapData(1, 1, true, 0)
+        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY, -xx, -yy)
+        bmp.draw(_scaleLayer, matrix);
+
+        return bmp.getPixel32(0, 0);
     }
 
     protected function handleShowBrush (event :MouseEvent) :void
@@ -655,6 +695,7 @@ public class EditCanvas extends Canvas
     /** Sprites used to represent bits. */
     protected var _crop :Sprite;
     protected var _brush :Shape;
+    protected var _dropper :DropperCursor = new DropperCursor();
 
     protected var _cropRect :Rectangle;
     protected var _cropPoint :Point;
@@ -721,4 +762,17 @@ class ImageHolder extends UIComponent
     }
 
     protected var _background :Shape;
+}
+
+class DropperCursor extends Shape
+{
+    public function setColor (color :uint, alpha :Number = 1) :void
+    {
+        var g :Graphics = graphics;
+        g.clear();
+        g.beginFill(color, alpha);
+        g.lineStyle(1, 0x000000);
+        g.drawRect(0, 10, 20, 20);
+        g.endFill();
+    }
 }
