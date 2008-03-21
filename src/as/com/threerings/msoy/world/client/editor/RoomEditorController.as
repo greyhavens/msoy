@@ -331,6 +331,7 @@ public class RoomEditorController
         // make the furni's type to a portal, and save on the server
         withFurniUpdate(function () :void {
             data.actionType = FurniData.ACTION_PORTAL;
+            data.actionData = "" + scene.getId() + ":" + scene.getName();
         });
 
         // now open up the door creation wizard. note: we're not wrapping this
