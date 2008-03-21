@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.data;
 
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
@@ -209,7 +210,7 @@ public class MsoySceneModel extends SceneModel
                 MsoyPortal p = new MsoyPortal(furni);
                 _portalInfo.put(p.portalId, p);
             } catch (Exception e) {
-                log.warning("Invalid portal furni [fd=" + furni + ", error=" + e + "].");
+                log.log(Level.WARNING, "Invalid portal furni [fd=" + furni + "].", e);
             }
         }
     }
