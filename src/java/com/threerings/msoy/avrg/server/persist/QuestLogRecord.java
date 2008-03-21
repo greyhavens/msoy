@@ -56,7 +56,7 @@ public class QuestLogRecord extends PersistentRecord
     /** The id of the quest that was just completed. */
     public String questId;
 
-    /** The payout factor that was associated with the quest copmletion. */
+    /** The payout factor that was associated with the quest completion. */
     public float payoutFactor;
 
     /** Empty constructor for deserializing. */
