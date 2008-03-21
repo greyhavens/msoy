@@ -22,16 +22,16 @@
   font-weight: normal;
 } 
 
-.itemDetailPanel .Box .Preview {
+.itemDetailPanel .headerBox .Preview {
   background-image: url(/images/item/detail_preview_bg.png);
   padding: 10px;
 }
 
-.itemDetailPanel .Box .Rating {
+.itemDetailPanel .headerBox .Rating {
   padding: 5px;
 }
 
-.itemDetailPanel .Box .Rating table {
+.itemDetailPanel .headerBox .Rating table {
   margin-left: auto;
   margin-right: auto;
 }
