@@ -563,13 +563,31 @@ public class RoomController extends SceneController
                         { label: Msgs.GENERAL.get("l.add_as_friend"),
                           command: WorldController.INVITE_FRIEND, arg: [memId] });
                 }
+
+                var kind :String = Msgs.GENERAL.get(avatar.getDesc());
+                var flagItems :Array = [];
+
+                flagItems.push({
+                    label: Msgs.GENERAL.get("b.complain"),
+                    enabled: false });
+
                 if (avatar.isBlockable()) {
-                    var kind :String = Msgs.GENERAL.get(avatar.getDesc());
                     var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
-                    menuItems.push(
+                    flagItems.push(
                         { label: Msgs.GENERAL.get(key, kind),
                           callback: avatar.toggleBlocked, arg: _wdctx });
                 }
+
+                var ident :ItemIdent = avatar.getItemIdent();
+                if (ident != null && ident.type >= 0) { // -1 is used for the default avatar, etc
+                    flagItems.push(
+                        { label: Msgs.GENERAL.get("b.view_item", kind),
+                          command: MsoyController.VIEW_ITEM, arg: ident });
+                }
+
+                menuItems.push({ type: "separator"},
+                    { label: Msgs.GENERAL.get("l.flag_menu"),
+                      children: flagItems });
             }
         }
 
