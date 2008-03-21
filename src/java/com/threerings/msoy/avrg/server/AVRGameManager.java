@@ -35,6 +35,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.data.GameState;
@@ -255,7 +256,10 @@ public class AVRGameManager
 //                "Member not subscribed to completed quest [questId=" + questId + "]");
 //        }
 
+        final GameDetailRecord detail = _content.detail;
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
+        final int playedMinutes =
+            Math.round(getTotalTrackedSeconds() / 60f) + detail.singlePlayerMinutes; 
         final int recalcMinutes;
         final int oldPayoutFactor;
         
@@ -265,20 +269,21 @@ public class AVRGameManager
             recalcMinutes = 0;
             
         } else {
-            if (_content.detail.payoutFactor == 0) {
+            if (detail.payoutFactor == 0) {
                 // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
                 oldPayoutFactor = Math.round(flowPerHour * (5 / 3600f));
             } else {
-                oldPayoutFactor = _content.detail.payoutFactor;
+                oldPayoutFactor = detail.payoutFactor;
             }
-            log.info("singlePlayerGames: " + _content.detail.singlePlayerGames);
+
             // TODO: Change the "100" into a runtime configuration value
-            if (((_content.detail.singlePlayerGames + 1) % 100) == 0) {
-                recalcMinutes = Math.round(getTotalTrackedSeconds() / 60f) +
-                    (_content.detail.singlePlayerMinutes -  _content.detail.lastPayoutRecalc);
-                log.info("Recalculation mins: " +  Math.round(getTotalTrackedSeconds()) +
-                    " + (" + _content.detail.singlePlayerMinutes + " - " +
-                    _content.detail.lastPayoutRecalc + ") = " + recalcMinutes);
+            if (((detail.singlePlayerGames + 1) % 20) == 0) {
+                recalcMinutes = playedMinutes - detail.lastPayoutRecalc;
+
+                log.info("Time to recalculate AVRG payout factor [gameId=" + _gameId +
+                    ", minutes=(" + playedMinutes + "-" + detail.lastPayoutRecalc + ") = " +
+                    recalcMinutes + ", games=" + detail.singlePlayerGames + "]");
+
             } else {
                 recalcMinutes = 0;
             }
@@ -287,18 +292,22 @@ public class AVRGameManager
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
                 GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
-
                 _payoutFactor = oldPayoutFactor;
-                // see if it's time to recalculate the payout factor
+                
+                // if we decided it's time to recalculate the payout factor, do it now
                 if (recalcMinutes > 0) {
                     QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
                     if (record.payoutFactorTotal > 0) {
-                        _payoutFactor = (flowPerHour * recalcMinutes) / 60 / record.payoutFactorTotal;
-                        log.info("new payout factor = (" + flowPerHour + " *" + recalcMinutes +
-                            ") / 60 / " + record.payoutFactorTotal + " = " + _payoutFactor);
+                        _payoutFactor = Math.round((
+                                flowPerHour*recalcMinutes)/60f/record.payoutFactorTotal);
+                        
+                        gameRepo.updatePayoutFactor(_gameId, _payoutFactor, playedMinutes);
+                        _repo.deleteQuestLogRecords(_gameId);
+                        
+                        log.info("Recalculation complete [factor=(" + flowPerHour + "*" +
+                            recalcMinutes + ")/60f/" + record.payoutFactorTotal + " => " +
+                            _payoutFactor + "]");
                     }
-
-                    gameRepo.updatePayoutFactor(_gameId, _payoutFactor);
                 }
 
                 // mark the quest completed and create a log record
@@ -316,12 +325,12 @@ public class AVRGameManager
                         _payout);
                 }
             }
+            
             public void handleSuccess () {
                 if (oldState != null) {
                     player.removeFromQuestState(questId);
                 }
 
-                log.info("Paying out flow: " + _payout);
                 // if we paid out flow, let any logged-on member objects know
                 if (_payout > 0) {
                     MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), _payout);
@@ -333,12 +342,13 @@ public class AVRGameManager
                     }
                 }
 
-                // note the completion in our runtime data structure
-                _content.detail.singlePlayerGames ++;
+                // note this completion in our runtime data structure
+                detail.singlePlayerGames ++;
                 
                 // if we updated the payout factor in the db, do it in dobj land too
-                if (_payoutFactor != oldPayoutFactor) {
-                    _content.detail.payoutFactor = _payoutFactor;
+                if (recalcMinutes > 0) {
+                    detail.payoutFactor = _payoutFactor;
+                    detail.lastPayoutRecalc = playedMinutes;
                 }
                 listener.requestProcessed();
             }
@@ -612,6 +622,7 @@ public class AVRGameManager
         public Player (PlayerObject playerObject)
         {
             this.playerObject = playerObject;
+            this.beganStamp = now();
         }
         
         public int getPlayTime (int now) {

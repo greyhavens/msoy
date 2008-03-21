@@ -42,5 +42,5 @@ public class QuestLogSummaryRecord extends PersistentRecord
     public int payoutCount;
     
     /** The sum of payout factors this AVRG has granted for this summary. */
-    public int payoutFactorTotal;
+    public float payoutFactorTotal;
 }

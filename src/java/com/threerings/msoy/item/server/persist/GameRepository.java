@@ -161,12 +161,13 @@ public class GameRepository extends ItemRepository<
             new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
     }
 
-    public boolean updatePayoutFactor (int gameId, int factor)
+    public boolean updatePayoutFactor (int gameId, int factor, int minutes)
         throws PersistenceException
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
         return 0 < updatePartial(GameDetailRecord.class, gameId,
-                                 GameDetailRecord.PAYOUT_FACTOR, factor);
+                                 GameDetailRecord.PAYOUT_FACTOR, factor,
+                                 GameDetailRecord.LAST_PAYOUT_RECALC, minutes);
     }
     
     /**

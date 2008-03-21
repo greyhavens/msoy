@@ -433,7 +433,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 //                     GameFlowSummaryRecord record =
 //                         repo.summarizeFlowGrants(_content.game.gameId);
                     _newPayout = 128; // TODO: real algorithm
-                    repo.updatePayoutFactor(_content.game.gameId, _newPayout);
+                    repo.updatePayoutFactor(
+                        _content.game.gameId, _newPayout,
+                        _content.detail.singlePlayerMinutes + _content.detail.multiPlayerMinutes);
                     repo.deleteFlowGrants(_content.game.gameId);
                 }
                 repo.noteGamePlayed(_content.game.gameId, playerGames, playerMins);
