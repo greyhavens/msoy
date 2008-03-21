@@ -31,6 +31,8 @@ import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages forum threads and messages.
  */
@@ -135,16 +137,25 @@ public class ForumRepository extends DepotRepository
         ftr.mostRecentPostTime = new Timestamp(System.currentTimeMillis()); // must be non-null
         insert(ftr);
 
-        // post the first message to the thread (this will update the thread's last posted info)
-        ForumMessageRecord fmr = postMessage(ftr.threadId, creatorId, 0, message);
+        try {
+            // post the first message to the thread (this will update the thread's last posted info)
+            ForumMessageRecord fmr = postMessage(ftr.threadId, creatorId, 0, message);
 
-        // fill the last post values into the thread record by hand so that we can return it
-        ftr.mostRecentPostId = fmr.messageId;
-        ftr.mostRecentPostTime = fmr.created;
-        ftr.mostRecentPosterId = creatorId;
-        ftr.posts = 1;
+            // fill the last post values into the thread record by hand so that we can return it
+            ftr.mostRecentPostId = fmr.messageId;
+            ftr.mostRecentPostTime = fmr.created;
+            ftr.mostRecentPosterId = creatorId;
+            ftr.posts = 1;
+            return ftr;
 
-        return ftr;
+        } catch (PersistenceException pe) {
+            try {
+                delete(ftr);
+            } catch (PersistenceException pe2) {
+                log.warning("Failed to roll back thread insert " + ftr + ": " + pe2 + ".");
+            }
+            throw pe;
+        }
     }
 
     /**
