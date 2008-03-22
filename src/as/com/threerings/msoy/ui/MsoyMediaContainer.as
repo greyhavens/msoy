@@ -62,7 +62,7 @@ public class MsoyMediaContainer extends MediaContainer
     // TODO: doc
     public function isBlockable () :Boolean
     {
-        return (_desc != null) && !(_desc is StaticMediaDesc);
+        return (_desc != null) && !(_desc is StaticMediaDesc) && (_desc.getMediaPath() != null);
     }
 
     // TODO: doc

@@ -122,6 +122,10 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static String getMediaPath (byte[] mediaHash, byte mimeType, boolean proxy)
     {
+        if (mediaHash == null) {
+            return null;
+        }
+
         switch (mimeType) {
         case VIDEO_YOUTUBE_DEPRECATED:
             return "http://www.youtube.com/v/" + bytesToString(mediaHash);

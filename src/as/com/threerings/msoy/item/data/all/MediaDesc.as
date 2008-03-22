@@ -325,6 +325,10 @@ public class MediaDesc
      */
     public function getMediaPath () :String
     {
+        if (hash == null) {
+            return null;
+        }
+
         switch (mimeType) {
         case VIDEO_YOUTUBE_DEPRECATED:
             return "http://www.youtube.com/v/" + StringUtil.fromBytes(hash);

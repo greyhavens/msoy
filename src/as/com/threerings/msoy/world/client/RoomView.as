@@ -307,7 +307,7 @@ public class RoomView extends AbstractRoomView
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident != null) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            if (ident.type >= 0) { // -1 is used for the default avatar, etc.
+            if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
                 menuItems.push(MenuUtil.createControllerMenuItem(
                                    Msgs.GENERAL.get("b.view_item", kind),
                                    MsoyController.VIEW_ITEM, ident));
