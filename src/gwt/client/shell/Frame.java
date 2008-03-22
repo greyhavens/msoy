@@ -348,7 +348,7 @@ public class Frame
             subnavi.addLink(null, "My Profile", Page.PEOPLE, "me");
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Account", Page.ME, "account");
-            if (CShell.isSupport()) {
+            if (CShell.isAdmin()) {
                 subnavi.addLink(null, "Admin", Page.ADMIN, "");
             }
 
@@ -383,6 +383,9 @@ public class Frame
 
         } else if (pageId.equals(Page.HELP)) {
             subnavi.addLink(null, "Help", Page.HELP, "");
+            if (CShell.isSupport()) {
+                subnavi.addLink(null, "Admin", Page.SUPPORT, "admin");
+            }
         }
 
         return new TitleBar(pageId, Page.getDefaultTitle(pageId), subnavi);

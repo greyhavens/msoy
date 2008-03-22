@@ -37,11 +37,11 @@ public class index extends MsgsEntryPoint
 
         if (action.equals("admin")) {
             AdminPanel panel = new AdminPanel(_webctx);
-            setContent(panel);
+            setContent("Customer Support", panel);
             panel.init();
         } else {
             UserPanel panel = new UserPanel(_webctx);
-            setContent(panel);
+            setContent("Frequently Asked Questions", panel);
             panel.init();
         }
     }
