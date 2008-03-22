@@ -24,6 +24,9 @@ public interface MemberService extends InvocationService
     function acknowledgeNotifications (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
+    function acknowledgeWarning (arg1 :Client) :void;
+
+    // from Java interface MemberService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService

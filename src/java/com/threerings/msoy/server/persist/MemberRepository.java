@@ -999,6 +999,52 @@ public class MemberRepository extends DepotRepository
         insert(record);
     }
 
+    /**
+     * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
+     */
+    public void tempBanMember (int memberId, Timestamp expires, String warning)
+        throws PersistenceException
+    {
+        MemberWarningRecord record = new MemberWarningRecord();
+        record.memberId = memberId;
+        record.banExpires = expires;
+        record.warning = warning;
+        store(record);
+    }
+
+    /**
+     * Updates the warning message for a member, or creates a new warning message if none exists.
+     */
+    public void updateMemberWarning (int memberId, String warning)
+        throws PersistenceException
+    {
+        if (updatePartial(MemberWarningRecord.class, memberId,
+                          MemberWarningRecord.WARNING, warning) == 0) {
+            MemberWarningRecord record = new MemberWarningRecord();
+            record.memberId = memberId;
+            record.warning = warning;
+            insert(record);
+        }
+    }
+
+    /**
+     * Clears a warning message from a member (this includes any temp ban information).
+     */
+    public void clearMemberWarning (int memberId)
+        throws PersistenceException
+    {
+        delete(MemberWarningRecord.class, memberId);
+    }
+
+    /**
+     * Returns the MemberWarningRecord for the memberId, or null if none found.
+     */
+    public MemberWarningRecord loadMemberWarningRecord (int memberId)
+        throws PersistenceException
+    {
+        return load(MemberWarningRecord.class, memberId);
+    }
+
     protected String randomInviteId ()
     {
         String rand = "";
@@ -1019,6 +1065,7 @@ public class MemberRepository extends DepotRepository
         classes.add(InviterRecord.class);
         classes.add(OptOutRecord.class);
         classes.add(ExternalMapRecord.class);
+        classes.add(MemberWarningRecord.class);
     }
 
     @Entity @Computed

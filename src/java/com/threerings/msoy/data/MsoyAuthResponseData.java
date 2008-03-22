@@ -15,4 +15,7 @@ public class MsoyAuthResponseData extends AuthResponseData
 
     /** A machine identifier to be assigned to this machine, or null. */
     public String ident;
+
+    /** A possible warning message to the user, or null. */
+    public String warning;
 }

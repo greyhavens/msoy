@@ -23,6 +23,11 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#acknowledgeWarning} request.
+     */
+    public void acknowledgeWarning (ClientObject caller);
+
+    /**
      * Handles a {@link MemberService#followMember} request.
      */
     public void followMember (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)

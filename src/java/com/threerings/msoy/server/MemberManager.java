@@ -56,6 +56,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
+import com.samskivert.util.Invoker;
 
 /**
  * Manage msoy members.
@@ -120,7 +121,7 @@ public class MemberManager
     /**
      * Fetch the home ID for a member and return it.
      */
-    public void getHomeId (final byte ownerType, final int ownerId, 
+    public void getHomeId (final byte ownerType, final int ownerId,
                            ResultListener<Integer> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
@@ -423,6 +424,23 @@ public class MemberManager
         } finally {
             user.commitTransaction();
         }
+    }
+
+    // from interface MemberProvider
+    public void acknowledgeWarning (ClientObject caller)
+    {
+        final MemberObject user = (MemberObject) caller;
+        MsoyServer.invoker.postUnit(new Invoker.Unit("acknowledgeWarning") {
+            public boolean invoke () {
+                try {
+                    _memberRepo.clearMemberWarning(user.getMemberId());
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to clean member warning [for=" +
+                        user.getMemberId() + "].", pe);
+                }
+                return false;
+            }
+        });
     }
 
     // from interface MemberProvider

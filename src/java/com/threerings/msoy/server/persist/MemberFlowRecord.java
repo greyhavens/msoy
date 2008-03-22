@@ -37,7 +37,7 @@ public class MemberFlowRecord extends PersistentRecord
     public static final ColumnExp ACC_FLOW_C =
         new ColumnExp(MemberFlowRecord.class, ACC_FLOW);
     // AUTO-GENERATED: FIELDS END
-    
+
     /** See {@MemberRecord#memberId}. */
     @Id
     public int memberId;

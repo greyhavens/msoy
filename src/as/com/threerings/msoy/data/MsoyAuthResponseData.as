@@ -19,6 +19,9 @@ public class MsoyAuthResponseData extends AuthResponseData
     /** A machine identifier to be assigned to this machine, or null. */
     public var ident :String;
 
+    /** A possible warning message to the user, or null. */
+    public var warning :String;
+
 //    override public function writeObject (out :ObjectOutputStream) :void
 //    {
 //        super.writeObject(out);
@@ -33,6 +36,7 @@ public class MsoyAuthResponseData extends AuthResponseData
 
         sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
+        warning = (ins.readField(String) as String);
     }
 }
 }

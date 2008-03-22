@@ -152,6 +152,18 @@ public /*abstract*/ class MsoyClient extends Client
         c = LurkerName;
     }
 
+    // from Client
+    override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
+    {
+        super.gotBootstrap(data, omgr);
+
+        // see if we have a warning message to display
+        var rdata :MsoyAuthResponseData = (getAuthResponseData() as MsoyAuthResponseData);
+        if (rdata.warning != null) {
+            new WarningDialog(_ctx, rdata.warning);
+        }
+    }
+
     /**
      * Find out whether this client is embedded in a non-whirled page.
      */

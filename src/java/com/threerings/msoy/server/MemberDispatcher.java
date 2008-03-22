@@ -47,6 +47,12 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.ACKNOWLEDGE_WARNING:
+            ((MemberProvider)provider).acknowledgeWarning(
+                source                
+            );
+            return;
+
         case MemberMarshaller.FOLLOW_MEMBER:
             ((MemberProvider)provider).followMember(
                 source,

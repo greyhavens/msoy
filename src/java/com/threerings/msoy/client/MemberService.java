@@ -90,4 +90,9 @@ public interface MemberService extends InvocationService
      * Set the given scene as the member's home scene
      */
     public void setHomeSceneId (Client client, int sceneId, ConfirmListener listener);
+
+    /**
+     * Acknowledges that the user has read their warning message.
+     */
+    public void acknowledgeWarning (Client client);
 }

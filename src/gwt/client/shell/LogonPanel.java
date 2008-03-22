@@ -20,6 +20,7 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.Predicate;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.util.ClickCallback;
@@ -113,7 +114,14 @@ public class LogonPanel extends SmartTable
             }
             public void onFailure (Throwable caught) {
                 CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
-                MsoyUI.errorNear(CShell.serverError(caught), _password);
+                String message = null;
+                if (caught instanceof BannedException) {
+                    BannedException be = (BannedException)caught;
+                    message = CShell.cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+                } else {
+                    message = CShell.serverError(caught);
+                }
+                MsoyUI.errorNear(CShell.serverError(message), _password);
             }
         });
     }

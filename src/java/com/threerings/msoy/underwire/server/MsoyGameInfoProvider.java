@@ -16,6 +16,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.threerings.msoy.server.MsoyBaseServer;
 
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberWarningRecord;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -76,6 +77,13 @@ public class MsoyGameInfoProvider extends GameInfoProvider
             account.firstSession = new Date(member.created.getTime());
             account.lastSession = new Date(member.lastSession.getTime());
             account.altName = member.permaName;
+            MemberWarningRecord warning =
+                MsoyBaseServer.memberRepo.loadMemberWarningRecord(member.memberId);
+            if (warning != null) {
+                account.tempBan = warning.banExpires == null ?
+                    null : new Date(warning.banExpires.getTime());
+                account.warning = warning.warning;
+            }
         }
     }
 

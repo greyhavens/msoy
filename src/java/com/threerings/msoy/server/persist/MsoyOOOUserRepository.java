@@ -471,7 +471,7 @@ public class MsoyOOOUserRepository extends DepotRepository
             return false;
         }
 
-        if (!user.setBanned(site, true)) {
+        if (!user.setBanned(site, false)) {
             return false;
         }
         updateUser(user);

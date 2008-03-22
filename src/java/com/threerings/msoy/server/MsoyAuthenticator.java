@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Date;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -28,9 +29,11 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberWarningRecord;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -56,6 +59,9 @@ public class MsoyAuthenticator extends Authenticator
 
         /** Whether or not this account is logging on for the first time. */
         public boolean firstLogon;
+
+        /** A warning message on this account. */
+        public String warning;
     }
 
     /** Provides authentication information for a particular partner. */
@@ -301,8 +307,11 @@ public class MsoyAuthenticator extends Authenticator
                 account.firstLogon = (mrec.sessions == 0);
             }
 
-            // validate that they can logon
+            // validate that they can logon from the domain
             domain.validateAccount(account);
+
+            // validate that they can logon locally
+            validateAccount(account, mrec.memberId);
 
             return mrec;
 
@@ -454,6 +463,10 @@ public class MsoyAuthenticator extends Authenticator
         // logging in from a tainted machine
         domain.validateAccount(account, creds.ident, newIdent);
 
+        // validate the account locally
+        validateAccount(account, member.memberId);
+        rdata.warning = account.warning;
+
         // replace the tokens provided by the Domain with tokens derived from their member
         // record (a newly created record will have its bits set from the Domain values)
         int tokens = 0;
@@ -554,6 +567,29 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
+     * Validates an account checking for possible temp bans or warning messages.
+     */
+    protected void validateAccount (Account account, int memberId)
+        throws ServiceException, PersistenceException
+    {
+        MemberWarningRecord record = MsoyServer.memberRepo.loadMemberWarningRecord(memberId);
+        if (record == null) {
+            return;
+        }
+
+        if (record.banExpires != null) {
+            // figure out how many hours are left on the temp ban
+            Date now = new Date();
+            if (now.before(record.banExpires)) {
+                int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
+                throw new BannedException(MsoyAuthCodes.TEMP_BANNED, record.warning, expires);
+            }
+        }
+
+        account.warning = record.warning;
+    }
+
+    /**
      * Generate a new unique ident for this flash client.
      */
     protected static String generateIdent (String accountName, int offset)
@@ -589,4 +625,7 @@ public class MsoyAuthenticator extends Authenticator
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;
+
+    /** The number of milliseconds in an hour. */
+    protected static final long ONE_HOUR = 60 * 60 * 1000L;
 }
