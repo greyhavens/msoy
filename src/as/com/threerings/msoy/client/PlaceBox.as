@@ -26,6 +26,9 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the loading spinner. */
     public static const LAYER_ROOM_SPINNER :int = 10;
 
+    /** The layer priority of the AVRG panel. */
+    public static const LAYER_AVRG_PANEL :int = 15;
+
     /** The layer priority of the scrolling chat. */
     public static const LAYER_CHAT_SCROLL :int = 20;
 
@@ -37,9 +40,6 @@ public class PlaceBox extends LayeredContainer
 
     /** The layer priority of history chat messages. */
     public static const LAYER_CHAT_HISTORY :int = 35;
-
-    /** The layer priority of the AVRG panel. */
-    public static const LAYER_AVRG_PANEL :int = 40;
 
     /** The layer priority of the trophy award, avatar intro, and chat tip. */
     public static const LAYER_TRANSIENT :int = 50;
