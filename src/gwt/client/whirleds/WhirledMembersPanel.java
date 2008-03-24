@@ -136,8 +136,10 @@ public class WhirledMembersPanel extends PagedGrid
             setText(1, 0, rankStr, 1, "tipLabel");
             setWidget(2, 0, new MemberStatusLabel(card.status), 2, null);
 
-            // if we're not a manager or above this member in rank, don't add the edit controls
-            if (_detail.myRank != GroupMembership.RANK_MANAGER || !amSenior(card)) {
+            // if we're not a manager above this member in rank, or we're not support+ don't add 
+            // the edit controls
+            if (!CWhirleds.isSupport() && 
+                (_detail.myRank != GroupMembership.RANK_MANAGER || !amSenior(card))) {
                 return;
             }
 

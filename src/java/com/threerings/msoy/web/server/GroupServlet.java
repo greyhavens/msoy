@@ -544,7 +544,8 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId,
                 mrec.memberId);
-            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+            if (!mrec.isSupport() && 
+                (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)) {
                 log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
