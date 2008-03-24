@@ -10,6 +10,8 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.presents.data.ClientObject;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  */
 public class SubscriptionSpeakHandler extends ChannelSpeakHandler
@@ -26,9 +28,14 @@ public class SubscriptionSpeakHandler extends ChannelSpeakHandler
             VizMemberName chatter = ((MemberObject)caller).memberName;
             ChatChannel channel = _ch.getChannel();
             MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(channel);
-            host.peerChatService.forwardSpeak(
-                MsoyServer.peerMan.getPeerClient(host.nodeName),
-                chatter, channel, message, mode, new ReportListener(chatter));
+            if (host != null) {
+                host.peerChatService.forwardSpeak(
+                    MsoyServer.peerMan.getPeerClient(host.nodeName),
+                    chatter, channel, message, mode, new ReportListener(chatter));
+            } else {
+                log.info("Dropping channel message, no host [speaker=" + chatter +
+                         ", channel=" + channel + "].");
+            }
         }
     }
 }
