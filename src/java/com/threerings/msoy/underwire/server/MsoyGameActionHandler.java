@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.server.ServletUtil;
 
 import com.threerings.underwire.server.GameActionHandler;
@@ -59,16 +59,13 @@ public class MsoyGameActionHandler extends GameActionHandler
     /**
      * Boots a member off any active session and clears their web session token as well.
      */
-    protected void bootMember (int memberId)
+    protected void bootMember (final int memberId)
         throws PersistenceException
     {
-        final MemberName name = new MemberName(null, memberId);
         // we need to run this on the DObjectMgr thread
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                if (!MsoyServer.memberMan.bootMember(name)) {
-                    MsoyServer.peerMan.forwardBootMember(name);
-                }
+                MemberNodeActions.bootMember(memberId);
             }
         });
         ServletUtil.clearSessionToken(memberId);

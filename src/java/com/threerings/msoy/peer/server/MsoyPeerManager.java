@@ -208,29 +208,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Looks for a client on our peer node and boots them from the node if found.
-     */
-    public void forwardBootMember (MemberName target)
-    {
-        for (PeerNode peer : _peers.values()) {
-            MsoyNodeObject mnobj = (MsoyNodeObject)peer.nodeobj;
-            if (mnobj == null) {
-                continue;
-            }
-            MsoyClientInfo minfo = (MsoyClientInfo)mnobj.clients.get(target);
-            if (minfo != null) {
-                mnobj.msoyPeerService.forwardBootMember(peer.getClient(), target);
-            }
-        }
-    }
-
-    // from interface MsoyPeerProvider
-    public void forwardBootMember (ClientObject caller, MemberName target)
-    {
-        MsoyServer.memberMan.bootMember(target);
-    }
-
-    /**
      * Called by the RoomManager when it is hosting a scene.
      */
     public void roomDidStartup (int sceneId, String name, int ownerId, byte ownerType,

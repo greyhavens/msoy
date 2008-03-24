@@ -21,9 +21,4 @@ public interface MsoyPeerService extends InvocationService
      */
     public void forwardMemberObject (
         Client client, MemberObject memobj, String actorState, StatSet stats);
-
-    /**
-     * Boot a member from the peer node.
-     */
-    public void forwardBootMember (Client client, MemberName target);
 }

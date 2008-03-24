@@ -628,9 +628,9 @@ public class MemberManager
      *
      * @return true if the player was found and booted successfully
      */
-    public boolean bootMember (MemberName target)
+    public boolean bootMember (int memberId)
     {
-        MemberObject mobj = MsoyServer.lookupMember(target);
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj != null) {
             PresentsClient pclient = MsoyServer.clmgr.getClient(mobj.username);
             if (pclient != null) {

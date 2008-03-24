@@ -60,6 +60,14 @@ public class MemberNodeActions
         MsoyServer.peerMan.invokeNodeAction(new LeftGroup(memberId, groupId));
     }
 
+    /**
+     * Boots a member from any server into which they are logged in.
+     */
+    public static void bootMember (int memberId)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new BootMember(memberId));
+    }
+
     protected static class DisplayNameChanged extends MemberNodeAction
     {
         public DisplayNameChanged (MemberName name) {
@@ -140,5 +148,16 @@ public class MemberNodeActions
         }
 
         protected int _groupId;
+    }
+
+    protected static class BootMember extends MemberNodeAction
+    {
+        public BootMember (int memberId) {
+            super(memberId);
+        }
+
+        protected void execute (MemberObject memobj) {
+            MsoyServer.memberMan.bootMember(_memberId);
+        }
     }
 }
