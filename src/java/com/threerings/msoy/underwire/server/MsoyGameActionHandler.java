@@ -62,12 +62,10 @@ public class MsoyGameActionHandler extends GameActionHandler
     protected void bootMember (final int memberId)
         throws PersistenceException
     {
-        // we need to run this on the DObjectMgr thread
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MemberNodeActions.bootMember(memberId);
-            }
-        });
+        // boot the player from the flash client
+        MemberNodeActions.bootMember(memberId);
+
+        // then clear out their session data from the web client
         ServletUtil.clearSessionToken(memberId);
         MsoyServer.memberRepo.clearSession(memberId);
     }
