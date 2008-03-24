@@ -168,8 +168,8 @@ public class UpdateAccumulator
                 repo.persistUpdates(this, _finalVersion);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to commit accumulated updates " +
-                        "[sceneId=" + get(0).getSceneId() + ", count=" + size() +
-                        ", fvers=" + _finalVersion + "].", pe);
+                        "[sceneId=" + get(0).getSceneId() + ", fvers=" + _finalVersion +
+                        ", updates=" + this + "].", pe);
             }
         }
 
