@@ -546,6 +546,9 @@ public class MsoyAuthenticator extends Authenticator
             }
         });
 
+        // TEMP: grant this new member 5 invitations
+        MsoyServer.memberRepo.grantInvites(mrec.memberId, 5);
+
         // use the tokens filled in by the domain to assign privileges
         mrec.setFlag(MemberRecord.Flag.SUPPORT, account.tokens.isSupport());
         mrec.setFlag(MemberRecord.Flag.ADMIN, account.tokens.isAdmin());
