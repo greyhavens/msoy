@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -48,7 +45,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         }
 
         // if we don't have a session token -> member id mapping, then...
-        Integer memberId = _members.get(ident.token);
+        Integer memberId = ServletUtil.getMemberId(ident.token);
         if (memberId == null) {
             // ...try looking up this session token, they may have originally authenticated with
             // another server and then started talking to us
@@ -57,7 +54,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
                 if (mrec == null || mrec.memberId != ident.memberId) {
                     return null;
                 }
-                mapUser(ident.token, mrec);
+                ServletUtil.mapMemberId(ident.token, mrec.memberId);
                 return mrec;
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Failed to load session [tok=" + ident.token + "].", pe);
@@ -116,15 +113,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /**
-     * Called when a user logs on or refreshes their credentials to map the user's record by their
-     * session token.
-     */
-    protected static void mapUser (String ident, MemberRecord record)
-    {
-        _members.put(ident, record.memberId);
-    }
-
-    /**
      * Returns null if mrec is null {@link MemberRecord#who} otherwise.
      */
     protected static String who (MemberRecord mrec)
@@ -134,8 +122,4 @@ public class MsoyServiceServlet extends RemoteServiceServlet
 
     /** Used to log interesting events for later grindage. */
     protected MsoyEventLogger _eventLog;
-
-    /** Contains a mapping of authenticated members. */
-    protected static Map<String,Integer> _members = Collections.synchronizedMap(
-        new HashMap<String,Integer>());
 }

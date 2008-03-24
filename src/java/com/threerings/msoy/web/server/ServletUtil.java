@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -64,6 +67,31 @@ public class ServletUtil
             return MemberName.compareNames(c1.name, c2.name);
         }
     };
+
+    /**
+     * Looks up a member id based on their session token. May return null if this member does not
+     * have a session mapped into memory on this server.
+     */
+    public static Integer getMemberId (String sessionToken)
+    {
+        return _members.get(sessionToken);
+    }
+
+    /**
+     * Maps a session token to a member id for later retrieval via {@link #getMemberId}.
+     */
+    public static void mapMemberId (String sessionToken, int memberId)
+    {
+        _members.put(sessionToken, memberId);
+    }
+
+    /**
+     * Clears a session token to member id mapping.
+     */
+    public static void clearMemberId (String sessionToken)
+    {
+        _members.remove(sessionToken);
+    }
 
     /**
      * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
@@ -255,4 +283,8 @@ public class ServletUtil
             requestFailed(new InvocationException(cause));
         }
     }
+
+    /** Contains a mapping of authenticated members. */
+    protected static Map<String,Integer> _members = Collections.synchronizedMap(
+        new HashMap<String,Integer>());
 }
