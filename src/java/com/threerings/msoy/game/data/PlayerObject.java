@@ -391,4 +391,11 @@ public class PlayerObject extends BodyObject
         this.gameContent = clone;
     }
     // AUTO-GENERATED: METHODS END
+
+    @Override // from BodyObject
+    protected void addWhoData (StringBuilder buf)
+    {
+        buf.append("id=").append(getMemberId()).append(" oid=");
+        super.addWhoData(buf);
+    }
 }
