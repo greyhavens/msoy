@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,6 +92,20 @@ public class ServletUtil
     public static void clearMemberId (String sessionToken)
     {
         _members.remove(sessionToken);
+    }
+
+    /**
+     * Clears all session tokens for a member id.
+     */
+    public static void clearSessionToken (int memberId)
+    {
+        for (Iterator<Map.Entry<String,Integer>> iter = _members.entrySet().iterator();
+                iter.hasNext(); ) {
+            Map.Entry<String,Integer> entry = iter.next();
+            if (entry.getValue() == memberId) {
+                iter.remove();
+            }
+        }
     }
 
     /**

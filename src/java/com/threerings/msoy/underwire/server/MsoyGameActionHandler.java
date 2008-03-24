@@ -6,10 +6,11 @@ package com.threerings.msoy.underwire.server;
 import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.server.ServletUtil;
 
 import com.threerings.underwire.server.GameActionHandler;
 
@@ -25,12 +26,23 @@ public class MsoyGameActionHandler extends GameActionHandler
     }
 
     @Override // from GameActionHandler
+    public void ban (String accountName)
+        throws PersistenceException
+    {
+        int memberId = getMemberId(accountName);
+        if (memberId > 0) {
+            bootMember(memberId);
+        }
+    }
+
+    @Override // from GameActionHandler
     public void tempBan (String accountName, Timestamp expires, String warning)
         throws PersistenceException
     {
         int memberId = getMemberId(accountName);
         if (memberId > 0) {
             MsoyServer.memberRepo.tempBanMember(memberId, expires, warning);
+            bootMember(memberId);
         }
     }
 
@@ -42,6 +54,25 @@ public class MsoyGameActionHandler extends GameActionHandler
         if (memberId > 0) {
             MsoyServer.memberRepo.updateMemberWarning(memberId, warning);
         }
+    }
+
+    /**
+     * Boots a member off any active session and clears their web session token as well.
+     */
+    protected void bootMember (int memberId)
+        throws PersistenceException
+    {
+        final MemberName name = new MemberName(null, memberId);
+        // we need to run this on the DObjectMgr thread
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                if (!MsoyServer.memberMan.bootMember(name)) {
+                    MsoyServer.peerMan.forwardBootMember(name);
+                }
+            }
+        });
+        ServletUtil.clearSessionToken(memberId);
+        MsoyServer.memberRepo.clearSession(memberId);
     }
 
     protected int getMemberId (String accountName)

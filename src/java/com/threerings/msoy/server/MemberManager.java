@@ -12,6 +12,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
@@ -23,6 +24,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
@@ -56,7 +58,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
-import com.samskivert.util.Invoker;
 
 /**
  * Manage msoy members.
@@ -620,6 +621,24 @@ public class MemberManager
                 }
             });
         }
+    }
+
+    /**
+     * Boots a player from the server.  Must be called on the dobjmgr thread.
+     *
+     * @return true if the player was found and booted successfully
+     */
+    public boolean bootMember (MemberName target)
+    {
+        MemberObject mobj = MsoyServer.lookupMember(target);
+        if (mobj != null) {
+            PresentsClient pclient = MsoyServer.clmgr.getClient(mobj.username);
+            if (pclient != null) {
+                pclient.endSession();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

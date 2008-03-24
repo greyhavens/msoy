@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 import com.threerings.presents.client.Client;
@@ -40,6 +41,13 @@ public class MsoyPeerDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case MsoyPeerMarshaller.FORWARD_BOOT_MEMBER:
+            ((MsoyPeerProvider)provider).forwardBootMember(
+                source,
+                (MemberName)args[0]
+            );
+            return;
+
         case MsoyPeerMarshaller.FORWARD_MEMBER_OBJECT:
             ((MsoyPeerProvider)provider).forwardMemberObject(
                 source,

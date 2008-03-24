@@ -316,7 +316,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         SessionRecord session = load(SessionRecord.class, sessionToken);
-        if (session.expires.getTime() < System.currentTimeMillis()) {
+        if (session != null && session.expires.getTime() < System.currentTimeMillis()) {
             session = null;
         }
         return (session == null) ? null : load(MemberRecord.class, session.memberId);
@@ -385,6 +385,19 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         delete(SessionRecord.class, sessionToken);
+    }
+
+    /**
+     * Clears out a session to member id mapping.
+     */
+    public void clearSession (int memberId)
+        throws PersistenceException
+    {
+        SessionRecord record =
+            load(SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
+        if (record != null) {
+            delete(record);
+        }
     }
 
     /**

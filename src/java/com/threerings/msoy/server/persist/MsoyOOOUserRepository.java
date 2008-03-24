@@ -270,7 +270,11 @@ public class MsoyOOOUserRepository extends DepotRepository
     {
         // don't taint blank or null idents
         if (!StringUtil.isBlank(machIdent)) {
-            insert(new TaintedIdentRecord(machIdent));
+            try {
+                insert(new TaintedIdentRecord(machIdent));
+            } catch (DuplicateKeyException dke) {
+                // that's fine
+            }
         }
     }
 

@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.data;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -20,8 +21,19 @@ import com.threerings.stats.data.StatSet;
 public class MsoyPeerMarshaller extends InvocationMarshaller
     implements MsoyPeerService
 {
+    /** The method id used to dispatch {@link #forwardBootMember} requests. */
+    public static final int FORWARD_BOOT_MEMBER = 1;
+
+    // from interface MsoyPeerService
+    public void forwardBootMember (Client arg1, MemberName arg2)
+    {
+        sendRequest(arg1, FORWARD_BOOT_MEMBER, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #forwardMemberObject} requests. */
-    public static final int FORWARD_MEMBER_OBJECT = 1;
+    public static final int FORWARD_MEMBER_OBJECT = 2;
 
     // from interface MsoyPeerService
     public void forwardMemberObject (Client arg1, MemberObject arg2, String arg3, StatSet arg4)
