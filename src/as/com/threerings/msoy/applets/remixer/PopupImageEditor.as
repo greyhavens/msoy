@@ -37,11 +37,7 @@ public class PopupImageEditor extends TitleWindow
         var box :VBox = new VBox();
         addChild(box);
 
-        _image = new ImageManipulator(true, cutWidth, cutHeight);
-        _image.maxWidth = 450;
-        _image.maxHeight = 300;
-        _image.minWidth = 200;
-        _image.minHeight = 100;
+        _image = new ImageManipulator(600, 450, true, cutWidth, cutHeight);
         box.addChild(_image);
 
         var bar :ButtonBar = new ButtonBar();
@@ -49,6 +45,7 @@ public class PopupImageEditor extends TitleWindow
         bar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(bar);
 
+        _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
         _image.setImage(bytes);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
@@ -62,6 +59,11 @@ public class PopupImageEditor extends TitleWindow
         }
 
         PopUpManager.removePopUp(this);
+    }
+
+    protected function handleSizeKnown (event :ValueEvent) :void
+    {
+        callLater(PopUpUtil.center, [ this ]);
     }
 
     protected var _image :ImageManipulator;

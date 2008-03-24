@@ -53,17 +53,25 @@ public class ImageManipulator extends HBox
 {
     public static const SIZE_KNOWN :String = EditCanvas.SIZE_KNOWN;
 
-    public static const MAX_WIDTH :int = 300;
-    public static const MAX_HEIGHT :int = 300;
-
     public function ImageManipulator (
-        allowEdit :Boolean = false, cutWidth :Number = NaN, cutHeight :Number = NaN)
+        maxW :int = 400, maxH :int = 400, allowEdit :Boolean = false,
+        cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
+        this.maxWidth = maxW;
+        this.maxHeight = maxH;
+        this.minWidth = 100;
+        this.minHeight = 100;
+        _maxWidth = maxW;
+        _maxHeight = maxH;
+        if (allowEdit) {
+            _maxWidth -= CONTROL_BAR_WIDTH;
+        }
+
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xCCCCCC);
-        _editor = new EditCanvas(MAX_WIDTH, MAX_HEIGHT);
+        _editor = new EditCanvas(_maxWidth, _maxHeight);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
         addChild(_editor);
@@ -111,7 +119,7 @@ public class ImageManipulator extends HBox
         var bar :VBox = new VBox();
         bar.setStyle("paddingLeft", 0);
         bar.setStyle("paddingRight", 0);
-        bar.width = 150;
+        bar.width = CONTROL_BAR_WIDTH;
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
         bar.verticalScrollPolicy = ScrollPolicy.OFF;
 
@@ -271,12 +279,17 @@ public class ImageManipulator extends HBox
         if (_controlBar != null) {
             var w :Number = event.value[0];
             var h :Number = event.value[1];
-            _zoomSlider.minimum = Math.min(1, Math.min(MAX_WIDTH / w, MAX_HEIGHT / h));
+            _zoomSlider.minimum = Math.min(1, Math.min(_maxWidth / w, _maxHeight / h));
             _zoomSlider.value = 1;
             _rotSlider.value = 0;
             _scaleSlider.value = 1;
         }
     }
+
+    protected static const CONTROL_BAR_WIDTH :int = 150;
+
+    protected var _maxWidth :int;
+    protected var _maxHeight :int;
 
     protected var _controlBar :VBox;
 

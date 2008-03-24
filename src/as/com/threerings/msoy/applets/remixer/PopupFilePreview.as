@@ -83,12 +83,8 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new ImageManipulator();
+        _image = new ImageManipulator(450, 450);
         _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
-        _image.maxWidth = 450;
-        _image.maxHeight = 300;
-        _image.minWidth = 200;
-        _image.minHeight = 100;
         previewBox.addChild(_image);
         _label = new Label();
 
