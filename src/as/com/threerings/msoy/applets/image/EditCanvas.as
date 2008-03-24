@@ -777,10 +777,13 @@ class DropperCursor extends Shape
 {
     public function setColor (color :uint, alpha :Number = 1) :void
     {
+        var max :uint = Math.max(color & 0xFF, (color >> 8) & 0xFF);
+        max = Math.max(max, (color >> 16) & 0xFF);
+
         var g :Graphics = graphics;
         g.clear();
         g.beginFill(color, alpha);
-        g.lineStyle(1, 0x000000);
+        g.lineStyle(1, (max > 127) ? 0x000000 : 0xFFFFFF);
         g.drawRect(0, 10, 20, 20);
         g.endFill();
     }
