@@ -137,7 +137,8 @@ public class WorldContext extends MsoyContext
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
-        return (getMemberObject() == null) ? null : getMemberObject().tokens;
+        // if we're not logged on, claim to have no privileges
+        return (getMemberObject() == null) ? new MsoyTokenRing() : getMemberObject().tokens;
     }
 
     // from MsoyContext
