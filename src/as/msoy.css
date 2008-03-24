@@ -194,14 +194,8 @@ PopUpButton {
 }
 
 ButtonBar {
-  buttonStyleName: "msoyButtonBar";
   buttonWidth: 72;
   horizontalGap: 6;
-}
-
-.msoyButtonBar {
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
 }
 
 VScrollBar {

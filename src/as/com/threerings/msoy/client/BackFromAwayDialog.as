@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import mx.controls.Button;
+import mx.controls.ButtonBar;
 import mx.controls.Label;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -36,6 +37,8 @@ public class BackFromAwayDialog extends FloatingPanel
         addChild(label);
 
         addButtons(OK_BUTTON);
+        var bar :ButtonBar = getChildAt(numChildren - 1) as ButtonBar;
+        bar.setStyle("buttonWidth", 100);
     }
 
     override protected function createButton (buttonId :int) :Button
