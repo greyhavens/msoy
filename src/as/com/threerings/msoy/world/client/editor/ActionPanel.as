@@ -75,7 +75,7 @@ public class ActionPanel extends BasePanel
     {
         super.createChildren();
 
-        var playerIsSupportPlus :Boolean = _controller.ctx.getMemberObject().tokens.isSupport();
+        var playerIsSupportPlus :Boolean = _controller.ctx.getTokens().isSupport();
 
         // generate combo box definitions, including only those actions whose editable flag is set,
         // and which are available for the player's account level
