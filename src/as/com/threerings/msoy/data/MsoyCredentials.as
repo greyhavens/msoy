@@ -16,6 +16,9 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
+    /** A string prepended to session tokens that represent guest sessions. */
+    public static const GUEST_SESSION_PREFIX :String = "G";
+
     /** A session token that identifies a user without requiring username or password. */
     public var sessionToken :String;
 

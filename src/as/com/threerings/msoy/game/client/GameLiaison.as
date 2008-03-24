@@ -9,9 +9,11 @@ import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.system.Security;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+import flash.system.Security;
 import flash.text.TextField;
 
 import mx.core.Container;
@@ -39,6 +41,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -47,6 +50,7 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 
@@ -79,11 +83,30 @@ public class GameLiaison
     {
         if (ghost != null && gport != 0) {
             gameLocated(ghost, gport);
-        } else {
+
+        } else if (_wctx.getClient().isLoggedOn()) {
             log.info("Resolving location of game [id=" + _gameId + "].");
             var mgsvc :MsoyGameService =
                 (_wctx.getClient().requireService(MsoyGameService) as MsoyGameService);
             mgsvc.locateGame(_wctx.getClient(), gameId, this);
+
+        } else {
+            log.info("Resolving location of game via HTTP [id=" + _gameId + "].");
+            var loader :URLLoader = new URLLoader();
+            loader.addEventListener(Event.COMPLETE, function () :void {
+                loader.removeEventListener(Event.COMPLETE, arguments.callee);
+                var bits :Array = (loader.data as String).split(":");
+                var guestId :int = int(bits[2]);
+                if (guestId != 0) {
+                    var creds :MsoyGameCredentials  =
+                        (_gctx.getClient().getCredentials() as MsoyGameCredentials);
+                    creds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
+                }
+                gameLocated(bits[0], int(bits[1]));
+            });
+            // TODO: add listeners for failure events? give feedback on failure?
+            loader.load(new URLRequest("http://" + DeploymentConfig.serverHost + ":" +
+                                       DeploymentConfig.httpPort + "/embed/g" + _gameId));
         }
     }
 

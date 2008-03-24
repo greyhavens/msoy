@@ -6,8 +6,11 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageQuality;
+import flash.events.Event;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
 
 import mx.core.Application;
 
@@ -107,12 +110,36 @@ public class WorldClient extends MsoyClient
         stage.quality = StageQuality.MEDIUM;
 
         // make sure we're running a sufficiently new version of Flash
-        if (_wctx.getTopPanel().verifyFlashVersion()) {
-            logon(); // now logon
+        if (!_wctx.getTopPanel().verifyFlashVersion()) {
+            return;
+        }
+
+        // if we are embedded, we won't have a server host in our parameters, so we need to obtain
+        // that via an HTTP request, otherwise just logon directly
+        var params :Object = _stage.loaderInfo.parameters;
+        if (getHostname() == null) {
+            var loader :URLLoader = new URLLoader();
+            loader.addEventListener(Event.COMPLETE, function () :void {
+                loader.removeEventListener(Event.COMPLETE, arguments.callee);
+                var bits :Array = (loader.data as String).split(":");
+                setServer(bits[0], [ int(bits[1]) ]);
+                logon();
+            });
+            // TODO: add listeners for failure events? give feedback on failure?
+
+            // embedded clients should link to a particular scene (or game in which case we'll just
+            // connect to any old world server)
+            var sceneId :int = int(params["sceneId"]);
+            var url :String = "http://" + DeploymentConfig.serverHost + ":" +
+                DeploymentConfig.httpPort + "/embed/" + (sceneId == 0 ? "" : ("s"+sceneId));
+            loader.load(new URLRequest(url));
+            log.info("Loading server info from " + url + ".");
+
+        } else {
+            logon();
         }
 
         // if we are actually going right into a game lobby, do that now
-        var params :Object = _stage.loaderInfo.parameters;
         if (params["gameLobby"]) {
             log.info("Doing pre-logon go to join game lobby.");
             _wctx.getWorldController().preLogonGo(params);

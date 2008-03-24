@@ -126,7 +126,7 @@ public /*abstract*/ class MsoyClient extends Client
         // prior to logging on to a server, set up our security policy for that server
         addClientObserver(new ClientAdapter(clientWillLogon));
 
-        // configure our server and port info and logon
+        // configure our server and port info
         setServer(getServerHost(stage), getServerPorts(stage));
         _httpPort = getHttpServerPort(stage);
 
@@ -349,13 +349,13 @@ public /*abstract*/ class MsoyClient extends Client
     }
 
     /**
-     * Returns the hostname of the game server to which we should connect, first checking the movie
-     * parameters, then falling back to the default in DeploymentConfig.
+     * Returns the hostname of the game server to which we should connect, or null if that is not
+     * configured in our parameters.
      */
     protected static function getServerHost (stage :Stage) :String
     {
         var params :Object = stage.loaderInfo.parameters;
-        return (params["host"] != null) ? String(params["host"]) : DeploymentConfig.serverHost;
+        return (params["host"] != null) ? String(params["host"]) : null;
     }
 
     /**

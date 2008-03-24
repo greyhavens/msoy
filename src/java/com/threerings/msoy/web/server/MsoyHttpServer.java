@@ -58,6 +58,7 @@ public class MsoyHttpServer extends Server
             }
             context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
         }
+        context.addServlet(new ServletHolder(new EmbedRouterServlet()), "/embed/*");
         context.addServlet(new ServletHolder(new MediaProxyServlet()),
                            DeploymentConfig.PROXY_PREFIX + "*");
 

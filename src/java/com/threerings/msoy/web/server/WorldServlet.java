@@ -23,8 +23,6 @@ import com.samskivert.util.ExpiringReference;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
@@ -34,10 +32,6 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.game.client.MsoyGameService;
-import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
@@ -45,13 +39,7 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
@@ -75,7 +63,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.WorldService;
@@ -255,88 +242,7 @@ public class WorldServlet extends MsoyServiceServlet
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
-
-        // load up the metadata for this game
-        GameRepository repo = MsoyServer.itemMan.getGameRepository();
-        GameRecord grec;
-        try {
-            grec = repo.loadGameRecord(gameId);
-            if (grec == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-        Game game = (Game)grec.toItem();
-
-        // create a launch config record for the game
-        LaunchConfig config = new LaunchConfig();
-        config.gameId = game.gameId;
-
-        MsoyMatchConfig match;
-        try {
-            if (StringUtil.isBlank(game.config)) {
-                // fall back to a sensible default for our legacy games
-                match = new MsoyMatchConfig();
-                match.minSeats = match.startSeats = 1;
-                match.maxSeats = 2;
-            } else {
-                MsoyGameDefinition def = (MsoyGameDefinition)new MsoyGameParser().parseGame(game);
-                config.lwjgl = def.lwjgl;
-                match = (MsoyMatchConfig)def.match;
-            }
-
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId + "]", e);
-            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        switch (game.gameMedia.mimeType) {
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            config.type = game.isInWorld() ?
-                    LaunchConfig.FLASH_IN_WORLD : LaunchConfig.FLASH_LOBBIED;
-            break;
-        case MediaDesc.APPLICATION_JAVA_ARCHIVE:
-            // ignore maxSeats in the case of a party game - always display a lobby
-            config.type = (!match.isPartyGame && match.maxSeats == 1) ?
-                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_FLASH_LOBBIED;
-            break;
-        default:
-            log.warning("Requested config for game of unknown media type " +
-                        "[id=" + gameId + ", media=" + game.gameMedia + "].");
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        // we have to proxy game jar files through the game server due to the applet sandbox
-        config.gameMediaPath = (game.gameMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
-            game.gameMedia.getProxyMediaPath() : game.gameMedia.getMediaPath();
-        config.name = game.name;
-        config.httpPort = ServerConfig.httpPort;
-
-        // determine what server is hosting the game, start hosting it if necessary
-        final GameLocationWaiter waiter = new GameLocationWaiter(config.gameId);
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    MsoyServer.gameReg.locateGame(null, waiter.gameId, waiter);
-                } catch (InvocationException ie) {
-                    waiter.requestFailed(ie);
-                }
-            }
-        });
-        Tuple<String, Integer> rhost = waiter.waitForResult();
-        config.server = rhost.left;
-        config.port = rhost.right;
-
-        // finally, if they are a guest and have not yet been assigned a guest id, do so now so
-        // that they can log directly into the game server
-        if (ident == null || ident.memberId == 0) {
-            config.guestId = MsoyServer.peerMan.getNextGuestId(); // this method is thread safe
-        }
-
-        return config;
+        return ServletUtil.loadLaunchConfig(ident, gameId);
     }
 
     // from interface WorldService
@@ -587,22 +493,6 @@ public class WorldServlet extends MsoyServiceServlet
     {
         public PlaceCard place;
         public List<MemberName> friends = Lists.newArrayList();
-    }
-
-    protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
-        implements MsoyGameService.LocationListener
-    {
-        public int gameId;
-        public GameLocationWaiter (int gameId) {
-            super("locateGame(" + gameId + ")");
-            this.gameId = gameId;
-        }
-        public void gameLocated (String host, int port) {
-            postSuccess(new Tuple<String,Integer>(host, port));
-        }
-        public void requestFailed (String cause) {
-            requestFailed(new InvocationException(cause));
-        }
     }
 
     /** Contains a cached copy of our WhatIsWhirled data. */

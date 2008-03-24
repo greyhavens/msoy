@@ -162,7 +162,8 @@ public class GameDirector extends BasicDirector
     {
         if (_liaison == null) {
             var memberObj :MemberObject = _wctx.getMemberObject();
-            if (memberObj.avrGameId > 0) {
+            // we might not yet be logged onto our world server; freak not out if so
+            if (memberObj != null && memberObj.avrGameId > 0) {
                 _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
                 _liaison.start();
             }
