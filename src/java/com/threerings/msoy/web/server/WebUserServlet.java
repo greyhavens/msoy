@@ -204,7 +204,7 @@ public class WebUserServlet extends MsoyServiceServlet
             }
 
             WebCreds creds = mrec.toCreds(authtok);
-            mapUser(creds.token, mrec);
+            ServletUtil.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
@@ -427,7 +427,7 @@ public class WebUserServlet extends MsoyServiceServlet
             // if they made it through that gauntlet, create or update their session token
             WebCreds creds = mrec.toCreds(
                 MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
-            mapUser(creds.token, mrec);
+            ServletUtil.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
