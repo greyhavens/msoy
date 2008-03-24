@@ -118,7 +118,7 @@ public class ChatChannelManager
                     if (_policy == Group.POLICY_PUBLIC) {
                         resolveAndJoinChannel(member, channel, listener);
                     } else {
-                        log.warning("Unable to join non-public channel [member=" + member +
+                        log.warning("Unable to join non-public channel [member=" + member.who() +
                                     ", channel=" + channel + "]");
                         listener.requestFailed(E_ACCESS_DENIED);
                     }
