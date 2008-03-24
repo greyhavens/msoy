@@ -93,9 +93,9 @@ public class ProfileBlurb extends Blurb
             buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
                                                  CPeople.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new MailComposition(_name, CPeople.msgs.inviteTitle(),
+                    new MailComposition(_name, CPeople.msgs.friendInviteTitle(),
                                         new FriendInvite.Composer(),
-                                        CPeople.msgs.inviteBody()).show();
+                                        CPeople.msgs.friendInviteBody()).show();
                 }
             }));
         }

@@ -117,9 +117,9 @@ public class MemberList extends PagedGrid
                 } else if (CPeople.getMemberId() != 0) {
                     onClick = new ClickListener() {
                         public void onClick (Widget sender) {
-                            new MailComposition(card.name, CPeople.msgs.inviteTitle(),
+                            new MailComposition(card.name, CPeople.msgs.friendInviteTitle(),
                                                 new FriendInvite.Composer(),
-                                                CPeople.msgs.inviteBody()).show();
+                                                CPeople.msgs.friendInviteBody()).show();
                         }
                     };
                     extras.setWidget(row, 0, MsoyUI.createActionImage(
