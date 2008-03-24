@@ -28,7 +28,7 @@ import com.threerings.flex.GridUtil;
 
 import com.whirled.remix.data.EditableDataPack;
 
-import com.threerings.msoy.applets.image.ImagePreview;
+import com.threerings.msoy.applets.image.ImageManipulator;
 
 public class ExistingFileChooser extends TitleWindow
 {
@@ -62,7 +62,7 @@ public class ExistingFileChooser extends TitleWindow
     {
         var bytes :ByteArray = pack.getFileByFilename(filename);
 
-        var image :ImagePreview = new ImagePreview();
+        var image :ImageManipulator = new ImageManipulator();
         image.maxWidth = 100;
         image.maxHeight = 100;
         image.setImage(bytes);

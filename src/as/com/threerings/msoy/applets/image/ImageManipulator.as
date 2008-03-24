@@ -47,16 +47,16 @@ import com.threerings.flex.ScrollBox;
 [Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
 
 /**
- * Displays an image. I think this could be the base class for our in-line image editing.
+ * Displays or allows editing of an image.
  */
-public class ImagePreview extends HBox
+public class ImageManipulator extends HBox
 {
     public static const SIZE_KNOWN :String = EditCanvas.SIZE_KNOWN;
 
     public static const MAX_WIDTH :int = 300;
     public static const MAX_HEIGHT :int = 300;
 
-    public function ImagePreview (
+    public function ImageManipulator (
         allowEdit :Boolean = false, cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -101,9 +101,9 @@ public class ImagePreview extends HBox
      * @return an Array with the ByteArray as the first element, and if there's a forced
      * extension then that's the 2nd element.
      */
-    public function getImage (asJpg :Boolean = false, quality :Number = 50) :Array
+    public function getImage (forceFormat :String = null, formatArg :Object = null) :Array
     {
-        return _editor.getImage(asJpg, quality);
+        return _editor.getImage(forceFormat, formatArg);
     }
 
     protected function createControlBar () :VBox
@@ -122,11 +122,11 @@ public class ImagePreview extends HBox
 
         var grid :Grid = new Grid();
 
-        GridUtil.addRow(grid, _colorPicker, addMode("eyedrop", EditCanvas.SELECT_COLOR));
+        GridUtil.addRow(grid, _colorPicker, addModeBtn("eyedrop", EditCanvas.SELECT_COLOR));
         GridUtil.addRow(grid,
-            addMode("paint", EditCanvas.PAINT), addMode("erase", EditCanvas.ERASE));
+            addModeBtn("paint", EditCanvas.PAINT), addModeBtn("erase", EditCanvas.ERASE));
         GridUtil.addRow(grid,
-            addMode("select", EditCanvas.SELECT), addMode("move", EditCanvas.MOVE));
+            addModeBtn("select", EditCanvas.SELECT), addModeBtn("move", EditCanvas.MOVE));
         GridUtil.addRow(grid, new CommandButton("Crop", _editor.doCrop), [ 2, 1 ]);
         GridUtil.addRow(grid, _undo = new CommandButton("Undo", _editor.doUndo),
             _redo = new CommandButton("Redo", _editor.doRedo));
@@ -218,7 +218,7 @@ public class ImagePreview extends HBox
         return slider;
     }
 
-    protected function addMode (label :String, mode :int) :CommandButton
+    protected function addModeBtn (label :String, mode :int) :CommandButton
     {
         var but :CommandButton = new CommandButton(label, setMode, mode);
         but.data = mode;
@@ -259,11 +259,11 @@ public class ImagePreview extends HBox
     protected function handleColorPicked (event :ColorPickerEvent) :void
     {
         _editor.setPaintColor(event.color);
+        setMode(EditCanvas.PAINT);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
     {
-
         // redispatch
         dispatchEvent(event);
 

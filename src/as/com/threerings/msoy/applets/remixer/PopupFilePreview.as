@@ -35,7 +35,7 @@ import com.threerings.flex.PopUpUtil;
 import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
-import com.threerings.msoy.applets.image.ImagePreview;
+import com.threerings.msoy.applets.image.ImageManipulator;
 
 import com.threerings.msoy.applets.upload.Uploader;
 
@@ -83,15 +83,19 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new ImagePreview(true, Number(entry.width), Number(entry.height));
-        _image.addEventListener(ImagePreview.SIZE_KNOWN, handleSizeKnown);
+        _image = new ImageManipulator();
+        _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
         _image.maxWidth = 450;
         _image.maxHeight = 300;
         _image.minWidth = 200;
         _image.minHeight = 100;
         previewBox.addChild(_image);
         _label = new Label();
-        previewBox.addChild(_label);
+
+        hbox = new HBox();
+        hbox.addChild(new CommandButton("Edit", doEdit, entry));
+        hbox.addChild(_label);
+        previewBox.addChild(hbox);
 
         var hrule :HRule = new HRule();
         hrule.percentWidth = 100;
@@ -138,7 +142,6 @@ public class PopupFilePreview extends TitleWindow
             var array :Array = _image.getImage();
             var ba :ByteArray = ByteArray(array[0]);
             if (ba != null) {
-                _filename = _ctx.createFilename(_filename, ba, array[1] as String);
                 _parent.updateValue(_filename, ba);
                 saved = true;
             }
@@ -228,6 +231,9 @@ public class PopupFilePreview extends TitleWindow
 
     protected function getFilters () :Array
     {
+        // Note: returning one filter is preferable to returning many because
+        // the first filter will control the set of files the user initially sees and
+        // switching filters is usually a tiny pulldown that users don't notice.
         switch (_type) {
         case "Blob":
             return null; // no filter: show all files
@@ -241,6 +247,26 @@ public class PopupFilePreview extends TitleWindow
         default:
             throw new Error("Don't understand " + _type + " files yet.");
         }
+    }
+
+    protected function doEdit (entry :Object) :void
+    {
+        var img :Array = _image.getImage();
+        var ba :ByteArray = ByteArray(img[0]);
+
+        var editor :PopupImageEditor = new PopupImageEditor(ba,
+            Number(entry.width), Number(entry.height));
+        editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
+        editor.title = _name;
+    }
+
+    protected function handleEditorClosed (event :ValueEvent) :void
+    {
+        var array :Array = event.value as Array;
+
+        var ba :ByteArray = ByteArray(array[0]);
+        _filename = _ctx.createFilename(_filename, ba, array[1] as String);
+        setImage(_filename, ba);
     }
 
     protected var _parent :FileEditor;
@@ -257,7 +283,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected var _ok :CommandButton;
 
-    protected var _image :ImagePreview;
+    protected var _image :ImageManipulator;
 
     protected var _label :Label;
 }

@@ -68,6 +68,10 @@ public class EditCanvas extends Canvas
 
     public static const UNDO_REDO_CHANGE :String = "UndoRedoChange";
 
+    /** Formatting constants. */
+    public static const IMAGE_FORMAT_JPG :String = "jpg";
+    public static const IMAGE_FORMAT_PNG :String = "png";
+
     /** Mode constants. */
     public static const NONE :int = -1;
     public static const PAINT :int = 0;
@@ -295,19 +299,20 @@ public class EditCanvas extends Canvas
     /**
      * Get the image back out of the editor.
      */
-    public function getImage (asJpg :Boolean = false, quality :Number = 50) :Array
+    public function getImage (forceFormat :String = null, formatArg :Object = null) :Array
     {
         // see if we can skip re-encoding
         // TODO: this should probably be removed unless we're in preview-only mode?
-        if (_bytes != null && _cropRect == null) {
+        if (forceFormat == null && _bytes != null && _cropRect == null) {
             return [ _bytes ];
         }
 
         var bmp :BitmapData = getRawImage();
-        if (asJpg) {
-            return [ (new JPGEncoder(quality)).encode(bmp), "jpg" ];
+        if (forceFormat == IMAGE_FORMAT_JPG) {
+            var quality :Number = (formatArg == null) ? 50 : Number(formatArg);
+            return [ (new JPGEncoder(quality)).encode(bmp), IMAGE_FORMAT_JPG ];
         } else {
-            return [ PNGEncoder.encode(bmp), "png" ];
+            return [ PNGEncoder.encode(bmp), IMAGE_FORMAT_PNG ];
         }
     }
 
