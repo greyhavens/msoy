@@ -62,9 +62,7 @@ public class ExistingFileChooser extends TitleWindow
     {
         var bytes :ByteArray = pack.getFileByFilename(filename);
 
-        var image :ImageManipulator = new ImageManipulator();
-        image.maxWidth = 100;
-        image.maxHeight = 100;
+        var image :ImageManipulator = new ImageManipulator(100, 100);
         image.setImage(bytes);
 
         // we wrap the array arg of a command button in another array

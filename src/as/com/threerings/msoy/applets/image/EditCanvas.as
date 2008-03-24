@@ -120,6 +120,8 @@ public class EditCanvas extends Canvas
         ho.includeInLayout = false;
         addChild(ho);
         addChild(_holder);
+
+        _paintInsertionOffset = _paintLayer.numChildren;
     }
 
     public function canUndo () :Boolean
@@ -143,7 +145,7 @@ public class EditCanvas extends Canvas
     public function doRedo () :void
     {
         var layer :Shape = _redoStack.pop() as Shape;
-        _paintLayer.addChildAt(layer, _paintLayer.numChildren - 1);
+        _paintLayer.addChildAt(layer, _paintLayer.numChildren - _paintInsertionOffset);
         _undoStack.push(layer);
         fireUndoRedoChange();
     }
@@ -540,7 +542,7 @@ public class EditCanvas extends Canvas
         if (_mode == ERASE) {
             _curPaint.blendMode = BlendMode.ERASE;
         }
-        _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - 1);
+        _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - _paintInsertionOffset);
 
         _paintPoint = new Point(event.localX, event.localY);
         _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
@@ -716,6 +718,8 @@ public class EditCanvas extends Canvas
     protected var _height :int;
 
     protected var _scale :Number = 1;
+
+    protected var _paintInsertionOffset :int;
 
     protected var _mode :int;
     protected var _color :uint;
