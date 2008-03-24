@@ -101,9 +101,14 @@ public class HostedWrapper extends ChannelWrapper
         if (addAction) {
             _ccobj.addToChatters(chatter);
         } else {
-            _ccobj.removeFromChatters(chatter.getKey());
-            if (_ccobj.chatters.size() == 0) {
-                checkShutdownInterval();
+            if (_ccobj.chatters.contains(chatter)) {
+                _ccobj.removeFromChatters(chatter.getKey());
+                if (_ccobj.chatters.size() == 0) {
+                    checkShutdownInterval();
+                }
+            } else {
+                log.warning("Requested to remove non-member of chatter set [channel=" + _channel +
+                            ", chatter=" + chatter + "].");
             }
         }
     }
