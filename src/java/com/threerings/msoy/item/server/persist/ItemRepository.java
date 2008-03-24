@@ -876,12 +876,15 @@ public abstract class ItemRepository<
                 searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
             }
 
-            // then look up each word as a tag
+            // look up each word as a tag
             IntSet tagIds = new ArrayIntSet();
-            for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
-                tagIds.add(tRec.tagId);
+            if (searchTerms.length > 0) {
+                for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
+                    tagIds.add(tRec.tagId);
+                }
             }
 
+            // if we have no tags, just do the text match
             if (tagIds.size() == 0) {
                 whereBits.add(ftMatch);
 
