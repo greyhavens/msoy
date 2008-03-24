@@ -98,7 +98,8 @@ public class WhirledMembersPanel extends PagedGrid
                     public void onSuccess (Object result) {
                         card.rank = rank;
                         card.rankAssigned = System.currentTimeMillis();
-                        // TODO: feedback?
+                        // force a page refresh so we see the new rank...
+                        displayPage(_page, true);
                     }
                 });
             }
@@ -113,7 +114,6 @@ public class WhirledMembersPanel extends PagedGrid
                                               card.name.getMemberId(), new MsoyCallback() {
                     public void onSuccess (Object result) {
                         removeItem(card);
-                        // TODO: feedback
                     }
                 });
             }
