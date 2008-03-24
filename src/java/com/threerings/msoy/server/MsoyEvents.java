@@ -20,6 +20,7 @@ public class MsoyEvents
         public int total;
         public int active;
         public int guests;
+        public int viewers;
     }
 
     public static class Login extends MsoyEvent

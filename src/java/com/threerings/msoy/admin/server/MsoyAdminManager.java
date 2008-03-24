@@ -48,8 +48,26 @@ public class MsoyAdminManager
         _conmgrStatsUpdater.schedule(5000L, true);
 
         // start up the system "snapshot" logger
-        _systemStatsLogger = new StatsLogger();
-        _systemStatsLogger.schedule(0, StatsLogger.DELAY);
+        new Interval(_server.omgr) {
+            public void expired () {
+                // iterate over the list of members, adding up a total, as well as counting up
+                // subsets of active users and guest users
+                int total = 0, active = 0, guests = 0, viewers = 0;
+                for (MemberObject memobj : _server.getMembersOnline()) {
+                    total++;
+                    active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
+                    if (memobj.isGuest()) {
+                        if (memobj.getMemberId() == 0) {
+                            viewers++;
+                        } else {
+                            guests++;
+                        }
+                    }
+                }
+                // this simply posts a message to a queue and returns
+                _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guests, viewers);
+            }
+        }.schedule(0, STATS_DELAY);
 
         // initialize our reboot manager
         _rebmgr.init();
@@ -71,32 +89,6 @@ public class MsoyAdminManager
         long when = System.currentTimeMillis() + minutes * 60 * 1000L - 5000L;
         _rebmgr.scheduleReboot(when, initiator);
     }
-
-    /** Logs current system "snapshot". */
-    protected class StatsLogger extends Interval
-    {
-        /** 10 minute delay between logged snapshots, in milliseconds. */
-        public static final long DELAY = 1000 * 60 * 10;
-
-        public void expired () {
-            // we have to do this on the dobj thread, because we're accessing the server's member
-            // object list. so we better be quick! :)
-            _server.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    // iterate over the list of members, adding up a total, as well as counting up
-                    // subsets of active users and guest users
-                    int total = 0, active = 0, guest = 0;
-                    for (MemberObject memobj : _server.getMembersOnline()) {
-                        total++;
-                        active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
-                        guest += memobj.isGuest() ? 1 : 0;
-                    }
-                    // this simply posts a message to a queue and returns
-                    _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guest);
-                }
-            });
-        }
-    };
 
     /** Used to manage automatic reboots. */
     protected class MsoyRebootManager extends RebootManager
@@ -171,10 +163,10 @@ public class MsoyAdminManager
         }
     };
 
-    /** Logs server "snapshot" information every 10 minutes. */
-    protected Interval _systemStatsLogger;
-
     protected MsoyServer _server;
     protected MsoyEventLogger _eventLog;
     protected MsoyRebootManager _rebmgr;
+
+    /** 10 minute delay between logged snapshots, in milliseconds. */
+    protected static final long STATS_DELAY = 1000 * 60 * 10;
 }

@@ -55,13 +55,15 @@ public class MsoyEventLogger
         }
     }
 
-    public void currentMemberStats (String serverName, int total, int active, int guests)
+    public void currentMemberStats (
+        String serverName, int total, int active, int guests, int viewers)
     {
         MsoyEvents.CurrentMemberStats message = new MsoyEvents.CurrentMemberStats();
         message.serverName = serverName;
         message.total = total;
         message.active = active;
         message.guests = guests;
+        message.viewers = viewers;
         post(message);
     }
 
