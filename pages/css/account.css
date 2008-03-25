@@ -51,6 +51,14 @@
   padding-right: 10px;
 }
 
+.createAccount .TOS {
+  padding-left: 55px;
+}
+
+.createAccount .TOS a {
+  color: white;
+}
+
 .createAccount .Status {
   text-align: center;
 }

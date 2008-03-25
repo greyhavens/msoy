@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
@@ -116,17 +117,26 @@ public class CreateAccountPanel extends VerticalPanel
                                CAccount.msgs.createPhotoTip()));
         add(makeStep(3, box));
 
+//         // add the TOS agreement checkbox and submit button
+//         final HorizontalPanel tosBits = new HorizontalPanel();
+//         tosBits.setVerticalAlignment(HasAlignment.ALIGN_BOTTOM);
+//         tosBits.addStyleName("TOS");
+//         tosBits.add(_tosBox = new CheckBox(""));
+//         tosBits.add(WidgetUtil.makeShim(5, 5));
+//         tosBits.add(MsoyUI.createHTML(CAccount.msgs.createTOSAgree(), null));
+//         add(tosBits);
+
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("400px");
         controls.add(_status = MsoyUI.createLabel("", "Status"));
         controls.add(WidgetUtil.makeShim(10, 10));
         controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(),
-                                         new ClickListener() {
+        ClickListener createGo = new ClickListener() {
             public void onClick (Widget sender) {
                 createAccount();
             }
-        }));
+        };
+        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(), createGo));
         add(controls);
 
         Label slurp;
@@ -168,6 +178,8 @@ public class CreateAccountPanel extends VerticalPanel
         } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
             status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
             toFocus = _name;
+//         } else if (!_tosBox.isChecked()) {
+//             status = CAccount.msgs.createMustAgreeTOS();
         } else {
             return true;
         }
@@ -329,5 +341,6 @@ public class CreateAccountPanel extends VerticalPanel
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
     protected PhotoUploader _photo;
+    protected CheckBox _tosBox;
     protected Label _status;
 }

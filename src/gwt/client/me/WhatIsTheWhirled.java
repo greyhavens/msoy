@@ -89,11 +89,11 @@ public class WhatIsTheWhirled extends AbsolutePanel
         int year = 1900 + new Date().getYear();
         bits.add(MsoyUI.createHTML(CMe.msgs.whatCopyright(""+year), "inline"));
         bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        bits.add(new Anchor("http://www.threerings.net", CMe.msgs.whatAbout(), "_blank"));
+        bits.add(makeLink("http://www.threerings.net", CMe.msgs.whatAbout()));
         bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        bits.add(MsoyUI.createLabel(CMe.msgs.whatTerms(), "inline"));
+        bits.add(makeLink("http://wiki.whirled.com/Terms_of_Service", CMe.msgs.whatTerms()));
         bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        bits.add(MsoyUI.createLabel(CMe.msgs.whatPrivacy(), "inline"));
+        bits.add(makeLink("http://www.threerings.net/about/privacy.html", CMe.msgs.whatPrivacy()));
         bits.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         bits.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
         add(bits, 0, 600);
@@ -107,6 +107,13 @@ public class WhatIsTheWhirled extends AbsolutePanel
                 // no user feedback, just leave that spot blank
             }
         });
+    }
+
+    protected Widget makeLink (String url, String title)
+    {
+        Anchor anchor = new Anchor(url, title, "_blank");
+        anchor.addStyleName("external");
+        return anchor;
     }
 
     protected void showData (WhatIsWhirledData data)
