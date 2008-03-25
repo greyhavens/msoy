@@ -411,19 +411,16 @@ public class MsoyController extends Controller
         restartIdleTimer();
 
         switch (event.keyCode) {
-        // TODO: not F7
+
         case Keyboard.F7:
+            _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
+            break;
+        case Keyboard.F8:
+            _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
+            break;
+        case Keyboard.F9:
             handleToggleChatHide();
             break;
-        case Keyboard.LEFT:
-            if (event.ctrlKey) {
-                _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
-            }
-            break;
-        case Keyboard.RIGHT:
-            if (event.ctrlKey) {
-                _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
-            }
         }
 
         // We check every keyboard event, see if it's a "word" character,
