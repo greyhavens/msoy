@@ -47,10 +47,11 @@ public class WhatIsTheWhirled extends AbsolutePanel
             public void onClick (Widget sender) {
                 video.remove(1);
                 video.add(WidgetUtil.createFlashContainer(
-                              "preview", "/images/landing/slideshow.swf", 359, 259, null));
+                              "preview", "/images/landing/slideshow.swf", 360, 260, null));
             }
         };
-        video.add(MsoyUI.createActionLabel(CMe.msgs.whatClickToStart(), "Click", onClick));
+        video.add(MsoyUI.createActionImage("/images/landing/click_to_play.png",
+                                           CMe.msgs.whatClickToStart(), onClick));
         add(video, 40, 225);
 
         FlowPanel right = new FlowPanel();
