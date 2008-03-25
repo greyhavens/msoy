@@ -1058,8 +1058,7 @@ public class RoomController extends SceneController
         _roomView.addChildAt(_walkTarget, _roomView.numChildren);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.CLICK, mouseWillClick, true);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
@@ -1079,7 +1078,6 @@ public class RoomController extends SceneController
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -1238,8 +1236,8 @@ public class RoomController extends SceneController
             return;
         }
 
-        // in case a mouse event was captured by an entity, prevent it from adding a popup later
-        _entityAllowedToPop = null;
+//        // in case a mouse event was captured by an entity, prevent it from adding a popup later
+//        _entityAllowedToPop = null;
 
         // freak not out if we're temporarily removed from the stage
         if (_roomView.stage == null || !_roomView.isShowing()) {
@@ -1394,18 +1392,6 @@ public class RoomController extends SceneController
         _hoverTips.length = 0; // truncate
     }
 
-    protected function mouseWillClick (event :MouseEvent) :void
-    {
-        if (_shiftDownSpot != null || isRoomEditing()) {
-            return;
-        }
-
-        // this method is called for the CAPTURE phase of the MouseEvent, the entity
-        // has not yet received the click, but we see which it was to see if we'll allow
-        // the popup.
-        _entityAllowedToPop = getHitSprite(event.stageX, event.stageY, false);
-    }
-
     protected function mouseClicked (event :MouseEvent) :void
     {
         // if we're in a featured place view, any click should take the member to this room.
@@ -1414,9 +1400,9 @@ public class RoomController extends SceneController
             return;
         }
 
-        // at this point, the mouse click is bubbling back out, and the entity is no
-        // longer allowed to pop up a popup.
-        _entityAllowedToPop = null;
+//        // at this point, the mouse click is bubbling back out, and the entity is no
+//        // longer allowed to pop up a popup.
+//        _entityAllowedToPop = null;
 
         // if shift is being held down, we're looking for locations only, so skip looking for
         // hitSprites.
@@ -1801,7 +1787,7 @@ public class RoomController extends SceneController
 
     protected var _entityPopup :EntityPopup;
 
-    protected var _entityAllowedToPop :MsoySprite;
+//    protected var _entityAllowedToPop :MsoySprite;
 
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;
