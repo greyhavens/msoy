@@ -203,7 +203,10 @@
     <propertyregex property="server_url_host_port" input="${server_url}"
                    regexp="http://" replace=""/>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
-      <filterset><filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/></filterset>
+      <filterset>
+        <filter token="SERVER_URL" value="${server_url}"/>
+        <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
+      </filterset>
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
                    regexp="http://([^:/]*):?.*" replace="\1"/>

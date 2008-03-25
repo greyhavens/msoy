@@ -4,7 +4,7 @@
   <title>Whirled</title>
   <script type="text/javascript">
     if (document.location.host != "@SERVER_URL_HOST_PORT@") {
-       document.location.host = "@SERVER_URL_HOST_PORT@";
+       document.location = "@SERVER_URL@";
     }
   </script>
   <link rel="stylesheet" href="/css/global.css" type="text/css"/>
