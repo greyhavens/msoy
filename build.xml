@@ -199,6 +199,16 @@
       <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     </else></if>
 
+    <!-- generate our index.html and crossdomain.xml -->
+    <propertyregex property="server_url_host" input="${server_url}"
+                   regexp="http://([^:/]*):?.*" replace="\1"/>
+    <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
+      <filterset><filter token="SERVER_URL_HOST" value="${server_url_host}"/></filterset>
+    </copy>
+    <copy file="pages/crossdomain.xml.in" tofile="pages/crossdomain.xml" overwrite="true">
+      <filterset><filter token="SERVER_URL_HOST" value="${server_url_host}"/></filterset>
+    </copy>
+
     <!-- copy our HTML sanitizer configuration -->
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
 
