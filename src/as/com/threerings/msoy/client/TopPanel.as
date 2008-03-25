@@ -389,12 +389,12 @@ public class TopPanel extends Canvas
     {
         _minimized = true;
 
-        _placeBox.mouseChildren = false;
-        _placeBox.buttonMode = true;
-        _placeBox.useHandCursor = true;
-
 // TODO: we're disabling the "click anywhere to restore the client" because that results in unhappy
 // accidents; let's see how we like having to click the close button for a while
+//
+//         _placeBox.mouseChildren = false;
+//         _placeBox.buttonMode = true;
+//         _placeBox.useHandCursor = true;
 //
 //         // add this on the next frame, so that we don't accidentally register ourselves
 //         // to receive the very click that causes this minimize action...
@@ -411,10 +411,12 @@ public class TopPanel extends Canvas
     {
         _minimized = false;
 
-        _placeBox.useHandCursor = false;
-        _placeBox.buttonMode = false;
-        _placeBox.mouseChildren = true;
-        _placeBox.removeEventListener(MouseEvent.CLICK, placeBoxClicked);
+// TODO: see above
+//
+//         _placeBox.useHandCursor = false;
+//         _placeBox.buttonMode = false;
+//         _placeBox.mouseChildren = true;
+//         _placeBox.removeEventListener(MouseEvent.CLICK, placeBoxClicked);
 
         _headerBar.miniChanged();
         _controlBar.miniChanged();
