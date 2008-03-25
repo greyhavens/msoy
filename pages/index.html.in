@@ -3,8 +3,7 @@
 <head>
   <title>Whirled</title>
   <script type="text/javascript">
-    if (document.location.host != "@SERVER_URL_HOST@" && 
-        document.location.host != "first.whirled.com") { // TODO: nix legacy crap
+    if (document.location.host != "@SERVER_URL_HOST@") {
        document.location.host = "@SERVER_URL_HOST@";
     }
   </script>
