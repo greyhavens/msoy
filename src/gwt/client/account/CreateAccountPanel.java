@@ -178,8 +178,8 @@ public class CreateAccountPanel extends VerticalPanel
         } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
             status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
             toFocus = _name;
-//         } else if (!_tosBox.isChecked()) {
-//             status = CAccount.msgs.createMustAgreeTOS();
+        } else if (!_tosBox.isChecked()) {
+            status = CAccount.msgs.createMustAgreeTOS();
         } else {
             return true;
         }
