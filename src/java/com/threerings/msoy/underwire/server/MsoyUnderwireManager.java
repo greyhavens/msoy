@@ -25,6 +25,9 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.chat.data.ChannelMessage;
+import com.threerings.msoy.chat.data.ChatChannel;
+
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.data.Event;
@@ -77,8 +80,18 @@ public class MsoyUnderwireManager
         for (ChatMessage msg : SpeakUtil.getChatHistory(source.memberName)) {
             UserMessage umsg = (UserMessage)msg;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
-            chatHistory.append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ');
-            chatHistory.append(umsg.speaker).append(": ").append(umsg.message).append('\n');
+            if (umsg instanceof ChannelMessage) {
+                ChannelMessage cmsg = (ChannelMessage)umsg;
+                chatHistory.append('[').append(ChatChannel.XLATE_TYPE[cmsg.channel.type]);
+                chatHistory.append(':').append(cmsg.channel.ident).append("] ");
+            } else {
+                chatHistory.append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ');
+            }
+            chatHistory.append(umsg.speaker);
+            if (umsg.speaker instanceof MemberName) {
+                chatHistory.append('(').append(((MemberName)umsg.speaker).getMemberId()).append(')');
+            }
+            chatHistory.append(": ").append(umsg.message).append('\n');
         }
         event.chatHistory = chatHistory.toString();
 

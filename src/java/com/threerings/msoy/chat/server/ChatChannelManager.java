@@ -156,7 +156,7 @@ public class ChatChannelManager
                         MsoySceneModel model =
                             (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
                         if (model != null) {
-                            _hasRights = member.canEnterScene(model.ownerId, model.ownerType, 
+                            _hasRights = member.canEnterScene(model.ownerId, model.ownerType,
                                                               model.accessControl);
                         }
                     }
@@ -238,7 +238,7 @@ public class ChatChannelManager
         }
 
         // all that's left is sending the chat message out to everybody
-        ChannelMessage msg = new ChannelMessage(chatter, message, mode);
+        ChannelMessage msg = new ChannelMessage(chatter, message, mode, wrapper.getChannel());
         SpeakUtil.sendMessage(wrapper.getCCObj(), msg);
 
         listener.requestProcessed();

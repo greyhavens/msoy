@@ -32,6 +32,11 @@ public class ChatChannel extends SimpleStreamableObject
     /** A chat channel between a member and the jabber gateway. */
     public static final int JABBER_CHANNEL = 5;
 
+    /** String translations for the various chat types.  Used for chat logging. */
+    public static final String[] XLATE_TYPE = {
+        "none", "member", "group", "private", "room", "jabber"
+    };
+
     /** The type of this chat channel. */
     public int type;
 
