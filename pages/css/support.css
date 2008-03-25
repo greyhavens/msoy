@@ -203,19 +203,26 @@
 .uEventsTable .unclaimed {
   border-top: 1px solid;
   background: #FFCCCC;
+  font-size: small;
 }
 
 .uEventsTable .claimed {
   border-top: 1px solid;
   background: #99CCFF;
+  font-size: small;
 }
 
 .uEventsTable .closed {
   border-top: 1px solid;
   background: #CCCCFF;
+  font-size: small;
 }
 
 .uEventPanel {
   padding: 5px;
+}
+
+.uEventPanelScroll {
+  width: 800px;
 }
 
