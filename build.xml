@@ -954,6 +954,8 @@
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <delete file="pages/media/static/game/tutorial.swf"/>
     <delete file="pages/media/MediaStub.swf"/>
+    <delete file="pages/index.html"/>
+    <delete file="pages/crossdomain.xml"/>
     <for list="${gmsgs.list}" param="which"><sequential>
       <propertyregex property="file" input="@{which}" regexp="\." replace="/"/>
       <delete file="${gsrc.dir}/client/${file}Messages.java"/>
