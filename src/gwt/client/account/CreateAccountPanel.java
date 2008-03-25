@@ -117,14 +117,14 @@ public class CreateAccountPanel extends VerticalPanel
                                CAccount.msgs.createPhotoTip()));
         add(makeStep(3, box));
 
-//         // add the TOS agreement checkbox and submit button
-//         final HorizontalPanel tosBits = new HorizontalPanel();
-//         tosBits.setVerticalAlignment(HasAlignment.ALIGN_BOTTOM);
-//         tosBits.addStyleName("TOS");
-//         tosBits.add(_tosBox = new CheckBox(""));
-//         tosBits.add(WidgetUtil.makeShim(5, 5));
-//         tosBits.add(MsoyUI.createHTML(CAccount.msgs.createTOSAgree(), null));
-//         add(tosBits);
+        // add the TOS agreement checkbox and submit button
+        final HorizontalPanel tosBits = new HorizontalPanel();
+        tosBits.setVerticalAlignment(HasAlignment.ALIGN_BOTTOM);
+        tosBits.addStyleName("TOS");
+        tosBits.add(_tosBox = new CheckBox(""));
+        tosBits.add(WidgetUtil.makeShim(5, 5));
+        tosBits.add(MsoyUI.createHTML(CAccount.msgs.createTOSAgree(), null));
+        add(tosBits);
 
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("400px");
