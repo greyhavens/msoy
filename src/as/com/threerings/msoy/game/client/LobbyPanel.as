@@ -236,10 +236,9 @@ public class LobbyPanel extends TitleWindow
         }
 
         // otherwise look at the data
-        var seated :Boolean = false;
+        var ourName :MemberName = _gctx.getPlayerObject().memberName;
         for each (var table :Table in _lobbyObj.tables.toArray()) {
-            if (table.players != null &&
-                table.players.indexOf(_gctx.getPlayerObject().memberName) != -1) {
+            if (table.players != null && -1 != table.players.indexOf(ourName)) {
                 return true;
             }
         }
