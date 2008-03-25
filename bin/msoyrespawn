@@ -9,16 +9,7 @@ my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
 my $node = shift or die "Usage: $0 nodename [pidfile]\n";
 
 # figure out what user as which to run the server
-my $msoy_user;
-open(CONFIG, "$root/server.conf") or die "Can't read $root/server.conf: $!\n";
-while (<CONFIG>) {
-    chomp;
-    my @bits = split(/=/);
-    if (@bits && $bits[0] eq "MSOY_USER") {
-        $msoy_user = $bits[1];
-    }
-}
-close(CONFIG);
+my $msoy_user = read_prop("$root/server.conf", "MSOY_USER");
 die "Unable to determine server user from $root/server.conf\n" unless (defined $msoy_user);
 
 my $LOG;
@@ -45,8 +36,10 @@ while (1) {
     my $now = localtime($start);
 
     # update the code to the latest version
-    check_system("apt-get update");
-    check_system("apt-get install msoy-server");
+    if (read_prop("$root/dist/server.properties", "dev_deployment") ne "true") {
+        check_system("apt-get update");
+        check_system("apt-get install msoy-server");
+    }
 
     # now run the server
     print $LOG "$now Running msoy server: $root/bin/runmsoy $node $server_pidfile\n";
@@ -75,4 +68,27 @@ sub check_system {
     my ($command) = @_;
     my $rcode = system($command);
     die "'$command' failed: $rcode\n" unless ($rcode == 0);
+}
+
+sub read_prop {
+    my ($file, $key) = @_;
+    my $value;
+    open(CONFIG, $file) or die "Can't read $file: $!\n";
+    while (<CONFIG>) {
+        chomp;
+        my @bits = split(/=/);
+        if (@bits && trim($bits[0]) eq $key) {
+            $value = trim($bits[1]);
+            last;
+        }
+    }
+    close(CONFIG);
+    return $value;
+}
+
+sub trim {
+    my ($value) = @_;
+    $value =~ s/^\s+//;
+    $value =~ s/\s+$//;
+    return $value;
 }
