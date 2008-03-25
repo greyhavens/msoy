@@ -258,8 +258,7 @@ public class AVRGameManager
 
         final GameDetailRecord detail = _content.detail;
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
-        final int playedMinutes =
-            Math.round(getTotalTrackedSeconds() / 60f) + detail.singlePlayerMinutes; 
+        final int playedMinutes;
         final int recalcMinutes;
         final int oldPayoutFactor;
         
@@ -267,6 +266,7 @@ public class AVRGameManager
         if (_gameId == Game.TUTORIAL_GAME_ID) {
             oldPayoutFactor = 1;
             recalcMinutes = 0;
+            playedMinutes = 0;
             
         } else {
             if (detail.payoutFactor == 0) {
@@ -276,6 +276,7 @@ public class AVRGameManager
                 oldPayoutFactor = detail.payoutFactor;
             }
 
+            playedMinutes = Math.round(getTotalTrackedSeconds() / 60f) + detail.singlePlayerMinutes; 
             // TODO: Change the "100" into a runtime configuration value
             if (((detail.singlePlayerGames + 1) % 20) == 0) {
                 recalcMinutes = playedMinutes - detail.lastPayoutRecalc;
