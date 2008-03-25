@@ -438,8 +438,13 @@ public class OccupantSprite extends MsoySprite
         // see if it actually landed on a decoration
         var decCons :Object = getDecorationAt(event.stageX, event.stageY);
         if (decCons != null) {
-            // deliver it there
-            DisplayObject(decCons.dec).dispatchEvent(event);
+            // dispatch a non-bubbling copy of the click to the decoration
+            var dec :DisplayObject = DisplayObject(decCons.dec);
+            var p :Point = dec.globalToLocal(new Point(event.stageX, event.stageY));
+            var me :MouseEvent = new MouseEvent(MouseEvent.CLICK, false, false, p.x, p.y,
+                event.relatedObject, event.ctrlKey, event.altKey, event.shiftKey, event.buttonDown,
+                event.delta);
+            dec.dispatchEvent(me);
 
         } else {
             // otherwise, do the standard thing
