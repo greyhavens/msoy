@@ -249,10 +249,6 @@ public class ControlBar extends HBox
         addControlButtons();
 
         // some elements that are common to guest and logged in users
-        var footerLeft :SkinnableImage = new SkinnableImage();
-        footerLeft.styleName = "controlBarFooterLeft";
-        addGroupChild(footerLeft, [ UI_STD, UI_MINI,  UI_GUEST ]);
-
         var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;

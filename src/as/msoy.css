@@ -476,10 +476,6 @@ TabNavigator, TabBar {
   paddingRight: 10;
 }
 
-.controlBarFooterLeft {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_left.png");
-}
-
 .notificationDisplay { 
   borderStyle: "solid";
   borderThickness: 1;
