@@ -58,4 +58,14 @@ public class LaunchConfig
      * log directly into the game server instead of waiting for their authentication with the world
      * server to complete and result in their being assigned a guest id. */
     public int guestId;
+
+    /**
+     * Creates a URL that can be used to communicate directly to the server represented by this
+     * launch config.
+     */
+    public String getURL (String path)
+    {
+        String port = (httpPort == 80) ? "" : (":" + httpPort);
+        return "http://" + server + port + path;
+    }
 }

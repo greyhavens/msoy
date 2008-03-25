@@ -19,4 +19,14 @@ public class ConnectConfig
 
     /** The HTTP port from which the applet should be downloaded. */
     public int httpPort;
+
+    /**
+     * Creates a URL that can be used to communicate directly to the server represented by this
+     * connection config.
+     */
+    public String getURL (String path)
+    {
+        String port = (httpPort == 80) ? "" : (":" + httpPort);
+        return "http://" + server + port + path;
+    }
 }

@@ -105,11 +105,12 @@ public class SwiftlyPanel extends FlexTable
             "authtoken", "" + _authtoken,
             "projectId", String.valueOf(_project.projectId),
             "server", _config.server,
-            "port", String.valueOf(_config.port) };
-        // we have to serve swiftly-client.jar from the server to which it will connect back
-        // due to security restrictions
-        String swiftlyJar = "http://" + _config.server + ":" + _config.httpPort + "/clients/" +
-            DeploymentConfig.version + "/swiftly-client.jar";
+            "port", String.valueOf(_config.port),
+        };
+        // we have to load the swiftly-client.jar from the server to which it will connect back due
+        // to security restrictions
+        String swiftlyJar = _config.getURL(
+            "/clients/" + DeploymentConfig.version + "/swiftly-client.jar");
         _applet = WidgetUtil.createApplet(
             "swiftly", swiftlyJar, "com.threerings.msoy.swiftly.client.SwiftlyApplet",
             "100%", "100%", false, args);

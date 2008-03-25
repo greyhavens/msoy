@@ -42,15 +42,8 @@ public class UploadDialog extends FlexTable
         _listener = listener;
 
         final FormPanel form = new FormPanel();
-
-        if (GWT.isScript()) {
-            // we need to upload to the server hosting this project and has the room manager
-            // resolved
-            form.setAction(
-                "http://" + config.server + ":" + config.httpPort + "/swiftlyuploadsvc");
-        } else {
-            form.setAction("http://localhost:8080/swiftlyuploadsvc");
-        }
+        // upload to the server hosting this project (which has the room manager resolved)
+        form.setAction(config.getURL("/swiftlyuploadsvc"));
         form.setEncoding(FormPanel.ENCODING_MULTIPART);
         form.setMethod(FormPanel.METHOD_POST);
 

@@ -40,8 +40,7 @@ public class WorldClient extends Widget
 
         String flashArgs = "featuredPlace=" + sceneId;
         if (!clientGo("featuredplace", flashArgs)) {
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port +
-                         "&httpPort=" + _defaultServer.httpPort;
+            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
             String partner = Application.getPartner();
             if (partner != null) {
                 flashArgs += "&partner=" + partner;
@@ -83,9 +82,7 @@ public class WorldClient extends Widget
         if (_curFlashArgs == null) {
             clientWillClose(); // clear our Java client if we have one
             _curFlashArgs = flashArgs; // note our new flash args before we tack on server info
-            flashArgs += "&host=" + _defaultServer.server +
-                "&port=" + _defaultServer.port +
-                "&httpPort=" + _defaultServer.httpPort;
+            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
             String partner = Application.getPartner();
             if (partner != null) {
                 flashArgs += "&partner=" + partner;
@@ -114,9 +111,7 @@ public class WorldClient extends Widget
         if (!action.equals("")) {
             flashArgs += "&mode=" + action;
         }
-        flashArgs += ("&host=" + config.server +
-                      "&port=" + config.port +
-                      "&httpPort=" + config.httpPort);
+        flashArgs += ("&host=" + config.server + "&port=" + config.port);
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }

@@ -204,10 +204,8 @@ public class index extends Page
                 bits.setStyleName("javaLoading");
                 bits.add(new Label("Loading game..."));
 
-                String gameServer = "http://" + config.server + ":" + config.httpPort;
-                String howdyJar =
-                    gameServer + "/clients/" + DeploymentConfig.version + "/howdy.jar";
-                bits.add(WidgetUtil.createApplet("game", howdyJar,
+                String hpath = "/clients/" + DeploymentConfig.version + "/howdy.jar";
+                bits.add(WidgetUtil.createApplet("game", config.getURL(hpath),
                                                  "com.threerings.msoy.client.HowdyPardner",
                                                  "100", "10", true, new String[0]));
                 setContent(bits);
@@ -235,20 +233,15 @@ public class index extends Page
             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
             "server", config.server, "port", "" + config.port,
             "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
-
-        // we have to serve game-client.jar from the server to which it will connect back due to
-        // security restrictions and proxy the game jar through there as well
-        String gameServer = "http://" + config.server + ":" + config.httpPort;
-        String gameJar = gameServer + "/clients/" +
-            DeploymentConfig.version + "/" + (config.lwjgl ? "lwjgl-" : "") +
-            "game-client.jar";
-
+        String gjpath = "/clients/" + DeploymentConfig.version + "/" +
+            (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
         WorldClient.displayJava(
             WidgetUtil.createApplet(
-                "game", gameJar + "," + gameServer + config.gameMediaPath,
+                // here we explicitly talk directly to our game server (not via the public facing
+                // URL which is a virtual IP) so that Java's security policy works
+                "game", config.getURL(gjpath) + "," + config.getURL(config.gameMediaPath),
+                "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
                 // TODO: allow games to specify their dimensions in their config
-                "com.threerings.msoy.game.client." +
-                (config.lwjgl ? "LWJGL" : "") + "GameApplet",
                 "100%", "600", false, args));
     }
 

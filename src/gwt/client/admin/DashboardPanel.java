@@ -96,8 +96,8 @@ public class DashboardPanel extends FlexTable
 
         // we have to serve admin-client.jar from the server to which it will connect back due to
         // security restrictions and proxy the game jar through there as well
-        String appletURL = "http://" + config.server + ":" + config.httpPort + "/clients/" +
-            DeploymentConfig.version + "/admin-client.jar";
+        String appletURL = config.getURL(
+            "/clients/" + DeploymentConfig.version + "/admin-client.jar");
 
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
