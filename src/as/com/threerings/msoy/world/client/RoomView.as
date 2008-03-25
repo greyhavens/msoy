@@ -62,6 +62,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.LoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;

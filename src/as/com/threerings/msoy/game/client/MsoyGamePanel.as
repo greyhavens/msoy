@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.Loader;
+
 import com.threerings.crowd.data.PlaceObject;
 import com.whirled.game.client.GameBackend;
 
@@ -11,6 +13,7 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.LoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -58,6 +61,11 @@ public class MsoyGamePanel extends WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
+
+        var spinner :LoadingDisplay = new LoadingDisplay(
+            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
+        spinner.watchLoader(
+            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo, true);
 
         _gctx.getMsoyContext().getMsoyChatDirector().displayGameChat(
             _gctx.getChatDirector(), _playerList);

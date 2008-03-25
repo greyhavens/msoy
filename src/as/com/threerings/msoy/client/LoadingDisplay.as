@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
@@ -34,21 +34,21 @@ public class LoadingDisplay extends Sprite
     }
 
     // from interface LoadingWatcher
-    public function watchLoader (info :LoaderInfo, isDecor :Boolean = false) :void
+    public function watchLoader (info :LoaderInfo, isPrimaryForPlace :Boolean = false) :void
     {
         info.addEventListener(Event.COMPLETE, handleComplete);
         info.addEventListener(Event.UNLOAD, handleComplete);
         info.addEventListener(IOErrorEvent.IO_ERROR, handleIOError);
 
-        if (isDecor) {
-            _decor = info;
+        if (isPrimaryForPlace) {
+            _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
             setProgress(0, 1);
             _spinner.scaleX = 1;
             _spinner.scaleY = 1;
 
         } else {
-            _furniCount++;
+            _secondaryCount++;
         }
 
         // make sure we're showing
@@ -63,19 +63,19 @@ public class LoadingDisplay extends Sprite
         info.removeEventListener(Event.UNLOAD, handleComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, handleIOError);
 
-        if (info == _decor) {
+        if (info == _primary) {
             info.removeEventListener(ProgressEvent.PROGRESS, handleProgress);
             removeChild(_progress);
             _progress = null;
-            _decor = null;
+            _primary = null;
             _spinner.scaleX = .25;
             _spinner.scaleY = .25;
 
         } else {
-            _furniCount--;
+            _secondaryCount--;
         }
 
-        if (_decor == null && _furniCount == 0 && (parent != null)) {
+        if (_primary == null && _secondaryCount == 0 && (parent != null)) {
             _box.removeOverlay(this);
         }
     }
@@ -118,15 +118,15 @@ public class LoadingDisplay extends Sprite
 
     protected var _box :PlaceBox;
 
-    protected var _furniCount :int;
+    protected var _primary :LoaderInfo
 
-    protected var _decor :LoaderInfo
+    protected var _secondaryCount :int;
 
     protected var _spinner :DisplayObject;
 
     protected var _progress :TextField;
 
-    [Embed(source="../../../../../../../rsrc/media/loading.swf")]
+    [Embed(source="../../../../../../rsrc/media/loading.swf")]
     protected static const SPINNER :Class;
 }
 }

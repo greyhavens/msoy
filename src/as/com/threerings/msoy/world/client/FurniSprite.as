@@ -21,6 +21,7 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.msoy.client.LoadingWatcher;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
