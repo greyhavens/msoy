@@ -84,7 +84,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#MultiLoader()">MultiLoader</a>(sources:Object, generatorFn:Function, completeCallback:Function, forEach:Boolean = false, errorTypes:Array = null, completeType:String = null)</div>
+<a class="signatureLink" href="#MultiLoader()">MultiLoader</a>(sources:Object, generatorFn:Function, completeCallback:Function, forEach:Boolean = false, isCompleteCheckFn:String = null, errorTypes:Array = null, completeType:String = null)</div>
 <div class="summaryTableDescription">
      Coordinate loading some asynchronous objects.</div>
 </td><td class="summaryTableOwnerCol">MultiLoader</td>
@@ -206,7 +206,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function MultiLoader(sources:Object, generatorFn:Function, completeCallback:Function, forEach:Boolean = false, errorTypes:Array = null, completeType:String = null)</code><p>
+<code>public function MultiLoader(sources:Object, generatorFn:Function, completeCallback:Function, forEach:Boolean = false, isCompleteCheckFn:String = null, errorTypes:Array = null, completeType:String = null)</code><p>
      Coordinate loading some asynchronous objects.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -234,6 +234,14 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">forEach</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; whether to call the completeCallback for each source, or all-at-once at
      the end. If forEach is used, keys will never be returned.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">isCompleteCheckFn</span>:String</code> (default = <code>null</code>)<code></code> &mdash; a function to attempt to call on the dispatcher to see if
+     it's already complete after generation.
      </td>
 </tr>
 <tr>
@@ -321,13 +329,17 @@ showHideInherited();
 </table>
 <br>
 <span class="label">Example</span>
-<br>     <div class='listing'><pre>
+<br>Load one embed, add it as a child.
+     <div class='listing'><pre>
      MultiLoader.getContents(EMBED_CONSTANT, addChild);
      </pre></div>
-          <p></p>     <div class='listing'><pre>
+          <p></p>Load 3 embeds, add them as children.
+     <div class='listing'><pre>
      MultiLoader.getContents([EMBED1, EMBED2, EMBED3], addChild, true);
      </pre></div>
-          <p></p>     <div class='listing'><pre>
+          <p></p>Load multiple URLs, have the contents returned to the result function one at
+     a time.
+     <div class='listing'><pre>
      function handleComplete (result :Object) :void {
         // process a result here. Result may be a DisplayObject or an Error.
      };
@@ -340,7 +352,8 @@ showHideInherited();
      MultiLoader.getContents(obj, handleComplete, true);
      </pre></div>
      
-     <p></p>     <div class='listing'><pre>
+     <p></p>Load 3 embeds, wait to handle them until they're all loaded.
+     <div class='listing'><pre>
      function handleComplete (results :Array) :void {
          // process results here
      };
@@ -357,7 +370,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public static function getLoaders(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</code><p>
      Exactly like getContents() only it returns the Loader objects rather than their contents.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">sources</span>:Object</code></td>
@@ -385,6 +398,25 @@ showHideInherited();
 <span class="label">See also</span>
 </p>
 <div class="seeAlso">getContents()</div>
+<br>
+<span class="label">Example</span>
+<br>Advanced usage: Loading classes.
+     <div class='listing'><pre>
+     // A holder for new classes, created as a child of the system domain.
+     var appDom :ApplicationDomain = new ApplicationDomain(null);
+     <br/>
+     function handleComplete (results :Object) :void {
+         // now we can retrieve classes
+         var clazz :Class = appDom.getDefinition("com.package.SomeClass") as Class;
+     }
+     <br/>
+     // load all the classes contained in the specified sources
+     MultiLoader.getLoaders([EMBED, "http://site.com/pack.swf"], handleComplete, false, appDom);
+     <br/>
+     [Embed(source="resource.swf", mimeType="application/octet-stream")]
+     private static const EMBED :Class;
+     </pre></div>
+          <p></p>
 </div>
 <a name="handleComplete()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

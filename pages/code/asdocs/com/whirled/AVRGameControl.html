@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AVRGameControl,com.whirled.AVRGameControl,hitPointTester,mobSpriteExporter,quests,state,deactivateGame,despawnMob,getAvatarInfo,getPlayerId,getPlayerIds,getRoomBounds,getRoomId,getStageSize,hasControl,isPlayerHere,playAvatarAction,roomToStage,setAvatarLocation,setAvatarMoveSpeed,setAvatarOrientation,setAvatarState,setHitPointTester,setMobSpriteExporter,spawnMob,stageToRoom" name="keywords">
+<meta content="AVRGameControl,com.whirled.AVRGameControl,hitPointTester,mobSpriteExporter,quests,state,deactivateGame,despawnMob,getAvatarInfo,getPlayerId,getPlayerIds,getRoomBounds,getRoomId,getStageSize,hasControl,isPlayerHere,locationToRoom,locationToStage,playAvatarAction,roomToStage,setAvatarLocation,setAvatarMoveSpeed,setAvatarOrientation,setAvatarState,setHitPointTester,setMobSpriteExporter,spawnMob,stageToRoom,startTicker,stopTicker" name="keywords">
 <title>com.whirled.AVRGameControl</title>
 </head>
 <body>
@@ -45,7 +45,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  This file should be included by AVR games so that they can communicate
  with the whirled.
   AVRGame means: Alternate Virtual Reality Game, and refers to games
- played within the whirled environment.
+ played within the whirled environment with your avatar.
+  <p><b>Note</b>: The AVRG framework is "alpha" and may be changed in incompatible ways.
+ If you are making an AVRG game, please let us know what you're doing in the AVRG
+ discussion forum: <a href="http://first.whirled.com/#whirleds-d_135_r">http://first.whirled.com/#whirleds-d_135_r</a></p>
  <p></p>
 <br>
 <hr>
@@ -211,6 +214,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#locationToRoom()">locationToRoom</a>(x:Number, y:Number, z:Number):Point</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#locationToStage()">locationToStage</a>(x:Number, y:Number, z:Number):Point</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#playAvatarAction()">playAvatarAction</a>(action:String):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
@@ -286,6 +303,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#stageToRoom()">stageToRoom</a>(p:Point):Point</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#startTicker()">startTicker</a>(tickerName:String, msOfDelay:int):void</div>
+<div class="summaryTableDescription">
+     Start the ticker with the specified name.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#stopTicker()">stopTicker</a>(tickerName:String):void</div>
+<div class="summaryTableDescription">
+     Stop the specified ticker.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 </table>
@@ -667,6 +700,72 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="locationToRoom()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">locationToRoom</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function locationToRoom(x:Number, y:Number, z:Number):Point</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">z</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Point</code></td>
+</tr>
+</table>
+</div>
+<a name="locationToStage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">locationToStage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function locationToStage(x:Number, y:Number, z:Number):Point</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">z</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Point</code></td>
+</tr>
+</table>
+</div>
 <a name="playAvatarAction()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -899,6 +998,46 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="startTicker()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">startTicker</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function startTicker(tickerName:String, msOfDelay:int):void</code><p>
+     Start the ticker with the specified name. The ticker will deliver messages
+     to all connected clients, at the specified delay. The value of each message is
+     a single integer, starting with 0 and increasing by 1 with each messsage.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">tickerName</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">msOfDelay</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="stopTicker()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stopTicker</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function stopTicker(tickerName:String):void</code><p>
+     Stop the specified ticker.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">tickerName</span>:String</code></td>
+</tr>
+</table>
+</div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:avatarChanged"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -913,8 +1052,7 @@ showHideInherited();
 <br><p>
  Dispatched when something has changed about a player's
  avatar.
- 
- </p><p> An event type dispatched when a something has changed about a player's avatar.
+  </p><p> An event type dispatched when a something has changed about a player's avatar.
      key: N/A
      value: N/A
           </p></div>
@@ -930,8 +1068,7 @@ showHideInherited();
 <span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#ENTERED_ROOM"><code>com.whirled.AVRGameControlEvent.ENTERED_ROOM</code></a>
 <br><p>
  Dispatched when we've entered our current room.
- 
- </p></div>
+  </p></div>
 <a name="event:gotControl"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -945,8 +1082,7 @@ showHideInherited();
 <br><p>
  Dispatched when this client-side instance of the AVRG
  has gained "control" over the other client-side instances.
- 
- </p><p> An event type dispatched when this client-side instance of the AVRG
+  </p><p> An event type dispatched when this client-side instance of the AVRG
      has gained "control" over the other client-side instances.
      name: unused
      value: unused
@@ -963,8 +1099,7 @@ showHideInherited();
 <span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#LEFT_ROOM"><code>com.whirled.AVRGameControlEvent.LEFT_ROOM</code></a>
 <br><p>
  Dispatched when we've left our current room.
- 
- </p></div>
+  </p></div>
 <a name="event:playerEntered"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -978,8 +1113,7 @@ showHideInherited();
 <br><p>
  Dispatched either when somebody in our room entered our current game,
  or somebody playing the game entered our current room.
- 
- </p><p> An event type dispatched either when somebody in our room joined our current game,
+  </p><p> An event type dispatched either when somebody in our room joined our current game,
      or somebody playing the game entered our current room.
      key: N/A
      value: the oid of the player body
@@ -997,8 +1131,7 @@ showHideInherited();
 <br><p>
  Dispatched either when somebody in our room left our current game,
  or somebody playing the game left our current room.
- 
- </p><p> An event type dispatched either when a player of our game who's also in our
+  </p><p> An event type dispatched either when a player of our game who's also in our
      current room took up a new location in the scene.
      key: N/A
      value: the oid of the player body
@@ -1015,8 +1148,7 @@ showHideInherited();
 <span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#PLAYER_MOVED"><code>com.whirled.AVRGameControlEvent.PLAYER_MOVED</code></a>
 <br><p>
  Dispatched when another player in our current room took up a new location.
- 
- </p></div>
+  </p></div>
 <a name="event:sizeChanged"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1029,8 +1161,7 @@ showHideInherited();
 <span class="label">AVRGameControlEvent.type property = </span><a href="../whirled/AVRGameControlEvent.html#SIZE_CHANGED"><code>com.whirled.AVRGameControlEvent.SIZE_CHANGED</code></a>
 <br><p>
  Dispatched when the control has been resized.
- 
- </p><p> An event type dispatched when the control has been resized.
+  </p><p> An event type dispatched when the control has been resized.
      key: N/A
      value: N/A
           </p></div>
