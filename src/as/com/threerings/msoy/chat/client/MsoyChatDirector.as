@@ -37,7 +37,6 @@ import com.threerings.msoy.data.all.RoomName;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.JabberMarshaller;
@@ -258,20 +257,6 @@ public class MsoyChatDirector extends ChatDirector
     {
         super.clearDisplays();
         _roomHistory.clear();
-    }
-
-    // from ChatDirector
-    override public function messageReceived (event :MessageEvent) :void
-    {
-        // check if this is our custom chat message, unknown to the parent class
-        if (ChatChannelCodes.CHAT_MESSAGE === event.getName()) {
-            var msg :ChannelMessage = (event.getArgs()[0] as ChannelMessage);
-            var localtype :String = getLocalType(event.getTargetOid());
-            processReceivedMessage(msg, localtype);
-        } else {
-            // some other message - let the parent deal with it
-            super.messageReceived(event);
-        }
     }
 
     // from ChatDirector

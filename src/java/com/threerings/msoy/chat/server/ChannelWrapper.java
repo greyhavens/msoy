@@ -4,16 +4,19 @@
 package com.threerings.msoy.chat.server;
 
 import com.samskivert.util.ArrayUtil;
+
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -77,7 +80,7 @@ public abstract class ChannelWrapper
     {
         // please note: this abstract class does not automatically register itself as a listener on
         // the distributed object. subclasses should register themselves if desired.
-        if (event.getName().equals(ChatChannelCodes.CHAT_MESSAGE)) {
+        if (event.getName().equals(ChatCodes.CHAT_NOTIFICATION)) {
             Object[] args = event.getArgs();
             if (! (args.length == 1 && args[0] instanceof ChannelMessage)) {
                 log.warning("Invalid chat message event [event=" + event + "].");

@@ -11,6 +11,8 @@ import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -22,9 +24,9 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.whirled.server.SceneManager;
-
-import com.threerings.util.Name;
 
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -49,7 +51,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 
 import com.threerings.msoy.world.data.MsoyScene;
@@ -61,7 +62,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the server side of our chat channel services.
  */
 public class ChatChannelManager
-    implements ChatChannelProvider, ChatChannelCodes, PeerChatProvider
+    implements ChatChannelProvider, PeerChatProvider
 {
     /**
      * Initializes this manager during server startup.
@@ -120,7 +121,7 @@ public class ChatChannelManager
                     } else {
                         log.warning("Unable to join non-public channel [member=" + member.who() +
                                     ", channel=" + channel + "]");
-                        listener.requestFailed(E_ACCESS_DENIED);
+                        listener.requestFailed(ChatCodes.E_ACCESS_DENIED);
                     }
                 }
                 protected String getFailureMessage () {
@@ -144,7 +145,7 @@ public class ChatChannelManager
                 if (!((MsoyScene) scmgr.getScene()).canEnter(member)) {
                     log.warning("Unable to join channel due to access restrictions [member=" +
                         member + ", channel=" + channel + "]");
-                    listener.requestFailed(E_ACCESS_DENIED);
+                    listener.requestFailed(ChatCodes.E_ACCESS_DENIED);
                     return;
                 }
 
@@ -171,7 +172,7 @@ public class ChatChannelManager
                         } else {
                             log.warning("Unable to join channel due to access restrictions " +
                                 "[member=" + member + ", channel=" + channel + "]");
-                            listener.requestFailed(E_ACCESS_DENIED);
+                            listener.requestFailed(ChatCodes.E_ACCESS_DENIED);
                         }
                     }
                     protected String getFailureMessage () {
@@ -186,7 +187,7 @@ public class ChatChannelManager
         default:
             log.warning("Member requested to join invalid channel [who=" + member.who() +
                         ", channel=" + channel + "].");
-            throw new InvocationException(E_INTERNAL_ERROR);
+            throw new InvocationException(ChatCodes.E_INTERNAL_ERROR);
         }
 
         // if we made it this far, we can do our joining immediately
@@ -238,7 +239,7 @@ public class ChatChannelManager
 
         // all that's left is sending the chat message out to everybody
         ChannelMessage msg = new ChannelMessage(chatter, message, mode);
-        wrapper.getCCObj().postMessage(ChatChannelCodes.CHAT_MESSAGE, new Object[] { msg });
+        SpeakUtil.sendMessage(wrapper.getCCObj(), msg);
 
         listener.requestProcessed();
     }

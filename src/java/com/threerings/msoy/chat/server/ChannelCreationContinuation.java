@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.chat.server;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.data.MemberObject;
 
 import static com.threerings.msoy.Log.log;
@@ -33,7 +34,7 @@ public abstract class ChannelCreationContinuation
     {
         log.warning("Chat channel finalizer failed [user=" + _user.who() +
                     ", channel=" + _channel + ", cause=" + cause + "].");
-        _listener.requestFailed(ChatChannelCodes.E_INTERNAL_ERROR);
+        _listener.requestFailed(ChatCodes.E_INTERNAL_ERROR);
     }
 
     /** User subscribing to the channel. */
