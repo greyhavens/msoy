@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -39,10 +40,17 @@ public class WhatIsTheWhirled extends AbsolutePanel
     {
         setStyleName("whatIsTheWhirled");
 
-        FlowPanel video = new FlowPanel();
+        final FlowPanel video = new FlowPanel();
         video.setStyleName("Video");
         video.add(MsoyUI.createLabel(CMe.msgs.whatVideo(), "Title"));
-        video.add(MsoyUI.createLabel(CMe.msgs.whatComingSoon(), "ComingSoon"));
+        ClickListener onClick = new ClickListener() {
+            public void onClick (Widget sender) {
+                video.remove(1);
+                video.add(WidgetUtil.createFlashContainer(
+                              "preview", "/images/landing/slideshow.swf", 359, 259, null));
+            }
+        };
+        video.add(MsoyUI.createActionLabel(CMe.msgs.whatClickToStart(), "Click", onClick));
         add(video, 40, 225);
 
         FlowPanel right = new FlowPanel();
