@@ -12,6 +12,8 @@ import flash.geom.Point;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 
+import flash.utils.Dictionary;
+
 import mx.core.Application;
 
 import com.adobe.crypto.MD5;
@@ -388,15 +390,19 @@ public class WorldClient extends MsoyClient
         try {
             var allObjects :Array = _stage.getObjectsUnderPoint(
                 new Point(_stage.mouseX, _stage.mouseY));
-            var seenObjects :Array = [];
+            var seen :Dictionary = new Dictionary();
             for each (var disp :DisplayObject in allObjects) {
-                do {
-                    seenObjects.push(disp);
-                    if (disp is ContextMenuProvider) {
-                        (disp as ContextMenuProvider).populateContextMenu(_wctx, custom);
+                try {
+                    while (disp != null && !(disp in seen)) {
+                        seen[disp] = true;
+                        if (disp is ContextMenuProvider) {
+                            (disp as ContextMenuProvider).populateContextMenu(_wctx, custom);
+                        }
+                        disp = disp.parent;
                     }
-                    disp = disp.parent;
-                } while (disp != null && (seenObjects.indexOf(disp) == -1));
+                } catch (serr :SecurityError) {
+                    // that's ok, let's move on
+                }
             }
         } catch (e :Error) {
             log.logStackTrace(e);
