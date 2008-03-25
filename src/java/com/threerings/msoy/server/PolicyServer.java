@@ -80,15 +80,18 @@ public class PolicyServer extends IoHandlerAdapter
             policyBuilder.append(
                 "  <site-control permitted-cross-domain-policies=\"master-only\"/>\n");
         }
-        policyBuilder.append("  <allow-access-from domain=\"").append(publicServerHost).
-            append("\"").append(" to-ports=\"");
 
-        // allow Flash connections on our server & game ports
-        for (int port : ServerConfig.serverPorts) {
-            policyBuilder.append(port).append(",");
+        // TEMP: support both our real host and legacy first.whirled.com
+        for (String host : new String[] { publicServerHost, "first.whirled.com" }) {
+            policyBuilder.append("  <allow-access-from domain=\"").append(host).append("\"");
+            policyBuilder.append(" to-ports=\"");
+            // allow Flash connections on our server & game ports
+            for (int port : ServerConfig.serverPorts) {
+                policyBuilder.append(port).append(",");
+            }
+            policyBuilder.append(ServerConfig.gameServerPort).append("\"/>\n");
         }
-        policyBuilder.append(ServerConfig.gameServerPort).append("\"/>\n").
-            append("</cross-domain-policy>\n");
+        policyBuilder.append("</cross-domain-policy>\n");
 
         _policy = policyBuilder.toString();
     }
