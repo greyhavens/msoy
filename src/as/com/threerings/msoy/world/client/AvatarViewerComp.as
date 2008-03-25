@@ -75,6 +75,21 @@ public class AvatarViewerComp extends VBox
         percentWidth = 100;
         percentHeight = 100;
 
+        addChild(_holder = new Canvas());
+        _holder.percentWidth = 100;
+        _holder.percentHeight = 100;
+
+        // draw a gradient background
+        var bmp :Bitmap = Bitmap(new BACKGROUND());
+        var bgsprite :Sprite = new Sprite();
+        bgsprite.graphics.beginBitmapFill(bmp.bitmapData);
+        bgsprite.graphics.drawRect(0, 0, 1000, 1000);
+        bgsprite.graphics.endFill();
+        _holder.rawChildren.addChildAt(bgsprite, 0);
+        // Disabled, because it confused the "usability testers" to have the menu always
+        // popping up.
+        //bgsprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
+
         // create an HBox to hold "walking", "facing", "talk"
         var controls: HBox = new HBox();
         controls.percentWidth = 100;
@@ -104,20 +119,6 @@ public class AvatarViewerComp extends VBox
         createScaleControls();
         addChild(_scaleControls);
 
-        addChild(_holder = new Canvas());
-        _holder.percentWidth = 100;
-        _holder.percentHeight = 100;
-
-        // draw a gradient background
-        var bmp :Bitmap = Bitmap(new BACKGROUND());
-        var bgsprite :Sprite = new Sprite();
-        bgsprite.graphics.beginBitmapFill(bmp.bitmapData);
-        bgsprite.graphics.drawRect(0, 0, 1000, 1000);
-        bgsprite.graphics.endFill();
-        _holder.rawChildren.addChildAt(bgsprite, 0);
-        // Disabled, because it confused the "usability testers" to have the menu always
-        // popping up.
-        //bgsprite.addEventListener(MouseEvent.CLICK, handleMouseClick);
 
         // bind actions to the user interface elements
         BindingUtils.bindSetter(setMode, mode, "selectedIndex");
@@ -409,7 +410,7 @@ class ViewerAvatarSprite extends MemberSprite
         _scale = scale;
         scaleUpdated();
         x = (_comp.width - width)/2;
-        y = (_comp.height - height - parent.y);
+        y = (parent.height - height);
     }
 
     override public function getState () :String
