@@ -128,7 +128,6 @@ public /*abstract*/ class MsoyClient extends Client
 
         // configure our server and port info
         setServer(getServerHost(stage), getServerPorts(stage));
-        _httpPort = getHttpServerPort(stage);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
@@ -178,14 +177,6 @@ public /*abstract*/ class MsoyClient extends Client
     public function isFeaturedPlaceView () :Boolean
     {
         return _featuredPlaceView;
-    }
-
-    /**
-     * Returns the port on which we can connect to the HTTP server.
-     */
-    public function getHttpPort () :int
-    {
-        return _httpPort;
     }
 
     /**
@@ -369,24 +360,10 @@ public /*abstract*/ class MsoyClient extends Client
             [ int(parseInt(params["port"])) ] : DeploymentConfig.serverPorts;
     }
 
-    /**
-     * Returns the port on which we can connect to the HTTP server, first checking the movie
-     * parameters, then falling back to the default in DeploymentConfig.
-     */
-    protected static function getHttpServerPort (stage :Stage) :int
-    {
-        var params :Object = stage.loaderInfo.parameters;
-        return (params["httpPort"] != null) ?
-            int(parseInt(params["httpPort"])) : DeploymentConfig.httpPort;
-    }
-
     protected var _ctx :MsoyContext;
 
     protected var _minimized :Boolean;
     protected var _embedded :Boolean;
     protected var _featuredPlaceView :Boolean;
-
-    /** The port on which we connect to the HTTP server. */
-    protected var _httpPort :int;
 }
 }

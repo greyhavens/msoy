@@ -16,6 +16,7 @@ import com.adobe.images.JPGEncoder;
 
 import com.threerings.util.StringUtil;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.RoomView;
@@ -28,15 +29,14 @@ import com.threerings.msoy.world.client.WorldContext;
 public class SnapshotController
 {
     public static const SERVICE_ENTRY_POINT :String = "/snapshotsvc";
-    public static const SNAPSHOT_MEDIA_PATH :String = "/media/snapshot/";
-    
+
     public function SnapshotController (ctx :WorldContext, sceneId :int)
     {
         _ctx = ctx;
         _sceneId = sceneId;
 
         _request = new URLRequest();
-        _request.url = baseUrl + SERVICE_ENTRY_POINT;
+        _request.url = DeploymentConfig.serverURL + SERVICE_ENTRY_POINT;
         _request.method = URLRequestMethod.POST;
         _request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
 
@@ -55,15 +55,10 @@ public class SnapshotController
 
     public function get mediaUrl () :String
     {
-        return baseUrl + SNAPSHOT_MEDIA_PATH + _sceneId + ".jpg";
+        return DeploymentConfig.mediaURL + "/snapshot/" + _sceneId + ".jpg";
     }
-    
-    protected function get baseUrl () :String
-    {
-        var client :WorldClient = _ctx.getWorldClient();
-        return "http://" + client.getHostname() + ":" + client.getHttpPort();
-    }
-    
+
+
     /** Pops up a UI that will ask the user to apply or cancel the current room screenshot. */
     public function takeScreenshot (view :RoomView) :void
     {
@@ -86,7 +81,7 @@ public class SnapshotController
         }
         _panel = null;
     }
-    
+
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
     {
@@ -96,7 +91,7 @@ public class SnapshotController
         var b :String = "--" + BOUNDARY + "\r\n";
         output.writeBytes(
             StringUtil.toBytes(
-                "\r\n" + b +  
+                "\r\n" + b +
                 "Content-Disposition: form-data; name=\"member\"\r\n" +
                 "\r\n" + String(memberId) + "\r\n" + b +
                 "Content-Disposition: form-data; name=\"scene\"\r\n" +
