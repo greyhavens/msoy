@@ -35,6 +35,7 @@ import com.threerings.msoy.web.data.SessionData;
 
 import client.people.SendInvitesPanel;
 import client.shell.Application;
+import client.shell.CShell;
 import client.shell.Page;
 import client.util.DateFields;
 import client.util.MediaUploader;
@@ -246,6 +247,10 @@ public class CreateAccountPanel extends VerticalPanel
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, new MediaUploader(Item.THUMB_MEDIA, new MediaUploader.Listener() {
                 public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+                    if (!desc.isImage()) {
+                        MsoyUI.error(CShell.emsgs.errPhotoNotImage());
+                        return;
+                    }
                     _media = desc;
                     setWidget(0, 0, new ThumbBox(_media, null));
                 }
