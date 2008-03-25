@@ -117,6 +117,8 @@
 .shopPanel .FeatListingBox .Name {
   font-size: 14px;
   font-weight: bold;
+  overflow: hidden;
+  max-width: 105px;
 }
 
 .shopPanel .FeatListingBox .Descrip {
