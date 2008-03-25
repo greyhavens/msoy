@@ -569,7 +569,7 @@ public class RoomController extends SceneController
 
                 flagItems.push({
                     label: Msgs.GENERAL.get("b.complain"),
-                    enabled: false });
+                    command: WorldController.COMPLAIN_MEMBER, arg: [memId, occInfo.username] });
 
                 if (avatar.isBlockable()) {
                     var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";

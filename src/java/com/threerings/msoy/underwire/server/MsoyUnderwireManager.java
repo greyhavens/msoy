@@ -3,18 +3,33 @@
 
 package com.threerings.msoy.underwire.server;
 
+import java.lang.StringBuilder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+
+import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.util.StringUtil;
+import com.samskivert.util.Invoker;
+
+import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.OOOUserRecord;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.server.persist.UnderwireRepository;
-
 import com.threerings.underwire.web.data.Event;
-import com.threerings.msoy.server.persist.OOOUserRecord;
-import com.samskivert.io.PersistenceException;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles generating events for underwire.
@@ -43,6 +58,66 @@ public class MsoyUnderwireManager
         event.status = Event.RESOLVED_CLOSED;
         event.subject = reason;
         _underrepo.insertEvent(event);
+    }
+
+    /**
+     * Adds a complaint record to the underwire event queue.
+     */
+    public void addComplaint (final MemberObject source, final int targetId, String complaint)
+    {
+        final EventRecord event = new EventRecord();
+        event.source = Integer.toString(source.memberName.getMemberId());
+        event.sourceHandle = source.memberName.toString();
+        event.status = Event.OPEN;
+        event.subject = complaint;
+
+        // format and provide the complainer's chat history
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        StringBuilder chatHistory = new StringBuilder();
+        for (ChatMessage msg : SpeakUtil.getChatHistory(source.memberName)) {
+            UserMessage umsg = (UserMessage)msg;
+            chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
+            chatHistory.append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ');
+            chatHistory.append(umsg.speaker).append(": ").append(umsg.message).append('\n');
+        }
+        event.chatHistory = chatHistory.toString();
+
+        // if the target is online, get thir name from their member object
+        MemberObject target = MsoyServer.lookupMember(targetId);
+        if (target != null) {
+            event.targetHandle = target.memberName.toString();
+            event.target = Integer.toString(target.memberName.getMemberId());
+        }
+
+        MsoyServer.invoker.postUnit(new Invoker.Unit("addComplaint") {
+            public boolean invoke () {
+                try {
+                    // load the target information if necessary
+                    if (event.target == null) {
+                        MemberName targetName = MsoyServer.memberRepo.loadMemberName(targetId);
+                        if (targetName == null) {
+                            log.warning("Unable to locate target of complaint [event=" + event +
+                                ", targetId=" + targetId + "].");
+                        } else {
+                            event.targetHandle = targetName.toString();
+                            event.target = Integer.toString(targetName.getMemberId());
+                        }
+                    }
+
+                    // add the event to the repository
+                    _underrepo.insertEvent(event);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to add complaint event [event=" + event + "].");
+                    _failed = true;
+                }
+                return true;
+            }
+            public void handleResult () {
+                SpeakUtil.sendFeedback(source, MsoyCodes.GENERAL_MSGS,
+                        _failed ? "m.complain_fail" : "m.complain_success");
+            }
+            protected boolean _failed = false;
+        });
     }
 
     protected UnderwireRepository _underrepo;

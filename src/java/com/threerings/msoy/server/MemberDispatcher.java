@@ -53,6 +53,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.COMPLAIN_MEMBER:
+            ((MemberProvider)provider).complainMember(
+                source,
+                ((Integer)args[0]).intValue(), (String)args[1]
+            );
+            return;
+
         case MemberMarshaller.FOLLOW_MEMBER:
             ((MemberProvider)provider).followMember(
                 source,

@@ -95,4 +95,9 @@ public interface MemberService extends InvocationService
      * Acknowledges that the user has read their warning message.
      */
     public void acknowledgeWarning (Client client);
+
+    /**
+     * Posts a complaint event in underwire.
+     */
+    public void complainMember (Client client, int memberId, String complaint);
 }

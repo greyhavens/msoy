@@ -62,6 +62,7 @@ import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
@@ -71,7 +72,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
-import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 /**
  * Brings together all of the services needed by the World server.

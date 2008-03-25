@@ -498,6 +498,12 @@ public class MemberManager
         });
     }
 
+    // from interface MemberProvider
+    public void complainMember (ClientObject caller, int memberId, String complaint)
+    {
+        MsoyServer.supportMan.addComplaint((MemberObject)caller, memberId, complaint);
+    }
+
     /**
      * Grants flow to the member identified in the supplied user action details.
      *

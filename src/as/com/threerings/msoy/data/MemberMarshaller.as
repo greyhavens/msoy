@@ -52,8 +52,19 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #complainMember} requests. */
+    public static const COMPLAIN_MEMBER :int = 3;
+
+    // from interface MemberService
+    public function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void
+    {
+        sendRequest(arg1, COMPLAIN_MEMBER, [
+            Integer.valueOf(arg2), arg3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #followMember} requests. */
-    public static const FOLLOW_MEMBER :int = 3;
+    public static const FOLLOW_MEMBER :int = 4;
 
     // from interface MemberService
     public function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -66,7 +77,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
-    public static const GET_CURRENT_MEMBER_LOCATION :int = 4;
+    public static const GET_CURRENT_MEMBER_LOCATION :int = 5;
 
     // from interface MemberService
     public function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -79,7 +90,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static const GET_DISPLAY_NAME :int = 5;
+    public static const GET_DISPLAY_NAME :int = 6;
 
     // from interface MemberService
     public function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -92,7 +103,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static const GET_GROUP_NAME :int = 6;
+    public static const GET_GROUP_NAME :int = 7;
 
     // from interface MemberService
     public function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -105,7 +116,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static const GET_HOME_ID :int = 7;
+    public static const GET_HOME_ID :int = 8;
 
     // from interface MemberService
     public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
@@ -118,7 +129,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static const INVITE_TO_BE_FRIEND :int = 8;
+    public static const INVITE_TO_BE_FRIEND :int = 9;
 
     // from interface MemberService
     public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -131,7 +142,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static const INVITE_TO_FOLLOW :int = 9;
+    public static const INVITE_TO_FOLLOW :int = 10;
 
     // from interface MemberService
     public function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -144,7 +155,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #issueInvitation} requests. */
-    public static const ISSUE_INVITATION :int = 10;
+    public static const ISSUE_INVITATION :int = 11;
 
     // from interface MemberService
     public function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void
@@ -157,7 +168,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static const SET_AVATAR :int = 11;
+    public static const SET_AVATAR :int = 12;
 
     // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
@@ -170,7 +181,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static const SET_AWAY :int = 12;
+    public static const SET_AWAY :int = 13;
 
     // from interface MemberService
     public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
@@ -181,7 +192,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static const SET_DISPLAY_NAME :int = 13;
+    public static const SET_DISPLAY_NAME :int = 14;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -194,7 +205,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static const SET_HOME_SCENE_ID :int = 14;
+    public static const SET_HOME_SCENE_ID :int = 15;
 
     // from interface MemberService
     public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -207,7 +218,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static const UPDATE_AVAILABILITY :int = 15;
+    public static const UPDATE_AVAILABILITY :int = 16;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void

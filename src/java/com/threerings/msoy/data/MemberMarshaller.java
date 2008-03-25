@@ -44,8 +44,19 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #complainMember} requests. */
+    public static final int COMPLAIN_MEMBER = 3;
+
+    // from interface MemberService
+    public void complainMember (Client arg1, int arg2, String arg3)
+    {
+        sendRequest(arg1, COMPLAIN_MEMBER, new Object[] {
+            Integer.valueOf(arg2), arg3
+        });
+    }
+
     /** The method id used to dispatch {@link #followMember} requests. */
-    public static final int FOLLOW_MEMBER = 3;
+    public static final int FOLLOW_MEMBER = 4;
 
     // from interface MemberService
     public void followMember (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -58,7 +69,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
-    public static final int GET_CURRENT_MEMBER_LOCATION = 4;
+    public static final int GET_CURRENT_MEMBER_LOCATION = 5;
 
     // from interface MemberService
     public void getCurrentMemberLocation (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -71,7 +82,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static final int GET_DISPLAY_NAME = 5;
+    public static final int GET_DISPLAY_NAME = 6;
 
     // from interface MemberService
     public void getDisplayName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -84,7 +95,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 6;
+    public static final int GET_GROUP_NAME = 7;
 
     // from interface MemberService
     public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -97,7 +108,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 7;
+    public static final int GET_HOME_ID = 8;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -110,7 +121,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static final int INVITE_TO_BE_FRIEND = 8;
+    public static final int INVITE_TO_BE_FRIEND = 9;
 
     // from interface MemberService
     public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -123,7 +134,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static final int INVITE_TO_FOLLOW = 9;
+    public static final int INVITE_TO_FOLLOW = 10;
 
     // from interface MemberService
     public void inviteToFollow (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -136,7 +147,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #issueInvitation} requests. */
-    public static final int ISSUE_INVITATION = 10;
+    public static final int ISSUE_INVITATION = 11;
 
     // from interface MemberService
     public void issueInvitation (Client arg1, MemberName arg2, InvocationService.ResultListener arg3)
@@ -149,7 +160,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 11;
+    public static final int SET_AVATAR = 12;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.ConfirmListener arg4)
@@ -162,7 +173,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static final int SET_AWAY = 12;
+    public static final int SET_AWAY = 13;
 
     // from interface MemberService
     public void setAway (Client arg1, boolean arg2, String arg3)
@@ -173,7 +184,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 13;
+    public static final int SET_DISPLAY_NAME = 14;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -186,7 +197,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 14;
+    public static final int SET_HOME_SCENE_ID = 15;
 
     // from interface MemberService
     public void setHomeSceneId (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -199,7 +210,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 15;
+    public static final int UPDATE_AVAILABILITY = 16;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)

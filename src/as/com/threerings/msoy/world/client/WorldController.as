@@ -135,6 +135,9 @@ public class WorldController extends MsoyController
     /** Command to open the account creation UI. */
     public static const CREATE_ACCOUNT :String = "CreateAccount";
 
+    /** Command to complain about a member. */
+    public static const COMPLAIN_MEMBER :String = "ComplainMember";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -638,6 +641,14 @@ public class WorldController extends MsoyController
     public function handleCreateAccount (invite :String = null) :void
     {
         displayPage("account", (invite == null) ? "create" : ("create_" + invite));
+    }
+
+    /**
+     * Handles the COMPLAIN_MEMBER command.
+     */
+    public function handleComplainMember (memberId :int, username :String) :void
+    {
+        _topPanel.callLater(function () :void { new ComplainDialog(_wctx, memberId, username); });
     }
 
     /**
