@@ -402,6 +402,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_GAME_INSTRUCTIONS command.
+     */
+    public function handleViewGameInstructions (gameId :int) :void
+    {
+        displayPage("games", "d_" + gameId + "_i");
+    }
+
+    /**
      * Handles the VIEW_MY_AVATARS command.
      */
     public function handleViewMyAvatars () :void
@@ -1008,6 +1016,7 @@ public class WorldController extends MsoyController
                     headerBar.setOwnerLink("");
                 }
                 headerBar.setCommentLink(handleViewRoom, model.sceneId);
+                headerBar.setInstructionsLink(null);
             }
 
             // update the stack; also, if this is not the first scene, enable the back button
@@ -1037,6 +1046,7 @@ public class WorldController extends MsoyController
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
             headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
+            headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
         } else {
             controlBar.setLocation(null, false, false);
         }

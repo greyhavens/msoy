@@ -86,6 +86,17 @@ public class HeaderBar extends HBox
     /**
      * Shows or clears the comment link. Passing null for the onClick function will clear the link.
      */
+    public function setInstructionsLink (onClick :Function , arg :Object = null) :void
+    {
+        _instructionsLink.setCallback(onClick, arg);
+        _instructionsVisible = (onClick != null);
+        _instructionsLink.visible = _instructionsVisible;
+        _instructionsLink.includeInLayout = _instructionsVisible;
+    }
+
+    /**
+     * Shows or clears the comment link. Passing null for the onClick function will clear the link.
+     */
     public function setCommentLink (onClick :Function, arg :Object = null) :void
     {
         _commentLink.setCallback(onClick, arg);
@@ -113,6 +124,8 @@ public class HeaderBar extends HBox
                     comp.includeInLayout = comp.visible = _embedVisible;
                 } else if (comp == _commentLink) {
                     comp.includeInLayout = comp.visible = _commentVisible;
+                } else if (comp == _instructionsLink) {
+                    comp.includeInLayout = comp.visible = _instructionsVisible;
                 } else {
                     comp.includeInLayout = comp.visible = true;
                 }
@@ -194,6 +207,12 @@ public class HeaderBar extends HBox
         controlBox.percentHeight = 100;
         addChild(controlBox);
 
+        _instructionsLink = new CommandLinkButton(Msgs.GENERAL.get("b.instructions"));
+        _instructionsLink.styleName = "headerLink";
+        controlBox.addChild(_instructionsLink);
+        setInstructionsLink(null);
+        _extras.push(_instructionsLink);
+
         _commentLink = new CommandLinkButton(Msgs.GENERAL.get("b.comment"));
         _commentLink.styleName = "headerLink";
         controlBox.addChild(_commentLink);
@@ -226,6 +245,9 @@ public class HeaderBar extends HBox
     protected var _loc :Label;
     protected var _owner :HBox;
     protected var _spacer :HBox;
+
+    protected var _instructionsVisible :Boolean;
+    protected var _instructionsLink :CommandLinkButton;
 
     protected var _commentVisible :Boolean;
     protected var _commentLink :CommandLinkButton;
