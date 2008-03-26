@@ -747,7 +747,9 @@ public class RoomController extends SceneController
     public function useItem (itemType :int, itemId :int) :void
     {
         if (itemType == Item.AVATAR) {
-            _wdctx.getWorldDirector().setAvatar(itemId, 1);
+            // NOTE: this is not used. GWT calls WorldClient.externalUseAvatar, but
+            // we may as well handle this case
+            _wdctx.getWorldDirector().setAvatar(itemId);
             return;
         }
 
@@ -846,7 +848,9 @@ public class RoomController extends SceneController
     public function clearItem (itemType :int, itemId :int) :void
     {
         if (itemType == Item.AVATAR) {
-            _wdctx.getWorldDirector().setAvatar(0, 0);
+            // NOTE: this is not used. GWT calls WorldClient.externalUseAvatar, but
+            // we may as well handle this case
+            _wdctx.getWorldDirector().setAvatar(0);
 
         } else if (itemType == Item.PET) {
             // ensure this pet really is in this room
