@@ -84,7 +84,8 @@ public class HeaderBar extends HBox
     }
 
     /**
-     * Shows or clears the comment link. Passing null for the onClick function will clear the link.
+     * Shows or clears the instructions link. Passing null for the onClick function will clear the 
+     * link.
      */
     public function setInstructionsLink (onClick :Function , arg :Object = null) :void
     {
