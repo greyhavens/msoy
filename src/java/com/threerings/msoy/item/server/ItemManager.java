@@ -20,7 +20,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.ObserverList;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -34,6 +33,9 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager;
+
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
@@ -46,6 +48,8 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
+
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.web.data.ServiceException;
@@ -71,16 +75,6 @@ import static com.threerings.msoy.Log.log;
 public class ItemManager
     implements ItemProvider
 {
-    /** Used to listen for item updates.
-     * See note in registerItemUpdateListener. */
-    public interface ItemUpdateListener
-    {
-        /**
-         * Called when a (mutable) item is updated.
-         */
-        public void itemUpdated (ItemRecord item);
-    }
-
     /**
      * An exception that may be thrown if an item repository doesn't exist.
      */
@@ -219,38 +213,6 @@ public class ItemManager
         } catch (MissingRepositoryException mre) {
             log.warning("Requested invalid repository type " + type + ".");
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-        }
-    }
-
-    /**
-     * Registers an item update listener.
-     *
-     * NOTE: this is not peer-aware. Currently the only ItemUpdateListener used is
-     * MsoyGameRegistry, and it takes care of dispatching to peers. If you are thinking
-     * about adding something here, it may be time to re-think this code.
-     */
-    public void registerItemUpdateListener (
-        Class<? extends ItemRecord> type, ItemUpdateListener lner)
-    {
-        MsoyServer.requireDObjThread();
-        ObserverList<ItemUpdateListener> list = _listeners.get(type);
-        if (list == null) {
-            list = new ObserverList<ItemUpdateListener>(ObserverList.FAST_UNSAFE_NOTIFY);
-            _listeners.put(type, list);
-        }
-        list.add(lner);
-    }
-
-    /**
-     * Removes a previously registered item update listener.
-     */
-    public void removeItemUpdateListener (
-        Class<? extends ItemRecord> type, ItemUpdateListener lner)
-    {
-        MsoyServer.requireDObjThread();
-        ObserverList<ItemUpdateListener> list = _listeners.get(type);
-        if (list != null) {
-            list.remove(lner);
         }
     }
 
@@ -684,12 +646,16 @@ public class ItemManager
      */
     public void itemUpdated (ItemRecord rec)
     {
-        if (rec.getType() == Item.AVATAR) {
+        byte type = rec.getType();
+        if (type == Item.AVATAR) {
             MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
-        }
 
-        // notify any item update listeners
-        notifyItemUpdated(rec);
+        } else if (type == Item.GAME) {
+            if (rec.sourceId == 0) { // we are only interested in mutable games
+                MsoyServer.peerMan.invokeNodeAction(
+                    new UpdateGameAction(((GameRecord) rec).gameId));
+            }
+        }
     }
 
     /**
@@ -1097,26 +1063,6 @@ public class ItemManager
     }
 
     /**
-     * Called when a mutable item is updated.
-     *
-     * NOTE: this method does not work across peers, however, the only thing implementing
-     * it currently is MsoyGameRegistry, which will take any update and push it to the
-     * peers if it needs to.
-     */
-    protected void notifyItemUpdated (final ItemRecord record)
-    {
-        ObserverList<ItemUpdateListener> obs = _listeners.get(record.getClass());
-        if (obs != null) {
-            obs.apply(new ObserverList.ObserverOp<ItemUpdateListener>() {
-                public boolean apply (ItemUpdateListener lner) {
-                    lner.itemUpdated(record);
-                    return true;
-                }
-            });
-        }
-    }
-
-    /**
      * A class that helps manage loading or storing a bunch of items that may be spread in
      * difference repositories.
      */
@@ -1235,15 +1181,25 @@ public class ItemManager
         protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
 
-    /**
-     * An interface for updating an item in a user's cache.
-     */
-    protected interface ItemUpdateOp
+    /** Updates a game record across peers. */
+    protected static class UpdateGameAction extends PeerManager.NodeAction
     {
-        /**
-         * Update the specified item.
-         */
-        public void update (Item item);
+        public UpdateGameAction (int gameId) {
+            _gameId = gameId;
+        }
+
+        @Override
+        public boolean isApplicable (NodeObject nodeObj) {
+            return ((MsoyNodeObject) nodeObj).hostedGames.containsKey(_gameId);
+        }
+
+        @Override
+        protected void execute ()
+        {
+            MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
+        }
+
+        protected int _gameId;
     }
 
     /** A reference to our game repository. We'd just look this up from the table but we can't
@@ -1264,10 +1220,6 @@ public class ItemManager
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
-
-    /** A mapping from item type to update listeners. */
-    protected HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>> _listeners =
-        new HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>>();
 
     /** The special repository that stores item lists. */
     protected ItemListRepository _listRepo;

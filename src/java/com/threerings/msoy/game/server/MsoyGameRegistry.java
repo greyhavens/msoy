@@ -40,18 +40,13 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
-import com.threerings.msoy.item.server.ItemManager.ItemUpdateListener;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 
-import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.PeerGameMarshaller;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.PeerGameDispatcher;
-import com.threerings.msoy.peer.server.PeerGameProvider;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
@@ -65,7 +60,7 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner, PeerGameProvider
+    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -97,10 +92,6 @@ public class MsoyGameRegistry
         // register to hear when the server is shutdown
         MsoyServer.registerShutdowner(this);
 
-        // register and initialize our peer game service
-        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerGameService(
-            (PeerGameMarshaller)invmgr.registerDispatcher(new PeerGameDispatcher(this)));
-
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
         MsoyServer.omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
@@ -117,9 +108,6 @@ public class MsoyGameRegistry
                 }
             }
         });
-
-        // tell the item manager we want to know about game updates
-        MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, new GameUpdateListener());
     }
 
     // from interface MsoyGameProvider
@@ -303,8 +291,10 @@ public class MsoyGameRegistry
         MsoyServer.peerMan.updateMemberLocation(memObj);
     }
 
-    // from interface PeerGameProvider
-    public void gameRecordUpdated (ClientObject caller, final int gameId)
+    /**
+     * Called to update a mutable game.
+     */
+    public void gameUpdatedOnPeer (int gameId)
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
@@ -356,20 +346,6 @@ public class MsoyGameRegistry
                 handler.shutdown();
             }
         }
-    }
-
-    protected void applyToNodes (int memberId, final GameServiceOperation op)
-    {
-        // locate the peer that is hosting this member and forward the request there
-        final MemberName memkey = new MemberName(null, memberId);
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                if (msnobj.clients.containsKey(memkey)) {
-                    op.execute(client, msnobj.peerGameService);
-                }
-            }
-        });
     }
 
     protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
@@ -448,42 +424,6 @@ public class MsoyGameRegistry
             return false;
         }
         return true;
-    }
-
-    protected class GameUpdateListener implements ItemUpdateListener
-    {
-        public void itemUpdated (ItemRecord item)
-        {
-            // we're only interested in mutable games
-            if (item.sourceId != 0) {
-                return;
-            }
-
-            // alright, let's find out where this updated game might be hosted...
-            final int gameId = ((GameRecord) item).gameId;
-
-            // maybe locally? that'd be great.
-            if (_handmap.containsKey(gameId)) {
-                gameRecordUpdated(null, gameId);
-                return;
-            }
-            // otherwise is it hosted on any world server's game peer(s)?
-            MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-                public void invoke (Client client, NodeObject nodeobj) {
-                    MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
-                    if (msnobj.hostedGames.containsKey(gameId)) {
-                        // great, tell the world server what's up
-                        msnobj.peerGameService.gameRecordUpdated(client, gameId);
-                    }
-                }
-            });
-        }
-    }
-
-    /** Used by {@link #applyToNodes}. */
-    protected static interface GameServiceOperation
-    {
-        public void execute (Client client, PeerGameService service);
     }
 
     /** Handles communications with a delegate game server. */
