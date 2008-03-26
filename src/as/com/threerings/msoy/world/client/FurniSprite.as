@@ -63,14 +63,6 @@ public class FurniSprite extends MsoySprite
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseHover);
     }
 
-    /**
-     * Call the provided function when this particular sprite is done loading
-     */
-    public function setLoadedCallback (fn :Function) :void
-    {
-        _loadedCallback = fn;
-    }
-
     override public function getDesc () :String
     {
         switch (_furni.actionType) {
@@ -423,15 +415,6 @@ public class FurniSprite extends MsoySprite
         callUserCode("mouseHover_v1", (event.type == MouseEvent.MOUSE_OVER));
     }
 
-    override protected function stoppedLoading () :void
-    {
-        if (_loadedCallback != null) {
-            _loadedCallback();
-        }
-
-        super.stoppedLoading();
-    }
-
     override protected function addListeners (info :LoaderInfo) :void
     {
         super.addListeners(info);
@@ -443,9 +426,6 @@ public class FurniSprite extends MsoySprite
 
     /** The furniture data for this piece of furni. */
     protected var _furni :FurniData;
-
-    /** A function we call when we've finished loading. */
-    protected var _loadedCallback :Function;
 
     /** The watcher for loading progress. */
     protected static var _loadingWatcher :LoadingWatcher;

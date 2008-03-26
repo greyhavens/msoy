@@ -63,7 +63,7 @@ public class MsoyGameBackend extends GameBackend
 }
 
 import flash.events.Event;
-import flash.events.IOErrorEvent;
+import flash.events.ErrorEvent;
 
 import flash.display.Loader;
 import flash.display.LoaderInfo;
@@ -115,9 +115,9 @@ class Headshot extends MediaContainer
         callbacks = null;
     }
 
-    override protected function handleIOError (event :IOErrorEvent) :void
+    override protected function handleError (event :ErrorEvent) :void
     {
-        super.handleIOError(event);
+        super.handleError(event);
 
         state = STATE_ERROR;
 

@@ -22,6 +22,14 @@ public class DecorSprite extends FurniSprite
         super(ctx, furniData);
         setLocation(furniData.loc);
     }
+
+    /**
+     * Call the provided function when this particular sprite is done loading
+     */
+    public function setLoadedCallback (fn :Function) :void
+    {
+        _loadedCallback = fn;
+    }
     
     override public function getRoomLayer () :int
     {
@@ -91,5 +99,17 @@ public class DecorSprite extends FurniSprite
         
         return furniData;
     }
+
+    override protected function stoppedLoading () :void
+    {
+        if (_loadedCallback != null) {
+            _loadedCallback();
+        }
+
+        super.stoppedLoading();
+    }
+
+    /** A function we call when we've finished loading. */
+    protected var _loadedCallback :Function;
 }
 }

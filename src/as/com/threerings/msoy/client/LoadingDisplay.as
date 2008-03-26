@@ -8,8 +8,10 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.ErrorEvent;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
 
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -38,7 +40,8 @@ public class LoadingDisplay extends Sprite
     {
         info.addEventListener(Event.COMPLETE, handleComplete);
         info.addEventListener(Event.UNLOAD, handleComplete);
-        info.addEventListener(IOErrorEvent.IO_ERROR, handleIOError);
+        info.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+        info.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
         if (isPrimaryForPlace) {
             _primary = info;
@@ -61,7 +64,8 @@ public class LoadingDisplay extends Sprite
     {
         info.removeEventListener(Event.COMPLETE, handleComplete);
         info.removeEventListener(Event.UNLOAD, handleComplete);
-        info.removeEventListener(IOErrorEvent.IO_ERROR, handleIOError);
+        info.removeEventListener(IOErrorEvent.IO_ERROR, handleError);
+        info.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
         if (info == _primary) {
             info.removeEventListener(ProgressEvent.PROGRESS, handleProgress);
@@ -85,7 +89,7 @@ public class LoadingDisplay extends Sprite
         unwatchLoader(event.target as LoaderInfo);
     }
 
-    protected function handleIOError (event :IOErrorEvent) :void
+    protected function handleError (event :ErrorEvent) :void
     {
         unwatchLoader(event.target as LoaderInfo);
     }

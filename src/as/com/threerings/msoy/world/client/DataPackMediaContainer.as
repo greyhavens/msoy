@@ -123,7 +123,8 @@ public class DataPackMediaContainer extends MsoyMediaContainer
 
             removeListeners(info);
             info.addEventListener(Event.COMPLETE, handleStubComplete);
-            info.addEventListener(IOErrorEvent.IO_ERROR, handleStubIOError);
+            info.addEventListener(IOErrorEvent.IO_ERROR, handleStubError);
+            info.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleStubError);
         }
 
         return loader;
@@ -174,7 +175,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Handle an error while loading the stub.
      */
-    protected function handleStubIOError (event :IOErrorEvent) :void
+    protected function handleStubError (event :ErrorEvent) :void
     {
         // we *may* be loading a datapack. If so, shut it down.
         if (_packLoader != null) {
@@ -187,7 +188,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         }
 
         // call the regular error handler
-        handleIOError(event);
+        handleError(event);
     }
 
     /**
