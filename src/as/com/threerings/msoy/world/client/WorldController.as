@@ -40,6 +40,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.client.ChatPrefsDialog;
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -937,12 +938,12 @@ public class WorldController extends MsoyController
             return displayPageGWT(page, args);
 
         } else {
-            var fullURL :String;
+            var fullURL :String = DeploymentConfig.serverURL;
             var scene :Scene = _wctx.getSceneDirector().getScene();
             if (scene == null) {
-                fullURL = "/#" + page + "-" + args;
+                fullURL += "/#" + page + "-" + args;
             } else {
-                fullURL = "/#world-s" + scene.getId() + "-" + page + "-" + args;
+                fullURL += "/#world-s" + scene.getId() + "-" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
             try {
