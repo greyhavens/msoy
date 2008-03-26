@@ -217,11 +217,6 @@ public class LobbyManager
         _lobj.subscriberListener = null;
         _lobj.removeListener(_tableWatcher);
 
-//         // if our game is mutable, clear our update listener
-//         if (_uplist != null) {
-//             MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
-//         }
-
         _shutObs.lobbyDidShutdown(_content.game);
 
         _tableMgr.shutdown();
@@ -337,9 +332,6 @@ public class LobbyManager
 
     /** Manages the actual tables. */
     protected MsoyTableManager _tableMgr;
-
-    /** Used to listen for updates to our game item if necessary. */
-    protected ItemManager.ItemUpdateListener _uplist;
 
     /** An interval to let us delay lobby shutdown for awhile. */
     protected Interval _shutdownInterval;
