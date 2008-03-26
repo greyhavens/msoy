@@ -130,7 +130,7 @@ public class MemberSprite extends ActorSprite
                 _idleIcon = (new IDLE_ICON() as DisplayObject);
                 addDecoration(_idleIcon, {
                     weight: Number.MAX_VALUE / 2,
-                    bounds: new Rectangle(0, 0, 50, 80)
+                    bounds: new Rectangle(0, 0, 50, 45)
                 });
             } else {
                 removeDecoration(_idleIcon);
