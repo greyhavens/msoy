@@ -40,6 +40,7 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -70,7 +71,8 @@ import static com.threerings.msoy.Log.log;
 public class ItemManager
     implements ItemProvider
 {
-    /** Used to listen for item updates. */
+    /** Used to listen for item updates.
+     * See note in registerItemUpdateListener. */
     public interface ItemUpdateListener
     {
         /**
@@ -222,6 +224,10 @@ public class ItemManager
 
     /**
      * Registers an item update listener.
+     *
+     * NOTE: this is not peer-aware. Currently the only ItemUpdateListener used is
+     * MsoyGameRegistry, and it takes care of dispatching to peers. If you are thinking
+     * about adding something here, it may be time to re-think this code.
      */
     public void registerItemUpdateListener (
         Class<? extends ItemRecord> type, ItemUpdateListener lner)
@@ -466,15 +472,6 @@ public class ItemManager
     }
 
     /**
-     * Update an item in its owner's cache, if the item was modified persistently by an entity
-     * outside of this manager.
-     */
-    public void updateUserCache (Item item)
-    {
-        updateUserCache(null, item);
-    }
-
-    /**
      * Helper function: updates usage of avatar items.  This method assumes that the specified
      * items are both valid and owned by the user in question. The supplied listener will be
      * notified of success with null.
@@ -510,44 +507,86 @@ public class ItemManager
             return; // getRepository already informed the listener about this problem
         }
 
-        final int[] oldItemIds = new int[] { oldItemId };
-        final int[] newItemIds = new int[] { newItemId };
-
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
             public Object invokePersistResult () throws Exception {
                 if (oldItemId != 0) {
-                    repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
+                    repo.markItemUsage(new int[] { oldItemId }, Item.UNUSED, 0);
                 }
                 if (newItemId != 0) {
-                    repo.markItemUsage(newItemIds, itemUseType, locationId);
+                    repo.markItemUsage(new int[] { newItemId }, itemUseType, locationId);
                 }
                 return null;
             }
+        });
+    }
 
-            public void handleSuccess () {
-                super.handleSuccess();
-                final double lastTouched = System.currentTimeMillis();
-                if (oldItemId != 0) {
-                    updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
-                        public void update (Item item) {
-                            item.used = Item.UNUSED;
-                            item.location = 0;
-                            item.lastTouched = lastTouched;
-                        }
-                    }, true);
-                }
-                if (newItemId != 0) {
-                    updateUserCache(memberId, itemType, newItemIds, new ItemUpdateOp() {
-                        public void update (Item item) {
-                            item.used = itemUseType;
-                            item.location = locationId;
-                            // make the now-used item sliiightly more recently touched..
-                            item.lastTouched = lastTouched + 1;
-                        }
-                    }, true);
-                }
+    public void avatarUpdatedOnPeer (final MemberObject memObj, final int avatarId)
+    {
+        getItem(new ItemIdent(Item.AVATAR, avatarId), new ResultListener<Item>() {
+            public void requestCompleted (Item avatar) {
+                avatarUpdatedOnPeer(memObj, (Avatar) avatar);
+            }
+
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Failed to resolve updated avatar. [id=" + avatarId + "]",
+                    cause);
             }
         });
+    }
+
+    public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar)
+    {
+        memObj.startTransaction();
+        try {
+            // if they're wearing it, update that.
+            if (avatar.equals(memObj.avatar)) {
+                memObj.setAvatar(avatar);
+                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            }
+
+            // probably we'll update it in their cache, too.
+            if (memObj.avatarCache.contains(avatar)) {
+                memObj.updateAvatarCache(avatar);
+
+            } else if (memObj.avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
+                memObj.addToAvatarCache(avatar);
+
+            } else {
+                Avatar oldest = avatar;
+                for (Avatar av : memObj.avatarCache) {
+                    if (oldest.lastTouched > av.lastTouched) {
+                        oldest = av;
+                    }
+                }
+                if (oldest != avatar) {
+                    memObj.removeFromAvatarCache(oldest.getKey());
+                    memObj.addToAvatarCache(avatar);
+                }
+            }
+        } finally {
+            memObj.commitTransaction();
+        }
+    }
+
+    /**
+     * Called to effect the deletion of an avatar on a member's userobject.
+     */
+    public void avatarDeletedOnPeer (MemberObject memObj, int avatarId)
+    {
+        memObj.startTransaction();
+        try {
+            if ((memObj.avatar != null) && (memObj.avatar.itemId == avatarId)) {
+                // the user is wearing this item: delete
+                memObj.setAvatar(null);
+                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            }
+            ItemIdent ident = new ItemIdent(Item.AVATAR, avatarId);
+            if (memObj.avatarCache.containsKey(ident)) {
+                memObj.removeFromAvatarCache(ident);
+            }
+        } finally {
+            memObj.commitTransaction();
+        }
     }
 
     /**
@@ -605,48 +644,9 @@ public class ItemManager
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
                 }
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : scened) {
-                    tup.left.markItemUsage(tup.right,
-                        Item.USED_AS_FURNITURE, sceneId);
+                    tup.left.markItemUsage(tup.right, Item.USED_AS_FURNITURE, sceneId);
                 }
                 return null;
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-
-                // TODO: known problem.
-                // There are 4 types of furniture updates, actually:
-                // 1) added furni (by definition, owned by us)
-                // 2) moved furni
-                // 3) removed furni owned by us
-                // 4) removed furni owned by others
-                // #1 & #3 will be handled by the below code (awkwardly)
-                // #2 needs no actual usage updates
-                // #4 is currently unhandled- we don't know who the
-                // owner of those items is without reading that out of the DB.
-                Iterator<Tuple<Byte, int[]>> itr = unused.typeIterator();
-                final double lastTouched = System.currentTimeMillis();
-                while (itr.hasNext()) {
-                    Tuple<Byte, int[]> tup = itr.next();
-                    updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
-                        public void update (Item item) {
-                            item.used = Item.UNUSED;
-                            item.location = 0;
-                            item.lastTouched = lastTouched;
-                        }
-                    }, false);
-                }
-                itr = scened.typeIterator();
-                while (itr.hasNext()) {
-                    Tuple<Byte, int[]> tup = itr.next();
-                    updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
-                        public void update (Item item) {
-                            item.used = Item.USED_AS_FURNITURE;
-                            item.location = sceneId;
-                            item.lastTouched = lastTouched;
-                        }
-                    }, false);
-                }
             }
         });
     }
@@ -654,10 +654,11 @@ public class ItemManager
     /**
      * Informs the runtime world that an item was created and inserted into the database.
      */
-    public void itemCreated (ItemRecord record)
+    public void itemCreated (ItemRecord rec)
     {
-        // add the item to the user's cached inventory
-        updateUserCache(record, null);
+        if (rec.getType() == Item.AVATAR) {
+            MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
+        }
     }
 
     /**
@@ -666,20 +667,23 @@ public class ItemManager
      */
     public void itemPurchased (Item item)
     {
-        updateUserCache(null, item);
+        if (item.getType() == Item.AVATAR) {
+            MemberNodeActions.avatarUpdated(item.ownerId, item.itemId);
+        }
     }
 
     /**
      * Informs the runtime world that an item was updated in the database. Worn avatars will be
      * updated, someday items being used as furni or decor in rooms will also magically be updated.
      */
-    public void itemUpdated (ItemRecord record)
+    public void itemUpdated (ItemRecord rec)
     {
-        // add the item to the user's cached inventory
-        updateUserCache(record, null);
+        if (rec.getType() == Item.AVATAR) {
+            MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
+        }
 
         // notify any item update listeners
-        notifyItemUpdated(record);
+        notifyItemUpdated(rec);
     }
 
     /**
@@ -687,7 +691,9 @@ public class ItemManager
      */
     public void itemDeleted (ItemRecord record)
     {
-        deleteFromUserCache(record.ownerId, new ItemIdent(record.getType(), record.itemId));
+        if (record.getType() == Item.AVATAR) {
+            MemberNodeActions.avatarDeleted(record.ownerId, record.itemId);
+        }
     }
 
     /**
@@ -1062,145 +1068,6 @@ public class ItemManager
         });
     }
 
-    /**
-     * Internal cache-updatey method that takes a record or an item.
-     */
-    protected void updateUserCache (ItemRecord rec, Item item)
-    {
-        // first locate the owner
-        int ownerId;
-        byte type;
-        if (item == null) {
-            ownerId = rec.ownerId;
-            type = rec.getType();
-        } else {
-            ownerId = item.ownerId;
-            type = item.getType();
-        }
-
-        if (type != Item.AVATAR) {
-            return; // nothing to update, currently
-        }
-
-        if (item == null) {
-            item = rec.toItem(); // lazy-create when we need it
-        }
-
-        // currently, the only thing to update would be if the user is wearing this avatar
-        // PEER TODO: user may be resolved on another world server
-        MemberObject memObj = MsoyServer.lookupMember(ownerId);
-        if (memObj != null) {
-            memObj.startTransaction();
-            try {
-                if (type == Item.AVATAR) {
-                    Avatar updatedAvatar = (Avatar) item;
-                    if (updatedAvatar.equals(memObj.avatar)) {
-                        // the user is wearing this item: update
-                        memObj.setAvatar(updatedAvatar);
-                        MsoyServer.memberMan.updateOccupantInfo(memObj);
-                    }
-
-                    // Find the same avatar in the cache, or the oldest if we need to replace.
-                    boolean needReplace =
-                        (memObj.avatarCache.size() >= MemberObject.AVATAR_CACHE_SIZE);
-                    Avatar oldest = null;
-                    for (Avatar av : memObj.avatarCache) {
-                        if (av.equals(updatedAvatar)) {
-                            oldest = av;
-                            break;
-                        } else if (needReplace &&
-                                (oldest == null || oldest.lastTouched > av.lastTouched)) {
-                            oldest = av; // no 'break' here
-                        }
-                    }
-                    // and update the avatarCache
-                    if (updatedAvatar.equals(oldest)) {
-                        memObj.updateAvatarCache(updatedAvatar);
-
-                    } else if (oldest == null || oldest.lastTouched < updatedAvatar.lastTouched) {
-                        memObj.addToAvatarCache(updatedAvatar);
-                        if (oldest != null) {
-                            memObj.removeFromAvatarCache(oldest.getKey());
-                        }
-                    }
-                }
-
-            } finally {
-                memObj.commitTransaction();
-            }
-        }
-    }
-
-    /**
-     * Internal cache-updatey method for deleting an item that no longer exists.
-     */
-    protected void deleteFromUserCache (int memberId, ItemIdent ident)
-    {
-        // first, filter any items we don't care about
-        if (ident.type != Item.AVATAR) {
-            return;
-        }
-
-        // PEER TODO: user may be resolved on another world server
-        MemberObject memObj = MsoyServer.lookupMember(memberId);
-        if (memObj != null) {
-            memObj.startTransaction();
-            try {
-                if (ident.type == Item.AVATAR) {
-                    if ((memObj.avatar != null) && (memObj.avatar.itemId == ident.itemId)) {
-                        // the user is wearing this item: delete
-                        memObj.setAvatar(null);
-                        MsoyServer.memberMan.updateOccupantInfo(memObj);
-                    }
-                    if (memObj.avatarCache.containsKey(ident)) {
-                        memObj.removeFromAvatarCache(ident);
-                    }
-                }
-            } finally {
-                memObj.commitTransaction();
-            }
-        }
-    }
-
-    /**
-     * Update changed items that are already loaded in a user's inventory.
-     */
-    protected void updateUserCache (
-        int ownerId, byte type, int[] ids, ItemUpdateOp op, boolean warnIfMissing)
-    {
-        // currently, only avatars are affected
-        if (type != Item.AVATAR) {
-            return;
-        }
-
-        // PEER TODO: user may be resolved on another world server
-        MemberObject memObj = MsoyServer.lookupMember(ownerId);
-        if (memObj != null) {
-            memObj.startTransaction();
-            try {
-                if (type == Item.AVATAR) {
-                    if (memObj.avatar != null && IntListUtil.contains(ids, memObj.avatar.itemId)) {
-                        op.update(memObj.avatar);
-                        memObj.setAvatar(memObj.avatar);
-                        MsoyServer.memberMan.updateOccupantInfo(memObj);
-                    }
-
-                    // then, check if any of the cached avatars need updating
-                    Avatar[] avs = memObj.avatarCache.toArray(
-                        new Avatar[memObj.avatarCache.size()]);
-                    for (Avatar av : avs) {
-                        if (IntListUtil.contains(ids, av.itemId)) {
-                            op.update(av);
-                            memObj.updateAvatarCache(av);
-                        }
-                    }
-                }
-            } finally {
-                memObj.commitTransaction();
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     protected void registerRepository (byte itemType, ItemRepository repo)
     {
@@ -1225,6 +1092,10 @@ public class ItemManager
 
     /**
      * Called when a mutable item is updated.
+     *
+     * NOTE: this method does not work across peers, however, the only thing implementing
+     * it currently is MsoyGameRegistry, which will take any update and push it to the
+     * peers if it needs to.
      */
     protected void notifyItemUpdated (final ItemRecord record)
     {

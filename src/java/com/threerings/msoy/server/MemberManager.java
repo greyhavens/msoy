@@ -677,19 +677,44 @@ public class MemberManager
             }
 
             public void handleSuccess () {
+                Avatar prev = user.avatar;
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
-                    MsoyServer.itemMan.updateUserCache(avatar);
                 }
                 MsoyServer.itemMan.updateItemUsage(
-                    user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {
+                    user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
                     public void requestFailed (Exception cause) {
                         log.warning("Unable to update usage from an avatar change.");
                     }
                 });
-                user.setAvatar(avatar);
-                user.actorState = null; // clear out their state
-                updateOccupantInfo(user);
+
+                // now we need to make sure that the two avatars have a reasonable touched time
+                user.startTransaction();
+                try {
+                    // unset the current avatar to avoid busy-work in avatarUpdatedOnPeer, but
+                    // we'll set the new avatar at the bottom...
+                    user.avatar = null;
+
+                    // NOTE: we are not updating the used/location fields of the cached avatars,
+                    // I don't think it's necessary, but it'd be a simple matter here...
+                    long now = System.currentTimeMillis();
+                    if (prev != null) {
+                        prev.lastTouched = now;
+                        MsoyServer.itemMan.avatarUpdatedOnPeer(user, prev);
+                    }
+                    if (avatar != null) {
+                        avatar.lastTouched = now + 1; // the new one should be more recently touched
+                        MsoyServer.itemMan.avatarUpdatedOnPeer(user, avatar);
+                    }
+
+                    // now set the new avatar
+                    user.setAvatar(avatar);
+                    user.actorState = null; // clear out their state
+                    updateOccupantInfo(user);
+
+                } finally {
+                    user.commitTransaction();
+                }
                 listener.requestProcessed();
             }
 

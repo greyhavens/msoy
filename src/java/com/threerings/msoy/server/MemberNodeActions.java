@@ -68,6 +68,22 @@ public class MemberNodeActions
         MsoyServer.peerMan.invokeNodeAction(new BootMember(memberId));
     }
 
+    /**
+     * Update a changed avatar.
+     */
+    public static void avatarUpdated (int memberId, int avatarId)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId));
+    }
+
+    /**
+     * Act upon a deleted avatar.
+     */
+    public static void avatarDeleted (int memberId, int avatarId)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new AvatarDeleted(memberId, avatarId));
+    }
+
     protected static class DisplayNameChanged extends MemberNodeAction
     {
         public DisplayNameChanged (MemberName name) {
@@ -159,5 +175,33 @@ public class MemberNodeActions
         protected void execute (MemberObject memobj) {
             MsoyServer.memberMan.bootMember(_memberId);
         }
+    }
+
+    protected static class AvatarDeleted extends MemberNodeAction
+    {
+        public AvatarDeleted (int memberId, int avatarId) {
+            super(memberId);
+            _avatarId = avatarId;
+        }
+
+        protected void execute (MemberObject memobj) {
+            MsoyServer.itemMan.avatarDeletedOnPeer(memobj, _avatarId);
+        }
+
+        protected int _avatarId;
+    }
+
+    protected static class AvatarUpdated extends MemberNodeAction
+    {
+        public AvatarUpdated (int memberId, int avatarId) {
+            super(memberId);
+            _avatarId = avatarId;
+        }
+
+        protected void execute (MemberObject memobj) {
+            MsoyServer.itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
+        }
+
+        protected int _avatarId;
     }
 }
