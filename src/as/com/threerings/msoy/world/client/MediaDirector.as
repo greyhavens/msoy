@@ -41,6 +41,7 @@ public class MediaDirector extends BasicDirector
         if (occInfo is MemberInfo) {
             var isOurs :Boolean = _wctx.getMyName().equals(occInfo.username);
             if (isOurs && _ourAvatar != null) {
+                _ourAvatar.setOccupantInfo(occInfo);
                 return _ourAvatar;
             }
             var sprite :MemberSprite = new MemberSprite(_wctx, occInfo as MemberInfo);
