@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.peer.server;
 
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.peer.client.PeerGameService;
 import com.threerings.msoy.peer.data.PeerGameMarshaller;
 import com.threerings.presents.client.Client;
@@ -43,27 +42,6 @@ public class PeerGameDispatcher extends InvocationDispatcher
             ((PeerGameProvider)provider).gameRecordUpdated(
                 source,
                 ((Integer)args[0]).intValue()
-            );
-            return;
-
-        case PeerGameMarshaller.PEER_LEAVE_AVRGAME:
-            ((PeerGameProvider)provider).peerLeaveAVRGame(
-                source,
-                ((Integer)args[0]).intValue()
-            );
-            return;
-
-        case PeerGameMarshaller.PEER_REPORT_FLOW_AWARD:
-            ((PeerGameProvider)provider).peerReportFlowAward(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
-            );
-            return;
-
-        case PeerGameMarshaller.PEER_UPDATE_PLAYER:
-            ((PeerGameProvider)provider).peerUpdatePlayer(
-                source,
-                ((Integer)args[0]).intValue(), (GameSummary)args[1]
             );
             return;
 

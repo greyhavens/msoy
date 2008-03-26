@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -12,7 +14,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 /**
  * Contains information about a piece of media.
  */
-public class MediaDesc implements Streamable, IsSerializable
+public class MediaDesc implements Serializable, Streamable, IsSerializable
 {
     /** The unsupported MIME types. */
     public static final byte INVALID_MIME_TYPE = -1;

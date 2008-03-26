@@ -214,60 +214,33 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
-    public void leaveAVRGame (ClientObject caller, final int playerId)
+    public void leaveAVRGame (ClientObject caller, int playerId)
     {
         if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
             return;
         }
 
-        MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj != null) {
-            peerLeaveAVRGame(null, playerId);
-        }
-
-        applyToNodes(playerId, new GameServiceOperation() {
-            public void execute (Client client, PeerGameService service) {
-                service.peerLeaveAVRGame(client, playerId);
-            }
-        });
+        MsoyServer.peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
     }
 
     // from interface GameServerProvider
-    public void updatePlayer (ClientObject caller, final int playerId, final GameSummary game)
+    public void updatePlayer (ClientObject caller, int playerId, GameSummary game)
     {
         if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
             return;
         }
 
-        MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj != null) {
-            peerUpdatePlayer(null, playerId, game);
-        }
-
-        applyToNodes(playerId, new GameServiceOperation() {
-            public void execute (Client client, PeerGameService service) {
-                service.peerUpdatePlayer(client, playerId, game);
-            }
-        });
+        MsoyServer.peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
     }
 
     // from interface GameServerProvider
-    public void reportFlowAward (ClientObject caller, final int memberId, final int deltaFlow)
+    public void reportFlowAward (ClientObject caller, int memberId, int deltaCoins)
     {
-        if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaFlow + ")")) {
+        if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaCoins + ")")) {
             return;
         }
 
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
-        if (mobj != null) {
-            peerReportFlowAward(null, memberId, deltaFlow);
-        }
-
-        applyToNodes(memberId, new GameServiceOperation() {
-            public void execute (Client client, PeerGameService service) {
-                service.peerReportFlowAward(client, memberId, deltaFlow);
-            }
-        });
+        MsoyServer.peerMan.invokeNodeAction(new ReportCoinsAwardAction(memberId, deltaCoins));
     }
 
     // from interface GameServerProvider
@@ -285,91 +258,49 @@ public class MsoyGameRegistry
         }
     }
 
-    // from interface PeerGameProvider
-    public void peerUpdatePlayer (ClientObject caller, int playerId, GameSummary game)
+    /**
+     * Called to update that a player is either lobbying for, playing, or no longer playing
+     * the specified game.
+     */
+    public void updatePlayerOnPeer (MemberObject memObj, GameSummary game)
     {
-        if (caller != null && !checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
-            return;
-        }
+        memObj.startTransaction();
+        try {
+            // check to see if we were previously in an AVRG game
+            int avrGameId = (memObj.game != null && memObj.game.avrGame) ? memObj.game.gameId : 0;
 
-        MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj == null) {
-            // TODO: this method gets called with game == null and memobj == null constantly;
-            // TODO: my suspicion is this happens when you log out and the AVRG clears as part
-            // TODO: of your logging out -- but I am turning off logging in the specific case
-            // TODO: of game == null until I can investigate.
-            if (game != null) {
-                log.warning("Player vanished, dropping playerUpdate [caller=" + caller +
-                            ", player=" + playerId + ", game=" + game + "]");
+            // update our game
+            memObj.setGame(game);
+
+            // see if we need to do some extra AVRG bits
+            if (avrGameId != 0 || (game != null && game.avrGame)) {
+                PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memObj.getPlaceOid());
+                RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
+
+                // if we left an AVRG, let the room know
+                if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
+                    rmgr.occupantLeftAVRGame(memObj);
+                }
+
+                // if we're now in a new one, subscribe to it
+                if (game != null && game.avrGame) {
+                    memObj.setAvrGameId(game.gameId);
+
+                    // and immediately let the room manager give us of control, if needed
+                    if (rmgr != null && game.gameId != avrGameId) {
+                        rmgr.occupantEnteredAVRGame(memObj);
+                    }
+                }
             }
-            return;
-        }
-
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-        RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
-        
-        int avrGameId = (memobj.game != null && memobj.game.avrGame) ? memobj.game.gameId : 0;
-        
-        // update our game
-        memobj.setGame(game);
-
-        // if we left an AVRG, let the room know
-        if (avrGameId != 0 && (game == null || game.gameId != avrGameId) && rmgr != null) {
-            rmgr.occupantLeftAVRGame(memobj);
-        }
-
-        // if we're now in a new one, subscribe to it
-        if (game != null && game.avrGame) {
-            memobj.setAvrGameId(game.gameId);
-
-            // and immediately let the room manager give us of control, if needed
-            if (game.gameId != avrGameId && rmgr != null) {
-                rmgr.occupantEnteredAVRGame(memobj);
-            }
+        } finally {
+            memObj.commitTransaction();
         }
 
         // update their occupant info if they're in a scene
-        MsoyServer.memberMan.updateOccupantInfo(memobj);
+        MsoyServer.memberMan.updateOccupantInfo(memObj);
 
         // update their published location in our peer object
-        MsoyServer.peerMan.updateMemberLocation(memobj);
-    }
-
-    // from interface PeerGameProvider
-    public void peerLeaveAVRGame (ClientObject caller, int playerId)
-    {
-        if (!checkCallerAccess(caller, "peerLeaveAVRGame(" + playerId + ")")) {
-            return;
-        }
-
-        MemberObject memobj = MsoyServer.lookupMember(playerId);
-        if (memobj == null) {
-            log.warning("Player vanished, dropping AVRG departure [caller=" + caller +
-                        ", player=" + playerId + "]");
-            return;
-        }
-
-        // clear their AVRG affiliation
-        memobj.setAvrGameId(0);
-
-    }
-
-    // from interface PeerGameProvider
-    public void peerReportFlowAward (ClientObject caller, int playerId, int deltaFlow)
-    {
-        if (!checkCallerAccess(caller, "peerReportFlowAward(" + playerId + ", " + deltaFlow + ")")) {
-            return;
-        }
-
-        MemberObject mobj = MsoyServer.lookupMember(playerId);
-        if (mobj == null) {
-            log.warning("Player vanished, dropping flow award [caller=" + caller +
-                        ", player=" + playerId + ", deltaFlow=" + deltaFlow + "]");
-            return;
-        }
-
-        mobj.setFlow(mobj.flow + deltaFlow);
-        mobj.setAccFlow(mobj.accFlow + deltaFlow);
+        MsoyServer.peerMan.updateMemberLocation(memObj);
     }
 
     // from interface PeerGameProvider
@@ -635,6 +566,50 @@ public class MsoyGameRegistry
 
         protected int _inviterId, _gameId;
         protected String _inviter, _game;
+    }
+
+    /** Handles updating a player's game. */
+    protected static class UpdatePlayerAction extends MemberNodeAction
+    {
+        public UpdatePlayerAction (int memberId, GameSummary game) {
+            super(memberId);
+            _game = game;
+        }
+
+        protected void execute (MemberObject memObj) {
+            MsoyServer.gameReg.updatePlayerOnPeer(memObj, _game);
+        }
+
+        protected GameSummary _game;
+    }
+
+    /** Handles leaving an AVR game. */
+    protected static class LeaveAVRGameAction extends MemberNodeAction
+    {
+        public LeaveAVRGameAction (int memberId) {
+            super(memberId);
+        }
+        
+        protected void execute (MemberObject memObj) {
+            // clear their AVRG affiliation
+            memObj.setAvrGameId(0);
+        }
+    }
+
+    /** Handles updating a player's coin count. */
+    protected static class ReportCoinsAwardAction extends MemberNodeAction
+    {
+        public ReportCoinsAwardAction (int memberId, int deltaCoins) {
+            super(memberId);
+            _deltaCoins = deltaCoins;
+        }
+
+        protected void execute (MemberObject memObj) {
+            memObj.setFlow(memObj.flow + _deltaCoins);
+            memObj.setAccFlow(memObj.accFlow + _deltaCoins);
+        }
+
+        protected int _deltaCoins;
     }
 
     /** Used to load metadata for games. */
