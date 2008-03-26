@@ -9,6 +9,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -563,14 +564,16 @@ public class MsoyGameRegistry
             // make a note of our port
             this.port = port;
 
-            // the rungame script explicitly redirects all output, so we don't need to worry about
-            // this process's input or output streams
-            Runtime.getRuntime().exec(new String[] {
+            // fire up the game server process
+            Process proc = Runtime.getRuntime().exec(new String[] {
                 ServerConfig.serverRoot + "/bin/rungame",
                 String.valueOf(port),
                 // have the game server connect to us on our first port
                 String.valueOf(ServerConfig.serverPorts[0]),
             });
+
+            // copy stdout and stderr to our logs
+            ProcessLogger.copyOutput(log, "rungame", proc);
         }
 
         public void setClientObject (ClientObject clobj) {
