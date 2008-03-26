@@ -520,6 +520,9 @@ public class ItemManager
         });
     }
 
+    /**
+     * Called when an avatar item is updated.
+     */
     public void avatarUpdatedOnPeer (final MemberObject memObj, final int avatarId)
     {
         getItem(new ItemIdent(Item.AVATAR, avatarId), new ResultListener<Item>() {
@@ -534,6 +537,9 @@ public class ItemManager
         });
     }
 
+    /**
+     * Called when an avatar item is updated.
+     */
     public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar)
     {
         memObj.startTransaction();
