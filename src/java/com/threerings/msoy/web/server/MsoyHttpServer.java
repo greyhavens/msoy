@@ -69,7 +69,7 @@ public class MsoyHttpServer extends Server
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
 
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
-        if (Boolean.getBoolean("throttle")) {
+        if (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia")) {
             log.info("NOTE: Serving static media via throttled servlet.");
             context.addServlet(new ServletHolder(new MsoyThrottleServlet()), "/*");
         } else {
@@ -110,17 +110,22 @@ public class MsoyHttpServer extends Server
     {
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
-            HttpServletResponse rsp2 = new HttpServletResponseWrapper(rsp) {
-                @Override
-                public ServletOutputStream getOutputStream () throws IOException {
-                    if (_out == null) {
-                        _out = new ThrottleOutputStream(super.getOutputStream());
+            // if we're only throttling media, see if this is media
+            if (!Boolean.getBoolean("throttle") && req.getRequestURI().startsWith("/media/")) {
+                HttpServletResponse rsp2 = new HttpServletResponseWrapper(rsp) {
+                    @Override
+                    public ServletOutputStream getOutputStream () throws IOException {
+                        if (_out == null) {
+                            _out = new ThrottleOutputStream(super.getOutputStream());
+                        }
+                        return _out;
                     }
-                    return _out;
-                }
-                protected ServletOutputStream _out;
-            };
-            super.doGet(req, rsp2);
+                    protected ServletOutputStream _out;
+                };
+                super.doGet(req, rsp2);
+            } else {
+                super.doGet(req, rsp);
+            }
         }
     }
 
