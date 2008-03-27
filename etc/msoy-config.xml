@@ -236,7 +236,7 @@
    <!-- debug-password: the password to include in debuggable SWFs-->
    <debug-password></debug-password>
    <!-- default-background-color: default background color (may be overridden by the application code)-->
-   <default-background-color>0x222222</default-background-color>
+   <default-background-color>0x000000</default-background-color>
    <!-- default-frame-rate: default frame rate to be used in the SWF.-->
    <default-frame-rate>30</default-frame-rate>
    <!-- default-script-limits: default script execution limits (may be overridden by root attributes)-->

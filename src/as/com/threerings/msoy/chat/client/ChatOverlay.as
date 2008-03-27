@@ -1647,7 +1647,7 @@ public class ChatOverlay
     protected static const GAME_COLOR :uint = 0x777777;
     protected static const NOTIFY_COLOR :uint = 0x008A83;
     protected static const CHANNEL_COLOR :uint = 0x5500AA;
-    protected static const BLACK :uint = 0x222222; // same black as other Whirled UI bits
+    protected static const BLACK :uint = 0x000000; // same black as other Whirled UI bits
     protected static const WHITE :uint = 0xFFFFFF;
 
     /** The font for all chat. */

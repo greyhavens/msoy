@@ -50,7 +50,7 @@ TitleWindow {
 }
 
 .topPanel {
-  backgroundColor: #222222;
+  backgroundColor: #000000;
 }
 
 .entityPopup {
@@ -950,7 +950,7 @@ BasePanel {
 }
 
 .titleBox, .tabsFillerBox {
-  backgroundColor: #222222;
+  backgroundColor: #000000;
 }
 
 .startBox {
@@ -1155,7 +1155,7 @@ BasePanel {
 .chatContainer {
   borderThickness: 0;
   borderStyle: "solid";
-  borderColor: #222222;
+  borderColor: #000000;
 }
 
 .topLevelLabel {
