@@ -35,8 +35,8 @@ public class BackFromAwayDialog extends FloatingPanel
         label.text = "\"" + _msg + "\"";
         addChild(label);
 
+        setButtonWidth(0);
         addButtons(OK_BUTTON);
-        _buttonBar.setStyle("buttonWidth", 100);
     }
 
     override protected function createButton (buttonId :int) :Button

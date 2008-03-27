@@ -35,6 +35,8 @@ public class FloatingPanel extends TitleWindow
     public static const OK_BUTTON :int = 0;
     public static const CANCEL_BUTTON :int = 1;
 
+    public static const DEFAULT_BUTTON_WIDTH :int = 72;
+
     /**
      * Create a Floating Panel.
      */
@@ -115,7 +117,10 @@ public class FloatingPanel extends TitleWindow
         }
 
         if (_buttonBar == null) {
-            _buttonBar = new ButtonBar();
+            // only set to the default width if no width has already been set
+            setButtonWidth(DEFAULT_BUTTON_WIDTH);
+        }
+        if (_buttonBar.parent == null) {
             addChild(_buttonBar);
         }
 
@@ -140,6 +145,21 @@ public class FloatingPanel extends TitleWindow
         // then custom buttons
         for each (var comp :Button in comps) {
             _buttonBar.addChild(comp);
+        }
+    }
+
+    /**
+     * Set the width used by all buttons, or 0 to clear the default width.
+     */
+    public function setButtonWidth (width :int) :void
+    {
+        if (_buttonBar == null) {
+            _buttonBar = new ButtonBar();
+        }
+        if (width > 0) {
+            _buttonBar.setStyle("buttonWidth", width);
+        } else {
+            _buttonBar.clearStyle("buttonWidth");
         }
     }
 

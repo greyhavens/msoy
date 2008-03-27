@@ -194,7 +194,6 @@ PopUpButton {
 }
 
 ButtonBar {
-  buttonWidth: 72;
   horizontalGap: 6;
 }
 
