@@ -19,6 +19,7 @@ public class EmbedDialog extends FloatingPanel
     public function EmbedDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.embed_link_window"));
+        showCloseButton = true;
 
         setStyle("horizontalAlign", "center");
 
@@ -41,6 +42,7 @@ public class EmbedDialog extends FloatingPanel
 
         addButtons(FloatingPanel.OK_BUTTON,
             new CommandButton(Msgs.GENERAL.get("b.copy_to_clipboard"), System.setClipboard, embedCode));
+        _buttonBar.setStyle("buttonWidth", 160);
         open(true);
     }
 }
