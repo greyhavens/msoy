@@ -12,8 +12,6 @@ import mx.containers.TitleWindow;
 import mx.controls.Button;
 import mx.controls.ButtonBar;
 
-import mx.core.UIComponent;
-
 import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
@@ -95,41 +93,54 @@ public class FloatingPanel extends TitleWindow
 
     /**
      * A convenience function to add a button bar containing the specified button ids or 
-     * already instantiated button objects (CommandButtons, probably). You probably
+     * already instantiated Button objects (CommandButtons, probably). You probably
      * want to call this at the bottom of your createChildren() method. Note that this is just for
      * standard buttons in the button bar. You can certainly add your own buttons elsewhere.
      *
      * TODO: consider instead creating a content area and a button area in createChildren() and
      * letting subclasses just populate those.
      */
-    public function addButtons (... buttonIds) :void
+    public function addButtons (... buttonSources) :void
     {
-        buttonIds.sort(Array.NUMERIC);
+        // separate sources into ids an UIComponents
+        var ids :Array = [];
+        var comps :Array = [];
 
-        var butBox :ButtonBar = new ButtonBar();
-        for each (var buttonSource :Object in buttonIds) {
+        for each (var buttonSource :Object in buttonSources) {
             if (buttonSource is int) {
-                var buttonId :int = buttonSource as int;
-                var but :Button = createButton(buttonId);
-                // if not a CommandButton, add our own event handling...
-                if (!(but is CommandButton)) {
-                    addListener(but, buttonId);
-                }
-                butBox.addChild(but);
-
-                // store the button for later retrieval
-                _buttons[buttonId] = but;
-                // if we're showing a standard cancel button, also add the close "X"
-                if (buttonId == CANCEL_BUTTON) {
-                    showCloseButton = true;
-                }
-
+                ids.push(buttonSource);
             } else {
-                butBox.addChild(UIComponent(buttonSource));
+                comps.push(buttonSource);
             }
         }
 
-        addChild(butBox);
+        if (_buttonBar == null) {
+            _buttonBar = new ButtonBar();
+            addChild(_buttonBar);
+        }
+
+        // id buttons first
+        ids.sort(Array.NUMERIC);
+        for each (var buttonId :int in ids) {
+            var but :Button = createButton(buttonId);
+            // if not a CommandButton, add our own event handling...
+            if (!(but is CommandButton)) {
+                addListener(but, buttonId);
+            }
+            _buttonBar.addChild(but);
+
+            // store the button for later retrieval
+            _buttons[buttonId] = but;
+            // if we're showing a standard cancel button, also add the close "X"
+            if (buttonId == CANCEL_BUTTON) {
+                showCloseButton = true;
+            }
+        }
+
+        // then custom buttons
+        for each (var comp :Button in comps) {
+            _buttonBar.addChild(comp);
+        }
     }
 
     /**
@@ -217,6 +228,9 @@ public class FloatingPanel extends TitleWindow
 
     /** Provides client services. */
     protected var _ctx :MsoyContext;
+
+    /** The button bar. */
+    protected var _buttonBar :ButtonBar;
 
     /** An associative hash mapping buttonId to Button. */
     protected var _buttons :Object = new Object();
