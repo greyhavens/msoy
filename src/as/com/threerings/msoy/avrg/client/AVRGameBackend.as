@@ -31,6 +31,7 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.dobj.*;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.Name;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -95,7 +96,7 @@ public class AVRGameBackend extends ControlBackend
 
     public function panelResized () :void
     {
-        callUserCode("panelResized_v1");
+        MethodQueue.callLater(callUserCode, [ "panelResized_v1" ]);
     }
 
     public function tutorialEvent (eventName :String) :void
