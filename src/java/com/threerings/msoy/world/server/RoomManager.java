@@ -467,6 +467,10 @@ public class RoomManager extends SpotSceneManager
         } else if (_roomObj.roomProperties.contains(entry)) {
             if (_roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
                 log.info("Rejecting memory update, store is full [entry=" + entry + "]");
+
+            } else if (entry.value == null) {
+                _roomObj.removeFromRoomProperties(entry.key);
+
             } else {
                 _roomObj.updateRoomProperties(entry);
             }
