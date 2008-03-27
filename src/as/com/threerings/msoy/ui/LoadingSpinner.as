@@ -17,6 +17,9 @@ import flash.utils.ByteArray;
 
 public class LoadingSpinner extends Sprite
 {
+    public static const WIDTH :int = 168;
+    public static const HEIGHT :int = 116;
+
     public function LoadingSpinner ()
     {
         // avoiding using MultiLoader to minimize dependancies

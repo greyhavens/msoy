@@ -18,21 +18,28 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
+import mx.events.ResizeEvent;
+
 import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.ui.LoadingSpinner;
 
-public class LoadingDisplay extends Sprite
+public class PlaceLoadingDisplay extends Sprite
     implements LoadingWatcher
 {
-    public function LoadingDisplay (box :PlaceBox)
+    public function PlaceLoadingDisplay (box :PlaceBox)
     {
         _box = box;
-
-        x = 10;
-        y = 10;
-
+        _box.addEventListener(ResizeEvent.RESIZE, handleBoxResized);
         addChild(_spinner = new LoadingSpinner());
+    }
+
+    protected function handleBoxResized (event :ResizeEvent) :void
+    {
+        if (_spinner.scaleX == 1) {
+            x = (_box.width - LoadingSpinner.WIDTH) / 2;
+            y = (_box.height - LoadingSpinner.HEIGHT) / 2;
+        }
     }
 
     // from interface LoadingWatcher
@@ -46,6 +53,10 @@ public class LoadingDisplay extends Sprite
         if (isPrimaryForPlace) {
             _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
+
+            x = (_box.width - LoadingSpinner.WIDTH) / 2;
+            y = (_box.height - LoadingSpinner.HEIGHT) / 2;
+
             _spinner.setProgress(0, 1);
             _spinner.scaleX = 1;
             _spinner.scaleY = 1;
@@ -53,6 +64,10 @@ public class LoadingDisplay extends Sprite
         } else {
             _secondaryCount++;
             _spinner.setProgress();
+
+            x = 20;
+            y = 20;
+
             _spinner.scaleX = .4;
             _spinner.scaleY = .4;
         }

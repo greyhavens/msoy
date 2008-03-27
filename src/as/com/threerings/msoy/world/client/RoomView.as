@@ -62,7 +62,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
-import com.threerings.msoy.client.LoadingDisplay;
+import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
@@ -522,7 +522,8 @@ public class RoomView extends AbstractRoomView
     {
         // set load-all to false, as we're going to just load the decor item first.
         _loadAllMedia = false;
-        FurniSprite.setLoadingWatcher(new LoadingDisplay(_ctx.getTopPanel().getPlaceContainer()));
+        FurniSprite.setLoadingWatcher(
+            new PlaceLoadingDisplay(_ctx.getTopPanel().getPlaceContainer()));
 
         super.willEnterPlace(plobj);
 

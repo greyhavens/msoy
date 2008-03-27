@@ -13,10 +13,12 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.LoadingDisplay;
+import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
@@ -62,7 +64,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.willEnterPlace(plobj);
 
-        var spinner :LoadingDisplay = new LoadingDisplay(
+        var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
             _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
         spinner.watchLoader(
             Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo, true);
