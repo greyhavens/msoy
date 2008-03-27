@@ -12,6 +12,8 @@ import mx.containers.TitleWindow;
 import mx.controls.Button;
 import mx.controls.ButtonBar;
 
+import mx.core.UIComponent;
+
 import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
@@ -92,7 +94,8 @@ public class FloatingPanel extends TitleWindow
     }
 
     /**
-     * A convenience function to add a button bar containing the specified button ids. You probably
+     * A convenience function to add a button bar containing the specified button ids or 
+     * already instantiated button objects (CommandButtons, probably). You probably
      * want to call this at the bottom of your createChildren() method. Note that this is just for
      * standard buttons in the button bar. You can certainly add your own buttons elsewhere.
      *
@@ -104,20 +107,25 @@ public class FloatingPanel extends TitleWindow
         buttonIds.sort(Array.NUMERIC);
 
         var butBox :ButtonBar = new ButtonBar();
-        for each (var buttonId :int in buttonIds) {
-            var but :Button = createButton(buttonId);
+        for each (var buttonSource :Object in buttonIds) {
+            if (buttonSource is int) {
+                var buttonId :int = buttonSource as int;
+                var but :Button = createButton(buttonId);
+                // if not a CommandButton, add our own event handling...
+                if (!(but is CommandButton)) {
+                    addListener(but, buttonId);
+                }
+                butBox.addChild(but);
 
-            // if not a CommandButton, add our own event handling...
-            if (!(but is CommandButton)) {
-                addListener(but, buttonId);
-            }
-            butBox.addChild(but);
+                // store the button for later retrieval
+                _buttons[buttonId] = but;
+                // if we're showing a standard cancel button, also add the close "X"
+                if (buttonId == CANCEL_BUTTON) {
+                    showCloseButton = true;
+                }
 
-            // store the button for later retrieval
-            _buttons[buttonId] = but;
-            // if we're showing a standard cancel button, also add the close "X"
-            if (buttonId == CANCEL_BUTTON) {
-                showCloseButton = true;
+            } else {
+                butBox.addChild(UIComponent(buttonSource));
             }
         }
 
