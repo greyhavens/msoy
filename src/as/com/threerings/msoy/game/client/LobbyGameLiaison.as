@@ -140,12 +140,16 @@ public class LobbyGameLiaison extends GameLiaison
 
     /**
      * Shuts down any active lobby and enters the specified game.
+     *
+     * @return true if we initiated the entry request, false if we could not.
      */
-    public function enterGame (gameOid :int) :void
+    public function enterGame (gameOid :int) :Boolean
     {
         // note our game oid and enter the game location
         _gameOid = gameOid;
-        _gctx.getLocationDirector().moveTo(gameOid);
+        if (!_gctx.getLocationDirector().moveTo(gameOid)) {
+            return false;
+        }
 
         // shut our lobby down now that we're entering the game
         if (_lobby != null) {
@@ -154,6 +158,11 @@ public class LobbyGameLiaison extends GameLiaison
 
         // make a note what game we're playing, for posterity
         _wctx.getGameDirector().setMostRecentLobbyGame(_gameId);
+
+        // also leave our current world location
+        _wctx.getLocationDirector().leavePlace();
+
+        return true;
     }
 
     /**

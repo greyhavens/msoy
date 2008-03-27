@@ -92,8 +92,6 @@ public class LiaisonGameContext
     // from CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
-        // leave our current scene as we're about to display the game
-        _wctx.getLocationDirector().leavePlace();
         _wctx.setPlaceView(view);
     }
 
