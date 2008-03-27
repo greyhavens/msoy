@@ -8,7 +8,9 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Decor;
@@ -19,6 +21,7 @@ import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.world.data.PetInfo;
+import com.threerings.msoy.world.data.RoomObject;
 
 /**
  * Handles the loading of various media.
@@ -31,6 +34,8 @@ public class MediaDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+
+        ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, locationDidChange));
     }
 
     /**
@@ -104,6 +109,22 @@ public class MediaDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
+        shutdownOurAvatar();
+    }
+
+    /**
+     * This method is adapted as a LocationObserver method.
+     */
+    protected function locationDidChange (place :PlaceObject) :void
+    {
+        // if we've moved to a non-room, kill our avatar
+        if (!(place is RoomObject)) {
+            shutdownOurAvatar();
+        }
+    }
+
+    protected function shutdownOurAvatar () :void
+    {
         // release our hold on our avatar
         if (_ourAvatar != null) {
             _ourAvatar.shutdown();
