@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -16,6 +17,8 @@ import flash.events.SecurityErrorEvent;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+
+import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.client.PlaceBox;
 
@@ -29,10 +32,7 @@ public class LoadingDisplay extends Sprite
         x = 10;
         y = 10;
 
-        _spinner = DisplayObject(new SPINNER());
-        _spinner.scaleX = .25;
-        _spinner.scaleY = .25;
-        addChild(_spinner);
+        MultiLoader.getContents(SPINNER, gotSpinner);
     }
 
     // from interface LoadingWatcher
@@ -47,12 +47,12 @@ public class LoadingDisplay extends Sprite
             _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
             setProgress(0, 1);
-            _spinner.scaleX = 1;
-            _spinner.scaleY = 1;
 
         } else {
             _secondaryCount++;
         }
+
+        updateSpinner();
 
         // make sure we're showing
         if (parent == null) {
@@ -69,15 +69,13 @@ public class LoadingDisplay extends Sprite
 
         if (info == _primary) {
             info.removeEventListener(ProgressEvent.PROGRESS, handleProgress);
-            removeChild(_progress);
-            _progress = null;
             _primary = null;
-            _spinner.scaleX = .25;
-            _spinner.scaleY = .25;
 
         } else {
             _secondaryCount--;
         }
+
+        updateSpinner();
 
         if (_primary == null && _secondaryCount == 0 && (parent != null)) {
             _box.removeOverlay(this);
@@ -101,23 +99,33 @@ public class LoadingDisplay extends Sprite
 
     protected function setProgress (partial :Number, total :Number) :void
     {
-        if (_progress == null) {
-            var tf :TextFormat = new TextFormat();
-            tf.size = 32;
-            tf.font = "_sans";
-            tf.color = 0xFFFFFF;
-            tf.align = TextFormatAlign.CENTER;
+        _progress = Math.round((partial * 100) / total);
+        updateSpinner();
+    }
 
-            _progress = new TextField();
-            _progress.defaultTextFormat = tf;
-            _progress.width = 110;
-            _progress.height = 50;
-            _progress.y = 110;
-            addChild(_progress);
+    protected function gotSpinner (clip :MovieClip) :void
+    {
+        _spinner = clip;
+        addChild(_spinner);
+        updateSpinner();
+    }
+
+    protected function updateSpinner () :void
+    {
+        if (_spinner == null) {
+            return;
         }
 
-        var perc :String = Math.round((partial * 100) / total) + "%";
-        _progress.text = perc;
+        if (_primary != null) {
+            _spinner.gotoAndStop(Math.max(1, _progress));
+            _spinner.scaleX = 1;
+            _spinner.scaleY = 1;
+
+        } else {
+            _spinner.gotoAndStop(100);
+            _spinner.scaleX = .4;
+            _spinner.scaleY = .4;
+        }
     }
 
     protected var _box :PlaceBox;
@@ -126,11 +134,11 @@ public class LoadingDisplay extends Sprite
 
     protected var _secondaryCount :int;
 
-    protected var _spinner :DisplayObject;
+    protected var _spinner :MovieClip;
 
-    protected var _progress :TextField;
+    protected var _progress :int;
 
-    [Embed(source="../../../../../../rsrc/media/loading.swf")]
+    [Embed(source="../../../../../../rsrc/media/loading.swf", mimeType="application/octet-stream")]
     protected static const SPINNER :Class;
 }
 }
