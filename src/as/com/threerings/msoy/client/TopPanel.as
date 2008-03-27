@@ -237,7 +237,7 @@ public class TopPanel extends Canvas
         bounds.y = HeaderBar.HEIGHT;
         bounds.width = stage.stageWidth - getRightPanelWidth();
         if (_chat != null) {
-            bounds.width -= _chatBounds.width - SLIDE_CHAT_OVERLAP;
+            bounds.width -= _chatBounds.width + CHAT_PADDING;
         }
         bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
         if (padVertical(_placeBox.getPlaceView())) {
