@@ -481,7 +481,7 @@ public class TopPanel extends Canvas
             _placeBox.clearStyle("bottom");
             _placeBox.clearStyle("left");
             _placeBox.clearStyle("right");
-            _placeBox.wasResized(stage.stageWidth, stage.stageHeight);
+            _placeBox.setActualSize(stage.stageWidth, stage.stageHeight);
             return;
         }
 
@@ -515,7 +515,7 @@ public class TopPanel extends Canvas
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("left", left);
         _placeBox.setStyle("right", getRightPanelWidth());
-        _placeBox.wasResized(w, h);
+        _placeBox.setActualSize(w, h);
     }
 
     protected function padVertical (view :PlaceView) :Boolean

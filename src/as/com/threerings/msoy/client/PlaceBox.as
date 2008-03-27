@@ -106,8 +106,10 @@ public class PlaceBox extends LayeredContainer
      * This must be called on when our size is changed to allow us update our PlaceView mask and
      * resize the PlaceView itself.
      */
-    public function wasResized (width :int, height :int) :void
+    override public function setActualSize (width :Number, height :Number) :void
     {
+        super.setActualSize(width, height);
+
         _mask.graphics.clear();
         _mask.graphics.beginFill(0xFFFFFF);
         _mask.graphics.drawRect(0, 0, width, height);
