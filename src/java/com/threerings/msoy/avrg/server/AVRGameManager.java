@@ -244,17 +244,8 @@ public class AVRGameManager
                                final ConfirmListener listener)
         throws InvocationException
     {
-        if (payoutLevel < 0 || payoutLevel > 1) {
-            throw new IllegalArgumentException(
-                "Payout level must lie in [0, 1] [payoutLevel=" + payoutLevel + "]");
-        }
         final PlayerObject player = (PlayerObject) caller;
-
         final QuestState oldState = player.questState.get(questId);
-//        if (oldState == null) {
-//            throw new IllegalArgumentException(
-//                "Member not subscribed to completed quest [questId=" + questId + "]");
-//        }
 
         final GameDetailRecord detail = _content.detail;
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
@@ -269,6 +260,11 @@ public class AVRGameManager
             playedMinutes = 0;
             
         } else {
+            if (payoutLevel < 0 || payoutLevel > 1) {
+                throw new IllegalArgumentException(
+                    "Payout level must lie in [0, 1] [payoutLevel=" + payoutLevel + "]");
+            }
+
             if (detail.payoutFactor == 0) {
                 // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
                 oldPayoutFactor = Math.round(flowPerHour * (5 / 3600f));
@@ -337,19 +333,18 @@ public class AVRGameManager
                     MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), _payout);
 
                     // report to the game that this player earned some flow
-                    DObject user = MsoyGameServer.omgr.getObject(player.getOid());
-                    if (user != null) {
-                        user.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, _payout, -1);
-                    }
+                    player.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, _payout, -1);
                 }
 
-                // note this completion in our runtime data structure
-                detail.singlePlayerGames ++;
+                if (detail != null) {
+                    // note this completion in our runtime data structure
+                    detail.singlePlayerGames ++;
                 
-                // if we updated the payout factor in the db, do it in dobj land too
-                if (recalcMinutes > 0) {
-                    detail.payoutFactor = _payoutFactor;
-                    detail.lastPayoutRecalc = playedMinutes;
+                    // if we updated the payout factor in the db, do it in dobj land too
+                    if (recalcMinutes > 0) {
+                        detail.payoutFactor = _payoutFactor;
+                        detail.lastPayoutRecalc = playedMinutes;
+                    }
                 }
                 listener.requestProcessed();
             }
