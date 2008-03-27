@@ -18,9 +18,9 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
-import com.threerings.util.MultiLoader;
-
 import com.threerings.msoy.client.PlaceBox;
+
+import com.threerings.msoy.ui.LoadingSpinner;
 
 public class LoadingDisplay extends Sprite
     implements LoadingWatcher
@@ -32,7 +32,7 @@ public class LoadingDisplay extends Sprite
         x = 10;
         y = 10;
 
-        MultiLoader.getContents(SPINNER, gotSpinner);
+        addChild(_spinner = new LoadingSpinner());
     }
 
     // from interface LoadingWatcher
@@ -46,13 +46,16 @@ public class LoadingDisplay extends Sprite
         if (isPrimaryForPlace) {
             _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
-            setProgress(0, 1);
+            _spinner.setProgress(0, 1);
+            _spinner.scaleX = 1;
+            _spinner.scaleY = 1;
 
         } else {
             _secondaryCount++;
+            _spinner.setProgress();
+            _spinner.scaleX = .4;
+            _spinner.scaleY = .4;
         }
-
-        updateSpinner();
 
         // make sure we're showing
         if (parent == null) {
@@ -75,8 +78,6 @@ public class LoadingDisplay extends Sprite
             _secondaryCount--;
         }
 
-        updateSpinner();
-
         if (_primary == null && _secondaryCount == 0 && (parent != null)) {
             _box.removeOverlay(this);
         }
@@ -94,38 +95,7 @@ public class LoadingDisplay extends Sprite
 
     protected function handleProgress (event :ProgressEvent) :void
     {
-        setProgress(event.bytesLoaded, event.bytesTotal);
-    }
-
-    protected function setProgress (partial :Number, total :Number) :void
-    {
-        _progress = Math.round((partial * 100) / total);
-        updateSpinner();
-    }
-
-    protected function gotSpinner (clip :MovieClip) :void
-    {
-        _spinner = clip;
-        addChild(_spinner);
-        updateSpinner();
-    }
-
-    protected function updateSpinner () :void
-    {
-        if (_spinner == null) {
-            return;
-        }
-
-        if (_primary != null) {
-            _spinner.gotoAndStop(Math.max(1, _progress));
-            _spinner.scaleX = 1;
-            _spinner.scaleY = 1;
-
-        } else {
-            _spinner.gotoAndStop(100);
-            _spinner.scaleX = .4;
-            _spinner.scaleY = .4;
-        }
+        _spinner.setProgress(event.bytesLoaded, event.bytesTotal);
     }
 
     protected var _box :PlaceBox;
@@ -134,11 +104,6 @@ public class LoadingDisplay extends Sprite
 
     protected var _secondaryCount :int;
 
-    protected var _spinner :MovieClip;
-
-    protected var _progress :int;
-
-    [Embed(source="../../../../../../rsrc/media/loading.swf", mimeType="application/octet-stream")]
-    protected static const SPINNER :Class;
+    protected var _spinner :LoadingSpinner;
 }
 }
