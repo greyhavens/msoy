@@ -3,8 +3,12 @@
 
 package com.threerings.msoy.client {
 
+import flash.system.System;
+
 import mx.controls.TextArea;
 import mx.controls.Text;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -18,6 +22,10 @@ public class EmbedDialog extends FloatingPanel
 
         setStyle("horizontalAlign", "center");
 
+        var url :String = ctx.getTopPanel().root.loaderInfo.loaderURL;
+        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
+        var embedCode :String = Msgs.GENERAL.get("m.embed", ctx.getMsoyController().getSceneIdString(), url);
+
         var instruction :Text = new Text();
         instruction.width = 300;
         instruction.text = Msgs.GENERAL.get("l.embed_instruction");
@@ -28,12 +36,11 @@ public class EmbedDialog extends FloatingPanel
         html.minHeight = 100;
         html.width = 300;
         html.editable = false;
-        var url :String = ctx.getTopPanel().root.loaderInfo.loaderURL;
-        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
-        html.text = Msgs.GENERAL.get("m.embed", ctx.getMsoyController().getSceneIdString(), url);
+        html.text = embedCode;
         addChild(html);
-        addButtons(FloatingPanel.OK_BUTTON);
 
+        addButtons(FloatingPanel.OK_BUTTON,
+            new CommandButton(Msgs.GENERAL.get("b.copy_to_clipboard"), System.setClipboard, embedCode));
         open(true);
     }
 }
