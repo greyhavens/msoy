@@ -46,7 +46,6 @@ public class PlaceLoadingDisplay extends Sprite
     public function watchLoader (info :LoaderInfo, isPrimaryForPlace :Boolean = false) :void
     {
         info.addEventListener(Event.COMPLETE, handleComplete);
-        info.addEventListener(Event.UNLOAD, handleComplete);
         info.addEventListener(IOErrorEvent.IO_ERROR, handleError);
         info.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
@@ -81,7 +80,6 @@ public class PlaceLoadingDisplay extends Sprite
     protected function unwatchLoader (info :LoaderInfo) :void
     {
         info.removeEventListener(Event.COMPLETE, handleComplete);
-        info.removeEventListener(Event.UNLOAD, handleComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, handleError);
         info.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
