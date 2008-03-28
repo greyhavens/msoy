@@ -44,7 +44,6 @@ public class EditIssuePanel extends TableFooterPanel
     public EditIssuePanel (IssuePanel ipanel)
     {
         _ipanel = ipanel;
-
         buildPanel();
     }
 
@@ -53,10 +52,17 @@ public class EditIssuePanel extends TableFooterPanel
         _tpanel = tpanel;
         _message = message;
         buildPanel();
+
+        createIssue();
+        addMessage(message);
+    }
+
+    public void createIssue ()
+    {
+        _newIssue = true;
         _issue = new Issue();
         _issue.creator = new MemberName(CMsgs.creds.permaName, CMsgs.creds.getMemberId());
         fillEditPanel();
-        addMessage(message);
     }
 
     public void setIssue (Issue issue)
@@ -215,10 +221,10 @@ public class EditIssuePanel extends TableFooterPanel
                     _ipanel.redisplayIssues();
                 }
             }));
-            Button update = new Button(CMsgs.mmsgs.update());
+            Button update = new Button(_newIssue ? CMsgs.mmsgs.create() : CMsgs.mmsgs.update());
             new ClickCallback(update) {
                 public boolean callService () {
-                    return commitEdit(false, this);
+                    return commitEdit(_newIssue, this);
                 }
                 public boolean gotResult (Object result) {
                     _ipanel.redisplayIssues();
@@ -290,7 +296,8 @@ public class EditIssuePanel extends TableFooterPanel
         }
 
         if (create) {
-            CMsgs.issuesvc.createIssue(CMsgs.ident, _issue, _message.messageId, callback);
+            CMsgs.issuesvc.createIssue(
+                    CMsgs.ident, _issue, (_message == null ? 0 : _message.messageId), callback);
         } else {
             CMsgs.issuesvc.updateIssue(CMsgs.ident, _issue, callback);
         }
@@ -302,6 +309,7 @@ public class EditIssuePanel extends TableFooterPanel
     protected ThreadPanel _tpanel;
     protected ForumMessage _message;
     protected int _messageId, _page;
+    protected boolean _newIssue;
 
     protected SmartTable _table;
     protected ListBox _typeBox;

@@ -143,7 +143,9 @@ public class IssueServlet extends MsoyServiceServlet
             rissue.creator = issue.creator;
             rissue.owner = issue.owner;
 
-            MsoyServer.forumRepo.updateMessageIssue(messageId, rissue.issueId);
+            if (messageId > 0) {
+                MsoyServer.forumRepo.updateMessageIssue(messageId, rissue.issueId);
+            }
             return rissue;
 
         } catch (PersistenceException pe) {

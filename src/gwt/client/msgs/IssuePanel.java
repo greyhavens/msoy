@@ -97,6 +97,15 @@ public class IssuePanel extends TitledListPanel
         }
     }
 
+    public void createIssue ()
+    {
+        if (_ipanel == null) {
+            _ipanel = new EditIssuePanel(this);
+        }
+        _ipanel.createIssue();
+        setContents(CMsgs.mmsgs.newIssue(), _ipanel, true);
+    }
+
     protected FlexTable createHeader (String title, boolean states)
     {
         FlexTable header = new FlexTable();
