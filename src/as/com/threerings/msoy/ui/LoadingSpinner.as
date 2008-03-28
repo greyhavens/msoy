@@ -54,7 +54,10 @@ public class LoadingSpinner extends Sprite
         }
 
         if (!isNaN(_progress)) {
-            _spinner.gotoAndStop(1 + _progress);
+            var frame :int = 1 + _progress;
+            if (_spinner.currentFrame != frame) {
+                _spinner.gotoAndStop(frame);
+            }
 
         } else if (_spinner.currentFrame < 102) {
             _spinner.gotoAndPlay(102);
