@@ -63,11 +63,11 @@ public class TablePanel extends VBox
         }
         _seatsGrid.setStyle("horizontalGap", 10 * Math.max(1, 8-table.players.length));
 
-        // create a box to hold configuration options
-        _labelsBox = new HBox();
-        _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        addChild(_labelsBox);
+        // create a place to hold configuration info
+        _info = new Text();
+        _info.styleName = "tableStatusLabel";
+        _info.percentWidth = 100;
+        addChild(_info);
 
         // if we are the creator, add a button for starting the game now
         if (table.players.length > 0 &&
@@ -93,22 +93,8 @@ public class TablePanel extends VBox
             (_seatsGrid.getCellAt(ii) as SeatPanel).update(_gctx, table, ii, isSeated);
         }
 
-        // update our configuration labels if we have them
-        if (_labelsBox == null) {
-            return;
-        }
-        while (_labelsBox.numChildren > 0) {
-            _labelsBox.removeChild(_labelsBox.getChildAt(0));
-        }
-
         // if the game is in progress
         if (table.gameOid != -1) {
-            // display the non-players in the room (or everyone for party games)
-            if (table.watchers.length > 0) {
-                _labelsBox.addChild(
-                    makeConfigLabel(Msgs.GAME.get("l.people") + ": " + table.watchers.join(), ""));
-            }
-
             // maybe add a button for entering the game if we haven't already
             if (_seatsGrid.cellCount == 0 ||
                 (_seatsGrid.getCellAt(_seatsGrid.cellCount-1) is SeatPanel)) {
@@ -136,35 +122,33 @@ public class TablePanel extends VBox
             }
         }
 
-        var ratedKey :String = table.config.rated ? "l.is_rated" : "l.not_rated";
-        _labelsBox.addChild(makeConfigLabel(Msgs.GAME.get(ratedKey), Msgs.GAME.get("t.rated")));
+        // display whether this game is rated
+        var info :String = Msgs.GAME.get(table.config.rated ? "l.is_rated" : "l.not_rated");
 
+        // display the non-players in the room (or everyone for party games)
+        if (table.watchers != null && table.watchers.length > 0) {
+            info = info + ", " + Msgs.GAME.get("l.people") + ": asdf, asdf asdf,as df,asdf a,sdf,asdfasdf asd,fa sdf,asdf asd,fas,dfas dfas,dfa,sdfasdfasdf,a sdf,asd ,fasd,fasdfasd,fasd,f asd,fasd,fasdasdfasdf, " + table.watchers.join();
+        }
+
+        // and display any custom table configuration
         if (table.config is WhirledGameConfig) {
             var gconfig :WhirledGameConfig = (table.config as WhirledGameConfig);
             var params :Array = gconfig.getGameDefinition().params;
             if (params != null) {
                 for each (var param :Parameter in params) {
-                    var name :String = StringUtil.isBlank(param.name) ?
-                             param.ident : param.name;
+                    var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
                     var value :String = String(gconfig.params.get(param.ident));
-                    _labelsBox.addChild(makeConfigLabel(name + ": "+ value, param.tip));
+                    info = info + ", " + name + ": "+ value;
                 }
             }
         }
-    }
 
-    protected function makeConfigLabel (text :String, tip :String) :UIComponent
-    {
-        var label :Label = MsoyUI.createLabel(text, "tableStatusLabel");
-        if (tip != "") {
-            label.toolTip = tip;
-        }
-        return label;
+        _info.text = info;
     }
 
     protected var _gctx :GameContext;
     protected var _watcherCount :int;
-    protected var _labelsBox :HBox;
+    protected var _info :Text;
     protected var _seatsGrid :SimpleGrid;
     protected var _startBtn :CommandButton;
 
