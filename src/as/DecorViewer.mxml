@@ -7,6 +7,7 @@
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     width="600" height="400" frameRate="1000"
+    preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="addChild(new DecorViewerComp());">
 <!-- Note: viewer width and height are also duplicated in
      FlashClients.createDecorViewer(), for GWT embedding. -->   

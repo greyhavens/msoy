@@ -3,6 +3,7 @@
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     width="100%" height="100%"
+    preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="addChild(new RemixControls(this));">
 <mx:Style source="msoy.css"/>
 <mx:Style>
