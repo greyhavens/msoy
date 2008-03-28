@@ -18,7 +18,6 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
@@ -182,6 +181,13 @@ public class AVRGameManager
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
+        if (questId == null) {
+            log.warning(
+                "Received startQuest() request with questId == null [gameId=" + _gameId +
+                _gameId + ", player=" + player.who() + "]");
+            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            return;
+        }
 
         if (player.questState.containsKey(questId)) {
             // silently ignore
@@ -189,7 +195,6 @@ public class AVRGameManager
         }
 
         final int sceneId = ScenePlace.getSceneId(player);
-
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
             public void invokePersist () throws PersistenceException {
                 _repo.setQuestState(
@@ -396,6 +401,12 @@ public class AVRGameManager
                              ConfirmListener listener)
         throws InvocationException
     {
+        if (key == null) {
+            log.warning("Can't set property of key null [who=" + caller.who() + "]");
+            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            return;
+        }
+
         GameState entry = new GameState(key, value, persistent);
 
         // TODO: verify that the memory does not exceed legal size
@@ -422,6 +433,11 @@ public class AVRGameManager
         throws InvocationException
     {
         PlayerObject player = (PlayerObject) caller;
+        if (key == null) {
+            log.warning("Can't set player property of key null [who=" + player.who() + "]");
+            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            return;
+        }
 
         GameState entry = new GameState(key, value, persistent);
 
