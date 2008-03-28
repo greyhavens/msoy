@@ -261,7 +261,7 @@ public class EditIssuePanel extends TableFooterPanel
     protected void addMessage (ForumMessage message)
     {
         _table.getFlexCellFormatter().setColSpan(_messagesRow, 0, 2);
-        _table.setWidget(_messagesRow++, 0, new SimpleMessagePanel(message));
+        _table.setWidget(_messagesRow++, 0, new IssueMessagePanel(message));
     }
 
     protected boolean commitEdit (boolean create, ClickCallback callback)
