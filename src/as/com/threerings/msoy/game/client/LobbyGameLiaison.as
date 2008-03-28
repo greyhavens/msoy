@@ -44,6 +44,11 @@ public class LobbyGameLiaison extends GameLiaison
         // listen for our game to be ready so that we can display it
         _gctx.getParlorDirector().addGameReadyObserver(this);
 
+        // listen for game location changes; we don't need to clear this observer because the
+        // location directory goes away when we do
+        _gctx.getLocationDirector().addLocationObserver(
+            new LocationAdapter(null, gameLocationDidChange, null));
+
         // listen for changes in world location so that we can shutdown if we move
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
@@ -160,7 +165,10 @@ public class LobbyGameLiaison extends GameLiaison
         _wctx.getGameDirector().setMostRecentLobbyGame(_gameId);
 
         // also leave our current world location
-        _wctx.getLocationDirector().leavePlace();
+        if (!_wctx.getLocationDirector().leavePlace()) {
+            log.warning("Uh oh, unable to leave room before entering game " +
+                        "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
+        }
 
         return true;
     }
@@ -232,6 +240,12 @@ public class LobbyGameLiaison extends GameLiaison
             shutdown();
         }, gotLobbyOid);
         lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
+    }
+
+    protected function gameLocationDidChange (place :PlaceObject) :void
+    {
+        // tell the world controller to update the location display
+        _wctx.getWorldController().updateLocationDisplay();
     }
 
     protected function worldLocationDidChange (place :PlaceObject) :void

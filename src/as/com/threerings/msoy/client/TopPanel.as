@@ -160,6 +160,9 @@ public class TopPanel extends Canvas
         if (_controlBar != null) {
             _controlBar.locationDidChange(place);
         }
+        if (place == null) {
+            clearPlaceView(null);
+        }
     }
 
     // from LocationObserver

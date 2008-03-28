@@ -124,7 +124,7 @@ public class MsoyController extends Controller
 
         // listen for location changes
         _mctx.getLocationDirector().addLocationObserver(
-            new LocationAdapter(null, this.locationChanged, null));
+            new LocationAdapter(null, this.locationDidChange, null));
     }
 
     /**
@@ -292,6 +292,16 @@ public class MsoyController extends Controller
         }
     }
 
+    /**
+     * Updates our header and control bars based on our current location. This is called
+     * automatically when the world location changes but must be called explicitly by the game
+     * services when we enter a game as the world services don't know about that.
+     */
+    public function updateLocationDisplay () :void
+    {
+        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
@@ -444,10 +454,10 @@ public class MsoyController extends Controller
     /**
      * Called when our location changes.
      */
-    protected function locationChanged (place :PlaceObject) :void
+    protected function locationDidChange (place :PlaceObject) :void
     {
         if (!_mctx.getMsoyClient().isFeaturedPlaceView()) {
-            updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+            updateLocationDisplay();
         }
     }
 
