@@ -55,7 +55,7 @@ public class QuestControlBackend
     protected function offerQuest_v1 (questId :String, intro :String, initialStatus :String)
         :Boolean
     {
-        if (!_backend.isPlaying() || isOnQuest(questId)) {
+        if (!questId || !_backend.isPlaying() || isOnQuest(questId)) {
             return false;
         }
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
@@ -86,7 +86,7 @@ public class QuestControlBackend
 
     protected function updateQuest_v1 (questId :String, step :int, status :String) :Boolean
     {
-        if (!isOnQuest(questId)) {
+        if (!questId || !isOnQuest(questId)) {
             return false;
         }
         _gameObj.avrgService.updateQuest(
@@ -99,7 +99,7 @@ public class QuestControlBackend
 
     protected function completeQuest_v1 (questId :String, outro :String, payout :Number) :Boolean
     {
-        if (!_backend.isPlaying()) {
+        if (!questId || !_backend.isPlaying()) {
             return false;
         }
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
@@ -127,7 +127,7 @@ public class QuestControlBackend
 
     protected function cancelQuest_v1 (questId :String) :Boolean
     {
-        if (!_backend.isPlaying() || !isOnQuest(questId)) {
+        if (!questId || !_backend.isPlaying() || !isOnQuest(questId)) {
             return false;
         }
         // TODO: confirmation dialog

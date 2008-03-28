@@ -67,6 +67,9 @@ public class StateControlBackend
 
     protected function getProperty_v1 (key :String) :Object
     {
+        if (key == null) {
+            return null;
+        }
         var entry :GameState = GameState(_gameObj.state.get(key));
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
@@ -74,6 +77,10 @@ public class StateControlBackend
     protected function setProperty_v1 (
         key :String, value: Object, persistent :Boolean) :Boolean
     {
+        if (key == null) {
+            return false;
+        }
+
         var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deleteProperty(_gctx.getClient(), key,
@@ -108,7 +115,7 @@ public class StateControlBackend
     protected function getRoomProperty_v1 (key :String) :Object
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
+        if (key != null && view != null) {
             var roomObj :RoomObject = view.getRoomObject();
             var entry :RoomPropertyEntry = roomObj.roomProperties.get(key) as RoomPropertyEntry;
             if (entry != null) {
@@ -121,7 +128,7 @@ public class StateControlBackend
     protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
+        if (key != null && view != null) {
             return view.getRoomController().setRoomProperty(key, value);
         }
         return false;
@@ -129,6 +136,9 @@ public class StateControlBackend
    
     protected function getPlayerProperty_v1 (key :String) :Object
     {
+        if (key == null) {
+            return null;
+        }
         var entry :GameState = GameState(_playerObj.gameState.get(key));
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
@@ -136,6 +146,10 @@ public class StateControlBackend
     protected function setPlayerProperty_v1 (
         key :String, value: Object, persistent :Boolean) :Boolean
     {
+        if (key == null) {
+            return false;
+        }
+
         var wgsvc :AVRGameService = _gameObj.avrgService;
         if (value == null) {
             wgsvc.deletePlayerProperty(_gctx.getClient(), key,
@@ -151,6 +165,9 @@ public class StateControlBackend
 
     protected function sendMessage_v1 (key :String, value :Object, playerId :int) :Boolean
     {
+        if (key == null) {
+            return false;
+        }
         _gameObj.avrgService.sendMessage(_gctx.getClient(), key,
                                          ObjectMarshaller.validateAndEncode(value),
                                          playerId, loggingInvocationListener("sendMessage"));
