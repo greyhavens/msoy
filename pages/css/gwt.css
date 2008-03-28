@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles shared by all GWT stuff.
@@ -8,7 +8,7 @@ body {
   background: #000000;
 }
 
-img, embed, applet, object { 
+img, embed, applet, object {
   display: block; /* no descender padding thanks */
 }
 
@@ -33,14 +33,14 @@ img, embed, applet, object {
   background: #6699CC;
 }
 
-.gwt-TabPanelBottom { 
+.gwt-TabPanelBottom {
   padding: 5px;
 }
 
 /* MenuBar styles */
 .gwt-MenuBar {
   background-color: white;
-  border: 1px solid black; 
+  border: 1px solid black;
   cursor: default;
   font-size: 14px;
 }
@@ -234,7 +234,7 @@ img, embed, applet, object {
   height: 50px;
 }
 
-.frameHeader .Logo .gwt-Image { 
+.frameHeader .Logo .gwt-Image {
   width: 126px;
 }
 
@@ -375,7 +375,7 @@ img, embed, applet, object {
   color: #FFFFFF;
 }
 
-.pageDialog .Close { 
+.pageDialog .Close {
   background: #3F8EBA;
 }
 
@@ -773,23 +773,23 @@ img, embed, applet, object {
 /** General UI styles. */
 .inline {
   display: inline;
-}   
+}
 
 .inlineL {
   display: inline;
   margin-left: 5px;
-}   
+}
 
 .inlineR {
   display: inline;
   margin-right: 5px;
-}   
+}
 
 .inlineLR {
   display: inline;
   margin-left: 5px;
   margin-right: 5px;
-}   
+}
 
 .actionLabel {
   cursor: pointer;
@@ -1066,4 +1066,23 @@ img, embed, applet, object {
 
 .memberStatus {
   font-size: 14px;
+}
+
+.flashLink {
+  color: white;
+  background-color: black;
+}
+
+.flashLink a {
+  color: white;
+  border: 0;
+}
+
+.flashLink a:visited {
+  color: white;
+  border: 0;
+}
+
+.flashLink img {
+  border: 0;
 }

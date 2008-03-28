@@ -25,16 +25,29 @@ import client.shell.Frame;
  */
 public class FlashClients
 {
+    /** Our required minimum flash client version. */
+    public static final int[] MIN_FLASH_VERSION = {9, 0, 115, 0};
+
+    /**
+     * Configure the WidgetUtil to use the appropriate flash player version.
+     */
+    static {
+        WidgetUtil.FLASH_VERSION =  "" + MIN_FLASH_VERSION[0] + "," + MIN_FLASH_VERSION[1] +
+                                    "," + MIN_FLASH_VERSION[2] + "," + MIN_FLASH_VERSION[3];
+    }
+
     /**
      * Creates a world client, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.
      */
     public static void embedWorldClient (Panel container, String flashVars)
     {
-        WidgetUtil.embedFlashObject(
-            container, WidgetUtil.createFlashObjectDefinition(
-                "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+        if (shouldShowFlash(container, 0, 0)) {
+            WidgetUtil.embedFlashObject(
+                container, WidgetUtil.createFlashObjectDefinition(
+                    "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+                    "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+        }
     }
 
     /**
@@ -43,10 +56,12 @@ public class FlashClients
      */
     public static void embedGameClient (Panel container, String flashVars)
     {
-        WidgetUtil.embedFlashObject(
-            container, WidgetUtil.createFlashObjectDefinition(
-                "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+        if (shouldShowFlash(container, 0, 0)) {
+            WidgetUtil.embedFlashObject(
+                container, WidgetUtil.createFlashObjectDefinition(
+                    "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
+                    "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+        }
     }
 
     /**
@@ -54,10 +69,12 @@ public class FlashClients
      */
     public static void embedFeaturedPlaceView (Panel container, String flashVars)
     {
-        WidgetUtil.embedFlashObject(
-            container, WidgetUtil.createFlashObjectDefinition(
-                "featuredplace", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT, flashVars));
+        if (shouldShowFlash(container, FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT)) {
+            WidgetUtil.embedFlashObject(
+                container, WidgetUtil.createFlashObjectDefinition(
+                    "featuredplace", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+                    FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT, flashVars));
+        }
     }
 
     /**
@@ -66,7 +83,8 @@ public class FlashClients
      */
     public static void embedDecorViewer (HTML html)
     {
-        html.setHTML(WidgetUtil.createFlashObjectDefinition(
+        String definition = getUpgradeString(600, 400);
+        html.setHTML(definition != null ? definition : WidgetUtil.createFlashObjectDefinition(
                          "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
                          600, 400, ""));
     }
@@ -78,10 +96,21 @@ public class FlashClients
      */
     public static String createPopularPlacesDefinition (String hotspotData)
     {
-        return WidgetUtil.createFlashObjectDefinition(
+        String definition = getUpgradeString(0,0);
+        return definition != null ? definition : WidgetUtil.createFlashObjectDefinition(
             "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
             "100%", String.valueOf(Frame.CLIENT_HEIGHT - BLACKBAR_HEIGHT),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
+    }
+
+    /**
+     * Creates a solo game definition, as an object definition string.
+     */
+    public static String createSoloGameDefinition (String media)
+    {
+        String definition = getUpgradeString(800,600);
+        return definition != null ? definition :
+            WidgetUtil.createFlashObjectDefinition("game", media, 800, 600, null);
     }
 
     /**
@@ -89,12 +118,17 @@ public class FlashClients
      */
     public static HTML createAvatarViewer (String avatarPath, float scale, boolean allowScaleChange)
     {
+        String definition = getUpgradeString(360, 385);
+        if (definition != null) {
+            return new HTML(definition);
+        }
         String flashVars = "avatar=" + URL.encodeComponent(avatarPath) + "&scale=" + scale;
         if (allowScaleChange) {
             flashVars += "&scaling=true";
         }
         return WidgetUtil.createFlashContainer(
-            "avatarViewer", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
+            "avatarViewer",
+            "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
             360, 385, flashVars);
     }
 
@@ -103,6 +137,10 @@ public class FlashClients
      */
     public static HTML createVideoViewer (String videoPath)
     {
+        String definition = getUpgradeString(320, 240);
+        if (definition != null) {
+            return new HTML(definition);
+        }
         return WidgetUtil.createFlashContainer(
             "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
             320, 240, "video=" + URL.encodeComponent(videoPath));
@@ -218,6 +256,84 @@ public class FlashClients
     }-*/;
 
     /**
+     * Checks if we have a specilized flash object to show, and if so, adds it to the container
+     * and returns false, otherwise returns true.
+     */
+    protected static boolean shouldShowFlash (Panel container, int width, int height)
+    {
+        String definition = getUpgradeString(width, height);
+        if (definition != null) {
+            WidgetUtil.embedFlashObject(container, definition);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns some code to display if flash isn't configured properly, or null if the default
+     * flash code should be used.
+     */
+    protected static String getUpgradeString (int width, int height)
+    {
+        // If they have the required flash, we're happy
+        // If they're using IE, we'll let it handle upgrading/installing the flash activex control
+        // since that works in most cases and we can't easily detect the cases where it doesn't
+        if (hasFlashVersionNative(FULL_VERSION) || isIeNative()) {
+            return null;
+        }
+        if (isVistaNative()) {
+            // Only flash 9 is fully compatible with the express installer
+            if (hasFlashVersionNative(VISTA_VERSION)) {
+                return getExpressInstallerString(width, height);
+            }
+
+            // otherwise they'll need to do a manual upgrade
+            return getFlashDownloadString(width, height);
+        }
+        // only some system can run the upgrade script
+        if (hasFlashVersionNative(UPGRADE_VERSION) && canUpgradeExpressNative()) {
+            return getExpressInstallerString(width, height);
+        }
+        // if they have any version of flash we need to show the manual link
+        if (hasFlashVersionNative(ANY_VERSION)) {
+            return getFlashDownloadString(width, height);
+        }
+        // otherwise we'll rely on the browser to do the right thing when they don't have the plugin
+        return null;
+    }
+
+    /**
+     * Creates an embed string for the express installer swf.
+     */
+    protected static String getExpressInstallerString (int width, int height)
+    {
+        if (width < MIN_INSTALLER_WIDTH) {
+            width = MIN_INSTALLER_WIDTH;
+        }
+        if (height < MIN_INSTALLER_HEIGHT) {
+            height = MIN_INSTALLER_HEIGHT;
+        }
+        String flashArgs = "MMredirectURL=" + getLocationNative() + "&MMplayerType=PlugIn"
+            + "&MMdoctitle=" + Window.getTitle().substring(0, 47) + " - Flash Player Installation";
+        return WidgetUtil.createFlashObjectDefinition(
+                "expressInstall", "/expressinstall/expressInstall.swf", width, height, flashArgs);
+    }
+
+    /**
+     * Creates a string with a link to the flash player download site.
+     */
+    protected static String getFlashDownloadString (int width, int height)
+    {
+        String dims = (width > 0 && height > 0) ?
+            " style=\"width:" + width + "px; height:" + height + "px\"" : "";
+        return "<div class=\"flashLink\"" + dims + ">Whirled requires the latest " +
+               "<a href=\"http://www.adobe.com/go/getflashplayer\" target=\"_blank\">" +
+               "Flash Player</a> to operate. " +
+               "<a href=\"http://www.adobe.com/go/getflashplayer\" target=\"_blank\">" +
+               "<img src=\"/images/Get_Flash_Player.jpg\"></div>";
+    }
+
+    /**
      * Does the actual <code>clientExists()</code> call.
      */
     protected static native boolean clientExistsNative () /*-{
@@ -292,10 +408,70 @@ public class FlashClients
         }
     }-*/;
 
+
+    /**
+     * Checks for a minimum flash version.
+     */
+    protected static native boolean hasFlashVersionNative (String version) /*-{
+        return $wnd.swfobject.hasFlashPlayerVersion(version);
+    }-*/;
+
+    /**
+     * Gets the current location.
+     */
+    protected static native String getLocationNative () /*-{
+        return $wnd.location;
+    }-*/;
+
+    /**
+     * Returns true if we're in windows vista.
+     */
+    protected static native boolean isVistaNative () /*-{
+        var u = $wnd.navigator.userAgent.toLowerCase();
+        return /windows nt 6.0/.test(u);
+    }-*/;
+
+    /**
+     * Returns true if we're in windows.
+     */
+    protected static native boolean isWindowsNative () /*-{
+        return $wnd.swfobject.ua.win;
+    }-*/;
+
+    /**
+     * Returns true if we're in internet explorer.
+     */
+    protected static native boolean isIeNative () /*-{
+        return $wnd.swfobject.ua.ie;
+    }-*/;
+
+    /**
+     * Returns true if we can use the express installer.
+     */
+    protected static native boolean canUpgradeExpressNative () /*-{
+        return $wnd.swfobject.ua.win || $wnd.swfobject.ua.mac;
+    }-*/;
+
     // TODO: put this in Application?
     protected static final int BLACKBAR_HEIGHT = 20;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
-    protected static final String FEATURED_PLACE_WIDTH = "380px";
-    protected static final String FEATURED_PLACE_HEIGHT = "167px";
+    protected static final int FEATURED_PLACE_WIDTH = 380;
+    protected static final int FEATURED_PLACE_HEIGHT = 167;
+
+    protected static final int MIN_INSTALLER_WIDTH = 310;
+    protected static final int MIN_INSTALLER_HEIGHT = 137;
+
+    /** The minimum flash for full functionality. */
+    protected static final String FULL_VERSION =
+        "" + MIN_FLASH_VERSION[0] + "." + MIN_FLASH_VERSION[1] + "." + MIN_FLASH_VERSION[2];
+
+    /** The minimum flash for the express upgrade in vista. */
+    protected static final String VISTA_VERSION = "9.0.0";
+
+    /** The minimum flash for the express upgrade functionality. */
+    protected static final String UPGRADE_VERSION = "6.0.65";
+
+    /** See if they have any flash at all. */
+    protected static final String ANY_VERSION = "0.0.1";
 }

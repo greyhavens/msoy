@@ -213,8 +213,8 @@ public class index extends Page
             break;
 
         case LaunchConfig.FLASH_SOLO:
-            setFlashContent(config.name, WidgetUtil.createFlashObjectDefinition(
-                                "game", config.gameMediaPath, 800, 600, null));
+            setFlashContent(
+                    config.name, FlashClients.createSoloGameDefinition(config.gameMediaPath));
             break;
 
         case LaunchConfig.JAVA_SOLO:
