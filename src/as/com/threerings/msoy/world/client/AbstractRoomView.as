@@ -34,6 +34,7 @@ import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -228,14 +229,29 @@ public class AbstractRoomView extends Sprite
      */
     public function getScrollSize () :Rectangle
     {
-        var x :int = _actualWidth;
-        var y :int = _actualHeight;
+        // figure the upper left in decor pixels, taking into account scroll offset
+        var topLeft :Point = new Point(getScrollOffset(), 0);
+
+        // and the lower right, possibly cut off by the width of the underlying scene
+        var farX :int = getScrollOffset() + _actualWidth / scaleX;
+        var farY :int = _actualHeight / scaleY;
         if (_scene != null) {
-            x = Math.min(_scene.getWidth() * scaleX, x);
-            y = Math.min(_scene.getHeight() * scaleY, y);
+            farX = Math.min(_scene.getWidth(), farX);
+            farY = Math.min(_scene.getHeight(), farY);
         }
-        var bottomRight :Point = this.localToGlobal(new Point(x, y));
-        var topLeft :Point = this.localToGlobal(new Point(0, 0));
+        var bottomRight :Point = new Point(farX, farY);
+
+        // finally convert from decor to placebox coordinates
+        var placeBox :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+        topLeft = placeBox.globalToLocal(localToGlobal(topLeft));
+        bottomRight = placeBox.globalToLocal(localToGlobal(bottomRight));
+
+        // a last sanity check
+        if (bottomRight == null || topLeft == null) {
+            return null;
+        }
+
+        // and then return the result
         return new Rectangle(
             topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
     }
