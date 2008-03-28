@@ -20,9 +20,10 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.LoopingThread;
 import com.samskivert.util.Queue;
 import com.samskivert.util.Throttle;
-
-import com.threerings.panopticon.common.Event;
-import com.threerings.panopticon.common.walken.EventSerializer;
+import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
+import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.common.event.EventDataFactory;
+import com.threerings.panopticon.common.net.otp.message.event.EventDataSerializer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -32,6 +33,8 @@ import static com.threerings.msoy.Log.log;
  */
 public class LocalEventLogger extends LoopingThread
 {
+    public static final Integer VERSION_ID = 0xcdefcdef;
+    
     /**
      * Creates an logger that logs to the specified file.
      */
@@ -39,6 +42,8 @@ public class LocalEventLogger extends LoopingThread
     {
         super("LocalEventLogger");
 
+        _factory = new EventDataFactory();
+        
         _logPath = fullpath;
         openLog(true);
 
@@ -50,7 +55,7 @@ public class LocalEventLogger extends LoopingThread
     /**
      * Records the supplied event to the log.
      */
-    public void log (Event event)
+    public void log (MsoyEvent event)
     {
         // append it to our queue, the logging thread will subsequently record it
         _events.append(event);
@@ -59,16 +64,21 @@ public class LocalEventLogger extends LoopingThread
     @Override // from LoopingThread
     protected void iterate ()
     {
-        Event event = _events.get();
+        MsoyEvent event = _events.get();
         if (event == null) {
             return; // we're shutting down
         }
 
         try {
             // serialize our event into a byte buffer
+            ByteArrayOutputStream encoded = new ByteArrayOutputStream();
+            EventData eventdata = _factory.getEventData(event);
+            EventDataSerializer.serialize(eventdata, encoded);
+            
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ObjectOutputStream oout = new ObjectOutputStream(bout);
-            oout.writeObject(EventSerializer.toBytes(event));
+            oout.writeObject(new Integer(VERSION_ID));
+            oout.writeObject(encoded.toByteArray());
             oout.close();
             ByteBuffer data = ByteBuffer.wrap(bout.toByteArray());
 
@@ -181,6 +191,9 @@ public class LocalEventLogger extends LoopingThread
         }
     };
 
+    /** Converts events to EventData instances. */
+    protected EventDataFactory _factory;
+    
     /** The path to our log file. */
     protected File _logPath;
 
@@ -188,7 +201,7 @@ public class LocalEventLogger extends LoopingThread
     protected FileChannel _logChannel;
 
     /** A queue to which events are posted and from which our thread reads and logs them. */
-    protected Queue<Event> _events = new Queue<Event>();
+    protected Queue<MsoyEvent> _events = new Queue<MsoyEvent>();
 
     /** Suppress freakouts if our log file becomes hosed. */
     protected Throttle _throttle = new Throttle(2, 5*60*1000L);

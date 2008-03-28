@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import com.threerings.panopticon.common.BaseEvent;
 import com.threerings.panopticon.common.Event;
-import com.threerings.panopticon.common.walken.EventSerializer;
+import com.threerings.panopticon.common.serialize.walken.EventSerializer;
 
 /**
  * Log file converter for log formats used early in alpha test stage.

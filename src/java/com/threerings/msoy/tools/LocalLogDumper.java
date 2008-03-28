@@ -6,6 +6,7 @@ package com.threerings.msoy.tools;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.ObjectOutputStream;
 import java.io.EOFException;
@@ -16,6 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.regex.Pattern;
+
+import com.threerings.msoy.server.LocalEventLogger;
+import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.common.net.otp.message.event.EventDataSerializer;
+import com.threerings.panopticon.common.serialize.EncodingException;
+import com.threerings.panopticon.common.serialize.walken.EventDeserializer;
 
 /**
  * Dumps the events from a {@link LocalEventLogger}, either to screen, 
@@ -101,35 +108,70 @@ public class LocalLogDumper
             new BufferedInputStream(new FileInputStream(file)));
         
         while (true) {
-            Object o = null;
-            
             try {
                 byte[] data = new byte[din.readInt()];
                 din.read(data);
-                o = new ObjectInputStream(new ByteArrayInputStream(data)).readObject();
-
-                if (! (o instanceof byte[])) {
+                ObjectInputStream payload = new ObjectInputStream(new ByteArrayInputStream(data));
+                Object o = payload.readObject();
+                
+                // if it's the old-format walken-serialized event, the stream will only have a byte array,
+                // which we'll need to convert to a regular EventData object, and convert to new format.
+                // if it's the new optic-serialized event, it'll have a magic cookie, and we can just
+                // pass it along.
+                
+                if (o instanceof byte[]) {
+                    
+                    // walken version
+                    EventDeserializer deserializer = new EventDeserializer((byte[]) o);
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    EventDataSerializer.serialize(deserializer.toEventData(), bout);
+                    output(out, bout.toByteArray(), 0);
+                    
+                } else if (o instanceof Integer) {
+                    
+                    // optic version
+                    if (! ((Integer)o).equals(LocalEventLogger.VERSION_ID)) {
+                        throw new IllegalStateException("Unknown item version: " + ((Integer)o));
+                    }
+                    
+                    Object result = payload.readObject();
+                    if (! (result instanceof byte[])) {
+                        throw new IllegalStateException("Unexpected data in item version " + o);
+                    } 
+                    output (out, (byte[]) result, (Integer) o);
+                    
+                } else {
                     throw new IllegalStateException("Unexpected event object: " + o.getClass().getName());
                 }
                 
-                byte[] bytes = (byte[]) o;
-                if (out != null) {
-                    out.writeObject(bytes);
-                } else {
-                    System.out.println("Serialized event: " + bytes);
-                }
-            
             } catch (EOFException eofe) {
                 break;
+                
             } catch (ClassNotFoundException ce) {
                 throw new IOException("File contains old event definitions: " + file.getName() + "," +
                 		"; original exception: " + ce);
+            } catch (EncodingException ee) {
+                throw new IOException("Unknown event found: " + ee);
             }
 
             _eventcount++;
         }
 
         _filecount++;
+    }
+
+    protected static void output (ObjectOutputStream out, byte[] opticEvent, int version) 
+        throws EncodingException, IOException
+    {
+        if (out != null) {
+            out.writeObject(opticEvent);
+            
+        } else {
+            ByteArrayInputStream in = new ByteArrayInputStream(opticEvent);
+            EventData data = EventDataSerializer.deserialize(in);
+            System.out.println("Serialized event (" + version + "): " + data);
+        }
+
     }
     
     protected static int _filecount = 0;
