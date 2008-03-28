@@ -60,11 +60,15 @@ public class StatusServlet extends HttpServlet
             return;
         }
 
+        boolean details = "/details".equals(req.getPathInfo());
         PrintStream out = null;
         try {
             out = new PrintStream(rsp.getOutputStream());
             for (ServerInfo sinfo : info.values()) {
                 out.println(sinfo);
+                if (details) {
+                    out.println(sinfo.details);
+                }
             }
         } finally {
             StreamUtil.close(out);
@@ -94,6 +98,7 @@ public class StatusServlet extends HttpServlet
             if (mloc.gameId != 0) {
                 info.inGame++;
             }
+            info.details.append("- ").append(mloc).append("\n");
         }
 
         return info;
@@ -112,6 +117,8 @@ public class StatusServlet extends HttpServlet
 
         public int inScene;
         public int inGame;
+
+        public StringBuilder details = new StringBuilder();
 
         public String toString () {
             return name + " [members=" + members + ", guests=" + guests +
