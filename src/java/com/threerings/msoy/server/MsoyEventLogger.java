@@ -8,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
 
-import com.threerings.panopticon.client.net.LoggingConnection;
 import com.threerings.panopticon.common.Event;
 
 import com.threerings.msoy.data.UserActionDetails;
@@ -29,13 +28,19 @@ public class MsoyEventLogger
     {
         MsoyBaseServer.registerShutdowner(this);
 
+        /* LoggingConnection references commented out, while we migrate to the new
+           Panopticon connection protocol. They're not being used right now anyway.
+           (RZ 3/28/08)
+          
         if (serverURL != null) {
             log.info("Events will be logged to '" + serverURL + "'.");
             _nlogger = new LoggingConnection(
                 new InetSocketAddress(serverURL.getHost(), serverURL.getPort()));
             _nlogger.start();
 
-        } else {
+        } else
+        */
+        {
             File logloc = new File(
                 new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
             log.info("Events will be logged locally to '" + logloc + "'.");
@@ -47,9 +52,11 @@ public class MsoyEventLogger
     // from interface MsoyBaseServer.Shutdowner
     public void shutdown ()
     {
+        /*
         if (_nlogger != null) {
             _nlogger.shutdown();
         }
+        */
         if (_llogger != null) {
             _llogger.shutdown();
         }
@@ -250,6 +257,7 @@ public class MsoyEventLogger
     /** Posts a log message to the appropriate place. */
     protected void post (Event message)
     {
+        /*
         if (_nlogger != null) {
             try {
                 _nlogger.send(message);
@@ -258,16 +266,17 @@ public class MsoyEventLogger
                 log.log(Level.WARNING, "Failed to send log event " + message + ".", e);
             }
 
-        } else if (_llogger != null) {
+        } else
+        */
+        if (_llogger != null) {
             _llogger.log(message);
-
         } else {
             log.warning("No logger configured! Dropping " + message + ".");
         }
     }
 
     /** The connection via which we deliver our log messages. */
-    protected LoggingConnection _nlogger;
+    // protected LoggingConnection _nlogger;
 
     /** Used to log events if we have no network logger. */
     protected LocalEventLogger _llogger;
