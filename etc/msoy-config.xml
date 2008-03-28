@@ -242,7 +242,7 @@
    <!-- default-script-limits: default script execution limits (may be overridden by root attributes)-->
    <default-script-limits>
       <max-recursion-depth>1000</max-recursion-depth>
-      <max-execution-time>2</max-execution-time>
+      <max-execution-time>5</max-execution-time>
    </default-script-limits>
    <!-- default-size: default application size (may be overridden by root attributes in the application)-->
    <default-size>
