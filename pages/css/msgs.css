@@ -213,6 +213,13 @@
   padding: 2px, 0px;
 }
 
+.issueMessageLink {
+  font-size: 12px;
+  color: #999999;
+  display: inline;
+  margin-left: 5px;
+}
+
 .messageSummaryPanel {
   width: 100%;
 }
