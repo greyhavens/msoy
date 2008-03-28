@@ -420,7 +420,7 @@ public class FurniSprite extends MsoySprite
         super.addListeners(info);
 
         if (_loadingWatcher != null) {
-            _loadingWatcher.watchLoader(info, (this is DecorSprite));
+            _loadingWatcher.watchLoader(info, this, (this is DecorSprite));
         }
     }
 

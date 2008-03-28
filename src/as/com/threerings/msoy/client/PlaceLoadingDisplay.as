@@ -10,6 +10,7 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.ErrorEvent;
+import flash.events.IEventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
@@ -17,6 +18,10 @@ import flash.events.SecurityErrorEvent;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+
+import flash.utils.Dictionary;
+
+import com.threerings.util.Log;
 
 import mx.events.ResizeEvent;
 
@@ -43,13 +48,17 @@ public class PlaceLoadingDisplay extends Sprite
     }
 
     // from interface LoadingWatcher
-    public function watchLoader (info :LoaderInfo, isPrimaryForPlace :Boolean = false) :void
+    public function watchLoader (
+        info :LoaderInfo, unloadie :IEventDispatcher, isPrimary :Boolean = false) :void
     {
+        _unloadies[info] = unloadie;
+        unloadie.addEventListener(Event.UNLOAD, handleUnload);
+
         info.addEventListener(Event.COMPLETE, handleComplete);
         info.addEventListener(IOErrorEvent.IO_ERROR, handleError);
         info.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
 
-        if (isPrimaryForPlace) {
+        if (isPrimary) {
             _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
 
@@ -79,6 +88,16 @@ public class PlaceLoadingDisplay extends Sprite
 
     protected function unwatchLoader (info :LoaderInfo) :void
     {
+        var ed :IEventDispatcher = IEventDispatcher(_unloadies[info]);
+        if (ed == null) {
+            // due to shite in MediaContainer, we may get both an ERROR and UNLOAD,
+            // so just avoid processing things twice.
+            return;
+        }
+
+        ed.removeEventListener(Event.UNLOAD, handleUnload);
+        delete _unloadies[info];
+
         info.removeEventListener(Event.COMPLETE, handleComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, handleError);
         info.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
@@ -111,6 +130,17 @@ public class PlaceLoadingDisplay extends Sprite
         _spinner.setProgress(event.bytesLoaded, event.bytesTotal);
     }
 
+    protected function handleUnload (event :Event) :void
+    {
+        // since this is the uncommon case, let's just iterate and find the right LoaderInfo
+        for (var key :* in _unloadies) {
+            if (_unloadies[key] == event.target) {
+                unwatchLoader(LoaderInfo(key));
+                return;
+            }
+        }
+    }
+
     protected var _box :PlaceBox;
 
     protected var _primary :LoaderInfo
@@ -118,5 +148,7 @@ public class PlaceLoadingDisplay extends Sprite
     protected var _secondaryCount :int;
 
     protected var _spinner :LoadingSpinner;
+
+    protected var _unloadies :Dictionary = new Dictionary(true);
 }
 }

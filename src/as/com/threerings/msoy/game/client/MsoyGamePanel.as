@@ -67,7 +67,8 @@ public class MsoyGamePanel extends WhirledGamePanel
         var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
             _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
         spinner.watchLoader(
-            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo, true);
+            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
+            _gameView.getMediaContainer(), true);
 
         _gctx.getMsoyContext().getMsoyChatDirector().displayGameChat(
             _gctx.getChatDirector(), _playerList);
