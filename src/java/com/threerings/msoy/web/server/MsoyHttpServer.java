@@ -111,8 +111,8 @@ public class MsoyHttpServer extends Server
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
             // if we're only throttling media, see if this is media
-            if (!Boolean.getBoolean("throttle") && req.getRequestURI().startsWith("/media/")) {
-                HttpServletResponse rsp2 = new HttpServletResponseWrapper(rsp) {
+            if (Boolean.getBoolean("throttle") || req.getRequestURI().startsWith("/media/")) {
+                rsp = new HttpServletResponseWrapper(rsp) {
                     @Override
                     public ServletOutputStream getOutputStream () throws IOException {
                         if (_out == null) {
@@ -122,10 +122,8 @@ public class MsoyHttpServer extends Server
                     }
                     protected ServletOutputStream _out;
                 };
-                super.doGet(req, rsp2);
-            } else {
-                super.doGet(req, rsp);
             }
+            super.doGet(req, rsp);
         }
     }
 
