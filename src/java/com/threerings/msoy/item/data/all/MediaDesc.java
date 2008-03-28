@@ -218,6 +218,9 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
      */
     public static byte stringToMimeType (String mimeType)
     {
+        if (mimeType == null) {
+            return INVALID_MIME_TYPE;
+        }
         mimeType = mimeType.toLowerCase();
         if (mimeType.equals("text/plain")) {
             return TEXT_PLAIN;
