@@ -539,7 +539,7 @@ img, embed, applet, object {
 }
 
 /** Standard paged grid configuration. */
-.pagedGrid .Header {
+.pagedGrid .Header, .pagedGrid .Footer {
   background: url(/images/ui/grid_header_tile.png) repeat-x left;
   color: #487999;
   height: 29px;
@@ -555,13 +555,22 @@ img, embed, applet, object {
   width: 26px;
 }
 
-.pagedGrid .Footer {
+.pagedGrid .Footer .BottomLeft {
+  background: white url(/images/ui/grid_footer_left.png) no-repeat left;
+  width: 26px;
+}
+
+.pagedGrid .Footer .BottomRight {
+  background: white url(/images/ui/grid_footer_right.png) no-repeat right;
+  width: 26px;
+}
+
+.pagedGrid .BareFooter {
   border-top: 1px solid #DADADA;
   padding-top: 2px;
 }
 
 .pagedGrid .Info {
-  /*width: 100%;*/
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
@@ -625,11 +634,7 @@ img, embed, applet, object {
   background-color: #F4F3F4;
 }
 
-.dottedGrid .Grid .TopCell {
-  border-bottom: 1px solid #DADADA;
-}
-
-.dottedGrid .Grid .MiddleCell {
+.dottedGrid .Grid .TopCell, .dottedGrid .Grid .MiddleCell {
   border-bottom: 1px solid #DADADA;
 }
 
