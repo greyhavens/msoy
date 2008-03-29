@@ -567,6 +567,6 @@ public class TopPanel extends Canvas
     protected var _chatBounds :Rectangle;
 
     protected static const MIN_FLASH_VERSION :int = 9;
-    protected static const MIN_FLASH_REVISION :int = 28;
+    protected static const MIN_FLASH_REVISION :int = 115;
 }
 }
