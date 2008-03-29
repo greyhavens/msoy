@@ -184,7 +184,6 @@ public class MailMessageRecord extends PersistentRecord
         MailHeaders headers = new MailHeaders();
         headers.messageId = messageId;
         headers.folderId = folderId;
-        headers.ownerId = ownerId;
         headers.subject = subject;
         headers.sent = new Date(sent.getTime());
         headers.unread = unread;
@@ -213,7 +212,7 @@ public class MailMessageRecord extends PersistentRecord
         message.headers = toMailHeaders(memberRepo);
         message.bodyText = bodyText;
         message.wasUnread = unread;
-        
+
         if (payloadType != 0) {
             if (payloadState != null) {
                 try {

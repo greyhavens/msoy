@@ -210,8 +210,7 @@ public abstract class GroupInvite
                             // and if that succeded to, let the mail app know to refresh
                             public void onSuccess (Object result) {
                                 if (_listener != null) {
-                                    _listener.messageChanged(_message.headers.ownerId,
-                                                             _message.headers.folderId,
+                                    _listener.messageChanged(_message.headers.folderId,
                                                              _message.headers.messageId);
                                 }
                             }

@@ -46,6 +46,17 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
         _count++;
     }
 
+    /**
+     * Clears out any cached data and resets the model to total blankness.
+     */
+    public void reset ()
+    {
+        _count = -1;
+        _pageOffset = 0;
+        _pageCount = -1;
+        _pageItems = Collections.EMPTY_LIST;
+    }
+
     // from interface DataModel
     public int getItemCount ()
     {

@@ -18,7 +18,7 @@ import client.util.HashIntMap;
 import client.util.ServiceBackedDataModel;
 
 /**
- * Various data models used by hte forum services.
+ * Various data models used by the forum services.
  */
 public class ForumModels
 {

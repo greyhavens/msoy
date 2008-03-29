@@ -4,13 +4,13 @@
 package com.threerings.msoy.person.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
 
 /**
  * Represents a full message, both the metadata and the actual message text.
  */
-
-final public class MailMessage
+public class MailMessage
     implements IsSerializable, Streamable
 {
     /** All the metadata for this message. */
@@ -18,13 +18,13 @@ final public class MailMessage
 
     /** The (optional) text part of the message body. */
     public String bodyText;
-    
+
     /** The (optional) object part of the message body. */
     public MailPayload payload;
 
     /** Was this message unread before it was read just now? */
     public boolean wasUnread;
-    
+
     // @Override
     public int hashCode ()
     {

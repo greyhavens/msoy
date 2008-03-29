@@ -5,8 +5,6 @@ package client.mail;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.person.data.MailFolder;
-
 import client.msgs.MsgsEntryPoint;
 import client.shell.Application;
 import client.shell.Args;
@@ -32,24 +30,15 @@ public class index extends MsgsEntryPoint
         // if we have no creds, just display a message saying login
         if (CMail.ident == null) {
             setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
-            _mainView = null;
             return;
         }
 
-        // initialize the application, if necessary
-        if (_mainView == null) {
-            _mainView = new MailApplication();
+        String action = args.get(0, "");
+        if (action.equals("c")) {
+            setContent(CMail.msgs.mailTitle(), new ConvoPanel(_model, args.get(1, 0)));
+        } else {
+            setContent(CMail.msgs.mailTitle(), new MailPanel(_model, args.get(0, 0)));
         }
-        // make sure we're displaying the application
-        if (!_mainView.isAttached()) {
-            setContent(CMail.msgs.mailTitle(), _mainView);
-        }
-
-        // display the requested folder, header and/or message
-        int folderId = args.get(0, MailFolder.INBOX_FOLDER_ID);
-        int headerOffset = args.get(1, 0);
-        int messageId = args.get(2, -1);
-        _mainView.show(folderId, headerOffset, messageId);
     }
 
     // @Override // from Page
@@ -73,5 +62,5 @@ public class index extends MsgsEntryPoint
         CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
     }
 
-    protected MailApplication _mainView;
+    protected ConvosModel _model = new ConvosModel();
 }

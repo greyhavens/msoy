@@ -22,9 +22,6 @@ public final class MailHeaders
     /** The id of the folder in which this message is currently filed. */
     public int folderId;
 
-    /** The id of the owner of this message. */
-    public int ownerId;
-
     /** The message sender. */
     public MemberName sender;
 
@@ -40,10 +37,18 @@ public final class MailHeaders
     /** Whether or not this message has yet to be read. */
     public boolean unread;
 
+    /**
+     * Returns the member name of the "other" party in this message.
+     */
+    public MemberName getOther (int myMemberId)
+    {
+        return (sender.getMemberId() == myMemberId) ? recipient : sender;
+    }
+
     // @Override
     public int hashCode ()
     {
-        return messageId + 31*(folderId + 31*ownerId);
+        return messageId + 31*folderId;
     }
 
     // @Override
@@ -56,7 +61,6 @@ public final class MailHeaders
             return false;
         }
         MailHeaders other = (MailHeaders) obj;
-        return (other.messageId == messageId && other.folderId == folderId &&
-                other.ownerId == ownerId);
+        return (other.messageId == messageId && other.folderId == folderId);
     }
 }
