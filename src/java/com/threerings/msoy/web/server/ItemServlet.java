@@ -17,7 +17,6 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -35,7 +34,6 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
 
-import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -597,21 +595,11 @@ public class ItemServlet extends MsoyServiceServlet
             repo.deleteItem(item.itemId);
             deletionCount ++;
 
-            // build a message record
-            MailMessageRecord record = new MailMessageRecord();
-            record.senderId = 0;
-            record.folderId = MailFolder.INBOX_FOLDER_ID;
-            record.subject = subject;
-            record.sent = new Timestamp(System.currentTimeMillis());
-            record.bodyText = body;
-            record.unread = true;
-
-            // and notify everybody
+            // notify the owners of the deletion
             for (int ownerId : owners) {
-                record.ownerId = ownerId;
-                record.recipientId = ownerId;
-                MsoyServer.mailMan.getRepository().fileMessage(record);
+                MsoyServer.mailRepo.startConversation(ownerId, mRec.memberId, subject, body, null);
             }
+
             return Integer.valueOf(deletionCount);
 
         } catch (PersistenceException pe) {

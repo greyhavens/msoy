@@ -181,13 +181,11 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     protected void sendGotInvitesMail (int senderId, int recipientId, int number)
+        throws PersistenceException
     {
         String subject = MsoyServer.msgMan.getBundle("server").get("m.got_invites_subject", number);
         String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
-        MsoyServer.mailMan.deliverMessage(
-            senderId, recipientId, subject, body, null, false,
-            new ComplainingListener<Void>(log, "Send got invites mail failed [sid=" + senderId +
-                                          ", rid=" + recipientId + "]"));
+        MsoyServer.mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
 
     protected static final int MEMBERS_PER_LOOP = 100;

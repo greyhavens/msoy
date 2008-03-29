@@ -26,7 +26,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
-import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.web.client.GroupService;
 
@@ -119,13 +118,6 @@ public abstract class GroupInvite
 
     public static final class Display extends MailPayloadDisplay
     {
-        public Display (MailMessage message)
-        {
-            super(message);
-            // no sanity checks: if anything breaks here, it's already a disaster
-            _invitePayload = (GroupInvitePayload) message.payload;
-        }
-
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
@@ -144,6 +136,13 @@ public abstract class GroupInvite
         {
             // we're always happy to be deleted
             return null;
+        }
+
+        // @Override // from MailPayloadDisplay
+        protected void didInit ()
+        {
+            // no sanity checks: if anything breaks here, it's already a disaster
+            _invitePayload = (GroupInvitePayload) _message.payload;
         }
 
         protected class DisplayWidget extends DockPanel
@@ -210,8 +209,7 @@ public abstract class GroupInvite
                             // and if that succeded to, let the mail app know to refresh
                             public void onSuccess (Object result) {
                                 if (_listener != null) {
-                                    _listener.messageChanged(_message.headers.folderId,
-                                                             _message.headers.messageId);
+                                    _listener.messageChanged(_convoId, _message);
                                 }
                             }
                         });

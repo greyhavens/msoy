@@ -36,6 +36,8 @@ public class index extends MsgsEntryPoint
         String action = args.get(0, "");
         if (action.equals("c")) {
             setContent(CMail.msgs.mailTitle(), new ConvoPanel(_model, args.get(1, 0)));
+        } else if (action.equals("w")) {
+            setContent(CMail.msgs.mailTitle(), new ComposePanel(args.get(1, 0)));
         } else {
             setContent(CMail.msgs.mailTitle(), new MailPanel(_model, args.get(0, 0)));
         }

@@ -539,13 +539,6 @@ public class MsoyAuthenticator extends Authenticator
         // store their member record in the repository making them a real Whirled citizen
         MsoyServer.memberRepo.insertMember(mrec);
 
-        // create their mail account
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.memberCreated(mrec.memberId);
-            }
-        });
-
         // TEMP: grant this new member 10 invitations
         MsoyServer.memberRepo.grantInvites(mrec.memberId, 10);
 

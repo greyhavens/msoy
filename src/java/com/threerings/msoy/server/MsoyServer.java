@@ -61,7 +61,7 @@ import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
@@ -102,9 +102,6 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles management of member's friends lists. */
     public static FriendManager friendMan = new FriendManager();
 
-    /** Our runtime mail manager. */
-    public static MailManager mailMan = new MailManager();
-
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
 
@@ -116,6 +113,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
+
+    /** Contains information on our mail system. */
+    public static MailRepository mailRepo;
 
     /** Contains information on our forums. */
     public static ForumRepository forumRepo;
@@ -269,6 +269,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // create our various repositories
         groupRepo = new GroupRepository(perCtx, _eventLog);
+        mailRepo = new MailRepository(perCtx, _eventLog);
         forumRepo = new ForumRepository(perCtx);
         issueRepo = new IssueRepository(perCtx);
         commentRepo = new CommentRepository(perCtx);
@@ -372,7 +373,6 @@ public class MsoyServer extends MsoyBaseServer
         adminMan.init(this, _eventLog);
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
-        mailMan.init(perCtx, memberRepo, _eventLog);
         channelMan.init(invmgr);
         jabberMan.init(invmgr);
         itemMan.init(perCtx, _eventLog);

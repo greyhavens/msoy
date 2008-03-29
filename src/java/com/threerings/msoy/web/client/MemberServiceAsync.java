@@ -16,6 +16,11 @@ import com.threerings.msoy.web.data.Invitation;
 public interface MemberServiceAsync
 {
     /**
+     * The asynchronous version of {@link MemberService#getMemberCard}.
+     */
+    public void getMemberCard (int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
     public void getFriendStatus (WebIdent ident, int memberId, AsyncCallback callback);

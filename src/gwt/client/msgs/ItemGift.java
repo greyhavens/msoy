@@ -25,7 +25,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.person.data.ItemGiftPayload;
-import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
 
 import client.shell.CShell;
@@ -187,12 +186,6 @@ public abstract class ItemGift
 
     public static final class Display extends MailPayloadDisplay
     {
-        public Display (MailMessage message)
-        {
-            super(message);
-            _giftPayload = (ItemGiftPayload) message.payload;
-        }
-
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
@@ -213,6 +206,12 @@ public abstract class ItemGift
                 return null;
             }
             return CMsgs.mmsgs.giftNoDelete();
+        }
+
+        // @Override // from MailPayloadDisplay
+        protected void didInit ()
+        {
+            _giftPayload = (ItemGiftPayload) _message.payload;
         }
 
         protected class DisplayWidget extends DockPanel

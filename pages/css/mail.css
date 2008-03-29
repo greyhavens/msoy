@@ -70,8 +70,7 @@
 }
 
 .convo {
-  width: 640px;
-  margin: 0px 10px;
+  padding: 15px;
 }
 
 .convo .Subject {
@@ -107,4 +106,29 @@
   font-size: 14px;
   font-weight: bold;
   padding-bottom: 5px;
+}
+
+.compose {
+  padding: 15px;
+}
+
+.compose .WriteTo {
+  text-align: center;
+}
+
+.compose .Contents {
+  width: 100%;
+  background: #F0FCFF;
+  border-left: 1px solid #A1CEEC;
+  border-right: 1px solid #A1CEEC;
+}
+
+.compose .Contents .Label {
+  text-align: right;
+  color: #317FB2;
+}
+
+.convo .gwt-TextArea, .compose .gwt-TextBox, .compose .gwt-TextArea {
+  border: 1px solid #7F9DB9;
+  background: #FFFFFF;
 }

@@ -76,7 +76,7 @@ public class MemberList extends PagedGrid
 
     protected class MemberWidget extends SmartTable
     {
-        public MemberWidget (final MemberCard card) 
+        public MemberWidget (MemberCard card) 
         {
             super("memberWidget", 0, 5);
 
@@ -117,9 +117,10 @@ public class MemberList extends PagedGrid
                 } else if (CPeople.getMemberId() != 0) {
                     onClick = new ClickListener() {
                         public void onClick (Widget sender) {
-                            new MailComposition(card.name, CPeople.msgs.friendInviteTitle(),
-                                                new FriendInvite.Composer(),
-                                                CPeople.msgs.friendInviteBody()).show();
+// TODO: custom biz
+//                             new MailComposition(card.name, CPeople.msgs.friendInviteTitle(),
+//                                                 new FriendInvite.Composer(),
+//                                                 CPeople.msgs.friendInviteBody()).show();
                         }
                     };
                     extras.setWidget(row, 0, MsoyUI.createActionImage(
@@ -130,11 +131,8 @@ public class MemberList extends PagedGrid
 
                 // if we're not a guest, we can send them mail
                 if (CPeople.getMemberId() != 0) {
-                    onClick = new ClickListener() {
-                        public void onClick (Widget widget) {
-                            new MailComposition(card.name, null, null, null).show();
-                        }
-                    };
+                    onClick = Application.createLinkListener(
+                        Page.MAIL, Args.compose("w", card.name.getMemberId()));
                     extras.setWidget(row, 0, MsoyUI.createActionImage(
                                          "/images/profile/sendmail.png", onClick));
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(

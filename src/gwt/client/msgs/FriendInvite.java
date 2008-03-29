@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.data.FriendInvitePayload;
-import com.threerings.msoy.person.data.MailMessage;
 import com.threerings.msoy.person.data.MailPayload;
 
 import client.util.ClickCallback;
@@ -68,11 +67,6 @@ public abstract class FriendInvite
 
     public static class Display extends MailPayloadDisplay
     {
-        public Display (MailMessage message)
-        {
-            super(message);
-        }
-
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
@@ -111,7 +105,7 @@ public abstract class FriendInvite
             protected void refreshUI (final boolean roundtrip)
             {
                 CMsgs.membersvc.getFriendStatus(
-                    CMsgs.ident, _message.headers.sender.getMemberId(), new AsyncCallback() {
+                    CMsgs.ident, _message.author.name.getMemberId(), new AsyncCallback() {
                        public void onSuccess (Object result) {
                            buildUI(((Boolean) result).booleanValue(), roundtrip);
                        }
@@ -126,8 +120,8 @@ public abstract class FriendInvite
                 _content.clear();
                 if (friendStatus) {
                     _content.add(new InlineLabel(roundtrip ?
-                        CMsgs.mmsgs.friendAccepted(_message.headers.sender.toString()) :
-                        CMsgs.mmsgs.friendAlreadyFriend(_message.headers.sender.toString())));
+                        CMsgs.mmsgs.friendAccepted(_message.author.toString()) :
+                        CMsgs.mmsgs.friendAlreadyFriend(_message.author.toString())));
                     return;
                 }
                 if (_thirdPerson) {
@@ -142,7 +136,7 @@ public abstract class FriendInvite
                 new ClickCallback(ayeButton) {
                     public boolean callService () {
                         CMsgs.membersvc.addFriend(
-                            CMsgs.ident, _message.headers.sender.getMemberId(), this);
+                            CMsgs.ident, _message.author.name.getMemberId(), this);
                         return true;
                     }
                     public boolean gotResult (Object result) {
@@ -156,19 +150,17 @@ public abstract class FriendInvite
 
             protected void mailResponse ()
             {
-                MemberName inviter = _message.headers.sender;
-                MemberName invitee = _message.headers.recipient;
-
-                CMsgs.mailsvc.deliverMessage(
-                    CMsgs.ident, inviter.getMemberId(),
-                    CMsgs.mmsgs.friendReplySubject(),
-                    CMsgs.mmsgs.friendReplyBody(invitee.toString()),
-                    null,
-                    new MsoyCallback() {
-                        public void onSuccess (Object result) {
-                            // Well that's nice.
-                        }
-                    });
+// TODO
+//                 CMsgs.mailsvc.deliverMessage(
+//                     CMsgs.ident, _message.author.name.getMemberId(),
+//                     CMsgs.mmsgs.friendReplySubject(),
+//                     CMsgs.mmsgs.friendReplyBody(CMsgs.creds.name.toString()),
+//                     null,
+//                     new MsoyCallback() {
+//                         public void onSuccess (Object result) {
+//                             // Well that's nice.
+//                         }
+//                     });
             }
 
             protected boolean _thirdPerson;

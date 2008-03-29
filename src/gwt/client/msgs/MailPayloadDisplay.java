@@ -6,12 +6,12 @@ package client.msgs;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.person.data.MailMessage;
+import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.MailPayload;
 
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a
- * {@link MailMessage}, and will be asked to hand out Widgets to be displayed in mail messages in
+ * {@link ConvMessage}, and will be asked to hand out Widgets to be displayed in mail messages in
  * the GTW Mail system through the functions {@link #widgetForRecipient()} and {@link
  * #widgetForOthers()).
  */
@@ -21,28 +21,33 @@ public abstract class MailPayloadDisplay
      * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the
      * given mail message (presuming it has a payload).
      */
-    public static MailPayloadDisplay getDisplay (MailMessage message)
+    public static MailPayloadDisplay getDisplay (int convoId, ConvMessage message)
     {
         if (message.payload == null) {
             return null;
         }
+
+        MailPayloadDisplay display;
         switch (message.payload.getType()) {
         case MailPayload.TYPE_GROUP_INVITE:
-            return new GroupInvite.Display(message);
+            display = new GroupInvite.Display();
+            break;
         case MailPayload.TYPE_FRIEND_INVITE:
-            return new FriendInvite.Display(message);
+            display = new FriendInvite.Display();
+            break;
         case MailPayload.TYPE_ITEM_GIFT:
-            return new ItemGift.Display(message);
+            display = new ItemGift.Display();
+            break;
         case MailPayload.TYPE_GAME_AWARD:
-            return new GameAward.Display(message);
+            display = new GameAward.Display();
+            break;
+        default:
+            throw new IllegalArgumentException(
+                "Unknown payload requested [type=" + message.payload.getType() + "]");
         }
-        throw new IllegalArgumentException(
-            "Unknown payload requested [type=" + message.payload.getType() + "]");
-    }
 
-    public MailPayloadDisplay (MailMessage message)
-    {
-        _message = message;
+        display.init(convoId, message);
+        return display;
     }
 
     /**
@@ -71,6 +76,23 @@ public abstract class MailPayloadDisplay
     public abstract String okToDelete ();
 
     /**
+     * Initializes this display with its bits.
+     */
+    protected void init (int convoId, ConvMessage message)
+    {
+        _convoId = convoId;
+        _message = message;
+        didInit();
+    }
+
+    /**
+     * Allows derived classes to finish their initialization.
+     */
+    protected void didInit ()
+    {
+    }
+
+    /**
      * Performs a server request to update the state for this message. If the callback
      * argument is null, one is created for you which does nothing on success and throws
      * a RuntimeException on failure.
@@ -86,9 +108,10 @@ public abstract class MailPayloadDisplay
                 }
             };
         }
-        CMsgs.mailsvc.updatePayload(CMsgs.ident, _message.headers.folderId,
-                                    _message.headers.messageId, payload, callback);
+        CMsgs.mailsvc.updatePayload(CMsgs.ident, _convoId, _message.author.name.getMemberId(),
+                                    _message.sent.getTime(), payload, callback);
     }
 
-    protected MailMessage _message;
+    protected int _convoId;
+    protected ConvMessage _message;
 }

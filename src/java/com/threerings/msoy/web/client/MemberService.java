@@ -7,17 +7,24 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.MemberInvites;
-import com.threerings.msoy.web.data.InvitationResults;
-import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
  */
 public interface MemberService extends RemoteService
 {
+    /**
+     * Looks up a member's card.
+     */
+    public MemberCard getMemberCard (int memberId)
+        throws ServiceException;
+
     /**
      * Figure out whether or not a given member is your friend.
      */

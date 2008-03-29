@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.MailMessage;
 
 import com.threerings.msoy.person.data.GameAwardPayload;
 
@@ -25,12 +24,6 @@ public abstract class GameAward
 {
     public static final class Display extends MailPayloadDisplay
     {
-        public Display (MailMessage message)
-        {
-            super(message);
-            _payload = (GameAwardPayload)message.payload;
-        }
-
         // @Override // from MailPayloadDisplay
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
@@ -70,6 +63,12 @@ public abstract class GameAward
         public String okToDelete ()
         {
             return null;
+        }
+
+        // @Override // from MailPayloadDisplay
+        protected void didInit ()
+        {
+            _payload = (GameAwardPayload)_message.payload;
         }
 
         protected GameAwardPayload _payload;

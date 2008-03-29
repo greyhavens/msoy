@@ -27,7 +27,7 @@ public class ItemGiftPayload extends MailPayload
     {
         this.item = item;
     }
-    
+
     // @Override
     public int getType ()
     {

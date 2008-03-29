@@ -19,6 +19,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -30,6 +31,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -43,6 +45,23 @@ import static com.threerings.msoy.Log.log;
 public class MemberServlet extends MsoyServiceServlet
     implements MemberService
 {
+    // from interface MemberService
+    public MemberCard getMemberCard (int memberId)
+        throws ServiceException
+    {
+        try {
+            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(
+                     Collections.singleton(memberId))) {
+                return mcr.toMemberCard();
+            }
+            return null;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getMemberCard failed [id=" + memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // from MemberService
     public boolean getFriendStatus (WebIdent ident, final int memberId)
         throws ServiceException

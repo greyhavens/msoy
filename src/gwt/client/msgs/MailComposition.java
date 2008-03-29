@@ -184,19 +184,20 @@ public class MailComposition extends BorderedDialog
     // send the message off to the backend for delivery
     protected void deliverMail ()
     {
-        CMsgs.mailsvc.deliverMessage(
-            CMsgs.ident, _recipient.getMemberId(), _subjectBox.getText(), _messageBox.getText(),
-            (_payloadComposer == null) ? null : _payloadComposer.getComposedPayload(),
-            new MsoyCallback() {
-            public void onSuccess (Object result) {
-                Iterator i = _listeners.iterator();
-                while (i.hasNext()) {
-                    ((MailSentListener) i.next()).messageSent(_recipient);
-                }
-                hide();
-                MsoyUI.info(CMsgs.mmsgs.messageSent());
-            }
-        });
+// TODO
+//         CMsgs.mailsvc.deliverMessage(
+//             CMsgs.ident, _recipient.getMemberId(), _subjectBox.getText(), _messageBox.getText(),
+//             (_payloadComposer == null) ? null : _payloadComposer.getComposedPayload(),
+//             new MsoyCallback() {
+//             public void onSuccess (Object result) {
+//                 Iterator i = _listeners.iterator();
+//                 while (i.hasNext()) {
+//                     ((MailSentListener) i.next()).messageSent(_recipient);
+//                 }
+//                 hide();
+//                 MsoyUI.info(CMsgs.mmsgs.messageSent());
+//             }
+//         });
     }
 
     protected void updateButtons ()

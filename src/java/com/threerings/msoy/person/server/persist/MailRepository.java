@@ -13,25 +13,28 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.Where;
 
-import com.threerings.msoy.person.data.Conversation;
-import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.util.JSONMarshaller;
+
+import com.threerings.msoy.person.data.Conversation;
+import com.threerings.msoy.person.data.GameAwardPayload;
+import com.threerings.msoy.person.data.MailPayload;
 
 import static com.threerings.msoy.Log.log;
 
@@ -117,8 +120,8 @@ public class MailRepository extends DepotRepository
     /**
      * Starts a conversation with the specified subject.
      */
-    public ConversationRecord startConversation (String subject, int recipientId, int authorId,
-                                                 String body, int payloadType, byte[] payloadState)
+    public ConversationRecord startConversation (int recipientId, int authorId, String subject,
+                                                 String body, MailPayload payload)
         throws PersistenceException
     {
         // TODO: do this in a transaction
@@ -134,8 +137,16 @@ public class MailRepository extends DepotRepository
         cmrec.sent = conrec.lastSent;
         cmrec.authorId = authorId;
         cmrec.body = body;
-        cmrec.payloadType = payloadType;
-        cmrec.payloadState = payloadState;
+        // serialize the payload
+        if (payload != null) {
+            cmrec.payloadType = payload.getType();
+            try {
+                cmrec.payloadState =
+                    JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
+            } catch (Exception e) {
+                throw new PersistenceException(e);
+            }
+        }
         insert(cmrec);
 
         ParticipantRecord aprec = new ParticipantRecord();
@@ -183,242 +194,12 @@ public class MailRepository extends DepotRepository
     }
 
     /**
-     * Fetch and return a single folder record for a given member, or null.
+     * Returns the number of unread messages in all conversations for the specified member.
      */
-    public MailFolderRecord getFolder (int memberId, int folderId)
+    public int getUnreadMessages (int memberId)
         throws PersistenceException
     {
-        return load(MailFolderRecord.class,
-                    MailFolderRecord.OWNER_ID, memberId,
-                    MailFolderRecord.FOLDER_ID, folderId);
-    }
-
-    /**
-     * Count the number of read/unread messages in a given folder and return a Tuple<Integer,
-     * Integer> with the number of read messages in the left spot and the unread ones in the right.
-     */
-    public Tuple<Integer, Integer> getMessageCount (final int memberId, final int folderId)
-        throws PersistenceException
-    {
-        // make sure MailMessageRecord is resolved (TODO: depot should do this automatically based
-        // on the @Computed(shadowOf=class) annotation)
-        _ctx.getMarshaller(MailMessageRecord.class);
-
-        int read = 0, unread = 0;
-        List<MailCountRecord> records = findAll(
-            MailCountRecord.class,
-            new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                      MailMessageRecord.FOLDER_ID_C, folderId),
-            new GroupBy(MailMessageRecord.UNREAD_C));
-        for (MailCountRecord record : records) {
-            if (record.unread) {
-                unread = record.count;
-            } else {
-                read = record.count;
-            }
-        }
-        return new Tuple<Integer, Integer>(read, unread);
-    }
-
-    /**
-     * Fetch and return all folder records for a given member.
-     */
-    public List<MailFolderRecord> getFolders (int memberId)
-        throws PersistenceException
-    {
-        return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID_C, memberId));
-    }
-
-    /**
-     * Fetch and return a single message record in a given folder of a given member.
-     */
-    public MailMessageRecord getMessage (int memberId, int folderId, int messageId)
-        throws PersistenceException
-    {
-        return load(MailMessageRecord.class,
-                    MailMessageRecord.OWNER_ID, memberId,
-                    MailMessageRecord.FOLDER_ID, folderId,
-                    MailMessageRecord.MESSAGE_ID, messageId);
-    }
-
-    /**
-     * Fetch and return all message records in a given folder of a given member.
-     */
-    public List<MailMessageRecord> getMessages (int memberId, int folderId)
-        throws PersistenceException
-    {
-        return findAll(MailMessageRecord.class,
-                       new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                                 MailMessageRecord.FOLDER_ID_C, folderId),
-                       OrderBy.descending(MailMessageRecord.SENT_C));
-    }
-
-    /**
-     * Fetch and return all message records in a given folder of a given member for whom the other
-     * party is the specified id.
-     */
-    public List<MailMessageRecord> getMessages (int memberId, int folderId, int otherId)
-        throws PersistenceException
-    {
-        return findAll(
-            MailMessageRecord.class,
-            new Where(new And(new Equals(MailMessageRecord.OWNER_ID_C, memberId),
-                              new Equals(MailMessageRecord.FOLDER_ID_C, folderId),
-                              new Or(new Equals(MailMessageRecord.SENDER_ID_C, otherId),
-                                     new Equals(MailMessageRecord.RECIPIENT_ID_C, otherId)))),
-            OrderBy.descending(MailMessageRecord.SENT_C));
-    }
-
-    /**
-     * Insert a new folder record into the database.
-     */
-    public MailFolderRecord createFolder (MailFolderRecord record)
-        throws PersistenceException
-    {
-        insert(record);
-        return record;
-    }
-
-    /**
-     * Deliver a message by filing it in the recipient's and the sender's in- and sent boxes
-     * respectively, with ownerId set appropriately. This method modifies the record.
-     */
-    public void deliverMessage (MailMessageRecord record)
-        throws PersistenceException
-    {
-        record.sent = new Timestamp(System.currentTimeMillis());
-
-        // file one copy for ourselves
-        if (record.senderId != 0) {
-            record.ownerId = record.senderId;
-            record.folderId = MailFolder.SENT_FOLDER_ID;
-            record.unread = false;
-            fileMessage(record);
-        }
-
-        // and make a copy for the recipient
-        record.ownerId = record.recipientId;
-        record.folderId = MailFolder.INBOX_FOLDER_ID;
-        record.unread = true;
-        fileMessage(record);
-
-        _eventLog.mailSent(record.senderId, record.recipientId, record.payloadType);
-    }
-
-    /**
-     * Insert a message into the database, for a given member and folder. This method
-     * fills in the messageId field with a new value that's unique within the folder.
-     */
-    public MailMessageRecord fileMessage (MailMessageRecord record)
-        throws PersistenceException
-    {
-        record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
-        if (record.messageId < 0) {
-            log.warning("Failed to file message, unable to obtain message id " + record + ".");
-            return null;
-        }
-        insert(record);
-        return record;
-    }
-
-    /**
-     * Moves a message from one folder to another.
-     */
-    public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
-        throws PersistenceException
-    {
-        Comparable[] idArr = IntListUtil.box(messageIds);
-        int newId = claimMessageId(ownerId, newFolderId, messageIds.length);
-        if (newId < 0) {
-            log.warning("Failed to move message, unable to obtain message id [oid=" + ownerId +
-                        ", fid=" + folderId + ", nfid=" + newFolderId +
-                        ", ids=" + StringUtil.toString(messageIds) + "].");
-            return;
-        }
-
-        MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
-            MailMessageRecord.class,
-            MailMessageRecord.OWNER_ID, ownerId,
-            MailMessageRecord.FOLDER_ID, folderId,
-            MailMessageRecord.MESSAGE_ID, idArr);
-        updatePartial(MailMessageRecord.class, key, key,
-                      MailMessageRecord.FOLDER_ID, newFolderId,
-                      MailMessageRecord.MESSAGE_ID, newId++);
-    }
-
-    /**
-     * Delete one or more message records.
-     */
-    public void deleteMessage (int ownerId, int folderId, int... messageIds)
-        throws PersistenceException
-    {
-        if (messageIds.length == 0) {
-            return;
-        }
-        Comparable[] idArr = IntListUtil.box(messageIds);
-        MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
-            MailMessageRecord.class,
-            MailMessageRecord.OWNER_ID, ownerId,
-            MailMessageRecord.FOLDER_ID, folderId,
-            MailMessageRecord.MESSAGE_ID, idArr);
-        deleteAll(MailMessageRecord.class, key, key);
-    }
-
-    /**
-     * Set the payload state of a message in the persistent store.
-     */
-    public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
-        throws PersistenceException
-    {
-        updatePartial(MailMessageRecord.getKey(messageId, folderId, ownerId),
-                      MailMessageRecord.PAYLOAD_STATE, state);
-    }
-
-    /**
-     * Flags messages as being unread (or not).
-     */
-    public void setUnread (int ownerId, int folderId, IntSet messageIds, boolean unread)
-        throws PersistenceException
-    {
-        // TODO: do this in one query
-        for (int messageId : messageIds) {
-            updatePartial(MailMessageRecord.getKey(messageId, folderId, ownerId),
-                          MailMessageRecord.UNREAD, unread);
-        }
-    }
-
-    // claim space in a folder to deliver idCount messages; returns the first usable id
-    protected int claimMessageId (int memberId, int folderId, int idCount)
-        throws PersistenceException
-    {
-        int firstId, rows;
-        int attempts = 10;
-        do {
-            // sanity check
-            if (--attempts < 0) {
-                throw new PersistenceException(
-                    "Failed to claim new ID for message delivery in 10 attempts [memberId=" +
-                    memberId + ", folderId=" + folderId + ", idCount=" + idCount + "]");
-            }
-            Key<MailFolderRecord> key = MailFolderRecord.getKey(folderId, memberId);
-
-            // find the next available message ID
-            MailFolderRecord record = load(MailFolderRecord.class, key);
-            if (record == null) {
-                return -1;
-            }
-            firstId = record.nextMessageId;
-
-            // attempt to claim our message id block with a lock-less database update
-            rows = updatePartial(
-                MailFolderRecord.class,
-                new Where(new And(key.condition,
-                                  new Equals(MailFolderRecord.NEXT_MESSAGE_ID_C, firstId))),
-                key,
-                MailFolderRecord.NEXT_MESSAGE_ID, firstId + idCount);
-        } while (rows == 0);
-
-        return firstId;
+        return 1; // TODO
     }
 
     // TEMP
@@ -427,10 +208,19 @@ public class MailRepository extends DepotRepository
     {
         // there are about 50k messages on production right now, so we can handle loading
         // everything into memory and being more sophisticated about our converstion
+
+        // we have to load these less than Short.MAX_VALUE at a time to avoid triggering a Postgres
+        // JDBC driver bug
+        List<MailMessageRecord> msgrecs = Lists.newArrayList(), batch;
+        do {
+            batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), Short.MAX_VALUE));
+            msgrecs.addAll(batch);
+        } while (batch.size() == Short.MAX_VALUE);
+
         int migrated = 0, duplicates = 0;
         Map<String,MigratedConvo> convos = Maps.newHashMap();
       SCAN:
-        for (MailMessageRecord msg : findAll(MailMessageRecord.class)) {
+        for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject;
             if (subject.toLowerCase().startsWith("re: ")) {
                 subject = subject.substring(4);
@@ -516,8 +306,8 @@ public class MailRepository extends DepotRepository
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(MailMessageRecord.class);
-        classes.add(MailFolderRecord.class);
+//         classes.add(MailMessageRecord.class);
+//         classes.add(MailFolderRecord.class);
         classes.add(ConversationRecord.class);
         classes.add(ConvMessageRecord.class);
         classes.add(ParticipantRecord.class);
@@ -543,4 +333,13 @@ public class MailRepository extends DepotRepository
     // END TEMP
 
     protected MsoyEventLogger _eventLog;
+
+    static {
+        // register a migration for TrophyAwardPayload -> GameAwardPayload
+        Map<String, String> migmap = Maps.newHashMap();
+        migmap.put("trophyName", "awardName");
+        migmap.put("trophyMedia", "awardMediaHash");
+        migmap.put("trophyMimeType", "awardMimeType");
+        JSONMarshaller.registerMigration(GameAwardPayload.class, migmap);
+    }
 }

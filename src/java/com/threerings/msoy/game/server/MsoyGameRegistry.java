@@ -312,16 +312,17 @@ public class MsoyGameRegistry
             return;
         }
 
-        // send them a mail message as well
-        String subject = MsoyServer.msgMan.getBundle("server").get(
-            "m.got_trophy_subject", trophy.name);
-        String body = MsoyServer.msgMan.getBundle("server").get(
-            "m.got_trophy_body", trophy.description);
-        MsoyServer.mailMan.deliverMessage(
-            // TODO: sender should be special system id
-            memberId, memberId, subject, body, new GameAwardPayload(
-                trophy.gameId, gameName, GameAwardPayload.TROPHY, trophy.name, trophy.trophyMedia),
-            true, new ResultListener.NOOP<Void>());
+// TODO: put this in their feed
+//         // send them a mail message as well
+//         String subject = MsoyServer.msgMan.getBundle("server").get(
+//             "m.got_trophy_subject", trophy.name);
+//         String body = MsoyServer.msgMan.getBundle("server").get(
+//             "m.got_trophy_body", trophy.description);
+//         MsoyServer.mailMan.deliverMessage(
+//             // TODO: sender should be special system id
+//             memberId, memberId, subject, body, new GameAwardPayload(
+//                 trophy.gameId, gameName, GameAwardPayload.TROPHY, trophy.name, trophy.trophyMedia),
+//             true, new ResultListener.NOOP<Void>());
     }
 
     // from interface GameServerProvider

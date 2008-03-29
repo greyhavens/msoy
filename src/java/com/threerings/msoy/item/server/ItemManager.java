@@ -381,16 +381,18 @@ public class ItemManager
 
             public void handleSuccess () {
                 super.handleSuccess();
-                // send them a mail message as well
-                String subject = MsoyServer.msgMan.getBundle("server").get(
-                    "m.got_prize_subject", _result.name);
-                String body = MsoyServer.msgMan.getBundle("server").get("m.got_prize_body");
-                MsoyServer.mailMan.deliverMessage(
-                    // TODO: sender should be special system id
-                    memberId, memberId, subject, body, new GameAwardPayload(
-                        gameId, gameName, GameAwardPayload.PRIZE,
-                        _result.name, _result.getThumbnailMedia()),
-                    true, new ResultListener.NOOP<Void>());
+
+// TODO: post to their feed
+//                 // send them a mail message as well
+//                 String subject = MsoyServer.msgMan.getBundle("server").get(
+//                     "m.got_prize_subject", _result.name);
+//                 String body = MsoyServer.msgMan.getBundle("server").get("m.got_prize_body");
+//                 MsoyServer.mailMan.deliverMessage(
+//                     // TODO: sender should be special system id
+//                     memberId, memberId, subject, body, new GameAwardPayload(
+//                         gameId, gameName, GameAwardPayload.PRIZE,
+//                         _result.name, _result.getThumbnailMedia()),
+//                     true, new ResultListener.NOOP<Void>());
             }
         });
     }

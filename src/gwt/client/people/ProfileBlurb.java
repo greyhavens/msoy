@@ -27,8 +27,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
 
-import client.msgs.FriendInvite;
-import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -79,25 +77,23 @@ public class ProfileBlurb extends Blurb
             buttons.add(homepage);
         }
         if (CPeople.getMemberId() != 0 && !isMe) {
-            buttons.add(MsoyUI.createActionImage("/images/profile/sendmail.png",
-                                                 CPeople.msgs.sendMail(), new ClickListener() {
-                public void onClick (Widget widget) {
-                    new MailComposition(_name, null, null, null).show();
-                }
-            }));
+            buttons.add(Application.createImageLink("/images/profile/sendmail.png",
+                                                    CPeople.msgs.sendMail(), Page.MAIL,
+                                                    Args.compose("w", _name.getMemberId())));
         }
         buttons.add(Application.createImageLink("/images/profile/visithome.png",
                                                 CPeople.msgs.visitHome(),
                                                 Page.WORLD, "m" + _name.getMemberId()));
         if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend && !isMe) {
-            buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
-                                                 CPeople.msgs.inviteFriend(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    new MailComposition(_name, CPeople.msgs.friendInviteTitle(),
-                                        new FriendInvite.Composer(),
-                                        CPeople.msgs.friendInviteBody()).show();
-                }
-            }));
+// TODO: custom popup
+//             buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
+//                                                  CPeople.msgs.inviteFriend(), new ClickListener() {
+//                 public void onClick (Widget sender) {
+//                     new MailComposition(_name, CPeople.msgs.friendInviteTitle(),
+//                                         new FriendInvite.Composer(),
+//                                         CPeople.msgs.friendInviteBody()).show();
+//                 }
+//             }));
         }
         if (CPeople.isAdmin()) {
             buttons.add(Application.createImageLink("/images/profile/admininfo.png",

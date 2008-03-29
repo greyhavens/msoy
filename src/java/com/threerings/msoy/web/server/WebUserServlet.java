@@ -153,21 +153,23 @@ public class WebUserServlet extends MsoyServiceServlet
             }
 
             if (inviter != null) {
-                // send a notification email to the inviter that the friend has accepted
+                // send them a whirled mail informing them of the acceptance
+                String subject = MsoyServer.msgMan.getBundle("server").get(
+                    "m.invite_accepted_subject");
+                String body = MsoyServer.msgMan.getBundle("server").get(
+                    "m.invite_accepted_body", invite.inviteeEmail, displayName);
+                try {
+                    MsoyServer.mailRepo.startConversation(
+                        invite.inviterId, newAccount.memberId, subject, body, null);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to sent invite accepted mail", pe);
+                }
+
+                // note the establishment of this friendship in the runtime
                 final InvitationRecord finvite = invite;
                 final MemberName finviter = inviter;
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
-                        // send them a whirled mail informing them of the acceptance
-                        String subject = MsoyServer.msgMan.getBundle("server").get(
-                            "m.invite_accepted_subject");
-                        String body = MsoyServer.msgMan.getBundle("server").get(
-                            "m.invite_accepted_body", finvite.inviteeEmail, displayName);
-                        MsoyServer.mailMan.deliverMessage(
-                            newAccount.memberId, finvite.inviterId, subject, body, null,
-                            false, new ResultListener.NOOP<Void>());
-
-                        // note the establishment of this friendship in the appropriate manager
                         // TODO: This is really spammy; in fact, when somebody accepts your invite
                         // TODO: you may get, in practice, four separate notifications:
                         // TODO:  - Foo is now your friend.
@@ -448,8 +450,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // load up their new message count
         try {
-            data.newMailCount = MsoyServer.mailMan.getRepository().getMessageCount(
-                mrec.memberId, MailFolder.INBOX_FOLDER_ID).right;
+            data.newMailCount = MsoyServer.mailRepo.getUnreadMessages(mrec.memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }

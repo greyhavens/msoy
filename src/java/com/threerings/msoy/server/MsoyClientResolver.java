@@ -15,9 +15,7 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.group.data.GroupMembership;
@@ -132,10 +130,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail message count
-        MailRepository mailRepo = MsoyServer.mailMan.getRepository();
-        Tuple<Integer, Integer> count = mailRepo.getMessageCount(
-            member.memberId, MailFolder.INBOX_FOLDER_ID);
-        userObj.newMailCount = count.right;
+        userObj.newMailCount = MsoyServer.mailRepo.getUnreadMessages(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {

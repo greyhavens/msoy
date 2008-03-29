@@ -177,19 +177,26 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void inviteToBeFriend (ClientObject caller, int friendId,
-                                  InvocationService.ConfirmListener lner)
+    public void inviteToBeFriend (ClientObject caller, final int friendId,
+                                  InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
 
         // in GWT land, we just send a mail message, so do the same here
-        String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
-        String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
-        MsoyServer.mailMan.deliverMessage(
-            user.getMemberId(), friendId, subject, body, new FriendInvitePayload(), false,
-            new ConfirmAdapter(lner));
+        final String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
+        final String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
+        String uname = "sendInviteMail(" + user.who() + ", " + friendId + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
+                MsoyServer.mailRepo.startConversation(
+                    friendId, user.getMemberId(), subject, body, new FriendInvitePayload());
+            }
+            public void handleSuccess () {
+                ((InvocationService.ConfirmListener)_listener).requestProcessed();
+            }
+        });
     }
 
     // from interface MemberProvider
