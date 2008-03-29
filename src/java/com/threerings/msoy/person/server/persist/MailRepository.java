@@ -215,7 +215,7 @@ public class MailRepository extends DepotRepository
         do {
             batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), 10000));
             msgrecs.addAll(batch);
-        } while (batch.size() == Short.MAX_VALUE);
+        } while (batch.size() == 10000);
 
         int migrated = 0, duplicates = 0;
         Map<String,MigratedConvo> convos = Maps.newHashMap();
