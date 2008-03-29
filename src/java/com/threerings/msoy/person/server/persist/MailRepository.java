@@ -209,11 +209,11 @@ public class MailRepository extends DepotRepository
         // there are about 50k messages on production right now, so we can handle loading
         // everything into memory and being more sophisticated about our converstion
 
-        // we have to load these less than Short.MAX_VALUE at a time to avoid triggering a Postgres
-        // JDBC driver bug
+        // we have to load these less than 32768 at a time because these keys all turn into one
+        // giant WHERE foo in (?, ?, ...) clause and that can only contain 32768 arguments
         List<MailMessageRecord> msgrecs = Lists.newArrayList(), batch;
         do {
-            batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), Short.MAX_VALUE));
+            batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), 10000));
             msgrecs.addAll(batch);
         } while (batch.size() == Short.MAX_VALUE);
 
