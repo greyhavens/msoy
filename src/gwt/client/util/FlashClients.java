@@ -290,8 +290,14 @@ public class FlashClients
             // otherwise they'll need to do a manual upgrade
             return getFlashDownloadString(width, height);
         }
+        // some mac flash plugins are booched and can't express install
+        boolean mac = isMacNative();
+        if (mac && !hasFlashVersionNative(MAC_PASSTHROUGH_MAX) &&
+                hasFlashVersionNative(MAC_PASSTHROUGH_MIN)) {
+            return null;
+        }
         // only some system can run the upgrade script
-        if (hasFlashVersionNative(UPGRADE_VERSION) && canUpgradeExpressNative()) {
+        if (hasFlashVersionNative(UPGRADE_VERSION) && (mac || isWindowsNative())) {
             return getExpressInstallerString(width, height);
         }
         // if they have any version of flash we need to show the manual link
@@ -446,10 +452,10 @@ public class FlashClients
     }-*/;
 
     /**
-     * Returns true if we can use the express installer.
+     * Returns true if we're on a mac.
      */
-    protected static native boolean canUpgradeExpressNative () /*-{
-        return $wnd.swfobject.ua.win || $wnd.swfobject.ua.mac;
+    protected static native boolean isMacNative () /*-{
+        return $wnd.swfobject.ua.mac;
     }-*/;
 
     // TODO: put this in Application?
@@ -468,6 +474,10 @@ public class FlashClients
 
     /** The minimum flash for the express upgrade in vista. */
     protected static final String VISTA_VERSION = "9.0.0";
+
+    /** A range of mac versions we'll let through since they have problems with express install. */
+    protected static final String MAC_PASSTHROUGH_MIN = "9.0.0";
+    protected static final String MAC_PASSTHROUGH_MAX = "9.0.49";
 
     /** The minimum flash for the express upgrade functionality. */
     protected static final String UPGRADE_VERSION = "6.0.65";
