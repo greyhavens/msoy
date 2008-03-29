@@ -21,7 +21,7 @@ public class BlankPlaceView extends Canvas
     public function BlankPlaceView ()
     {
         var spinner :LoadingSpinner = new LoadingSpinner();
-        spinner.setProgress(1, 1);
+        spinner.setProgress(0, 1);
         var wrapper :FlexWrapper = new FlexWrapper(spinner);
 
         wrapper.setStyle("verticalCenter", "0");
