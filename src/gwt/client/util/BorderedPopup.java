@@ -5,9 +5,12 @@ package client.util;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import client.shell.Frame;
 
 /**
  * Displays a popup with a nice border around it.
@@ -48,6 +51,25 @@ public class BorderedPopup extends PopupPanel
             center(); // this will show us
         } else {
             super.show();
+        }
+    }
+
+    // @Override // from PopupPanel
+    public void center ()
+    {
+        boolean initiallyShowing = (getParent() != null); // can't access super.showing, yay!
+        if (!initiallyShowing) {
+            setVisible(false);
+            show();
+        }
+
+        // center in our frame width rather than the browser width
+        int left = (Frame.CONTENT_WIDTH - getOffsetWidth()) / 2;
+        int top = (Window.getClientHeight() - getOffsetHeight()) / 2;
+        setPopupPosition(Window.getScrollLeft() + left, Window.getScrollTop() + top);
+
+        if (!initiallyShowing) {
+            setVisible(true);
         }
     }
 
