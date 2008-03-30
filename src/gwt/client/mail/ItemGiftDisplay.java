@@ -68,11 +68,11 @@ public class ItemGiftDisplay extends MailPayloadDisplay
 
             CMail.itemsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback() {
                 public void onSuccess (Object result) {
-                    add(new ItemThumbnail((Item) result, new ClickListener() {
+                    add(new ItemThumbnail((Item) result, _enabled ? new ClickListener() {
                         public void onClick (Widget sender) {
                             unwrapItem();
                         }
-                    }));
+                    } : null));
                 }
             });
         }

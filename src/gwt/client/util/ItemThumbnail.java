@@ -23,7 +23,11 @@ public class ItemThumbnail extends FlexTable
         setCellSpacing(0);
         setWidget(0, 0, MediaUtil.createMediaView(
                       item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, listener));
-        setWidget(1, 0, MsoyUI.createActionLabel(ItemUtil.getName(item), "Text", listener));
+        if (listener != null) {
+            setWidget(1, 0, MsoyUI.createActionLabel(ItemUtil.getName(item), "Text", listener));
+        } else {
+            setWidget(1, 0, MsoyUI.createLabel(ItemUtil.getName(item), "Text"));
+        }
     }
 
     public Item getItem ()
