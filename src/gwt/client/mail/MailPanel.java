@@ -113,8 +113,12 @@ public class MailPanel extends VerticalPanel
 
             controls.setWidget(0, 0, new Button(CMail.msgs.mailCheck(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    ((ConvosModel)_model).reset();
-                    displayPage(0, true); // force a reload and go to page 0
+                    if (_page == 0) {
+                        ((ConvosModel)_model).reset();
+                        displayPage(0, true);
+                    } else {
+                        Application.go(Page.MAIL, "");
+                    }
                 }
             }));
         }

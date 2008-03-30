@@ -180,12 +180,9 @@ public class MessagesPanel extends PagedGrid
 
             if (CMsgs.getMemberId() != 0 &&
                 CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        new MailComposition(_message.poster.name,
-                                            CMsgs.mmsgs.mailRe(_thread.subject), null, null).show();
-                    }
-                }));
+                String args = Args.compose("w", _message.poster.name.getMemberId());
+                info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(),
+                                       Application.createLinkListener(Page.MAIL, args)));
             }
 
             if (_postReply.isEnabled()) {
