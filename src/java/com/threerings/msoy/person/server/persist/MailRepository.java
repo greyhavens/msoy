@@ -32,6 +32,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
@@ -54,7 +55,8 @@ public class MailRepository extends DepotRepository
 
         // TEMP (3-27-08): if we have no conversation records, migrate our mail message records
         try {
-            if (load(CountRecord.class, new FromOverride(ConversationRecord.class)).count == 0) {
+            if (load(CountRecord.class, new FromOverride(ConversationRecord.class)).count == 0 &&
+                ServerConfig.nodeName.equals("msoy1")) {
                 migrateToConversations();
             }
         } catch (PersistenceException pe) {
@@ -234,7 +236,8 @@ public class MailRepository extends DepotRepository
       SCAN:
         for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject;
-            if (subject.toLowerCase().equals("invitation accepted!")) {
+            if (subject.toLowerCase().equals("invitation accepted!") ||
+                subject.equals("Be My Friend")) {
                 continue; // skip these auto-generated messages
             }
             if (subject.toLowerCase().startsWith("re: ")) {
