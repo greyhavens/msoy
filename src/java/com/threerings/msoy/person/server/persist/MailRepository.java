@@ -127,6 +127,8 @@ public class MailRepository extends DepotRepository
         // TODO: do this in a transaction
         ConversationRecord conrec = new ConversationRecord();
         conrec.subject = subject;
+        conrec.initiatorId = authorId;
+        conrec.targetId = recipientId;
         conrec.lastSent = new Timestamp(System.currentTimeMillis());
         conrec.lastSnippet = StringUtil.truncate(body, Conversation.SNIPPET_LENGTH);
         conrec.lastAuthorId = authorId;
@@ -222,6 +224,9 @@ public class MailRepository extends DepotRepository
       SCAN:
         for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject;
+            if (subject.toLowerCase().equals("invitation accepted!")) {
+                continue; // skip these auto-generated messages
+            }
             if (subject.toLowerCase().startsWith("re: ")) {
                 subject = subject.substring(4);
             }
@@ -259,8 +264,15 @@ public class MailRepository extends DepotRepository
         for (MigratedConvo convo : convos.values()) {
             try {
                 MigratedMessage latest = null;
+                int initiatorId = 0, targetId = 0;
                 IntSet participantIds = new ArrayIntSet();
                 for (MigratedMessage msg : convo.messages) {
+                    if (initiatorId == 0) {
+                        initiatorId = msg.authorId;
+                        targetId = msg.authorId;
+                    } else if (msg.authorId != initiatorId) {
+                        targetId = msg.authorId;
+                    }
                     participantIds.add(msg.authorId);
                     if (latest == null || latest.sent < msg.sent) {
                         latest = msg;
@@ -269,6 +281,8 @@ public class MailRepository extends DepotRepository
 
                 ConversationRecord conrec = new ConversationRecord();
                 conrec.subject = convo.subject;
+                conrec.initiatorId = initiatorId;
+                conrec.targetId = targetId;
                 conrec.lastSent = new Timestamp(latest.sent);
                 conrec.lastSnippet = StringUtil.truncate(latest.body, Conversation.SNIPPET_LENGTH);
                 conrec.lastAuthorId = latest.authorId;

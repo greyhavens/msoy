@@ -62,8 +62,8 @@ public class ConvoPanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, result.subject, 1, "Middle");
-        header.getFlexCellFormatter().addStyleName(0, 1, "Subject");
+        header.setText(0, 1, CMail.msgs.convoWith(""+result.other), 1, "Middle");
+        header.getFlexCellFormatter().addStyleName(0, 1, "Title");
         header.setWidget(0, 2, new Button("Back to Inbox", toInbox), 1, "Middle");
         header.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         header.setHTML(0, 3, "&nbsp;", 1, "TopRight");
@@ -71,7 +71,8 @@ public class ConvoPanel extends FlowPanel
 
         for (int ii = 0; ii < result.messages.size(); ii++) {
             ConvMessage msg = (ConvMessage)result.messages.get(ii);
-            add(new MessageWidget(msg, msg.sent.getTime() > result.lastRead,
+            add(new MessageWidget((ii == 0) ? result.subject : null, msg,
+                                  msg.sent.getTime() > result.lastRead,
                                   ii == result.messages.size()-1));
         }
 
@@ -91,7 +92,7 @@ public class ConvoPanel extends FlowPanel
 
     protected class MessageWidget extends SmartTable
     {
-        public MessageWidget (ConvMessage msg, boolean unread, boolean showReply)
+        public MessageWidget (String subject, ConvMessage msg, boolean unread, boolean showReply)
         {
             super("Message", 0, 0);
             if (unread) {
@@ -112,14 +113,17 @@ public class ConvoPanel extends FlowPanel
             getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
             _contents = new FlowPanel();
+            if (subject != null) {
+                _contents.add(MsoyUI.createLabel(subject, "Subject"));
+            }
             if (msg.payload != null) {
                 MailPayloadDisplay display = MailPayloadDisplay.getDisplay(_convoId, msg);
-                if (CMail.getMemberId() == msg.author.name.getMemberId()) {
-                    _contents.add(display.widgetForRecipient());
-                } else {
-                    _contents.add(display.widgetForOthers());
+                Widget payviz = (CMail.getMemberId() == msg.author.name.getMemberId()) ?
+                    display.widgetForSender() : display.widgetForRecipient();
+                if (payviz != null) {
+                    _contents.add(payviz);
+                    _contents.add(WidgetUtil.makeShim(10, 10));
                 }
-                _contents.add(WidgetUtil.makeShim(10, 10));
             }
             _contents.add(new HTML(MailUtil.textToHTML(msg.body)));
             setWidget(0, 2, _contents, 1, "Body");
@@ -127,7 +131,9 @@ public class ConvoPanel extends FlowPanel
 
             if (showReply) {
                 _contents.add(WidgetUtil.makeShim(10, 10));
-                _contents.add(_reply = new Button(CMail.msgs.convoReply(), new ClickListener() {
+                String action = _msg.author.name.getMemberId() == CMail.getMemberId() ?
+                    CMail.msgs.convoFollowUp() : CMail.msgs.convoReply();
+                _contents.add(_reply = new Button(action, new ClickListener() {
                     public void onClick (Widget sender) {
                         showReply();
                     }
@@ -176,7 +182,7 @@ public class ConvoPanel extends FlowPanel
                     ConvMessage sent = (ConvMessage)result;
                     _model.noteMessageAdded(_convoId, sent);
                     _contents.remove(reply);
-                    ConvoPanel.this.insert(new MessageWidget(sent, false, true),
+                    ConvoPanel.this.insert(new MessageWidget(null, sent, false, true),
                                            ConvoPanel.this.getWidgetCount()-1);
                     return false;
                 }

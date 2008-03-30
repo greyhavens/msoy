@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.util.ClickCallback;
+import client.msgs.StartConvoCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -74,22 +74,7 @@ public class ComposePanel extends FlowPanel
         HorizontalPanel buttons = new HorizontalPanel();
         Button send = new Button(CMail.msgs.composeSend());
         buttons.add(send);
-        new ClickCallback(send) {
-            public boolean callService () {
-                String subject = _subject.getText().trim();
-                String body = _body.getText().trim();
-                if (subject.length() == 0) {
-                    MsoyUI.error(CMail.msgs.composeMissingSubject());
-                    return false;
-                }
-                if (body.length() == 0) {
-                    MsoyUI.error(CMail.msgs.composeMissingBody());
-                    return false;
-                }
-                CMail.mailsvc.startConversation(
-                    CMail.ident, _recipient.name.getMemberId(), subject, body, null, this);
-                return true;
-            }
+        new StartConvoCallback(send, _recipient.name.getMemberId(), _subject, _body) {
             public boolean gotResult (Object result) {
                 MsoyUI.info(CMail.msgs.composeSent(_recipient.name.toString()));
                 History.back();

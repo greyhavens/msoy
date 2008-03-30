@@ -56,10 +56,10 @@ public class MailServlet extends MsoyServiceServlet
             List<Conversation> convos = Lists.newArrayList();
             List<ConversationRecord> conrecs =
                 _mailRepo.loadConversations(memrec.memberId, offset, count);
-            IntSet authorIds = new ArrayIntSet();
+            IntSet otherIds = new ArrayIntSet();
             for (ConversationRecord conrec : conrecs) {
                 convos.add(conrec.toConversation());
-                authorIds.add(conrec.lastAuthorId);
+                otherIds.add(conrec.getOtherId(memrec.memberId));
             }
 
             // load up the last read info for these conversations (TODO: do this in a join when
@@ -69,13 +69,13 @@ public class MailServlet extends MsoyServiceServlet
                 convo.hasUnread = (lastRead == null) || (lastRead < convo.lastSent.getTime());
             }
 
-            // resolve the member cards for all latest authors
-            IntMap<MemberCard> authors = IntMaps.newHashIntMap();
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(authorIds)) {
-                authors.put(mcr.memberId, mcr.toMemberCard());
+            // resolve the member cards for the other parties
+            IntMap<MemberCard> others = IntMaps.newHashIntMap();
+            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(otherIds)) {
+                others.put(mcr.memberId, mcr.toMemberCard());
             }
             for (int ii = 0, ll = convos.size(); ii < ll; ii++) {
-                convos.get(ii).lastAuthor = authors.get(conrecs.get(ii).lastAuthorId);
+                convos.get(ii).other = others.get(conrecs.get(ii).getOtherId(memrec.memberId));
             }
 
             return convos;
@@ -107,6 +107,7 @@ public class MailServlet extends MsoyServiceServlet
             if (conrec == null) {
                 return null;
             }
+            convo.other = MsoyServer.memberRepo.loadMemberName(conrec.getOtherId(memrec.memberId));
             convo.subject = conrec.subject;
 
             // load up the messages in this conversation

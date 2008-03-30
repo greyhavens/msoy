@@ -101,6 +101,12 @@ public class MailPanel extends VerticalPanel
         }
 
         // @Override // from PagedGrid
+        protected boolean displayNavi (int items)
+        {
+            return true;
+        }
+
+        // @Override // from PagedGrid
         protected void addCustomControls (FlexTable controls)
         {
             super.addCustomControls(controls);
@@ -120,11 +126,11 @@ public class MailPanel extends VerticalPanel
         {
             super("Convo", 0, 0);
 
-            Widget photo = new ThumbBox(convo.lastAuthor.photo, MediaDesc.HALF_THUMBNAIL_SIZE, null);
+            Widget photo = new ThumbBox(convo.other.photo, MediaDesc.HALF_THUMBNAIL_SIZE, null);
             setWidget(0, 0, photo, 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-            setWidget(0, 1, Application.memberViewLink(convo.lastAuthor.name), 1, "Name");
+            setWidget(0, 1, Application.memberViewLink(convo.other.name), 1, "Name");
             setText(1, 0, _fmt.format(convo.lastSent), 1, "Sent");
 
             Widget link = Application.createLink(

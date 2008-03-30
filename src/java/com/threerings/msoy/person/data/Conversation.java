@@ -21,14 +21,17 @@ public class Conversation
     /** The unique identifier of this conversation. */
     public int conversationId;
 
+    /** The other party in this conversation. */
+    public MemberCard other;
+
     /** The subject of this conversation. */
     public String subject;
 
     /** The time at which the most recent message was sent in this conversation. */
     public Date lastSent;
 
-    /** The author of the most recent message. */
-    public MemberCard lastAuthor;
+    /** The id of the last author in this conversation. */
+    public int lastAuthorId;
 
     /** A snippet of the text of the most recent message. */
     public String lastSnippet;

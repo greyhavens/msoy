@@ -21,7 +21,7 @@ import client.util.ThumbBox;
 public class GameAwardDisplay extends MailPayloadDisplay
 {
     // @Override // from MailPayloadDisplay
-    public Widget widgetForRecipient ()
+    public Widget widgetForSender ()
     {
         FlexTable table = new FlexTable();
 
@@ -44,18 +44,6 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.setText(1, 1, _payload.awardName);
 
         return table;
-    }
-
-    // @Override // from MailPayloadDisplay
-    public Widget widgetForOthers ()
-    {
-        throw new IllegalStateException("Non-recipients should not see game awards.");
-    }
-
-    // @Override // from MailPayloadDisplay
-    public String okToDelete ()
-    {
-        return null;
     }
 
     // @Override // from MailPayloadDisplay

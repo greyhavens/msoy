@@ -33,6 +33,20 @@ public class ConversationRecord extends PersistentRecord
     public static final ColumnExp CONVERSATION_ID_C =
         new ColumnExp(ConversationRecord.class, CONVERSATION_ID);
 
+    /** The column identifier for the {@link #initiatorId} field. */
+    public static final String INITIATOR_ID = "initiatorId";
+
+    /** The qualified column identifier for the {@link #initiatorId} field. */
+    public static final ColumnExp INITIATOR_ID_C =
+        new ColumnExp(ConversationRecord.class, INITIATOR_ID);
+
+    /** The column identifier for the {@link #targetId} field. */
+    public static final String TARGET_ID = "targetId";
+
+    /** The qualified column identifier for the {@link #targetId} field. */
+    public static final ColumnExp TARGET_ID_C =
+        new ColumnExp(ConversationRecord.class, TARGET_ID);
+
     /** The column identifier for the {@link #subject} field. */
     public static final String SUBJECT = "subject";
 
@@ -64,11 +78,17 @@ public class ConversationRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** A unique identifier for this conversation. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int conversationId;
+
+    /** The member id of the initiator of this conversation. */
+    public int initiatorId;
+
+    /** The member id of the target of this conversation. */
+    public int targetId;
 
     /** The subject of this conversation. */
     public String subject;
@@ -83,8 +103,16 @@ public class ConversationRecord extends PersistentRecord
     public String lastSnippet;
 
     /**
-     * Converts this persistent record to a runtime record. The {@link Conversation#lastAuthor} is
-     * not filled in.
+     * Returns the member id of the other party to this conversation.
+     */
+    public int getOtherId (int readerId)
+    {
+        return (readerId == initiatorId) ? targetId : initiatorId;
+    }
+
+    /**
+     * Converts this persistent record to a runtime record. {@link Conversation#other} and {@link
+     * Conversation#hasUnread} are not filled in.
      */
     public Conversation toConversation ()
     {
@@ -92,6 +120,7 @@ public class ConversationRecord extends PersistentRecord
         convo.conversationId = conversationId;
         convo.subject = subject;
         convo.lastSent = new Date(lastSent.getTime());
+        convo.lastAuthorId = lastAuthorId;
         convo.lastSnippet = lastSnippet;
         return convo;
     }

@@ -26,18 +26,9 @@ public class ItemGiftDisplay extends MailPayloadDisplay
     }
 
     // @Override
-    public Widget widgetForOthers ()
+    public Widget widgetForSender ()
     {
         return new DisplayWidget(false);
-    }
-
-    // @Override
-    public String okToDelete ()
-    {
-        if (_giftPayload.item == null) {
-            return null;
-        }
-        return CMail.msgs.giftNoDelete();
     }
 
     // @Override // from MailPayloadDisplay

@@ -12,6 +12,7 @@ import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.MailPayload;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -23,6 +24,9 @@ public interface MailService extends RemoteService
     /** Communicates results for {@link #loadConversation}. */
     public static class ConvResult implements IsSerializable
     {
+        /** The name of the other party to this conversation. */
+        public MemberName other;
+
         /** The subject of the conversation. */
         public String subject;
 

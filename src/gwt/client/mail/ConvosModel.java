@@ -37,7 +37,6 @@ public class ConvosModel extends ServiceBackedDataModel
             Conversation convo = (Conversation)_pageItems.get(ii);
             if (convo.conversationId == convoId) {
                 convo.lastSent = message.sent;
-                convo.lastAuthor = message.author;
                 convo.lastSnippet = (message.body.length() > Conversation.SNIPPET_LENGTH) ?
                     message.body.substring(0, Conversation.SNIPPET_LENGTH) : message.body;
             }

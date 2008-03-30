@@ -15,8 +15,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.msgs.FriendInvite;
-import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -115,14 +113,7 @@ public class MemberList extends PagedGrid
 
                 // otherwise if we're not a guest, show the add friend button
                 } else if (CPeople.getMemberId() != 0) {
-                    onClick = new ClickListener() {
-                        public void onClick (Widget sender) {
-// TODO: custom biz
-//                             new MailComposition(card.name, CPeople.msgs.friendInviteTitle(),
-//                                                 new FriendInvite.Composer(),
-//                                                 CPeople.msgs.friendInviteBody()).show();
-                        }
-                    };
+                    onClick = InviteFriendPopup.createListener(card.name);
                     extras.setWidget(row, 0, MsoyUI.createActionImage(
                                          "/images/profile/addfriend.png", onClick));
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(

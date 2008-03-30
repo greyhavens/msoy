@@ -85,15 +85,9 @@ public class ProfileBlurb extends Blurb
                                                 CPeople.msgs.visitHome(),
                                                 Page.WORLD, "m" + _name.getMemberId()));
         if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend && !isMe) {
-// TODO: custom popup
-//             buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
-//                                                  CPeople.msgs.inviteFriend(), new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     new MailComposition(_name, CPeople.msgs.friendInviteTitle(),
-//                                         new FriendInvite.Composer(),
-//                                         CPeople.msgs.friendInviteBody()).show();
-//                 }
-//             }));
+            buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
+                                                 CPeople.msgs.inviteFriend(),
+                                                 InviteFriendPopup.createListener(_name)));
         }
         if (CPeople.isAdmin()) {
             buttons.add(Application.createImageLink("/images/profile/admininfo.png",

@@ -30,19 +30,6 @@ public class GroupInviteDisplay extends MailPayloadDisplay
     }
 
     // @Override // from MailPayloadDisplay
-    public Widget widgetForOthers ()
-    {
-        return new DisplayWidget(false);
-    }
-
-    // @Override // from MailPayloadDisplay
-    public String okToDelete ()
-    {
-        // we're always happy to be deleted
-        return null;
-    }
-
-    // @Override // from MailPayloadDisplay
     protected void didInit ()
     {
         // no sanity checks: if anything breaks here, it's already a disaster

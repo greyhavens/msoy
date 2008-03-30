@@ -11,11 +11,10 @@ import com.threerings.msoy.person.data.MailPayload;
 
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a
- * {@link ConvMessage}, and will be asked to hand out Widgets to be displayed in mail messages in
- * the GTW Mail system through the functions {@link #widgetForRecipient()} and {@link
- * #widgetForOthers()).
+ * {@link ConvMessage}, and will be asked to create displays for mail payloads via {@link
+ * #widgetForRecipient()} and {@link #widgetForSender()).
  */
-public abstract class MailPayloadDisplay
+public class MailPayloadDisplay
 {
     /**
      * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the given mail message
@@ -55,25 +54,21 @@ public abstract class MailPayloadDisplay
      * may (and typically will) contain active UI components to initiate requests to the
      * server. May be null, in which case nothing is displayed to the recipient.
      */
-    public abstract Widget widgetForRecipient ();
+    public Widget widgetForRecipient ()
+    {
+        return null;
+    }
 
     /**
-     * Returns a {@link Widget} to display to anybody who is not this message's recipient.  This
-     * object is meant to illustrate to an observer what the message looks like to the recipient,
-     * but any UI components it includes should be inactive. May be null, in which case nothing is
-     * displayed to the viewer.
+     * Returns a {@link Widget} to display to the author of this message. This object is meant to
+     * illustrate to an observer what the message looks like to the recipient, but any UI
+     * components it includes should be inactive. May be null, in which case nothing is displayed
+     * to the viewer.
      */
-    public abstract Widget widgetForOthers ();
-
-    /**
-     * Asks this if the payload represented by this display widget may be deleted, in which case we
-     * return null. If it may not, return a string with the human-readable reason; it will be
-     * displayed to the user.
-     *
-     * TODO: Ideally this should be some kind of delete-button-outgraying callback mechanism, but
-     * that may be over the top.
-     */
-    public abstract String okToDelete ();
+    public Widget widgetForSender ()
+    {
+        return null;
+    }
 
     /**
      * Initializes this display with its bits.
