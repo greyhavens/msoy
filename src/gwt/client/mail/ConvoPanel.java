@@ -111,6 +111,15 @@ public class ConvoPanel extends FlowPanel
             getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
             _contents = new FlowPanel();
+            if (msg.payload != null) {
+                MailPayloadDisplay display = MailPayloadDisplay.getDisplay(_convoId, msg);
+                if (CMail.getMemberId() == msg.author.name.getMemberId()) {
+                    _contents.add(display.widgetForRecipient());
+                } else {
+                    _contents.add(display.widgetForOthers());
+                }
+                _contents.add(WidgetUtil.makeShim(10, 10));
+            }
             _contents.add(new HTML(MailUtil.textToHTML(msg.body)));
             setWidget(0, 2, _contents, 1, "Body");
             getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);

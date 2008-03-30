@@ -36,6 +36,11 @@ public interface GroupServiceAsync
     public void searchForTag (WebIdent ident, String tag, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GroupService#getGroupInfo}
+     */
+    public void getGroupInfo (WebIdent ident, int groupId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getGroupHomeId}
      */
     public void getGroupHomeId (WebIdent ident, int groupId, AsyncCallback callback);

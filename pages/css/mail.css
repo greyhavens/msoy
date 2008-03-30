@@ -132,3 +132,13 @@
   border: 1px solid #7F9DB9;
   background: #FFFFFF;
 }
+
+.groupInvitation .JoinButton {
+  display: block;
+  margin-left: 8em;
+}
+
+.friendInvitation .AyeButton {
+  margin-top: 10px;
+  margin-left: 30px;
+}

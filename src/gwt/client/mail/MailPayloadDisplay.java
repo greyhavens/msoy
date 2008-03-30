@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.mail;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,8 +18,8 @@ import com.threerings.msoy.person.data.MailPayload;
 public abstract class MailPayloadDisplay
 {
     /**
-     * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the
-     * given mail message (presuming it has a payload).
+     * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the given mail message
+     * (presuming it has a payload).
      */
     public static MailPayloadDisplay getDisplay (int convoId, ConvMessage message)
     {
@@ -30,16 +30,16 @@ public abstract class MailPayloadDisplay
         MailPayloadDisplay display;
         switch (message.payload.getType()) {
         case MailPayload.TYPE_GROUP_INVITE:
-            display = new GroupInvite.Display();
+            display = new GroupInviteDisplay();
             break;
         case MailPayload.TYPE_FRIEND_INVITE:
-            display = new FriendInvite.Display();
+            display = new FriendInviteDisplay();
             break;
         case MailPayload.TYPE_ITEM_GIFT:
-            display = new ItemGift.Display();
+            display = new ItemGiftDisplay();
             break;
         case MailPayload.TYPE_GAME_AWARD:
-            display = new GameAward.Display();
+            display = new GameAwardDisplay();
             break;
         default:
             throw new IllegalArgumentException(
@@ -55,7 +55,7 @@ public abstract class MailPayloadDisplay
      * may (and typically will) contain active UI components to initiate requests to the
      * server. May be null, in which case nothing is displayed to the recipient.
      */
-    public abstract Widget widgetForRecipient (MailUpdateListener listener);
+    public abstract Widget widgetForRecipient ();
 
     /**
      * Returns a {@link Widget} to display to anybody who is not this message's recipient.  This
@@ -66,12 +66,12 @@ public abstract class MailPayloadDisplay
     public abstract Widget widgetForOthers ();
 
     /**
-     * Asks this if the payload represented by this display widget may be deleted, in which
-     * case we return null. If it may not, return a string with the human-readable reason;
-     * it will be displayed to the user.
+     * Asks this if the payload represented by this display widget may be deleted, in which case we
+     * return null. If it may not, return a string with the human-readable reason; it will be
+     * displayed to the user.
      *
-     * TODO: Ideally this should be some kind of delete-button-outgraying callback mechanism,
-     * but that may be over the top.
+     * TODO: Ideally this should be some kind of delete-button-outgraying callback mechanism, but
+     * that may be over the top.
      */
     public abstract String okToDelete ();
 
@@ -108,7 +108,7 @@ public abstract class MailPayloadDisplay
                 }
             };
         }
-        CMsgs.mailsvc.updatePayload(CMsgs.ident, _convoId, _message.author.name.getMemberId(),
+        CMail.mailsvc.updatePayload(CMail.ident, _convoId, _message.author.name.getMemberId(),
                                     _message.sent.getTime(), payload, callback);
     }
 

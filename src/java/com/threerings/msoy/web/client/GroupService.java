@@ -54,7 +54,7 @@ public interface GroupService extends RemoteService
 
         /**
          * The rooms owned by the caller.
-         * 
+         *
          * @gwt.typeArgs <com.threerings.msoy.web.client.GroupService.Room>
          */
         public List callerRooms;
@@ -73,13 +73,23 @@ public interface GroupService extends RemoteService
         public MediaDesc decor;
     }
 
+    /** Delivers the response to {@link #getGroupInfo}. */
+    public static class GroupInfo implements IsSerializable
+    {
+        /** The name of the group in question. */
+        public GroupName name;
+
+        /** The requester's rank in this group (possibly non-member). */
+        public byte rank;
+    }
+
     /**
      * Loads the information displayed on the Galaxy page.
      */
     public GalaxyData getGalaxyData (WebIdent ident)
         throws ServiceException;
 
-    /** 
+    /**
      * Get the list of all groups.
      *
      * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
@@ -102,7 +112,13 @@ public interface GroupService extends RemoteService
      */
     public List searchForTag (WebIdent ident, String tag)
         throws ServiceException;
-    
+
+    /**
+     * Returns information on the specified group.
+     */
+    public GroupInfo getGroupInfo (WebIdent ident, int groupId)
+        throws ServiceException;
+
     /**
      * Look up a group by id and return the id of its home scene.
      */
@@ -147,13 +163,13 @@ public interface GroupService extends RemoteService
      */
     public Group createGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException;
-    
+
     /**
      * Update the data for a group according to the supplied {@link Group} argument.
      */
     public void updateGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException;
-    
+
     /**
      * Sever the membership connection between a group and a member.
      */
@@ -175,10 +191,10 @@ public interface GroupService extends RemoteService
     /**
      * Update a tag on a group.
      */
-    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set) 
+    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set)
         throws ServiceException;
 
-    /** 
+    /**
      * Gets the tags recently used by the user.
      *
      * @gwt.typeArgs <com.threerings.msoy.web.data.TagHistory>
