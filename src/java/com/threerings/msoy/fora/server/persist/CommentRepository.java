@@ -22,20 +22,13 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.server.persist.CountRecord;
 
 /**
  * Manages member comments on various and sundry things.
  */
 public class CommentRepository extends DepotRepository
 {
-    /** Used by {@link #loadCommentCount}. */
-    @Entity @Computed
-    public static class CommentCountRecord extends PersistentRecord
-    {
-        @Computed(fieldDefinition="count(*)")
-        public int count;
-    }
-
     public CommentRepository (PersistenceContext ctx)
     {
         super(ctx);
@@ -78,9 +71,7 @@ public class CommentRepository extends DepotRepository
         clauses.add(new FromOverride(CommentRecord.class));
         clauses.add(new Where(CommentRecord.ENTITY_TYPE_C, entityType,
                               CommentRecord.ENTITY_ID_C, entityId));
-        CommentCountRecord crec = load(
-            CommentCountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
-        return crec.count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
