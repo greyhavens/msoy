@@ -227,7 +227,9 @@ public class MailRepository extends DepotRepository
         // giant WHERE foo in (?, ?, ...) clause and that can only contain 32768 arguments
         List<MailMessageRecord> msgrecs = Lists.newArrayList(), batch;
         while (true) {
-            batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), 10000));
+            batch = findAll(MailMessageRecord.class,
+                            OrderBy.ascending(MailMessageRecord.SENT_C),
+                            new Limit(msgrecs.size(), 10000));
             if (batch.size() == 0) {
                 break;
             }
@@ -241,7 +243,8 @@ public class MailRepository extends DepotRepository
       SCAN:
         for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject, lsubject = subject.toLowerCase();
-            if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend")) {
+            if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend") ||
+                msg.senderId == msg.recipientId) {
                 continue; // skip these auto-generated messages
             }
             if (lsubject.startsWith("re: ")) {
@@ -254,6 +257,8 @@ public class MailRepository extends DepotRepository
             MigratedConvo convo = convos.get(key);
             if (convo == null) {
                 convos.put(key, convo = new MigratedConvo());
+                convo.initiatorId = msg.senderId;
+                convo.targetId = msg.recipientId;
                 convo.subject = subject;
             }
 
@@ -281,29 +286,18 @@ public class MailRepository extends DepotRepository
         for (MigratedConvo convo : convos.values()) {
             try {
                 MigratedMessage latest = null;
-                int initiatorId = 0, targetId = 0;
                 IntSet participantIds = new ArrayIntSet();
                 for (MigratedMessage msg : convo.messages) {
-                    if (initiatorId == 0) {
-                        initiatorId = msg.authorId;
-                    } else if (targetId == 0 && msg.authorId != initiatorId) {
-                        targetId = msg.authorId;
-                    }
                     participantIds.add(msg.authorId);
                     if (latest == null || latest.sent < msg.sent) {
                         latest = msg;
                     }
                 }
 
-                // if we didn't find two parties in this conversation, don't convert it
-                if (targetId == 0) {
-                    continue;
-                }
-
                 ConversationRecord conrec = new ConversationRecord();
                 conrec.subject = convo.subject;
-                conrec.initiatorId = initiatorId;
-                conrec.targetId = targetId;
+                conrec.initiatorId = convo.initiatorId;
+                conrec.targetId = convo.targetId;
                 conrec.lastSent = new Timestamp(latest.sent);
                 conrec.lastSnippet = StringUtil.truncate(latest.body, Conversation.SNIPPET_LENGTH);
                 conrec.lastAuthorId = latest.authorId;
@@ -361,6 +355,8 @@ public class MailRepository extends DepotRepository
 
     protected static class MigratedConvo
     {
+        public int initiatorId;
+        public int targetId;
         public String subject;
         public List<MigratedMessage> messages = Lists.newArrayList();
         public String toString () { return StringUtil.fieldsToString(this); }
