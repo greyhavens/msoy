@@ -27,6 +27,9 @@ import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CountRecord;
@@ -201,7 +204,14 @@ public class MailRepository extends DepotRepository
     public int getUnreadMessages (int memberId)
         throws PersistenceException
     {
-        return 1; // TODO
+        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID_C, memberId);
+        SQLExpression isNew = new Conditionals.GreaterThan(
+            ConvMessageRecord.SENT_C, ParticipantRecord.LAST_READ_C);
+        return load(CountRecord.class,
+                    new FromOverride(ParticipantRecord.class),
+                    new Join(ParticipantRecord.CONVERSATION_ID_C,
+                             ConvMessageRecord.CONVERSATION_ID_C),
+                    new Where(new Logic.And(isMe, isNew))).count;
     }
 
     // TEMP
