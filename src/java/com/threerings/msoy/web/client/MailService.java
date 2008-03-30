@@ -22,7 +22,18 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface MailService extends RemoteService
 {
     /** Communicates results for {@link #loadConversation}. */
-    public static class ConvResult implements IsSerializable
+    public static class ConvosResult implements IsSerializable
+    {
+        /** The total conversation count for this player (if requested). */
+        public int totalConvoCount;
+
+        /** The conversations.
+         * @gwt.typeArgs <com.threerings.msoy.person.data.Conversation> */
+        public List convos;
+    }
+
+    /** Communicates results for {@link #loadConversation}. */
+    public static class ConvoResult implements IsSerializable
     {
         /** The name of the other party to this conversation. */
         public MemberName other;
@@ -40,16 +51,14 @@ public interface MailService extends RemoteService
 
     /**
      * Loads the specified range of conversations in which the caller is a participant.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.Conversation>
      */
-    public List loadConversations (WebIdent ident, int offset, int count)
+    public ConvosResult loadConversations (WebIdent ident, int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**
      * Loads the specified conversation.
      */
-    public ConvResult loadConversation (WebIdent ident, int convoId)
+    public ConvoResult loadConversation (WebIdent ident, int convoId)
         throws ServiceException;
 
     /**

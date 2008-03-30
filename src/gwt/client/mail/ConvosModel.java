@@ -9,6 +9,7 @@ import client.util.ServiceBackedDataModel;
 
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
+import com.threerings.msoy.web.client.MailService;
 
 /**
  * A data model that provides a member's conversations.
@@ -45,17 +46,16 @@ public class ConvosModel extends ServiceBackedDataModel
 
     // @Override // from ServiceBackedDataModel
     protected void callFetchService (int start, int count, boolean needCount) {
-        // TODO: need count
-        CMail.mailsvc.loadConversations(CMail.ident, start, count, this); 
+        CMail.mailsvc.loadConversations(CMail.ident, start, count, needCount, this); 
     }
 
     // @Override // from ServiceBackedDataModel
     protected int getCount (Object result) {
-        return 0; // TODO: ((MailService.ConvosResult)result).count;
+        return ((MailService.ConvosResult)result).totalConvoCount;
     }
 
     // @Override // from ServiceBackedDataModel
     protected List getRows (Object result) {
-        return (List)result; // TODO ((MailService.ConvosResult)result).convos;
+        return ((MailService.ConvosResult)result).convos;
     }
 }

@@ -15,7 +15,8 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#loadConversations}
      */
-    public void loadConversations (WebIdent ident, int offset, int count, AsyncCallback callback);
+    public void loadConversations (WebIdent ident, int offset, int count, boolean needCount,
+                                   AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#loadConversation}

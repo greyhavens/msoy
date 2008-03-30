@@ -47,7 +47,7 @@ public class MailServlet extends MsoyServiceServlet
     implements MailService
 {
     // from interface MailService
-    public List<Conversation> loadConversations (WebIdent ident, int offset, int count)
+    public ConvosResult loadConversations (WebIdent ident, int offset, int count, boolean needCount)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -78,7 +78,12 @@ public class MailServlet extends MsoyServiceServlet
                 convos.get(ii).other = others.get(conrecs.get(ii).getOtherId(memrec.memberId));
             }
 
-            return convos;
+            ConvosResult result = new ConvosResult();
+            if (needCount) {
+                result.totalConvoCount = _mailRepo.loadConversationCount(memrec.memberId);
+            }
+            result.convos = convos;
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Load conversations failed [for=" + memrec.who() +
@@ -88,12 +93,12 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public ConvResult loadConversation (WebIdent ident, int convoId)
+    public ConvoResult loadConversation (WebIdent ident, int convoId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
         try {
-            ConvResult convo = new ConvResult();
+            ConvoResult convo = new ConvoResult();
 
             // make sure this member is a conversation participant
             Long lastRead = _mailRepo.loadLastRead(convoId, memrec.memberId);

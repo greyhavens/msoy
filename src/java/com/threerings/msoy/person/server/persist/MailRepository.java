@@ -66,6 +66,16 @@ public class MailRepository extends DepotRepository
     }
 
     /**
+     * Returns the number of conversations in which the specified member is a participant.
+     */
+    public int loadConversationCount (int participantId)
+        throws PersistenceException
+    {
+        return load(CountRecord.class, new FromOverride(ParticipantRecord.class),
+                    new Where(ParticipantRecord.PARTICIPANT_ID_C, participantId)).count;
+    }
+
+    /**
      * Loads conversations in which the specified member is a participant, sorted by most recently
      * active to least.
      */

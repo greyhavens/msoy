@@ -46,12 +46,12 @@ public class ConvoPanel extends FlowPanel
         _convoId = convoId;
         CMail.mailsvc.loadConversation(CMail.ident, convoId, new MsoyCallback() {
             public void onSuccess (Object result) {
-                init((MailService.ConvResult)result);
+                init((MailService.ConvoResult)result);
             }
         });
     }
 
-    protected void init (MailService.ConvResult result)
+    protected void init (MailService.ConvoResult result)
     {
         ClickListener toInbox = new ClickListener() {
             public void onClick (Widget sender) {
