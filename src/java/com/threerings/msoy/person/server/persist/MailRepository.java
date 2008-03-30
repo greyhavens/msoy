@@ -226,10 +226,15 @@ public class MailRepository extends DepotRepository
         // we have to load these less than 32768 at a time because these keys all turn into one
         // giant WHERE foo in (?, ?, ...) clause and that can only contain 32768 arguments
         List<MailMessageRecord> msgrecs = Lists.newArrayList(), batch;
-        do {
+        while (true) {
             batch = findAll(MailMessageRecord.class, new Limit(msgrecs.size(), 10000));
+            if (batch.size() == 0) {
+                break;
+            }
             msgrecs.addAll(batch);
-        } while (batch.size() == 10000);
+        }
+
+        log.info("Migrating " + msgrecs.size() + " messages into conversations...");
 
         int migrated = 0, duplicates = 0;
         Map<String,MigratedConvo> convos = Maps.newHashMap();
