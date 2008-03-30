@@ -254,7 +254,8 @@ public class MailRepository extends DepotRepository
         for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject, lsubject = subject.toLowerCase();
             if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend") ||
-                lsubject.equals("you got whirled invites!") || msg.senderId == msg.recipientId) {
+                lsubject.equals("you got whirled invites!") || msg.senderId == msg.recipientId ||
+                msg.senderId == 0) {
                 continue; // skip these auto-generated messages
             }
             if (lsubject.startsWith("re: ")) {
