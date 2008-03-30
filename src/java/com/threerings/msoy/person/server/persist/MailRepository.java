@@ -240,12 +240,11 @@ public class MailRepository extends DepotRepository
         Map<String,MigratedConvo> convos = Maps.newHashMap();
       SCAN:
         for (MailMessageRecord msg : msgrecs) {
-            String subject = msg.subject;
-            if (subject.toLowerCase().equals("invitation accepted!") ||
-                subject.equals("Be My Friend")) {
+            String subject = msg.subject, lsubject = subject.toLowerCase();
+            if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend")) {
                 continue; // skip these auto-generated messages
             }
-            if (subject.toLowerCase().startsWith("re: ")) {
+            if (lsubject.startsWith("re: ")) {
                 subject = subject.substring(4);
             }
 
@@ -287,14 +286,18 @@ public class MailRepository extends DepotRepository
                 for (MigratedMessage msg : convo.messages) {
                     if (initiatorId == 0) {
                         initiatorId = msg.authorId;
-                        targetId = msg.authorId;
-                    } else if (msg.authorId != initiatorId) {
+                    } else if (targetId == 0 && msg.authorId != initiatorId) {
                         targetId = msg.authorId;
                     }
                     participantIds.add(msg.authorId);
                     if (latest == null || latest.sent < msg.sent) {
                         latest = msg;
                     }
+                }
+
+                // if we didn't find two parties in this conversation, don't convert it
+                if (targetId == 0) {
+                    continue;
                 }
 
                 ConversationRecord conrec = new ConversationRecord();
