@@ -29,6 +29,7 @@ import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -165,9 +166,12 @@ public class WebUserServlet extends MsoyServiceServlet
                     log.log(Level.WARNING, "Failed to sent invite accepted mail", pe);
                 }
 
-                // note the establishment of this friendship in the runtime
+                // update the two friends' runtime objects if they are online
+                FriendManager.friendshipEstablished(
+                    new MemberName(displayName, newAccount.memberId), inviter);
+
+                // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;
-                final MemberName finviter = inviter;
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         // TODO: This is really spammy; in fact, when somebody accepts your invite
@@ -178,8 +182,6 @@ public class WebUserServlet extends MsoyServiceServlet
                         // TODO:  - Foo is now online.
                         // TODO: We'd like to bring this down to one or possibly two lines, and
                         // TODO: will tackle this problem when notification has been peerified.
-                        MsoyServer.friendMan.friendshipEstablished(
-                            new MemberName(displayName, newAccount.memberId), finviter);
 
                         // and possibly send a runtime notification as well
                         MsoyServer.notifyMan.notifyInvitationAccepted(

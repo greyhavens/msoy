@@ -23,6 +23,26 @@ public class FriendManager
     implements MsoyPeerManager.RemoteMemberObserver
 {
     /**
+     * Called to report that a friendship request was accepted. May be called from any thread.
+     */
+    public static void friendshipEstablished (MemberName acceptor, MemberName friend)
+    {
+        // add them to the friends list of both parties if/whereever they are online
+        MsoyServer.peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
+        MsoyServer.peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
+    }
+
+    /**
+     * Called to report that a friendship was removed. May be called from any thread.
+     */
+    public static void friendshipCleared (int removerId, int friendId)
+    {
+        // remove them from the friends list of both parties, wherever they are online
+        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
+        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
+    }
+
+    /**
      * Prepares the friend manager for operation.
      */
     public void init ()
@@ -70,26 +90,6 @@ public class FriendManager
 
         // let local friends know this member is offline
         updateOnlineStatus(memobj.getMemberId(), false);
-    }
-
-    /**
-     * Called to notify the friend manager that a friendship request was accepted.
-     */
-    public void friendshipEstablished (MemberName acceptor, MemberName friend)
-    {
-        // add them to the friends list of both parties if/whereever they are online
-        MsoyServer.peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
-        MsoyServer.peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
-    }
-
-    /**
-     * Called to notify the friend manager that a friendship was removed.
-     */
-    public void friendshipCleared (int removerId, int friendId)
-    {
-        // remove them from the friends list of both parties, wherever they are online
-        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
-        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
     }
 
     // from interface MsoyPeerManager.RemoteMemberObserver

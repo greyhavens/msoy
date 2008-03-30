@@ -16,6 +16,7 @@ import org.apache.velocity.VelocityContext;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -79,21 +80,16 @@ public class MemberServlet extends MsoyServiceServlet
     public void addFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
-            final MemberName friendName =
-                MsoyServer.memberRepo.noteFriendship(memrec.memberId, friendId);
+            MemberName friendName = MsoyServer.memberRepo.noteFriendship(memrec.memberId, friendId);
             if (friendName == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
             MsoyServer.feedRepo.publishMemberMessage(
-                    memrec.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                    friendName.toString() + "\t" + String.valueOf(friendId) );
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.friendMan.friendshipEstablished(memrec.getName(), friendName);
-                }
-            });
+                memrec.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
+                friendName.toString() + "\t" + String.valueOf(friendId) );
+            FriendManager.friendshipEstablished(memrec.getName(), friendName);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "addFriend failed [for=" + memrec.memberId +
@@ -109,11 +105,7 @@ public class MemberServlet extends MsoyServiceServlet
         final MemberRecord memrec = requireAuthedUser(ident);
         try {
             MsoyServer.memberRepo.clearFriendship(memrec.memberId, friendId);
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.friendMan.friendshipCleared(memrec.memberId, friendId);
-                }
-            });
+            FriendManager.friendshipCleared(memrec.memberId, friendId);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "removeFriend failed [for=" + memrec.memberId +
