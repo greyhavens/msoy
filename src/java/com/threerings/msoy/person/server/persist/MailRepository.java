@@ -85,14 +85,14 @@ public class MailRepository extends DepotRepository
     }
 
     /**
-     * Loads the messages in the supplied conversation.
+     * Loads the messages in the supplied conversation (in oldest to newest order).
      */
     public List<ConvMessageRecord> loadMessages (int conversationId)
         throws PersistenceException
     {
         return findAll(ConvMessageRecord.class,
                        new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId),
-                       OrderBy.descending(ConvMessageRecord.SENT_C));
+                       OrderBy.ascending(ConvMessageRecord.SENT_C));
     }
 
     /**

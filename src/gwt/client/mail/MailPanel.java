@@ -135,5 +135,5 @@ public class MailPanel extends VerticalPanel
         }
     }
 
-    protected static SimpleDateFormat _fmt = new SimpleDateFormat("MMM dd h:mm a");
+    protected static SimpleDateFormat _fmt = new SimpleDateFormat("h:mm a MMM dd");
 }
