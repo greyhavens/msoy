@@ -70,7 +70,7 @@ img, embed, applet, object {
   background-repeat: repeat-x;
   border: 1px solid #404040;
   font-size: 12px;
-  vertical-align: top;
+  vertical-align: middle;
   cursor: pointer;
   height: 19px;
   margin: 0px;
