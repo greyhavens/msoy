@@ -21,6 +21,8 @@ import flash.text.TextFormatAlign;
 
 import flash.utils.Dictionary;
 
+import caurina.transitions.Tweener;
+
 import com.threerings.util.Log;
 
 import mx.events.ResizeEvent;
@@ -41,9 +43,8 @@ public class PlaceLoadingDisplay extends Sprite
 
     protected function handleBoxResized (event :ResizeEvent) :void
     {
-        if (_spinner.scaleX == 1) {
-            x = (_box.width - LoadingSpinner.WIDTH) / 2;
-            y = (_box.height - LoadingSpinner.HEIGHT) / 2;
+        if (_primary != null) {
+            center();
         }
     }
 
@@ -62,22 +63,22 @@ public class PlaceLoadingDisplay extends Sprite
             _primary = info;
             info.addEventListener(ProgressEvent.PROGRESS, handleProgress);
 
-            x = (_box.width - LoadingSpinner.WIDTH) / 2;
-            y = (_box.height - LoadingSpinner.HEIGHT) / 2;
-
+            center();
             _spinner.setProgress(0, 1);
             _spinner.scaleX = 1;
             _spinner.scaleY = 1;
 
         } else {
+            if (_secondaryCount == 0) {
+                _spinner.setProgress(); // put in "indeterminite" mode
+                const DURATION :Number = 1;
+                const TRANS :String = "easeoutcubic";
+                Tweener.addTween(this, { x: 20, y: 20, time: DURATION, transition: TRANS });
+                Tweener.addTween(_spinner,
+                    { scaleX: .4, scaleY: .4, time: DURATION, transition: TRANS });
+            }
+
             _secondaryCount++;
-            _spinner.setProgress();
-
-            x = 20;
-            y = 20;
-
-            _spinner.scaleX = .4;
-            _spinner.scaleY = .4;
         }
 
         // make sure we're showing
@@ -113,6 +114,12 @@ public class PlaceLoadingDisplay extends Sprite
         if (_primary == null && _secondaryCount == 0 && (parent != null)) {
             _box.removeOverlay(this);
         }
+    }
+
+    protected function center () :void
+    {
+        x = (_box.width - LoadingSpinner.WIDTH) / 2;
+        y = (_box.height - LoadingSpinner.HEIGHT) / 2;
     }
 
     protected function handleComplete (event :Event) :void
