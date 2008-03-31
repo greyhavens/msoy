@@ -144,6 +144,8 @@ public class MailServlet extends MsoyServiceServlet
             // maybe mark this member as having read the conversation
             if (newLastRead > lastRead) {
                 _mailRepo.updateLastRead(convoId, memrec.memberId, newLastRead);
+                // decrement their unread mail count if they are online
+                MemberNodeActions.reportUnreadMail(memrec.memberId, -1);
             }
 
             return convo;
@@ -156,21 +158,24 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public void startConversation (WebIdent ident, int recipientId, String subject, String body,
+    public void startConversation (WebIdent ident, int recipId, String subject, String body,
                                    MailPayload attachment)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
         try {
             // if the payload is an item attachment, transfer it to the recipient
-            processPayload(memrec.memberId, recipientId, attachment);
+            processPayload(memrec.memberId, recipId, attachment);
 
             // now start the conversation (and deliver the message)
-            _mailRepo.startConversation(recipientId, memrec.memberId, subject, body, attachment);
+            _mailRepo.startConversation(recipId, memrec.memberId, subject, body, attachment);
+
+            // let recipient know they've got mail
+            MemberNodeActions.reportUnreadMail(recipId, _mailRepo.loadUnreadConvoCount(recipId));
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Start conversation failed [for=" + memrec.who() +
-                    ", recipId=" + recipientId + "].", pe);
+                    ", recipId=" + recipId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -224,7 +229,9 @@ public class MailServlet extends MsoyServiceServlet
             // update our last read for this conversation to reflect that we've read our message
             _mailRepo.updateLastRead(convoId, memrec.memberId, cmr.sent.getTime());
 
-            // TODO: let other conversation participants know they've got mail
+            // let other conversation participant know they've got mail
+            int otherId = conrec.getOtherId(memrec.memberId);
+            MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
 
             // convert the added message to a runtime record and return it to the caller
             ConvMessage result = cmr.toConvMessage();
@@ -274,7 +281,7 @@ public class MailServlet extends MsoyServiceServlet
         }
     }
 
-    protected void processPayload (int senderId, int recipientId, MailPayload attachment)
+    protected void processPayload (int senderId, int recipId, MailPayload attachment)
         throws PersistenceException, ServiceException
     {
         if (attachment instanceof PresentPayload) {
@@ -293,12 +300,12 @@ public class MailServlet extends MsoyServiceServlet
                 errmsg = "Trying to gift in-use item";
             }
             if (errmsg != null) {
-                log.warning(errmsg + " [sender=" + senderId + ", recip=" + recipientId +
+                log.warning(errmsg + " [sender=" + senderId + ", recip=" + recipId +
                             ", ident=" + ident + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
-            repo.updateOwnerId(item, recipientId);
+            repo.updateOwnerId(item, recipId);
         }
     }
 

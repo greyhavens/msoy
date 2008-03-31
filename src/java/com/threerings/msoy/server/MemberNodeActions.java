@@ -36,6 +36,9 @@ public class MemberNodeActions
     /**
      * Dispatches a notification that a member's unread mail count has changed to whichever server
      * they are logged into.
+     *
+     * @param newMailCount a positive integer to set the absolute value, a negative integer to
+     * adjust the current value down by the specified negative amount.
      */
     public static void reportUnreadMail (int memberId, int newMailCount)
     {
@@ -131,7 +134,11 @@ public class MemberNodeActions
 
         protected void execute (MemberObject memobj) {
             if (memobj.newMailCount != _newMailCount) {
-                memobj.setNewMailCount(_newMailCount);
+                if (_newMailCount < 0) {
+                    memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
+                } else {
+                    memobj.setNewMailCount(_newMailCount);
+                }
             }
         }
 
