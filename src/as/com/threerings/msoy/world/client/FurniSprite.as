@@ -59,8 +59,8 @@ public class FurniSprite extends MsoySprite
 
         checkPerspective();
 
-        addEventListener(MouseEvent.MOUSE_OVER, handleMouseHover);
-        addEventListener(MouseEvent.MOUSE_OUT, handleMouseHover);
+        addEventListener(MouseEvent.ROLL_OVER, handleMouseHover);
+        addEventListener(MouseEvent.ROLL_OUT, handleMouseHover);
     }
 
     override public function getDesc () :String
@@ -407,12 +407,12 @@ public class FurniSprite extends MsoySprite
     }
 
     /**
-     * Listens for MOUSE_OVER and MOUSE_OUT, which we only receive if the sprite
+     * Listens for ROLL_OVER and ROLL_OUT, which we only receive if the sprite
      * has action.
      */
     protected function handleMouseHover (event :MouseEvent) :void
     {
-        callUserCode("mouseHover_v1", (event.type == MouseEvent.MOUSE_OVER));
+        callUserCode("mouseHover_v1", (event.type == MouseEvent.ROLL_OVER));
     }
 
     override protected function addListeners (info :LoaderInfo) :void
