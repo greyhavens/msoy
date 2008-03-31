@@ -56,8 +56,9 @@ public class index extends Page
                     WorldClient.displayFlash("sceneId=" + sceneId);
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
-                    WorldClient.displayFlash("sceneId=" + sceneId + "&page=" +
-                                             Args.compose(args.splice(1)), "s" + sceneId);
+                    WorldClient.displayFlash("sceneId=" + sceneId +
+                                             "&page=" + Args.compose(args.splice(1)),
+                                             Page.WORLD + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
