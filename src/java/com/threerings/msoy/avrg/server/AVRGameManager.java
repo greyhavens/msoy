@@ -5,7 +5,6 @@ package com.threerings.msoy.avrg.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -609,12 +608,6 @@ public class AVRGameManager
             }
         }
         return null;
-    }
-
-    protected int getPlayerMinutes ()
-    {
-        // TODO: iterate over tracking records
-        return 0;
     }
 
     /**
