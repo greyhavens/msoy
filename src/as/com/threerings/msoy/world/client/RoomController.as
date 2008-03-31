@@ -1357,7 +1357,7 @@ public class RoomController extends SceneController
             tip = null;
         }
         if (tip == null && text != null) {
-            addHoverTip(_hoverSprite, String(text), stageX, stageY + HOVER_TIP_Y_OFFSET);
+            addHoverTip(_hoverSprite, String(text), stageX, stageY + MOUSE_TOOLTIP_Y_OFFSET);
         }
     }
 
@@ -1743,8 +1743,8 @@ public class RoomController extends SceneController
     /** The event to send to GWT when furni has been added or removed. */
     protected static const FURNI_CHANGED_EVENT :String = "furniChanged";
 
-    /** The amount we alter the y coordinate of hover tips. */
-    protected static const HOVER_TIP_Y_OFFSET :int = 50;
+    /** The amount we alter the y coordinate of tooltips generated under the mouse. */
+    protected static const MOUSE_TOOLTIP_Y_OFFSET :int = 50;
 
     /** The life-force of the client. */
     protected var _wdctx :WorldContext;
