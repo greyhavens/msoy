@@ -336,7 +336,7 @@ public class FlashClients
                "<a href=\"http://www.adobe.com/go/getflashplayer\" target=\"_blank\">" +
                "Flash Player</a> to operate. " +
                "<a href=\"http://www.adobe.com/go/getflashplayer\" target=\"_blank\">" +
-               "<img src=\"/images/Get_Flash_Player.jpg\"></div>";
+               "<img src=\"/images/get_flash.jpg\"></div>";
     }
 
     /**
