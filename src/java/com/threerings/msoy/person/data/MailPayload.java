@@ -4,13 +4,12 @@
 package com.threerings.msoy.person.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
 
 /**
- * Represents the general object portion of a mail message body. This object is serialized
- * to and unserialized from persistent storage through its 'type' and 'state' members, and
- * whenever it is to be displayed, the relevant functions {@link #widgetForRecipient()} or
- * {@link #widgetForOthers()) will be called to retrieve the relevant UI.
+ * Represents the general object portion of a mail message body. This object is serialized to and
+ * unserialized from persistent storage.
  */
 public abstract class MailPayload
     implements IsSerializable, Streamable
@@ -36,6 +35,11 @@ public abstract class MailPayload
     public static final int TYPE_GAME_AWARD = 4;
 
     /**
+     * The identifying integer of a {@link PresentPayload} payload.
+     */
+    public static final int TYPE_PRESENT = 5;
+
+    /**
      * Returns the class registered for the specified payload type.
      *
      * @exception IllegalArgumentException thrown if an unknown payload type is provided.
@@ -51,6 +55,8 @@ public abstract class MailPayload
             return ItemGiftPayload.class;
         case TYPE_GAME_AWARD:
             return GameAwardPayload.class;
+        case TYPE_PRESENT:
+            return PresentPayload.class;
         }
         throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }

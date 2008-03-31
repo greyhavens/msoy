@@ -3,12 +3,16 @@
 
 package client.mail;
 
+import java.util.List;
+
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,9 +21,17 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.data.PresentPayload;
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.StartConvoCallback;
+import client.shell.Application;
+import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -29,56 +41,65 @@ import client.util.ThumbBox;
  */
 public class ComposePanel extends FlowPanel
 {
-    public ComposePanel (int recipientId)
+    public ComposePanel ()
     {
         setStyleName("compose");
         addStyleName("pagedGrid"); // for our header and footer
 
-        CMail.membersvc.getMemberCard(recipientId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((MemberCard)result);
-            }
-        });
-    }
-
-    protected void init (MemberCard recipient)
-    {
-        _recipient = recipient;
-
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, CMail.msgs.composeWriteTo(recipient.name.toString()), 1, "Middle");
+        header.setText(0, 1, CMail.msgs.composeTitle(), 1, "Middle");
         header.getFlexCellFormatter().addStyleName(0, 1, "WriteTo");
         header.setHTML(0, 2, "&nbsp;", 1, "TopRight");
         add(header);
 
-        SmartTable contents = new SmartTable("Contents", 0, 5);
-        contents.setWidget(0, 0, new ThumbBox(recipient.photo, null));
-        contents.getFlexCellFormatter().setRowSpan(0, 0, 4);
-        contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        _contents = new SmartTable("Contents", 0, 5);
+        _contents.setWidget(0, 0, new ThumbBox(Profile.DEFAULT_PHOTO, null));
+        _contents.getFlexCellFormatter().setRowSpan(0, 0, 5);
+        _contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
-        contents.setText(0, 1, CMail.msgs.composeTo(), 1, "Label");
-        contents.setText(0, 2, recipient.name.toString());
+        _contents.setText(0, 1, CMail.msgs.composeTo(), 1, "Label");
+        _contents.setWidget(0, 2, _friendBox = new ListBox());
+        _friendBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                int idx = _friendBox.getSelectedIndex();
+                if (idx > 0) {
+                    setRecipient((MemberCard)_friends.get(idx-1), false);
+                }
+            }
+        });
 
-        contents.setText(1, 0, CMail.msgs.composeSubject(), 1, "Label");
-        contents.setWidget(1, 1, _subject = new TextBox());
+        _contents.setText(1, 0, CMail.msgs.composeSubject(), 1, "Label");
+        _contents.setWidget(1, 1, _subject = new TextBox());
         _subject.setWidth("390px");
 
-        contents.setText(2, 0, CMail.msgs.composeMessage(), 1, "Label");
-        contents.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
-        contents.setWidget(2, 1, _body = new TextArea());
+        _contents.setText(2, 0, CMail.msgs.composeMessage(), 1, "Label");
+        _contents.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
+        _contents.setWidget(2, 1, _body = new TextArea());
         _body.setVisibleLines(10);
         _body.setWidth("390px");
 
         HorizontalPanel buttons = new HorizontalPanel();
-        Button send = new Button(CMail.msgs.composeSend());
-        buttons.add(send);
-        new StartConvoCallback(send, _recipient.name.getMemberId(), _subject, _body) {
+        buttons.add(_send = new Button(CMail.msgs.composeSend()));
+        _send.setEnabled(false);
+        new StartConvoCallback(_send, _subject, _body) {
             public boolean gotResult (Object result) {
                 MsoyUI.info(CMail.msgs.composeSent(_recipient.name.toString()));
-                History.back();
+                // if we just mailed an item as a gift, we can't go back to the item detail page
+                // because we no longer have access to it, so go to the STUFF page instead
+                if (_payload != null) {
+                    Application.go(Page.STUFF, ""+_payload.ident.type);
+                } else {
+                    History.back();
+                }
                 return false;
+            }
+            protected int getRecipientId () {
+                return _recipient.name.getMemberId();
+            }
+            protected MailPayload getPayload () {
+                return _payload;
             }
         };
         buttons.add(WidgetUtil.makeShim(10, 10));
@@ -87,9 +108,9 @@ public class ComposePanel extends FlowPanel
                 History.back();
             }
         }));
-        contents.setWidget(3, 1, buttons);
+        _contents.setWidget(4, 1, buttons);
 
-        add(contents);
+        add(_contents);
 
         SmartTable footer = new SmartTable("Footer", 0, 0);
         footer.setWidth("100%");
@@ -103,7 +124,63 @@ public class ComposePanel extends FlowPanel
         _subject.setFocus(true);
     }
 
+    public void setRecipientId (int recipientId)
+    {
+        CMail.membersvc.getMemberCard(recipientId, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                setRecipient((MemberCard)result, true);
+            }
+        });
+    }
+
+    public void setGiftItem (byte type, int itemId)
+    {
+        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId), new MsoyCallback() {
+            public void onSuccess (Object result) {
+                _payload = new PresentPayload((Item)result);
+                _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
+                _contents.getFlexCellFormatter().setVerticalAlignment(3, 0, HasAlignment.ALIGN_TOP);
+                _contents.setWidget(3, 1, new ThumbBox(_payload.getThumbnailMedia(), null));
+            }
+        });
+    }
+
+    protected void onLoad ()
+    {
+        super.onLoad();
+
+        // TODO: replace this with a magical auto-completing search box
+        if (_friendBox.isAttached()) {
+            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(), new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    _friends = ((ProfileService.FriendsResult)result).friends;
+                    _friendBox.addItem("Select...");
+                    for (int ii = 0; ii < _friends.size(); ii++) {
+                        _friendBox.addItem(""+((MemberCard)_friends.get(ii)).name);
+                    }
+                }
+            });
+        }
+    }
+
+    protected void setRecipient (MemberCard recipient, boolean clearBox)
+    {
+        _recipient = recipient;
+        _contents.setWidget(0, 0, new ThumbBox(recipient.photo, null));
+        if (clearBox) {
+            _contents.setText(0, 2, recipient.name.toString());
+        }
+        _send.setEnabled(true);
+    }
+
+    protected SmartTable _contents;
     protected MemberCard _recipient;
+    protected PresentPayload _payload;
+
+    protected ListBox _friendBox;
+    protected List _friends;
+
     protected TextBox _subject;
     protected TextArea _body;
+    protected Button _send;
 }

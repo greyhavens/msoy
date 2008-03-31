@@ -92,7 +92,55 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(new ItemActivator(_item, false));
         }
 
-        int gap = 10;
+        RowPanel buttons = new RowPanel();
+
+        // if this item is in use, mention that
+        if (_item.used != Item.UNUSED) {
+            // TODO: tell them where this item is used
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(new Label(CStuff.msgs.detailInUse()));
+
+        } else {
+            // add a button for deleting this item
+            PushButton delete = MsoyUI.createButton(
+                MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
+            new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
+                public boolean callService () {
+                    CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    // remove the item from our cached models
+                    int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
+                    DataModel model = _models.getModel(_item.getType(), suiteId);
+                    if (model != null) {
+                        model.removeItem(_item);
+                    }
+                    MsoyUI.info(CStuff.msgs.msgItemDeleted());
+                    History.back(); // back up to the page that contained the item
+                    return false;
+                }
+            };
+            buttons.add(delete);
+        }
+
+        // add a button for editing this item, if it's an original
+        if (_item.sourceId == 0) {
+            String butlbl = CStuff.msgs.detailEdit();
+            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
+                public void onClick (Widget sender) {
+                    CStuff.editItem(_item.getType(), _item.itemId);
+                }
+            }));
+        }
+
+        // add our delete/edit buttons if we have them
+        if (buttons.getWidgetCount() > 0) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(buttons);
+        }
+
+        // if this item is listed in the catalog or listable, add a UI for that
         if (_item.catalogId != 0 || _item.sourceId == 0) {
             String tip, butlbl;
             if (_item.catalogId != 0) {
@@ -104,10 +152,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(_listTip = new Label(tip));
-            gap = 5; // tuck our second set of buttons up next to these
 
             // add a button for listing or updating the item
-            RowPanel buttons = new RowPanel();
+            buttons = new RowPanel();
             ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, null, ItemDetailPanel.this);
@@ -135,39 +182,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(buttons);
         }
 
-        // add a button for deleting this item
-        _details.add(WidgetUtil.makeShim(5, gap));
-        RowPanel buttons = new RowPanel();
-        PushButton delete = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
-        new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
-            public boolean callService () {
-                CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
-                return true;
-            }
-            public boolean gotResult (Object result) {
-                // remove the item from our cached models
-                int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
-                DataModel model = _models.getModel(_item.getType(), suiteId);
-                if (model != null) {
-                    model.removeItem(_item);
-                }
-                MsoyUI.info(CStuff.msgs.msgItemDeleted());
-                History.back(); // back up to the page that contained the item
-                return false;
-            }
-        };
-        buttons.add(delete);
-
-        // add a button for editing this item, if it's an original
-        if (_item.sourceId == 0) {
-            String butlbl = CStuff.msgs.detailEdit();
-            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
-                public void onClick (Widget sender) {
-                    CStuff.editItem(_item.getType(), _item.itemId);
-                }
-            }));
+        // if this item is giftable, add a UI for that
+        if (_item.catalogId == 0 && _item.used == Item.UNUSED) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(new Label(CStuff.msgs.detailGiftTip()));
+            _details.add(WidgetUtil.makeShim(10, 5));
+            ClickListener onClick = Application.createLinkListener(
+                Page.MAIL, Args.compose("g", ""+_item.getType(), ""+_item.itemId));
+            _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick));
         }
-        _details.add(buttons);
 
         // TODO: enable remixing for everyone
         boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP) &&

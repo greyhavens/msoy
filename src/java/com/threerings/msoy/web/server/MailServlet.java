@@ -25,9 +25,15 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -157,7 +163,10 @@ public class MailServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
         try {
-            // TODO: validate recipient exists?
+            // if the payload is an item attachment, transfer it to the recipient
+            processPayload(memrec.memberId, recipientId, attachment);
+
+            // now start the conversation (and deliver the message)
             _mailRepo.startConversation(recipientId, memrec.memberId, subject, body, attachment);
 
         } catch (PersistenceException pe) {
@@ -206,6 +215,9 @@ public class MailServlet extends MsoyServiceServlet
                 }
             }
 
+            // if the payload is an item attachment, transfer it to the recipient
+            processPayload(memrec.memberId, conrec.getOtherId(memrec.memberId), attachment);
+
             // store the message in the repository
             ConvMessageRecord cmr =
                 _mailRepo.addMessage(convoId, memrec.memberId, text, payloadType, payloadState);
@@ -227,6 +239,34 @@ public class MailServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Continue conversation failed [for=" + memrec.who() +
                     ", convoId=" + convoId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected void processPayload (int senderId, int recipientId, MailPayload attachment)
+        throws PersistenceException, ServiceException
+    {
+        if (attachment instanceof PresentPayload) {
+            ItemIdent ident = ((PresentPayload)attachment).ident;
+            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(ident.type);
+            ItemRecord item = repo.loadItem(ident.itemId);
+
+            // validate that they're allowed to gift this item (these are all also checked on the
+            // client so we don't need useful error messages)
+            String errmsg = null;
+            if (item == null) {
+                errmsg = "Trying to gift non-existent item";
+            } else if (item.ownerId != senderId) {
+                errmsg = "Trying to gift un-owned item";
+            } else if (item.used != Item.UNUSED) {
+                errmsg = "Trying to gift in-use item";
+            }
+            if (errmsg != null) {
+                log.warning(errmsg + " [sender=" + senderId + ", recip=" + recipientId +
+                            ", ident=" + ident + "].");
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+
+            repo.updateOwnerId(item, recipientId);
         }
     }
 

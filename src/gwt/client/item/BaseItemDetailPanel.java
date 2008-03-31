@@ -99,8 +99,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.add(new Label(ItemUtil.getDescription(_item)));
 
         if (_item instanceof Game) {
+            _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("d" , ((Game)_item).gameId);
-            _details.add(Application.createLink("More info...", Page.GAMES, args));
+            _details.add(Application.createLink(CShell.imsgs.bidPlay(), Page.GAMES, args));
         }
 
         // add our tag business at the bottom

@@ -17,11 +17,9 @@ import client.util.MsoyUI;
  */
 public abstract class StartConvoCallback extends ClickCallback
 {
-    public StartConvoCallback (SourcesClickEvents trigger, int recipientId,
-                               TextBox subject, TextArea body)
+    public StartConvoCallback (SourcesClickEvents trigger, TextBox subject, TextArea body)
     {
         super(trigger);
-        _recipientId = recipientId;
         _subject = subject;
         _body = body;
     }
@@ -40,16 +38,17 @@ public abstract class StartConvoCallback extends ClickCallback
             return false;
         }
         CMsgs.mailsvc.startConversation(
-            CMsgs.ident, _recipientId, subject, body, getPayload(), this);
+            CMsgs.ident, getRecipientId(), subject, body, getPayload(), this);
         return true;
     }
+
+    protected abstract int getRecipientId ();
 
     protected MailPayload getPayload ()
     {
         return null;
     }
 
-    protected int _recipientId;
     protected TextBox _subject;
     protected TextArea _body;
 }

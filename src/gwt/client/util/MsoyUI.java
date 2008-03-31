@@ -86,7 +86,9 @@ public class MsoyUI
     public static Label createActionLabel (String text, String style, ClickListener listener)
     {
         Label label = createCustomActionLabel(text, style, listener);
-        label.addStyleName("actionLabel");
+        if (listener != null) {
+            label.addStyleName("actionLabel");
+        }
         return label;
     }
 

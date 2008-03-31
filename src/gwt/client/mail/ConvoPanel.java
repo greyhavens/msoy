@@ -171,8 +171,6 @@ public class ConvoPanel extends FlowPanel
                         return false;
                     }
 
-                    // TODO: handle attachments
-
                     // deliver the message to the recipient
                     CMail.mailsvc.continueConversation(CMail.ident, _convoId, text, null, this);
                     return true;

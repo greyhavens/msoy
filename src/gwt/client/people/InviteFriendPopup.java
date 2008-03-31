@@ -56,11 +56,14 @@ public class InviteFriendPopup extends BorderedDialog
         setContents(contents);
 
         Button send = new Button(CPeople.msgs.ifriendSend());
-        new StartConvoCallback(send, target.getMemberId(), _subject, _body) {
+        new StartConvoCallback(send, _subject, _body) {
             public boolean gotResult (Object result) {
                 MsoyUI.info(CPeople.msgs.ifriendSent());
                 hide();
                 return false;
+            }
+            protected int getRecipientId () {
+                return target.getMemberId();
             }
             protected MailPayload getPayload () {
                 return new FriendInvitePayload();

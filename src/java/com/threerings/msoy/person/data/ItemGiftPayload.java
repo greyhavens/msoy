@@ -7,6 +7,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * This object contains a reference to an item that's included as a gift in a mail message.
+ *
+ * <em>Note:</em> Don't use this, it has been replaced by {@link PresentPayload}.
  */
 public class ItemGiftPayload extends MailPayload
 {
