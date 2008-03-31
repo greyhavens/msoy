@@ -153,11 +153,12 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             // display the message if the status changed
             if (entry.online != oldEntry.online) {
-                // show it in the notification area
-                dispatchChatNotification(MessageBundle.tcompose(
-                    entry.online ? "m.friend_online" : "m.friend_offline",
-                    entry.name, entry.name.getMemberId()));
-                // if we have the tell tab open for this friend, show it in that tab's history too
+                // show friends logging on in the notification area
+                if (entry.online) {
+                    dispatchChatNotification(MessageBundle.tcompose("m.friend_online", entry.name,
+                                                                    entry.name.getMemberId()));
+                }
+                // if we have the tell tab open for this friend, show logging on and off there
                 dispatchTellNotification(entry.name, 
                     Msgs.NOTIFY.get(entry.online ? "m.friend_online" : "m.friend_offline",
                     entry.name, entry.name.getMemberId()));
