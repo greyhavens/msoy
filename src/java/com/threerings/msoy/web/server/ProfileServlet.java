@@ -148,27 +148,31 @@ public class ProfileServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser(ident);
 
         try {
-            // locate the members that match the supplied search
-            IntSet mids = new ArrayIntSet();
-
-            // first check for an email mathc
-            MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
-            if (memrec != null) {
-                mids.add(memrec.memberId);
-            }
-
-            // next look for a real name match
-            mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(search, MAX_PROFILE_MATCHES));
-
-            // last look for a display name match
-            mids.addAll(MsoyServer.profileRepo.findMembersByRealName(search, MAX_PROFILE_MATCHES));
-
             // if the caller is a member, load up their friends set
             IntSet callerFriendIds = (mrec == null) ? null :
                 MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
 
+            // locate the members that match the supplied search
+            IntSet mids = new ArrayIntSet();
+
+            // first check for an email match (and use only that if we have a match)
+            MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
+            if (memrec != null) {
+                mids.add(memrec.memberId);
+
+            } else {
+                // look for a display name match
+                mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(
+                                search, MAX_PROFILE_MATCHES));
+                // look for a real name match
+                mids.addAll(MsoyServer.profileRepo.findMembersByRealName(
+                                search, MAX_PROFILE_MATCHES));
+            }
+
             // finally resolve cards for these members
-            return ServletUtil.resolveMemberCards(mids, false, callerFriendIds);
+            List<MemberCard> results = ServletUtil.resolveMemberCards(mids, false, callerFriendIds);
+            Collections.sort(results, ServletUtil.SORT_BY_LAST_ONLINE);
+            return results;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
