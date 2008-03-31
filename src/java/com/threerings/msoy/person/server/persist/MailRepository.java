@@ -227,6 +227,16 @@ public class MailRepository extends DepotRepository
         return record;
     }
 
+    /**
+     * Updates the payload state of a message.
+     */
+    public void updatePayloadState (int conversationId, long sent, byte[] state)
+        throws PersistenceException
+    {
+        updatePartial(ConvMessageRecord.getKey(conversationId, new Timestamp(sent)),
+                      ConvMessageRecord.PAYLOAD_STATE, state);
+    }
+
     // TEMP
     protected void migrateToConversations ()
         throws PersistenceException

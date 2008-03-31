@@ -78,7 +78,6 @@ public interface MailService extends RemoteService
     /**
      * Updates the payload on the specified message.
      */
-    public void updatePayload (WebIdent ident, int convoId, int authorId, long sent,
-                               MailPayload payload)
+    public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload payload)
         throws ServiceException;
 }

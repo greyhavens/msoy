@@ -106,8 +106,8 @@ public class MailPayloadDisplay
                 }
             };
         }
-        CMail.mailsvc.updatePayload(CMail.ident, _convoId, _message.author.name.getMemberId(),
-                                    _message.sent.getTime(), payload, callback);
+        CMail.mailsvc.updatePayload(
+            CMail.ident, _convoId, _message.sent.getTime(), payload, callback);
     }
 
     protected int _convoId;

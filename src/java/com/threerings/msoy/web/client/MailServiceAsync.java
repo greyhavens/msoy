@@ -38,6 +38,6 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#updatePayload}
      */
-    public void updatePayload (WebIdent ident, int convoId, int authorId, long sent,
-                               MailPayload obj, AsyncCallback callback);
+    public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload obj,
+                               AsyncCallback callback);
 }
