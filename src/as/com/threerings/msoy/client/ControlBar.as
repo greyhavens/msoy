@@ -124,7 +124,7 @@ public class ControlBar extends HBox
         if (_backBtn != null) {
             _backBtn.enabled = canGoBack;
         }
-        _zoomBtn.enabled = inRoom;
+        enableZoomControl(inRoom);
     }
 
     /**
@@ -177,6 +177,11 @@ public class ControlBar extends HBox
     public function enableZoomControl (enabled :Boolean ) :void
     {
         _zoomBtn.enabled = enabled;
+        if (enabled) {
+            _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
+        } else {
+            _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom_disabled");
+        }
     }
 
     // from HBox
