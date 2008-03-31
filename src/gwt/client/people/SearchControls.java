@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,11 +34,24 @@ public class SearchControls extends SmartTable
     {
         super("searchControls", 0, 5);
 
-        int col = 0;
-        setText(0, col++, CPeople.msgs.searchTitle(), 1, "rightLabel");
+        PushButton action;
+        if (CPeople.getMemberId() == 0) {
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchJoin(),
+                                         Application.createLinkListener(Page.ACCOUNT, "create"));
+        } else {
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchInvite(),
+                                         Application.createLinkListener(Page.PEOPLE, "invites"));
+        }
+        setWidget(0, 0, action, 1, "Action");
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-        setWidget(0, col++, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
-        _search.setWidth("250px");
+        FlowPanel bits = new FlowPanel();
+        bits.add(MsoyUI.createLabel(CPeople.msgs.searchTitle(), "Title"));
+        bits.add(MsoyUI.createLabel(CPeople.msgs.searchTip(), "Tip"));
+        setWidget(0, 1, bits, 2, null);
+
+        setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
+        _search.setWidth("200px");
         _search.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
                 DeferredCommand.add(new Command() {
@@ -48,21 +62,10 @@ public class SearchControls extends SmartTable
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));
-        setWidget(0, col++, _go = new Button(CPeople.msgs.searchGo(), this));
+        setWidget(1, 1, _go = new Button(CPeople.msgs.searchGo(), this));
         _go.setEnabled(false);
 
-        setText(1, 1, CPeople.msgs.searchTip(), 2, "tipLabel");
-
-        // only add the invite blurb for non-guests
-        if (CPeople.getMemberId() != 0) {
-            setWidget(0, col++, WidgetUtil.makeShim(20, 1));
-
-            FlowPanel inv = new FlowPanel();
-            inv.add(MsoyUI.createLabel(CPeople.msgs.searchInvite(), "nowrapLabel"));
-            inv.add(Application.createLink(CPeople.msgs.searchInviteGo(), Page.PEOPLE, "invites"));
-            getFlexCellFormatter().setRowSpan(0, col, 2);
-            setWidget(0, col++, inv);
-        }
+        setWidget(1, 2, WidgetUtil.makeShim(15, 15));
     }
 
     public void setSearch (String query)

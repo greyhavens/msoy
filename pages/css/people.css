@@ -114,12 +114,35 @@
   height: 17px;
 }
 
-.friendsPanel .Grid {
-  border-bottom: 1px solid #DADADA;
+.friendsPanel .headerBox, .searchPanel .headerBox {
+  margin-left: 10px;
+  border-bottom: 10px solid white;
+  width: 665px;
 }
 
 .searchControls {
+  background: url(/images/people/header_bg.png) no-repeat top left;
+  width: 679px;
+  height: 79px;
   font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.searchControls .Action {
+  width: 190px;
+  padding-left: 165px;
+  padding-top: 30px;
+}
+
+.searchControls .Title {
+  font-size: 18px;
+  color: white;
+}
+
+.searchControls .Tip {
+  font-size: 11px;
+  white-space: nowrap;
+  color: #B4E0F1;
 }
 
 .sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {

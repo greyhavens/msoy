@@ -5,7 +5,7 @@ package client.people;
 
 import java.util.List;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -13,7 +13,7 @@ import client.shell.Args;
 import client.util.HeaderBox;
 import client.util.MsoyCallback;
 
-public class SearchPanel extends VerticalPanel
+public class SearchPanel extends FlowPanel
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
@@ -24,7 +24,6 @@ public class SearchPanel extends VerticalPanel
     public SearchPanel ()
     {
         setStyleName("searchPanel");
-        setSpacing(5);
         add(_ctrls = new SearchControls());
     }
 
