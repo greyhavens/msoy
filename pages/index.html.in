@@ -2,6 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Whirled</title>
+  <meta content="Play games, make friends, explore, chat, shop and create all in your own Whirled."
+        name="description"/>
+  <meta content="games,friends,explore,chat,shop,create,whirled" name="keywords"/>
   <script type="text/javascript">
     if (document.location.host != "@SERVER_URL_HOST_PORT@") {
        document.location = "@SERVER_URL@";
