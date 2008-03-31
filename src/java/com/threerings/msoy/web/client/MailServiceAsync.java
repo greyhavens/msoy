@@ -36,6 +36,11 @@ public interface MailServiceAsync
                                       MailPayload attachment, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MailService#deleteConversation}
+     */
+    public void deleteConversation (WebIdent ident, int convoId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MailService#updatePayload}
      */
     public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload obj,

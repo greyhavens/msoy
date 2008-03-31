@@ -76,6 +76,15 @@ public interface MailService extends RemoteService
         throws ServiceException;
 
     /**
+     * Deletes a conversation (for the calling user).
+     *
+     * @return true if the conversation was deleted, false if it could not be deleted because it
+     * has unread messages.
+     */
+    public boolean deleteConversation (WebIdent ident, int convoId)
+        throws ServiceException;
+
+    /**
      * Updates the payload on the specified message.
      */
     public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload payload)

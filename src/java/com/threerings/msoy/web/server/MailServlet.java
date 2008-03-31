@@ -219,7 +219,7 @@ public class MailServlet extends MsoyServiceServlet
 
             // store the message in the repository
             ConvMessageRecord cmr =
-                _mailRepo.addMessage(convoId, memrec.memberId, text, payloadType, payloadState);
+                _mailRepo.addMessage(conrec, memrec.memberId, text, payloadType, payloadState);
 
             // update our last read for this conversation to reflect that we've read our message
             _mailRepo.updateLastRead(convoId, memrec.memberId, cmr.sent.getTime());
@@ -241,7 +241,23 @@ public class MailServlet extends MsoyServiceServlet
         }
     }
 
-    // from MailService
+    // from interface MailService
+    public boolean deleteConversation (WebIdent ident, int convoId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        try {
+            // the repository handles all the juicy goodness
+            return _mailRepo.deleteConversation(convoId, memrec.memberId);
+
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to delete convo [for=" + memrec.who() +
+                    ", convoId=" + convoId + "].", e);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface MailService
     public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload payload)
         throws ServiceException
     {

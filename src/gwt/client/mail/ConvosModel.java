@@ -42,14 +42,34 @@ public class ConvosModel extends ServiceBackedDataModel
      */
     public void noteMessageAdded (int convoId, ConvMessage message)
     {
+        Conversation convo = findConversation(convoId);
+        if (convo != null) {
+            convo.lastSent = message.sent;
+            convo.lastSnippet = (message.body.length() > Conversation.SNIPPET_LENGTH) ?
+                message.body.substring(0, Conversation.SNIPPET_LENGTH) : message.body;
+        }
+    }
+
+    /**
+     * Notes that a conversation has been deleted.
+     */
+    public void conversationDeleted (int convoId)
+    {
+        Conversation convo = findConversation(convoId);
+        if (convo != null) {
+            removeItem(convo);
+        }
+    }
+
+    protected Conversation findConversation (int convoId)
+    {
         for (int ii = 0, ll = _pageItems.size(); ii < ll; ii++) {
             Conversation convo = (Conversation)_pageItems.get(ii);
             if (convo.conversationId == convoId) {
-                convo.lastSent = message.sent;
-                convo.lastSnippet = (message.body.length() > Conversation.SNIPPET_LENGTH) ?
-                    message.body.substring(0, Conversation.SNIPPET_LENGTH) : message.body;
+                return convo;
             }
         }
+        return null;
     }
 
     // @Override // from ServiceBackedDataModel

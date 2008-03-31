@@ -43,6 +43,11 @@
   font-size: 14px;
 }
 
+.mail .Folder .Convo .Delete {
+  width: 15px;
+  padding-right: 10px;
+}
+
 .mail .Folder .Convo .Photo {
   width: 50px;
 }
@@ -78,6 +83,12 @@
   font-size: 16px;
   font-weight: bold;
   color: #FFFFFF;
+}
+
+.convo .Control {
+  padding: 3px 0px 0px 10px;
+  vertical-align: top;
+  width: 50px;
 }
 
 .convo .Message {

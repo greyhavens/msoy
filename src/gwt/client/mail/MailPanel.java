@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,6 +28,7 @@ import com.threerings.msoy.person.data.Profile;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -64,7 +67,7 @@ public class MailPanel extends VerticalPanel
         // @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
-            return new ConvoWidget((Conversation)item);
+            return new ConvoWidget(this, (Conversation)item);
         }
 
         // @Override // from PagedGrid
@@ -128,9 +131,31 @@ public class MailPanel extends VerticalPanel
 
     protected static class ConvoWidget extends SmartTable
     {
-        public ConvoWidget (Conversation convo)
+        public ConvoWidget (final ConvosGrid grid, final Conversation convo)
         {
             super("Convo", 0, 0);
+
+            Image delete = new Image("/images/profile/remove.png");
+            delete.setTitle(CMail.msgs.mailDeleteTip());
+            delete.addStyleName("actionLabel");
+            new ClickCallback(delete, CMail.msgs.deleteConfirm()) {
+                public boolean callService () {
+                    CMail.mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    boolean deleted = ((Boolean)result).booleanValue();
+                    if (!deleted) {
+                        MsoyUI.info(CMail.msgs.deleteNotDeleted());
+                    } else {
+                        grid.removeItem(convo);
+                        MsoyUI.info(CMail.msgs.deleteDeleted());
+                    }
+                    return !deleted;
+                }
+            };
+            setWidget(0, 0, delete, 1, "Delete");
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
 
             MediaDesc photo;
             Widget name;
@@ -142,16 +167,16 @@ public class MailPanel extends VerticalPanel
                 name = Application.memberViewLink(convo.other.name);
             }
 
-            setWidget(0, 0, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE, null), 1, "Photo");
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            setWidget(0, 1, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE, null), 1, "Photo");
+            getFlexCellFormatter().setRowSpan(0, 1, 2);
 
-            setWidget(0, 1, name, 1, "Name");
+            setWidget(0, 2, name, 1, "Name");
             setText(1, 0, _fmt.format(convo.lastSent), 1, "Sent");
 
             Widget link = Application.createLink(
                 (convo.subject.length() == 0) ? CMail.msgs.mailNoSubject() : convo.subject,
                 Page.MAIL, Args.compose("c", convo.conversationId));
-            setWidget(0, 2, link, 1, "Subject");
+            setWidget(0, 3, link, 1, "Subject");
             setText(1, 1, convo.lastSnippet, 1, "Snippet");
         }
     }

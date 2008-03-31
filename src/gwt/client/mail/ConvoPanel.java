@@ -44,7 +44,13 @@ public class ConvoPanel extends FlowPanel
 
         _model = model;
         _convoId = convoId;
-        CMail.mailsvc.loadConversation(CMail.ident, convoId, new MsoyCallback() {
+        refresh();
+    }
+
+    protected void refresh ()
+    {
+        clear();
+        CMail.mailsvc.loadConversation(CMail.ident, _convoId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 init((MailService.ConvoResult)result);
             }
@@ -53,20 +59,12 @@ public class ConvoPanel extends FlowPanel
 
     protected void init (MailService.ConvoResult result)
     {
-        ClickListener toInbox = new ClickListener() {
-            public void onClick (Widget sender) {
-                History.back();
-            }
-        };
-
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, CMail.msgs.convoWith(""+result.other), 1, "Middle");
-        header.getFlexCellFormatter().addStyleName(0, 1, "Title");
-        header.setWidget(0, 2, new Button("Back to Inbox", toInbox), 1, "Middle");
-        header.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        header.setHTML(0, 3, "&nbsp;", 1, "TopRight");
+        header.setText(0, 1, CMail.msgs.convoWith(""+result.other), 1, "Title");
+        addControls(header);
+        header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
 
         for (int ii = 0; ii < result.messages.size(); ii++) {
@@ -79,15 +77,45 @@ public class ConvoPanel extends FlowPanel
         SmartTable footer = new SmartTable("Footer", 0, 0);
         footer.setWidth("100%");
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
-        footer.setHTML(0, 1, "&nbsp;", 1, "Middle");
-        footer.getFlexCellFormatter().addStyleName(0, 1, "Subject");
-        footer.setWidget(0, 2, new Button("Back to Inbox", toInbox), 1, "Middle");
-        footer.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        footer.setHTML(0, 3, "&nbsp;", 1, "BottomRight");
+        footer.setHTML(0, 1, "&nbsp;", 1, "Title");
+        addControls(footer);
+        footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
 
         // note that we've read this conversation
         _model.markConversationRead(_convoId);
+    }
+
+    protected void addControls (SmartTable table)
+    {
+        int col = table.getCellCount(0);
+
+        Button delete = new Button(CMail.msgs.convoDelete());
+        new ClickCallback(delete, CMail.msgs.deleteConfirm()) {
+            public boolean callService () {
+                CMail.mailsvc.deleteConversation(CMail.ident, _convoId, this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                boolean deleted = ((Boolean)result).booleanValue();
+                if (!deleted) {
+                    refresh();
+                    MsoyUI.info(CMail.msgs.deleteNotDeleted());
+                } else {
+                    _model.conversationDeleted(_convoId);
+                    MsoyUI.info(CMail.msgs.deleteDeleted());
+                    History.back();
+                }
+                return !deleted;
+            }
+        };
+        table.setWidget(0, col++, delete, 1, "Control");
+
+        table.setWidget(0, col++, new Button(CMail.msgs.convoBack(), new ClickListener() {
+            public void onClick (Widget sender) {
+                History.back();
+            }
+        }), 1, "Control");
     }
 
     protected class MessageWidget extends SmartTable

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
@@ -201,12 +203,12 @@ public class MailRepository extends DepotRepository
     /**
      * Adds a message to a conversation.
      */
-    public ConvMessageRecord addMessage (int conversationId, int authorId, String body,
+    public ConvMessageRecord addMessage (ConversationRecord conrec, int authorId, String body,
                                          int payloadType, byte[] payloadState)
         throws PersistenceException
     {
         ConvMessageRecord record = new ConvMessageRecord();
-        record.conversationId = conversationId;
+        record.conversationId = conrec.conversationId;
         record.sent = new Timestamp(System.currentTimeMillis());
         record.authorId = authorId;
         record.body = body;
@@ -215,16 +217,77 @@ public class MailRepository extends DepotRepository
         insert(record);
 
         // update the conversation record
-        updatePartial(ConversationRecord.class, conversationId,
+        updatePartial(ConversationRecord.class, conrec.conversationId,
                       ConversationRecord.LAST_SENT, record.sent,
                       ConversationRecord.LAST_AUTHOR_ID, authorId,
                       ConversationRecord.LAST_SNIPPET,
                       StringUtil.truncate(body, Conversation.SNIPPET_LENGTH));
 
+        // ressurect the other conversation participant if they have deleted this convo
+        int otherId = conrec.getOtherId(authorId);
+        if (loadLastRead(conrec.conversationId, otherId) == null) {
+            ParticipantRecord parrec = new ParticipantRecord();
+            parrec.conversationId = conrec.conversationId;
+            parrec.participantId = otherId;
+            // set their last read time to a couple of seconds before this message's sent time
+            parrec.lastRead = new Timestamp(record.sent.getTime()-2000);
+            insert(parrec);
+        }
+
         // note that we added a message to a conversation
-        _eventLog.mailSent(conversationId, authorId, payloadType);
+        _eventLog.mailSent(conrec.conversationId, authorId, payloadType);
 
         return record;
+    }
+
+    /**
+     * Deletes the specified participant from the specified conversation.
+     *
+     * @return true if the participant was deleted, false if they were not due to the conversation
+     * having unread messages.
+     */
+    public boolean deleteConversation (final int conversationId, int participantId)
+        throws PersistenceException
+    {
+        // TODO: do this in a transaction
+        Key<ParticipantRecord> key = ParticipantRecord.getKey(conversationId, participantId);
+        ParticipantRecord parrec = load(ParticipantRecord.class, key);
+        if (parrec == null) {
+            return true; // oh yeah, we're deleted
+        }
+
+        // if the conversation is already gone somehow, just delete our participant record
+        ConversationRecord conrec = load(ConversationRecord.class, conversationId);
+        if (conrec == null) {
+            delete(parrec);
+            return true;
+        }
+
+        // make sure the conversation is fully read by the participant
+        if (conrec.lastSent.getTime() > parrec.lastRead.getTime()) {
+            return false;
+        }
+
+        // delete our participation record
+        delete(parrec);
+
+        // if the other guy is still around, then stop here
+        if (loadLastRead(conversationId, conrec.getOtherId(participantId)) != null) {
+            return true;
+        }
+
+        // otherwise actually delete the contents of the conversation
+        deleteAll(
+            ConvMessageRecord.class,
+            new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId),
+            new CacheInvalidator.TraverseWithFilter<ConvMessageRecord>(ConvMessageRecord.class) {
+                protected boolean testForEviction (Serializable key, ConvMessageRecord cmr) {
+                    return cmr.conversationId == conversationId;
+                }
+            });
+        delete(conrec);
+
+        return true;
     }
 
     /**
