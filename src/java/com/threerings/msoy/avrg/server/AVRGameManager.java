@@ -365,12 +365,6 @@ public class AVRGameManager
         });
     }
 
-    protected int getPlayerMinutes ()
-    {
-        // TODO: iterate over tracking records
-        return 0;
-    }
-
     // from AVRGameProvider
     public void cancelQuest (ClientObject caller, final String questId,
                              final ConfirmListener listener)
@@ -479,19 +473,6 @@ public class AVRGameManager
                 AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
                 new Object[] { msg, data });
         }
-    }
-
-    protected PlayerObject getPlayer (int playerId)
-    {
-        // TODO: we should probably map playerId -> playerOid in this manager object
-        for (OccupantInfo occInfo : _gameObj.players) {
-            if ((occInfo.username instanceof MemberName) &&
-                    playerId == ((MemberName) occInfo.username).getMemberId()) {
-                Player player = _players.get(occInfo.getBodyOid()); 
-                return player != null ? player.playerObject : null;
-            }
-        }
-        return null;
     }
 
     // from AVRGameProvider
@@ -615,6 +596,25 @@ public class AVRGameManager
             total += player.getPlayTime(now);
         }
         return total;
+    }
+
+    protected PlayerObject getPlayer (int playerId)
+    {
+        // TODO: we should probably map playerId -> playerOid in this manager object
+        for (OccupantInfo occInfo : _gameObj.players) {
+            if ((occInfo.username instanceof MemberName) &&
+                    playerId == ((MemberName) occInfo.username).getMemberId()) {
+                Player player = _players.get(occInfo.getBodyOid()); 
+                return player != null ? player.playerObject : null;
+            }
+        }
+        return null;
+    }
+
+    protected int getPlayerMinutes ()
+    {
+        // TODO: iterate over tracking records
+        return 0;
     }
 
     /**
