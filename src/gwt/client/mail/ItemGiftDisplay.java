@@ -55,7 +55,9 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 return;
             }
 
-            add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
+            if (_enabled) {
+                add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
+            }
 
             CMail.itemsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback() {
                 public void onSuccess (Object result) {
