@@ -54,7 +54,7 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.memberId = memberId;
             this.firstLogin = firstLogin;
-            this.sessionToken = sessionToken;
+            this.sessionToken = (sessionToken != null) ? sessionToken : "";
             this.createdOn = createdOn;
         }
     }
@@ -72,7 +72,7 @@ public class MsoyEvents
         {
             this.timestamp = new Date();
             this.memberId = memberId;
-            this.sessionToken = sessionToken;
+            this.sessionToken = (sessionToken != null) ? sessionToken : "";
             this.activeSeconds = activeSeconds;
             this.idleSeconds = idleSeconds;
         }
