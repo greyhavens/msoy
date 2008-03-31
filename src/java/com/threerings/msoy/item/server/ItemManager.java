@@ -653,10 +653,8 @@ public class ItemManager
             MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
 
         } else if (type == Item.GAME) {
-            if (rec.sourceId == 0) { // we are only interested in mutable games
-                MsoyServer.peerMan.invokeNodeAction(
-                    new UpdateGameAction(((GameRecord) rec).gameId));
-            }
+            MsoyServer.peerMan.invokeNodeAction(
+                new UpdateGameAction(((GameRecord) rec).gameId));
         }
     }
 
@@ -1202,7 +1200,7 @@ public class ItemManager
         }
 
         protected int _gameId;
-    }
+    } /* End: static class UpdateGameAction. */
 
     /** A reference to our game repository. We'd just look this up from the table but we can't
      * downcast an ItemRepository to a GameRepository, annoyingly. */
