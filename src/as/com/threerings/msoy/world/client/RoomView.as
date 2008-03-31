@@ -915,6 +915,11 @@ public class RoomView extends AbstractRoomView
     protected function moveBody (bodyOid :int) :void
     {
         var sprite :OccupantSprite = (_occupants.get(bodyOid) as OccupantSprite);
+        if (sprite == null) {
+            // It's possible to get an occupant update while we're still loading the room
+            // and haven't yet set up the occupant's sprite. Ignore.
+            return;
+        }
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         sprite.moveTo(sloc.loc as MsoyLocation, _scene);
     }
@@ -923,10 +928,8 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :OccupantSprite = (_occupants.get(newInfo.getBodyOid()) as OccupantSprite);
         if (sprite == null) {
-// TODO: ?
-//             if (newInfo is ActorInfo) {
-//                 log.warning("No sprite for updated occupant? [info=" + newInfo + "].");
-//             }
+            // It's possible to get an occupant update while we're still loading the room
+            // and haven't yet set up the occupant's sprite. Ignore.
             return;
         }
         sprite.setOccupantInfo(newInfo);
