@@ -10,7 +10,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -20,6 +19,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.WhatIsWhirledData;
@@ -119,17 +119,11 @@ public class WhatIsTheWhirled extends AbsolutePanel
 
     protected void showData (WhatIsWhirledData data)
     {
-        FlexTable bits = new FlexTable();
-        bits.setCellPadding(0);
-        bits.setCellSpacing(0);
-        bits.setStyleName("Stats");
+        SmartTable bits = new SmartTable("Stats", 0, 0);
         int[] numbers = { data.players, data.places, data.games };
         for (int ii = 0; ii < numbers.length; ii++) {
-            int row = 2*ii;
-            bits.setText(row, 0, ""+numbers[ii]);
-            bits.getFlexCellFormatter().setStyleName(row, 0, "Number");
-            bits.setText(row+1, 0, LABELS[ii]);
-            bits.getFlexCellFormatter().setStyleName(row+1, 0, "Label");
+            bits.addText(""+numbers[ii], 1, numbers[ii] > 9999 ? "SmallNumber" : "Number");
+            bits.addText(LABELS[ii], 1, "Label");
         }
         add(bits, 448, 245);
     }

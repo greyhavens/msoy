@@ -190,11 +190,16 @@
   height: 250px;
 }
 
-.whatIsTheWhirled .Stats .Number {
-  font-size: 28px;
+.whatIsTheWhirled .Stats .Number, .whatIsTheWhirled .Stats .SmallNumber {
   font-weight: bold;
   text-align: center;
   vertical-align: bottom;
+}
+.whatIsTheWhirled .Stats .Number {
+  font-size: 28px;
+}
+.whatIsTheWhirled .Stats .SmallNumber {
+  font-size: 24px;
 }
 
 .whatIsTheWhirled .Stats .Label {
