@@ -33,6 +33,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
 import com.threerings.flex.CommandMenu;
+import com.threerings.flex.PopUpUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
@@ -1356,7 +1357,7 @@ public class RoomController extends SceneController
             tip = null;
         }
         if (tip == null && text != null) {
-            addHoverTip(_hoverSprite, String(text), stageX, stageY);
+            addHoverTip(_hoverSprite, String(text), stageX, stageY + HOVER_TIP_Y_OFFSET);
         }
     }
 
@@ -1371,6 +1372,7 @@ public class RoomController extends SceneController
         tipComp.styleName = "roomToolTip";
         tipComp.x -= tipComp.width/2;
         tipComp.y -= tipComp.height/2;
+        PopUpUtil.fit(tipComp);
         var hoverColor :uint = sprite.getHoverColor();
         tipComp.setStyle("color", hoverColor);
         if (hoverColor == 0) {
@@ -1740,6 +1742,9 @@ public class RoomController extends SceneController
 
     /** The event to send to GWT when furni has been added or removed. */
     protected static const FURNI_CHANGED_EVENT :String = "furniChanged";
+
+    /** The amount we alter the y coordinate of hover tips. */
+    protected static const HOVER_TIP_Y_OFFSET :int = 50;
 
     /** The life-force of the client. */
     protected var _wdctx :WorldContext;
