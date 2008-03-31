@@ -122,9 +122,20 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
+        log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject +
+                 ", startId=" + startId + ", endId=" + endId + "].");
+
         // TODO: if we want to continue to use this mechanism to send mass emails to our members,
         // we will need to farm out the mail deliver task to all nodes in the network so that we
         // don't task one node with sending out a million email messages
+
+        // start with member 1 if we weren't given a higher starting id
+        startId = Math.max(startId, 1);
+
+        // if we don't have an endId, go all the way
+        if (endId <= 0) {
+            endId = Integer.MAX_VALUE;
+        }
 
         // we'll track the number of sent, failed and opted out accounts
         int[] results = new int[] { 0, 0, 0 };
@@ -133,11 +144,7 @@ public class AdminServlet extends MsoyServiceServlet
         String from = ServerConfig.getFromAddress();
         int found;
         try {
-            // if we don't have an endId, go all the way
-            if (endId <= 0) {
-                endId = Integer.MAX_VALUE;
-            }
-            for (startId = Math.max(startId, 1); startId < endId; startId += MEMBERS_PER_LOOP) {
+            do {
                 IntSet memIds = new ArrayIntSet();
                 for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
                     int memberId = ii + startId;
@@ -169,7 +176,9 @@ public class AdminServlet extends MsoyServiceServlet
                         // roll on through and try the next one
                     }
                 }
-            }
+
+                startId += MEMBERS_PER_LOOP;
+            } while (startId < endId && found > 0);
 
             return results;
 
