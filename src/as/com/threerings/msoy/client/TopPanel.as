@@ -351,8 +351,8 @@ public class TopPanel extends Canvas
     public function slideInChat (chat :Container, bounds :Rectangle) :void
     {
         _chatBounds = bounds;
-        if (_chat != null) {
-            // we already own the chat
+        if (_chat != null || _ctx.getMsoyClient().isFeaturedPlaceView()) {
+            // we already own the chat, or we shouldn't be showing slide chat.
             return;
         }
 
