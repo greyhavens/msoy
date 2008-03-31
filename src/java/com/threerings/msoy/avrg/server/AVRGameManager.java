@@ -5,6 +5,7 @@ package com.threerings.msoy.avrg.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -32,6 +33,7 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
@@ -471,14 +473,25 @@ public class AVRGameManager
         }
 
         // send to a specific player
-        if (_gameObj.playerOids.contains(playerId)) {
-            PlayerObject toPlayer = (PlayerObject) MsoyGameServer.omgr.getObject(playerId);
-            if (toPlayer != null) {
-                toPlayer.postMessage(
-                    AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
-                    new Object[] { msg, data });
+        PlayerObject player = getPlayer(playerId);
+        if (player != null) {
+            player.postMessage(
+                AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
+                new Object[] { msg, data });
+        }
+    }
+
+    protected PlayerObject getPlayer (int playerId)
+    {
+        // TODO: we should probably map playerId -> playerOid in this manager object
+        for (OccupantInfo occInfo : _gameObj.players) {
+            if ((occInfo.username instanceof MemberName) &&
+                    playerId == ((MemberName) occInfo.username).getMemberId()) {
+                Player player = _players.get(occInfo.getBodyOid()); 
+                return player != null ? player.playerObject : null;
             }
         }
+        return null;
     }
 
     // from AVRGameProvider
