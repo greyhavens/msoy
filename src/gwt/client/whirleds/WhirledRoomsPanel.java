@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -71,9 +72,12 @@ public class WhirledRoomsPanel extends VerticalPanel
         }
         add(new TongueBox(CWhirleds.msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
 
-        HorizontalPanel transferPanel = new HorizontalPanel();
-        transferPanel.setSpacing(10);
-        transferPanel.add(_roomsListBox = new ListBox());
+        VerticalPanel transferPanel = new VerticalPanel();
+        transferPanel.add(new Label(CWhirleds.msgs.detailTransferRoomInfo()));
+        HorizontalPanel transferForm = new HorizontalPanel();
+        transferPanel.add(transferForm);
+        transferForm.setSpacing(10);
+        transferForm.add(_roomsListBox = new ListBox());
         for (int ii = 0; ii < _roomsResult.callerRooms.size(); ii++) {
             _roomsListBox.addItem(((GroupService.Room)_roomsResult.callerRooms.get(ii)).name);
         }
@@ -83,7 +87,7 @@ public class WhirledRoomsPanel extends VerticalPanel
                     transferCurrentRoom();
                 }
             });
-        transferPanel.add(transferButton);
+        transferForm.add(transferButton);
         add(new TongueBox(CWhirleds.msgs.detailCallersRoomsTitle(), transferPanel));
     }
 
