@@ -933,7 +933,7 @@ public class WorldController extends MsoyController
             if (scene == null) {
                 fullURL += "/#" + page + "-" + args;
             } else {
-                fullURL += "/#world-s" + scene.getId() + "-" + page + "-" + args;
+                fullURL += "/#world-s" + scene.getId() + "_" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
             try {
