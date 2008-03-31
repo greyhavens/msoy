@@ -177,11 +177,7 @@ public class ControlBar extends HBox
     public function enableZoomControl (enabled :Boolean ) :void
     {
         _zoomBtn.enabled = enabled;
-        if (enabled) {
-            _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
-        } else {
-            _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom_disabled");
-        }
+        _zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
     }
 
     // from HBox
