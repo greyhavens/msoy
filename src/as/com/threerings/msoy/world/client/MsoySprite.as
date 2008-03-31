@@ -73,10 +73,10 @@ public class MsoySprite extends DataPackMediaContainer
 
     /** Hover colors. */
     public static const AVATAR_HOVER :uint = 0x99BFFF;// light blue
-    public static const PET_HOVER :uint = 0x999999;// light gray
+    public static const PET_HOVER :uint = 0x999999; // light gray
     public static const PORTAL_HOVER :uint = 0x7BFFB0; // happy green
     public static const GAME_HOVER :uint = 0xFFFFFF;  // white
-    public static const OTHER_HOVER :uint = 0x000000; // black
+    public static const OTHER_HOVER :uint = 0xFF993F; // orange
 
     /**
      * Construct a MsoySprite.
