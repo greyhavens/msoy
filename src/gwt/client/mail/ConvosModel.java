@@ -6,6 +6,8 @@ package client.mail;
 import java.util.List;
 
 import client.util.ServiceBackedDataModel;
+import client.util.events.FlashEvents;
+import client.util.events.StatusChangeEvent;
 
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
@@ -21,12 +23,18 @@ public class ConvosModel extends ServiceBackedDataModel
      */
     public void markConversationRead (int convoId)
     {
+        int unread = 0;
         for (int ii = 0, ll = _pageItems.size(); ii < ll; ii++) {
             Conversation convo = (Conversation)_pageItems.get(ii);
             if (convo.conversationId == convoId) {
                 convo.hasUnread = false;
+            } else if (convo.hasUnread) {
+                unread++;
             }
         }
+
+        // now dispatch an event indicating our new unread mail count
+        FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
     }
 
     /**

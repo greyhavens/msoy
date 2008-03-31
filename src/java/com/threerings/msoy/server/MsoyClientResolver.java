@@ -129,8 +129,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             // we don't pass in member name here because we don't need it on the client
             MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
-        // load up this member's current new mail message count
-        userObj.newMailCount = MsoyServer.mailRepo.getUnreadMessages(member.memberId);
+        // load up this member's current new mail count
+        userObj.newMailCount = MsoyServer.mailRepo.loadUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {

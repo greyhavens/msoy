@@ -450,9 +450,9 @@ public class WebUserServlet extends MsoyServiceServlet
         // data.gold = TODO
         data.level = mrec.level;
 
-        // load up their new message count
+        // load up their new mail count
         try {
-            data.newMailCount = MsoyServer.mailRepo.getUnreadMessages(mrec.memberId);
+            data.newMailCount = MsoyServer.mailRepo.loadUnreadConvoCount(mrec.memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }

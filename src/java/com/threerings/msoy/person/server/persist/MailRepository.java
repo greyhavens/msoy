@@ -76,6 +76,23 @@ public class MailRepository extends DepotRepository
     }
 
     /**
+     * Returns the number of conversations in which the specified member is a participant and which
+     * have messages not read by that member.
+     */
+    public int loadUnreadConvoCount (int memberId)
+        throws PersistenceException
+    {
+        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID_C, memberId);
+        SQLExpression isNew = new Conditionals.GreaterThan(
+            ConversationRecord.LAST_SENT_C, ParticipantRecord.LAST_READ_C);
+        return load(CountRecord.class,
+                    new FromOverride(ParticipantRecord.class),
+                    new Join(ParticipantRecord.CONVERSATION_ID_C,
+                             ConversationRecord.CONVERSATION_ID_C),
+                    new Where(new Logic.And(isMe, isNew))).count;
+    }
+
+    /**
      * Loads conversations in which the specified member is a participant, sorted by most recently
      * active to least.
      */
@@ -208,22 +225,6 @@ public class MailRepository extends DepotRepository
         _eventLog.mailSent(conversationId, authorId, payloadType);
 
         return record;
-    }
-
-    /**
-     * Returns the number of unread messages in all conversations for the specified member.
-     */
-    public int getUnreadMessages (int memberId)
-        throws PersistenceException
-    {
-        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID_C, memberId);
-        SQLExpression isNew = new Conditionals.GreaterThan(
-            ConvMessageRecord.SENT_C, ParticipantRecord.LAST_READ_C);
-        return load(CountRecord.class,
-                    new FromOverride(ParticipantRecord.class),
-                    new Join(ParticipantRecord.CONVERSATION_ID_C,
-                             ConvMessageRecord.CONVERSATION_ID_C),
-                    new Where(new Logic.And(isMe, isNew))).count;
     }
 
     // TEMP
