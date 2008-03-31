@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.samskivert.net.MailUtil;
@@ -129,7 +129,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
-            ArrayList<Item> items = new ArrayList<Item>();
+            List<Item> items = Lists.newArrayList();
             for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
                 items.add(record.toItem());
             }
@@ -160,7 +160,7 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             MemberInvites result = new MemberInvites();
             result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
-            ArrayList<Invitation> pending = new ArrayList<Invitation>();
+            List<Invitation> pending = Lists.newArrayList();
             for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(mrec.memberId)) {
                 // we issued these invites so we are the inviter
                 pending.add(iRec.toInvitation(mrec.getName()));
@@ -187,28 +187,35 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
-        try {
-            // make sure this user still has available invites; we already check this value in GWT
-            // land, and deal with it sensibly there
-            int availInvites = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
-            if (availInvites < addresses.size()) {
-                log.warning("Member requested to grant more invites than they have " +
-                            "[who=" + mrec.who() + ", tried=" + addresses.size() +
-                            ", have=" + availInvites + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
+// TODO: nix this when we stop caring about retaining the potential to limit growth
+//         try {
+//             // make sure this user still has available invites; we already check this value in GWT
+//             // land, and deal with it sensibly there
+//             int availInvites = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
+//             if (availInvites < addresses.size()) {
+//                 log.warning("Member requested to grant more invites than they have " +
+//                             "[who=" + mrec.who() + ", tried=" + addresses.size() +
+//                             ", have=" + availInvites + "].");
+//                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+//             }
 
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+//         } catch (PersistenceException pe) {
+//             log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
+//             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+//         }
 
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
+        List<Invitation> penders = Lists.newArrayList();
         for (int ii = 0; ii < addresses.size(); ii++) {
             String email = (String)addresses.get(ii);
-            ir.results[ii] = sendInvite(anonymous ? null : mrec, email, fromName, customMessage);
+            try {
+                penders.add(sendInvite(anonymous ? null : mrec, email, fromName, customMessage));
+            } catch (ServiceException se) {
+                ir.results[ii] = se.getMessage();
+            }
         }
+        ir.pendingInvitations = penders;
         return ir;
     }
 
@@ -256,29 +263,30 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * Helper function for {@link #sendInvites}.
      */
-    protected String sendInvite (MemberRecord inviter, String email, String fromName,
-                                 String customMessage)
+    protected Invitation sendInvite (MemberRecord inviter, String email, String fromName,
+                                     String customMessage)
+        throws ServiceException
     {
         try {
             // make sure this address is valid
             if (!MailUtil.isValidAddress(email)) {
-                return InvitationResults.INVALID_EMAIL;
+                throw new ServiceException(InvitationResults.INVALID_EMAIL);
             }
 
             // make sure this address isn't already registered
             if (MsoyServer.memberRepo.loadMember(email) != null) {
-                return InvitationResults.ALREADY_REGISTERED;
+                throw new ServiceException(InvitationResults.ALREADY_REGISTERED);
             }
 
             // make sure this address isn't on the opt-out list
             if (MsoyServer.memberRepo.hasOptedOut(email)) {
-                return InvitationResults.OPTED_OUT;
+                throw new ServiceException(InvitationResults.OPTED_OUT);
             }
 
             // make sure this user hasn't already invited this address
             int inviterId = (inviter == null) ? 0 : inviter.memberId;
             if (MsoyServer.memberRepo.loadInvite(email, inviterId) != null) {
-                return InvitationResults.ALREADY_INVITED;
+                throw new ServiceException(InvitationResults.ALREADY_INVITED);
             }
 
             String inviteId = MsoyServer.memberRepo.generateInviteId();
@@ -299,19 +307,23 @@ public class MemberServlet extends MsoyServiceServlet
             try {
                 MailSender.sendEmail(email, from, "memberInvite", ctx);
             } catch (Exception e) {
-                return e.getMessage();
+                throw new ServiceException(e.getMessage());
             }
 
             // record the invite and that we sent it
             MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
             _eventLog.inviteSent(inviteId, inviterId, email);
 
-            return InvitationResults.SUCCESS;
+            Invitation invite = new Invitation();
+            invite.inviteId = inviteId;
+            invite.inviteeEmail = email;
+            // invite.inviter left blank on purpose
+            return invite;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "sendInvite failed [inviter=" + inviter.who() +
                     ", email=" + email + "].", pe);
-            return ServiceCodes.E_INTERNAL_ERROR;
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 }

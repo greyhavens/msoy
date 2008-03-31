@@ -704,7 +704,8 @@ public class MemberRepository extends DepotRepository
 
         if (inviterId > 0) {
             InviterRecord inviterRec = load(InviterRecord.class, inviterId);
-            inviterRec.invitesGranted--;
+// TODO: nix this when we nix invite limiting
+//             inviterRec.invitesGranted--;
             inviterRec.invitesSent++;
             update(inviterRec);
         }

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /** 
@@ -28,4 +30,8 @@ public class InvitationResults
 
     /** The results for each address sent in the request. */
     public String[] results;
+
+    /** The pending invitations generated.
+     * @gwt.typeArgs <com.threerings.msoy.web.data.Invitation> */
+    public List pendingInvitations;
 }
