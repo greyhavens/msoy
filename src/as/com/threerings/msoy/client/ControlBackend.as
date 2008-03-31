@@ -70,6 +70,11 @@ public class ControlBackend
      */
     protected function handleUserCodeConnect (evt :Object) :void
     {
+        if (_props != null) {
+            var log :Log = Log.getLog(this);
+            log.warning("Warning: Usercode connected more than once. [sprite=" + this + "].");
+        }
+
         // copy down the user functions
         setUserProperties(evt.userProps);
         // pass back ours
