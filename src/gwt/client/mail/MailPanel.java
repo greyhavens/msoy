@@ -21,10 +21,12 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Conversation;
+import com.threerings.msoy.person.data.Profile;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyUI;
 import client.util.ThumbBox;
 
 /**
@@ -130,11 +132,20 @@ public class MailPanel extends VerticalPanel
         {
             super("Convo", 0, 0);
 
-            Widget photo = new ThumbBox(convo.other.photo, MediaDesc.HALF_THUMBNAIL_SIZE, null);
-            setWidget(0, 0, photo, 1, "Photo");
+            MediaDesc photo;
+            Widget name;
+            if (convo.other == null) {
+                photo = Profile.DEFAULT_PHOTO;
+                name = MsoyUI.createLabel("<unknown>", null);
+            } else {
+                photo = convo.other.photo;
+                name = Application.memberViewLink(convo.other.name);
+            }
+
+            setWidget(0, 0, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE, null), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-            setWidget(0, 1, Application.memberViewLink(convo.other.name), 1, "Name");
+            setWidget(0, 1, name, 1, "Name");
             setText(1, 0, _fmt.format(convo.lastSent), 1, "Sent");
 
             Widget link = Application.createLink(
