@@ -4,7 +4,6 @@
 package com.threerings.msoy.data;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -146,21 +145,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #issueInvitation} requests. */
-    public static final int ISSUE_INVITATION = 11;
-
-    // from interface MemberService
-    public void issueInvitation (Client arg1, MemberName arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ISSUE_INVITATION, new Object[] {
-            arg2, listener3
-        });
-    }
-
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 12;
+    public static final int SET_AVATAR = 11;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.ConfirmListener arg4)
@@ -173,7 +159,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static final int SET_AWAY = 13;
+    public static final int SET_AWAY = 12;
 
     // from interface MemberService
     public void setAway (Client arg1, boolean arg2, String arg3)
@@ -184,7 +170,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 14;
+    public static final int SET_DISPLAY_NAME = 13;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -197,7 +183,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 15;
+    public static final int SET_HOME_SCENE_ID = 14;
 
     // from interface MemberService
     public void setHomeSceneId (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -210,7 +196,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 16;
+    public static final int UPDATE_AVAILABILITY = 15;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)

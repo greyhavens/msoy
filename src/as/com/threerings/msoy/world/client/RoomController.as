@@ -541,12 +541,7 @@ public class RoomController extends SceneController
             menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
                 command: WorldController.OPEN_CHANNEL, arg: occInfo.username });
 
-            if (MemberName.isGuest(memId)) {
-                menuItems.push(
-                    { label: Msgs.GENERAL.get("l.invite_to_whirled"),
-                      command: WorldController.INVITE_GUEST, arg: occInfo.username });
-
-            } else {
+            if (!MemberName.isGuest(memId)) {
                 // TODO: move up when we can forward MemberObjects between servers for guests
                 menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
                                  callback: inviteFollow, arg: occInfo.username });

@@ -452,33 +452,6 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void issueInvitation (ClientObject caller, final MemberName guest,
-                                 InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        final MemberObject member = (MemberObject) caller;
-        ensureNotGuest(member);
-
-        String uname = "issueInvitation(" + member.getMemberId() + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
-            public void invokePersistent () throws Exception {
-                _invitesAvailable = _memberRepo.getInvitesGranted(member.getMemberId());
-                if (_invitesAvailable <= 0) {
-                    throw new InvocationException("e.not_enough_invites");
-                }
-                _memberRepo.addInvite(guest.toString(), member.getMemberId(),
-                                      _inviteId = _memberRepo.generateInviteId());
-            }
-            public void handleSuccess () {
-                MsoyServer.notifyMan.notifyIssuedInvitation(guest, _inviteId);
-                reportRequestProcessed(--_invitesAvailable);
-            }
-            protected int _invitesAvailable;
-            protected String _inviteId;
-        });
-    }
-
-    // from interface MemberProvider
     public void setHomeSceneId (ClientObject caller, final int sceneId,
                                 InvocationService.ConfirmListener listener)
         throws InvocationException

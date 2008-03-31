@@ -8,7 +8,6 @@ import com.threerings.util.*; // for Float, Integer, etc.
 import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -154,21 +153,8 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #issueInvitation} requests. */
-    public static const ISSUE_INVITATION :int = 11;
-
-    // from interface MemberService
-    public function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void
-    {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ISSUE_INVITATION, [
-            arg2, listener3
-        ]);
-    }
-
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static const SET_AVATAR :int = 12;
+    public static const SET_AVATAR :int = 11;
 
     // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
@@ -181,7 +167,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static const SET_AWAY :int = 13;
+    public static const SET_AWAY :int = 12;
 
     // from interface MemberService
     public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
@@ -192,7 +178,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static const SET_DISPLAY_NAME :int = 14;
+    public static const SET_DISPLAY_NAME :int = 13;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -205,7 +191,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static const SET_HOME_SCENE_ID :int = 15;
+    public static const SET_HOME_SCENE_ID :int = 14;
 
     // from interface MemberService
     public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -218,7 +204,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static const UPDATE_AVAILABILITY :int = 16;
+    public static const UPDATE_AVAILABILITY :int = 15;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void

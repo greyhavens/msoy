@@ -82,11 +82,6 @@ public interface MemberService extends InvocationService
     public void acknowledgeNotifications (Client client, int[] ids, InvocationListener listener);
 
     /**
-     * Issue an invitation to the given guest from the user's available invites.
-     */
-    public void issueInvitation (Client client, MemberName guest, ResultListener listener);
-
-    /**
      * Set the given scene as the member's home scene
      */
     public void setHomeSceneId (Client client, int sceneId, ConfirmListener listener);

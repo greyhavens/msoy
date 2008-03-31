@@ -53,7 +53,6 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
@@ -593,23 +592,6 @@ public class WorldController extends MsoyController
     public function handleInviteFriend (memberId :int) :void
     {
         _wctx.getMemberDirector().inviteToBeFriend(memberId);
-    }
-
-    /**
-     * Handles the INVITE_GUEST command.
-     */
-    public function handleInviteGuest (guest :MemberName) :void
-    {
-        var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        var errorHandler :Function = function (cause :String) :void {
-            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-        };
-        var resultHandler :Function = function (result :Object) :void {
-            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("m.invite_sent",
-                result));
-        };
-        msvc.issueInvitation(_wctx.getClient(), guest,
-                             new ResultWrapper(errorHandler, resultHandler));
     }
 
     /**

@@ -65,7 +65,6 @@ import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 
-import com.threerings.msoy.notify.data.GuestInviteNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
@@ -158,7 +157,6 @@ public class WorldClient extends MsoyClient
         c = Document;
         c = Furniture;
         c = Game;
-        c = GuestInviteNotification;
         c = ItemList;
         c = ItemMarshaller;
         c = ItemPack;

@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -72,12 +71,6 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#inviteToFollow} request.
      */
     public void inviteToFollow (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#issueInvitation} request.
-     */
-    public void issueInvitation (ClientObject caller, MemberName arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**
