@@ -27,7 +27,6 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
@@ -415,7 +414,7 @@ public class RoomController extends SceneController
     {
         switch (furni.actionType) {
         case FurniData.ACTION_URL:
-            NetUtil.navigateToURL(furni.splitActionData()[0] as String);
+            _wdctx.getMsoyController().showExternalURL(furni.splitActionData()[0] as String);
             return;
 
         case FurniData.ACTION_WORLD_GAME:
