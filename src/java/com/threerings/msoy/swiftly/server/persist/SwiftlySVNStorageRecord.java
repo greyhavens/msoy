@@ -21,8 +21,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
  * greater than 1000 bytes. Quick math:
  *    VARCHAR(255) * (UTF-8 4 bytes) == 1020
  */
-@Entity
-@Table(uniqueConstraints = {@UniqueConstraint(fieldNames={"protocol", "host", "port", "baseDir"})})
+@Entity(uniqueConstraints = {@UniqueConstraint(fieldNames={"protocol", "host", "port", "baseDir"})})
 public class SwiftlySVNStorageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

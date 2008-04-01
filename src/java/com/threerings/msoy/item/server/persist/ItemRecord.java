@@ -15,7 +15,6 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
@@ -26,15 +25,14 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * The base class for all digital items in the MSOY system.
  */
-@Table(fullTextIndexes={
-    @FullTextIndex(name=ItemRecord.FTS_ND, fieldNames={
-        ItemRecord.NAME, ItemRecord.DESCRIPTION })})
 @Entity(indices={
     @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
     @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
     @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
     @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
     @Index(name="ixCreator", fields={ ItemRecord.CREATOR_ID })
+}, fullTextIndexes={
+    @FullTextIndex(name=ItemRecord.FTS_ND, fieldNames={ ItemRecord.NAME, ItemRecord.DESCRIPTION })
 })
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {

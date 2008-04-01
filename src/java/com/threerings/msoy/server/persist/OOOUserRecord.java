@@ -13,7 +13,6 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.jora.FieldMask;
@@ -23,10 +22,9 @@ import com.threerings.user.OOOUser;
 /**
  * Emulates {@link OOOUser} for the Depot.
  */
-@Entity(name="users", indices={
-    @Index(name="ixEmail", fields={ OOOUserRecord.EMAIL })
-})
-@Table(uniqueConstraints={ @UniqueConstraint(fieldNames={ OOOUserRecord.USERNAME })})
+@Entity(name="users",
+        indices={ @Index(name="ixEmail", fields={ OOOUserRecord.EMAIL }) },
+        uniqueConstraints={ @UniqueConstraint(fieldNames={ OOOUserRecord.USERNAME })})
 public class OOOUserRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

@@ -19,7 +19,6 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
@@ -36,8 +35,7 @@ import com.threerings.msoy.group.data.GroupExtras;
  */
 @Entity(indices={
     @Index(name="ixPolicy", fields={ GroupRecord.POLICY })
-})
-@Table(fullTextIndexes={
+}, fullTextIndexes={
     @FullTextIndex(name=GroupRecord.FTS_NBC, fieldNames={
         GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })
 })

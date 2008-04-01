@@ -11,9 +11,9 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -23,7 +23,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 /**
  * Contains a member's profile data.
  */
-@Table(fullTextIndexes={
+@Entity(fullTextIndexes={
     @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fieldNames={ ProfileRecord.REAL_NAME })
 })
 public class ProfileRecord extends PersistentRecord

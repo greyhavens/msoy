@@ -19,8 +19,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 /**
  * Contains the definition of a swiftly project.
  */
-@Entity
-@Table(uniqueConstraints = {@UniqueConstraint(fieldNames={"ownerId", "projectName"})})
+@Entity(uniqueConstraints = {@UniqueConstraint(fieldNames={"ownerId", "projectName"})})
 public class SwiftlyProjectRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
