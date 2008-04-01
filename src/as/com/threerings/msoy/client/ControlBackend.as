@@ -70,20 +70,34 @@ public class ControlBackend
      */
     protected function handleUserCodeConnect (evt :Object) :void
     {
+        // older code has the properies in the top-level event, newer code in a sub-object
+        var props :Object = ("props" in evt) ? evt.props : evt;
+
         if (_props != null) {
-            var log :Log = Log.getLog(this);
-            log.warning("Warning: Usercode connected more than once. [sprite=" + this + "].");
+            // attempt to report this back to the caller, but don't worry if we can't
+            // set the property, old APIs only allowed userProps and hostProps.
+            try {
+                props.alreadyConnected = true;
+                return;
+            } catch (err :Error) {
+                // Let's log something for our own edification when this happens, but note well
+                // that this is not an error. Old avatars could be connecting twice and coping,
+                // so we don't want to break them. We use the above "alreadyConnected" property
+                // to inform newer entities that they're booching it.
+                var log :Log = Log.getLog(this);
+                log.warning("Warning: Usercode connected more than once. [backend=" + this + "].");
+            }
         }
 
         // copy down the user functions
-        setUserProperties(evt.userProps);
+        setUserProperties(props.userProps);
         // pass back ours
         var hostProps :Object = new Object();
         populateControlProperties(hostProps);
         var initProps :Object = new Object();
         populateControlInitProperties(initProps);
         hostProps["initProps"] = initProps;
-        evt.hostProps = hostProps;
+        props.hostProps = hostProps;
     }
 
     /**
