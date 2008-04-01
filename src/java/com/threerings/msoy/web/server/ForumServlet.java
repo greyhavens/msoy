@@ -35,6 +35,7 @@ import com.threerings.msoy.fora.data.ForumCodes;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
@@ -69,8 +70,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // load up the requested set of threads
-            List<ForumThreadRecord> thrrecs =
-                MsoyServer.forumRepo.loadThreads(groupId, offset, count);
+            List<ForumThreadRecord> thrrecs = _forumRepo.loadThreads(groupId, offset, count);
 
             // load up additional fiddly bits and create a result record
             ThreadResult result = toThreadResult(
@@ -87,7 +87,7 @@ public class ForumServlet extends MsoyServiceServlet
             // fill in our total thread count if needed
             if (needTotalCount) {
                 result.threadCount = (result.threads.size() < count && offset == 0) ?
-                    result.threads.size() : MsoyServer.forumRepo.loadThreadCount(groupId);
+                    result.threads.size() : _forumRepo.loadThreadCount(groupId);
             }
 
             return result;
@@ -117,8 +117,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (groups.size() == 0) {
                 thrrecs = Collections.emptyList();
             } else {
-                thrrecs = MsoyServer.forumRepo.loadUnreadThreads(
-                    mrec.memberId, groups.keySet(), maximum);
+                thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), maximum);
             }
 
             // load up additional fiddly bits and create a result record
@@ -147,7 +146,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they have read access to this thread
-            ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(threadId);
+            ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
@@ -158,8 +157,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // load up the requested set of messages
-            List<ForumMessageRecord> msgrecs =
-                MsoyServer.forumRepo.loadMessages(threadId, offset, count);
+            List<ForumMessageRecord> msgrecs = _forumRepo.loadMessages(threadId, offset, count);
 
             // enumerate the posters and create member cards for them
             IntMap<MemberCard> cards = IntMaps.newHashIntMap();
@@ -206,7 +204,7 @@ public class ForumServlet extends MsoyServiceServlet
                 }
                 // load up our last read post information
                 if (mrec != null) {
-                    for (ReadTrackingRecord rtr : MsoyServer.forumRepo.loadLastReadPostInfo(
+                    for (ReadTrackingRecord rtr : _forumRepo.loadLastReadPostInfo(
                              mrec.memberId, Collections.singleton(threadId))) {
                         result.thread.lastReadPostId = rtr.lastReadPostId;
                         result.thread.lastReadPostIndex = rtr.lastReadPostIndex;
@@ -219,7 +217,7 @@ public class ForumServlet extends MsoyServiceServlet
             // if this caller is authenticated, note that they've potentially updated their last
             // read message id
             if (mrec != null && highestPostId > lastReadPostId) {
-                MsoyServer.forumRepo.noteLastReadPostId(    // highestPostIndex
+                _forumRepo.noteLastReadPostId(              // highestPostIndex
                     mrec.memberId, threadId, highestPostId, offset + result.messages.size() - 1);
             }
 
@@ -248,7 +246,7 @@ public class ForumServlet extends MsoyServiceServlet
             message = sanitizeMessage(message);
 
             // create the thread (and first post) in the database and return its runtime form
-            ForumThread thread = MsoyServer.forumRepo.createThread(
+            ForumThread thread = _forumRepo.createThread(
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
                     Collections.singletonMap(mrec.memberId, mrec.getName()),
                     Collections.singletonMap(group.groupId, group.getName()));
@@ -274,9 +272,8 @@ public class ForumServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
-
         try {
-            ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(threadId);
+            ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
@@ -290,11 +287,26 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // if we made it this far, then update the flags
-            MsoyServer.forumRepo.updateThreadFlags(ftr.threadId, flags);
+            _forumRepo.updateThreadFlags(ftr.threadId, flags);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update thread flags [for=" + who(mrec) +
                     ", tid=" + threadId + ", flags=" + flags + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ForumService
+    public void ignoreThread (WebIdent ident, int threadId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        try {
+            _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to mark thread ignored [for=" + mrec.who() +
+                    ", threadId=" + threadId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -307,7 +319,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they're allowed to post a message to this thread's group
-            ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(threadId);
+            ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
@@ -317,7 +329,7 @@ public class ForumServlet extends MsoyServiceServlet
             message = sanitizeMessage(message);
 
             // create the message in the database and return its runtime form
-            ForumMessageRecord fmr = MsoyServer.forumRepo.postMessage(
+            ForumMessageRecord fmr = _forumRepo.postMessage(
                 threadId, mrec.memberId, inReplyTo, message);
 
             // load up the member card for the poster
@@ -345,7 +357,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they are the message author
-            ForumMessageRecord fmr = MsoyServer.forumRepo.loadMessage(messageId);
+            ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);
             if (fmr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
             }
@@ -357,7 +369,7 @@ public class ForumServlet extends MsoyServiceServlet
             message = sanitizeMessage(message);
 
             // if all is well then do the deed
-            MsoyServer.forumRepo.updateMessage(messageId, message);
+            _forumRepo.updateMessage(messageId, message);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to edit message [for=" + who(mrec) +
@@ -375,12 +387,12 @@ public class ForumServlet extends MsoyServiceServlet
 
         try {
             // make sure they are the message author or a group admin or whirled support+
-            ForumMessageRecord fmr = MsoyServer.forumRepo.loadMessage(messageId);
+            ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);
             if (fmr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
             }
             if (!mrec.isSupport() && fmr.posterId != mrec.memberId) {
-                ForumThreadRecord ftr = MsoyServer.forumRepo.loadThread(fmr.threadId);
+                ForumThreadRecord ftr = _forumRepo.loadThread(fmr.threadId);
                 if (ftr == null) {
                     throw new ServiceException(ForumCodes.E_INVALID_THREAD);
                 }
@@ -390,7 +402,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             // if all is well then do the deed
-            MsoyServer.forumRepo.deleteMessage(messageId);
+            _forumRepo.deleteMessage(messageId);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete message [for=" + who(mrec) +
@@ -475,7 +487,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
             if (threadIds.size() > 0) {
                 for (ReadTrackingRecord rtr :
-                         MsoyServer.forumRepo.loadLastReadPostInfo(mrec.memberId, threadIds)) {
+                         _forumRepo.loadLastReadPostInfo(mrec.memberId, threadIds)) {
                     ForumThread ftr = thrmap.get(rtr.threadId);
                     if (ftr != null) { // shouldn't be null but let's not have a cow
                         ftr.lastReadPostId = rtr.lastReadPostId;
@@ -520,4 +532,6 @@ public class ForumServlet extends MsoyServiceServlet
         }
         return sanitized;
     }
+
+    protected ForumRepository _forumRepo = MsoyServer.forumRepo;
 }

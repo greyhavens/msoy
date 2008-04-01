@@ -30,6 +30,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -99,6 +100,20 @@ public class MessagesPanel extends PagedGrid
         _postReply.setEnabled(false);
         controls.setWidget(0, 0, _postReply);
 
+        // add a button for ignoring this thread
+        _ignoreThread = new Button(CMsgs.mmsgs.ignoreThread());
+        new ClickCallback(_ignoreThread, CMsgs.mmsgs.ignoreThreadConfirm()) {
+            public boolean callService () {
+                CMsgs.forumsvc.ignoreThread(CMsgs.ident, _parent.getThreadId(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                MsoyUI.info(CMsgs.mmsgs.threadIgnored());
+                return false;
+            }
+        };
+        controls.setWidget(0, 1, _ignoreThread);
+
         // add a button for editing this thread's flags
         _editFlags = new Button(CMsgs.mmsgs.editFlags(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -106,7 +121,7 @@ public class MessagesPanel extends PagedGrid
             }
         });
         _editFlags.setEnabled(false);
-        controls.setWidget(0, 1, _editFlags);
+        controls.setWidget(0, 2, _editFlags);
     }
 
     // @Override // from PagedGrid
@@ -261,6 +276,9 @@ public class MessagesPanel extends PagedGrid
 
     /** A button for posting a reply message. */
     protected Button _postReply;
+
+    /** A button for ignoring this thread. */
+    protected Button _ignoreThread;
 
     /** A button for editing this thread's flags. */
     protected Button _editFlags;

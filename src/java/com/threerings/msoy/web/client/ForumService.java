@@ -90,6 +90,12 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
+     * Marks the specified thread as ignored by this player.
+     */
+    public void ignoreThread (WebIdent ident, int threadId)
+        throws ServiceException;
+
+    /**
      * Posts a message to the specified thread.
      */
     public ForumMessage postMessage (WebIdent ident, int threadId, int inReplyTo, String message)

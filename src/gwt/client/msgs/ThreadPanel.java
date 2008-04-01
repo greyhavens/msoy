@@ -70,6 +70,11 @@ public class ThreadPanel extends TitledListPanel
         }
     }
 
+    public int getThreadId ()
+    {
+        return _threadId;
+    }
+
     public void gotThread (ForumThread thread)
     {
         _thread = thread;

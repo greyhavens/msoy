@@ -41,6 +41,11 @@ public interface ForumServiceAsync
     public void updateThreadFlags (WebIdent ident, int threadId, int flags, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ForumService#ignoreThread}.
+     */
+    public void ignoreThread (WebIdent ident, int threadId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ForumService#postMessage}.
      */
     public void postMessage (WebIdent ident, int threadId, int inReplyTo, String message,
