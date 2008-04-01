@@ -57,7 +57,7 @@ public class MailRepository extends DepotRepository
 
         // TEMP (3-27-08): if we have no conversation records, migrate our mail message records
         try {
-            if (load(CountRecord.class, new FromOverride(ConversationRecord.class)).count == 0 &&
+            if (//load(CountRecord.class, new FromOverride(ConversationRecord.class)).count == 0 &&
                 ServerConfig.nodeName.equals("msoy1")) {
                 migrateToConversations();
             }
@@ -322,18 +322,27 @@ public class MailRepository extends DepotRepository
 
         log.info("Migrating " + msgrecs.size() + " messages into conversations...");
 
+        long now = System.currentTimeMillis();
         int migrated = 0, duplicates = 0;
         Map<String,MigratedConvo> convos = Maps.newHashMap();
       SCAN:
         for (MailMessageRecord msg : msgrecs) {
             String subject = msg.subject, lsubject = subject.toLowerCase();
-            if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend") ||
-                lsubject.equals("you got whirled invites!") || msg.senderId == msg.recipientId ||
-                msg.senderId == 0) {
-                continue; // skip these auto-generated messages
+//             if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend") ||
+//                 lsubject.equals("you got whirled invites!") || msg.senderId == msg.recipientId ||
+//                 msg.senderId == 0) {
+//                 continue; // skip these auto-generated messages
+//             }
+//             if (lsubject.startsWith("re: ")) {
+//                 subject = subject.substring(4);
+//             }
+
+            // we want only to migrate recent friend inivtations
+            if (!lsubject.equals("be my friend")) {
+                continue;
             }
-            if (lsubject.startsWith("re: ")) {
-                subject = subject.substring(4);
+            if (now - msg.sent.getTime() > 14*24*60*60*1000L) {
+                continue;
             }
 
             int lesser = Math.min(msg.senderId, msg.recipientId);
