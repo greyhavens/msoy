@@ -41,6 +41,7 @@
   width: 650px;
   margin: 5px 10px;
   font-size: 14px;
+  text-align: left;
 }
 
 .mail .Folder .Convo .Delete {
