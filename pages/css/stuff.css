@@ -44,6 +44,18 @@
   font-size: 14px;
 }
 
+.itemPanel .itemBox .Name {
+  text-align: center;
+}
+
+.itemPanel .itemBox .Activator {
+  padding-top: 3px;
+}
+
+.itemBox .Original {
+  font-style: italic;
+}
+
 .itemPanel .Upload .Button {
   padding-right: 20px;
 }
@@ -51,14 +63,6 @@
 .subInventoryContents {
   width: 650px;
   margin-top: 5px;
-}
-
-.subInventoryContents .itemBox .Original {
-  font-style: italic;
-}
-
-.subInventoryContents .itemBox .Activator {
-  padding-top: 3px;
 }
 
 .subInventoryContents .itemBox .Ident {
