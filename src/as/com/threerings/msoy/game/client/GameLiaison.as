@@ -42,6 +42,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -101,6 +102,9 @@ public class GameLiaison
                     var creds :MsoyGameCredentials  =
                         (_gctx.getClient().getCredentials() as MsoyGameCredentials);
                     creds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
+                    if (creds.getUsername() == null) {
+                        creds.setUsername(new MemberName("Guest" + (-guestId), guestId));
+                    }
                 }
                 gameLocated(bits[0], int(bits[1]));
             });
