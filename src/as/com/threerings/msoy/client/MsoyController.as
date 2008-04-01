@@ -147,7 +147,10 @@ public class MsoyController extends Controller
      */
     public function showExternalURL (url :String) :void
     {
-        if (!NetUtil.navigateToURL(url, false)) {
+        // if a URL is http://www.whirled.com or #foo-bar then show it in the same window
+        var sameWindow :Boolean = StringUtil.startsWith(url, DeploymentConfig.serverURL) ||
+            StringUtil.startsWith(url, "#");
+        if (!NetUtil.navigateToURL(url, sameWindow)) {
             _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
         }
     }
