@@ -3,15 +3,26 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 
+import octazen.addressbook.AddressBookAuthenticationException;
+import octazen.addressbook.AddressBookException;
+import octazen.addressbook.Contact;
+import octazen.addressbook.SimpleAddressBookImporter;
+import octazen.addressbook.UnexpectedFormatException;
+import octazen.addressbook.UnsupportedAddressBookException;
+import octazen.http.HttpException;
+import octazen.http.UserInputRequiredException;
+
 import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -33,6 +44,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.data.ProfileCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
@@ -82,7 +94,7 @@ public class ProfileServlet extends MsoyServiceServlet
             MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
-            UserAction action = (nrec.modifications == 1) 
+            UserAction action = (nrec.modifications == 1)
                 ? UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
 
             logUserAction(new UserActionDetails(memrec.memberId, action));
@@ -215,6 +227,49 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
+    // from ProfileService
+    public List<String> getWebMailAddresses (WebIdent ident, String email, String password)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+
+        try {
+            // don't let someone attempt more than 5 imports in a 5 minute period
+            long now = System.currentTimeMillis();
+            if (now > _waCleared + WEB_ACCESS_CLEAR_INTERVAL) {
+                _webmailAccess.clear();
+                _waCleared = now;
+            }
+            if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
+                throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
+            }
+            List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
+            List<String> results = Lists.newArrayList();
+
+            for (Contact contact : contacts) {
+                results.add(contact.getEmail());
+            }
+
+            return results;
+
+        } catch (AddressBookAuthenticationException e) {
+            throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
+        } catch (UnexpectedFormatException e) {
+            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        } catch (AddressBookException e) {
+            throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
+        } catch (UserInputRequiredException e) {
+            throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
+        } catch (IOException e) {
+            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        } catch (HttpException e) {
+            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
@@ -327,8 +382,14 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
+    protected IntIntMap _webmailAccess = new IntIntMap();
+    protected long _waCleared = System.currentTimeMillis();
+
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
+
+    protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
+    protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
 }

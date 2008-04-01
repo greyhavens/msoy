@@ -105,4 +105,12 @@ public interface ProfileService extends RemoteService
      */
     public FriendsResult loadFriends (WebIdent ident, int memberId)
         throws ServiceException;
+
+    /**
+     * Loads up e-mail addresses from a user's webmail account.
+     *
+     * @gwt.typeArgs <java.lang.String>
+     */
+    public List getWebMailAddresses (WebIdent ident, String email, String password)
+        throws ServiceException;
 }

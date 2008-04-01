@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,6 +31,7 @@ import com.threerings.msoy.web.data.Invitation;
 import client.util.BorderedPopup;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import java.util.List;
 
 /**
  * Display a UI allowing users to send out the invites that have been granted to them, as well
@@ -50,7 +52,29 @@ public class SendInvitesPanel extends VerticalPanel
         box.add(_emailAddresses = MsoyUI.createTextArea("", 40, 4));
         String tip = CPeople.msgs.inviteSendTip();
         box.add(MsoyUI.createLabel(tip, "tipLabel"));
-        add(makeRow(CPeople.msgs.inviteAddresses(), box));
+
+        FlowPanel grabber = new FlowPanel();
+        grabber.add(MsoyUI.createLabel(CPeople.msgs.inviteGrabber(), "nowrapLabel"));
+        grabber.add(MsoyUI.createLabel(CPeople.msgs.inviteWebAddress(), "tipLabel"));
+        grabber.add(_webAddress = MsoyUI.createTextBox("", 0, MAX_WEBMAIL_LENGTH));
+        grabber.add(MsoyUI.createLabel(CPeople.msgs.inviteWebPassword(), "tipLabel"));
+        grabber.add(_webPassword = new PasswordTextBox());
+        _webPassword.setWidth("" + MAX_WEBMAIL_LENGTH);
+        _webImport = new Button(CPeople.msgs.inviteWebImport(), new ClickListener() {
+            public void onClick (Widget widget) {
+                if ("".equals(_webAddress.getText())) {
+                    MsoyUI.info(CPeople.msgs.inviteEnterWebAddress());
+                } else if ("".equals(_webPassword.getText())) {
+                    MsoyUI.info(CPeople.msgs.inviteEnterWebPassword());
+                } else {
+                    _webImport.setEnabled(false);
+                    getWebAddresses();
+                }
+            }
+        });
+        grabber.add(_webImport);
+
+        add(makeRow(CPeople.msgs.inviteAddresses(), makeRow(box, grabber)));
 
         add(makeRow(CPeople.msgs.inviteFrom(), _fromName = MsoyUI.createTextBox(
                         CPeople.creds.name.toString(), MAX_FROM_LEN, MAX_FROM_LEN)));
@@ -153,6 +177,35 @@ public class SendInvitesPanel extends VerticalPanel
         });
     }
 
+    protected void getWebAddresses ()
+    {
+        CPeople.profilesvc.getWebMailAddresses(
+                CPeople.ident, _webAddress.getText(), _webPassword.getText(),
+                new MsoyCallback() {
+            public void onSuccess (Object result) {
+                List addresses = (List)result;
+                String abox = _emailAddresses.getText();
+                if (abox.length() > 0 && !abox.endsWith("\n")) {
+                    abox += "\n";
+                }
+                for (int ii = 0, nn = addresses.size(); ii < nn; ii++) {
+                    if (ii > 0) {
+                        abox += "\n";
+                    }
+                    abox += (String)addresses.get(ii);
+                }
+                _emailAddresses.setText(abox);
+                _webImport.setEnabled(true);
+                _webAddress.setText("");
+                _webPassword.setText("");
+            }
+            public void onFailure (Throwable cause) {
+                MsoyUI.error(CPeople.serverError(cause));
+                _webImport.setEnabled(true);
+            }
+        });
+    }
+
     protected class ResultsPopup extends BorderedPopup
     {
         public ResultsPopup (List addrs, InvitationResults invRes)
@@ -199,6 +252,10 @@ public class SendInvitesPanel extends VerticalPanel
     protected TextArea _customMessage;
     protected CheckBox _anonymous;
     protected FlexTable _penders;
+    protected TextBox _webAddress;
+    protected PasswordTextBox _webPassword;
+    protected Button _webImport;
 
     protected static final int MAX_FROM_LEN = 40;
+    protected static final int MAX_WEBMAIL_LENGTH = 30;
 }

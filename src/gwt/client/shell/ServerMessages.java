@@ -46,4 +46,9 @@ public interface ServerMessages extends ConstantsWithLookup
     public String invalid_group ();
     public String invalid_thread ();
     public String invalid_message ();
+
+    public String bad_username_pass ();
+    public String unsupported_webmail ();
+    public String user_input_required ();
+    public String max_webmail_attempts ();
 }

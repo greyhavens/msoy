@@ -33,4 +33,10 @@ public interface ProfileServiceAsync
      * The asynchronous version of {@link ProfileService#loadFriends}.
      */
     public void loadFriends (WebIdent ident, int memberId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#getWebMailAddresses}.
+     */
+    public void getWebMailAddresses (WebIdent ident, String email, String password,
+                                     AsyncCallback callback);
 }
