@@ -12,7 +12,6 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.io.Streamable;
@@ -25,7 +24,6 @@ import com.threerings.msoy.data.all.TagCodes;
 @Entity(indices={
     @Index(name="ixTag", fields={ TagNameRecord.TAG })
 })
-@Table
 public class TagNameRecord extends PersistentRecord
     implements Streamable
 {

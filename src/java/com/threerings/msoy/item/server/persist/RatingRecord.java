@@ -6,7 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.threerings.io.Streamable;
 

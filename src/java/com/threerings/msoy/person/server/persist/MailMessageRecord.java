@@ -14,7 +14,6 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
@@ -43,7 +42,6 @@ import com.threerings.msoy.person.data.MailPayload;
     @Index(name="ixOwnerFolder", fields={
         MailMessageRecord.OWNER_ID, MailMessageRecord.FOLDER_ID })
 })
-@Table
 public class MailMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

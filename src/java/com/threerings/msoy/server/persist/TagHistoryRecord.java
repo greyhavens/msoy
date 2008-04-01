@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.threerings.io.Streamable;
 
@@ -15,7 +14,6 @@ import com.threerings.io.Streamable;
  * Keeps a history of tagging events for a given target.
  */
 @Entity
-@Table
 public abstract class TagHistoryRecord extends PersistentRecord
     implements Streamable
 {

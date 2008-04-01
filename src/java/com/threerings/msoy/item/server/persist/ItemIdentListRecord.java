@@ -7,7 +7,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -16,7 +16,7 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
     
-@Table
+@Entity
 public class ItemIdentListRecord extends PersistentRecord
     implements Streamable
 {
