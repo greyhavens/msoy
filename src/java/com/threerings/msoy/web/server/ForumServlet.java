@@ -251,6 +251,10 @@ public class ForumServlet extends MsoyServiceServlet
                     Collections.singletonMap(mrec.memberId, mrec.getName()),
                     Collections.singletonMap(group.groupId, group.getName()));
 
+            // mark this thread as read by the poster
+            _forumRepo.noteLastReadPostId(
+                mrec.memberId, thread.threadId, thread.mostRecentPostId, 1);
+
             // if the thread is an announcement thread, post a feed message about it
             if (thread.isAnnouncement()) {
                 MsoyServer.feedRepo.publishGroupMessage(
@@ -338,6 +342,9 @@ public class ForumServlet extends MsoyServiceServlet
                      Collections.singleton(mrec.memberId))) {
                 cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
+
+            // mark this thread as read by the poster
+            _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
 
             // and create and return the runtime record for the post
             return fmr.toForumMessage(cards);
