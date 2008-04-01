@@ -127,7 +127,7 @@ public class TablePanel extends VBox
 
         // display the non-players in the room (or everyone for party games)
         if (table.watchers != null && table.watchers.length > 0) {
-            info = info + ", " + Msgs.GAME.get("l.people") + ": asdf, asdf asdf,as df,asdf a,sdf,asdfasdf asd,fa sdf,asdf asd,fas,dfas dfas,dfa,sdfasdfasdf,a sdf,asd ,fasd,fasdfasd,fasd,f asd,fasd,fasdasdfasdf, " + table.watchers.join();
+            info = info + ", " + Msgs.GAME.get("l.people") + ": " + table.watchers.join();
         }
 
         // and display any custom table configuration
