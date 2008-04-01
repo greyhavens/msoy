@@ -62,6 +62,9 @@ import static com.threerings.msoy.Log.log;
 public class AVRGameManager
     implements AVRGameProvider, OidListListener
 {
+    /**
+     * Creates a new {@link AVRGameManager} for the given game.
+     */
     public AVRGameManager (int gameId, AVRGameRepository repo)
     {
         _gameId = gameId;
@@ -83,6 +86,9 @@ public class AVRGameManager
         return _gameId;
     }
 
+    /**
+     * Called with our hosted game's data once it's finished loading from the database.
+     */
     public void startup (AVRGameObject gameObj, GameContent content,
                          List<GameStateRecord> stateRecords)
     {
@@ -106,12 +112,17 @@ public class AVRGameManager
         }
     }
 
-    /** The game has changed while we're hosting it; update the media, the client will reload. */
+    /** 
+     * The game has changed while we're hosting it; update the media, the client will reload.
+     */
     public void updateGame (Game game)
     {
         _gameObj.setGameMedia(game.gameMedia);
     }
 
+    /**
+     * Called when we're going down, clean up and flush accumulated data to store.
+     */
     public void shutdown ()
     {
         stopTickers();
@@ -198,8 +209,10 @@ public class AVRGameManager
         final int sceneId = ScenePlace.getSceneId(player);
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("startQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(
-                    _gameId, player.getMemberId(), questId, QuestState.STEP_FIRST, status, sceneId);
+                if (!MemberName.isGuest(player.getMemberId())) {
+                    _repo.setQuestState(_gameId, player.getMemberId(), questId,
+                                        QuestState.STEP_FIRST, status, sceneId);
+                }
             }
             public void handleSuccess () {
                 player.addToQuestState(
@@ -231,7 +244,10 @@ public class AVRGameManager
 
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.setQuestState(_gameId, player.getMemberId(), questId, step, status, sceneId);
+                if (!MemberName.isGuest(player.getMemberId())) {
+                    _repo.setQuestState(_gameId, player.getMemberId(), questId, step,
+                                        status, sceneId);
+                }
             }
             public void handleSuccess () {
                 player.updateQuestState(new QuestState(questId, step, status, sceneId));
@@ -252,6 +268,15 @@ public class AVRGameManager
     {
         final PlayerObject player = (PlayerObject) caller;
         final QuestState oldState = player.questState.get(questId);
+        
+        // very little is done for guests
+        if (MemberName.isGuest(player.getMemberId())) {
+            if (oldState != null) {
+                player.removeFromQuestState(questId);
+            }
+            listener.requestProcessed();
+            return;
+        }
 
         final GameDetailRecord detail = _content.detail;
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
@@ -376,9 +401,12 @@ public class AVRGameManager
             throw new IllegalArgumentException(
                 "Member not subscribed to cancelled quest [questId=" + questId + "]");
         }
+        
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("cancelQuest") {
             public void invokePersist () throws PersistenceException {
-                _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
+                if (!MemberName.isGuest(player.getMemberId())) {
+                    _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
+                }
             }
             public void handleSuccess () {
                 player.removeFromQuestState(questId);
@@ -510,9 +538,17 @@ public class AVRGameManager
         }
     }
 
+    /**
+     * Start managing a player who just joined this AVRG, given existing quest and state records.
+     */
     public void addPlayer (PlayerObject player, List<QuestStateRecord> questRecords,
                            List<PlayerGameStateRecord> stateRecords)
     {
+        if (_players.containsKey(player.getOid())) {
+            log.warning("Attempting to re-add existing player [gameId=" + _gameId + ", playerId=" +
+                player.getMemberId() + "]");
+            return;
+        }
         _players.put(player.getOid(), new Player(player));
 
         _gameObj.startTransaction();
@@ -538,6 +574,10 @@ public class AVRGameManager
         MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _content.game);
     }
 
+    /**
+     * The given player has quit the AVRG; remove them from the OidList data structure and then
+     * do the actual removal in the {@link #objectRemoved(ObjectRemovedEvent)} handler.
+     */
     public void removePlayer (PlayerObject player)
     {
         if (!_gameObj.playerOids.contains(player.getOid())) {
@@ -552,9 +592,13 @@ public class AVRGameManager
     {
         // find any modified memory records
         final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
-        for (GameState entry : player.gameState) {
-            if (entry.persistent && entry.modified) {
-                recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
+        
+        // unless we're a guest
+        if (!MemberName.isGuest(player.getMemberId())) {
+            for (GameState entry : player.gameState) {
+                if (entry.persistent && entry.modified) {
+                    recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
+                }
             }
         }
 
