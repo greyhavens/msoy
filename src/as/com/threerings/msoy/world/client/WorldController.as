@@ -768,6 +768,29 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
+    override public function showExternalURL (url :String) :void
+    {
+        // if our page refers to a Whirled page...
+        var gwtPrefix :String = DeploymentConfig.serverURL + "/#";
+        if (url.indexOf(gwtPrefix) == 0) {
+            url = url.substring(gwtPrefix.length);
+        } else if (url.indexOf("#") == 0) {
+            url = url.substring(1);
+        } else {
+            super.showExternalURL(url);
+            return;
+        }
+
+        // ...extract the page and arguments and tell GWT to display them properly
+        var didx :int = url.indexOf("-");
+        if (didx == -1) {
+            super.showExternalURL(url);
+        } else {
+            displayPage(url.substring(0, didx), url.substring(didx+1));
+        }
+    }
+
+    // from MsoyController
     override public function getSceneIdString () :String
     {
         return _sceneIdString;
