@@ -54,17 +54,6 @@ public class MailRepository extends DepotRepository
         super(ctx);
 
         _eventLog = eventLog;
-
-        // TEMP (3-27-08): if we have no conversation records, migrate our mail message records
-        try {
-            if (//load(CountRecord.class, new FromOverride(ConversationRecord.class)).count == 0 &&
-                ServerConfig.nodeName.equals("msoy1")) {
-                migrateToConversations();
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Conversation migration failed.", pe);
-        }
-        // END TEMP
     }
 
     /**
@@ -300,137 +289,9 @@ public class MailRepository extends DepotRepository
                       ConvMessageRecord.PAYLOAD_STATE, state);
     }
 
-    // TEMP
-    protected void migrateToConversations ()
-        throws PersistenceException
-    {
-        // there are about 50k messages on production right now, so we can handle loading
-        // everything into memory and being more sophisticated about our converstion
-
-        // we have to load these less than 32768 at a time because these keys all turn into one
-        // giant WHERE foo in (?, ?, ...) clause and that can only contain 32768 arguments
-        List<MailMessageRecord> msgrecs = Lists.newArrayList(), batch;
-        while (true) {
-            batch = findAll(MailMessageRecord.class,
-                            OrderBy.ascending(MailMessageRecord.SENT_C),
-                            new Limit(msgrecs.size(), 10000));
-            if (batch.size() == 0) {
-                break;
-            }
-            msgrecs.addAll(batch);
-        }
-
-        log.info("Migrating " + msgrecs.size() + " messages into conversations...");
-
-        long now = System.currentTimeMillis();
-        int migrated = 0, duplicates = 0;
-        Map<String,MigratedConvo> convos = Maps.newHashMap();
-      SCAN:
-        for (MailMessageRecord msg : msgrecs) {
-            String subject = msg.subject, lsubject = subject.toLowerCase();
-//             if (lsubject.equals("invitation accepted!") || lsubject.equals("be my friend") ||
-//                 lsubject.equals("you got whirled invites!") || msg.senderId == msg.recipientId ||
-//                 msg.senderId == 0) {
-//                 continue; // skip these auto-generated messages
-//             }
-//             if (lsubject.startsWith("re: ")) {
-//                 subject = subject.substring(4);
-//             }
-
-            // we want only to migrate recent friend inivtations
-            if (!lsubject.equals("be my friend")) {
-                continue;
-            }
-            if (now - msg.sent.getTime() > 14*24*60*60*1000L) {
-                continue;
-            }
-
-            int lesser = Math.min(msg.senderId, msg.recipientId);
-            int greater = Math.max(msg.senderId, msg.recipientId);
-            String key = lesser + ":" + greater + ":" + subject;
-            MigratedConvo convo = convos.get(key);
-            if (convo == null) {
-                convos.put(key, convo = new MigratedConvo());
-                convo.initiatorId = msg.senderId;
-                convo.targetId = msg.recipientId;
-                convo.subject = subject;
-            }
-
-            // make sure this message is not already added to the conversation (the sender and
-            // recipient might both have a copy)
-            for (MigratedMessage mmsg : convo.messages) {
-                if (mmsg.authorId == msg.senderId && ObjectUtil.equals(mmsg.body, msg.bodyText)) {
-                    // log.info("Skipping " + msg.senderId + " " + msg.sent + " " + subject + ".");
-                    duplicates++;
-                    continue SCAN;
-                }
-            }
-
-            migrated++;
-            MigratedMessage mmsg = new MigratedMessage();
-            mmsg.sent = msg.sent.getTime();
-            mmsg.authorId = msg.senderId;
-            mmsg.body = (msg.bodyText == null) ? "" : msg.bodyText;
-            mmsg.payloadType = msg.payloadType;
-            mmsg.payloadState = msg.payloadState;
-            convo.messages.add(mmsg);
-        }
-
-        // now create the appropriate conversation and friends records
-        for (MigratedConvo convo : convos.values()) {
-            try {
-                MigratedMessage latest = null;
-                IntSet participantIds = new ArrayIntSet();
-                for (MigratedMessage msg : convo.messages) {
-                    participantIds.add(msg.authorId);
-                    if (latest == null || latest.sent < msg.sent) {
-                        latest = msg;
-                    }
-                }
-
-                ConversationRecord conrec = new ConversationRecord();
-                conrec.subject = convo.subject;
-                conrec.initiatorId = convo.initiatorId;
-                conrec.targetId = convo.targetId;
-                conrec.lastSent = new Timestamp(latest.sent);
-                conrec.lastSnippet = StringUtil.truncate(latest.body, Conversation.SNIPPET_LENGTH);
-                conrec.lastAuthorId = latest.authorId;
-                insert(conrec);
-
-                for (MigratedMessage msg : convo.messages) {
-                    ConvMessageRecord record = new ConvMessageRecord();
-                    record.conversationId = conrec.conversationId;
-                    record.sent = new Timestamp(msg.sent);
-                    record.authorId = msg.authorId;
-                    record.body = msg.body;
-                    record.payloadType = msg.payloadType;
-                    record.payloadState = msg.payloadState;
-                    insert(record);
-                }
-
-                for (int participantId : participantIds) {
-                    ParticipantRecord prec = new ParticipantRecord();
-                    prec.conversationId = conrec.conversationId;
-                    prec.participantId = participantId;
-                    prec.lastRead = new Timestamp(0);
-                    insert(prec);
-                }
-
-            } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to migrate conversation " + convo + ".", pe);
-            }
-        }
-
-        log.info("Converted " + migrated + " messages into " + convos.size() + " conversations. " +
-                 "Skipped " + duplicates + " duplicate messages.");
-    }
-    // END TEMP
-
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-//         classes.add(MailMessageRecord.class);
-//         classes.add(MailFolderRecord.class);
         classes.add(ConversationRecord.class);
         classes.add(ConvMessageRecord.class);
         classes.add(ParticipantRecord.class);
