@@ -136,24 +136,28 @@ public class MailPanel extends VerticalPanel
             super("Convo", 0, 0);
 
             Image delete = new Image("/images/profile/remove.png");
-            delete.setTitle(CMail.msgs.mailDeleteTip());
-            delete.addStyleName("actionLabel");
-            new ClickCallback(delete, CMail.msgs.deleteConfirm()) {
-                public boolean callService () {
-                    CMail.mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
-                    return true;
-                }
-                public boolean gotResult (Object result) {
-                    boolean deleted = ((Boolean)result).booleanValue();
-                    if (!deleted) {
-                        MsoyUI.info(CMail.msgs.deleteNotDeleted());
-                    } else {
-                        grid.removeItem(convo);
-                        MsoyUI.info(CMail.msgs.deleteDeleted());
+            if (convo.hasUnread) {
+                delete.setTitle(CMail.msgs.mailNoDeleteTip());
+            } else {
+                delete.setTitle(CMail.msgs.mailDeleteTip());
+                delete.addStyleName("actionLabel");
+                new ClickCallback(delete, CMail.msgs.deleteConfirm()) {
+                    public boolean callService () {
+                        CMail.mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
+                        return true;
                     }
-                    return !deleted;
-                }
-            };
+                    public boolean gotResult (Object result) {
+                        boolean deleted = ((Boolean)result).booleanValue();
+                        if (!deleted) {
+                            MsoyUI.info(CMail.msgs.deleteNotDeleted());
+                        } else {
+                            grid.removeItem(convo);
+                            MsoyUI.info(CMail.msgs.deleteDeleted());
+                        }
+                        return !deleted;
+                    }
+                };
+            }
             setWidget(0, 0, delete, 1, "Delete");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
