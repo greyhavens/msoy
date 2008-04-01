@@ -40,6 +40,10 @@
   padding: 10px;
 }
 
+.reviewPanel .Item {
+  padding-top: 10px;
+}
+
 /*** Player Browser ***/
 .playerBrowser .PlayerList {
   text-align: center;

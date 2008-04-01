@@ -6,12 +6,14 @@ package client.admin;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
@@ -19,7 +21,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.BorderedPopup;
+import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -27,21 +29,30 @@ import client.util.RowPanel;
 /**
  * Displays an item to be reviewed.
  */
-public class ReviewItem extends VerticalPanel
+public class ReviewItem extends FlowPanel
 {
     public ReviewItem (ReviewPanel parent, ItemDetail detail)
     {
         _parent = parent;
         _item = detail.item;
 
-        // TODO: say what flags are set on it
+        // say what flags are set on it
+        FlowPanel flaggedAs = new FlowPanel();
+        flaggedAs.add(new InlineLabel("Flagged as:"));
+        if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
+            flaggedAs.add(new InlineLabel("Mature", false, true, false));
+        }
+        if (_item.isSet(Item.FLAG_FLAGGED_COPYRIGHT)) {
+            flaggedAs.add(new InlineLabel("Copyright Violation", false, true, false));
+        }
+        add(flaggedAs);
 
         // the name displays an item inspector
         String name = _item.name + " - " + detail.creator.toString();
-        String args = Args.compose(""+_item.getType(), "0", ""+_item.itemId);
+        String args = Args.compose("d", ""+_item.getType(), ""+_item.itemId);
         add(Application.createLink(name, Page.STUFF, args));
 
-        add(new Label(_item.description));
+        add(MsoyUI.createLabel(_item.description, null));
 
         // then a row of action buttons
         RowPanel line = new RowPanel();
@@ -126,44 +137,35 @@ public class ReviewItem extends VerticalPanel
     /**
      * Handle the deletion message and prompt.
      */
-    protected class DeleteDialog extends BorderedPopup
+    protected class DeleteDialog extends BorderedDialog
         implements KeyboardListener
     {
         public DeleteDialog ()
         {
-            VerticalPanel content = new VerticalPanel();
-            content.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+            setHeaderTitle(CAdmin.msgs.reviewDeletionTitle());
 
-            content.add(new Label(CAdmin.msgs.reviewDeletionPrompt()));
-
-            _area = new TextArea();
-            _area.setCharacterWidth(60);
-            _area.setVisibleLines(4);
+            VerticalPanel contents = new VerticalPanel();
+            contents.setSpacing(10);
+            contents.setWidth("500px");
+            contents.add(MsoyUI.createLabel(CAdmin.msgs.reviewDeletionPrompt(), null));
+            contents.add(_area = MsoyUI.createTextArea("", 50, 4));
             _area.addKeyboardListener(this);
-            content.add(_area);
+            setContents(contents);
 
-            _feedback = new Label();
-            content.add(_feedback);
-
-            _yesButton = new Button(CAdmin.msgs.reviewDeletionDo());
-            _yesButton.setEnabled(false);
-            final Button noButton = new Button(CAdmin.msgs.reviewDeletionDont());
-            ClickListener listener = new ClickListener () {
+            addButton(_yesButton = new Button(CAdmin.msgs.reviewDeletionDo(), new ClickListener () {
                 public void onClick (Widget sender) {
-                    if (sender == _yesButton) {
-                        doDelete();
-                    }
+                    doDelete();
                     hide();
                 }
-            };
-            _yesButton.addClickListener(listener);
-            noButton.addClickListener(listener);
-            RowPanel buttons = new RowPanel();
-            buttons.add(_yesButton);
-            buttons.add(noButton);
-            content.add(buttons);
+            }));
+            _yesButton.setEnabled(false);
 
-            setWidget(content);
+            addButton(new Button(CAdmin.msgs.reviewDeletionDont(), new ClickListener () {
+                public void onClick (Widget sender) {
+                    hide();
+                }
+            }));
+
             show();
         }
 
@@ -194,8 +196,7 @@ public class ReviewItem extends VerticalPanel
                         hide();
                     }
                     public void onFailure (Throwable caught) {
-                        _feedback.setText(
-                            CAdmin.msgs.reviewErrDeletionFailed(caught.getMessage()));
+                        MsoyUI.error(CAdmin.msgs.reviewErrDeletionFailed(caught.getMessage()));
                         if (_mark != null) {
                             _mark.setEnabled(true);
                         }
@@ -206,7 +207,6 @@ public class ReviewItem extends VerticalPanel
         }
 
         protected TextArea _area;
-        protected Label _feedback;
         protected Button _yesButton;
     }
 
