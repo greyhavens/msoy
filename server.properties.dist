@@ -163,3 +163,9 @@ oooauth.access_denied_url = /register/access_denied.wm
 # jabber.port = 5275
 # jabber.secret = secret
 # jabber.gateways = aim,msn,yahoo,icq
+
+#
+# Keys for accessing the reCAPTCHA verification service
+
+# recaptcha_public = RECAPTCHA_PUBLIC_KEY
+# recaptcha_private = RECAPTCHA_PRIVATE_KEY
