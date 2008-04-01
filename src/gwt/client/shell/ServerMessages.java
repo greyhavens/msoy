@@ -17,6 +17,7 @@ public interface ServerMessages extends ConstantsWithLookup
     public String server_closed ();
     public String no_registrations ();
     public String invite_already_redeemed ();
+    public String failed_captcha ();
 
     public String no_such_user ();
     public String invalid_password ();

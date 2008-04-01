@@ -77,6 +77,12 @@ public class ServerConfig
     /** The port on which we listen to socket policy requests. */
     public static int socketPolicyPort;
 
+    /** The ReCaptcha public key. */
+    public static String recaptchaPublicKey;
+
+    /** The ReCaptcha private key. */
+    public static String recaptchaPrivateKey;
+
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
     public static Config config = new Config("server");
@@ -213,5 +219,7 @@ public class ServerConfig
         mediaS3Key = config.getValue("media_s3key", "key");
         sharedSecret = config.getValue("server_secret", "");
         eventLogURL = config.getValue("event_log_url", "");
+        recaptchaPublicKey = config.getValue("recaptcha_public", "");
+        recaptchaPrivateKey = config.getValue("recaptcha_private", "");
     }
 }

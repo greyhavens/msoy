@@ -14,9 +14,11 @@ import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -32,6 +34,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.people.SendInvitesPanel;
@@ -117,6 +120,13 @@ public class CreateAccountPanel extends VerticalPanel
                                CAccount.msgs.createPhotoTip()));
         add(makeStep(3, box));
 
+        // optionally add the recaptcha component
+        if (hasRecaptchaKey()) {
+            box = new RoundBox(RoundBox.DARK_BLUE);
+            box.add(new HTML("<div id=\"recaptchaDiv\"></div>"));
+            add(makeStep(4, box));
+        }
+
         // add the TOS agreement checkbox and submit button
         final HorizontalPanel tosBits = new HorizontalPanel();
         tosBits.setVerticalAlignment(HasAlignment.ALIGN_BOTTOM);
@@ -151,6 +161,11 @@ public class CreateAccountPanel extends VerticalPanel
         if (_email != null) {
             _email.setFocus(true);
         }
+        if (hasRecaptchaKey()) {
+            RootPanel.get("recaptchaDiv").add(
+                    MsoyUI.createLabel(CAccount.msgs.createCaptcha(), "label"));
+            createRecaptcha("recaptchaDiv");
+        }
     }
 
     protected boolean validateData ()
@@ -180,6 +195,10 @@ public class CreateAccountPanel extends VerticalPanel
             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
             status = CAccount.msgs.createMustAgreeTOS();
+        } else if (hasRecaptchaKey() && (getRecaptchaResponse() == null ||
+                    getRecaptchaResponse().length() == 0)) {
+            status = CAccount.msgs.createMustCaptcha();
+            focusRecaptcha();
         } else {
             return true;
         }
@@ -225,7 +244,8 @@ public class CreateAccountPanel extends VerticalPanel
         setStatus(CAccount.msgs.creatingAccount());
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
-            _photo.getPhoto(), info, 1, inviteId, guestId, new AsyncCallback() {
+            _photo.getPhoto(), info, 1, inviteId, guestId, getRecaptchaChallenge(),
+            getRecaptchaResponse(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);
@@ -233,6 +253,10 @@ public class CreateAccountPanel extends VerticalPanel
                 CAccount.app.didLogon((SessionData)result);
             }
             public void onFailure (Throwable caught) {
+                if (caught instanceof CaptchaException) {
+                    reloadRecaptcha();
+                    focusRecaptcha();
+                }
                 setStatus(CAccount.serverError(caught));
             }
         });
@@ -336,6 +360,30 @@ public class CreateAccountPanel extends VerticalPanel
             setStatus("");
         }
     };
+
+    protected static native boolean hasRecaptchaKey () /*-{
+        return !(typeof $wnd.recaptchaPublicKey == "undefined");
+    }-*/;
+
+    protected static native void createRecaptcha (String element) /*-{
+        $wnd.Recaptcha.create($wnd.recaptchaPublicKey, element, { theme: "white" });
+    }-*/;
+
+    protected static native String getRecaptchaChallenge () /*-{
+        return $wnd.Recaptcha.get_challenge();
+    }-*/;
+
+    protected static native String getRecaptchaResponse () /*-{
+        return $wnd.Recaptcha.get_response();
+    }-*/;
+
+    protected static native void focusRecaptcha () /*-{
+        $wnd.Recaptcha.focus_response_field();
+    }-*/;
+
+    protected static native void reloadRecaptcha () /*-{
+        $wnd.Recaptcha.reload();
+    }-*/;
 
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;

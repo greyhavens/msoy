@@ -3,6 +3,17 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -17,10 +28,12 @@ import org.apache.velocity.VelocityContext;
 import com.google.common.base.Preconditions;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.io.StreamUtil;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -44,6 +57,7 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -72,7 +86,8 @@ public class WebUserServlet extends MsoyServiceServlet
     // from interface WebUserService
     public SessionData register (long clientVersion, String username, String password,
                                  final String displayName, int[] bdayvec, MediaDesc photo,
-                                 AccountInfo info, int expireDays, String inviteId, int guestId)
+                                 AccountInfo info, int expireDays, String inviteId, int guestId,
+                                 String captchaChallenge, String captchaResponse)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -108,6 +123,9 @@ public class WebUserServlet extends MsoyServiceServlet
             displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        // validate the captcha if necessary
+        verifyCaptcha(captchaChallenge, captchaResponse);
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
@@ -421,6 +439,60 @@ public class WebUserServlet extends MsoyServiceServlet
             log.info("Refusing wrong version [who=" + who + ", cvers=" + clientVersion +
                      ", svers=" + DeploymentConfig.version + "].");
             throw new ServiceException(MsoyAuthCodes.VERSION_MISMATCH);
+        }
+    }
+
+    protected void verifyCaptcha (String captchaChallenge, String captchaResponse)
+        throws ServiceException
+    {
+        if (StringUtil.isBlank(ServerConfig.recaptchaPrivateKey)) {
+            return;
+        }
+        OutputStream out = null;
+        InputStream in = null;
+        try {
+            // the reCaptcha verify api
+            URL curl = new URL("http://api-verify.recaptcha.net/verify");
+            HttpURLConnection conn = (HttpURLConnection)curl.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+
+            String ip = getThreadLocalRequest().getRemoteAddr();
+            StringBuilder postData = new StringBuilder("privatekey=");
+            postData.append(URLEncoder.encode(ServerConfig.recaptchaPrivateKey, "UTF-8"));
+            postData.append("&remoteip=").append(URLEncoder.encode(ip, "UTF-8"));
+            postData.append("&challenge=").append(URLEncoder.encode(captchaChallenge, "UTF-8"));
+            postData.append("&response=").append(URLEncoder.encode(captchaResponse, "UTF-8"));
+            out = conn.getOutputStream();
+            out.write(postData.toString().getBytes("UTF-8"));
+            out.flush();
+
+            in = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            // see if the response was valid
+            if ("true".equals(br.readLine())) {
+                return;
+            }
+
+            String error = br.readLine();
+            // we're not supposed to rely on these error codes, but reCaptcha doesn't give
+            // AJAX users any other options for error management
+            if (!"incorrect-captcha-sol".equals(error)) {
+                log.warning("Failed to verify captcha information [error=" + error + "].");
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+            throw new CaptchaException(MsoyAuthCodes.FAILED_CAPTCHA);
+
+        } catch (MalformedURLException mue) {
+            log.log(Level.WARNING, "Failed to verify captcha information.", mue);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        } catch (IOException ioe) {
+            log.log(Level.WARNING, "Failed to verify captcha information.", ioe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        } finally {
+            StreamUtil.close(in);
+            StreamUtil.close(out);
         }
     }
 

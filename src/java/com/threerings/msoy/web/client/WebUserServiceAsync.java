@@ -25,7 +25,8 @@ public interface WebUserServiceAsync
      */
     public void register (long clientVersion, String username, String password, String displayName,
                           int[] birthday, MediaDesc photo, AccountInfo info, int expireDays,
-                          String inviteId, int guestId, AsyncCallback callback);
+                          String inviteId, int guestId, String captchaChallenge,
+                          String captchaResponse, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.

@@ -59,4 +59,7 @@ public interface MsoyAuthCodes extends AuthCodes
 
     /** A code indicating that an invitation has already been redeemed. */
     public static final String INVITE_ALREADY_REDEEMED = "m.invite_already_redeemed";
+
+    /** A code indication that the user failed the captcha check. */
+    public static final String FAILED_CAPTCHA = "m.failed_captcha";
 }
