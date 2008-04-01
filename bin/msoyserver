@@ -12,7 +12,8 @@ HOSTNAME=`hostname`
 
 JAVA_ARGS="-Djava.awt.headless=true \
            -Djava.security.manager \
-           -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+           -Djava.security.policy=$MSOY_HOME/dist/security.policy \
+           -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger"
 
 # parse our arguments
 while [ ! -z "$1" ]; do
