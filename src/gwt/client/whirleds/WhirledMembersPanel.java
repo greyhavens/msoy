@@ -7,7 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -28,6 +30,7 @@ import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.GroupService;
 
 import client.shell.Application;
+import client.shell.Args;
 import client.shell.Page;
 import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
@@ -44,7 +47,10 @@ public class WhirledMembersPanel extends PagedGrid
     {
         super(5, 2, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
+
         _detail = detail;
+        String args = Args.compose("w", "g", ""+_detail.group.groupId);
+        _invite.addClickListener(Application.createLinkListener(Page.MAIL, args));
     }
 
     // @Override // from UIObject
@@ -80,6 +86,12 @@ public class WhirledMembersPanel extends PagedGrid
     protected boolean displayNavi (int items)
     {
         return true;
+    }
+
+    // @Override // from PagedGrid
+    protected void addCustomControls (FlexTable controls)
+    {
+        controls.setWidget(0, 0, _invite = new Button(CWhirleds.msgs.wmpInvite()));
     }
 
     public boolean amSenior (GroupMemberCard member) 
@@ -166,4 +178,5 @@ public class WhirledMembersPanel extends PagedGrid
 
     protected boolean _loaded;
     protected GroupDetail _detail;
+    protected Button _invite;
 }

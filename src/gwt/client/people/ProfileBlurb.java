@@ -79,7 +79,7 @@ public class ProfileBlurb extends Blurb
         if (CPeople.getMemberId() != 0 && !isMe) {
             buttons.add(Application.createImageLink("/images/profile/sendmail.png",
                                                     CPeople.msgs.sendMail(), Page.MAIL,
-                                                    Args.compose("w", _name.getMemberId())));
+                                                    Args.compose("w", "m", ""+_name.getMemberId())));
         }
         buttons.add(Application.createImageLink("/images/profile/visithome.png",
                                                 CPeople.msgs.visitHome(),

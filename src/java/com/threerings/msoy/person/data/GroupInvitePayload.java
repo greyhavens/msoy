@@ -10,7 +10,7 @@ public class GroupInvitePayload extends MailPayload
 {
     /** The group to which the member has been invited. */
     public int groupId;
-    
+
     /** Whether or not the recipient has responded to the invite. */
     public boolean responded;
 
@@ -29,7 +29,7 @@ public class GroupInvitePayload extends MailPayload
         this.groupId = groupId;
         this.responded = responded;
     }
-    
+
     // @Override
     public int getType ()
     {

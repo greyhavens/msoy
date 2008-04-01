@@ -123,7 +123,7 @@ public class MemberList extends PagedGrid
                 // if we're not a guest, we can send them mail
                 if (CPeople.getMemberId() != 0) {
                     onClick = Application.createLinkListener(
-                        Page.MAIL, Args.compose("w", card.name.getMemberId()));
+                        Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
                     extras.setWidget(row, 0, MsoyUI.createActionImage(
                                          "/images/profile/sendmail.png", onClick));
                     extras.setWidget(row++, 1, MsoyUI.createActionLabel(

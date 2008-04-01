@@ -187,8 +187,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
-            ClickListener onClick = Application.createLinkListener(
-                Page.MAIL, Args.compose("g", ""+_item.getType(), ""+_item.itemId));
+            String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
+            ClickListener onClick = Application.createLinkListener(Page.MAIL, Args.compose(args));
             _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick));
         }
 

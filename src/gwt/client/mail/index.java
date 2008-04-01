@@ -39,14 +39,16 @@ public class index extends MsgsEntryPoint
 
         } else if (action.equals("w")) {
             ComposePanel compose = new ComposePanel();
-            if (args.get(1, 0) > 0) {
-                compose.setRecipientId(args.get(1, 0));
+            for (int ii = 1; ii < args.getArgCount(); ii++) {
+                String extra = args.get(ii, "");
+                if (extra.equals("m")) {
+                    compose.setRecipientId(args.get(++ii, 0));
+                } else if (extra.equals("g")) {
+                    compose.setGroupInviteId(args.get(++ii, 0));
+                } else if (extra.equals("i")) {
+                    compose.setGiftItem((byte)args.get(++ii, 0), args.get(++ii, 0));
+                }
             }
-            setContent(CMail.msgs.mailTitle(), compose);
-
-        } else if (action.equals("g")) {
-            ComposePanel compose = new ComposePanel();
-            compose.setGiftItem((byte)args.get(1, 0), args.get(2, 0));
             setContent(CMail.msgs.mailTitle(), compose);
 
         } else {

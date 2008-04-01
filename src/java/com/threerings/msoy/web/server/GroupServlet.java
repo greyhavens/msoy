@@ -285,7 +285,9 @@ public class GroupServlet extends MsoyServiceServlet
             info.name = grec.toGroupName();
             if (mrec != null) {
                 GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-                info.rank = gmrec.rank;
+                if (gmrec != null) {
+                    info.rank = gmrec.rank;
+                }
             }
             return info;
 

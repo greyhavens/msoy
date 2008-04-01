@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -65,6 +66,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
             }
 
             add(new InlineLabel(CMail.msgs.groupInvitation(""+_info.name), true, false, true));
+            add(WidgetUtil.makeShim(5, 5));
             Button joinButton = new Button(CMail.msgs.groupBtnJoin(), new ClickListener() {
                 public void onClick (Widget sender) {
                     joinGroup();

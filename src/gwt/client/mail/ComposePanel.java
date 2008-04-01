@@ -23,9 +23,11 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
@@ -88,8 +90,8 @@ public class ComposePanel extends FlowPanel
                 MsoyUI.info(CMail.msgs.composeSent(_recipient.name.toString()));
                 // if we just mailed an item as a gift, we can't go back to the item detail page
                 // because we no longer have access to it, so go to the STUFF page instead
-                if (_payload != null) {
-                    Application.go(Page.STUFF, ""+_payload.ident.type);
+                if (_payload instanceof PresentPayload) {
+                    Application.go(Page.STUFF, ""+((PresentPayload)_payload).ident.type);
                 } else {
                     History.back();
                 }
@@ -128,7 +130,9 @@ public class ComposePanel extends FlowPanel
     {
         CMail.membersvc.getMemberCard(recipientId, new MsoyCallback() {
             public void onSuccess (Object result) {
-                setRecipient((MemberCard)result, true);
+                if (result != null) {
+                    setRecipient((MemberCard)result, true);
+                }
             }
         });
     }
@@ -137,10 +141,23 @@ public class ComposePanel extends FlowPanel
     {
         CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId), new MsoyCallback() {
             public void onSuccess (Object result) {
-                _payload = new PresentPayload((Item)result);
+                PresentPayload payload = new PresentPayload((Item)result);
                 _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(3, 0, HasAlignment.ALIGN_TOP);
-                _contents.setWidget(3, 1, new ThumbBox(_payload.getThumbnailMedia(), null));
+                _contents.setWidget(3, 1, new ThumbBox(payload.getThumbnailMedia(), null));
+                _payload = payload;
+            }
+        });
+    }
+
+    public void setGroupInviteId (int groupId)
+    {
+        CMail.groupsvc.getGroupInfo(CMail.ident, groupId, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                GroupService.GroupInfo info = (GroupService.GroupInfo)result;
+                _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
+                _contents.setText(3, 1, CMail.msgs.composeGroupDeets(""+info.name));
+                _payload = new GroupInvitePayload(info.name.getGroupId(), false);
             }
         });
     }
@@ -175,7 +192,7 @@ public class ComposePanel extends FlowPanel
 
     protected SmartTable _contents;
     protected MemberCard _recipient;
-    protected PresentPayload _payload;
+    protected MailPayload _payload;
 
     protected ListBox _friendBox;
     protected List _friends;
