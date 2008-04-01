@@ -20,9 +20,10 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -123,15 +124,10 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 return true;
             }
             public void setFlags (final byte flag) {
-                CShell.itemsvc.setFlags(CShell.ident, _item.getIdent(), flag, flag,
-                                       new AsyncCallback () {
+                ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
+                CShell.itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback() {
                     public void onSuccess (Object result) {
                         _item.flagged |= flag;
-                    }
-                    public void onFailure (Throwable caught) {
-                        CShell.log("Failed to update item flags [item=" + _item.getIdent() +
-                                  ", flag=" + flag + "]", caught);
-                        MsoyUI.error(CShell.serverError(caught));
                     }
                 });
             }
