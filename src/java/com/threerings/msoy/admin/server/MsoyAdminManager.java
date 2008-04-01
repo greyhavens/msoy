@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.admin.server;
 
+import java.util.Date;
+
 import com.samskivert.util.Interval;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
@@ -102,10 +104,15 @@ public class MsoyAdminManager
 
         public void scheduleReboot (long rebootTime, String initiator) {
             super.scheduleReboot(rebootTime, initiator);
+
+            String extra = "";
             if (rebootTime != RuntimeConfig.server.nextReboot) {
                 RuntimeConfig.server.setNextReboot(rebootTime);
                 statObj.setServerRebootTime(rebootTime);
+                extra = " and propagating to peers";
             }
+            log.info("Scheduling reboot on " + new Date(rebootTime) + " for " + initiator +
+                     extra + ".");
         }
 
         // from interface AttributeChangeListener
