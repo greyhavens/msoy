@@ -48,26 +48,22 @@
   padding-right: 20px;
 }
 
-.itemPanel .itemBox .Name {
-  text-align: center;
-}
-
-.itemPanel .itemBox .Original {
-  font-style: italic;
-}
-
-.itemPanel .itemBox .Activator {
-  padding-top: 3px;
-}
-
-.itemPanel .itemBox .Ident {
-  font-size: 10px;
-  padding-bottom: 3px;
-}
-
 .subInventoryContents {
   width: 650px;
   margin-top: 5px;
+}
+
+.subInventoryContents .itemBox .Original {
+  font-style: italic;
+}
+
+.subInventoryContents .itemBox .Activator {
+  padding-top: 3px;
+}
+
+.subInventoryContents .itemBox .Ident {
+  font-size: 10px;
+  padding-bottom: 3px;
 }
 
 .mediaUploader {
