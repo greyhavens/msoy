@@ -145,6 +145,10 @@
     <file name="lib/aperture/sesame-2.0-alpha-3.jar"/>
     <file name="lib/aperture/winlaf-0.5.1.jar"/>
 
+    <!-- The following are used for webmail address book importing -->
+    <file name="${extlibs.dir}/abimporter.jar"/>
+    <file name="${extlibs.dir}/ozcommons.jar"/>
+
     <!-- The following are used by our Flash clients -->
     <file name="lib/corelib.swc"/>
     <file name="lib/flexlib.swc"/>
