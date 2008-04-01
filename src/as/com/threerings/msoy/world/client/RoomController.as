@@ -59,6 +59,7 @@ import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.TopPanel;
@@ -657,6 +658,13 @@ public class RoomController extends SceneController
      */
     public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :*
     {
+        // check to make sure we're within the bounds of the place container
+        var container :PlaceBox = _wdctx.getTopPanel().getPlaceContainer();
+        if (stageX < container.x || stageX > container.x + container.width ||
+            stageY < container.y || stageY > container.y + container.width) {
+            return undefined;
+        }
+
         // first, avoid any popups
         var smgr :ISystemManager = Application.application.systemManager as ISystemManager;
         var ii :int;
@@ -672,7 +680,7 @@ public class RoomController extends SceneController
         }
 
         // then check with the PlaceBox
-        if (_wdctx.getTopPanel().getPlaceContainer().overlaysMousePoint(stageX, stageY)) {
+        if (container.overlaysMousePoint(stageX, stageY)) {
             return undefined;
         }
 
