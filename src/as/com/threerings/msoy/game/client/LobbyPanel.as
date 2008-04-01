@@ -55,7 +55,7 @@ public class LobbyPanel extends TitleWindow
     public static const LOBBY_PANEL_MAX_WIDTH :int = 600; // in px
 
     /** The maximum height of the lobby panel. */
-    public static const LOBBY_PANEL_MAX_HEIGHT :int = 500; // in px
+    public static const LOBBY_PANEL_MAX_HEIGHT :int = 400; // in px
 
     /**
      * Returns the count of friends of the specified member that are seated at this table.
