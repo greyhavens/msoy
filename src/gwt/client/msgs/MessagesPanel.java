@@ -73,15 +73,13 @@ public class MessagesPanel extends PagedGrid
     protected Widget createWidget (Object item)
     {
         ForumMessage msg = (ForumMessage)item;
-        final ThreadMessagePanel panel = new ThreadMessagePanel(
+        ThreadMessagePanel panel = new ThreadMessagePanel(
             ((ForumModels.ThreadMessages)_model).getThread(), msg);
         if (msg.messageId == _scrollToId) {
             _scrollToId = 0;
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    Frame.ensureVisible(panel);
-                }
-            });
+            _scrollToPanel = panel;
+        } else if (_scrollToPanel == null) {
+            _scrollToPanel = panel;
         }
         return panel;
     }
@@ -131,7 +129,15 @@ public class MessagesPanel extends PagedGrid
         _parent.gotThread(tmodel.getThread());
         _postReply.setEnabled(tmodel.canPostReply() && !tmodel.getThread().isLocked());
         _editFlags.setEnabled(tmodel.isManager());
+
         super.displayResults(start, count, list);
+
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                Frame.ensureVisible(_scrollToPanel);
+                _scrollToPanel = null;
+            }
+        });
     }
 
     protected void replyPosted (ForumMessage message)
@@ -273,6 +279,9 @@ public class MessagesPanel extends PagedGrid
 
     /** A message to scroll into view when we first receive our messages. */
     protected int _scrollToId;
+
+    /** The panel to which we want to scroll once our page is laid out. */
+    protected ThreadMessagePanel _scrollToPanel;
 
     /** A button for posting a reply message. */
     protected Button _postReply;
