@@ -29,6 +29,11 @@ public class EntityBackend extends ControlBackend
         _sprite = null;
     }
 
+    public function toString () :String
+    {
+        return "[EntityBackend, sprite=" + _sprite + "]"
+    }
+
     override protected function populateControlProperties (o :Object) :void
     {
         super.populateControlProperties(o);
