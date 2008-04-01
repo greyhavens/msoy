@@ -25,7 +25,7 @@ public class SubItemEntry extends ItemEntry
 
         int row = getRowCount();
         String btitle = (item.catalogId == 0) ?
-            CStuff.msgs.detailList() : CStuff.msgs.detailUplist();
+            CStuff.msgs.detailList() : CStuff.msgs.detailSubUplist();
         _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
                 DoListItemPopup.show(item, null, SubItemEntry.this);
@@ -34,7 +34,7 @@ public class SubItemEntry extends ItemEntry
         _list.addStyleName("tinyButton");
         setWidget(row, 0, _list);
 
-        Button button = new Button(CStuff.msgs.detailEdit(), new ClickListener() {
+        Button button = new Button(CStuff.msgs.detailSubEdit(), new ClickListener() {
             public void onClick (Widget sender) {
                 CStuff.editItem(item.getType(), item.itemId);
             }
