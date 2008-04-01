@@ -367,10 +367,8 @@ public class GroupServlet extends MsoyServiceServlet
                         if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
                             return false;
                         }
-                        // if we're only including groups we can invite to, strip out non-public
-                        // groups of which we're not managers
-                        if (canInvite && info.left.policy != Group.POLICY_PUBLIC &&
-                            info.right.rank != GroupMembership.RANK_MANAGER) {
+                        // if we're only including groups into which we can invite, enforce that
+                        if (canInvite && !Group.canInvite(info.left.policy, info.right.rank)) {
                             return false;
                         }
                         return true;

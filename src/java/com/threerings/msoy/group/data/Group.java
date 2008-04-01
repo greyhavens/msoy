@@ -84,6 +84,19 @@ public class Group
     }
 
     /**
+     * Returns true if a person of the specified rank can invite someone to join a group with the
+     * specified policy.
+     */
+    public static boolean canInvite (byte policy, byte rank)
+    {
+        switch (rank) {
+        case GroupMembership.RANK_MANAGER: return true;
+        case GroupMembership.RANK_MEMBER: return (policy == Group.POLICY_PUBLIC);
+        default: return false;
+        }
+    }
+
+    /**
      * Returns this group's logo, or the default.
      */
     public MediaDesc getLogo ()

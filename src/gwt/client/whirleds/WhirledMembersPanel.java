@@ -22,6 +22,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -51,6 +52,7 @@ public class WhirledMembersPanel extends PagedGrid
         _detail = detail;
         String args = Args.compose("w", "g", ""+_detail.group.groupId);
         _invite.addClickListener(Application.createLinkListener(Page.MAIL, args));
+        _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
     }
 
     // @Override // from UIObject
