@@ -597,6 +597,9 @@ public class ItemServlet extends MsoyServiceServlet
 
             // notify the owners of the deletion
             for (int ownerId : owners) {
+                if (ownerId == mRec.memberId) {
+                    continue; // admin deleting their own item? sure, whatever!
+                }
                 MsoyServer.mailRepo.startConversation(ownerId, mRec.memberId, subject, body, null);
             }
 
