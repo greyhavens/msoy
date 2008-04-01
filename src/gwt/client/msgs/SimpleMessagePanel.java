@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.msgs;
 
 import com.threerings.msoy.fora.data.ForumMessage;

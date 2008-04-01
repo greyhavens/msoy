@@ -8,8 +8,11 @@ import java.util.Date;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
@@ -71,12 +74,16 @@ public class MessagePanel extends FlexTable
         setWidget(0, 1, info);
         getFlexCellFormatter().setStyleName(0, 1, "LeftPad");
 
+        ScrollPanel scroller = new ScrollPanel();
+        scroller.setWidth("565px");
         if (textIsHTML()) {
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
-            setHTML(1, 0, text);
+            scroller.add(new HTML(text));
         } else {
-            setText(1, 0, text);
+            scroller.add(new Label(text));
         }
+        setWidget(1, 0, scroller);
+
         getFlexCellFormatter().setStyleName(1, 0, "Text");
         getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
         getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
