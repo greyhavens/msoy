@@ -73,8 +73,8 @@
 }
 
 .titledListPanel {
-  margin: 5px;
   width: 100%;
+  border: 5px solid white;
 }
 
 .titledListPanel .Header {
