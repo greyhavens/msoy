@@ -32,7 +32,7 @@ public class MsoyEvents
                 String serverName, int total, int active, int guests, int viewers)
         {
             this.timestamp = new Date();
-            this.serverName = serverName;
+            this.serverName = toValue(serverName);
             this.total = total;
             this.active = active;
             this.guests = guests;
@@ -54,7 +54,7 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.memberId = memberId;
             this.firstLogin = firstLogin;
-            this.sessionToken = (sessionToken != null) ? sessionToken : "";
+            this.sessionToken = toValue(sessionToken);
             this.createdOn = createdOn;
         }
     }
@@ -72,7 +72,7 @@ public class MsoyEvents
         {
             this.timestamp = new Date();
             this.memberId = memberId;
-            this.sessionToken = (sessionToken != null) ? sessionToken : "";
+            this.sessionToken = toValue(sessionToken);
             this.activeSeconds = activeSeconds;
             this.idleSeconds = idleSeconds;
         }
@@ -252,7 +252,7 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.recipientId = recipientId;
             this.gameId = gameId;
-            this.trophyIdent = trophyIdent;
+            this.trophyIdent = toValue(trophyIdent);
         }
     }
 
@@ -270,7 +270,7 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.recipientId = recipientId;
             this.gameId = gameId;
-            this.prizeIdent = prizeIdent;
+            this.prizeIdent = toValue(prizeIdent);
             this.prizeItemType = prizeItemType;
         }
     }
@@ -286,9 +286,9 @@ public class MsoyEvents
         public InviteSent (String inviteId, int inviterId, String recipient)
         {
             this.timestamp = new Date();
-            this.inviteId = inviteId;
+            this.inviteId = toValue(inviteId);
             this.inviterId = inviterId;
-            this.recipient = recipient;
+            this.recipient = toValue(recipient);
         }
     }
 
@@ -301,7 +301,7 @@ public class MsoyEvents
         public InviteViewed (String inviteId)
         {
             this.timestamp = new Date();
-            this.inviteId = inviteId;
+            this.inviteId = toValue(inviteId);
         }
     }
 
@@ -316,7 +316,7 @@ public class MsoyEvents
         {
             this.timestamp = new Date();
             this.newMemberId = newMemberId;
-            this.inviteId = inviteId;
+            this.inviteId = toValue(inviteId);
         }
     }
 
@@ -346,5 +346,9 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.memberId = memberId;
         }
+    }
+    
+    protected static String toValue (String input) {
+        return (input != null) ? input : "";
     }
 }
