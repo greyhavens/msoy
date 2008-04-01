@@ -84,8 +84,6 @@ public class RoomEditorPanel extends FloatingPanel
         _details.updateDisplay(data);
         _action.updateDisplay(data);
         _room.updateDisplay(data);
-
-        _custom.updateDisplay(target);
     }
 
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
@@ -127,6 +125,16 @@ public class RoomEditorPanel extends FloatingPanel
                 swapButtons(_middle, _removeDoorButton, _makeDoorButton);
             }
         } 
+
+        // For the custom config panel stuff, we need to avoid repeatedly watching
+        // the same sprite
+        if (target != _curTarget) {
+            if (_curTarget != null) {
+                _curTarget.removeEventListener(Event.INIT, handleTargetInit);
+            }
+            _curTarget = target;
+            checkCustomPanel();
+        }
     }
 
     /** Updates the name drop-down box with the selected item definitions. */
@@ -199,6 +207,12 @@ public class RoomEditorPanel extends FloatingPanel
         swapButtons(_middle, _removeDoorButton, _makeDoorButton);
     }
 
+    /** Shows the custom config panel. */
+    protected function showCustomConfig () :void
+    {
+        _controller.roomView.getRoomController().showFurniConfigPopup(_curTarget);
+    }
+
     /** Swaps two UI components in a container. */
     protected function swapButtons (
         container :Container, oldButton :UIComponent, newButton :UIComponent) :void
@@ -228,6 +242,28 @@ public class RoomEditorPanel extends FloatingPanel
             _controller.findAndSetTarget(_namebox.selectedItem.data);
         }
     }
+
+    /** See if we should display the custom panel button for the specified furni. */
+    protected function checkCustomPanel () :void
+    {
+        var hasPanel :Boolean = false;
+        if (_curTarget != null) {
+            hasPanel = (null != _curTarget.getCustomConfigPanel());
+            if (!hasPanel && !_curTarget.isContentInitialized()) {
+                _curTarget.addEventListener(Event.INIT, handleTargetInit);
+            }
+        }
+
+        // assume we won't show it
+        _customConfigButton.visible = hasPanel;
+    }
+
+    /** The current target is now initialized. */
+    protected function handleTargetInit (event :Event) :void
+    {
+        _curTarget.removeEventListener(Event.INIT, handleTargetInit);
+        checkCustomPanel();
+    }
         
     // from superclasses
     override protected function createChildren () :void
@@ -235,7 +271,7 @@ public class RoomEditorPanel extends FloatingPanel
         super.createChildren();
 
         var makeActionButton :Function = function (
-            fn :Function, style :String, tooltip :String,
+            fn :Function, style :String, translationBase :String,
             buttonlist :Array, makeLabel :Boolean = false) :UIComponent
         {
             var c :VBox = new VBox();
@@ -243,7 +279,7 @@ public class RoomEditorPanel extends FloatingPanel
             
             var b :CommandButton = new CommandButton(null, fn);
             b.styleName = style;
-            b.toolTip = Msgs.EDITING.get(tooltip);
+            b.toolTip = Msgs.EDITING.get("i." + translationBase);
             if (buttonlist != null) {
                 buttonlist.push(b);
             }
@@ -252,14 +288,12 @@ public class RoomEditorPanel extends FloatingPanel
             if (makeLabel) {
                 var l :Text = new Text();
                 l.styleName = "roomEditButtonLabel";
-                l.text = Msgs.EDITING.get(tooltip + "_label");
+                l.text = Msgs.EDITING.get("l." + translationBase);
                 c.addChild(l);
             }
             
             return c;
         }
-
-        var noop :Function = function (... ignore) :void { }
 
         _actionButtons = new Array();
         _deleteButtons = new Array();
@@ -342,27 +376,27 @@ public class RoomEditorPanel extends FloatingPanel
         GridUtil.addRow(leftgrid,
                         makeActionButton(
                             makeScaleFn(1 / SCALEMULTI, 1 / SCALEMULTI),
-                            "roomEditScaleDown", "b.scale_down", _targetButtons),
+                            "roomEditScaleDown", "scale_down", _targetButtons),
                         makeActionButton(
                             makeScaleFn(SCALEMULTI, SCALEMULTI),
-                            "roomEditScaleUp", "b.scale_up", _targetButtons));
+                            "roomEditScaleUp", "scale_up", _targetButtons));
         GridUtil.addRow(leftgrid,
                         makeActionButton(
-                            makeYFn(- Y_DELTA), "roomEditMoveDown", "b.move_down", _targetButtons),
+                            makeYFn(- Y_DELTA), "roomEditMoveDown", "move_down", _targetButtons),
                         makeActionButton(
-                            makeYFn(Y_DELTA), "roomEditMoveUp", "b.move_up", _targetButtons));
+                            makeYFn(Y_DELTA), "roomEditMoveUp", "move_up", _targetButtons));
         GridUtil.addRow(leftgrid,
                         makeActionButton(
                             makeRotateFn(- ROTATE_DELTA, ROTATE_DELTA),
-                            "roomEditRotateLeft", "b.rotate_left", _targetButtons),
+                            "roomEditRotateLeft", "rotate_left", _targetButtons),
                         makeActionButton(
                             makeRotateFn(ROTATE_DELTA, ROTATE_DELTA),
-                            "roomEditRotateRight", "b.rotate_right", _targetButtons));
+                            "roomEditRotateRight", "rotate_right", _targetButtons));
         GridUtil.addRow(leftgrid,
                         makeActionButton(
-                            makeScaleFn(-1, 1), "roomEditFlipH", "b.flip_h", _targetButtons),
+                            makeScaleFn(-1, 1), "roomEditFlipH", "flip_h", _targetButtons),
                         makeActionButton(
-                            makeScaleFn(1, -1), "roomEditFlipV", "b.flip_v", _targetButtons));
+                            makeScaleFn(1, -1), "roomEditFlipV", "flip_v", _targetButtons));
 
         // divider
         div = new SkinnableImage();
@@ -376,34 +410,40 @@ public class RoomEditorPanel extends FloatingPanel
 
         _middle.addChild(
             makeActionButton(_controller.actionDelete, "roomEditTrash",
-                             "b.put_away", _deleteButtons, true));
+                             "put_away", _deleteButtons, true));
         _middle.addChild(
             _makeDoorButton = makeActionButton(makeDoor, "roomEditDoor",
-                                               "b.make_door", _actionButtons, true));
+                                               "make_door", _actionButtons, true));
         _middle.addChild(
             _makeLinkButton = makeActionButton(makeUrl, "roomEditLink",
-                                               "b.make_link", _actionButtons, true));
+                                               "make_link", _actionButtons, true));
 
         _removeDoorButton = makeActionButton(
-            removeDoor, "roomRemoveDoor", "b.remove_door", _actionButtons, true);
+            removeDoor, "roomRemoveDoor", "remove_door", _actionButtons, true);
         _removeLinkButton = makeActionButton(
-            removeUrl, "roomRemoveLink", "b.remove_link", _actionButtons, true);
+            removeUrl, "roomRemoveLink", "remove_link", _actionButtons, true);
 
 
         // generic actions
         right.addChild(makeActionButton(displayFurnitureInventory, "roomEditAdd",
-                                        "b.add_item", null, true));
+                                        "add_item", null, true));
         right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndo",
-                                        "b.undo", _undoButtons, true));
+                                        "undo", _undoButtons, true));
         
         var undoall :UIComponent = makeActionButton(
-            _controller.actionUndo, "roomEditUndoAll", "b.undo_all", null, true);
+            _controller.actionUndo, "roomEditUndoAll", "undo_all", null, true);
         undoall.enabled = false;
         // commented out for beta - rz, 3/19/08
         //   the "undo all" functionality requires some way to consolidate all undo updates
         //   into one, so that we don't flood the server with a ton of messages
         // right.addChild(undoall);
-        
+
+        // Instead, we're putting a custom config button in its place
+        _customConfigButton = makeActionButton(
+            showCustomConfig, "roomEditCustom", "item_custom", null, true);
+        _customConfigButton.visible = false;
+        right.addChild(_customConfigButton);
+
         updateTargetSelected(null); // disable most buttons
 
         
@@ -414,7 +454,7 @@ public class RoomEditorPanel extends FloatingPanel
         _advancedPanels.percentWidth = 100;
         _switchablePanels.addChild(_advancedPanels);
 
-        var addPanel :Function = function (label :String, panel :UIComponent) :Array {
+        var addPanel :Function = function (label :String, panel :UIComponent) :void {
             var hr :HRule = new HRule();
             hr.percentWidth = 100;
             _advancedPanels.addChild(hr);
@@ -422,16 +462,10 @@ public class RoomEditorPanel extends FloatingPanel
             var c :CollapsingContainer = new CollapsingContainer(label);
             c.setContents(panel);
             _advancedPanels.addChild(c);
-
-            return [ hr, c ];
         }
-
-        var c :Array = null;
 
         addPanel(Msgs.EDITING.get("t.item_prefs"), _details = new DetailsPanel(_controller));
         addPanel(Msgs.EDITING.get("t.item_action"), _action = new ActionPanel(_controller)); 
-        c = addPanel(Msgs.EDITING.get("t.item_custom"), _custom = new CustomPanel());
-        _custom.setHiders(c);
         
         // invader zim says: "it's not stupid, it's advanced!"
 
@@ -464,10 +498,12 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _removeDoorButton :UIComponent;
     protected var _makeLinkButton :UIComponent;
     protected var _removeLinkButton :UIComponent;
+    protected var _customConfigButton :UIComponent;
+
+    protected var _curTarget :FurniSprite;
     
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
-    protected var _custom :CustomPanel;
     protected var _middle :VBox;
     
     protected var _defaultPanel :Box;

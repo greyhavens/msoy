@@ -1694,6 +1694,20 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Called to show the custom config panel for the specified FurniSprite in 
+     * a pop-up.
+     */
+    public function showFurniConfigPopup (sprite :FurniSprite) :void
+    {
+        var configger :DisplayObject = sprite.getCustomConfigPanel();
+        if (configger == null) {
+            return;
+        }
+        showEntityPopup(sprite, Msgs.GENERAL.get("t.config_item"), configger, configger.width,
+            configger.height, 0xFFFFFF, 1.0, false);
+    }
+
+    /**
      * Called from user code to show a custom popup.
      */
     internal function showEntityPopup (

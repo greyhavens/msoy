@@ -321,16 +321,10 @@ public class RoomView extends AbstractRoomView
                     sprite.toggleBlocked, ctx));
             }
 
-            if ((sprite is FurniSprite) && _ctrl.canEditRoom()) {
-                var configger :DisplayObject = (sprite as FurniSprite).getCustomConfigPanel();
-                if (configger != null) {
-                    var args :Array = [
-                        sprite, Msgs.GENERAL.get("t.config_item"), configger,
-                        configger.width, configger.height, 0xFFFFFF, 1.0, false ];
-                    menuItems.push(MenuUtil.createControllerMenuItem(
-                        Msgs.GENERAL.get("b.config_item", kind),
-                        _ctrl.showEntityPopup, args));
-                }
+            if ((sprite is FurniSprite) && _ctrl.canEditRoom() &&
+                    (null != (sprite as FurniSprite).getCustomConfigPanel())) {
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
             }
         }
     }
