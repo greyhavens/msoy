@@ -101,19 +101,37 @@ public class LobbyManager
     public void setGameContent (GameContent content)
         throws Exception
     {
-        if (_content != null) {
-            // only update the game until we figure out precisely how to do the full thing
-            updateGame(content.game);
-            return;
+        // check to see if we're setting up for the first time, or just updating
+        boolean updating = (_content != null);
+
+        // parse the game definition
+        GameDefinition gameDef;
+        try {
+            gameDef = new MsoyGameParser().parseGame(content.game);
+        } catch (Exception e) {
+            log.warning("Error parsing game definition [id=" + game.gameId + ", err=" + e + "].");
+            if (updating) {
+                return; // don't process the update. Seems like a bad idea.
+            } else {
+                throw e; // put the hard kibosh on things
+            }
         }
-        // parse the definition first so that if this is a reload and something goes wrong in
-        // parsing, we can fall back on the working configuration we already had
-        GameDefinition definition = new MsoyGameParser().parseGame(content.game);
 
-        _content = content;
+        // accept the new game
+        if (updating) {
+            _content.game = content.game;
+        } else {
+            _content = content;
+        }
 
-        _lobj.setGame(_content.game);
-        _lobj.setGameDef(definition);
+        // update the lobby object
+        _lobj.startTransaction();
+        try {
+            _lobj.setGame(_content.game);
+            _lobj.setGameDef(gameDef);
+        } finally {
+            _lobj.commitTransaction();
+        }
     }
 
     /**
@@ -232,31 +250,6 @@ public class LobbyManager
     public void subscriberCountChanged (LobbyObject lobj)
     {
         recheckShutdownInterval();
-    }
-
-    /**
-     * Update the game item associated with this lobby.
-     */
-    protected void updateGame (Game game)
-    {
-        // update the game in the lobby object, everything else is groovy
-        GameDefinition gameDef;
-        try {
-            gameDef = new MsoyGameParser().parseGame(game);
-        } catch (Exception e) {
-            log.warning("Error parsing game definition [id=" + game.gameId + ", err=" + e + "].");
-            return;
-        }
-
-        // accept the new game, and update the lobby object
-        _content.game = game;
-        _lobj.startTransaction();
-        try {
-            _lobj.setGame(game);
-            _lobj.setGameDef(gameDef);
-        } finally {
-            _lobj.commitTransaction();
-        }
     }
 
     /**
