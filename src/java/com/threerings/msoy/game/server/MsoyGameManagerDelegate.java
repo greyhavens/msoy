@@ -641,6 +641,19 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 player.flowAward = player.availFlow;
             }
             break;
+
+        case 3: { // TODO: Constant PROPORTIONAL
+            int totalFlow = 0;
+            int totalScore = 0;
+            for (Player player : players.values()) {
+                totalScore += player.score;
+                totalFlow += player.availFlow;
+            }
+            for (Player player : players.values()) {
+                player.flowAward = (int) Math.floor(((float) totalFlow) * player.score / totalScore);
+            }
+            break;
+        } // end: case 3
         }
 
         log.info("Awarding flow [game=" + where() + ", type=" + payoutType +
