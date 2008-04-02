@@ -458,8 +458,16 @@ class ChannelHandler implements Subscriber
 
     public function connect () :void
     {
+        if (_isConnecting) {
+            log.warning("Asked to connect to a channel while still attempting to connect! [" + 
+                channel + "]");
+            Log.dumpStack();
+            return;
+        }
+
         if (!_isConnected) {
             _ccsvc.joinChannel(_ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
+            _isConnecting = true;
         }
     }
 
@@ -501,18 +509,20 @@ class ChannelHandler implements Subscriber
 
     protected function gotChannelOid (result :Object) :void
     {
+        _isConnecting = false;
+        _isConnected = true;
         if (_isShutdown) {
             // zoiks! we got shutdown before we got our channel oid, just leave
-            _ccsvc.leaveChannel(_ctx.getClient(), channel);
+            disconnect();
         } else {
             _ccsub = new SafeSubscriber(int(result), this);
             _ccsub.subscribe(_ctx.getClient().getDObjectManager());
-            _isConnected = true;
         }
     }
 
     protected function failed (cause :String) :void
     {
+        _isConnecting = false;
         var msg :String = MessageBundle.compose("m.join_channel_failed", cause);
         _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
     }
@@ -523,6 +533,7 @@ class ChannelHandler implements Subscriber
     protected var _showTabFn :Function;
     protected var _isShutdown :Boolean = false;
     protected var _isConnected :Boolean = false;
+    protected var _isConnecting :Boolean = false;
 
     protected var _ccsvc :ChatChannelService;
     protected var _ccsub :SafeSubscriber;
