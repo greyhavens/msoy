@@ -76,19 +76,19 @@ public class index extends MsgsEntryPoint
             int type = args.get(1, Issue.TYPE_BUG);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
-            setContent(issues);
+            setContent(CWhirleds.msgs.myIssuesTitle(), issues);
 
         } else if (action.equals("assign") && CWhirleds.isAdmin()) {
             int messageId = args.get(1, 0), page = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayAssignIssues(Issue.TYPE_BUG, messageId, page);
-            setContent(issues);
+            setContent(CWhirleds.msgs.issuesTitle(), issues);
 
         } else if (action.equals("b") || action.equals("assign") || action.equals("owned")) {
             int type = args.get(1, Issue.TYPE_BUG), state = args.get(2, Issue.STATE_OPEN);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayIssues(type, state, false);
-            setContent(issues);
+            setContent(CWhirleds.msgs.issuesTitle(), issues);
 
         } else if (action.equals("a")) {
             int messageId = args.get(1, 0), page = args.get(2, 0), issueId = args.get(3, 0);
@@ -98,13 +98,13 @@ public class index extends MsgsEntryPoint
             } else {
                 issues.displayIssue(issueId, 0);
             }
-            setContent(issues);
+            setContent(CWhirleds.msgs.issuesTitle(), issues);
 
         } else if (action.equals("i")) {
             int issueId = args.get(1, 0), owned = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayIssue(issueId, owned);
-            setContent(issues);
+            setContent(CWhirleds.msgs.issuesTitle(), issues);
 
         } else {
             if (_galaxy == null) {
