@@ -133,7 +133,7 @@ public class IssueListPanel extends PagedGrid
             setText(0, col, IssueMsgs.categoryMsg(issue, CMsgs.mmsgs));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
-            setText(0, col, (issue.owner == null ? CMsgs.mmsgs.INone() : issue.owner.toString()));
+            setText(0, col, (issue.owner == null ? CMsgs.mmsgs.iNone() : issue.owner.toString()));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
             VerticalPanel created = new VerticalPanel();

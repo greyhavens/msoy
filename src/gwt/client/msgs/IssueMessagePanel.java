@@ -35,7 +35,7 @@ public class IssueMessagePanel extends SimpleMessagePanel
         super.addInfo(info);
 
         Hyperlink link = Application.createLink(
-                CMsgs.mmsgs.IThread(), Page.WHIRLEDS, "t_" + _threadId);
+            CMsgs.mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);

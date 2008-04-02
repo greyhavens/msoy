@@ -49,9 +49,9 @@ public class IssueMsgs
     {
         switch (type) {
         case Issue.TYPE_BUG:
-            return msgs.IBugReport();
+            return msgs.iBugReport();
         case Issue.TYPE_FEATURE:
-            return msgs.IFeature();
+            return msgs.iFeature();
         default:
             return "";
         }
@@ -64,11 +64,11 @@ public class IssueMsgs
     {
         switch (state) {
         case Issue.STATE_OPEN:
-            return msgs.IOpen();
+            return msgs.iOpen();
         case Issue.STATE_RESOLVED:
-            return msgs.IResolved();
+            return msgs.iResolved();
         case Issue.STATE_IGNORED:
-            return msgs.IIgnored();
+            return msgs.iIgnored();
         default:
             return "";
         }
@@ -81,11 +81,11 @@ public class IssueMsgs
     {
         switch (priority) {
         case Issue.PRIORITY_LOW:
-            return msgs.ILow();
+            return msgs.iLow();
         case Issue.PRIORITY_MEDIUM:
-            return msgs.IMedium();
+            return msgs.iMedium();
         case Issue.PRIORITY_HIGH:
-            return msgs.IHigh();
+            return msgs.iHigh();
         default:
             return "";
         }
@@ -98,7 +98,7 @@ public class IssueMsgs
     {
         switch (category) {
         case Issue.CAT_NONE:
-            return msgs.INoCategory();
+            return msgs.iNoCategory();
         default:
             return "";
         }

@@ -96,14 +96,14 @@ public class EditIssuePanel extends TableFooterPanel
     {
         _table = new SmartTable(0, 5);
 
-        _table.setText(0, 0, CMsgs.mmsgs.IType());
-        _table.setText(1, 0, CMsgs.mmsgs.ICreator());
-        _table.setText(2, 0, CMsgs.mmsgs.IOwner());
-        _table.setText(3, 0, CMsgs.mmsgs.IDescription());
-        _table.setText(4, 0, CMsgs.mmsgs.IState());
-        _table.setText(5, 0, CMsgs.mmsgs.IPriority());
-        _table.setText(6, 0, CMsgs.mmsgs.ICategory());
-        _table.setText(7, 0, CMsgs.mmsgs.IComment());
+        _table.setText(0, 0, CMsgs.mmsgs.iType());
+        _table.setText(1, 0, CMsgs.mmsgs.iCreator());
+        _table.setText(2, 0, CMsgs.mmsgs.iOwner());
+        _table.setText(3, 0, CMsgs.mmsgs.iDescription());
+        _table.setText(4, 0, CMsgs.mmsgs.iState());
+        _table.setText(5, 0, CMsgs.mmsgs.iPriority());
+        _table.setText(6, 0, CMsgs.mmsgs.iCategory());
+        _table.setText(7, 0, CMsgs.mmsgs.iComment());
 
         addRow(_table);
     }
@@ -114,7 +114,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(0, 1, IssueMsgs.typeMsg(_issue.type, CMsgs.mmsgs));
         _table.setText(1, 1, _issue.creator.toString());
         _table.setText(2, 1, (_issue.owner == null ?
-                    CMsgs.mmsgs.INoOwner() : _issue.owner.toString()));
+                    CMsgs.mmsgs.iNoOwner() : _issue.owner.toString()));
         _table.setText(3, 1, _issue.description);
         _table.setText(4, 1, IssueMsgs.stateMsg(_issue.state, CMsgs.mmsgs));
         _table.setText(5, 1, IssueMsgs.priorityMsg(_issue.priority, CMsgs.mmsgs));
@@ -150,7 +150,7 @@ public class EditIssuePanel extends TableFooterPanel
         }
         _table.setText(row++, 1, _issue.creator.toString());
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
-        _ownerBox.addItem(CMsgs.mmsgs.INoOwner());
+        _ownerBox.addItem(CMsgs.mmsgs.iNoOwner());
         CMsgs.issuesvc.loadOwners(CMsgs.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (result != null) {

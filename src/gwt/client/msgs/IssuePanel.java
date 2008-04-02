@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.data.Issue;
 
 import client.shell.Page;
@@ -108,17 +109,11 @@ public class IssuePanel extends TitledListPanel
 
     protected FlexTable createHeader (String title, boolean states)
     {
-        FlexTable header = new FlexTable();
-        header.setCellSpacing(0);
-        header.setCellPadding(0);
+        SmartTable header = new SmartTable(0, 2);
         header.setWidth("100%");
-        header.setText(0, 0, title);
-        header.getFlexCellFormatter().setStyleName(0, 0, "Title");
-        header.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-        HorizontalPanel filter = new HorizontalPanel();
-        filter.setSpacing(5);
-        filter.add(new Label(CMsgs.mmsgs.IType()));
+        int col = 0;
+        header.setText(0, col++, CMsgs.mmsgs.iType());
         ListBox typeBox = new ListBox();
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
             typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], CMsgs.mmsgs));
@@ -132,10 +127,10 @@ public class IssuePanel extends TitledListPanel
                     Issue.TYPE_VALUES[((ListBox)sender).getSelectedIndex()], _state, false);
             }
         });
-        filter.add(typeBox);
+        header.setWidget(0, col++, typeBox);
 
         if (states) {
-            filter.add(new Label(CMsgs.mmsgs.IState()));
+            header.setText(0, col++, CMsgs.mmsgs.iState());
             ListBox stateBox = new ListBox();
             for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
                 stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], CMsgs.mmsgs));
@@ -149,24 +144,14 @@ public class IssuePanel extends TitledListPanel
                         _type, Issue.STATE_VALUES[((ListBox)sender).getSelectedIndex()], false);
                 }
             });
-            filter.add(stateBox);
+            header.setWidget(0, col++, stateBox);
         }
-        header.setWidget(0, 1, filter);
-        header.getFlexCellFormatter().setStyleName(0, 1, "Filter");
-        header.getFlexCellFormatter().setColSpan(0, 1, 4);
 
-        header.setText(1, 0, CMsgs.mmsgs.IPriority());
-        header.getFlexCellFormatter().setStyleName(1, 0, "Column");
-        header.setText(1, 1, CMsgs.mmsgs.ICategory());
-        header.getFlexCellFormatter().setStyleName(1, 1, "Column");
-        header.setText(1, 2, CMsgs.mmsgs.IOwner());
-        header.getFlexCellFormatter().setStyleName(1, 2, "Column");
-        if (_state == Issue.STATE_OPEN) {
-            header.setText(1, 3, CMsgs.mmsgs.ICreator());
-        } else {
-            header.setText(1, 3, CMsgs.mmsgs.ICloser());
-        }
-        header.getFlexCellFormatter().setStyleName(1, 3, "Created");
+        header.setText(0, col++, CMsgs.mmsgs.iPriority(), 1, "Column");
+        header.setText(0, col++, CMsgs.mmsgs.iCategory(), 1, "Column");
+        header.setText(0, col++, CMsgs.mmsgs.iOwner(), 1, "Column");
+        String htext = (_state == Issue.STATE_OPEN) ? CMsgs.mmsgs.iCreator() : CMsgs.mmsgs.iCloser();
+        header.setText(0, col++, htext, 1, "Created");
 
         return header;
     }
