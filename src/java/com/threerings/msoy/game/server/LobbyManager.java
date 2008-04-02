@@ -109,7 +109,8 @@ public class LobbyManager
         try {
             gameDef = new MsoyGameParser().parseGame(content.game);
         } catch (Exception e) {
-            log.warning("Error parsing game definition [id=" + game.gameId + ", err=" + e + "].");
+            log.warning("Error parsing game definition [id=" + content.game.gameId +
+                ", err=" + e + "].");
             if (updating) {
                 return; // don't process the update. Seems like a bad idea.
             } else {
