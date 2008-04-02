@@ -444,6 +444,12 @@ public class RoomEditorPanel extends FloatingPanel
         _customConfigButton.visible = false;
         right.addChild(_customConfigButton);
 
+        // TEMP: adjust the size, since we have no icon
+        var b :CommandButton = _customConfigButton.getChildAt(0) as CommandButton;
+        b.width = 42;
+        b.height = 42;
+        // END: temp
+
         updateTargetSelected(null); // disable most buttons
 
         
