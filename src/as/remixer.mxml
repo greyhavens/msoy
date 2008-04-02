@@ -6,6 +6,7 @@
     preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="addChild(new RemixControls(this));">
 <mx:Style source="msoy.css"/>
+<mx:Style source="com/threerings/msoy/applets/image/image.css"/>
 <mx:Style>
    LinkButton {
       color: #000000;

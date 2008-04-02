@@ -34,6 +34,7 @@ import flash.utils.ByteArray;
 import mx.containers.Canvas;
 
 import mx.core.UIComponent;
+import mx.core.ScrollPolicy;
 
 import com.adobe.images.JPGEncoder; 
 import com.adobe.images.PNGEncoder;
@@ -80,10 +81,14 @@ public class EditCanvas extends Canvas
     public static const SELECT :int = 3;
     public static const MOVE :int = 4;
 
-    public function EditCanvas (maxW :int, maxH:int)
+    public function EditCanvas (maxW :int, maxH:int, editMode :Boolean)
     {
         this.maxWidth = maxW;
         this.maxHeight = maxH;
+        if (editMode) {
+            horizontalScrollPolicy = ScrollPolicy.ON;
+            verticalScrollPolicy = ScrollPolicy.ON;
+        }
 
         _editor = new Sprite();
 
@@ -762,7 +767,7 @@ class ImageHolder extends UIComponent
         for (var yy :int = 0; yy < h; yy += GRID_SIZE) {
             dark = ((yy % (GRID_SIZE * 2)) == 0);
             for (var xx :int = 0; xx < w; xx += GRID_SIZE) {
-                g.beginFill(dark ? 0x666666 : 0x999999);
+                g.beginFill(dark ? DARK_BKG : LIGHT_BKG);
                 g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
                 g.endFill();
                 dark = !dark;
@@ -771,6 +776,9 @@ class ImageHolder extends UIComponent
     }
 
     protected var _background :Shape;
+
+    protected static const DARK_BKG :uint = 0x999999; //0xE3E3E3;
+    protected static const LIGHT_BKG :uint = 0xCCCCCC; //0xF3F3F3;
 }
 
 class DropperCursor extends Shape

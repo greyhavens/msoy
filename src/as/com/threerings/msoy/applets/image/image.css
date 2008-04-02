@@ -1,0 +1,62 @@
+.brushButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
+
+  /* replace */
+  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
+  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
+  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
+}
+
+.eraserButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
+
+  /* replace */
+  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
+  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
+  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
+}
+
+.eyedropperButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
+
+  /* replace */
+  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
+  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
+  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
+}
+
+.moveButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+
+  /* replace */
+  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+}
+
+.undoButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo_down.png");
+
+  /* replace */
+  disabledSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo.png");
+}
+
+.redoButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo_over.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo_down.png");
+
+  /* replace */
+  disabledSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo.png");
+}
+

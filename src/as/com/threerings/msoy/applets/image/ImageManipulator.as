@@ -20,6 +20,7 @@ import flash.utils.ByteArray;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
+import mx.controls.Text;
 
 import mx.containers.Canvas;
 import mx.containers.Grid;
@@ -70,14 +71,14 @@ public class ImageManipulator extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
-        setStyle("backgroundColor", 0xCCCCCC);
-        _editor = new EditCanvas(_maxWidth, _maxHeight);
+        setStyle("backgroundColor", 0xDCDCDC);
+        _editor = new EditCanvas(_maxWidth, _maxHeight, allowEdit);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
-        addChild(_editor);
         if (allowEdit) {
             addChild(_controlBar = createControlBar());
         }
+        addChild(_editor);
         setImage(null);
 
         if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
@@ -123,33 +124,11 @@ public class ImageManipulator extends HBox
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
         bar.verticalScrollPolicy = ScrollPolicy.OFF;
 
-        // TODO: add a scrollbox
+        // TODO: add a scrollbox?
 
-        _colorPicker = new ColorPicker();
-        _colorPicker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
-
-        var grid :Grid = new Grid();
-
-        GridUtil.addRow(grid, _colorPicker, addModeBtn("eyedrop", EditCanvas.SELECT_COLOR));
-        GridUtil.addRow(grid,
-            addModeBtn("paint", EditCanvas.PAINT), addModeBtn("erase", EditCanvas.ERASE));
-        GridUtil.addRow(grid,
-            addModeBtn("select", EditCanvas.SELECT), addModeBtn("move", EditCanvas.MOVE));
-        GridUtil.addRow(grid, new CommandButton("Crop", _editor.doCrop), [ 2, 1 ]);
-        GridUtil.addRow(grid, _undo = new CommandButton("Undo", _editor.doUndo),
-            _redo = new CommandButton("Redo", _editor.doRedo));
-
-        KeyboardManager.setShortcut(_undo, 26/*should be: Keyboard.Z*/, Keyboard.CONTROL);
-        KeyboardManager.setShortcut(_redo, 25/*should be: Keyboard.Y*/, Keyboard.CONTROL);
-
-        bar.addChild(grid);
-
-        _rotSlider = addSlider(bar, "Rotation", -180, 180, 0, _editor.setRotation,
-            [ -180, -90, 0, 90, 180 ]);
-        _scaleSlider = addSlider(bar, "Scale", .01, 10, 1, _editor.setScale);
-        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
-        _brushSlider = addSlider(bar, "Brush", 1, 40, 10, _editor.setBrushSize,
-            [ 1, 2, 5, 10, 20, 40 ]);
+        createPositionControls(bar);
+        createPaintControls(bar);
+        createUndoControls(bar);
 
         _editor.setBrushSize(10);
         _editor.setBrushShape(true); // circular
@@ -163,6 +142,87 @@ public class ImageManipulator extends HBox
         return bar;
     }
 
+    protected function createPositionControls (bar :VBox) :void
+    {
+        bar.addChild(createControlHeader("Position Image"));
+
+        var box :HBox = new HBox();
+        box.addChild(addModeBtn("move", EditCanvas.MOVE));
+        box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
+        bar.addChild(box);
+
+        _scaleSlider = addSlider(bar, "Scale Image", .01, 10, 1, _editor.setScale);
+        _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
+            [ -180, -90, 0, 90, 180 ]);
+    }
+
+    protected function createPaintControls (bar :VBox) :void
+    {
+        bar.addChild(createControlHeader("Erase and Paint"));
+
+        var box :HBox = new HBox();
+        box.addChild(addModeBtn("eraser", EditCanvas.ERASE));
+        box.addChild(createTip("Erase around the image. Paint your own touches!"));
+        bar.addChild(box);
+
+        // OMITTED: eraser size slider XXX
+        //addModeBtn("crop", EditCanvas.CROP));
+        //_zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
+
+        box = new HBox();
+        box.addChild(addModeBtn("brush", EditCanvas.PAINT));
+        box.addChild(addModeBtn("eyedropper", EditCanvas.SELECT_COLOR));
+        _colorPicker = new ColorPicker();
+        _colorPicker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
+        box.addChild(_colorPicker);
+        bar.addChild(box);
+
+        _brushSlider = addSlider(bar, "Brush Size", 1, 40, 10, _editor.setBrushSize,
+            [ 1, 2, 5, 10, 20, 40 ]);
+    }
+
+    protected function createUndoControls (bar :VBox) :void
+    {
+        bar.addChild(createControlHeader("Undo Mistakes"));
+
+        var box :HBox = new HBox();
+        box.addChild(_undo = new CommandButton(null, _editor.doUndo));
+        box.addChild(_redo = new CommandButton(null, _editor.doRedo));
+        bar.addChild(box);
+
+        _undo.styleName = "undoButton";
+        _redo.styleName = "redoButton";
+        KeyboardManager.setShortcut(_undo, 26/*should be: Keyboard.Z*/, Keyboard.CONTROL);
+        KeyboardManager.setShortcut(_redo, 25/*should be: Keyboard.Y*/, Keyboard.CONTROL);
+    }
+
+    protected function createControlHeader (title :String) :HBox
+    {
+        var box :HBox = new HBox();
+        box.percentWidth = 100;
+        box.setStyle("backgroundColor", 0x6AB6E7);
+        box.setStyle("horizontalAlign", "center");
+
+        var lbl :Label = new Label();
+        lbl.setStyle("color", 0xFFFFFF);
+        lbl.setStyle("fontWeight", "bold");
+        lbl.text = title;
+
+        box.addChild(lbl);
+
+        return box;
+    }
+
+    protected function createTip (text :String) :Text
+    {
+        var tip :Text = new Text();
+        tip.selectable = false;
+        tip.width = 100; // TODO: constant
+        tip.setStyle("fontSize", 8);
+        tip.text = text;
+        return tip;
+    }
+
     protected function addSlider (
         container :Container, name :String, min :Number, max :Number, value :Number,
         changeHandler :Function, tickValues :Array = null) :HSlider
@@ -171,20 +231,22 @@ public class ImageManipulator extends HBox
             tickValues = [ value ];
         }
 
+        var hbox :HBox = new HBox();
+        hbox.setStyle("horizontalGap", 0);
+        hbox.setStyle("verticalAlign", "middle");
+
         var box :VBox = new VBox();
         box.horizontalScrollPolicy = ScrollPolicy.OFF;
         box.verticalScrollPolicy = ScrollPolicy.OFF;
+        box.setStyle("horizontalAlign", "center");
         box.setStyle("verticalGap", 0);
-
-        var hbox :HBox = new HBox();
-        hbox.setStyle("horizontalGap", 0);
 
         var lbl :Label = new Label();
         lbl.setStyle("fontSize", 8);
         lbl.text = name;
 
         var slider :HSlider = new HSlider();
-        slider.maxWidth = 130;
+        slider.maxWidth = 100;
         slider.liveDragging = true;
         slider.minimum = min;
         slider.maximum = max;
@@ -198,8 +260,7 @@ public class ImageManipulator extends HBox
         slider.addEventListener(SliderEvent.CHANGE, changeListener);
         slider.addEventListener(FlexEvent.VALUE_COMMIT, changeListener);
 
-        container.addChild(box);
-        box.addChild(hbox);
+        box.addChild(lbl);
         box.addChild(slider);
 
         var but :CommandButton = new CommandButton("Snap", function () :void {
@@ -220,16 +281,20 @@ public class ImageManipulator extends HBox
         });
         but.scaleY = .8;
         but.scaleX = .8;
-        hbox.addChild(lbl);
+
+        hbox.addChild(box);
         hbox.addChild(but);
+
+        container.addChild(hbox);
 
         return slider;
     }
 
-    protected function addModeBtn (label :String, mode :int) :CommandButton
+    protected function addModeBtn (styleBase :String, mode :int) :CommandButton
     {
-        var but :CommandButton = new CommandButton(label, setMode, mode);
+        var but :CommandButton = new CommandButton(null, setMode, mode);
         but.data = mode;
+        but.styleName = styleBase + "Button";
         but.toggle = true;
         _buttons.push(but);
         return but;
@@ -279,8 +344,10 @@ public class ImageManipulator extends HBox
         if (_controlBar != null) {
             var w :Number = event.value[0];
             var h :Number = event.value[1];
-            _zoomSlider.minimum = Math.min(1, Math.min(_maxWidth / w, _maxHeight / h));
-            _zoomSlider.value = 1;
+            if (_zoomSlider != null) {
+                _zoomSlider.minimum = Math.min(1, Math.min(_maxWidth / w, _maxHeight / h));
+                _zoomSlider.value = 1;
+            }
             _rotSlider.value = 0;
             _scaleSlider.value = 1;
         }
