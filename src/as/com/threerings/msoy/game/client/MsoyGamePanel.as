@@ -8,6 +8,7 @@ import flash.display.Loader;
 import com.threerings.crowd.data.PlaceObject;
 import com.whirled.game.client.GameBackend;
 
+import com.whirled.game.client.PlayerList;
 import com.whirled.game.client.WhirledGamePanel;
 import com.whirled.game.data.WhirledGameObject;
 
@@ -17,8 +18,6 @@ import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-
-import com.threerings.msoy.world.client.WorldContext;
 
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
@@ -99,6 +98,12 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
+    override protected function createPlayerList () :PlayerList
+    {
+        return new MsoyPlayerList(_ctx as GameContext);
+    }
+
+    // from WhirledGamePanel
     override protected function getButtonLabels (plobj :PlaceObject) :Array
     {
         var gameObj :WhirledGameObject = plobj as WhirledGameObject;
@@ -111,4 +116,34 @@ public class MsoyGamePanel extends WhirledGamePanel
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
 }
+}
+
+import com.threerings.flex.CommandMenu;
+
+import com.threerings.crowd.data.OccupantInfo;
+
+import com.whirled.game.client.PlayerList;
+
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.client.GameContext;
+
+class MsoyPlayerList extends PlayerList
+{
+    public function MsoyPlayerList (gctx :GameContext)
+    {
+        _gctx = gctx;
+    }
+
+    override protected function handlePlayerClicked (occInfo :OccupantInfo) :void
+    {
+        var menuItems :Array = [];
+        _gctx.getMsoyContext().getMsoyController().addMemberMenuItems(
+            occInfo.username as MemberName, menuItems);
+
+        var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+        menu.setDispatcher(_gctx.getMsoyContext().getTopPanel());
+        menu.popUpAtMouse();
+    }
+
+    protected var _gctx :GameContext;
 }

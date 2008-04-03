@@ -345,16 +345,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Updates our availability state.
-     */
-    public function updateAvailability (availability :int) :void
-    {
-        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.updateAvailability(_ctx.getClient(), availability);
-        _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
-    }
-
-    /**
      * Returns true if we are in edit mode, false if not.
      */
     public function isRoomEditing () :Boolean
@@ -456,6 +446,11 @@ public class RoomController extends SceneController
 
         var us :MemberObject = _wdctx.getMemberObject();
         var menuItems :Array = [];
+
+        // add the standard menu items
+        _wdctx.getMsoyController().addMemberMenuItems(occInfo.username as MemberName, menuItems);
+
+        // then add our custom menu items
         if (occInfo.bodyOid == us.getOid()) {
             // see if we can control our own avatar right now...
             var canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
@@ -471,16 +466,6 @@ public class RoomController extends SceneController
                 menuItems.push({ label: Msgs.GENERAL.get("l.stop_following"),
                                  callback: clearFollow });
             }
-
-            // create a menu for controlling our availability
-            var availActions :Array = [];
-            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
-                availActions.push({
-                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    type: "check", toggled: (ii == us.availability) });
-            }
-            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"),
-                             children: availActions, enabled: canControl });
 
             // if we're not a guest add a menu for changing avatars
             if (!us.isGuest()) {
@@ -539,51 +524,31 @@ public class RoomController extends SceneController
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
-            menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
-                command: WorldController.OPEN_CHANNEL, arg: occInfo.username });
 
             if (!MemberName.isGuest(memId)) {
                 // TODO: move up when we can forward MemberObjects between servers for guests
                 menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
                                  callback: inviteFollow, arg: occInfo.username });
-                menuItems.push(
-                    { label: Msgs.GENERAL.get("l.visit_home"),
-                      command: WorldController.GO_MEMBER_HOME, arg: memId });
-                if (!_wdctx.getWorldClient().isEmbedded()) {
-                    menuItems.push(
-                        { label: Msgs.GENERAL.get("l.view_member"),
-                          command: WorldController.VIEW_MEMBER, arg: memId });
-                }
-                if (!us.isGuest() && !us.friends.containsKey(memId)) {
-                    menuItems.push(
-                        { label: Msgs.GENERAL.get("l.add_as_friend"),
-                          command: WorldController.INVITE_FRIEND, arg: [memId] });
-                }
+                menuItems.push({ label: Msgs.GENERAL.get("l.visit_home"),
+                                 command: WorldController.GO_MEMBER_HOME, arg: memId });
 
                 var kind :String = Msgs.GENERAL.get(avatar.getDesc());
                 var flagItems :Array = [];
 
-                flagItems.push({
-                    label: Msgs.GENERAL.get("b.complain"),
-                    command: WorldController.COMPLAIN_MEMBER, arg: [memId, occInfo.username] });
-
                 if (avatar.isBlockable()) {
                     var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
-                    flagItems.push(
-                        { label: Msgs.GENERAL.get(key, kind),
-                          callback: avatar.toggleBlocked, arg: _wdctx });
+                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
+                                     callback: avatar.toggleBlocked, arg: _wdctx });
                 }
 
                 var ident :ItemIdent = avatar.getItemIdent();
                 if (ident != null && ident.type >= 0) { // -1 is used for the default avatar, etc
-                    flagItems.push(
-                        { label: Msgs.GENERAL.get("b.view_item", kind),
-                          command: MsoyController.VIEW_ITEM, arg: ident });
+                    flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+                                     command: MsoyController.VIEW_ITEM, arg: ident });
                 }
 
                 menuItems.push({ type: "separator"},
-                    { label: Msgs.GENERAL.get("l.flag_menu"),
-                      children: flagItems });
+                               { label: Msgs.GENERAL.get("l.flag_menu"), children: flagItems });
             }
         }
 

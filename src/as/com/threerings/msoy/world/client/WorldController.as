@@ -53,6 +53,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
@@ -681,6 +682,16 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Updates our availability state.
+     */
+    public function updateAvailability (availability :int) :void
+    {
+        var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
+        msvc.updateAvailability(_wctx.getClient(), availability);
+        _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
+    }
+
+    /**
      * Figure out where we should be going, and go there.
      */
     public function goToPlace (params :Object) :void
@@ -794,6 +805,40 @@ public class WorldController extends MsoyController
     override public function getSceneIdString () :String
     {
         return _sceneIdString;
+    }
+
+    // from MsoyController
+    override public function addMemberMenuItems (member :MemberName, menuItems :Array) :void
+    {
+        var memId :int = member.getMemberId();
+        var us :MemberObject = _wctx.getMemberObject();
+
+        if (memId == us.getMemberId()) {
+            // create a menu for controlling our availability
+            var availActions :Array = [];
+            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
+                availActions.push({
+                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
+                    type: "check", toggled: (ii == us.availability) });
+            }
+            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
+
+        } else {
+            menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
+                             command: OPEN_CHANNEL, arg: member });
+            if (!MemberName.isGuest(memId)) {
+                if (!_wctx.getMsoyClient().isEmbedded()) {
+                    menuItems.push({ label: Msgs.GENERAL.get("l.view_member"),
+                                     command: VIEW_MEMBER, arg: memId });
+                }
+                if (!us.isGuest() && !us.friends.containsKey(memId)) {
+                    menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
+                                     command: INVITE_FRIEND, arg: [memId] });
+                }
+            }
+            menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
+                             command: COMPLAIN_MEMBER, arg: [memId, member] });
+        }
     }
 
     // from MsoyController

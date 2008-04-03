@@ -44,6 +44,7 @@ import com.threerings.presents.client.ClientObserver;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
 import mx.controls.Button;
@@ -300,6 +301,15 @@ public class MsoyController extends Controller
     public function updateLocationDisplay () :void
     {
         updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+    }
+
+    /**
+     * Requests that standard menu items be added to the supplied menu which is being popped up as
+     * a result of clicking on another player (their name, or their avatar) somewhere in Whirled.
+     */
+    public function addMemberMenuItems (member :MemberName, menuItems :Array) :void
+    {
+        // nothing by default
     }
 
     // from ClientObserver
