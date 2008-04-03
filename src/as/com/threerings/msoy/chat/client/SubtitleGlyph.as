@@ -7,6 +7,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import com.threerings.util.Log;
+
 public class SubtitleGlyph extends ChatGlyph
 {
     /** If this glyph is showing chat history, the index into the HistoryList
@@ -23,7 +25,8 @@ public class SubtitleGlyph extends ChatGlyph
         texts :Array)
     {
         super(overlay, type, lifetime);
-        alpha = .75;
+        // default to transparent
+        setTransparent(true);
 
         var txt :TextField = createTextField();
         // set it up to be as wide as it can, and to wrap around if it wants
@@ -37,6 +40,11 @@ public class SubtitleGlyph extends ChatGlyph
         // add the text and draw a shape around it
         addChild(_txt = txt);
         txt.x = overlay.drawSubtitleShape(graphics, type, txt.width, txt.height);
+    }
+
+    public function setTransparent (transparent :Boolean) :void
+    {
+        alpha = transparent ? 0.75 : 1;
     }
 }
 }

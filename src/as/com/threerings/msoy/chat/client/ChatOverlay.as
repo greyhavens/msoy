@@ -1415,6 +1415,7 @@ public class ChatOverlay
                      ScrollBar.THICKNESS : 0);
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
+                glyph.setTransparent(_chatContainer == null);
             }
         }
 
