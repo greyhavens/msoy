@@ -50,6 +50,10 @@ import com.threerings.flash.GraphicsUtil;
  * Allows primitive editing of an image. Note that this is merely the model/view, the
  * controller is ImageManipulator.
  */
+// TODO/Notes:
+// - If you paint a fat stroke right next to the scrollbar, you can actually paint onto
+//   a portion of the image that's offscreen. Fix so that _curPaint has a mask of the currently
+//   viewable area...?
 public class EditCanvas extends DisplayCanvas
 {
     public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
