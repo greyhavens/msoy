@@ -292,7 +292,7 @@ public class MsoyGameRegistry
     }
 
     /**
-     * Called to update a mutable game.
+     * Called to update a game.
      */
     public void gameUpdatedOnPeer (int gameId)
     {

@@ -99,11 +99,7 @@ public class LobbyManager
      * Called when a lobby is first created and possibly again later to refresh its game metadata.
      */
     public void setGameContent (GameContent content)
-        throws Exception
     {
-        // check to see if we're setting up for the first time, or just updating
-        boolean updating = (_content != null);
-
         // parse the game definition
         GameDefinition gameDef;
         try {
@@ -111,19 +107,14 @@ public class LobbyManager
         } catch (Exception e) {
             log.warning("Error parsing game definition [id=" + content.game.gameId +
                 ", err=" + e + "].");
-            if (updating) {
-                return; // don't process the update. Seems like a bad idea.
-            } else {
-                throw e; // put the hard kibosh on things
-            }
+            // however, we do not want to put the kibosh on the update. If someone
+            // booches their game, we want the lobby to *fail fast*, not fail the next time
+            // the server reboots...
+            gameDef = null;
         }
 
         // accept the new game
-        if (updating) {
-            _content.game = content.game;
-        } else {
-            _content = content;
-        }
+        _content = content;
 
         // update the lobby object
         _lobj.startTransaction();

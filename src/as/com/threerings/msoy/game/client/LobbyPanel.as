@@ -152,7 +152,14 @@ public class LobbyPanel extends TitleWindow
 //             _buy.parent.removeChild(_buy);
 //         }
 
-        _logo.setItem(getGame());
+        _logo.setItem(game);
+
+        if (_lobbyObj.gameDef == null) {
+            _info.text = Msgs.GAME.get("e.no_gamedef");
+            _createBtn.enabled = false;
+            showTables();
+            return;
+        }
         _info.text = game.description;
 
         // determine our informational messages

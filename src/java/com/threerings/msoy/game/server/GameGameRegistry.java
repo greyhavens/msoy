@@ -186,8 +186,6 @@ public class GameGameRegistry
      * On some world server, somebody updated a game record, and eventually it was determined
      * that this game server is hosting that game. Do what we can to refresh our notion of the
      * game's definition.
-     *
-     * TODO: Handle _loadingLobbies.
      */
     public void gameRecordUpdated (final int gameId)
     {
@@ -201,13 +199,9 @@ public class GameGameRegistry
                 }
 
                 public void handleSuccess () {
-                    try {
-                        // and then update the lobby with the content
-                        lmgr.setGameContent(_content);
-                        log.info("Reloaded lobbied game configuration [id=" + gameId + "]");
-                    } catch (Exception e) {
-                        handleFailure(e);
-                    }
+                    // and then update the lobby with the content
+                    lmgr.setGameContent(_content);
+                    log.info("Reloaded lobbied game configuration [id=" + gameId + "]");
                 }
 
                 public void handleFailure (Exception e) {
@@ -218,6 +212,19 @@ public class GameGameRegistry
                 protected GameContent _content;
             });
 
+            return;
+        }
+
+        // see if it's a lobby game we're currently loading...
+        ResultListenerList list = _loadingLobbies.get(gameId);
+        if (list != null) {
+            list.add(new InvocationService.ResultListener() {
+                public void requestProcessed (Object result) {
+                    gameRecordUpdated(gameId);
+                }
+
+                public void requestFailed (String cause) {/*ignore*/}
+            });
             return;
         }
 
@@ -450,23 +457,18 @@ public class GameGameRegistry
                     return;
                 }
 
-                try {
-                    LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
-                    lmgr.setGameContent(_content);
-                    _lobbies.put(gameId, lmgr);
+                LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
+                lmgr.setGameContent(_content);
+                _lobbies.put(gameId, lmgr);
 
-                    ResultListenerList list = _loadingLobbies.remove(gameId);
-                    if (list != null) {
-                        list.requestProcessed(lmgr.getLobbyObject().getOid());
-                    }
-
-                    // map this game's score distributions
-                    _distribs.put(-Math.abs(gameId), _single == null ? new Percentiler() : _single);
-                    _distribs.put(Math.abs(gameId), _multi == null ? new Percentiler() : _multi);
-
-                } catch (Exception e) {
-                    handleFailure(e);
+                ResultListenerList list = _loadingLobbies.remove(gameId);
+                if (list != null) {
+                    list.requestProcessed(lmgr.getLobbyObject().getOid());
                 }
+
+                // map this game's score distributions
+                _distribs.put(-Math.abs(gameId), _single == null ? new Percentiler() : _single);
+                _distribs.put(Math.abs(gameId), _multi == null ? new Percentiler() : _multi);
             }
 
             public void handleFailure (Exception pe) {
