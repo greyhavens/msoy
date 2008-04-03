@@ -315,6 +315,8 @@ public class EditCanvas extends DisplayCanvas
 
     protected function configureMode () :void
     {
+        endCurrentPaint();
+
         var fn :Function;
         var on :Boolean;
 
@@ -436,8 +438,10 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handlePaintEnter (event :MouseEvent) :void
     {
-        if (event.buttonDown) {
+        if (event.buttonDown && _curPaint != null) {
             handlePaintStart(event);
+        } else {
+            endCurrentPaint();
         }
     }
 
@@ -445,12 +449,14 @@ public class EditCanvas extends DisplayCanvas
     {
         setPainted();
 
-        // create a new paintlayer
-        _curPaint =  new Shape();
-        if (_mode == ERASE) {
-            _curPaint.blendMode = BlendMode.ERASE;
+        if (_curPaint == null) {
+            // create a new paintlayer
+            _curPaint =  new Shape();
+            if (_mode == ERASE) {
+                _curPaint.blendMode = BlendMode.ERASE;
+            }
+            _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - _paintInsertionOffset);
         }
-        _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - _paintInsertionOffset);
 
         _paintPoint = new Point(event.localX, event.localY);
         _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
@@ -473,7 +479,10 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handlePaintEnd (event :MouseEvent) :void
     {
-        if (_paintPoint == null) {
+        if (_curPaint == null) {
+            return; // we never started..
+
+        } else if (_paintPoint == null) {
             handlePaintLine(event);
 
         } else {
@@ -492,10 +501,20 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
         _paintLayer.removeEventListener(MouseEvent.ROLL_OUT, handlePaintEnd);
 
-        // at the end of the paint 
-        _undoStack.push(_curPaint);
-        _redoStack.length = 0;
-        fireUndoRedoChange();
+        // if the button is still down, we don't end the current paint.
+        if (!event.buttonDown) {
+            endCurrentPaint();
+        }
+    }
+
+    protected function endCurrentPaint () :void
+    {
+        if (_curPaint != null) {
+            _undoStack.push(_curPaint);
+            _redoStack.length = 0;
+            fireUndoRedoChange();
+            _curPaint = null;
+        }
     }
 
     protected function handleSelectStart (event :MouseEvent) :void
