@@ -29,7 +29,6 @@ public class SearchBox extends HorizontalPanel
         _listener = listener;
 
         add(_input = new TextBox());
-        _input.setText(CShell.cmsgs.searchDefault());
         _input.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int modifiers) {
                 if (keyCode == KEY_ENTER) {
@@ -40,22 +39,24 @@ public class SearchBox extends HorizontalPanel
         _input.addFocusListener(new FocusListenerAdapter() {
             public void onFocus (Widget sender) {
                 if (_input.getText().equals(CShell.cmsgs.searchDefault())) {
+                    _input.removeStyleName("Faded");
                     _input.setText("");
                 }
             }
         });
         _close = MsoyUI.createCloseButton(new ClickListener() {
             public void onClick (Widget sender) {
-                clearSearch();
+                clearSearch(true);
             }
         });
+        clearSearch(false);
     }
 
     protected void doSearch ()
     {
         String query = _input.getText().trim();
         if (query.length() == 0) {
-            clearSearch();
+            clearSearch(true);
         } else {
             _listener.search(query);
             if (!_close.isAttached()) {
@@ -64,10 +65,14 @@ public class SearchBox extends HorizontalPanel
         }
     }
 
-    protected void clearSearch ()
+    protected void clearSearch (boolean informListener)
     {
-        _input.setText("");
-        _listener.clearSearch();
+        _input.setText(CShell.cmsgs.searchDefault());
+        _input.addStyleName("Faded");
+        _input.setFocus(false);
+        if (informListener) {
+            _listener.clearSearch();
+        }
         if (_close.isAttached()) {
             remove(_close);
         }

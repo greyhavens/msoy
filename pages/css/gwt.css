@@ -1102,6 +1102,10 @@ img, embed, applet, object {
   border: none;
 }
 
+.searchBox .Faded {
+  color: #AAAAAA;
+}
+
 .searchBox .closeButton {
   margin-top: 3px;
 }

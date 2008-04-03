@@ -121,6 +121,7 @@
 
 .titledListPanel .Header .Back {
   padding-left: 5px;
+  width: 15px;
 }
 
 .titledListPanel .Header .Filter {
