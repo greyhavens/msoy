@@ -61,16 +61,17 @@ public class index extends MsgsEntryPoint
         } else if (action.equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
             fpanel.displayUnreadThreads(false);
-            setContent(fpanel);
+            setContent(CWhirleds.msgs.myForumsTitle(), fpanel);
 
         } else if (action.equals("f")) {
             ForumPanel forums = new ForumPanel(_fmodels);
             forums.displayGroupThreads(args.get(1, 0));
-            setContent(forums);
+            setContent(CWhirleds.msgs.forumsTitle(), forums);
 
         } else if (action.equals("t")) {
-            int threadId = args.get(1, 0), page = args.get(2, 0), scrollToId = args.get(3, 0);
-            setContent(new ThreadPanel(this, threadId, page, scrollToId, _fmodels));
+            ThreadPanel tpanel = new ThreadPanel();
+            tpanel.showThread(_fmodels, args.get(1, 0), args.get(2, 0), args.get(3, 0));
+            setContent(CWhirleds.msgs.forumsTitle(), tpanel);
 
         } else if (action.equals("owned") && CWhirleds.isAdmin()) {
             int type = args.get(1, Issue.TYPE_BUG);
