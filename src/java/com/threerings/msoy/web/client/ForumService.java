@@ -55,6 +55,14 @@ public interface ForumService extends RemoteService
     }
 
     /**
+     * Loads up to <code>maximum</code> threads from groups of which the caller is a member for
+     * which there are messages not yet read by same. The threads are sorted from most to least
+     * recently active.
+     */
+    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+        throws ServiceException;
+
+    /**
      * Loads the specified range of threads for the specified group.
      */
     public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
@@ -62,11 +70,11 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads up to <code>maximum</code> threads from groups of which the caller is a member for
-     * which there are messages not yet read by same. The threads are sorted from most to least
-     * recently active.
+     * Searches the subjects and messages in all threads in the specified group.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread>
      */
-    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+    public List findThreads (WebIdent ident, int groupId, String search, int limit)
         throws ServiceException;
 
     /**

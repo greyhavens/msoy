@@ -44,46 +44,6 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Loads the specified range of forum threads for the specified group. Ordered first stickyness
-     * and then by most recently updated (newer first).
-     */
-    public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
-        throws PersistenceException
-    {
-        return findAll(ForumThreadRecord.class,
-                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
-                       new Limit(offset, count),
-                       new OrderBy(
-                           new SQLExpression[] { ForumThreadRecord.STICKY_C,
-                                                 ForumThreadRecord.MOST_RECENT_POST_ID_C },
-                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
-    }
-
-    /**
-     * Loads the latest threads for the specified group.  Ordered by threadId
-     * (ie: creation time)
-     */
-    public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
-        throws PersistenceException
-    {
-        return findAll(ForumThreadRecord.class,
-                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
-                       new Limit(0, count),
-                       OrderBy.descending(ForumThreadRecord.THREAD_ID_C));
-    }
-
-    /**
-     * Loads the total number of threads in the specified group.
-     */
-    public int loadThreadCount (int groupId)
-        throws PersistenceException
-    {
-        return load(CountRecord.class,
-                    new FromOverride(ForumThreadRecord.class),
-                    new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
-    }
-
-    /**
      * Loads up to the specified maximum number of threads from the supplied set of groups that
      * have messages that are unread by the specified member. The results are ordered from newest
      * to oldest.
@@ -107,6 +67,62 @@ public class ForumRepository extends DepotRepository
                        new Where(where),
                        new Limit(0, maximum),
                        OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
+    }
+
+    /**
+     * Loads the latest threads for the specified group. Ordered by threadId (ie: creation time).
+     */
+    public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
+        throws PersistenceException
+    {
+        return findAll(ForumThreadRecord.class,
+                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
+                       new Limit(0, count),
+                       OrderBy.descending(ForumThreadRecord.THREAD_ID_C));
+    }
+
+    /**
+     * Loads the total number of threads in the specified group.
+     */
+    public int loadThreadCount (int groupId)
+        throws PersistenceException
+    {
+        return load(CountRecord.class,
+                    new FromOverride(ForumThreadRecord.class),
+                    new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
+    }
+
+    /**
+     * Loads the specified range of forum threads for the specified group. Ordered first stickyness
+     * and then by most recently updated (newer first).
+     */
+    public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
+        throws PersistenceException
+    {
+        return findAll(ForumThreadRecord.class,
+                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
+                       new Limit(offset, count),
+                       new OrderBy(
+                           new SQLExpression[] { ForumThreadRecord.STICKY_C,
+                                                 ForumThreadRecord.MOST_RECENT_POST_ID_C },
+                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
+    }
+
+    /**
+     * Finds all threads that match the specified search in their subject or for which one or more
+     * of their messages matches the supplied search.
+     */
+    public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
+        throws PersistenceException
+    {
+        And where = new And(new Equals(ForumThreadRecord.GROUP_ID_C, groupId),
+                            new Or(new FullTextMatch(ForumThreadRecord.class,
+                                                     ForumThreadRecord.FTS_SUBJECT, search),
+                                   new FullTextMatch(ForumMessageRecord.class,
+                                                     ForumMessageRecord.FTS_MESSAGE, search)));
+        return findAll(ForumThreadRecord.class,
+                       new Join(ForumThreadRecord.THREAD_ID_C, ForumMessageRecord.THREAD_ID_C),
+                       new Where(where), new Limit(0, limit));
     }
 
     /**

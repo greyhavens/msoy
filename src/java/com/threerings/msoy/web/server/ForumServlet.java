@@ -55,6 +55,45 @@ public class ForumServlet extends MsoyServiceServlet
     implements ForumService
 {
     // from interface ForumService
+    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            // load up said member's group memberships
+            Map<Integer, GroupName> groups = Maps.newHashMap();
+            for (GroupCard card : MsoyServer.groupRepo.getMemberGroups(mrec.memberId, true)) {
+                groups.put(card.name.getGroupId(), card.name);
+            }
+
+            // load up the thread records
+            List<ForumThreadRecord> thrrecs;
+            if (groups.size() == 0) {
+                thrrecs = Collections.emptyList();
+            } else {
+                thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), maximum);
+            }
+
+            // load up additional fiddly bits and create a result record
+            ThreadResult result = new ThreadResult();
+            result.threads = resolveThreads(mrec, thrrecs, groups);
+
+            // we cheat on the total count here with the idea that the client basically just asks
+            // for "all" of the unread threads and we give them all as long as all is not
+            // ridiculously many
+            result.threadCount = result.threads.size();
+
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load unread threads [for=" + who(mrec) +
+                    ", max=" + maximum + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ForumService
     public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
                                      boolean needTotalCount)
         throws ServiceException
@@ -62,7 +101,7 @@ public class ForumServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser(ident);
 
         try {
-            // make sure they have read access to this thread
+            // make sure they have read access to this group
             Group group = getGroup(groupId);
             byte groupRank = getGroupRank(mrec, groupId);
             if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
@@ -73,8 +112,9 @@ public class ForumServlet extends MsoyServiceServlet
             List<ForumThreadRecord> thrrecs = _forumRepo.loadThreads(groupId, offset, count);
 
             // load up additional fiddly bits and create a result record
-            ThreadResult result = toThreadResult(
-                mrec, thrrecs, Collections.singletonMap(group.groupId, group.getName()));
+            ThreadResult result = new ThreadResult();
+            Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
+            result.threads = resolveThreads(mrec, thrrecs, gmap);
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = (mrec != null) &&
@@ -100,39 +140,24 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+    public List<ForumThread> findThreads (WebIdent ident, int groupId, String search, int limit)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser(ident);
 
         try {
-            // load up said member's group memberships
-            Map<Integer, GroupName> groups = Maps.newHashMap();
-            for (GroupCard card : MsoyServer.groupRepo.getMemberGroups(mrec.memberId, true)) {
-                groups.put(card.name.getGroupId(), card.name);
+            // make sure they have read access to this group
+            Group group = getGroup(groupId);
+            if (!group.checkAccess(getGroupRank(mrec, groupId), Group.ACCESS_READ, 0)) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
 
-            // load up the thread records
-            List<ForumThreadRecord> thrrecs;
-            if (groups.size() == 0) {
-                thrrecs = Collections.emptyList();
-            } else {
-                thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), maximum);
-            }
-
-            // load up additional fiddly bits and create a result record
-            ThreadResult result = toThreadResult(mrec, thrrecs, groups);
-
-            // we cheat on the total count here with the idea that the client basically just asks
-            // for "all" of the unread threads and we give them all as long as all is not
-            // ridiculously many
-            result.threadCount = result.threads.size();
-
-            return result;
+            Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
+            return resolveThreads(mrec, _forumRepo.findThreads(groupId, search, limit), gmap);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load unread threads [for=" + who(mrec) +
-                    ", max=" + maximum + "].", pe);
+            log.log(Level.WARNING, "Failed to search threads [for=" + who(mrec) +
+                    ", gid=" + groupId + ", search=" + search + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
     }
@@ -495,43 +520,32 @@ public class ForumServlet extends MsoyServiceServlet
      * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
      * filling in other bits.
      */
-    protected ThreadResult toThreadResult (MemberRecord mrec, List<ForumThreadRecord> thrrecs,
-                                           Map<Integer, GroupName> groups)
+    protected List<ForumThread> resolveThreads (MemberRecord mrec, List<ForumThreadRecord> thrrecs,
+                                                Map<Integer, GroupName> groups)
         throws PersistenceException
     {
         // enumerate the last-posters and create member names for them
         IntMap<MemberName> names = resolveNames(thrrecs);
 
-        // finally convert the threads to runtime format and return them
-        ThreadResult result = new ThreadResult();
-        IntMap<ForumThread> thrmap = IntMaps.newHashIntMap();
-        List<ForumThread> threads = Lists.newArrayList();
-        for (ForumThreadRecord thrrec : thrrecs) {
-            ForumThread ftr = thrrec.toForumThread(names, groups);
-            thrmap.put(ftr.threadId, ftr);
-            threads.add(ftr);
+        // convert the threads to runtime format and return them
+        Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
+        for (ForumThreadRecord ftr : thrrecs) {
+            thrmap.put(ftr.threadId, ftr.toForumThread(names, groups));
         }
-        result.threads = threads;
 
         // fill in the last read post information if the member is logged in
-        if (mrec != null) {
-            IntSet threadIds = new ArrayIntSet();
-            for (ForumThreadRecord thrrec : thrrecs) {
-                threadIds.add(thrrec.threadId);
-            }
-            if (threadIds.size() > 0) {
-                for (ReadTrackingRecord rtr :
-                         _forumRepo.loadLastReadPostInfo(mrec.memberId, threadIds)) {
-                    ForumThread ftr = thrmap.get(rtr.threadId);
-                    if (ftr != null) { // shouldn't be null but let's not have a cow
-                        ftr.lastReadPostId = rtr.lastReadPostId;
-                        ftr.lastReadPostIndex = rtr.lastReadPostIndex;
-                    }
+        if (mrec != null && thrmap.size() > 0) {
+            for (ReadTrackingRecord rtr : _forumRepo.loadLastReadPostInfo(
+                     mrec.memberId, thrmap.keySet())) {
+                ForumThread ftr = thrmap.get(rtr.threadId);
+                if (ftr != null) { // shouldn't be null but let's not have a cow
+                    ftr.lastReadPostId = rtr.lastReadPostId;
+                    ftr.lastReadPostIndex = rtr.lastReadPostIndex;
                 }
             }
         }
 
-        return result;
+        return Lists.newArrayList(thrmap.values());
     }
 
     /**

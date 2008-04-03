@@ -13,15 +13,21 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface ForumServiceAsync
 {
     /**
+     * The asynchronous version of {@link ForumService#loadUnreadThreads}.
+     */
+    public void loadUnreadThreads (WebIdent ident, int maximum, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ForumService#loadThreads}.
      */
     public void loadThreads (WebIdent ident, int groupId, int offset, int count,
                              boolean needTotalCount, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link ForumService#loadUnreadThreads}.
+     * The asynchronous version of {@link ForumService#findThreads}.
      */
-    public void loadUnreadThreads (WebIdent ident, int maximum, AsyncCallback callback);
+    public void findThreads (WebIdent ident, int groupId, String query, int limit,
+                             AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadMessages}.

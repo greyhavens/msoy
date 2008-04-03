@@ -3,11 +3,12 @@
 
 package client.msgs;
 
-import com.google.gwt.user.client.ui.FlexTable;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.util.MsoyUI;
+import client.util.SearchBox;
 
 /**
  * Displays forum threads and messages.
@@ -23,14 +24,14 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
-        setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader()), threads);
+        setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
     }
 
     public void displayUnreadThreads (boolean refresh)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
-        setContents(createHeader(CMsgs.mmsgs.groupUnreadThreadsHeader()), threads);
+        setContents(createHeader(CMsgs.mmsgs.groupUnreadThreadsHeader(), null), threads);
     }
 
     public void startNewThread (int groupId)
@@ -39,18 +40,17 @@ public class ForumPanel extends TitledListPanel
         setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, isManager));
     }
 
-    protected FlexTable createHeader (String title)
+    protected SmartTable createHeader (String title, SearchBox.Listener listener)
     {
-        FlexTable header = new FlexTable();
-        header.setCellSpacing(0);
-        header.setCellPadding(0);
+        SmartTable header = new SmartTable(0, 0);
         header.setWidth("100%");
-        header.setText(0, 0, title);
-        header.getFlexCellFormatter().setStyleName(0, 0, "Title");
-        header.setText(0, 1, CMsgs.mmsgs.groupThreadPosts());
-        header.getFlexCellFormatter().setStyleName(0, 1, "Posts");
-        header.setText(0, 2, CMsgs.mmsgs.groupThreadLastPost());
-        header.getFlexCellFormatter().setStyleName(0, 2, "LastPost");
+        int col = 0;
+        header.setText(0, col++, title, 1, "Title");
+        if (listener != null) {
+            header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
+        }
+        header.setText(0, col++, CMsgs.mmsgs.groupThreadPosts(), 1, "Posts");
+        header.setText(0, col++, CMsgs.mmsgs.groupThreadLastPost(), 1, "LastPost");
         return header;
     }
 

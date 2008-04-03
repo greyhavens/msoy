@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -29,6 +30,8 @@ import com.threerings.msoy.fora.data.ForumThread;
     @Index(name="ixGroupId", fields={ ForumThreadRecord.GROUP_ID }),
     @Index(name="ixMostRecentPostId", fields={ ForumThreadRecord.MOST_RECENT_POST_ID }),
     @Index(name="ixSticky", fields={ ForumThreadRecord.STICKY })
+}, fullTextIndexes={
+    @FullTextIndex(name=ForumThreadRecord.FTS_SUBJECT, fieldNames={ ForumThreadRecord.SUBJECT })
 })
 public class ForumThreadRecord extends PersistentRecord
 {
@@ -97,9 +100,12 @@ public class ForumThreadRecord extends PersistentRecord
         new ColumnExp(ForumThreadRecord.class, STICKY);
     // AUTO-GENERATED: FIELDS END
 
+    /** The identifier for the full text search index on {@link #subject} */
+    public static final String FTS_SUBJECT = "SUBJECT";
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** A unique identifier for this forum thread. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

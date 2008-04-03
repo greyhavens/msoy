@@ -21,19 +21,23 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.SearchBox;
 
 /**
  * Displays a list of threads.
  */
 public class ThreadListPanel extends PagedGrid
+    implements SearchBox.Listener
 {
     public ThreadListPanel (ForumPanel parent)
     {
@@ -46,13 +50,31 @@ public class ThreadListPanel extends PagedGrid
     public void displayGroupThreads (int groupId, ForumModels fmodels)
     {
         _groupId = groupId;
+        _fmodels = fmodels;
         setModel(fmodels.getGroupThreads(groupId), 0);
     }
 
     public void displayUnreadThreads (ForumModels fmodels, boolean refresh)
     {
         _groupId = 0;
+        _fmodels = fmodels;
         setModel(fmodels.getUnreadThreads(refresh), 0);
+    }
+
+    // from interface SearchBox.Listener
+    public void search (String search)
+    {
+        CMsgs.forumsvc.findThreads(CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                setModel(new SimpleDataModel((List)result), 0);
+            }
+        });
+    }
+
+    // from interface SearchBox.Listener
+    public void clearSearch ()
+    {
+        setModel(_fmodels.getGroupThreads(_groupId), 0);
     }
 
     // @Override // from PagedGrid
@@ -119,11 +141,12 @@ public class ThreadListPanel extends PagedGrid
             _refresh.setVisible(false);
             _refresh.setEnabled(false);
         } else {
-            // we're displaying unread threads
             _startThread.setVisible(false);
             _startThread.setEnabled(false);
-            _refresh.setVisible(true);
-            _refresh.setEnabled(true);
+            if (_model instanceof ForumModels.UnreadThreads) {
+                _refresh.setVisible(true);
+                _refresh.setEnabled(true);
+            }
         }
     }
 
@@ -201,6 +224,9 @@ public class ThreadListPanel extends PagedGrid
     /** The forum panel in which we're hosted. */
     protected ForumPanel _parent;
 
+    /** Provides access to our forum models. */
+    protected ForumModels _fmodels;
+
     /** Contains the id of the group whose threads we are displaying or zero. */
     protected int _groupId;
 
@@ -218,6 +244,9 @@ public class ThreadListPanel extends PagedGrid
 
     /** The number of threads displayed per page (TODO: base this on browser height). */
     protected static final int THREADS_PER_PAGE = 10;
+
+    /** The maximum number of thread search results. */
+    protected static final int MAX_RESULTS = 20;
 
     /** Images displayed next to threads that have special flags. */
     protected static final String[] FLAG_IMAGES = { "announce", "sticky", "locked" };

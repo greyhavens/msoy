@@ -91,7 +91,7 @@ public class ForumMessageRecord extends PersistentRecord
         new ColumnExp(ForumMessageRecord.class, MESSAGE);
     // AUTO-GENERATED: FIELDS END
 
-    /** The identifier for the full text search index on message */
+    /** The identifier for the full text search index on {@link #message} */
     public static final String FTS_MESSAGE = "MESSAGE";
 
     /** Increment this value if you modify the definition of this persistent object in a way that
