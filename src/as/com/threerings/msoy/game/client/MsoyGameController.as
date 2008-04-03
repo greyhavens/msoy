@@ -31,7 +31,6 @@ public class MsoyGameController extends WhirledGameController
         _occReporter.didLeavePlace(plobj);
     }
 
-
     // from WhirledGameController
     override public function backToWhirled (showLobby :Boolean = false) :void
     {
