@@ -1,3 +1,4 @@
+//
 // $Id$
 
 package com.threerings.msoy.world.client {
