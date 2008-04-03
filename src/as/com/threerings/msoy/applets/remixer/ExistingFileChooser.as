@@ -28,7 +28,7 @@ import com.threerings.flex.GridUtil;
 
 import com.whirled.remix.data.EditableDataPack;
 
-import com.threerings.msoy.applets.image.ImageManipulator;
+import com.threerings.msoy.applets.image.DisplayCanvas;
 
 public class ExistingFileChooser extends TitleWindow
 {
@@ -62,7 +62,7 @@ public class ExistingFileChooser extends TitleWindow
     {
         var bytes :ByteArray = pack.getFileByFilename(filename);
 
-        var image :ImageManipulator = new ImageManipulator(100, 100);
+        var image :DisplayCanvas = new DisplayCanvas(350, 350);
         image.setImage(bytes);
 
         // we wrap the array arg of a command button in another array

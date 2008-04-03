@@ -7,13 +7,9 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.CapsStyle;
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.JointStyle;
 import flash.display.LineScaleMode;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display.PixelSnapping;
 import flash.display.Shape;
 import flash.display.Sprite;
 
@@ -31,9 +27,6 @@ import flash.system.LoaderContext;
 
 import flash.utils.ByteArray;
 
-import mx.containers.Canvas;
-
-import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 
 import com.adobe.images.JPGEncoder; 
@@ -42,11 +35,6 @@ import com.adobe.images.PNGEncoder;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.GraphicsUtil;
-
-/** 
- * Dispatched when the size of the image is known.
- */
-[Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
 
 /** 
  * Dispatched when a color is selected.
@@ -59,11 +47,12 @@ import com.threerings.flash.GraphicsUtil;
 [Event(name="UndoRedoChange", type="com.threerings.util.ValueEvent")]
 
 /**
- * Allows primitive editing of an image.
+ * Allows primitive editing of an image. Note that this is merely the model/view, the
+ * controller is ImageManipulator.
  */
-public class EditCanvas extends Canvas
+public class EditCanvas extends DisplayCanvas
 {
-    public static const SIZE_KNOWN :String = "SizeKnown";
+    public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
 
     public static const COLOR_SELECTED :String = "ColorSelected";
 
@@ -81,16 +70,13 @@ public class EditCanvas extends Canvas
     public static const SELECT :int = 3;
     public static const MOVE :int = 4;
 
-    public function EditCanvas (maxW :int, maxH:int, editMode :Boolean)
+    public function EditCanvas (maxW :int, maxH :int, editMode :Boolean)
     {
-        this.maxWidth = maxW;
-        this.maxHeight = maxH;
+        super(maxW, maxH);
         if (editMode) {
             horizontalScrollPolicy = ScrollPolicy.ON;
             verticalScrollPolicy = ScrollPolicy.ON;
         }
-
-        _editor = new Sprite();
 
         _paintLayer = new Sprite();
         _scaleLayer = new Sprite();
@@ -110,21 +96,13 @@ public class EditCanvas extends Canvas
         _rotLayer.addChild(_unRotLayer);
         _scaleLayer.addChild(_rotLayer);
 
-        _editor.addChild(_scaleLayer);
-        _editor.addChild(_hudLayer);
+        _baseLayer.addChild(_scaleLayer);
+        _baseLayer.addChild(_hudLayer);
 
         _hudLayer.addChild(_crop);
 
         _paintLayer.addChild(_brush);
         _paintLayer.addChild(_dropper);
-
-        _holder = new ImageHolder(_editor);
-
-        var ho :UIComponent = new UIComponent();
-        ho.addChild(_holder.background);
-        ho.includeInLayout = false;
-        addChild(ho);
-        addChild(_holder);
 
         _paintInsertionOffset = _paintLayer.numChildren;
     }
@@ -210,14 +188,12 @@ public class EditCanvas extends Canvas
     }
 
     /**
-     * Clear any currently displayed image.
+     * @inheritDoc
      */
-    public function clearImage () :void
+    override public function clearImage () :void
     {
-        _bytes = null;
-        _bitmapData = null;
-        _width = 0;
-        _height = 0;
+        super.clearImage();
+
         _paintPoint = null;
         setScale(1);
         setZoom(1);
@@ -234,73 +210,15 @@ public class EditCanvas extends Canvas
         _paintLayer.graphics.clear();
         _hudLayer.graphics.clear();
         clearSelection();
-
-        if (_image != null) {
-            _paintLayer.removeChild(_image);
-            if (_image is Loader) {
-                var loader :Loader = _image as Loader;
-                try {
-                    loader.close();
-                } catch (err :Error) {
-                }
-                loader.unload();
-            }
-            _image = null;
-        }
-
-        this.width = 0;
-        this.height = 0;
     }
 
     /**
-     * Set the image to display.
-     *
-     * @param image may be a Bitmap, BitmapData, ByteArray, Class, URL (string), URLRequest
+     * @inheritDoc
      */
-    public function setImage (image :Object) :void
+    override public function setImage (image :Object) :void
     {
-        clearImage();
+        super.setImage(image);
         configureMode();
-        if (image == null) {
-            return;
-        }
-
-        if (image is String) {
-            image = new URLRequest(image as String);
-        } else if (image is Class) {
-            image = new (image as Class)();
-        }
-        // no else here
-        if (image is BitmapData) {
-            // TODO: explore PixelSnapping options
-            image = new Bitmap(image as BitmapData, PixelSnapping.ALWAYS, true);
-        }
-        if (image is Bitmap) {
-            var bmp :BitmapData = (image as Bitmap).bitmapData;
-            if (bmp != null) {
-                sizeKnown(bmp.width, bmp.height);
-            }
-
-        } else if ((image is URLRequest) || (image is ByteArray)) {
-            var notBytes :Boolean = (image is URLRequest);
-            var loader :Loader = new Loader();
-            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleImageLoadComplete);
-            // TODO: error listeners
-            var lc :LoaderContext = new LoaderContext(notBytes, new ApplicationDomain(null));
-            if (notBytes) {
-                loader.load(image as URLRequest, lc);
-            } else {
-                _bytes = image as ByteArray;
-                loader.loadBytes(_bytes, lc);
-            }
-            image = loader;
-        }
-        if (image is DisplayObject) {
-            _image = image as DisplayObject;
-            _paintLayer.addChildAt(_image, 0);
-        } else {
-            throw new Error("Unknown image source: " + image);
-        }
     }
 
     /**
@@ -372,17 +290,9 @@ public class EditCanvas extends Canvas
         updateBrush();
     }
 
-    protected function sizeKnown (width :Number, height :Number) :void
+    override protected function sizeKnown (width :Number, height :Number) :void
     {
-        _width = width;
-        _height = height;
-
-        _holder.width = width;
-        _holder.height = height;
-
-        // un-fucking believable
-        this.width = Math.min(this.maxWidth, width);
-        this.height = Math.min(this.maxHeight, height);
+        super.sizeKnown(width, height);
 
         _rotLayer.x = _width/2;
         _rotLayer.y = _height/2;
@@ -401,13 +311,6 @@ public class EditCanvas extends Canvas
         g.endFill();
 
         configureMode();
-        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _width, _height ]));
-    }
-
-    protected function handleImageLoadComplete (event :Event) :void
-    {
-        var li :LoaderInfo = event.target as LoaderInfo;
-        sizeKnown(li.width, li.height);
     }
 
     protected function configureMode () :void
@@ -683,9 +586,10 @@ public class EditCanvas extends Canvas
         dispatchEvent(new ValueEvent(UNDO_REDO_CHANGE, null));
     }
 
-    protected var _holder :ImageHolder;
-
-    protected var _editor :Sprite;
+    override protected function getImageLayer () :Sprite
+    {
+        return _paintLayer;
+    }
 
     /** Layers that contain things. */
     protected var _paintLayer :Sprite;
@@ -714,14 +618,6 @@ public class EditCanvas extends Canvas
 
     protected var _paintPoint :Point;
 
-    protected var _bitmapData :BitmapData;
-    protected var _bytes :ByteArray;
-
-    protected var _image :DisplayObject;
-
-    protected var _width :int;
-    protected var _height :int;
-
     protected var _scale :Number = 1;
 
     protected var _paintInsertionOffset :int;
@@ -731,55 +627,11 @@ public class EditCanvas extends Canvas
     protected var _brushSize :Number = 1;
     protected var _brushCircle :Boolean = true;
     protected var _forceCrop :Boolean = false;
-
-    /** The maximum number of undos. */
-    protected static const MAX_UNDOS :int = 1000;
 }
 }
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
-
-import mx.core.UIComponent;
-
-class ImageHolder extends UIComponent
-{
-    public function ImageHolder (toBeHeld :DisplayObject)
-    {
-        _background = new Shape();
-        addChild(toBeHeld);
-    }
-
-    public function get background () :DisplayObject
-    {
-        return _background;
-    }
-
-    override public function setActualSize (w :Number, h :Number) :void
-    {
-        super.setActualSize(w, h);
-
-        var g :Graphics = _background.graphics;
-        g.clear();
-        var dark :Boolean;
-        const GRID_SIZE :int = 10;
-        for (var yy :int = 0; yy < h; yy += GRID_SIZE) {
-            dark = ((yy % (GRID_SIZE * 2)) == 0);
-            for (var xx :int = 0; xx < w; xx += GRID_SIZE) {
-                g.beginFill(dark ? DARK_BKG : LIGHT_BKG);
-                g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
-                g.endFill();
-                dark = !dark;
-            }
-        }
-    }
-
-    protected var _background :Shape;
-
-    protected static const DARK_BKG :uint = 0x999999; //0xE3E3E3;
-    protected static const LIGHT_BKG :uint = 0xCCCCCC; //0xF3F3F3;
-}
 
 class DropperCursor extends Shape
 {

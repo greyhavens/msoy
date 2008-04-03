@@ -23,6 +23,8 @@ import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
 
+import com.adobe.images.PNGEncoder;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ValueEvent;
 
@@ -35,7 +37,7 @@ import com.threerings.flex.PopUpUtil;
 import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
-import com.threerings.msoy.applets.image.ImageManipulator;
+import com.threerings.msoy.applets.image.DisplayCanvas;
 
 import com.threerings.msoy.applets.upload.Uploader;
 
@@ -83,8 +85,8 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new ImageManipulator(450, 450);
-        _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
+        _image = new DisplayCanvas(450, 450);
+        _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
         previewBox.addChild(_image);
         _label = new Label();
 
@@ -112,16 +114,17 @@ public class PopupFilePreview extends TitleWindow
 
     public function setImage (filename :String, bytes :ByteArray) :void
     {
-        setFilename(filename, bytes);
+        if (filename == null) {
+            _filename = null;
+            _label.text = "<no file>";
+
+        } else {
+            _filename = _ctx.createFilename(filename, bytes);
+            _label.text = _filename;
+        }
+        _bytes = bytes;
         _image.setImage(bytes);
         _ok.enabled = (bytes != null);
-    }
-
-    public function setBitmap (filename :String, bitmapData :BitmapData) :void
-    {
-        setFilename(filename);
-        _image.setImage(bitmapData);
-        _ok.enabled = (bitmapData != null);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -133,16 +136,9 @@ public class PopupFilePreview extends TitleWindow
 
     protected function close (save :Boolean) :void
     {
-        var saved :Boolean = false;
-        if (save) {
-            var array :Array = _image.getImage();
-            var ba :ByteArray = ByteArray(array[0]);
-            if (ba != null) {
-                _parent.updateValue(_filename, ba);
-                saved = true;
-            }
-        }
-        if (!saved) {
+        if (save && _bytes != null) {
+            _parent.updateValue(_filename, _bytes);
+        } else {
             _parent.updateValue(null, null);
         }
 
@@ -178,7 +174,7 @@ public class PopupFilePreview extends TitleWindow
     protected function handleChooseCamera () :void
     {
         new CameraSnapshotControl(this, function (bitmapData :BitmapData) :void {
-            setBitmap("cameragrab.jpg", bitmapData);
+            setImage("cameragrab.png", PNGEncoder.encode(bitmapData));
         });
     }
 
@@ -213,18 +209,6 @@ public class PopupFilePreview extends TitleWindow
         return box;
     }
 
-    protected function setFilename (filename :String, bytes :ByteArray = null) :void
-    {
-        if (filename == null) {
-            _filename = null;
-            _label.text = "<no file>";
-
-        } else {
-            _filename = _ctx.createFilename(filename, bytes);
-            _label.text = _filename;
-        }
-    }
-
     protected function getFilters () :Array
     {
         // Note: returning one filter is preferable to returning many because
@@ -247,10 +231,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function doEdit (entry :Object) :void
     {
-        var img :Array = _image.getImage();
-        var ba :ByteArray = ByteArray(img[0]);
-
-        var editor :PopupImageEditor = new PopupImageEditor(ba,
+        var editor :PopupImageEditor = new PopupImageEditor(_bytes,
             Number(entry.width), Number(entry.height));
         editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
         editor.title = _name;
@@ -279,8 +260,10 @@ public class PopupFilePreview extends TitleWindow
 
     protected var _ok :CommandButton;
 
-    protected var _image :ImageManipulator;
+    protected var _image :DisplayCanvas;
 
     protected var _label :Label;
+
+    protected var _bytes :ByteArray;
 }
 }
