@@ -14,11 +14,9 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -35,11 +33,13 @@ import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.SearchBox;
 
 /**
  * Displays a thread header and either its messages or a post creation or editing panel.
  */
 public class ThreadPanel extends TitledListPanel
+    implements SearchBox.Listener
 {
     public ThreadPanel ()
     {
@@ -48,13 +48,7 @@ public class ThreadPanel extends TitledListPanel
         _theader.setWidget(0, 0, MsoyUI.createBackArrow(), 1, "Back");
         _theader.setText(0, 1, "", 1, "Whirled");
         _theader.setText(0, 2, "...", 1, "Title");
-        _theader.setWidget(0, 3, _search = new TextBox(), 1, "Search");
-        _search.setWidth("100px");
-        _search.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                searchThread(_search.getText().trim());
-            }
-        }));
+        _theader.setWidget(0, 3, _search = new SearchBox(this), 1, "Search");
     }
 
     public void showThread (ForumModels fmodels, int threadId, int page, int scrollToId)
@@ -114,18 +108,20 @@ public class ThreadPanel extends TitledListPanel
         setContents(CMsgs.mmsgs.newIssue(), new EditIssuePanel(this, message));
     }
 
-    protected void searchThread (String search)
+    // from interface SearchBox.Listener
+    public void search (String query)
     {
-        if (search.length() == 0) {
-            _mpanel.restoreThread();
-            return;
-        }
-
-        CMsgs.forumsvc.findMessages(CMsgs.ident, _threadId, search, MAX_RESULTS, new MsoyCallback() {
+        CMsgs.forumsvc.findMessages(CMsgs.ident, _threadId, query, MAX_RESULTS, new MsoyCallback() {
             public void onSuccess (Object result) {
                 _mpanel.setModel(new SimpleDataModel((List)result), 0);
             }
         });
+    }
+
+    // from interface SearchBox.Listener
+    public void clearSearch ()
+    {
+        _mpanel.restoreThread();
     }
 
     protected void replyPosted (ForumMessage message)
@@ -331,7 +327,7 @@ public class ThreadPanel extends TitledListPanel
     protected int _threadId;
     protected ForumThread _thread;
     protected SmartTable _theader;
-    protected TextBox _search;
+    protected SearchBox _search;
     protected MessagesPanel _mpanel;
 
     protected static final int MAX_RESULTS = 20;

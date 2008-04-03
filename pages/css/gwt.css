@@ -1091,3 +1091,17 @@ img, embed, applet, object {
 .flashLink img {
   border: 0;
 }
+
+.searchBox {
+  border: 1px solid black;
+  background: #E9F6FB;
+  padding: 0px 2px;
+}
+
+.searchBox .gwt-TextBox {
+  border: none;
+}
+
+.searchBox .closeButton {
+  margin-top: 3px;
+}
