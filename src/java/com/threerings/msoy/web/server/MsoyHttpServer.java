@@ -61,6 +61,7 @@ public class MsoyHttpServer extends Server
         context.addServlet(new ServletHolder(new EmbedRouterServlet()), "/embed/*");
         context.addServlet(new ServletHolder(new StatusServlet()), "/status/*");
         context.addServlet(new ServletHolder(new MyStatsServlet()), "/mystats/*");
+        context.addServlet(new ServletHolder(new RSSServlet()), "/rss/*");
         context.addServlet(new ServletHolder(new MediaProxyServlet()),
                            DeploymentConfig.PROXY_PREFIX + "*");
 

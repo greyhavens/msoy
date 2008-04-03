@@ -60,6 +60,19 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Loads the latest threads for the specified group.  Ordered by threadId
+     * (ie: creation time)
+     */
+    public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
+        throws PersistenceException
+    {
+        return findAll(ForumThreadRecord.class,
+                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
+                       new Limit(0, count),
+                       OrderBy.descending(ForumThreadRecord.THREAD_ID_C));
+    }
+
+    /**
      * Loads the total number of threads in the specified group.
      */
     public int loadThreadCount (int groupId)
