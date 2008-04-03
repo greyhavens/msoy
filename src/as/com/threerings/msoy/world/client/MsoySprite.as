@@ -411,7 +411,9 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
-     * Callback function.
+     * Called to inform this sprite that the mouse has been clicked on it. We don't use the normal
+     * Flash click handling because it doesn't do the right thing with transparent pixels, so
+     * RoomController does its own custom hist testing and calls this method manually.
      */
     public function mouseClick (event :MouseEvent) :void
     {
