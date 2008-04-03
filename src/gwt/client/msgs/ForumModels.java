@@ -147,14 +147,12 @@ public class ForumModels
     /** A data model that provides a particular thread's messages. */
     public static class ThreadMessages extends ServiceBackedDataModel
     {
-        public ThreadMessages (int threadId) {
+        public ThreadMessages (int threadId, ForumThread thread) {
             _threadId = threadId;
-        }
-
-        public ThreadMessages (ForumThread thread) {
-            _threadId = thread.threadId;
-            _thread = thread;
-            _count = _thread.posts;
+            if (thread != null) {
+                _thread = thread;
+                _count = _thread.posts;
+            }
         }
 
         public ForumThread getThread () {

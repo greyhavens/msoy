@@ -74,13 +74,14 @@ public class IssuePanel extends TitledListPanel
             _ipanel = new EditIssuePanel(this);
         }
         _owned = owned > 0;
-        Issue issue = _imodels.findIssue(issueId);
 
+        Issue issue = _imodels.findIssue(issueId);
         if (issue != null) {
             _state = issue.state;
             _type = issue.type;
             _ipanel.setIssue(issue, messageId, page);
             setContents(CMsgs.mmsgs.viewIssue(issue.description), _ipanel, true);
+
         } else {
             CMsgs.issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback() {
                 public void onSuccess (Object result) {

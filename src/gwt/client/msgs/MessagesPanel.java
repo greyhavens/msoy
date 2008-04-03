@@ -40,7 +40,8 @@ import client.util.PromptPopup;
  */
 public class MessagesPanel extends PagedGrid
 {
-    public MessagesPanel (ThreadPanel parent, int scrollToId)
+    public MessagesPanel (ThreadPanel parent, ForumModels.ThreadMessages model,
+                          int page, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
@@ -50,6 +51,14 @@ public class MessagesPanel extends PagedGrid
 
         _parent = parent;
         _scrollToId = scrollToId;
+        _tmodel = model;
+
+        setModel(_tmodel, page);
+    }
+
+    public void restoreThread ()
+    {
+        setModel(_tmodel, 0);
     }
 
     public void refreshDisplay ()
@@ -60,28 +69,13 @@ public class MessagesPanel extends PagedGrid
     // @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CMsgs.mmsgs.noMessages();
+        return (_model == _tmodel) ? CMsgs.mmsgs.noMessages() : CMsgs.mmsgs.noMatches();
     }
 
     // @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always show our navigation for consistency
-    }
-
-    // @Override // from PagedGrid
-    protected Widget createWidget (Object item)
-    {
-        ForumMessage msg = (ForumMessage)item;
-        ThreadMessagePanel panel = new ThreadMessagePanel(
-            ((ForumModels.ThreadMessages)_model).getThread(), msg);
-        if (msg.messageId == _scrollToId) {
-            _scrollToId = 0;
-            _scrollToPanel = panel;
-        } else if (_scrollToPanel == null) {
-            _scrollToPanel = panel;
-        }
-        return panel;
     }
 
     // @Override // from PagedGrid
@@ -125,26 +119,49 @@ public class MessagesPanel extends PagedGrid
     // @Override // from PagedGrid
     protected void displayResults (int start, int count, List list)
     {
-        ForumModels.ThreadMessages tmodel = (ForumModels.ThreadMessages)_model;
-        _parent.gotThread(tmodel.getThread());
-        _postReply.setEnabled(tmodel.canPostReply() && !tmodel.getThread().isLocked());
-        _editFlags.setEnabled(tmodel.isManager());
+        // if we're displaying results from our main thread model, update our ephemera; this must
+        // be done before the call to super because super creates our widgets and those check our
+        // ephmera to determine how they lay themselves out
+        if (_model == _tmodel) {
+            _parent.gotThread(_tmodel.getThread());
+            _postReply.setEnabled(_tmodel.canPostReply() && !_tmodel.getThread().isLocked());
+            _editFlags.setEnabled(_tmodel.isManager());
+        }
 
         super.displayResults(start, count, list);
 
-        DeferredCommand.addCommand(new Command() {
-            public void execute () {
-                Frame.ensureVisible(_scrollToPanel);
-                _scrollToPanel = null;
-            }
-        });
+        if (_scrollToPanel != null) {
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    Frame.ensureVisible(_scrollToPanel);
+                    _scrollToPanel = null;
+                }
+            });
+        }
+    }
+
+    // @Override // from PagedGrid
+    protected Widget createWidget (Object item)
+    {
+        ForumMessage msg = (ForumMessage)item;
+        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), msg);
+        if (msg.messageId == _scrollToId) {
+            _scrollToId = 0;
+            _scrollToPanel = panel;
+        } else if (_scrollToPanel == null) {
+            _scrollToPanel = panel;
+        }
+        return panel;
     }
 
     protected void replyPosted (ForumMessage message)
     {
         MsoyUI.info(CMsgs.mmsgs.msgReplyPosted());
-        ((ForumModels.ThreadMessages)_model).appendItem(message);
-        displayPage(_page, true);
+        _tmodel.appendItem(message);
+        if (_model == _tmodel) {
+            refreshDisplay();
+        }
+        // TODO: what to do if you post a reply while searching?
     }
 
     protected Command deletePost (final ForumMessage message)
@@ -276,6 +293,10 @@ public class MessagesPanel extends PagedGrid
 
     /** The thread panel in which we're hosted. */
     protected ThreadPanel _parent;
+
+    /** Our thread messages model. We keep this around because we may temporarily replace it with a
+     * search model if the user does a search. */
+    protected ForumModels.ThreadMessages _tmodel;
 
     /** A message to scroll into view when we first receive our messages. */
     protected int _scrollToId;

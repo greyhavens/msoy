@@ -77,6 +77,14 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
+     * Searches the messages in a particular thread.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage>
+     */
+    public List findMessages (WebIdent ident, int threadId, String search, int limit)
+        throws ServiceException;
+
+    /**
      * Creates a new thread for the specified group.
      */
     public ForumThread createThread (WebIdent ident, int groupId, int flags,

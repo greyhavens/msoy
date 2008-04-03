@@ -30,6 +30,12 @@ public interface ForumServiceAsync
                               int count, boolean needTotalCount, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ForumService#findMessages}.
+     */
+    public void findMessages (WebIdent ident, int threadId, String search, int limit,
+                              AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ForumService#createThread}.
      */
     public void createThread (WebIdent ident, int groupId, int flags, String subject, String message,

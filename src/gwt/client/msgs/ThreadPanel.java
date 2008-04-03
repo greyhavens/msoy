@@ -4,6 +4,7 @@
 package client.msgs;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -13,10 +14,14 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
@@ -28,6 +33,7 @@ import client.shell.MessagePanel;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -35,22 +41,28 @@ import client.util.MsoyUI;
  */
 public class ThreadPanel extends TitledListPanel
 {
-    public ThreadPanel (Page parent, int threadId, int page, int scrollToId, ForumModels fmodels)
+    public ThreadPanel ()
+    {
+        _theader = new SmartTable(0, 0);
+        _theader.setWidth("100%");
+        _theader.setWidget(0, 0, MsoyUI.createBackArrow(), 1, "Back");
+        _theader.setText(0, 1, "", 1, "Whirled");
+        _theader.setText(0, 2, "...", 1, "Title");
+        _theader.setWidget(0, 3, _search = new TextBox(), 1, "Search");
+        _search.setWidth("100px");
+        _search.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
+            public void onClick (Widget sender) {
+                searchThread(_search.getText().trim());
+            }
+        }));
+    }
+
+    public void showThread (ForumModels fmodels, int threadId, int page, int scrollToId)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(this, scrollToId);
-        _parent = parent;
-
-        // look for our thread in the resolved group thread models
-        ForumThread thread = fmodels.findThread(threadId);
-
-        // if we found our thread, use that to avoid making the server do extra work and so that we
-        // keep this ThreadRecord properly up to date
-        if (thread != null) {
-            _mpanel.setModel(new ForumModels.ThreadMessages(thread), page);
-        } else {
-            _mpanel.setModel(new ForumModels.ThreadMessages(threadId), page);
-        }
+        _mpanel = new MessagesPanel(
+            this, new ForumModels.ThreadMessages(threadId, fmodels.findThread(threadId)),
+            page, scrollToId);
         showMessages();
     }
 
@@ -61,12 +73,9 @@ public class ThreadPanel extends TitledListPanel
 
     public void showMessages (boolean refresh)
     {
-        setContents(getThreadTitle(), _mpanel, true);
+        setContents(_theader, _mpanel);
         if (refresh) {
             _mpanel.refreshDisplay();
-        }
-        if (_thread != null) { // if we already have our group, restore the group link
-            updateGroupLink();
         }
     }
 
@@ -78,8 +87,10 @@ public class ThreadPanel extends TitledListPanel
     public void gotThread (ForumThread thread)
     {
         _thread = thread;
-        updateTitle(getThreadTitle());
-        updateGroupLink();
+        _theader.setText(0, 2, _thread.subject);
+        _theader.setWidget(0, 1, Application.createLink(
+                               _thread.group + ":", Page.WHIRLEDS,
+                               Args.compose("f", _thread.group.getGroupId())));
     }
 
     public void editFlags ()
@@ -95,7 +106,7 @@ public class ThreadPanel extends TitledListPanel
 
     public void editPost (ForumMessage message, AsyncCallback callback)
     {
-        setContents(getThreadTitle(), new PostEditorPanel(message, callback));
+        setContents(_thread.subject, new PostEditorPanel(message, callback));
     }
 
     public void newIssue (ForumMessage message)
@@ -103,27 +114,24 @@ public class ThreadPanel extends TitledListPanel
         setContents(CMsgs.mmsgs.newIssue(), new EditIssuePanel(this, message));
     }
 
-    protected void updateGroupLink ()
+    protected void searchThread (String search)
     {
-        setRightBits(Application.createLink(_thread.group.toString(), Page.WHIRLEDS,
-                Args.compose("f", _thread.group.getGroupId())));
+        if (search.length() == 0) {
+            _mpanel.restoreThread();
+            return;
+        }
+
+        CMsgs.forumsvc.findMessages(CMsgs.ident, _threadId, search, MAX_RESULTS, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                _mpanel.setModel(new SimpleDataModel((List)result), 0);
+            }
+        });
     }
 
     protected void replyPosted (ForumMessage message)
     {
         _mpanel.replyPosted(message);
         showMessages();
-    }
-
-    protected String getThreadTitle ()
-    {
-        if (_thread == null) {
-            return "...";
-        } else if (_thread.isAnnouncement()) {
-            return CMsgs.mmsgs.threadAnnouncementHeader(_thread.subject);
-        } else {
-            return CMsgs.mmsgs.threadNormalHeader(_thread.subject);
-        }
     }
 
     protected static boolean checkMessageText (String text)
@@ -322,6 +330,9 @@ public class ThreadPanel extends TitledListPanel
 
     protected int _threadId;
     protected ForumThread _thread;
+    protected SmartTable _theader;
+    protected TextBox _search;
     protected MessagesPanel _mpanel;
-    protected Page _parent;
+
+    protected static final int MAX_RESULTS = 20;
 }

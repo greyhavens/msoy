@@ -151,57 +151,35 @@ public class ForumServlet extends MsoyServiceServlet
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
             Group group = getGroup(ftr.groupId);
-            byte groupRank = getGroupRank(mrec, ftr.groupId);
-            if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
+            byte rank = getGroupRank(mrec, ftr.groupId);
+            if (!group.checkAccess(rank, Group.ACCESS_READ, 0)) {
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
 
-            // load up the requested set of messages
-            List<ForumMessageRecord> msgrecs = _forumRepo.loadMessages(threadId, offset, count);
-
-            // enumerate the posters and create member cards for them
-            IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-            IntSet posters = new ArrayIntSet();
-            for (ForumMessageRecord msgrec : msgrecs) {
-                posters.add(msgrec.posterId);
-            }
-            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(posters)) {
-                cards.put(mcrec.memberId, mcrec.toMemberCard());
-            }
-
-            // convert the messages to runtime format
             MessageResult result = new MessageResult();
-            List<ForumMessage> messages = Lists.newArrayList();
+
+            // fill in this caller's posting privileges and manager status
+            result.canPostReply = (mrec != null) && group.checkAccess(rank, Group.ACCESS_POST, 0);
+            result.isManager = (mrec != null && mrec.isSupport()) ||
+                (rank == GroupMembership.RANK_MANAGER);
+
+            // load up the messages, convert to runtime records, compute highest post id
+            List<ForumMessage> messages = resolveMessages(
+                _forumRepo.loadMessages(threadId, offset, count));
             int highestPostId = 0;
-            for (ForumMessageRecord msgrec : msgrecs) {
-                ForumMessage msg = msgrec.toForumMessage(cards);
-                messages.add(msg);
+            for (ForumMessage msg : messages) {
                 highestPostId = Math.max(highestPostId, msg.messageId);
             }
             result.messages = messages;
 
-            // fill in this caller's posting privileges
-            result.canPostReply = (mrec != null) &&
-                group.checkAccess(groupRank, Group.ACCESS_POST, 0);
-
-            // fill in our manager status
-            result.isManager = (mrec != null && mrec.isSupport()) ||
-                (groupRank == GroupMembership.RANK_MANAGER);
-
-            Map<Integer, GroupName> groups =
-                Collections.singletonMap(group.groupId, group.getName());
-
             if (needTotalCount) {
                 // convert the thread record to a runtime record if needed
-                MemberCard mrpCard = cards.get(ftr.mostRecentPosterId);
-                if (mrpCard == null) {
-                    result.thread = ftr.toForumThread(
-                        resolveNames(Collections.singletonList(ftr)), groups);
-                } else {
-                    IntMap<MemberName> names = IntMaps.newHashIntMap();
-                    names.put(ftr.mostRecentPosterId, mrpCard.name);
-                    result.thread = ftr.toForumThread(names, groups);
-                }
+                result.thread = ftr.toForumThread(
+                    Collections.singletonMap(ftr.mostRecentPosterId,
+                                             // we don't need their display name here
+                                             new MemberName("", ftr.mostRecentPosterId)),
+                    Collections.singletonMap(group.groupId, group.getName()));
+
                 // load up our last read post information
                 if (mrec != null) {
                     for (ReadTrackingRecord rtr : _forumRepo.loadLastReadPostInfo(
@@ -228,6 +206,55 @@ public class ForumServlet extends MsoyServiceServlet
                     ", tid=" + threadId + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    // from interface ForumService
+    public List<ForumMessage> findMessages (WebIdent ident, int threadId, String search, int limit)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+
+        try {
+            // make sure they have read access to this thread
+            ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
+            if (ftr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_THREAD);
+            }
+            Group group = getGroup(ftr.groupId);
+            byte rank = getGroupRank(mrec, ftr.groupId);
+            if (!group.checkAccess(rank, Group.ACCESS_READ, 0)) {
+                throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+            }
+
+            // do the search and return the results
+            return resolveMessages(_forumRepo.findMessages(threadId, search, limit));
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to find messages [for=" + who(mrec) +
+                    ", tid=" + threadId + ", search=" + search + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
+        throws PersistenceException
+    {
+        // enumerate the posters and create member cards for them
+        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        IntSet posters = new ArrayIntSet();
+        for (ForumMessageRecord msgrec : msgrecs) {
+            posters.add(msgrec.posterId);
+        }
+        for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(posters)) {
+            cards.put(mcrec.memberId, mcrec.toMemberCard());
+        }
+
+        // convert the messages to runtime format
+        List<ForumMessage> messages = Lists.newArrayList();
+        for (ForumMessageRecord msgrec : msgrecs) {
+            messages.add(msgrec.toForumMessage(cards));
+        }
+        return messages;
     }
 
     // from interface ForumService

@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -27,6 +28,8 @@ import com.threerings.msoy.fora.data.ForumMessage;
 @Entity(indices={
     @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED }),
     @Index(name="ixIssueId", fields={ ForumMessageRecord.ISSUE_ID })
+}, fullTextIndexes={
+    @FullTextIndex(name=ForumMessageRecord.FTS_MESSAGE, fieldNames={ ForumMessageRecord.MESSAGE })
 })
 public class ForumMessageRecord extends PersistentRecord
 {
@@ -88,9 +91,12 @@ public class ForumMessageRecord extends PersistentRecord
         new ColumnExp(ForumMessageRecord.class, MESSAGE);
     // AUTO-GENERATED: FIELDS END
 
+    /** The identifier for the full text search index on message */
+    public static final String FTS_MESSAGE = "MESSAGE";
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** This message's unique identifier. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

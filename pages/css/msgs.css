@@ -84,18 +84,24 @@
   border: 1px solid #3A86B7;
 }
 
+.titledListPanel .Header .Whirled {
+  padding-left: 5px;
+  width: 50px;
+}
+
+.titledListPanel .Header .Whirled a {
+  white-space: nowrap;
+  color: #FFFFFF;
+}
+
 .titledListPanel .Header .Title {
   padding: 5px;
   font-weight: bold;
 }
 
-.titledListPanel .Header .RightBits {
-  padding-right: 10px;
-}
-
-.titledListPanel .Header .RightBits a {
-  white-space: nowrap;
-  color: #FFFFFF;
+.titledListPanel .Header .Search {
+  width: 105px;
+  padding-right: 5px;
 }
 
 .titledListPanel .Header .Posts {
@@ -127,7 +133,7 @@
 }
 
 .titledListPanel .Header .Column {
-  width: 75px;
+  width: 50px;
   font-size: 12px;
   vertical-align: bottom;
   white-space: nowrap;
@@ -192,7 +198,7 @@
 }
 
 .issueSummaryPanel .State {
-  width: 75px;
+  width: 50px;
   font-size: 12px;
   text-align: center;
 }

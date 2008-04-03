@@ -110,6 +110,18 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Searches the messages in a particular thread for a search string.
+     */
+    public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
+        throws PersistenceException
+    {
+        And where = new And(new Equals(ForumMessageRecord.THREAD_ID_C, threadId),
+                            new FullTextMatch(ForumMessageRecord.class,
+                                              ForumMessageRecord.FTS_MESSAGE, search));
+        return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
+    }
+
+    /**
      * Loads the specified forum thread record. Returns null if no record exists for that id.
      */
     public ForumThreadRecord loadThread (int threadId)
