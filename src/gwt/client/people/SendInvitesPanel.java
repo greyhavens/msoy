@@ -34,6 +34,7 @@ import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedPopup;
+import client.util.ClickCallback;
 import client.util.DefaultTextListener;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -89,18 +90,32 @@ public class SendInvitesPanel extends VerticalPanel
         DefaultTextListener.configure(_webAddress, CPeople.msgs.inviteWebAddress());
         input.setText(row, 1, CPeople.msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
-        _webImport = new Button(CPeople.msgs.inviteWebImport(), new ClickListener() {
-            public void onClick (Widget widget) {
+        _webImport = new Button(CPeople.msgs.inviteWebImport());
+        new ClickCallback(_webImport) {
+            public boolean callService () {
                 if ("".equals(_webAddress.getText())) {
                     MsoyUI.info(CPeople.msgs.inviteEnterWebAddress());
-                } else if ("".equals(_webPassword.getText())) {
-                    MsoyUI.info(CPeople.msgs.inviteEnterWebPassword());
-                } else {
-                    _webImport.setEnabled(false);
-                    getWebAddresses();
+                    return false;
                 }
+                if ("".equals(_webPassword.getText())) {
+                    MsoyUI.info(CPeople.msgs.inviteEnterWebPassword());
+                    return false;
+                }
+                CPeople.profilesvc.getWebMailAddresses(
+                    CPeople.ident, _webAddress.getText(), _webPassword.getText(), this);
+                return true;
             }
-        });
+            public boolean gotResult (Object result) {
+                List addresses = (List)result;
+                for (int ii = 0; ii < addresses.size(); ii++) {
+                    EmailContact ec = (EmailContact)addresses.get(ii);
+                    _emailList.addItem(ec.name, ec.email);
+                }
+                _webAddress.setText(CPeople.msgs.inviteWebAddress());
+                _webPassword.setText("");
+                return true;
+            }
+        };
         input.setWidget(row++, 3, _webImport);
         input.setText(row++, 0, CPeople.msgs.inviteNote(), 4, "Tip");
         box.add(input);
@@ -233,28 +248,6 @@ public class SendInvitesPanel extends VerticalPanel
                 addPendingInvites(ir.pendingInvitations);
                 new ResultsPopup(invited, ir).show();
                 _emailList.clear();
-            }
-        });
-    }
-
-    protected void getWebAddresses ()
-    {
-        CPeople.profilesvc.getWebMailAddresses(
-                CPeople.ident, _webAddress.getText(), _webPassword.getText(),
-                new MsoyCallback() {
-            public void onSuccess (Object result) {
-                List addresses = (List)result;
-                for (int ii = 0; ii < addresses.size(); ii++) {
-                    EmailContact ec = (EmailContact)addresses.get(ii);
-                    _emailList.addItem(ec.name, ec.email);
-                }
-                _webImport.setEnabled(true);
-                _webAddress.setText("");
-                _webPassword.setText("");
-            }
-            public void onFailure (Throwable cause) {
-                MsoyUI.error(CPeople.serverError(cause));
-                _webImport.setEnabled(true);
             }
         });
     }
