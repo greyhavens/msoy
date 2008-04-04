@@ -11,6 +11,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 
@@ -65,6 +66,20 @@ public class Frame
 
         // set up the callbackd that our flash clients can call
         configureCallbacks();
+
+        // load up various JavaScript dependencies
+        for (int ii = 0; ii < JS_DEPENDS.length; ii += 2) {
+            Element e = DOM.getElementById(JS_DEPENDS[ii]);
+            if (e != null) {
+                DOM.setAttribute(e, "src", JS_DEPENDS[ii+1]);
+            }
+        }
+
+        // those setAttribute() calls seem to not return until their underlying JavaScript code is
+        // loaded, so we seem to be safe immediately initializing Google Analytics now
+        if (!initGoogleAnalytics()) {
+            CShell.log("Failed to initialize Google Analytics?");
+        }
 
         // create our header
         _header = new Header();
@@ -403,6 +418,20 @@ public class Frame
        };
     }-*/;
 
+    /**
+     * Initializes Google Anayltics and reports in.
+     */
+    protected static native boolean initGoogleAnalytics () /*-{
+        try {
+            var pageTracker = $wnd._gat._getTracker("UA-169037-5");
+            pageTracker._initData();
+            pageTracker._trackPageview();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }-*/;
+
     protected static native boolean isLinux () /*-{
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
@@ -666,6 +695,14 @@ public class Frame
 
     /** Our navigation menu images. */
     protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
+
+    /** Enumerates our Javascript dependencies. */
+    protected static final String[] JS_DEPENDS = {
+        "swfobject", "/js/swfobject.js",
+        "md5", "/js/md5.js",
+        "recaptcha", "http://api.recaptcha.net/js/recaptcha_ajax.js",
+        "googanal", "http://www.google-analytics.com/ga.js",
+    };
 
     // constants for our top-level elements
     protected static final String HEADER = "header";

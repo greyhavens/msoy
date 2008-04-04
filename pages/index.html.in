@@ -39,10 +39,11 @@
   </table>
   <iframe id="__gwt_historyFrame" style="width:0px;height:0px;border:0px;display:none"></iframe>
   <script language="javascript" src="/msoy/msoy.nocache.js"></script>
-  <script src="/js/swfobject.js" type="text/javascript"></script>
-  <script src="/js/md5.js" type="text/javascript"></script>
+  <script id="swfobject" type="text/javascript"></script>
+  <script id="md5" type="text/javascript"></script>
+  <script id="googanal" type="text/javascript"></script>
   @RECAPTCHA_IN@
-  <script src="http://api.recaptcha.net/js/recaptcha_ajax.js" type="text/javascript"></script>
+  <script id="recaptcha" type="text/javascript"></script>
   <script type="text/javascript">
     var recaptchaPublicKey = "@RECAPTCHA_KEY@";
   </script>
@@ -53,11 +54,5 @@
     <p>If you would like more information, please read our instructions on
     <a href="http://wiki.whirled.com/How_To_Enable_JavaScript">how to turn on JavaScript</a>.
   </blockquote></noscript>
-  <script type="text/javascript" src="http://www.google-analytics.com/ga.js"></script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-169037-5");
-    pageTracker._initData();
-    pageTracker._trackPageview();
-  </script>
 </body>
 </html>
