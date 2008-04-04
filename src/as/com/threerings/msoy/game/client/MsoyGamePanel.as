@@ -24,8 +24,8 @@ public class MsoyGamePanel extends WhirledGamePanel
 {
     public function MsoyGamePanel (gctx :GameContext, ctrl :MsoyGameController)
     {
+        _gctx = gctx; // set this before calling super
         super(gctx, ctrl);
-        _gctx = gctx;
     }
 
     // from MsoyPlaceView
@@ -100,7 +100,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override protected function createPlayerList () :PlayerList
     {
-        return new MsoyPlayerList(_ctx as GameContext);
+        return new MsoyPlayerList(_gctx);
     }
 
     // from WhirledGamePanel
