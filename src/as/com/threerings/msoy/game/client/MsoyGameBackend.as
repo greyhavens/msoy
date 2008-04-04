@@ -78,6 +78,8 @@ import com.threerings.flash.ImageUtil;
 
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
+// TODO: it's a little sketchy to return this to the usercode, as they could
+// call toggleBlocked or other things. Thought required here.
 class Headshot extends MsoyMediaContainer
 {
     public static const STATE_LOADING :int = 0;
