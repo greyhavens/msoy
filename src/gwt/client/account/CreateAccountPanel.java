@@ -62,8 +62,7 @@ public class CreateAccountPanel extends VerticalPanel
 
         // create the account information section
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
-        box.add(new LabeledBox(CAccount.msgs.createEmail(),
-                               _email = MsoyUI.createTextBox("", -1, 30),
+        box.add(new LabeledBox(CAccount.msgs.createEmail(), _email = new TextBox(),
                                CAccount.msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -99,8 +98,7 @@ public class CreateAccountPanel extends VerticalPanel
 
         // create the real you section
         box = new RoundBox(RoundBox.DARK_BLUE);
-        box.add(new LabeledBox(CAccount.msgs.createRealName(),
-                               _rname = MsoyUI.createTextBox("", -1, 30),
+        box.add(new LabeledBox(CAccount.msgs.createRealName(), _rname = new TextBox(),
                                CAccount.msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
@@ -111,7 +109,7 @@ public class CreateAccountPanel extends VerticalPanel
 
         // create the Whirled you section
         box = new RoundBox(RoundBox.DARK_BLUE);
-        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, 30);
+        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
         box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
                                CAccount.msgs.createDisplayNameTip()));

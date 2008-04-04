@@ -35,6 +35,10 @@
   position: relative;
 }
 
+.createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox {
+  width: 250px;
+}
+
 .createAccount .Tip {
   background: url(/images/ui/tip_balloon.png) no-repeat;
   position: absolute;
