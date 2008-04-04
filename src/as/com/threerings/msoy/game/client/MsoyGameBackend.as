@@ -75,15 +75,16 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 import com.threerings.flash.ImageUtil;
-import com.threerings.flash.MediaContainer;
 
-class Headshot extends MediaContainer
+import com.threerings.msoy.ui.MsoyMediaContainer;
+
+class Headshot extends MsoyMediaContainer
 {
     public static const STATE_LOADING :int = 0;
     public static const STATE_COMPLETE :int = 1;
     public static const STATE_ERROR :int = 2;
 
-    public var callbacks :Array = [ ];
+    public var callbacks :Array;
     public var state :int;
 
     function Headshot (url :String)
