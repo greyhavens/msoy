@@ -132,8 +132,12 @@ public class MsoyUI
         if (text != null) {
             area.setText(text);
         }
-        area.setCharacterWidth(width);
-        area.setVisibleLines(height);
+        if (width > 0) {
+            area.setCharacterWidth(width);
+        }
+        if (height > 0) {
+            area.setVisibleLines(height);
+        }
         return area;
     }
 
