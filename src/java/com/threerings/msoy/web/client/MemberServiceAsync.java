@@ -57,6 +57,11 @@ public interface MemberServiceAsync
     public void getInvitation (String inviteId, boolean viewing, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#removeInvitation}.
+     */
+    public void removeInvitation (WebIdent ident, String inviteId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#optOut}.
      */
     public void optOut (String inviteId, AsyncCallback callback);

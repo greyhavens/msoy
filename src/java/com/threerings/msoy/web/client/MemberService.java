@@ -55,28 +55,34 @@ public interface MemberService extends RemoteService
     /**
      * Return the invitation details for the given ident.
      */
-    public MemberInvites getInvitationsStatus (WebIdent ident) 
+    public MemberInvites getInvitationsStatus (WebIdent ident)
         throws ServiceException;
 
-    /** 
+    /**
      * Send out some of this person's available invites.
      *
      * @param anonymous if true, the invitations will not be from the caller but will be
      * anonymous. This is only allowed for admin callers.
      *
-     * @gwt.typeArgs addresses <java.lang.String>
+     * @gwt.typeArgs addresses <com.threerings.msoy.web.data.EmailContact>
      */
     public InvitationResults sendInvites (WebIdent ident, List addresses, String fromName,
                                           String customMessage, boolean anonymous)
         throws ServiceException;
 
-    /** 
+    /**
      * Grabs the details for an Invitation for the use of the InvitationDialog.
      *
      * @param viewing If true, this will ensure that the viewed date in the database has been set.
      * If false, the viewdate will be left alone.
      */
     public Invitation getInvitation (String inviteId, boolean viewing)
+        throws ServiceException;
+
+    /**
+     * Removes a pending invitation.
+     */
+    public void removeInvitation (WebIdent ident, String inviteId)
         throws ServiceException;
 
     /**

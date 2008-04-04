@@ -776,6 +776,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Delete the InvitationRecord that corresponds to the given unique code.
+     */
+    public void deleteInvite (String inviteId)
+        throws PersistenceException
+    {
+        delete(InvitationRecord.class, inviteId);
+    }
+
+    /**
      * Add an email address to the opt-out list.
      */
     public void addOptOutEmail (String email)

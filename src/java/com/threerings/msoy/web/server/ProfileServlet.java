@@ -48,6 +48,7 @@ import com.threerings.msoy.person.data.ProfileCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.GameRating;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.MemberCard;
@@ -228,7 +229,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from ProfileService
-    public List<String> getWebMailAddresses (WebIdent ident, String email, String password)
+    public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -244,10 +245,13 @@ public class ProfileServlet extends MsoyServiceServlet
                 throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
             }
             List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
-            List<String> results = Lists.newArrayList();
+            List<EmailContact> results = Lists.newArrayList();
 
             for (Contact contact : contacts) {
-                results.add(contact.getEmail());
+                EmailContact ec = new EmailContact();
+                ec.name = contact.getName();
+                ec.email = contact.getEmail();
+                results.add(ec);
             }
 
             return results;

@@ -30,6 +30,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
@@ -208,9 +209,13 @@ public class MemberServlet extends MsoyServiceServlet
         ir.results = new String[addresses.size()];
         List<Invitation> penders = Lists.newArrayList();
         for (int ii = 0; ii < addresses.size(); ii++) {
-            String email = (String)addresses.get(ii);
+            EmailContact contact = (EmailContact)addresses.get(ii);
+            if (contact.name.equals(contact.email)) {
+                contact.name = null;
+            }
             try {
-                penders.add(sendInvite(anonymous ? null : mrec, email, fromName, customMessage));
+                penders.add(sendInvite(anonymous ? null : mrec, contact.email, contact.name,
+                            fromName, customMessage));
             } catch (ServiceException se) {
                 ir.results[ii] = se.getMessage();
             }
@@ -247,6 +252,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
+    public void removeInvitation (WebIdent ident, String inviteId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, false);
+            if (invRec == null) {
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+
+            if (invRec.inviterId != mrec.memberId || invRec.inviteeId != 0) {
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+            MsoyServer.memberRepo.deleteInvite(inviteId);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "removeInvitation failed [inviteId=" + inviteId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from MemberService
     public void optOut (String inviteId)
         throws ServiceException
     {
@@ -263,8 +291,8 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * Helper function for {@link #sendInvites}.
      */
-    protected Invitation sendInvite (MemberRecord inviter, String email, String fromName,
-                                     String customMessage)
+    protected Invitation sendInvite (MemberRecord inviter, String email, String toName,
+                                     String fromName, String customMessage)
         throws ServiceException
     {
         try {
@@ -296,6 +324,9 @@ public class MemberServlet extends MsoyServiceServlet
             if (inviter != null) {
                 ctx.put("friend", fromName);
                 ctx.put("email", inviter.accountName);
+            }
+            if (!StringUtil.isBlank(toName)) {
+                ctx.put("name", toName);
             }
             if (!StringUtil.isBlank(customMessage)) {
                 ctx.put("custom_message", customMessage);

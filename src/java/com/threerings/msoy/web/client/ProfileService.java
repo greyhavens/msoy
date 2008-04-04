@@ -109,7 +109,7 @@ public interface ProfileService extends RemoteService
     /**
      * Loads up e-mail addresses from a user's webmail account.
      *
-     * @gwt.typeArgs <java.lang.String>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.EmailContact>
      */
     public List getWebMailAddresses (WebIdent ident, String email, String password)
         throws ServiceException;
