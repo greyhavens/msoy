@@ -7,7 +7,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/** 
+import com.threerings.msoy.data.all.MemberName;
+
+/**
  * Contains result information on the invitations that were requested.
  */
 public class InvitationResults
@@ -25,11 +27,17 @@ public class InvitationResults
     /** The invitee has already registered. */
     public static final String ALREADY_REGISTERED = "e.already_registered";
 
+    /** The invitee is already your friend.  (Some friend you are) */
+    public static final String ALREADY_FRIEND = "e.already_friend";
+
     /** The invitee has already been invited by the inviter. */
     public static final String ALREADY_INVITED = "e.already_invited";
 
     /** The results for each address sent in the request. */
     public String[] results;
+
+    /** MemberNames for registered users. */
+    public MemberName[] names;
 
     /** The pending invitations generated.
      * @gwt.typeArgs <com.threerings.msoy.web.data.Invitation> */

@@ -41,6 +41,7 @@ public interface ServerMessages extends ConstantsWithLookup
     public String opted_out ();
     public String already_registered ();
     public String already_invited ();
+    public String already_friend ();
 
     public String group_name_in_use ();
 

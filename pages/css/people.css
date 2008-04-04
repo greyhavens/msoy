@@ -186,6 +186,13 @@
   white-space: nowrap;
 }
 
+.sendInvitesResultsPopup .ScrollPanel {
+  max-height: 300px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
 .sendInvites .InviteList {
   width: 100%;
   border: 1px solid #316C94;

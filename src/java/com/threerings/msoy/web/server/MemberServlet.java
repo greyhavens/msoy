@@ -207,6 +207,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
+        ir.names = new MemberName[addresses.size()];
         List<Invitation> penders = Lists.newArrayList();
         for (int ii = 0; ii < addresses.size(); ii++) {
             EmailContact contact = (EmailContact)addresses.get(ii);
@@ -216,6 +217,9 @@ public class MemberServlet extends MsoyServiceServlet
             try {
                 penders.add(sendInvite(anonymous ? null : mrec, contact.email, contact.name,
                             fromName, customMessage));
+            } catch (NameServiceException nse) {
+                ir.results[ii] = nse.getMessage();
+                ir.names[ii] = nse.name;
             } catch (ServiceException se) {
                 ir.results[ii] = se.getMessage();
             }
@@ -302,8 +306,13 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this address isn't already registered
-            if (MsoyServer.memberRepo.loadMember(email) != null) {
-                throw new ServiceException(InvitationResults.ALREADY_REGISTERED);
+            MemberRecord invitee = MsoyServer.memberRepo.loadMember(email);
+            if (invitee != null) {
+                if (MsoyServer.memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
+                    throw new ServiceException(InvitationResults.ALREADY_FRIEND);
+                }
+                throw new NameServiceException(
+                        InvitationResults.ALREADY_REGISTERED, invitee.getName());
             }
 
             // make sure this address isn't on the opt-out list
@@ -355,6 +364,17 @@ public class MemberServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "sendInvite failed [inviter=" + inviter.who() +
                     ", email=" + email + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected class NameServiceException extends ServiceException
+    {
+        public MemberName name;
+
+        public NameServiceException (String message, MemberName name)
+        {
+            super(message);
+            this.name = name;
         }
     }
 }

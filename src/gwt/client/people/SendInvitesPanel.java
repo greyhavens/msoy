@@ -195,14 +195,15 @@ public class SendInvitesPanel extends VerticalPanel
 
     protected void addPendingInvites  (List penders)
     {
-        int prow = (_penders.getCellCount(2) == 1) ? 2 : _penders.getRowCount();
+        int prow = (_penders.getRowCount() == 2 || _penders.getCellCount(2) == 1) ?
+            2 : _penders.getRowCount();
         for (int ii = 0; ii < penders.size(); ii++) {
             final int frow = prow++;
             final Invitation inv = (Invitation)penders.get(ii);
-            _penders.setWidget(
-                frow, 0, MsoyUI.createActionImage("/images/profile/remove.png", new ClickListener() {
+            _penders.setWidget(frow, 0,
+                    MsoyUI.createActionImage("/images/profile/remove.png", new ClickListener() {
                 public void onClick (Widget widget) {
-                    removeInvite(inv.inviteId, frow);
+                    removeInvite(inv);
                 }
             }));
             _penders.setText(frow, 1, inv.inviteeEmail);
@@ -210,11 +211,16 @@ public class SendInvitesPanel extends VerticalPanel
         }
     }
 
-    protected void removeInvite (String inviteId, final int frow)
+    protected void removeInvite (final Invitation inv)
     {
-        CPeople.membersvc.removeInvitation(CPeople.ident, inviteId, new MsoyCallback() {
+        CPeople.membersvc.removeInvitation(CPeople.ident, inv.inviteId, new MsoyCallback() {
             public void onSuccess (Object result) {
-                _penders.removeRow(frow);
+                for (int ii = 2, nn = _penders.getRowCount(); ii < nn; ii++) {
+                    if (inv.inviteeEmail.equals(_penders.getText(ii, 1))) {
+                        _penders.removeRow(ii);
+                        break;
+                    }
+                }
             }
         });
     }
@@ -246,8 +252,8 @@ public class SendInvitesPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 InvitationResults ir = (InvitationResults)result;
                 addPendingInvites(ir.pendingInvitations);
-                new ResultsPopup(invited, ir).show();
                 _emailList.clear();
+                new ResultsPopup(invited, ir).show();
             }
         });
     }
@@ -261,27 +267,70 @@ public class SendInvitesPanel extends VerticalPanel
             top.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             top.add(MsoyUI.createLabel(CPeople.msgs.inviteResults(), "ResultsHeader"));
 
-            FlexTable contents = new FlexTable();
-            contents.setCellSpacing(10);
-            top.add(contents);
+            SmartTable contents = new SmartTable();
+            contents.setCellSpacing(3);
+            ScrollPanel scroll = new ScrollPanel(contents);
+            scroll.setStyleName("ScrollPanel");
+            top.add(scroll);
 
             int row = 0;
+            boolean success = false;
             for (int ii = 0; ii < invRes.results.length; ii++) {
+                if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null;
+                    EmailContact ec = (EmailContact)addrs.get(ii);
+                    if (!success) {
+                        contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful());
+                        success = true;
+                    }
+                    contents.setText(
+                            row++, 0, CPeople.msgs.inviteResultsComma(ec.name, ec.email), 3, null);
+                }
+            }
+            if (success) {
+                contents.setWidget(row++, 0, WidgetUtil.makeShim(10, 10));
+            }
+
+            boolean members = false;
+            for (int ii = 0; ii < invRes.results.length; ii++) {
+                if (invRes.names[ii] != null) {
+                    EmailContact ec = (EmailContact)addrs.get(ii);
+                    if (!members) {
+                        contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
+                        members = true;
+                    }
+                    contents.setText(row, 0, CPeople.msgs.inviteResultsComma(ec.name, ec.email));
+                    ClickListener onClick = InviteFriendPopup.createListener(invRes.names[ii]);
+                    contents.setWidget(row, 1, MsoyUI.createActionImage(
+                                "/images/profile/addfriend.png", onClick));
+                    contents.setWidget(row++, 2, MsoyUI.createActionLabel(
+                                CPeople.msgs.mlAddFriend(), onClick));
+                }
+            }
+            if (members) {
+                contents.setWidget(row++, 0, WidgetUtil.makeShim(10, 10));
+            }
+
+            boolean failed = false;
+            for (int ii = 0; ii < invRes.results.length; ii++) {
+                if (invRes.results[ii] == InvitationResults.SUCCESS || invRes.names[ii] != null) {
+                    continue;
+                }
+                if (!failed) {
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed());
+                    failed = true;
+                }
                 EmailContact ec = (EmailContact)addrs.get(ii);
-                if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null
-                    contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful(ec.email));
-                } else if (invRes.results[ii].startsWith("e.")) {
-                    contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed(
-                                         ec.email, CPeople.serverError(invRes.results[ii])));
+                String name = CPeople.msgs.inviteResultsComma(ec.name, ec.email);
+                if (invRes.results[ii].startsWith("e.")) {
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsComma(
+                                         name, CPeople.serverError(invRes.results[ii])), 3, null);
                 } else {
-                    contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed(
-                                         ec.email, invRes.results[ii]));
+                    contents.setText(row++, 0, CPeople.msgs.inviteResultsComma(
+                                         name, invRes.results[ii]), 3, null);
                 }
             }
 
-            contents.getFlexCellFormatter().setHorizontalAlignment(
-                row, 0, VerticalPanel.ALIGN_RIGHT);
-            contents.setWidget(row++, 0, new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
+            top.add(new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }
@@ -324,7 +373,7 @@ public class SendInvitesPanel extends VerticalPanel
         public void clear ()
         {
             _items.clear();
-            for (int ii = _listTable.getRowCount() - 1; ii > 1; ii++) {
+            for (int ii = _listTable.getRowCount() - 1; ii >= 0; ii--) {
                 _listTable.removeRow(ii);
             }
         }
