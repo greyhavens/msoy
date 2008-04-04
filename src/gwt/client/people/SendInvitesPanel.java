@@ -90,8 +90,8 @@ public class SendInvitesPanel extends VerticalPanel
         DefaultTextListener.configure(_webAddress, CPeople.msgs.inviteWebAddress());
         input.setText(row, 1, CPeople.msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
-        _webImport = new Button(CPeople.msgs.inviteWebImport());
-        new ClickCallback(_webImport) {
+        Button webImport = new Button(CPeople.msgs.inviteWebImport());
+        new ClickCallback(webImport) {
             public boolean callService () {
                 if ("".equals(_webAddress.getText())) {
                     MsoyUI.info(CPeople.msgs.inviteEnterWebAddress());
@@ -116,7 +116,7 @@ public class SendInvitesPanel extends VerticalPanel
                 return true;
             }
         };
-        input.setWidget(row++, 3, _webImport);
+        input.setWidget(row++, 3, webImport);
         input.setText(row++, 0, CPeople.msgs.inviteNote(), 4, "Tip");
         box.add(input);
 
@@ -373,7 +373,6 @@ public class SendInvitesPanel extends VerticalPanel
     protected SmartTable _penders;
     protected TextBox _webAddress;
     protected PasswordTextBox _webPassword;
-    protected Button _webImport;
 
     protected TextBox _friendName;
     protected TextBox _friendEmail;
