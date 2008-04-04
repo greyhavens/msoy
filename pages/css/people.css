@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles for the Profile interfaces.
@@ -145,8 +145,36 @@
   color: #B4E0F1;
 }
 
+.sendInvites {
+  font-size: 12px;
+  color: white;
+}
+
+.sendInvites .Title {
+  font-weight: bold;
+}
+
+.sendInvites .Section {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.sendInvites .Footer {
+  margin-top: 15px;
+  color: #316C94;
+}
+
+.sendInvites .Action {
+  margin-bottom: 15px;
+}
+
+.sendInvites .Tip {
+  font-size: 9px;
+}
+
 .sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {
   font-weight: bold;
+  font-size: 18px;
 }
 
 .sendInvitesResultsPopup .ResultsHeader {
@@ -155,4 +183,45 @@
   font-size: 22px;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.inviteList {
+  border: 1px solid #316C94;
+  padding: 0px;
+  margin: 0px;
+  height: 200px;
+  width: 100%;
+  background: #E9F6FB;
+  margin-bottom: 15px;
+}
+
+.inviteList .Header {
+  height: 20px;
+  color: #316C94;
+  font-weight: normal;
+  font-size: 12px;
+  border: 0px;
+  padding: 5px;
+}
+
+.inviteList .Scroll {
+  height: 180px;
+  background: #FFFFFF;
+  width: 100%;
+}
+
+.inviteListTable {
+  width: 100%;
+  background: #FFFFFF;
+  font-size: 12px;
+  color: #316C94;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+
+.importSupportLink {
+  font-size: 8px;
+}
+
+.importSupportList {
+  padding: 8px;
 }
