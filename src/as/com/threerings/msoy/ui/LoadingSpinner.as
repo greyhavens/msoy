@@ -41,6 +41,11 @@ public class LoadingSpinner extends Sprite
     protected function handleComplete (event :Event) :void
     {
         _spinner = (event.target as LoaderInfo).loader.content as MovieClip;
+        // stop, so that even if we're currently supposed to be on frame 1
+        // we don't run past it because updateSpinner() won't gotoAndStop
+        // to frame it's already on.
+        _spinner.stop();
+                        
         addChild(_spinner);
         updateSpinner();
 
@@ -55,7 +60,11 @@ public class LoadingSpinner extends Sprite
 
         if (!isNaN(_progress)) {
             var frame :int = 1 + _progress;
-            _spinner.gotoAndStop(frame);
+            // avoid re-setting us to the same frame, as that causes the
+            // inner swirls to halt (for some reason!)
+            if (_spinner.currentFrame != frame) {
+                _spinner.gotoAndStop(frame);
+            }
 
         } else if (_spinner.currentFrame < 102) {
             _spinner.gotoAndPlay(102);
