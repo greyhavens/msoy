@@ -122,6 +122,9 @@ import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.world.client.NameField;
 
+import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ScalingMediaContainer;
+
 class ListBox extends VBox 
 {
     public function ListBox (scrollBar :VScrollBar)
@@ -184,12 +187,12 @@ class ChatterRenderer extends HBox
     {
         super.createChildren(); 
 
-        addChild(_headshot = new Image());
-        _headshot.height = 20; // 1/3 of headshot size
-        _headshot.width = 20;
-        _headshot.maintainAspectRatio = true;
-        _headshot.setStyle("verticalAlign", "middle");
-        _headshot.setStyle("horizontalAlign", "center");
+        // 20 == 1/3 of headshot size
+        _headshot = new ScalingMediaContainer(20, 20);
+        var wrapper :MediaWrapper = new MediaWrapper(_headshot, 20, 20, true);
+        wrapper.setStyle("verticalAlign", "middle");
+        wrapper.setStyle("horizontalAlign", "center");
+        addChild(wrapper);
 
         addChild(new FlexWrapper(_nameField = new NameField()));
         _nameField.autoSize = TextFieldAutoSize.LEFT;
@@ -210,16 +213,16 @@ class ChatterRenderer extends HBox
                 // account for the boldness/glowfilter
                 _nameField.y = -_nameField.height / 2;
             });
-            _headshot.source = chatter.getPhoto().getMediaPath();
+            _headshot.setMediaDesc(chatter.getPhoto());
 
         } else {
             _nameField.text = "";
-            _headshot.source = null;
+            _headshot.shutdown();
         }
     }
 
     private static const log :Log = Log.getLog(ChatterRenderer);
 
-    protected var _headshot :Image;
+    protected var _headshot :ScalingMediaContainer;
     protected var _nameField :NameField;
 }
