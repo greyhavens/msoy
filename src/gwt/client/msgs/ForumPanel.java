@@ -3,10 +3,14 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
+
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import client.images.msgs.MsgsImages;
 import client.util.MsoyUI;
 import client.util.SearchBox;
 
@@ -24,14 +28,14 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
-        setContents(createHeader(CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
+        setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
     }
 
     public void displayUnreadThreads (boolean refresh)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
-        setContents(createHeader(CMsgs.mmsgs.groupUnreadThreadsHeader(), null), threads);
+        setContents(createHeader(0, CMsgs.mmsgs.groupUnreadThreadsHeader(), null), threads);
     }
 
     public void startNewThread (int groupId)
@@ -40,11 +44,16 @@ public class ForumPanel extends TitledListPanel
         setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, isManager));
     }
 
-    protected SmartTable createHeader (String title, SearchBox.Listener listener)
+    protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
     {
         SmartTable header = new SmartTable(0, 0);
         header.setWidth("100%");
         int col = 0;
+        if (groupId > 0) {
+            Anchor rss = new Anchor("/rss/" + groupId, "", "_blank");
+            rss.setHTML(_images.rss().getHTML());
+            header.setWidget(0, col++, rss, 1, "RSS");
+        }
         header.setText(0, col++, title, 1, "Title");
         if (listener != null) {
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
@@ -68,4 +77,7 @@ public class ForumPanel extends TitledListPanel
 
     /** Our forum model cache. */
     protected ForumModels _fmodels;
+
+    /** Our action icon images. */
+    protected static MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
 }

@@ -45,4 +45,9 @@ public interface MsgsImages extends ImageBundle
      * @gwt.resource view_issue.png
      */
     AbstractImagePrototype view_issue ();
+
+    /**
+     * @gwt.resource rss.png
+     */
+    AbstractImagePrototype rss ();
 }
