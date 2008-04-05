@@ -41,7 +41,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.NotifyMessage;
-import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -183,22 +182,10 @@ public class MemberManager
                                   InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-
-        // in GWT land, we just send a mail message, so do the same here
-        final String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
-        final String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
-        String uname = "sendInviteMail(" + user.who() + ", " + friendId + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
-            public void invokePersistent () throws Exception {
-                MsoyServer.mailRepo.startConversation(
-                    friendId, user.getMemberId(), subject, body, new FriendInvitePayload());
-            }
-            public void handleSuccess () {
-                ((InvocationService.ConfirmListener)_listener).requestProcessed();
-            }
-        });
+        // pass the buck to the mail manager
+        MsoyServer.mailMan.sendFriendInvite(user.getMemberId(), friendId, listener);
     }
 
     // from interface MemberProvider

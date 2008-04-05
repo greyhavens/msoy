@@ -127,12 +127,12 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
-        final MemberRecord newAccount = MsoyServer.author.createAccount(
+        final MemberRecord invitee = MsoyServer.author.createAccount(
             username, password, displayName, ignoreRestrict, invite);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
-        prec.memberId = newAccount.memberId;
+        prec.memberId = invitee.memberId;
         prec.birthday = birthday;
         prec.realName = info.realName;
         prec.setPhoto(photo);
@@ -147,24 +147,24 @@ public class WebUserServlet extends MsoyServiceServlet
         // negative ids are valid guest ids)
         if (guestId < 0) {
             MsoyServer.peerMan.invokeNodeAction(
-                new TransferGuestFlowAction(guestId, newAccount.memberId));
+                new TransferGuestFlowAction(guestId, invitee.memberId));
         }
 
         // if we are responding to an invitation, wire that all up
         if (invite != null && invite.inviterId != 0) {
             try {
-                MsoyServer.memberRepo.linkInvite(inviteId, newAccount);
+                MsoyServer.memberRepo.linkInvite(inviteId, invitee);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "Linking invites failed [inviteId=" + inviteId +
-                        ", memberId=" + newAccount.memberId + "]", pe);
+                        ", memberId=" + invitee.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            MemberName inviter;
+            MemberRecord inviter;
             try {
-                inviter = MsoyServer.memberRepo.loadMemberName(invite.inviterId);
+                inviter = MsoyServer.memberRepo.loadMember(invite.inviterId);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to lookup inviter name [inviteId=" + inviteId +
+                log.log(Level.WARNING, "Failed to lookup inviter [inviteId=" + inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -176,15 +176,14 @@ public class WebUserServlet extends MsoyServiceServlet
                 String body = MsoyServer.msgMan.getBundle("server").get(
                     "m.invite_accepted_body", invite.inviteeEmail, displayName);
                 try {
-                    MsoyServer.mailRepo.startConversation(
-                        invite.inviterId, newAccount.memberId, subject, body, null);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to sent invite accepted mail", pe);
+                    MsoyServer.mailMan.startConversation(invitee, inviter, subject, body, null);
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Failed to sent invite accepted mail", e);
                 }
 
                 // update the two friends' runtime objects if they are online
                 FriendManager.friendshipEstablished(
-                    new MemberName(displayName, newAccount.memberId), inviter);
+                    new MemberName(displayName, invitee.memberId), inviter.getName());
 
                 // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;
@@ -207,7 +206,7 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
-        return startSession(newAccount, expireDays);
+        return startSession(invitee, expireDays);
     }
 
     // from interface WebUserService

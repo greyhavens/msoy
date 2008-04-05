@@ -20,11 +20,9 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
-import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -35,6 +33,7 @@ import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.data.PresentPayload;
+import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -174,17 +173,8 @@ public class MailServlet extends MsoyServiceServlet
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
-            // if the payload is an item attachment, transfer it to the recipient
-            processPayload(memrec.memberId, recipId, attachment);
-
-            // now start the conversation (and deliver the message)
-            _mailRepo.startConversation(recipId, memrec.memberId, subject, body, attachment);
-
-            // potentially send a real email to the recipient
-            sendMailEmail(memrec, recip, subject, body);
-
-            // let recipient know they've got mail
-            MemberNodeActions.reportUnreadMail(recipId, _mailRepo.loadUnreadConvoCount(recipId));
+            // let the mail manager handle the rest
+            _mailMan.startConversation(memrec, recip, subject, body, attachment);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Start conversation failed [for=" + memrec.who() +
@@ -200,59 +190,8 @@ public class MailServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
         try {
-            ConversationRecord conrec = _mailRepo.loadConversation(convoId);
-            if (conrec == null) {
-                log.warning("Requested to continue non-existent conversation [by=" + memrec.who() +
-                            ", convoId=" + convoId + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            // make sure this member is a conversation participant
-            Long lastRead = _mailRepo.loadLastRead(convoId, memrec.memberId);
-            if (lastRead == null) {
-                log.warning("Request to continue conversation by non-member [who=" + memrec.who() +
-                            ", convoId=" + convoId + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            // TODO: make sure body.length() is not too long
-
-            // encode the attachment if we have one
-            int payloadType = 0;
-            byte[] payloadState = null;
-            if (attachment != null) {
-                payloadType = attachment.getType();
-                try {
-                    payloadState = JSONMarshaller.getMarshaller(
-                        attachment.getClass()).getStateBytes(attachment);
-                } catch (Exception e) {
-                    log.warning("Failed to encode message attachment [for=" + memrec.who() +
-                                ", attachment=" + attachment + "].");
-                    throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-                }
-            }
-
-            // if the payload is an item attachment, transfer it to the recipient
-            processPayload(memrec.memberId, conrec.getOtherId(memrec.memberId), attachment);
-
-            // store the message in the repository
-            ConvMessageRecord cmr =
-                _mailRepo.addMessage(conrec, memrec.memberId, body, payloadType, payloadState);
-
-            // update our last read for this conversation to reflect that we've read our message
-            _mailRepo.updateLastRead(convoId, memrec.memberId, cmr.sent.getTime());
-
-            // let other conversation participant know they've got mail
-            int otherId = conrec.getOtherId(memrec.memberId);
-            MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
-
-            // potentially send a real email to the recipient
-            MemberRecord recip = MsoyServer.memberRepo.loadMember(otherId);
-            if (recip != null) {
-                String subject = MsoyServer.msgMan.getBundle("server").get(
-                    "m.reply_subject", conrec.subject);
-                sendMailEmail(memrec, recip, subject, body);
-            }
+            // pass the buck to the mail manager
+            ConvMessageRecord cmr = _mailMan.continueConversation(memrec, convoId, body, attachment);
 
             // convert the added message to a runtime record and return it to the caller
             ConvMessage result = cmr.toConvMessage();
@@ -302,57 +241,6 @@ public class MailServlet extends MsoyServiceServlet
         }
     }
 
-    /**
-     * Send an email to a Whirled mail recipient to report that they received a Whirled mail. Does
-     * nothing if the recipient has requested not to receive such mails.
-     */
-    protected void sendMailEmail (MemberRecord sender, MemberRecord recip,
-                                  String subject, String body)
-    {
-        // if they don't want to hear about it, stop now
-        if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL)) {
-            return;
-        }
-
-        // otherwise do the deed
-        String result = MailSender.sendEmail(
-            recip.accountName, ServerConfig.getFromAddress(), "gotMail", 
-            "subject", subject,"sender", sender.name, "senderId", sender.memberId,
-            "body", body, "server_url", ServerConfig.getServerURL());
-        if (result != null) {
-            log.warning("Failed to send mail email [from=" + sender.who() +
-                        ", to=" + recip.accountName + ", error=" + result + "].");
-            // nothing to do but keep on keepin' on
-        }
-    }
-
-    protected void processPayload (int senderId, int recipId, MailPayload attachment)
-        throws PersistenceException, ServiceException
-    {
-        if (attachment instanceof PresentPayload) {
-            ItemIdent ident = ((PresentPayload)attachment).ident;
-            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(ident.type);
-            ItemRecord item = repo.loadItem(ident.itemId);
-
-            // validate that they're allowed to gift this item (these are all also checked on the
-            // client so we don't need useful error messages)
-            String errmsg = null;
-            if (item == null) {
-                errmsg = "Trying to gift non-existent item";
-            } else if (item.ownerId != senderId) {
-                errmsg = "Trying to gift un-owned item";
-            } else if (item.used != Item.UNUSED) {
-                errmsg = "Trying to gift in-use item";
-            }
-            if (errmsg != null) {
-                log.warning(errmsg + " [sender=" + senderId + ", recip=" + recipId +
-                            ", ident=" + ident + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            repo.updateOwnerId(item, recipId);
-        }
-    }
-
     protected MailRepository _mailRepo = MsoyServer.mailRepo;
+    protected MailManager _mailMan = MsoyServer.mailMan;
 }

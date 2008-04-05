@@ -563,10 +563,11 @@ public class ItemServlet extends MsoyServiceServlet
     public Integer deleteItemAdmin (WebIdent ident, ItemIdent iident, String subject, String body)
         throws ServiceException
     {
-        MemberRecord mRec = requireAuthedUser(ident);
-        if (!mRec.isSupport()) {
+        MemberRecord admin = requireAuthedUser(ident);
+        if (!admin.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
+
         byte type = iident.type;
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
@@ -597,10 +598,13 @@ public class ItemServlet extends MsoyServiceServlet
 
             // notify the owners of the deletion
             for (int ownerId : owners) {
-                if (ownerId == mRec.memberId) {
+                if (ownerId == admin.memberId) {
                     continue; // admin deleting their own item? sure, whatever!
                 }
-                MsoyServer.mailRepo.startConversation(ownerId, mRec.memberId, subject, body, null);
+                MemberRecord owner = MsoyServer.memberRepo.loadMember(ownerId);
+                if (owner != null) {
+                    MsoyServer.mailMan.startConversation(admin, owner, subject, body, null);
+                }
             }
 
             return Integer.valueOf(deletionCount);
