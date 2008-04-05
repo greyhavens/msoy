@@ -60,6 +60,8 @@ public class ImageManipulator extends HBox
     {
         this.maxWidth = maxW;
         this.maxHeight = maxH;
+        this.width = maxW;
+        this.height = maxH;
         this.minWidth = 100;
         this.minHeight = 100;
         _maxWidth = maxW;
@@ -146,9 +148,18 @@ public class ImageManipulator extends HBox
     {
         bar.addChild(createControlHeader("Position Image"));
 
+        // TODO: Rick wants this removed
+        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
+
         var box :HBox = new HBox();
         box.addChild(addModeBtn("move", EditCanvas.MOVE));
         box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
+        bar.addChild(box);
+
+        // TODO: Rick wants this removed
+        box = new HBox();
+        box.addChild(new CommandButton("Crop", _editor.doCrop));
+        box.addChild(createTip("Crop the image to the selected region"));
         bar.addChild(box);
 
         _scaleSlider = addSlider(bar, "Scale Image", .01, 10, 1, _editor.setScale);
@@ -164,10 +175,6 @@ public class ImageManipulator extends HBox
         box.addChild(addModeBtn("eraser", EditCanvas.ERASE));
         box.addChild(createTip("Erase around the image. Paint your own touches!"));
         bar.addChild(box);
-
-        // OMITTED: eraser size slider XXX
-        //addModeBtn("crop", EditCanvas.CROP));
-        //_zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
 
         box = new HBox();
         box.addChild(addModeBtn("brush", EditCanvas.PAINT));

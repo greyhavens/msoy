@@ -78,6 +78,8 @@ public class EditCanvas extends DisplayCanvas
     {
         super(maxW, maxH);
         if (editMode) {
+            width = maxW;
+            height = maxH;
             horizontalScrollPolicy = ScrollPolicy.ON;
             verticalScrollPolicy = ScrollPolicy.ON;
         }
@@ -212,6 +214,8 @@ public class EditCanvas extends DisplayCanvas
         fireUndoRedoChange();
 
         _paintLayer.graphics.clear();
+        _paintLayer.x = 0;
+        _paintLayer.y = 0;
         _hudLayer.graphics.clear();
         clearSelection();
     }
@@ -267,9 +271,12 @@ public class EditCanvas extends DisplayCanvas
         _brush.visible = false;
         _dropper.visible = false;
         // screenshot the image
-        bmp.draw(_scaleLayer, matrix);
-        _brush.visible = brushVis;
-        _dropper.visible = dropperVis;
+        try {
+            bmp.draw(_scaleLayer, matrix);
+        } finally {
+            _brush.visible = brushVis;
+            _dropper.visible = dropperVis;
+        }
 
         return bmp;
     }
@@ -297,6 +304,9 @@ public class EditCanvas extends DisplayCanvas
     override protected function sizeKnown (width :Number, height :Number) :void
     {
         super.sizeKnown(width, height);
+
+        this.width = this.maxWidth;
+        this.height = this.maxHeight;
 
         _rotLayer.x = _width/2;
         _rotLayer.y = _height/2;
@@ -352,10 +362,10 @@ public class EditCanvas extends DisplayCanvas
 
         // MOVE
         on = (_mode == MOVE);
-        fn = on ? _crop.addEventListener : _crop.removeEventListener;
+        fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
         fn(MouseEvent.MOUSE_DOWN, handleCropSelect);
         fn(MouseEvent.MOUSE_UP, handleCropUp);
-        _crop.mouseEnabled = on;
+        //_crop.mouseEnabled = on;
 
         // SELECT_COLOR
         on = (_mode == SELECT_COLOR);
@@ -366,7 +376,8 @@ public class EditCanvas extends DisplayCanvas
         fn(MouseEvent.ROLL_OUT, handleShowDropper);
 
         // and finally:
-        _paintLayer.mouseEnabled = (_mode == PAINT) || (_mode == ERASE) || (_mode == SELECT_COLOR);
+        _paintLayer.mouseEnabled = (_mode == PAINT) || (_mode == ERASE) || (_mode == SELECT_COLOR) ||
+            (_mode == MOVE);
     }
 
     protected function updateBrush () :void
@@ -561,10 +572,6 @@ public class EditCanvas extends DisplayCanvas
         g.clear();
         g.lineStyle(1);
         GraphicsUtil.dashRect(g, 0, 0, _cropRect.width, _cropRect.height)
-        g.lineStyle(0, 0, 0);
-        g.beginFill(0xFFFFFF, 0);
-        g.drawRect(0, 0, _cropRect.width, _cropRect.height);
-        g.endFill();
     }
 
     protected function clearSelection () :void
@@ -583,15 +590,12 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleCropSelect (event :MouseEvent) :void
     {
-        _crop.startDrag(false, new Rectangle(0, 0,
-            Math.max(0, _width - _cropRect.width), Math.max(0, _height - _cropRect.height)));
+        _paintLayer.startDrag(false);
     }
 
     protected function handleCropUp (event :MouseEvent) :void
     {
-        _crop.stopDrag();
-        _cropRect.x = _crop.x;
-        _cropRect.y = _crop.y;
+        _paintLayer.stopDrag();
     }
 
     /** 

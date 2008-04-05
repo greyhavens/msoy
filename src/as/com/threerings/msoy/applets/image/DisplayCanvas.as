@@ -23,6 +23,7 @@ import flash.utils.ByteArray;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
+import mx.containers.VBox;
 
 import com.threerings.util.ValueEvent;
 
@@ -138,9 +139,6 @@ public class DisplayCanvas extends Canvas
         _width = width;
         _height = height;
 
-        _holder.width = width;
-        _holder.height = height;
-
         // un-fucking believable
         this.width = Math.min(this.maxWidth, width);
         this.height = Math.min(this.maxHeight, height);
@@ -176,12 +174,23 @@ import flash.display.Shape;
 
 import mx.core.UIComponent;
 
+import com.threerings.util.Log;
+
 class ImageHolder extends UIComponent
 {
     public function ImageHolder (toBeHeld :DisplayObject)
     {
+        setStyle("left", 0);
+        setStyle("top", 0);
+        setStyle("right", 0);
+        setStyle("bottom", 0);
+
         _background = new Shape();
         addChild(toBeHeld);
+
+        _mask = new Shape();
+        this.mask = _mask;
+        addChild(_mask);
     }
 
     public function get background () :DisplayObject
@@ -193,7 +202,16 @@ class ImageHolder extends UIComponent
     {
         super.setActualSize(w, h);
 
-        var g :Graphics = _background.graphics;
+        // update our size in the mask
+        var g :Graphics = _mask.graphics;
+        g.clear();
+        g.beginFill(0xFFFFFF);
+        g.drawRect(0, 0, w, h);
+        g.endFill();
+
+        // draw the checkerboard on the background, which isn't even
+        // technically our child
+        g = _background.graphics;
         g.clear();
         var dark :Boolean;
         const GRID_SIZE :int = 10;
@@ -209,6 +227,8 @@ class ImageHolder extends UIComponent
     }
 
     protected var _background :Shape;
+
+    protected var _mask :Shape;
 
     protected static const DARK_BKG :uint = 0x999999; //0xE3E3E3;
     protected static const LIGHT_BKG :uint = 0xCCCCCC; //0xF3F3F3;

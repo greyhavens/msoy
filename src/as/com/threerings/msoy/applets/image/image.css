@@ -1,3 +1,14 @@
+/** Note that I can apply base styles like so:
+
+.blaButton, .fooButton, .flamButton {
+  // common styles
+}
+
+.blaButton {
+  // specific styles
+}
+*/
+
 .brushButton {
   upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush.png");
   overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_over.png");

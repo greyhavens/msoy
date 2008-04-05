@@ -85,6 +85,9 @@ public class RemixControls extends HBox
         vbox = new VBox();
         vbox.width = PREVIEW_WIDTH;
         addChild(vbox);
+        var lbl :Label = new Label();
+        lbl.text = "Remixer beta build: " + DeploymentConfig.buildTime;
+        vbox.addChild(lbl);
         vbox.addChild(createPreviewHeader());
 
         _previewer = new SWFLoader();
