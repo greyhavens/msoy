@@ -133,12 +133,10 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            if (memobj.newMailCount != _newMailCount) {
-                if (_newMailCount < 0) {
-                    memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
-                } else {
-                    memobj.setNewMailCount(_newMailCount);
-                }
+            if (_newMailCount < 0) {
+                memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
+            } else if (memobj.newMailCount != _newMailCount) {
+                memobj.setNewMailCount(_newMailCount);
             }
         }
 
