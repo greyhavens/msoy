@@ -240,10 +240,11 @@ public class CreateAccountPanel extends VerticalPanel
         info.realName = _rname.getText().trim();
 
         setStatus(CAccount.msgs.creatingAccount());
+        String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
+        String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
-            _photo.getPhoto(), info, 1, inviteId, guestId, getRecaptchaChallenge(),
-            getRecaptchaResponse(), new AsyncCallback() {
+            _photo.getPhoto(), info, 1, inviteId, guestId, challenge, response, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);
