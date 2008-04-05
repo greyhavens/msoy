@@ -13,6 +13,7 @@ import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
@@ -68,6 +69,7 @@ public class MsoyGameServer extends MsoyBaseServer
      * Called when a player starts their session to associate the name with the player's
      * distributed object.
      */
+    @EventThread
     public static void playerLoggedOn (PlayerObject plobj)
     {
         _online.put(plobj.memberName, plobj);
@@ -76,6 +78,7 @@ public class MsoyGameServer extends MsoyBaseServer
     /**
      * Called when a player ends their session to clear their name to player object mapping.
      */
+    @EventThread
     public static void playerLoggedOff (PlayerObject plobj)
     {
         _online.remove(plobj.memberName);
@@ -118,9 +121,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /**
      * Returns the player object for the user identified by the given ID if they are resolved on
-     * this game server currently, null otherwise. This must only be called from the dobjmgr
-     * thread.
+     * this game server currently, null otherwise.
      */
+    @EventThread
     public static PlayerObject lookupPlayer (int playerId)
     {
         // MemberName.equals and hashCode only depend on the id
@@ -129,9 +132,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /**
      * Returns the player object for the user identified by the given name if they are resolved
-     * on this game server currently, null otherwise. This must only be called from the dobjmgr
-     * thread.
+     * on this game server currently, null otherwise.
      */
+    @EventThread
     public static PlayerObject lookupPlayer (MemberName name)
     {
         requireDObjThread();

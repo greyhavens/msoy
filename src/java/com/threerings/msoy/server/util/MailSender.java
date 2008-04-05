@@ -29,6 +29,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -76,6 +78,7 @@ public class MailSender
      *
      * @return null or a string indicating the problem in the event of failure.
      */
+    @BlockingThread
     public static String sendEmail (String recip, String sender, String template, Object ... params)
     {
         Parameters pobj = new Parameters();
@@ -91,6 +94,7 @@ public class MailSender
      *
      * @return null or a string indicating the problem in the event of failure.
      */
+    @BlockingThread
     public static String sendEmail (String recip, String sender, String template, Parameters params)
     {
         MsoyBaseServer.refuseDObjThread(); // avoid unhappy accidents

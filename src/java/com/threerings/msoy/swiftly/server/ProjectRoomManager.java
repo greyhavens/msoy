@@ -490,23 +490,17 @@ public class ProjectRoomManager extends PlaceManager
 
     /**
      * Return the ProjectRoomObject resolved in this room manager.
-     * Note: This should only be used on the distributed object thread.
      */
     public ProjectRoomObject getRoomObj ()
     {
-        // Enforce access only on the distributed object thread.
-        MsoyServer.requireDObjThread();
         return _roomObj;
     }
 
     /**
      * Return the cache of memberId to build result itemId mapping used for exporting results.
-     * Note: This should only be used on the distributed object thread.
      */
     public Map<MemberName, Integer> getResultItems ()
     {
-        // Enforce access only on the distributed object thread.
-        MsoyServer.requireDObjThread();
         return _resultItems;
     }
 
@@ -576,11 +570,10 @@ public class ProjectRoomManager extends PlaceManager
         _svnExecutor.addTask(new CommitProjectTask(this, listener));
     }
 
-    /** Server-root relative path to the Whirled SDK. */
-    protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";
-
-    /** Server-root relative path to the Flex SDK. */
-    protected static final String FLEX_SDK = "/data/swiftly/flex_sdk";
+    protected ProjectRoomObject _roomObj;
+    protected ProjectStorage _storage;
+    protected ProjectBuilder _builder;
+    protected File _buildDir;
 
     /** This is used to execute potentially long running svn operations serially on a separate
      * thread so that they do not interfere with normal server operation. */
@@ -589,9 +582,9 @@ public class ProjectRoomManager extends PlaceManager
     /** Cache the memberId to build result itemId mapping used for exporting results */
     protected Map<MemberName, Integer> _resultItems;
 
-    protected ProjectRoomObject _roomObj;
-    protected ProjectStorage _storage;
-    protected ProjectBuilder _builder;
-    protected File _buildDir;
+    /** Server-root relative path to the Whirled SDK. */
+    protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";
 
+    /** Server-root relative path to the Flex SDK. */
+    protected static final String FLEX_SDK = "/data/swiftly/flex_sdk";
 }
