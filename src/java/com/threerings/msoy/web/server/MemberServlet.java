@@ -328,26 +328,25 @@ public class MemberServlet extends MsoyServiceServlet
 
             String inviteId = MsoyServer.memberRepo.generateInviteId();
 
-            // create and send the invitation
-            VelocityContext ctx = new VelocityContext();
+            // create and send the invitation email
+            MailSender.Parameters params = new MailSender.Parameters();
             if (inviter != null) {
-                ctx.put("friend", fromName);
-                ctx.put("email", inviter.accountName);
+                params.set("friend", fromName);
+                params.set("email", inviter.accountName);
             }
             if (!StringUtil.isBlank(toName)) {
-                ctx.put("name", toName);
+                params.set("name", toName);
             }
             if (!StringUtil.isBlank(customMessage)) {
-                ctx.put("custom_message", customMessage);
+                params.set("custom_message", customMessage);
             }
-            ctx.put("invite_id", inviteId);
-            ctx.put("server_url", ServerConfig.getServerURL());
+            params.set("invite_id", inviteId);
+            params.set("server_url", ServerConfig.getServerURL());
 
             String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
-            try {
-                MailSender.sendEmail(email, from, "memberInvite", ctx);
-            } catch (Exception e) {
-                throw new ServiceException(e.getMessage());
+            String result = MailSender.sendEmail(email, from, "memberInvite", params);
+            if (result != null) {
+                throw new ServiceException(result);
             }
 
             // record the invite and that we sent it

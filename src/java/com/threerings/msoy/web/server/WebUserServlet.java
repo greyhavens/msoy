@@ -23,8 +23,6 @@ import java.util.List;
 
 import java.util.logging.Level;
 
-import org.apache.velocity.VelocityContext;
-
 import com.google.common.base.Preconditions;
 
 import com.samskivert.io.PersistenceException;
@@ -262,13 +260,12 @@ public class WebUserServlet extends MsoyServiceServlet
             }
 
             // create and send a forgot password email
-            VelocityContext ctx = new VelocityContext();
-            ctx.put("server_url", ServerConfig.getServerURL());
-            ctx.put("email", mrec.accountName);
-            ctx.put("memberId", mrec.memberId);
-            ctx.put("code", code);
             try {
-                MailSender.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword", ctx);
+                MailSender.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword",
+                                     "server_url", ServerConfig.getServerURL(),
+                                     "email", mrec.accountName,
+                                     "memberId", mrec.memberId,
+                                     "code", code);
             } catch (Exception e) {
                 throw new ServiceException(e.getMessage());
             }

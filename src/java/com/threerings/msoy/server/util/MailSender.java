@@ -40,43 +40,18 @@ import static com.threerings.msoy.Log.log;
  */
 public class MailSender
 {
-    /**
-     * Use this to send email on the {@link MsoyServer#mailInvoker}.
-     */
-    public static abstract class Unit extends Invoker.Unit
+    /** Used to provide key/value pairs that are substituted into mail templates. */
+    public static class Parameters
     {
-        public Unit (String recipient, String template)
-        {
-            this(recipient, ServerConfig.getFromAddress(), template);
+        public void set (String key, Object value) {
+            _ctx.put(key, value);
         }
 
-        public Unit (String recipient, String sender, String template)
-        {
-            super("MailSender.Unit(" + recipient + ", " + template + ")");
-            _recipient = recipient;
-            _sender = sender;
-            _template = template;
+        /*package*/ VelocityContext getContext () {
+            return _ctx;
         }
 
-        public boolean invoke () {
-            try {
-                VelocityContext ctx = new VelocityContext();
-                populateContext(ctx);
-                sendEmail(_recipient, _sender, _template, ctx);
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to send mail [sender=" + _sender +
-                        ", recip=" + _recipient + ", template=" + _template + "].", e);
-            }
-            return false;
-        }
-
-        public long getLongThreshold () {
-            return 10000L; // mail sending takes a long time sometimes
-        }
-
-        protected abstract void populateContext (VelocityContext ctx);
-
-        protected String _recipient, _sender, _template;
+        protected VelocityContext _ctx = new VelocityContext();
     }
 
     /**
@@ -96,13 +71,27 @@ public class MailSender
     }
 
     /**
+     * Delivers an email using the supplied template and parameters which are used to populate a
+     * {@link Parameters} instance.
+     *
+     * @return null or a string indicating the problem in the event of failure.
+     */
+    public static String sendEmail (String recip, String sender, String template, Object ... params)
+    {
+        Parameters pobj = new Parameters();
+        for (int ii = 0; ii < params.length; ii += 2) {
+            pobj.set((String)params[ii], params[ii+1]);
+        }
+        return sendEmail(recip, sender, template, pobj);
+    }
+
+    /**
      * Delivers an email using the supplied template and context. The first line of the template
      * should be the subject and the remaining lines the body.
      *
      * @return null or a string indicating the problem in the event of failure.
      */
-    public static String sendEmail (
-        String recip, String sender, String template, VelocityContext ctx)
+    public static String sendEmail (String recip, String sender, String template, Parameters params)
     {
         MsoyBaseServer.refuseDObjThread(); // avoid unhappy accidents
 
@@ -126,7 +115,7 @@ public class MailSender
         StringWriter sw = new StringWriter();
         try {
             // TODO: have a server language and select templates based on that
-            ve.mergeTemplate("rsrc/email/" + template + ".tmpl", "UTF-8", ctx, sw);
+            ve.mergeTemplate("rsrc/email/" + template + ".tmpl", "UTF-8", params.getContext(), sw);
 
             String body = sw.toString();
             int nidx = body.indexOf("\n"); // first line is the subject
@@ -152,7 +141,7 @@ public class MailSender
                 MimeMultipart htmlParts = new MimeMultipart("related");
 
                 sw = new StringWriter();
-                ve.mergeTemplate(htmlPath, "UTF-8", ctx, sw);
+                ve.mergeTemplate(htmlPath, "UTF-8", params.getContext(), sw);
                 MimeBodyPart htmlPart = new MimeBodyPart();
                 htmlPart.setContent(sw.toString(), "text/html");
                 htmlParts.addBodyPart(htmlPart);
