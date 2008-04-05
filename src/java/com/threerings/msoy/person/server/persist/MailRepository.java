@@ -33,6 +33,8 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.CountRecord;
@@ -47,6 +49,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the persistent store of mail and mailboxes.
  */
+@BlockingThread
 public class MailRepository extends DepotRepository
 {
     public MailRepository (PersistenceContext ctx, MsoyEventLogger eventLog)

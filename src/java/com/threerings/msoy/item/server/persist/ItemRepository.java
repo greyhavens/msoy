@@ -53,6 +53,8 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -70,6 +72,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages a repository of digital items of a particular type.
  */
+@BlockingThread
 public abstract class ItemRepository<
     T extends ItemRecord,
     CLT extends CloneRecord<T>,

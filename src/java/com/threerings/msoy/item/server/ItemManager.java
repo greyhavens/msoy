@@ -27,6 +27,7 @@ import com.samskivert.util.Tuple;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -72,6 +73,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages digital items and their underlying repositories.
  */
+@EventThread
 public class ItemManager
     implements ItemProvider
 {

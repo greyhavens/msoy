@@ -21,12 +21,15 @@ import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.server.persist.CountRecord;
 
 /**
  * Manages member comments on various and sundry things.
  */
+@BlockingThread
 public class CommentRepository extends DepotRepository
 {
     public CommentRepository (PersistenceContext ctx)

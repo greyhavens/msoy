@@ -13,6 +13,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -61,6 +62,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the server side of our chat channel services.
  */
+@EventThread
 public class ChatChannelManager
     implements ChatChannelProvider, PeerChatProvider
 {

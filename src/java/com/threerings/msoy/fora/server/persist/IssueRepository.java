@@ -31,6 +31,8 @@ import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.fora.data.Issue;
@@ -38,6 +40,7 @@ import com.threerings.msoy.fora.data.Issue;
 /**
  * Manages issues.
  */
+@BlockingThread
 public class IssueRepository extends DepotRepository
 {
     public IssueRepository (PersistenceContext ctx)

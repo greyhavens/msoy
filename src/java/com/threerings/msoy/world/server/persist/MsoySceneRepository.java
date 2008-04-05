@@ -22,6 +22,8 @@ import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -47,6 +49,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides scene storage services for the msoy server.
  */
+@BlockingThread
 public class MsoySceneRepository extends DepotRepository
     implements SceneRepository
 {

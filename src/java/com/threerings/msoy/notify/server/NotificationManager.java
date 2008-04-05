@@ -5,6 +5,7 @@ package com.threerings.msoy.notify.server;
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -21,6 +22,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages most notifications to users.
  */
+@EventThread
 public class NotificationManager
 {
     /**

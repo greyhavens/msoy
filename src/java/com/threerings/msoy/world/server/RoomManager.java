@@ -26,6 +26,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -49,11 +50,12 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.ActorInfo;
@@ -85,6 +87,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages a "Room".
  */
+@EventThread
 public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {

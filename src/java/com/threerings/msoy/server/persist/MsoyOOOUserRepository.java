@@ -33,16 +33,19 @@ import com.samskivert.servlet.user.UserExistsException;
 import com.samskivert.servlet.user.Username;
 import com.samskivert.servlet.user.UserUtil;
 
-import com.threerings.underwire.server.persist.SupportRepository;
-
 import com.threerings.user.OOOUser;
 import com.threerings.user.OOOUserRepository;
+
+import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.underwire.server.persist.SupportRepository;
 
 import static com.threerings.msoy.Log.log;
 
 /**
  * Whirled-specific table-compatible simulation of the parts of {@link OOOUserRepository} we want.
  */
+@BlockingThread
 public class MsoyOOOUserRepository extends DepotRepository
     implements SupportRepository
 {

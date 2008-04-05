@@ -17,6 +17,7 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -62,6 +63,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manage msoy members.
  */
+@EventThread
 public class MemberManager
     implements MemberProvider
 {

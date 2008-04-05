@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import com.google.common.collect.Maps;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -19,6 +20,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages games that have a sandboxed Java server component.
  */
+@EventThread
 public class HostedGameManager
 {
     /**

@@ -38,6 +38,8 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -55,6 +57,7 @@ import com.threerings.msoy.group.data.GroupMembership;
 /**
  * Manages the persistent store of group data.
  */
+@BlockingThread
 public class GroupRepository extends DepotRepository
 {
     @Entity(name="GroupTagRecord")

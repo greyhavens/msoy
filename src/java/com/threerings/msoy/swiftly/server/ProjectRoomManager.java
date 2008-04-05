@@ -14,15 +14,35 @@ import java.util.logging.Level;
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.Maps;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
+
+import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.web.server.ServletWaiter;
+import com.threerings.msoy.web.server.UploadFile;
+
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
@@ -34,23 +54,11 @@ import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.server.ServletWaiter;
-import com.threerings.msoy.web.server.UploadFile;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-import com.threerings.presents.server.InvocationException;
 
 /**
  * Manages a Swiftly project room.
  */
+@EventThread
 public class ProjectRoomManager extends PlaceManager
     implements ProjectRoomProvider, SetListener
 {

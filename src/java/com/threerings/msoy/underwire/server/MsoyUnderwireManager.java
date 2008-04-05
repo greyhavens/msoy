@@ -13,10 +13,12 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Invoker;
 
-import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.presents.annotation.EventThread;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.OOOUserRecord;
@@ -37,6 +39,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles generating events for underwire.
  */
+@EventThread
 public class MsoyUnderwireManager
 {
     /**

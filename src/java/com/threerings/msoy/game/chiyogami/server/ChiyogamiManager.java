@@ -11,6 +11,8 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
+
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.ObjectAddedEvent;
@@ -18,10 +20,9 @@ import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.parlor.game.server.GameManager;
 
@@ -53,6 +54,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages a game of Chiyogami dance battle.
  */
+@EventThread
 public class ChiyogamiManager extends GameManager
 {
     public ChiyogamiManager ()

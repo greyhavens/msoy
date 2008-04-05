@@ -23,6 +23,7 @@ import com.samskivert.util.LoggingLogProvider;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
@@ -170,6 +171,7 @@ public class MsoyServer extends MsoyBaseServer
      * Returns the member object for the user identified by the given name if they are online
      * currently, null otherwise. This should only be called from the dobjmgr thread.
      */
+    @EventThread
     public static MemberObject lookupMember (MemberName name)
     {
         requireDObjThread();
@@ -180,6 +182,7 @@ public class MsoyServer extends MsoyBaseServer
      * Returns an <i>unmodifiable</i> collection of members currently online.
      * This should only be called from the dobjmgr thread.
      */
+    @EventThread
     public static Collection<MemberObject> getMembersOnline ()
     {
         requireDObjThread();
@@ -190,6 +193,7 @@ public class MsoyServer extends MsoyBaseServer
      * Called when a member starts their session to associate the name with the member's
      * distributed object.
      */
+    @EventThread
     public static void memberLoggedOn (MemberObject memobj)
     {
         _online.put(memobj.memberName, memobj);

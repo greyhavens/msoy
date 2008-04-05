@@ -19,11 +19,15 @@ import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Manages the persistent information associated with a member's projects.
  */
+@BlockingThread
 public class SwiftlyRepository extends DepotRepository
 {
     public SwiftlyRepository (PersistenceContext ctx)

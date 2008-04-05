@@ -52,6 +52,8 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
 
@@ -65,6 +67,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages persistent information stored on a per-member basis.
  */
+@BlockingThread
 public class MemberRepository extends DepotRepository
 {
     /** The cache identifier for the friends-of-a-member collection query. */

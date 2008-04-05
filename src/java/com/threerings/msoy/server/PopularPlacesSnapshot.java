@@ -13,6 +13,7 @@ import com.samskivert.util.SortableArrayList;
 
 import com.threerings.msoy.data.MemberLocation;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
@@ -37,6 +38,7 @@ public class PopularPlacesSnapshot
      *
      * This must be called on the dobj thread.
      */
+    @EventThread
     public static PopularPlacesSnapshot takeSnapshot ()
     {
         MsoyServer.requireDObjThread();

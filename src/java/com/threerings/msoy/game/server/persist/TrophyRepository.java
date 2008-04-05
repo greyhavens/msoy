@@ -17,9 +17,12 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 /**
  * Manages the trophy persistent storage.
  */
+@BlockingThread
 public class TrophyRepository extends DepotRepository
 {
     public TrophyRepository (PersistenceContext perCtx)

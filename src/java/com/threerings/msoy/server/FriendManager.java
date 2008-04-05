@@ -6,12 +6,14 @@ package com.threerings.msoy.server;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
 
@@ -19,6 +21,7 @@ import static com.threerings.msoy.Log.log;
  * Handles management of member's friends, including their online status and adding and removing
  * friends.
  */
+@EventThread
 public class FriendManager
     implements MsoyPeerManager.RemoteMemberObserver
 {

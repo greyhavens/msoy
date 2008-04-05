@@ -19,8 +19,14 @@ import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.game.data.QuestState;
 
+/**
+ * Maintains state for AVR games.
+ */
+@BlockingThread
 public class AVRGameRepository extends DepotRepository
 {
     public AVRGameRepository (PersistenceContext context)

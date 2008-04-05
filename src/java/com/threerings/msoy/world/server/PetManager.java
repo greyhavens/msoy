@@ -13,13 +13,15 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+
 import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 
@@ -44,6 +46,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Takes care of loading, unloading and handling of Pets.
  */
+@EventThread
 public class PetManager
     implements PetProvider
 {

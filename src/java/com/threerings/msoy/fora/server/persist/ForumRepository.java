@@ -27,15 +27,17 @@ import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
-import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.server.persist.CountRecord;
 
 import static com.threerings.msoy.Log.log;
 
 /**
  * Manages forum threads and messages.
  */
+@BlockingThread
 public class ForumRepository extends DepotRepository
 {
     public ForumRepository (PersistenceContext ctx)

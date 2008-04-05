@@ -14,6 +14,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
@@ -59,6 +60,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages an AVR game on the server.
  */
+@EventThread
 public class AVRGameManager
     implements AVRGameProvider, OidListListener
 {

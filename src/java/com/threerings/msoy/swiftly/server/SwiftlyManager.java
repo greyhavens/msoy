@@ -19,6 +19,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -27,29 +28,33 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerProjectMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerProjectDispatcher;
 import com.threerings.msoy.peer.server.PeerProjectProvider;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
-import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
-import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+
 /**
  * Handles the collection of Swiftly project information
  */
+@EventThread
 public class SwiftlyManager
     implements SwiftlyProvider, PeerProjectProvider, MsoyServer.Shutdowner
 {

@@ -10,36 +10,6 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-
-import com.threerings.crowd.chat.server.SpeakUtil;
-
-import com.threerings.crowd.chat.data.UserMessage;
-
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
-
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.data.all.ContactEntry;
-import com.threerings.msoy.data.all.GatewayEntry;
-import com.threerings.msoy.data.all.JabberName;
-
-import com.threerings.msoy.chat.client.JabberService;
-
-import com.threerings.msoy.web.client.DeploymentConfig;
-
-import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
-
-import com.threerings.presents.data.ClientObject;
-
-import com.threerings.presents.dobj.DSet;
-
 import org.jivesoftware.smack.util.StringUtils;
 
 import org.jivesoftware.smack.Chat;
@@ -63,11 +33,37 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.packet.RosterPacket;
 
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MessageManager;
+import com.threerings.util.Name;
+
+import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsClient;
+
+import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.SpeakUtil;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.ContactEntry;
+import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.JabberName;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.chat.client.JabberService;
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the connection to a jabber server providing gateway access to external IM networks.
  */
+@EventThread
 public class JabberManager
     implements MsoyServer.Shutdowner, ClientManager.ClientObserver, JabberProvider,
                ConnectionListener

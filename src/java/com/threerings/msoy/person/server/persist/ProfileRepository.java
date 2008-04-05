@@ -19,12 +19,15 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Manages the persistent store of profile profile data.
  */
+@BlockingThread
 public class ProfileRepository extends DepotRepository
 {
     public ProfileRepository (PersistenceContext ctx)

@@ -28,6 +28,8 @@ import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.samskivert.util.IntIntMap;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -37,6 +39,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages persistent information stored on a per-member basis.
  */
+@BlockingThread
 public class FlowRepository extends DepotRepository
 {
     /**

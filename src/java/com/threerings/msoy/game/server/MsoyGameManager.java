@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -22,6 +23,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 /**
  * Manages a MetaSOY game.
  */
+@EventThread
 public class MsoyGameManager extends WhirledGameManager
 {
     public MsoyGameManager ()

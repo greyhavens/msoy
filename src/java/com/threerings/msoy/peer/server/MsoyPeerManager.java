@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -53,6 +54,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages communication with our peer servers, coordinates services that must work across peers.
  */
+@EventThread
 public class MsoyPeerManager extends CrowdPeerManager
     implements MsoyPeerProvider
 {

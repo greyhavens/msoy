@@ -30,12 +30,15 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Manages the persistent side of tagging of things in the MetaSOY system (right now items and
  * groups).
  */
+@BlockingThread
 public abstract class TagRepository extends DepotRepository
 {
     /**

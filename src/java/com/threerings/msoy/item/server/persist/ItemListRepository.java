@@ -16,10 +16,13 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 
+@BlockingThread
 public class ItemListRepository extends DepotRepository
 {
     public ItemListRepository (PersistenceContext ctx)

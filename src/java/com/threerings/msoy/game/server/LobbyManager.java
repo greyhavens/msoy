@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.util.Interval;
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -43,6 +44,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages a lobby room.
  */
+@EventThread
 public class LobbyManager
     implements LobbyObject.SubscriberListener
 {

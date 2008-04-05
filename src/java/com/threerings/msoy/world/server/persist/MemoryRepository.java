@@ -23,11 +23,14 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Manages "smart" digital item memory.
  */
+@BlockingThread
 public class MemoryRepository extends DepotRepository
 {
     public MemoryRepository (PersistenceContext ctx)

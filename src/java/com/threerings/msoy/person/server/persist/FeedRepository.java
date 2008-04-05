@@ -26,11 +26,14 @@ import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.person.util.FeedMessageType;
 
 /**
  * Maintains persistent data for feeds.
  */
+@BlockingThread
 public class FeedRepository extends DepotRepository
 {
     @Computed @Entity

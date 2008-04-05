@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.ArrayIntSet;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
@@ -26,6 +27,10 @@ import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
 
+/**
+ * Customizes the basic table manager with MSOY specific bits.
+ */
+@EventThread
 public class MsoyTableManager extends TableManager
 {
     public MsoyTableManager (LobbyManager lmgr)

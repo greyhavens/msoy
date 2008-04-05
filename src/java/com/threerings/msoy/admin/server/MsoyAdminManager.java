@@ -9,6 +9,7 @@ import com.samskivert.util.Interval;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
@@ -28,6 +29,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles administrative bits for the MetaSOY server.
  */
+@EventThread
 public class MsoyAdminManager
 {
     /** Contains server status information published to admins. */
