@@ -38,6 +38,16 @@ public class MsoyClient extends WhirledClient
         _eventLog = eventLog;
     }
 
+    /**
+     * Called by the peer manager to let us know that our session was forwarded to another server.
+     * When this session ends we'll know that it's not *really* the end of the user's session,
+     * they're just moving to another server.
+     */
+    public void setSessionForwarded (boolean sessionForwarded)
+    {
+        _sessionForwarded = sessionForwarded;
+    }
+
     @Override // from PresentsClient
     protected BootstrapData createBootstrapData ()
     {
@@ -175,4 +185,8 @@ public class MsoyClient extends WhirledClient
 
     /** We generate events to this fellow. */
     protected MsoyEventLogger _eventLog;
+
+    /** Only valid in {@link #sessionDidEnd}, lets us know if the session is truly over or if the
+     * member just went to another server. */
+    protected boolean _sessionForwarded;
 }

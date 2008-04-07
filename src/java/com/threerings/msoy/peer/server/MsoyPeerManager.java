@@ -38,6 +38,7 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -349,6 +350,13 @@ public class MsoyPeerManager extends CrowdPeerManager
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
             node.getClient(), memobj, memobj.actorState, memobj.stats);
+
+        // let our client handler know that the session is not over but rather is being forwarded
+        // to another server
+        MsoyClient mclient = (MsoyClient)MsoyServer.clmgr.getClient(memobj.username);
+        if (mclient != null) {
+            mclient.setSessionForwarded(true);
+        }
     }
 
     // from interface MsoyPeerProvider
