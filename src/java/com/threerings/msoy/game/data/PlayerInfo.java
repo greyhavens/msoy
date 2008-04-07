@@ -10,6 +10,8 @@ import com.whirled.data.WhirledOccupantInfo;
 
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 /**
  * Contains information on occupants in a game.
  */
@@ -30,9 +32,18 @@ public class PlayerInfo extends OccupantInfo
         super(body);
     }
 
+    /**
+     * Use this method in preference to getHeadshotURL, as MediaDescs should
+     * be passed to endpoints, not urls.
+     */
+    public MediaDesc getHeadshot ()
+    {
+        return ((VizMemberName)username).getPhoto();
+    }
+
     // from interface WhirledOccupantInfo
     public String getHeadshotURL ()
     {
-        return ((VizMemberName)username).getPhoto().getMediaPath();
+        return getHeadshot().getMediaPath();
     }
 }
