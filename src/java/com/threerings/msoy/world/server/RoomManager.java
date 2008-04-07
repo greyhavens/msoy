@@ -5,8 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -16,19 +14,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
-
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -56,7 +53,6 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
-
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
@@ -79,7 +75,6 @@ import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -642,9 +637,11 @@ public class RoomManager extends SpotSceneManager
     {
         super.bodyEntered(bodyOid);
         
-        MsoyBodyObject body = (MsoyBodyObject) MsoyServer.omgr.getObject(bodyOid);
+        DObject body = MsoyServer.omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
-            ensureAVRGameControl((MemberObject) body);
+            MemberObject member = (MemberObject) body;
+            ensureAVRGameControl(member);
+            member.metrics.room.init((MsoySceneModel) getScene().getSceneModel());
         }
     }
     
@@ -662,6 +659,13 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected void bodyLeft (int bodyOid)
     {
+        // start metrics 
+        DObject body = MsoyServer.omgr.getObject(bodyOid);
+        if (body instanceof MemberObject) {
+            MemberObject member = (MemberObject) body;
+            member.metrics.room.save(member);
+        }
+        
         super.bodyLeft(bodyOid);
 
         // reassign this occupant's controlled entities
@@ -1059,7 +1063,7 @@ public class RoomManager extends SpotSceneManager
             return diff;
         }
     } // End: static class Controller
-
+    
     /** The room object. */
     protected RoomObject _roomObj;
 

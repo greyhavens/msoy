@@ -193,6 +193,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
+    
+    /** Metrics tracked for this player. */
+    public transient PlayerMetrics metrics = new PlayerMetrics();
 
     /**
      * Return true if this user is a guest.

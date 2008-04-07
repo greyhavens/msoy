@@ -57,7 +57,7 @@ public class MsoyAdminManager
                 // iterate over the list of members, adding up a total, as well as counting up
                 // subsets of active users and guest users
                 int total = 0, active = 0, guests = 0, viewers = 0;
-                for (MemberObject memobj : _server.getMembersOnline()) {
+                for (MemberObject memobj : MsoyServer.getMembersOnline()) {
                     total++;
                     active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
                     if (memobj.isGuest()) {

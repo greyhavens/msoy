@@ -22,13 +22,11 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
-
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.util.FeedMessageType;
-
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -135,6 +133,10 @@ public class MsoySceneRegistry extends SceneRegistry
 
             if (hasRights) {
                 log.info("Going to remote node " + sceneId + "@" + nodeInfo.left + ".");
+                
+                // flush all metrics, because the memobj will get serialized *before* the room exit is processed
+                memobj.metrics.save(memobj);
+                
                 sendClientToNode(nodeInfo.left, memobj, listener);
             } else {
                 listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);

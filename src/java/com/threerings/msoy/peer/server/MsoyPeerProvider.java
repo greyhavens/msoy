@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
@@ -19,5 +20,5 @@ public interface MsoyPeerProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyPeerService#forwardMemberObject} request.
      */
-    public void forwardMemberObject (ClientObject caller, MemberObject arg1, String arg2, StatSet arg3);
+    public void forwardMemberObject (ClientObject caller, MemberObject arg1, String arg2, StatSet arg3, PlayerMetrics arg4);
 }

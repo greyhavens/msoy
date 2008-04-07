@@ -59,22 +59,32 @@ public class MsoyEvents
         }
     }
 
-    @Event(name="Logout")
-    public static class Logout implements MsoyEvent
+    @Event(name="SessionMetrics")
+    public static class SessionMetrics implements MsoyEvent
     {
         @Index @Field final public Date timestamp; 
         @Field final public int memberId;
+        @Field final public int inMyRooms;
+        @Field final public int inFriendRooms;
+        @Field final public int inStrangerRooms;
+        @Field final public int inWhirleds;
+        @Field final public int totalActive;
+        @Field final public int totalIdle;
         @Field final public String sessionToken;
-        @Field final public int activeSeconds;
-        @Field final public int idleSeconds;
         
-        public Logout (int memberId, String sessionToken, int activeSeconds, int idleSeconds)
+        public SessionMetrics (int memberId, int timeInMyRooms, int timeInFriendRooms, 
+            int timeInStrangerRooms, int timeInWhirleds, int totalTimeActive, int totalTimeIdle, 
+            String sessionToken)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
+            this.inMyRooms = timeInMyRooms;
+            this.inFriendRooms = timeInFriendRooms;
+            this.inStrangerRooms = timeInStrangerRooms;
+            this.inWhirleds = timeInWhirleds;
+            this.totalActive = totalTimeActive;
+            this.totalIdle = totalTimeIdle;
             this.sessionToken = toValue(sessionToken);
-            this.activeSeconds = activeSeconds;
-            this.idleSeconds = idleSeconds;
         }
     }
 

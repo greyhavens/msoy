@@ -6,9 +6,12 @@ package com.threerings.msoy.server;
 import java.io.File;
 import java.net.URL;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
+import com.threerings.msoy.world.data.IdleMetrics;
+import com.threerings.msoy.world.data.RoomVisitMetrics;
 
 import static com.threerings.msoy.Log.log;
 
@@ -88,9 +91,13 @@ public class MsoyEventLogger
         post(new MsoyEvents.Login(memberId, firstLogin, sessionToken, createdOn));
     }
 
-    public void userLoggedOut (int memberId, String sessionToken, int activeSeconds, int idleSeconds)
+    public void logPlayerMetrics (MemberObject member, String sessionToken)
     {
-        post(new MsoyEvents.Logout(memberId, sessionToken, activeSeconds, idleSeconds));
+        RoomVisitMetrics room = member.metrics.room;
+        IdleMetrics idle = member.metrics.idle;
+        post(new MsoyEvents.SessionMetrics(member.getMemberId(), 
+                room.timeInMyRoom, room.timeInFriendRooms, room.timeInStrangerRooms, room.timeInWhirleds,
+                idle.timeActive, idle.timeIdle, sessionToken));
     }
 
     public void mailSent (int senderId, int recipientId, int payloadType)

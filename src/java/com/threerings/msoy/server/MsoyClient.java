@@ -19,6 +19,7 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -72,6 +73,9 @@ public class MsoyClient extends WhirledClient
         // flag viewing-only clients that way.
         _memobj.viewOnly = ((MsoyCredentials) getCredentials()).featuredPlaceView;
 
+        // start active/idle metrics on this server - the player starts out active
+        _memobj.metrics.idle.init(true);
+        
         // let our various server entities know that this member logged on
         MsoyServer.memberLoggedOn(_memobj);
     }
@@ -99,11 +103,16 @@ public class MsoyClient extends WhirledClient
 
         // let our various server entities know that this member logged off
         MsoyServer.memberLoggedOff(_memobj);
+        final int idleSeconds = _idleTracker.getIdleTime(), activeSeconds = _connectTime - idleSeconds;
 
-        // record the session to our event log
-        int idleSeconds = _idleTracker.getIdleTime(), activeSeconds = _connectTime - idleSeconds;
-        String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
-        _eventLog.userLoggedOut(_memobj.getMemberId(), sessTok, activeSeconds, idleSeconds);
+        // if this is a real logoff event, and this was a player, log what they did.
+        // (otherwise, if it's not a logoff, do nothing - the memobj was already forwarded to the new host.)
+        if (! _sessionForwarded && ! (_memobj.username instanceof LurkerName)) {
+            String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
+
+            _memobj.metrics.save(_memobj);
+            _eventLog.logPlayerMetrics(_memobj, sessTok); 
+        }
 
         // remove our idle tracker
         _memobj.removeListener(_idleTracker);
@@ -154,8 +163,12 @@ public class MsoyClient extends WhirledClient
 
         public void attributeChanged (AttributeChangedEvent event) {
             if (event.getName().equals(MemberObject.STATUS)) {
-                byte status = (Byte)event.getValue();
-                if (isIdle(status)) {
+                boolean idle = isIdle((Byte)event.getValue());
+                
+                _memobj.metrics.idle.save(_memobj);
+                _memobj.metrics.idle.init(!idle);
+                
+                if (idle) {
                     // log.info(_memobj.who() + " is idle.");
                     _idleStamp = _memobj.statusTime;
                 } else if (_idleStamp > 0) {

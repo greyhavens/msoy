@@ -37,6 +37,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
@@ -349,7 +350,7 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
-            node.getClient(), memobj, memobj.actorState, memobj.stats);
+            node.getClient(), memobj, memobj.actorState, memobj.stats, memobj.metrics);
 
         // let our client handler know that the session is not over but rather is being forwarded
         // to another server
@@ -361,13 +362,14 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     // from interface MsoyPeerProvider
     public void forwardMemberObject (
-        ClientObject caller, MemberObject memobj, String actorState, StatSet stats)
+        ClientObject caller, MemberObject memobj, String actorState, StatSet stats, PlayerMetrics metrics)
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
         // fill their transient fields back in
         memobj.actorState = actorState;
         memobj.stats = stats;
+        memobj.metrics = metrics;
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj));
