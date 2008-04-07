@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.geom.Point;
-import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
@@ -27,19 +27,20 @@ public class MsoyGameBackend extends GameBackend
         super(ctx, gameObj, ctrl);
     }
 
-    override protected function getHeadShot_v1 (occupant :int, callback :Function) :void
+    override protected function getHeadShot_v2 (occupant :int) :DisplayObject
     {
         validateConnected();
         var info :PlayerInfo = _gameObj.occupantInfo.get(occupant) as PlayerInfo;
         if (info != null) {
             var headshot :Headshot = _headshots[occupant];
             if (headshot == null) {
-                _headshots[occupant] = headshot = new Headshot(info.getHeadshotURL());
+                _headshots[occupant] = headshot = new Headshot(info.getHeadshot());
             }
-            headshot.newRequest(callback);
-            return;
+            return headshot;
         }
-        throw new Error("Failed to find occupant: " + occupant);
+
+        log.warning("Unable to find occupant: " + occupant);
+        return super.getHeadShot_v2(occupant); // return something that works anyway
     }
 
     override protected function getSize_v1 () :Point
@@ -62,76 +63,120 @@ public class MsoyGameBackend extends GameBackend
 }
 }
 
-import flash.events.Event;
-import flash.events.ErrorEvent;
-
-import flash.display.Loader;
-import flash.display.LoaderInfo;
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 
-import flash.net.URLRequest;
+import flash.geom.Point;
 
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
+import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.ImageUtil;
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
-// TODO: it's a little sketchy to return this to the usercode, as they could
-// call toggleBlocked or other things. Thought required here.
-class Headshot extends MsoyMediaContainer
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+/**
+ * We use a MsoyMediaContainer so that the headshot can be bleeped, but we wrap
+ * it inside this class so that the usercode cannot retrieve and fuxor with anything.
+ */
+class Headshot extends DisplayObjectContainer
 {
-    public static const STATE_LOADING :int = 0;
-    public static const STATE_COMPLETE :int = 1;
-    public static const STATE_ERROR :int = 2;
-
-    public var callbacks :Array;
-    public var state :int;
-
-    function Headshot (url :String)
+    function Headshot (desc :MediaDesc)
     {
-        callbacks = [ ];
-
-        state = STATE_LOADING;
-        setMedia(url);
+        _container = new MsoyMediaContainer(desc);
+        _container.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeKnown);
+        super.addChild(_container);
     }
 
-    public function newRequest (callback :Function) :void
+    override public function get width () :Number
     {
-        if (state != STATE_LOADING) {
-            respondTo(callback);
-        } else {
-            callbacks.push(callback);
-        }
+        return MediaDesc.THUMBNAIL_WIDTH;
     }
 
-    override protected function handleComplete (event :Event) :void
+    override public function get height () :Number
     {
-        super.handleComplete(event);
-
-        state = STATE_COMPLETE;
-
-        for (var ii :int = 0; ii < callbacks.length; ii ++) {
-            respondTo(callbacks[ii]);
-        }
-        callbacks = null;
+        return MediaDesc.THUMBNAIL_HEIGHT;
     }
 
-    override protected function handleError (event :ErrorEvent) :void
+    override public function addChild (child :DisplayObject) :DisplayObject
     {
-        super.handleError(event);
-
-        state = STATE_ERROR;
-
-        for (var ii :int = 0; ii < callbacks.length; ii ++) {
-            respondTo(callbacks[ii]);
-        }
-        callbacks = null;
+        nope();
+        return null;
     }
 
-    protected function respondTo (callback :Function) :void
+    override public function addChildAt (child :DisplayObject, index :int) :DisplayObject
     {
-        callback(this, state == STATE_COMPLETE);
+        nope();
+        return null;
     }
+
+    override public function contains (child :DisplayObject) :Boolean
+    {
+        return (child == this); // make it only work for us..
+    }
+
+    override public function getChildAt (index :int) :DisplayObject
+    {
+        nope();
+        return null;
+    }
+
+    override public function getChildByName (name :String) :DisplayObject
+    {
+        nope();
+        return null;
+    }
+
+    override public function getChildIndex (child :DisplayObject) :int
+    {
+        nope();
+        return 0;
+    }
+
+    override public function getObjectsUnderPoint (point :Point) :Array
+    {
+        nope();
+        return null;
+    }
+
+    override public function removeChild (child :DisplayObject) :DisplayObject
+    {
+        nope();
+        return null;
+    }
+
+    override public function removeChildAt (index :int) :DisplayObject
+    {
+        nope();
+        return null;
+    }
+
+    override public function setChildIndex (child :DisplayObject, index :int) :void
+    {
+        nope();
+    }
+
+    override public function swapChildren (child1 :DisplayObject, child2 :DisplayObject) :void
+    {
+        nope();
+    }
+
+    override public function swapChildrenAt (index1 :int, index2 :int) :void
+    {
+        nope();
+    }
+
+    protected function nope () :void
+    {
+        throw new Error("Operation not permitted.");
+    }
+
+    protected function handleMediaSizeKnown (event :ValueEvent) :void
+    {
+        _container.x = (this.width - Number(event.value[0])) / 2;
+        _container.y = (this.height - Number(event.value[1])) / 2;
+    }
+
+    protected var _container :MsoyMediaContainer;
 }
