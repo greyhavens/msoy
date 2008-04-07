@@ -75,12 +75,6 @@ public class Frame
             }
         }
 
-        // those setAttribute() calls seem to not return until their underlying JavaScript code is
-        // loaded, so we seem to be safe immediately initializing Google Analytics now
-        if (!initGoogleAnalytics()) {
-            CShell.log("Failed to initialize Google Analytics?");
-        }
-
         // create our header
         _header = new Header();
 
@@ -416,20 +410,6 @@ public class Frame
        $wnd.clearClient = function () {
             @client.shell.Frame::closeClient(Z)(true);
        };
-    }-*/;
-
-    /**
-     * Initializes Google Anayltics and reports in.
-     */
-    protected static native boolean initGoogleAnalytics () /*-{
-        try {
-            var pageTracker = $wnd._gat._getTracker("UA-169037-5");
-            pageTracker._initData();
-            pageTracker._trackPageview();
-            return true;
-        } catch (e) {
-            return false;
-        }
     }-*/;
 
     protected static native boolean isLinux () /*-{

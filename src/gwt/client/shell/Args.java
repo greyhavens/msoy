@@ -133,6 +133,19 @@ public class Args
         } while (token != null && token.length() > 0);
     }
 
+    /**
+     * Returns our args in path-like format: a1/a2/a3/...
+     */
+    public String toPath (String page)
+    {
+        StringBuffer buf = new StringBuffer("/").append(page);
+        for (int ii = 0, ll = _args.size(); ii < ll; ii++) {
+            buf.append("/");
+            buf.append(_args.get(ii));
+        }
+        return buf.toString();
+    }
+
     // @Override // from Object
     public String toString ()
     {
@@ -149,8 +162,7 @@ public class Args
     {
         return str.replaceAll(ARG_ESC_SEP, ARG_SEP).replaceAll(ARG_ESC_ESC, ARG_ESC);
     }
-    
-    
+
     protected List _args = new ArrayList();
 
     protected static final String ARG_SEP = "_";

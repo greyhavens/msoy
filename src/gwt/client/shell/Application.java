@@ -192,6 +192,9 @@ public class Application
         _status = new StatusPanel(this);
         Frame.init();
 
+        // initialize our GA handler
+        _analytics.init();
+
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
         _currentToken = History.getToken();
@@ -259,6 +262,9 @@ public class Application
         } else {
             _page.onHistoryChanged(args);
         }
+
+        // convert the page to GA format and report it to Google Analytics
+        _analytics.report(args.toPath(page));
     }
 
     /**
@@ -456,6 +462,7 @@ public class Application
 
     protected Page _page;
     protected HashMap _creators = new HashMap();
+    protected Analytics _analytics = new Analytics();
 
     protected StatusPanel _status;
 
