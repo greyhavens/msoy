@@ -331,8 +331,8 @@ public class FeedPanel extends TongueBox
                 }
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.SHOP, Args.compose(
-                                    message.data[1], "i", message.data[2]));
+                        Application.go(
+                            Page.SHOP, Args.compose("l", message.data[1], message.data[2]));
                     }
                 };
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
