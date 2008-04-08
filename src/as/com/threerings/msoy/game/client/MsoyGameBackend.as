@@ -64,7 +64,7 @@ public class MsoyGameBackend extends GameBackend
 }
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 
 import flash.geom.Point;
 
@@ -80,9 +80,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * We use a MsoyMediaContainer so that the headshot can be bleeped, but we wrap
  * it inside this class so that the usercode cannot retrieve and fuxor with anything.
  */
-class Headshot extends DisplayObjectContainer
+class Headshot extends Sprite
 {
-    function Headshot (desc :MediaDesc)
+    public function Headshot (desc :MediaDesc)
     {
         _container = new MsoyMediaContainer(desc);
         _container.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeKnown);
