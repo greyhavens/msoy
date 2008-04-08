@@ -170,7 +170,7 @@ public class RoomController extends SceneController
     public function requestControl (ident :ItemIdent) :void
     {
         if (_roomObj == null) {
-            log.warning("Cannot request entity control, no room object [ident=" + ident + "].");
+            log.info("Cannot request entity control, no room object [ident=" + ident + "].");
             return;
         }
 
@@ -208,6 +208,11 @@ public class RoomController extends SceneController
      */
     public function sendSpriteSignal (name :String, arg :Object) :void
     {
+        if (_roomObj == null) {
+            log.info("Dropping sprite signal, not in room [name=" + name + ", arg=" + arg + "].");
+            return;
+        }
+
         // send the request off to the server
         log.info("Sending sprite signal [name=" + name + "].");
         var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
@@ -246,6 +251,11 @@ public class RoomController extends SceneController
      */
     public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
     {
+        if (_roomObj == null) {
+            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");
+            return false;
+        }
+
 // NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
 //        if (!checkCanRequest(ident, "updateMemory")) {
 //            return false;
@@ -267,16 +277,19 @@ public class RoomController extends SceneController
      */
     public function setRoomProperty (key :String, value: Object) :Boolean
     {
+        if (_roomObj == null) {
+            log.info("Dropping room property update, not in room [key=" + key + "].");
+            return false;
+        }
+
         // serialize datum
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
-
         if (key.length > RoomPropertyEntry.MAX_KEY_LENGTH ||
             (data != null && data.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
             return false;
         }
 
         var entry :RoomPropertyEntry = new RoomPropertyEntry(key, data);
-
         if (_roomObj.roomProperties.contains(entry) &&
             _roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
             return false;
