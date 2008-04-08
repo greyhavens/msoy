@@ -1,73 +1,79 @@
-/** Note that I can apply base styles like so:
-
-.blaButton, .fooButton, .flamButton {
-  // common styles
+.brushButton, .eraserButton, .eyedropperButton, .moveButton, .cropButton, .selectButton, .undoButton, .redoButton {
+  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button.png");
+  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button.png");
+  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button_down.png");
+  disabledSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button_disable.png");
+  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button_down.png");
+  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button_down.png");
+  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/button.png");
 }
-
-.blaButton {
-  // specific styles
-}
-*/
 
 .brushButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
-
-  /* replace */
-  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
-  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
-  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/brush_down.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush_over.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_brush_over.png");
 }
 
 .eraserButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
-
-  /* replace */
-  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
-  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
-  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eraser_down.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser_over.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eraser_over.png");
 }
 
 .eyedropperButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
-
-  /* replace */
-  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
-  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
-  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/eyedropper_down.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper_over.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_eyedropper_over.png");
 }
 
 .moveButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move_over.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_move_over.png");
+}
 
-  /* replace */
-  selectedUpSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
-  selectedOverSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
-  selectedDownSkin: Embed(source="../../../../../../../rsrc/media/skins/image/move_down.png");
+.cropButton {
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop_over.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_crop_over.png");
+}
+
+.selectButton {
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select_over.png");
+  disabledIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select_disable.png");
+  selectedUpIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select.png");
+  selectedOverIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select_over.png");
+  selectedDownIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_select_over.png");
 }
 
 .undoButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo_down.png");
-
-  /* replace */
-  disabledSkin: Embed(source="../../../../../../../rsrc/media/skins/image/undo.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_undo.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_undo_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_undo_over.png");
+  disabledIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_undo_disable.png");
 }
 
 .redoButton {
-  upSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo.png");
-  overSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo_over.png");
-  downSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo_down.png");
-
-  /* replace */
-  disabledSkin: Embed(source="../../../../../../../rsrc/media/skins/image/redo.png");
+  upIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_redo.png");
+  overIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_redo_over.png");
+  downIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_redo_over.png");
+  disabledIcon: Embed(source="../../../../../../../rsrc/media/skins/image/icon_redo_disable.png");
 }
 

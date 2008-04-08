@@ -21,6 +21,7 @@ import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.Text;
+import mx.controls.TextInput;
 
 import mx.containers.Canvas;
 import mx.containers.Grid;
@@ -148,23 +149,37 @@ public class ImageManipulator extends HBox
     {
         bar.addChild(createControlHeader("Position Image"));
 
-        // TODO: Rick wants this removed
-        _zoomSlider = addSlider(bar, "Zoom", 1, 10, 1, _editor.setZoom);
-
         var box :HBox = new HBox();
         box.addChild(addModeBtn("move", EditCanvas.MOVE));
         box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
         bar.addChild(box);
 
-        // TODO: Rick wants this removed
-        box = new HBox();
-        box.addChild(new CommandButton("Crop", _editor.doCrop));
-        box.addChild(createTip("Crop the image to the selected region"));
-        bar.addChild(box);
-
         _scaleSlider = addSlider(bar, "Scale Image", .01, 10, 1, _editor.setScale);
         _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
+
+        // TODO: Rick wants this removed. This is here for debug only
+        _zoomSlider = addSlider(bar, "Zoom (temp)", 1, 10, 1, _editor.setZoom);
+
+        box = new HBox();
+        var crop :CommandButton = new CommandButton(null, _editor.doCrop);
+        crop.styleName = "cropButton";
+        box.addChild(crop);
+        box.addChild(createTip("Crop the image to the selected region"));
+        bar.addChild(box);
+
+        box = new HBox();
+        box.addChild(addModeBtn("select", EditCanvas.SELECT));
+        box.addChild(_selectionWidth = new TextInput());
+        var lbl :Label = new Label();
+        lbl.text = "x";
+        box.addChild(lbl);
+        box.addChild(_selectionHeight = new TextInput());
+        _selectionWidth.maxChars = 4;
+        _selectionHeight.maxChars = 4;
+        _selectionWidth.maxWidth = 40;
+        _selectionHeight.maxWidth = 40;
+        bar.addChild(box);
     }
 
     protected function createPaintControls (bar :VBox) :void
@@ -376,6 +391,9 @@ public class ImageManipulator extends HBox
     protected var _scaleSlider :HSlider;
     protected var _zoomSlider :HSlider;
     protected var _brushSlider :HSlider;
+
+    protected var _selectionWidth :TextInput;
+    protected var _selectionHeight :TextInput;
 
     protected var _undo :CommandButton;
     protected var _redo :CommandButton;

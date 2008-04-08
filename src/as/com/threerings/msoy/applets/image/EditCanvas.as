@@ -315,11 +315,13 @@ public class EditCanvas extends DisplayCanvas
 
         // color some layers so we can click on them
         var g :Graphics = _paintLayer.graphics;
+        g.clear();
         g.beginFill(0xFFFFFF, 0);
         g.drawRect(0, 0, _width, _height);
         g.endFill();
 
         g = _hudLayer.graphics;
+        g.clear();
         g.beginFill(0xFFFFFF, 0);
         g.drawRect(0, 0, _width, _height);
         g.endFill();
