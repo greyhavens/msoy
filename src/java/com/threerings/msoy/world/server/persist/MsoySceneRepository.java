@@ -6,6 +6,7 @@ package com.threerings.msoy.world.server.persist;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
@@ -21,6 +22,7 @@ import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -225,18 +227,29 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
-     * Saves the provided set of updates to the database.
+     * Saves the provided set of updates to the database. Errors applying any of the individual
+     * updates are caught and logged so that one update application failure does not prevent
+     * subsequent updates from failing.
      */
     protected void persistUpdates (Iterable<? extends SceneUpdate> updates, int finalVersion)
-        throws PersistenceException
     {
         int sceneId = 0;
         for (SceneUpdate update : updates) {
             sceneId = update.getSceneId();
-            applyUpdate(update);
+            try {
+                applyUpdate(update);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to apply scene update " + update +
+                        " from " + StringUtil.toString(updates) + ".", pe);
+            }
         }
         if (sceneId != 0) {
-            updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
+            try {
+                updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to update scene to final version [id=" + sceneId +
+                        ", fvers=" + finalVersion + "].", pe);
+            }
         }
     }
 
