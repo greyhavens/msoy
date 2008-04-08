@@ -204,6 +204,7 @@ public class AVRGameManager
         }
 
         if (player.questState.containsKey(questId)) {
+            listener.requestProcessed();
             // silently ignore
             return;
         }
