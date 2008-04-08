@@ -3,12 +3,14 @@
 
 package client.msgs;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.ContentFooterPanel;
+import client.util.MsoyUI;
 
 /**
  * A content footer panel customized for use by our forum bits.
@@ -48,6 +50,15 @@ public class TableFooterPanel extends ContentFooterPanel
         _content.setWidget(row, 0, widget);
         _content.getFlexCellFormatter().setColSpan(row, 0, 2);
         return row;
+    }
+
+    protected void addFooterButton (Button button)
+    {
+        if (_footer.getWidgetCount() > 0) {
+            // I'd love to use a <div> here with a width but that doesn't work, awesome!
+            _footer.add(MsoyUI.createHTML("&nbsp;", "inline"));
+        }
+        _footer.add(button);
     }
 
     protected FlexTable _content;

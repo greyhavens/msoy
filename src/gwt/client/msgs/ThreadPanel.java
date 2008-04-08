@@ -172,7 +172,7 @@ public class ThreadPanel extends TitledListPanel
                 setWidget(row++, 0, reply);
             }
 
-            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     showMessages();
                 }
@@ -193,7 +193,7 @@ public class ThreadPanel extends TitledListPanel
                     return false;
                 }
             };
-            _footer.add(submit);
+            addFooterButton(submit);
         }
 
         // @Override // from Widget
@@ -216,7 +216,7 @@ public class ThreadPanel extends TitledListPanel
             _content.setWidget(0, 0, _editor = new MessageEditor());
             _editor.setHTML(message.message);
 
-            _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     showMessages();
                 }
@@ -242,7 +242,7 @@ public class ThreadPanel extends TitledListPanel
                 }
                 protected String _text;
             };
-            _footer.add(submit);
+            addFooterButton(submit);
         }
 
         // @Override // from Widget

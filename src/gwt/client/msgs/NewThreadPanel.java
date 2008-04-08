@@ -46,7 +46,7 @@ public class NewThreadPanel extends TableFooterPanel
         addRow(CMsgs.mmsgs.ntpFirstMessage());
         addRow(_message = new MessageEditor());
 
-        _footer.add(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+        addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
@@ -61,7 +61,7 @@ public class NewThreadPanel extends TableFooterPanel
                 return false;
             }
         };
-        _footer.add(submit);
+        addFooterButton(submit);
     }
 
     protected boolean submitNewThread (ForumCallback callback)
