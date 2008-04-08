@@ -4,8 +4,13 @@
 package com.threerings.msoy.chat.server;
 
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
+
+import com.threerings.presents.client.Client;
+
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.data.VizMemberName;
@@ -26,13 +31,12 @@ public class SubscriptionWrapper extends ChannelWrapper
         super(mgr, channel);
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void initialize (final ChannelCreationContinuation cccont)
     {
         // let's create a proxy to a channel object hosted on another server
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         HostedChannel hosted = host.hostedChannels.get(HostedChannel.getKey(_channel));
-
         if (hosted == null) {
             // the host used to have this channel, but it disappeared. where did it go?
             log.warning("Remote channel no longer hosted, cannot be subscribed! " +
@@ -71,7 +75,7 @@ public class SubscriptionWrapper extends ChannelWrapper
         MsoyServer.peerMan.proxyRemoteObject(host.nodeName, hosted.oid, subscriptionResult);
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void shutdown ()
     {
         // clean up the object
@@ -84,42 +88,53 @@ public class SubscriptionWrapper extends ChannelWrapper
             // host already destroyed the distributed object
             return;
         }
-        
-        HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
 
+        HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
         MsoyServer.peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
     }
-    
-    // from abstract class ChannelWrapper 
+
+    // from abstract class ChannelWrapper
     public void addChatter (VizMemberName chatter)
     {
         removeStaleMessagesFromHistory();
-        MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
-        if (host == null) {
-            // TODO: This should mean that we're trying to subscribe to a channel that is hosted on
-            // another server *just* as that other server is shutting down the channel.  We should
-            // try to start hosting the channel now.
-            log.warning("host for known channel not found! [" + chatter + ", " + _channel + "]");
-            return;
+
+        Tuple<MsoyNodeObject,Client> bits = getChannelHost("addChatter", chatter);
+        if (bits != null) {
+            bits.left.peerChatService.addUser(
+                bits.right, chatter, _channel, new ChatterListener(chatter, 1));
         }
-        host.peerChatService.addUser(
-            MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
-            new ChatterListener(chatter, 1));
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void removeChatter (VizMemberName chatter)
+    {
+        Tuple<MsoyNodeObject,Client> bits = getChannelHost("removeChatter", chatter);
+        if (bits != null) {
+            bits.left.peerChatService.removeUser(
+                bits.right, chatter, _channel, new ChatterListener(chatter, -1));
+        }
+    }
+
+    /**
+     * Gets our host node object and client, but logs a warning and returns null if either of the
+     * two are missing for strange reasons.
+     */
+    protected Tuple<MsoyNodeObject,Client> getChannelHost (String caller, VizMemberName chatter)
     {
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         if (host == null) {
-            log.warning("attempting to remove chatter from channel with null host! [" + chatter +
-                ", " + _channel + "]");
-            return;
+            log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter + "].");
+            return null;
         }
 
-        host.peerChatService.removeUser(
-            MsoyServer.peerMan.getPeerClient(host.nodeName), chatter, _channel,
-            new ChatterListener(chatter, -1));
+        Client client = MsoyServer.peerMan.getPeerClient(host.nodeName);
+        if (client == null) {
+            log.warning("Missing client for chat host node [caller=" + caller +
+                        ", node=" + host.nodeName + "].");
+            return null;
+        }
+
+        return Tuple.create(host, client);
     }
 
     /**
