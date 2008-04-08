@@ -8,8 +8,9 @@ import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
+import com.threerings.gwt.util.ListenerList;
+
 import client.shell.CShell;
-import client.util.ListenerList;
 
 /**
  * Utility class for listening to events from the Flash client.

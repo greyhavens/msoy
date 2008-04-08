@@ -13,10 +13,10 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
 
+import com.threerings.gwt.util.ListenerList;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.HashIntMap;
-import client.util.ListenerList;
 import client.util.ServiceBackedDataModel;
 
 /**
