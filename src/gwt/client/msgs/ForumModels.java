@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.web.client.ForumService;
@@ -27,6 +28,11 @@ public class ForumModels
     {
         public GroupThreads (int groupId) {
             _groupId = groupId;
+            _group = new GroupName("", _groupId);
+        }
+
+        public GroupName getGroup () {
+            return _group;
         }
 
         public boolean canStartThread () {
@@ -35,6 +41,20 @@ public class ForumModels
 
         public boolean isManager () {
             return _isManager;
+        }
+
+        /**
+         * Requests to be informed when we obtain our group name from the first batch of thread
+         * results. {@link AsyncCallback#onSuccess} will be called with the {@link GroupName} when
+         * we learn it. {@link AsyncCallback#onFailure} will never be called but this interface is
+         * more convenient than Command which does not allow us to pass an argument.
+         */
+        public void setGotGroupName (AsyncCallback onGotGroupName) {
+            _onGotGroupName = onGotGroupName;
+            // if we already have our group name, fire the callback immediately
+            if (!_group.toString().equals("")) {
+                gotGroupName(_group);
+            }
         }
 
         /**
@@ -66,6 +86,10 @@ public class ForumModels
             for (int ii = 0; ii < tresult.threads.size(); ii++) {
                 mapThread((ForumThread)tresult.threads.get(ii));
             }
+            // grab our real group name from one of our thread records
+            if (tresult.threads.size() > 0) {
+                gotGroupName(((ForumThread)tresult.threads.get(0)).group);
+            }
             super.onSuccess(result);
         }
 
@@ -88,8 +112,23 @@ public class ForumModels
             _threads.put(thread.threadId, thread);
         }
 
+        protected void gotGroupName (GroupName group) {
+            _group = group;
+            if (_onGotGroupName != null) {
+                try {
+                    _onGotGroupName.onSuccess(_group);
+                } catch (Exception e) {
+                    CMsgs.log("Got group name callback failed [name=" + group + "].", e);
+                }
+                _onGotGroupName = null;
+            }
+        }
+
         protected int _groupId;
+        protected GroupName _group;
         protected boolean _canStartThread, _isManager;
+
+        protected AsyncCallback _onGotGroupName;
         protected HashIntMap _threads = new HashIntMap();
     }
 

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 

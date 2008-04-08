@@ -4,6 +4,7 @@
 package client.msgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
@@ -11,6 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.images.msgs.MsgsImages;
+import client.shell.Frame;
 import client.util.MsoyUI;
 import client.util.SearchBox;
 
@@ -29,6 +31,14 @@ public class ForumPanel extends TitledListPanel
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
         setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
+
+        // set up a callback to configure our page title when we learn this group's name
+        _fmodels.getGroupThreads(groupId).setGotGroupName(new AsyncCallback() {
+            public void onSuccess (Object result) {
+                Frame.setTitle(result.toString());
+            }
+            public void onFailure (Throwable error) { /* not used */ }
+        });
     }
 
     public void displayUnreadThreads (boolean refresh)
@@ -40,8 +50,8 @@ public class ForumPanel extends TitledListPanel
 
     public void startNewThread (int groupId)
     {
-        boolean isManager = _fmodels.getGroupThreads(groupId).isManager();
-        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, isManager));
+        ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
+        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager()));
     }
 
     protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
