@@ -20,6 +20,7 @@ import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -136,6 +137,35 @@ public class CommentServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete comment [entity=" + etype + ":" + eid +
+                    ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface CommentService
+    public void complainComment (WebIdent ident, String subject, int etype, int eid, long posted)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        try {
+            CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
+            if (record == null) {
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+            String link = ServerConfig.getServerURL();
+            if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
+                link += "/#shop-l_" + etype + "_" + eid;
+            } else if (etype == Comment.TYPE_ROOM) {
+                link += "/#world-room_" + eid;
+            } else {
+                link = null;
+            }
+
+            MsoyServer.supportMan.addMessageComplaint(
+                    mrec.getName(), record.memberId, record.text, subject, link);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to complain comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

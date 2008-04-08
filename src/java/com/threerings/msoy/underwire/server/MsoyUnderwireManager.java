@@ -136,5 +136,31 @@ public class MsoyUnderwireManager
         });
     }
 
+    /**
+     * Adds a mesasge complaint to the even queue.  This should only be called on the invoker
+     * thread or from a servlet.
+     */
+    public void addMessageComplaint (
+            MemberName source, int targetId, String message, String subject, String link)
+        throws PersistenceException
+    {
+        final EventRecord event = new EventRecord();
+        event.source = Integer.toString(source.getMemberId());
+        event.sourceHandle = source.toString();
+        event.status = Event.OPEN;
+        event.subject = subject;
+        event.link = link;
+        event.chatHistory = message.replaceAll("<br/>", "");
+        event.target = Integer.toString(targetId);
+        MemberName target = MsoyServer.memberRepo.loadMemberName(targetId);
+        if (target == null) {
+            log.warning("Unable to locate target of complaint [event=" + event +
+                    ", targetId=" + targetId+ "].");
+        } else {
+            event.targetHandle = target.toString();
+        }
+        _underrepo.insertEvent(event);
+    }
+
     protected UnderwireRepository _underrepo;
 }

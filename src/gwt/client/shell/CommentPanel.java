@@ -5,7 +5,9 @@ package client.shell;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -43,6 +45,18 @@ public class CommentPanel extends MessagePanel
             delete.addStyleName("Posted");
             delete.addStyleName("actionLabel");
             info.add(delete);
+        }
+
+        if (CShell.getMemberId() != 0 && CShell.getMemberId() != _comment.commentor.getMemberId()) {
+            InlineLabel complain = new InlineLabel(CShell.cmsgs.complainPost(), false, true, false);
+            complain.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _parent.complainComment(_comment);
+                }
+            });
+            complain.addStyleName("Posted");
+            complain.addStyleName("actionLabel");
+            info.add(complain);
         }
     }
 

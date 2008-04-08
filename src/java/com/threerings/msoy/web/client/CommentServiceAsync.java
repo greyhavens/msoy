@@ -29,4 +29,10 @@ public interface CommentServiceAsync
      */
     public void deleteComment (WebIdent ident, int entityType, int entityId, long when,
                                AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link CommentService#complainComment}.
+     */
+    public void complainComment (WebIdent ident, String subject, int entityType, int entityId,
+                                 long when, AsyncCallback callback);
 }

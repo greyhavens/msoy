@@ -72,4 +72,10 @@ public interface ForumServiceAsync
      * The asynchronous version of {@link ForumService#deleteMessage}.
      */
     public void deleteMessage (WebIdent ident, int messageId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ForumService#complainMessage}.
+     */
+    public void complainMessage (
+            WebIdent ident, String complaint, int messageId, AsyncCallback callback);
 }

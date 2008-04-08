@@ -52,4 +52,11 @@ public interface CommentService extends RemoteService
      */
     public boolean deleteComment (WebIdent ident, int entityType, int entityId, long when)
         throws ServiceException;
+
+    /**
+     * Complains the specified comment from the specified entity.
+     */
+    public void complainComment (
+            WebIdent ident, String subject, int entityType, int entityId, long when)
+        throws ServiceException;
 }

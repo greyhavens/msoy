@@ -251,6 +251,16 @@ public class MessagesPanel extends PagedGrid
                 }));
             }
 
+            if (CMsgs.getMemberId() != 0 &&
+                CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
+                info.add(makeInfoImage(_images.complain_post(), CMsgs.mmsgs.inlineComplain(),
+                    new ClickListener() {
+                        public void onClick (Widget sender) {
+                            new ForumMessageComplainPopup(_message).show();
+                        }
+                    }));
+            }
+
             // TODO: if whirled manager, also allow forum moderation
             if (CMsgs.getMemberId() == _message.poster.name.getMemberId() || CMsgs.isAdmin()) {
                 info.add(makeInfoImage(_images.delete_post(),
@@ -288,6 +298,24 @@ public class MessagesPanel extends PagedGrid
         }
 
         protected ForumThread _thread;
+        protected ForumMessage _message;
+    }
+
+    protected class ForumMessageComplainPopup extends ComplainPopup
+    {
+        public ForumMessageComplainPopup (ForumMessage message)
+        {
+            super();
+            _message = message;
+        }
+
+        protected boolean callService ()
+        {
+            CMsgs.forumsvc.complainMessage(
+                    CMsgs.ident, _description.getText(), _message.messageId, this);
+            return true;
+        }
+
         protected ForumMessage _message;
     }
 

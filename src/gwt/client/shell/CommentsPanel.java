@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.client.CommentService;
 
+import client.msgs.ComplainPopup;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -122,10 +123,15 @@ public class CommentsPanel extends PagedGrid
         };
     }
 
+    protected void complainComment (Comment comment)
+    {
+        new CommentComplainPopup(comment, _entityType, _entityId).show();
+    }
+
     protected class CommentModel extends ServiceBackedDataModel
     {
         protected void callFetchService (int start, int count, boolean needCount) {
-            CShell.commentsvc.loadComments(_entityType, _entityId, start, count, needCount, this); 
+            CShell.commentsvc.loadComments(_entityType, _entityId, start, count, needCount, this);
         }
         protected int getCount (Object result) {
             return ((CommentService.CommentResult)result).commentCount;
@@ -165,6 +171,27 @@ public class CommentsPanel extends PagedGrid
 
         protected TextArea _text;
         protected Label _status;
+    }
+
+    protected class CommentComplainPopup extends ComplainPopup
+    {
+        public CommentComplainPopup (Comment comment, int type, int id)
+        {
+            super();
+            _comment = comment;
+            _type = type;
+            _id = id;
+        }
+
+        protected boolean callService ()
+        {
+            CShell.commentsvc.complainComment(
+                    CShell.ident, _description.getText(), _type, _id, _comment.posted, this);
+            return true;
+        }
+
+        protected Comment _comment;
+        protected int _type, _id;
     }
 
     protected int _entityType, _entityId;

@@ -128,4 +128,10 @@ public interface ForumService extends RemoteService
      */
     public void deleteMessage (WebIdent ident, int messageId)
         throws ServiceException;
+
+    /**
+     * Complains about the specified message.
+     */
+    public void complainMessage (WebIdent ident, String complaint, int messageId)
+        throws ServiceException;
 }

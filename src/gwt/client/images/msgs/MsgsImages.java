@@ -50,4 +50,9 @@ public interface MsgsImages extends ImageBundle
      * @gwt.resource rss.png
      */
     AbstractImagePrototype rss ();
+
+    /**
+     * @gwt.resource complain_post.png
+     */
+    AbstractImagePrototype complain_post ();
 }

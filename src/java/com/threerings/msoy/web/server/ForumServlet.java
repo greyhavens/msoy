@@ -22,6 +22,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
@@ -465,6 +466,28 @@ public class ForumServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete message [for=" + who(mrec) +
+                    ", mid=" + messageId + "].", pe);
+            throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ForumService
+    public void complainMessage (WebIdent ident, String complaint, int messageId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            // load up the message details
+            ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);
+            if (fmr == null) {
+                throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
+            }
+            MsoyServer.supportMan.addMessageComplaint(
+                    mrec.getName(), fmr.posterId, fmr.message, complaint,
+                    ServerConfig.getServerURL() + "/#whirleds-t_" + fmr.threadId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to complain message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
