@@ -39,15 +39,7 @@ public class UpdateAccumulator
     public UpdateAccumulator (MsoySceneRepository repo)
     {
         _repo = repo;
-        // note carefully that we're setting up an Interval that posts to the invoker thread.
-        new Interval(MsoyServer.invoker) {
-            public void expired () {
-                checkAll(false);
-            }
-            public String toString () {
-                return "UpdateAccumulator.checkAll";
-            }
-        }.schedule(FLUSH_INTERVAL, true);
+        _flusher.schedule(FLUSH_INTERVAL, true);
         MsoyServer.registerShutdowner(this);
     }
 
@@ -81,6 +73,9 @@ public class UpdateAccumulator
     // from interface MsoyServer.Shutdowner
     public void shutdown ()
     {
+        // stop our flushing interval
+        _flusher.cancel();
+
         MsoyServer.invoker.postUnit(new Invoker.Unit("UpdateAccumulator.shutdown") {
             public boolean invoke () {
                 checkAll(true);
@@ -185,6 +180,17 @@ public class UpdateAccumulator
 
     /** Repository reference. */
     protected MsoySceneRepository _repo;
+
+    /** Handles flushing our room updates periodically. Note that we're setting up an Interval that
+     * posts to the invoker thread. */
+    protected Interval _flusher = new Interval(MsoyServer.invoker) {
+        public void expired () {
+            checkAll(false);
+        }
+        public String toString () {
+            return "UpdateAccumulator.checkAll";
+        }
+    };
 
     /** How often accumulated updates should be checked, in milliseconds between checks. */
     protected static final long FLUSH_INTERVAL = 2000;
