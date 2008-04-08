@@ -125,6 +125,8 @@ import com.threerings.msoy.world.client.NameField;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 class ListBox extends VBox 
 {
     public function ListBox (scrollBar :VScrollBar)
@@ -187,9 +189,11 @@ class ChatterRenderer extends HBox
     {
         super.createChildren(); 
 
-        // 20 == 1/3 of headshot size
-        _headshot = new ScalingMediaContainer(20, 20);
-        var wrapper :MediaWrapper = new MediaWrapper(_headshot, 20, 20, true);
+        const wid :int = MediaDesc.THUMBNAIL_WIDTH / 4;
+        const hei :int = MediaDesc.THUMBNAIL_HEIGHT / 4;
+
+        _headshot = new ScalingMediaContainer(wid, hei);
+        var wrapper :MediaWrapper = new MediaWrapper(_headshot, wid, hei, true);
         wrapper.setStyle("verticalAlign", "middle");
         wrapper.setStyle("horizontalAlign", "center");
         addChild(wrapper);
