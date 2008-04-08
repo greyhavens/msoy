@@ -467,6 +467,9 @@ public class GroupServlet extends MsoyServiceServlet
                 _groupRepo.updateGroup(group.groupId, updates);
             }
 
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "updateGroup failed [group=" + group +
                     ", extras=" + extras + "]", pe);
