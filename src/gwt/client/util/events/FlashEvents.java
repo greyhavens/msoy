@@ -3,15 +3,13 @@
 
 package client.util.events;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
 import client.shell.CShell;
+import client.util.ListenerList;
 
 /**
  * Utility class for listening to events from the Flash client.
@@ -30,12 +28,7 @@ public class FlashEvents
     {
         String name = nameForListener(listener);
         if (name != null) {
-            List listeners = (List)_eventListeners.get(name);
-            if (listeners == null) {
-                listeners = new ArrayList();
-                _eventListeners.put(name, listeners);
-            }
-            listeners.add(listener);
+            ListenerList.addListener(_eventListeners, name, listener);
         }
     }
 
@@ -46,24 +39,22 @@ public class FlashEvents
     {
         String name = nameForListener(listener);
         if (name != null) {
-            List listeners = (List)_eventListeners.get(name);
-            if (listeners != null) {
-                listeners.remove(listener);
-            }
+            ListenerList.removeListener(_eventListeners, name, listener);
         }
     }
 
     /**
      * Dispatches an event to all registered listeners.
      */
-    public static void dispatchEvent (FlashEvent event)
+    public static void dispatchEvent (final FlashEvent event)
     {
-        List listeners = (List)_eventListeners.get(event.getEventName());
+        ListenerList listeners = (ListenerList)_eventListeners.get(event.getEventName());
         if (listeners != null) {
-            Iterator iter = listeners.iterator();
-            while (iter.hasNext()) {
-                event.notifyListener((FlashEventListener) iter.next());
-            }
+            listeners.notify(new ListenerList.Op() {
+                public void notify (Object listener) {
+                    event.notifyListener((FlashEventListener)listener);
+                }
+            });
         }
     }
 

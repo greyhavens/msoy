@@ -16,6 +16,7 @@ import com.threerings.msoy.web.client.ForumService;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.HashIntMap;
+import client.util.ListenerList;
 import client.util.ServiceBackedDataModel;
 
 /**
@@ -49,8 +50,8 @@ public class ForumModels
          * we learn it. {@link AsyncCallback#onFailure} will never be called but this interface is
          * more convenient than Command which does not allow us to pass an argument.
          */
-        public void setGotGroupName (AsyncCallback onGotGroupName) {
-            _onGotGroupName = onGotGroupName;
+        public void addGotNameListener (AsyncCallback onGotGroupName) {
+            _gotNameListeners = ListenerList.addListener(_gotNameListeners, onGotGroupName);
             // if we already have our group name, fire the callback immediately
             if (!_group.toString().equals("")) {
                 gotGroupName(_group);
@@ -114,13 +115,13 @@ public class ForumModels
 
         protected void gotGroupName (GroupName group) {
             _group = group;
-            if (_onGotGroupName != null) {
-                try {
-                    _onGotGroupName.onSuccess(_group);
-                } catch (Exception e) {
-                    CMsgs.log("Got group name callback failed [name=" + group + "].", e);
-                }
-                _onGotGroupName = null;
+            if (_gotNameListeners != null) {
+                _gotNameListeners.notify(new ListenerList.Op() {
+                    public void notify (Object listener) {
+                        ((AsyncCallback)listener).onSuccess(_group);
+                    }
+                });
+                _gotNameListeners = null;
             }
         }
 
@@ -128,7 +129,7 @@ public class ForumModels
         protected GroupName _group;
         protected boolean _canStartThread, _isManager;
 
-        protected AsyncCallback _onGotGroupName;
+        protected ListenerList _gotNameListeners;
         protected HashIntMap _threads = new HashIntMap();
     }
 

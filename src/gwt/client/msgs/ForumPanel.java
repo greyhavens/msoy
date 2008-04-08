@@ -33,7 +33,7 @@ public class ForumPanel extends TitledListPanel
         setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
-        _fmodels.getGroupThreads(groupId).setGotGroupName(new AsyncCallback() {
+        _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback() {
             public void onSuccess (Object result) {
                 Frame.setTitle(result.toString());
             }
