@@ -168,12 +168,85 @@ public class Application
     }
 
     /**
+     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
+     * if the guest creates an account we can transfer anything they earned as a guest to their
+     * newly created account. This is also called if a player attempts to play a game without
+     * having first logged into the server.
+     */
+    public static void setGuestId (int guestId)
+    {
+        if (CShell.getMemberId() > 0) {
+            CShell.log("Warning: got guest id but appear to be logged in? " +
+                       "[memberId=" + CShell.getMemberId() + ", guestId=" + guestId + "].");
+        } else {
+            CShell.ident = new WebIdent();
+            CShell.ident.memberId = guestId;
+            // TODO: the code that knows how to do this is in MsoyCredentials which is not
+            // accessible to GWT currently for unrelated technical reasons
+            CShell.ident.token = "G" + guestId;
+        }
+    }
+
+    /**
      * Returns a partner identifier when we're running in partner cobrand mode, null when we're
      * running in the full Whirled environment.
      */
     public static native String getPartner () /*-{
         return $doc.whirledPartner;
     }-*/;
+
+    /**
+     * Returns a reference to the status panel.
+     */
+    public StatusPanel getStatusPanel ()
+    {
+        return _status;
+    }
+
+    /**
+     * Reports a page view event to our analytics engine.
+     */
+    public void reportEvent (String path)
+    {
+        _analytics.report(path);
+    }
+
+    /**
+     * Called when the player logs on (or when our session is validated).
+     */
+    public void didLogon (SessionData data)
+    {
+        CShell.creds = data.creds;
+        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
+        _status.didLogon(data);
+        WorldClient.didLogon(data.creds);
+        Frame.didLogon();
+
+        if (_page != null) {
+            _page.didLogon(data.creds);
+        } else if (_currentToken != null) {
+            onHistoryChanged(_currentToken);
+        }
+    }
+
+    /**
+     * Called when the player logs off.
+     */
+    public void didLogoff ()
+    {
+        CShell.creds = null;
+        CShell.ident = null;
+        _status.didLogoff();
+        Frame.didLogoff();
+
+        if (_page == null) {
+            // we can now load our starting page
+            onHistoryChanged(_currentToken);
+        } else {
+            Frame.closeClient(false);
+            _page.didLogoff();
+        }
+    }
 
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -264,72 +337,7 @@ public class Application
         }
 
         // convert the page to GA format and report it to Google Analytics
-        _analytics.report(args.toPath(page));
-    }
-
-    /**
-     * Returns a reference to the status panel.
-     */
-    public StatusPanel getStatusPanel ()
-    {
-        return _status;
-    }
-
-    /**
-     * Called when the player logs on (or when our session is validated).
-     */
-    public void didLogon (SessionData data)
-    {
-        CShell.creds = data.creds;
-        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
-        _status.didLogon(data);
-        WorldClient.didLogon(data.creds);
-        Frame.didLogon();
-
-        if (_page != null) {
-            _page.didLogon(data.creds);
-        } else if (_currentToken != null) {
-            onHistoryChanged(_currentToken);
-        }
-    }
-
-    /**
-     * Called when the player logs off.
-     */
-    public void didLogoff ()
-    {
-        CShell.creds = null;
-        CShell.ident = null;
-        _status.didLogoff();
-        Frame.didLogoff();
-
-        if (_page == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
-        } else {
-            Frame.closeClient(false);
-            _page.didLogoff();
-        }
-    }
-
-    /**
-     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
-     * if the guest creates an account we can transfer anything they earned as a guest to their
-     * newly created account. This is also called if a player attempts to play a game without
-     * having first logged into the server.
-     */
-    public static void setGuestId (int guestId)
-    {
-        if (CShell.getMemberId() > 0) {
-            CShell.log("Warning: got guest id but appear to be logged in? " +
-                       "[memberId=" + CShell.getMemberId() + ", guestId=" + guestId + "].");
-        } else {
-            CShell.ident = new WebIdent();
-            CShell.ident.memberId = guestId;
-            // TODO: the code that knows how to do this is in MsoyCredentials which is not
-            // accessible to GWT currently for unrelated technical reasons
-            CShell.ident.token = "G" + guestId;
-        }
+        reportEvent(args.toPath(page));
     }
 
     protected void initContext ()

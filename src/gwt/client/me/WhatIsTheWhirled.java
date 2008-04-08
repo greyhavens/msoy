@@ -46,6 +46,7 @@ public class WhatIsTheWhirled extends AbsolutePanel
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 video.remove(1);
+                CMe.app.reportEvent("/me/video");
                 video.add(WidgetUtil.createFlashContainer(
                               "preview", "/images/landing/slideshow.swf", 360, 260, null));
             }
