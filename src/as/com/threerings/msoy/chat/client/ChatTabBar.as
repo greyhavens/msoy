@@ -142,10 +142,10 @@ public class ChatTabBar extends HBox
 
         // this tab hasn't been created yet.
         if (inFront) {
-            addTab(new ChatTab(_ctx, this, channel), 0);
+            addTab(new ChatTab(_ctx, this, channel, "" + channel.ident), 0);
             selectedIndex = 0;
         } else {
-            addAndSelect(new ChatTab(_ctx, this, channel));
+            addAndSelect(new ChatTab(_ctx, this, channel, "" + channel.ident));
         }
     }
 
@@ -235,12 +235,12 @@ public class ChatTabBar extends HBox
         // to ATTENTION
         var umsg :UserMessage = msg as UserMessage;
         if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.MEMBER_CHANNEL) {
-            addTab(new ChatTab(_ctx, this, 
-                ChatChannel.makeMemberChannel(umsg.getSpeakerDisplayName() as MemberName)));
+            var member :MemberName = umsg.getSpeakerDisplayName() as MemberName;
+            addTab(new ChatTab(_ctx, this, ChatChannel.makeMemberChannel(member), "" + member));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.JABBER_CHANNEL) {
-            addTab(new ChatTab(_ctx, this, 
-                ChatChannel.makeJabberChannel(umsg.getSpeakerDisplayName() as JabberName)));
+            var jabberer :JabberName = umsg.getSpeakerDisplayName() as JabberName;
+            addTab(new ChatTab(_ctx, this, ChatChannel.makeJabberChannel(jabberer), "" + jabberer));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             // else this arrived (most likely) after we already closed the channel tab.
