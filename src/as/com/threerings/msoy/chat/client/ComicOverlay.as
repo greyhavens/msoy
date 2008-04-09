@@ -98,11 +98,14 @@ public class ComicOverlay extends ChatOverlay
 
         if (msg is NotifyMessage || msg is SystemMessage) {
             displayed = displayBubble(msg, getType(msg, false));
-        } else if (_ctx is WorldContext && ChatChannel.typeIsForRoom(msg.localtype, 
-            (_ctx as WorldContext).getSceneDirector().getScene().getId())) {
-            var type :int = getType(msg, false);
-            if (type != IGNORECHAT) {
-                displayed = displayBubble(msg, type);
+        } else if (_ctx is WorldContext) {
+            var scene :MsoyScene = 
+                (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
+            if (scene != null && ChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
+                var type :int = getType(msg, false);
+                if (type != IGNORECHAT) {
+                    displayed = displayBubble(msg, type);
+                }
             }
         } 
 
