@@ -213,7 +213,6 @@ public class ChatTabBar extends HBox
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        log.debug("displayMessage [localtype=" + msg.localtype + ", msg=" + msg + "]");
         var index :int = getLocalTypeIndex(msg.localtype);
         if (index != _selectedIndex && index != -1) {
             var tab :ChatTab = _tabs[index] as ChatTab;

@@ -683,10 +683,7 @@ public class ChatOverlay
         var localtype :String = msg.localtype;
 
         if (msg is TellFeedbackMessage) {
-            if (history) {
-                return (msg as TellFeedbackMessage).isFailure() ? FEEDBACK : TELLFEEDBACK;
-            }
-            return IGNORECHAT;
+            return (msg as TellFeedbackMessage).isFailure() ? FEEDBACK : TELLFEEDBACK;
 
         } else if (msg is UserMessage) {
             var type :int;
@@ -713,19 +710,16 @@ public class ChatOverlay
             }
 
         } else if (msg is SystemMessage) {
-            if (history) {
-                switch ((msg as SystemMessage).attentionLevel) {
-                case SystemMessage.INFO:
-                    return INFO;
-                case SystemMessage.FEEDBACK:
-                    return FEEDBACK;
-                case SystemMessage.ATTENTION:
-                    return ATTENTION;
-                default:
-                    log.warning("Unknown attention level for system message " +
-                        "[msg=" + msg + "].");;
-                    break;
-                }
+            switch ((msg as SystemMessage).attentionLevel) {
+            case SystemMessage.INFO:
+                return INFO;
+            case SystemMessage.FEEDBACK:
+                return FEEDBACK;
+            case SystemMessage.ATTENTION:
+                return ATTENTION;
+            default:
+                log.warning("Unknown attention level for system message " + "[msg=" + msg + "].");;
+                break;
             }
 
             // otherwise
