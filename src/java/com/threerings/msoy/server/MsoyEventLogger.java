@@ -4,7 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.net.URL;
+import java.net.InetAddress;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserActionDetails;
@@ -12,6 +12,10 @@ import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 import com.threerings.msoy.world.data.IdleMetrics;
 import com.threerings.msoy.world.data.RoomVisitMetrics;
+
+import com.threerings.panopticon.client.net.EventLogger;
+import com.threerings.panopticon.client.net.OTPConnection;
+import com.threerings.panopticon.client.net.OTPEventSender;
 
 import static com.threerings.msoy.Log.log;
 
@@ -24,41 +28,41 @@ public class MsoyEventLogger
     implements MsoyBaseServer.Shutdowner
 {
     /** Initializes the logger; this must happen before any events can be logged. */
-    public MsoyEventLogger (String ident, URL serverURL)
+    public MsoyEventLogger (String ident, String host, int port, String username, String password)
     {
         MsoyBaseServer.registerShutdowner(this);
 
-        /* LoggingConnection references commented out, while we migrate to the new
-           Panopticon connection protocol. They're not being used right now anyway.
-           (RZ 3/28/08)
-          
-        if (serverURL != null) {
-            log.info("Events will be logged to '" + serverURL + "'.");
-            _nlogger = new LoggingConnection(
-                new InetSocketAddress(serverURL.getHost(), serverURL.getPort()));
-            _nlogger.start();
-
-        } else
-        */
-        {
-            File logloc = new File(
+        // log locally (always for now)
+        File logloc = new File(
                 new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
-            log.info("Events will be logged locally to '" + logloc + "'.");
-            _llogger = new LocalEventLogger(logloc);
-            _llogger.start();
+        log.info("Events logged locally to: " + logloc);
+        _local = new LocalEventLogger(logloc);
+        _local.start();
+
+        // also, depending on server properties, log remotely
+        try {
+            if (host != null && host.length() > 0 && port > 0) {
+                log.info("Events logged remotely to: " + host + ":" + port);
+                OTPConnection conn = new OTPConnection(
+                    InetAddress.getByName(host), port, TIMEOUT, username, password);  
+                    
+                _remote = new EventLogger(QUEUE_SIZE, RETRY, new OTPEventSender(conn));
+                _remote.start();
+            } 
+        } catch (Exception e) {
+            log.severe("Failed to connect to remote logging server, will only log locally. " +
+            		"[host=" + host + ", port=" + port + ", exception=" + e + "]"); 
         }
     }
 
     // from interface MsoyBaseServer.Shutdowner
     public void shutdown ()
     {
-        /*
-        if (_nlogger != null) {
-            _nlogger.shutdown();
+        if (_remote != null) {
+            _remote.stop();
         }
-        */
-        if (_llogger != null) {
-            _llogger.shutdown();
+        if (_local != null) {
+            _local.shutdown();
         }
     }
 
@@ -173,27 +177,27 @@ public class MsoyEventLogger
     /** Posts a log message to the appropriate place. */
     protected void post (MsoyEvent message)
     {
-        /*
-        if (_nlogger != null) {
-            try {
-                _nlogger.send(message);
-            } catch (Exception e) {
-                // TODO: throttle these errors
-                log.log(Level.WARNING, "Failed to send log event " + message + ".", e);
-            }
+        // log locally
+        _local.log(message);
 
-        } else
-        */
-        if (_llogger != null) {
-            _llogger.log(message);
-        } else {
-            log.warning("No logger configured! Dropping " + message + ".");
-        }
+        // log remotely (if applicable)
+        if (_remote != null) {
+            _remote.log(message);
+        } 
     }
 
     /** The connection via which we deliver our log messages. */
-    // protected LoggingConnection _nlogger;
+    protected EventLogger _remote;
 
-    /** Used to log events if we have no network logger. */
-    protected LocalEventLogger _llogger;
+    /** Used to log events to the local filesystem. */
+    protected LocalEventLogger _local;
+    
+    /** Timeout value when connecting to the Panopticon server, in milliseconds. */
+    protected static final int TIMEOUT = 1000;
+    
+    /** Queue size for the remote connection. */
+    protected static final int QUEUE_SIZE = 100;
+    
+    /** Remote connection retry interval, in milliseconds. */
+    protected static final int RETRY = 1000;
 }

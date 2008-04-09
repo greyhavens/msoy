@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.net.URL;
 import java.security.Security;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -107,8 +106,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // initialize event logger
-        String logURL = ServerConfig.eventLogURL;
-        _eventLog = new MsoyEventLogger(getIdent(), logURL.length() == 0 ? null : new URL(logURL));
+        _eventLog = new MsoyEventLogger(
+            getIdent(), ServerConfig.eventLogHostname, ServerConfig.eventLogPort, 
+            ServerConfig.eventLogUsername, ServerConfig.eventLogPassword);
 
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then

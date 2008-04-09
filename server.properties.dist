@@ -152,9 +152,12 @@ oooauth.access_denied_url = /register/access_denied.wm
 # facebook.secret =
 
 #
-# Hostname and port of the event log server.
+# Connection details for the event log server.
 
-# event_log_url = http://logdb.whirled.com
+# event_log_host = logdb.whirled.com
+# event_log_port = 47615
+# event_log_username = username
+# event_log_password = password
 
 #
 # Jabber component configuration

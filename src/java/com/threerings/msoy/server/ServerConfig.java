@@ -71,8 +71,17 @@ public class ServerConfig
     /** The secret key used for S3 authentication. */
     public static String mediaS3Key;
 
-    /** Event logging server RPC URL. */
-    public static String eventLogURL;
+    /** Event logging server host name. */
+    public static String eventLogHostname;
+
+    /** Event logging server host name. */
+    public static int eventLogPort;
+
+    /** Event logging server host name. */
+    public static String eventLogUsername;
+
+    /** Event logging server host name. */
+    public static String eventLogPassword;
 
     /** The port on which we listen to socket policy requests. */
     public static int socketPolicyPort;
@@ -218,7 +227,10 @@ public class ServerConfig
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
         sharedSecret = config.getValue("server_secret", "");
-        eventLogURL = config.getValue("event_log_url", "");
+        eventLogHostname = config.getValue("event_log_host", "");
+        eventLogPort = config.getValue("event_log_port", 0);
+        eventLogUsername = config.getValue("event_log_username", "");
+        eventLogPassword = config.getValue("event_log_password", "");
         recaptchaPublicKey = config.getValue("recaptcha_public", "");
         recaptchaPrivateKey = config.getValue("recaptcha_private", "");
     }
