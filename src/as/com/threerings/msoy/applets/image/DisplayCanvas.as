@@ -58,8 +58,8 @@ public class DisplayCanvas extends Canvas
     {
         _bytes = null;
         _bitmapData = null;
-        _width = 0;
-        _height = 0;
+        _imgWidth = 0;
+        _imgHeight = 0;
 
         if (_image != null) {
             getImageLayer().removeChild(_image);
@@ -84,7 +84,7 @@ public class DisplayCanvas extends Canvas
      * @param image may be a Bitmap, BitmapData, ByteArray, Class, URL (string), URLRequest
      */
     public function setImage (image :Object) :void
-    {   
+    {
         clearImage();
         if (image == null) {
             return; 
@@ -103,7 +103,7 @@ public class DisplayCanvas extends Canvas
         if (image is Bitmap) {
             var bmp :BitmapData = (image as Bitmap).bitmapData;
             if (bmp != null) {
-                sizeKnown(bmp.width, bmp.height);
+                imageSizeKnown(bmp.width, bmp.height);
             }
 
         } else if ((image is URLRequest) || (image is ByteArray)) {
@@ -131,19 +131,35 @@ public class DisplayCanvas extends Canvas
     protected function handleImageLoadComplete (event :Event) :void
     {
         var li :LoaderInfo = event.target as LoaderInfo;
-        sizeKnown(li.width, li.height);
+        imageSizeKnown(li.width, li.height);
     }
 
-    protected function sizeKnown (width :Number, height :Number) :void
+    protected function imageSizeKnown (width :Number, height :Number) :void
     {
-        _width = width;
-        _height = height;
+        _imgWidth = width;
+        _imgHeight = height;
 
-        // un-fucking believable
-        this.width = Math.min(this.maxWidth, width);
-        this.height = Math.min(this.maxHeight, height);
+        updateCanvasSize();
 
-        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _width, _height ]));
+        dispatchEvent(new ValueEvent(SIZE_KNOWN, [ _imgWidth, _imgHeight ]));
+    }
+
+    protected function updateCanvasSize () :void
+    {
+        _holder.width = _imgWidth;
+        _holder.height = _imgHeight;
+
+        // FUCK YOU FLEX, YOU GIANT PIECE OF SHIT
+        // I set the child's size, now this container should adjust.
+        // None of the following works:
+//        invalidateSize();
+//        invalidateDisplayList();
+//        invalidateProperties();
+//        validateNow();
+
+        // Oh fucking boise, we can just do this manually.
+        this.width = Math.min(this.maxWidth, _imgWidth);
+        this.height = Math.min(this.maxHeight, _imgHeight);
     }
 
     /**
@@ -163,8 +179,8 @@ public class DisplayCanvas extends Canvas
 
     protected var _image :DisplayObject;
 
-    protected var _width :int;
-    protected var _height :int;
+    protected var _imgWidth :int;
+    protected var _imgHeight :int;
 }
 }
 
@@ -180,10 +196,15 @@ class ImageHolder extends UIComponent
 {
     public function ImageHolder (toBeHeld :DisplayObject)
     {
-        setStyle("left", 0);
-        setStyle("top", 0);
-        setStyle("right", 0);
-        setStyle("bottom", 0);
+        // you'd think I'd need these, but using them makes the scrollbars not 
+        // appear if we're bigger than the canvas. Maybe it's actually making the
+        // canvas bigger but its parent doesn't add scrollbars.
+        // Of course, I shouldn't even have to fucking size the canvas... see the
+        // note above in updateCanvasSize
+//        setStyle("left", 0);
+//        setStyle("top", 0);
+//        setStyle("right", 0);
+//        setStyle("bottom", 0);
 
         _background = new Shape();
         addChild(toBeHeld);

@@ -7,6 +7,7 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.CapsStyle;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.JointStyle;
 import flash.display.LineScaleMode;
@@ -54,6 +55,8 @@ import com.threerings.flash.GraphicsUtil;
 // - If you paint a fat stroke right next to the scrollbar, you can actually paint onto
 //   a portion of the image that's offscreen. Fix so that _curPaint has a mask of the currently
 //   viewable area...?
+//
+// - erasing needs to work on a drawn area or the cropping snapshot will pick up the eraser strokes
 public class EditCanvas extends DisplayCanvas
 {
     public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
@@ -109,7 +112,6 @@ public class EditCanvas extends DisplayCanvas
 
         _paintLayer.addChild(_brush);
         _paintLayer.addChild(_dropper);
-
         _paintInsertionOffset = _paintLayer.numChildren;
     }
 
@@ -182,7 +184,7 @@ public class EditCanvas extends DisplayCanvas
     {
         _forceCrop = true;
         _cropPoint = new Point(0, 0);
-        updateSelection(wid, hei);
+        updateSelection(new Point(wid, hei));
         _cropPoint = null;
     }
 
@@ -226,6 +228,12 @@ public class EditCanvas extends DisplayCanvas
     override public function setImage (image :Object) :void
     {
         super.setImage(image);
+
+        if (_image != null) {
+            _image.x = GUTTER;
+            _image.y = GUTTER;
+        }
+
         configureMode();
     }
 
@@ -258,7 +266,7 @@ public class EditCanvas extends DisplayCanvas
         var bmp :BitmapData;
         var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY);
         if (_cropRect == null) {
-            bmp = new BitmapData(_width, _height, true, 0);
+            bmp = new BitmapData(_imgWidth, _imgHeight, true, 0);
         } else {
             bmp = new BitmapData(_cropRect.width, _cropRect.height, true, 0);
             matrix.tx = -_cropRect.x;
@@ -301,32 +309,40 @@ public class EditCanvas extends DisplayCanvas
         updateBrush();
     }
 
-    override protected function sizeKnown (width :Number, height :Number) :void
+    override protected function updateCanvasSize () :void
     {
-        super.sizeKnown(width, height);
+        // We DON'T call super
 
-        this.width = this.maxWidth;
-        this.height = this.maxHeight;
+        const canvWidth :int = _imgWidth + (2 * GUTTER);
+        const canvHeight :int = _imgHeight + (2 * GUTTER);
 
-        _rotLayer.x = _width/2;
-        _rotLayer.y = _height/2;
-        _unRotLayer.x = _width/-2;
-        _unRotLayer.y = _height/-2;
+        _holder.width = canvWidth;
+        _holder.height = canvHeight;
+
+        _rotLayer.x = canvWidth/2;
+        _rotLayer.y = canvHeight/2;
+        _unRotLayer.x = canvWidth/-2;
+        _unRotLayer.y = canvHeight/-2;
 
         // color some layers so we can click on them
         var g :Graphics = _paintLayer.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, 0);
-        g.drawRect(0, 0, _width, _height);
+        g.drawRect(0, 0, canvWidth, canvHeight);
         g.endFill();
 
         g = _hudLayer.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, 0);
-        g.drawRect(0, 0, _width, _height);
+        g.drawRect(0, 0, canvWidth, canvHeight);
         g.endFill();
 
-        configureMode();
+        // jiggle the canvas width. See notes in super.updateCanvasSize()
+        this.width = this.maxWidth;
+        this.height = this.maxHeight;
+
+        // TODO: needed?
+        //configureMode();
     }
 
     protected function configureMode () :void
@@ -396,6 +412,11 @@ public class EditCanvas extends DisplayCanvas
         g.endFill();
     }
 
+    protected function layerPoint (layer :DisplayObject, event :MouseEvent) :Point
+    {
+        return layer.globalToLocal(new Point(event.stageX, event.stageY));
+    }
+
     // Editing operations
 
     protected function handleShowDropper (event :MouseEvent) :void
@@ -405,15 +426,12 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleDropperMove (event :MouseEvent) :void
     {
-        handleDropperMoveXY(event.localX, event.localY);
-    }
+        var p :Point = layerPoint(_paintLayer, event);
+        _dropper.x = p.x;
+        _dropper.y = p.y;
 
-    protected function handleDropperMoveXY (xx :Number, yy :Number) :void
-    {
-        _dropper.x = xx;
-        _dropper.y = yy;
-
-        var value :uint = getDropperColor(xx, yy);
+        p = layerPoint(_scaleLayer, event);
+        var value :uint = getDropperColor(p);
         var color :uint = (value & 0xFFFFFF);
         var alpha :Number = ((value >> 24) & 0xFF) / 255;
         _dropper.setColor(color, alpha);
@@ -421,7 +439,8 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleDropperClick (event :MouseEvent) :void
     {
-        var value :uint = getDropperColor(event.localX, event.localY);
+        var p :Point = layerPoint(_scaleLayer, event);
+        var value :uint = getDropperColor(p);
         var alpha :uint = (value >> 24) & 0xFF;
 
         if (alpha != 0) {
@@ -431,11 +450,11 @@ public class EditCanvas extends DisplayCanvas
         }
     }
 
-    protected function getDropperColor (xx :Number, yy :Number) :uint
+    protected function getDropperColor (p :Point) :uint
     {
         // paint into a 1x1 bitmapdata and see what color we get
         var bmp :BitmapData = new BitmapData(1, 1, true, 0)
-        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY, -xx, -yy)
+        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY, -p.x, -p.y)
         bmp.draw(_scaleLayer, matrix);
 
         return bmp.getPixel32(0, 0);
@@ -449,8 +468,9 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handlePaintMove (event :MouseEvent) :void
     {
-        _brush.x = event.localX;
-        _brush.y = event.localY;
+        var p :Point = layerPoint(_paintLayer, event);
+        _brush.x = p.x;
+        _brush.y = p.y;
     }
 
     protected function handlePaintEnter (event :MouseEvent) :void
@@ -475,7 +495,7 @@ public class EditCanvas extends DisplayCanvas
             _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - _paintInsertionOffset);
         }
 
-        _paintPoint = new Point(event.localX, event.localY);
+        _paintPoint = layerPoint(_paintLayer, event);
         _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handlePaintLine);
         _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handlePaintEnd);
     }
@@ -491,7 +511,8 @@ public class EditCanvas extends DisplayCanvas
             _paintPoint = null;
         }
 
-        g.lineTo(event.localX, event.localY);
+        var p :Point = layerPoint(_paintLayer, event);
+        g.lineTo(p.x, p.y);
     }
 
     protected function handlePaintEnd (event :MouseEvent) :void
@@ -507,10 +528,11 @@ public class EditCanvas extends DisplayCanvas
             var g :Graphics = _curPaint.graphics;
             g.beginFill(_color);
             const radius :Number = (_brushSize/2) / _scale;
+            var p :Point = layerPoint(_paintLayer, event);
             if (_brushCircle) {
-                g.drawCircle(event.localX, event.localY, radius);
+                g.drawCircle(p.x, p.y, radius);
             } else {
-                g.drawRect(event.localX - radius, event.localY - radius, radius * 2, radius * 2);
+                g.drawRect(p.x - radius, p.y - radius, radius * 2, radius * 2);
             }
             g.endFill();
             _paintPoint = null;
@@ -536,31 +558,31 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleSelectStart (event :MouseEvent) :void
     {
-        _cropPoint = new Point(event.localX, event.localY);
-        updateSelection(event.localX, event.localY);
+        _cropPoint = layerPoint(_hudLayer, event);
+        updateSelection(_cropPoint);
 
         _hudLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
     }
 
     protected function handleSelectUpdate (event :MouseEvent) :void
     {
-        updateSelection(event.localX, event.localY);
+        updateSelection(layerPoint(_hudLayer, event));
     }
 
     protected function handleSelectEnd (event :MouseEvent) :void
     {
         if (_cropPoint != null) {
-            updateSelection(event.localX, event.localY);
+            updateSelection(layerPoint(_hudLayer, event));
             _cropPoint = null;
 
             _hudLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
         }
     }
 
-    protected function updateSelection (x :Number, y :Number) :void
+    protected function updateSelection (p :Point) :void
     {
-        _cropRect = new Rectangle(Math.min(x, _cropPoint.x), Math.min(y, _cropPoint.y),
-            Math.abs(x - _cropPoint.x), Math.abs(y - _cropPoint.y));
+        _cropRect = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
+            Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
 
         if (_cropRect.width == 0 || _cropRect.height == 0) {
             clearSelection();
@@ -656,6 +678,9 @@ public class EditCanvas extends DisplayCanvas
     protected var _brushSize :Number = 1;
     protected var _brushCircle :Boolean = true;
     protected var _forceCrop :Boolean = false;
+
+    /** The number of pixels around the image that we provide as "working area". */
+    protected static const GUTTER :int = 150;
 }
 }
 
