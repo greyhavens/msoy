@@ -117,9 +117,11 @@ public class ActorSprite extends OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
+        // always update the itemIdent
+        setItemIdent((newInfo as ActorInfo).getItemIdent());
+        // but avoid loading the new media unless it's actually different
         var newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
         if (!newMedia.equals(_desc)) {
-            setItemIdent((newInfo as ActorInfo).getItemIdent());
             setMediaDesc(newMedia);
             return true;
         }
