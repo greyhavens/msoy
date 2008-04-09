@@ -124,9 +124,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** The item id of the catalog prototype created from this mutable item (ownerId != 0), or the
-     * item id of the mutable item from which this catalog prototype was created (ownerId == 0), or
-     * zero. */
+    /** The id of the catalog listing for which this item is either the listed prototype (in which
+     * case ownerId == 0) or the original (in which case ownerId != 0). */
     public int catalogId;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
