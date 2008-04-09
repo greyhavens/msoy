@@ -9,11 +9,13 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.dobj.MessageEvent;
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.StringUtil;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -130,10 +132,10 @@ public class MsoyChatDirector extends ChatDirector
     /**
      * Called when the user closes the tab associated with a particular chat channel.
      */
-    public function closeChannel (channel :ChatChannel) :void
+    public function tabClosed (localtype :String) :void
     {
         var controller :ChatChannelController = 
-            _channelControllers.remove(channel.toLocalType()) as ChatChannelController;
+            _channelControllers.remove(localtype) as ChatChannelController;
         if (controller != null) {
             controller.shutdown();
         }
@@ -231,8 +233,30 @@ public class MsoyChatDirector extends ChatDirector
             return super.requestChat(speakSvc, text, record);
         }
 
-        var controller :ChatChannelController = 
-            _channelControllers.get(_chatTabs.getCurrentLocalType());
+        var localtype :String = _chatTabs.getCurrentLocalType();
+        var controller :ChatChannelController = _channelControllers.get(localtype);
+    
+        if (controller == null) {
+            var channeltype :int = ChatChannel.typeOf(localtype);
+            var channel :ChatChannel
+            if (channeltype == ChatChannel.MEMBER_CHANNEL) {
+                try {
+                    channel = ChatChannel.makeMemberChannel(new MemberName("", 
+                        StringUtil.parseInteger(ChatChannel.infoOf(localtype))));
+                } catch (err :ArgumentError) {
+                    // NOOP
+                }
+            } else if (channeltype == ChatChannel.JABBER_CHANNEL) {
+                channel = ChatChannel.makeJabberChannel(
+                    new JabberName(ChatChannel.infoOf(localtype)));
+            }
+
+            if (channel != null) {
+                controller = new ChatChannelController(_wctx, channel);
+                _channelControllers.put(localtype, controller);
+            }
+        }
+
         if (controller == null) {
             // this really is going to the room chat.
             return super.requestChat(speakSvc, text, record);
@@ -242,6 +266,19 @@ public class MsoyChatDirector extends ChatDirector
         controller.sendChat(text);
         // this prevents the ChatControl from reporting errors on its own.
         return ChatCodes.SUCCESS;
+    }
+
+    override public function dispatchMessage (message :ChatMessage, localtype :String) :void
+    {
+        log.debug("dispatching message [" + message + ", " + localtype + "]");
+        if ((message is UserMessage && localtype == ChatCodes.USER_CHAT_TYPE) || 
+            message is TellFeedbackMessage) {
+            // use a more specific localtype
+            var member :MemberName = (message as UserMessage).getSpeakerDisplayName() as MemberName;
+            localtype = ChatChannel.makeMemberChannel(member).toLocalType();
+        }
+
+        super.dispatchMessage(message, localtype);
     }
 
     override protected function suppressTooManyCaps () :Boolean
@@ -284,7 +321,7 @@ public class MsoyChatDirector extends ChatDirector
         } else if (name is JabberName) {
             return ChatChannel.makeJabberChannel(name as JabberName);
         } else {
-            log.warning("Requested to open unknown type of channel [name=" + name +
+            log.warning("Requested to create unknown type of channel [name=" + name +
                         ", type=" + ClassUtil.getClassName(name) + "].");
             return null;
         }

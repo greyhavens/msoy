@@ -44,7 +44,7 @@ public class ChatChannelController
     implements SetListener, Subscriber
 {
     public function ChatChannelController (ctx :MsoyContext, channel :ChatChannel, 
-        showTabFn :Function)
+        showTabFn :Function = null)
     {
         _ctx = ctx;
         _channel = channel;
@@ -53,12 +53,12 @@ public class ChatChannelController
         if (_channel.type != ChatChannel.MEMBER_CHANNEL &&
             _channel.type != ChatChannel.JABBER_CHANNEL) {
             _occList = new ChannelOccupantList();
+
+            _departing = new ExpiringSet(3.0, handleDeparted);
+
+            _ccsvc = _ctx.getClient().requireService(ChatChannelService) as ChatChannelService;
+            connect();
         }
-
-        _departing = new ExpiringSet(3.0, handleDeparted);
-
-        _ccsvc = _ctx.getClient().requireService(ChatChannelService) as ChatChannelService;
-        connect();
     }
 
     public function get channel () :ChatChannel
@@ -68,6 +68,11 @@ public class ChatChannelController
 
     public function connect () :void
     {
+        if (_channel.type == ChatChannel.MEMBER_CHANNEL ||
+            _channel.type == ChatChannel.JABBER_CHANNEL) {
+            return;
+        }
+
         if (_isConnecting) {
             log.warning("Asked to connect to a channel while still attempting to connect! [" + 
                 _channel + "]");
@@ -109,7 +114,9 @@ public class ChatChannelController
     {
         _ccobj = (obj as ChatChannelObject);
         _ctx.getMsoyChatDirector().addAuxiliarySource(_ccobj, _channel.toLocalType());
-        _showTabFn();
+        if (_showTabFn != null) {
+            _showTabFn();
+        }
 
         _ccobj.addListener(this);
 

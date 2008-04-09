@@ -260,7 +260,7 @@ public class ChatTabBar extends HBox
 
         var selected :Boolean = _selectedIndex == index;
         var tab :ChatTab = _tabs[index];
-        removeTabAt(index);
+        removeTabAt(index, false);
         addTab(tab, 0);
         if (selected) {
             selectedIndex = 0;
@@ -406,7 +406,7 @@ public class ChatTabBar extends HBox
         removeTabAt(index);
     }
 
-    protected function removeTabAt (index :int) :void
+    protected function removeTabAt (index :int, shutdown :Boolean = true) :void
     {
         var tab :ChatTab = _tabs[index] as ChatTab;
         for (var ii :int = index; ii < _tabs.length; ii++) {
@@ -423,6 +423,10 @@ public class ChatTabBar extends HBox
 
         // default back to location chat when a tab is closed
         selectedIndex = 0;
+
+        if (shutdown) {
+            _ctx.getMsoyChatDirector().tabClosed(tab.localtype);
+        }
     }
 
     protected function getLocalTypeIndex (localtype :String) :int

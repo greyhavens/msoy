@@ -102,6 +102,14 @@ public class ChatChannel extends SimpleStreamableObject
     }
 
     /**
+     * Returns the extra info stored after the type parameter.
+     */
+    public static function infoOf (localtype :String) :String
+    {
+        return localtype.substring(2);
+    }
+
+    /**
      * Returns true if the localType matches a room channel with the given scene id.
      */
     public static function typeIsForRoom (localType :String, sceneId :int) :Boolean

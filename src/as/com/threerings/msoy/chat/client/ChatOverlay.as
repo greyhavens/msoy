@@ -124,8 +124,8 @@ public class ChatOverlay
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        log.debug("displayMessage [msg=" + msg + ", type=" + getType(msg, false) + ", already=" + 
-            alreadyDisp + "]");
+        log.debug("displayMessage [msg=" + msg + ", localtype=" + msg.localtype + ", type=" + 
+            getType(msg, false) + ", already=" + alreadyDisp + "]");
         var type :int = getType(msg, false);
         if (type == IGNORECHAT) {
             return false;
@@ -687,7 +687,10 @@ public class ChatOverlay
 
         } else if (msg is UserMessage) {
             var type :int;
-            if (ChatCodes.USER_CHAT_TYPE == localtype) {
+            var channelType :int = ChatChannel.typeOf(localtype);
+            // TODO: jabber messages should probably have their own format
+            if (channelType == ChatChannel.MEMBER_CHANNEL || 
+                channelType == ChatChannel.JABBER_CHANNEL) {
                 type = TELL;
             } else if (msg is ChannelMessage && 
                 ChatChannel.typeOf(localtype) != ChatChannel.ROOM_CHANNEL) {
