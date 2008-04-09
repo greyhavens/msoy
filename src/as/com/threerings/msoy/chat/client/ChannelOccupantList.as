@@ -38,6 +38,11 @@ public class ChannelOccupantList extends HBox
         addChild(_playersContainer = new ListBox(_scroll));
     }
 
+    public function clear () :void 
+    {
+        _playersContainer.removeAllChildren();
+    }
+
     public function addChatter (info :VizMemberName) :void
     {
         var ii :int;

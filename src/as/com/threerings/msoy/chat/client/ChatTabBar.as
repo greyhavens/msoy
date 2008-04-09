@@ -25,8 +25,11 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 
 import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.crowd.chat.client.ChatDirector;
+import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.HeaderBar;
@@ -34,11 +37,14 @@ import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelObject;
+
+import com.threerings.msoy.data.all.JabberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
 public class ChatTabBar extends HBox
+    implements ChatDisplay
 {
     public function ChatTabBar (ctx :MsoyContext)
     {
@@ -57,12 +63,6 @@ public class ChatTabBar extends HBox
         _scrollLayer.setActualSize(w, h);
         displayScrollTabs(w < getExplicitOrMeasuredWidth());
         horizontalScrollPosition = _scrollPercent * maxHorizontalScrollPosition;
-    }
-
-    override public function addChildAt (dispObj :DisplayObject, index :int) :DisplayObject
-    {
-        var retVal :DisplayObject = super.addChildAt(dispObj, index);
-        return retVal;
     }
 
     public function get selectedIndex () :int
@@ -86,7 +86,10 @@ public class ChatTabBar extends HBox
         _selectedIndex = (ii + _tabs.length) % _tabs.length;
         activeTab = _tabs[_selectedIndex] as ChatTab;
         activeTab.setVisualState(ChatTab.SELECTED);
-        activeTab.displayChat();
+        var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
+        if (overlay != null) {
+            overlay.setLocalType(activeTab.localtype);
+        }
     }
 
     public function get locationName () :String
@@ -108,14 +111,15 @@ public class ChatTabBar extends HBox
         // tab, it is cleared out.
         if (name == null && _tabs.length != 0) {
             for (var ii :int = 0; ii < _tabs.length; ii++) {
-                if ((_tabs[ii] as ChatTab).controller == null) {
+                if ((_tabs[ii] as ChatTab).localtype == ChatCodes.PLACE_CHAT_TYPE) {
                     removeTabAt(ii);
                     break;
                 }
             }
         } else if (name != null) {
-            if (_tabs.length == 0 || ((_tabs[0] as ChatTab).controller != null)) {
-                addTab(new ChatTab(_ctx, this, null, null, name), 0);
+            if (_tabs.length == 0 || 
+                ((_tabs[0] as ChatTab).localtype != ChatCodes.PLACE_CHAT_TYPE)) {
+                addTab(new ChatTab(_ctx, this, null, name), 0);
             } else {
                 (_tabs[0] as ChatTab).text = name;
             }
@@ -123,18 +127,12 @@ public class ChatTabBar extends HBox
         }
     }
 
-    public function setChatDirector (dir :ChatDirector) :void
+    public function selectChannelTab (channel :ChatChannel, inFront :Boolean = false) :void
     {
-        _chatDirector = dir;
-    }
-
-    public function displayChat (channel :ChatChannel, history :HistoryList = null,
-        inFront :Boolean = false) :void
-    {
-        var index :int = getControllerIndex(channel);
+        var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index != -1) {
             if (inFront) {
-                moveTabToFront(channel);
+                moveTabToFront(channel.toLocalType());
                 selectedIndex = 0;
             } else {
                 selectedIndex = index;
@@ -143,127 +141,23 @@ public class ChatTabBar extends HBox
         }
 
         // this tab hasn't been created yet.
-        if (history == null) {
-            log.warning("Cannot display chat for an unknown channel without a history [" +
-                channel + "]");
-            return;
-        }
         if (inFront) {
-            addTab(new ChatTab(_ctx, this, channel, history), 0);
+            addTab(new ChatTab(_ctx, this, channel), 0);
             selectedIndex = 0;
         } else {
-            addAndSelect(new ChatTab(_ctx, this, channel, history));
-        }
-    }
-
-    public function addMessage (channel :ChatChannel, msg :ChatMessage) :void
-    {
-        var controller :ChatChannelController;
-        if (channel == null) {
-            controller = getCurrentController();
-        } else {
-            controller = getController(channel);
-        }
-        if (controller != null) {
-            controller.addMessage(msg);
-            var index :int = getControllerIndex(channel);
-            if (index != _selectedIndex && channel != null) {
-                var tab :ChatTab = _tabs[index] as ChatTab;
-                tab.setVisualState(ChatTab.ATTENTION);
-                if (_rightScroll.visible && tab.x > (horizontalScrollPosition + width)) {
-                    _rightScroll.play();
-                } else if (_leftScroll.visible && (tab.x + tab.width) < horizontalScrollPosition) {
-                    _leftScroll.play();
-                }
-            }
-            return;
-        }
-
-        if (channel == null) {
-            if (getLocationHistory() != null) {
-                getLocationHistory().addMessage(msg);
-            } else {
-                log.warning("Dropping " + msg);
-            }
-            locationReceivedMessage();
-            return;
-        }
-
-        // if this is a message from a member, we can pop up a new tab, and set it to ATTENTION
-        if (channel.type == ChatChannel.MEMBER_CHANNEL ||
-                channel.type == ChatChannel.JABBER_CHANNEL) {
-            var history :HistoryList = _ctx.getMsoyChatDirector().getHistory(channel);
-            history.addMessage(msg);
-            addTab(new ChatTab(_ctx, this, channel, history));
-            (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
-        } else {
-            // else this arrived (most likely) after we already closed the channel tab.
-            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + 
-                      msg.localtype + "].");
-        }
-    }
-
-    public function locationReceivedMessage () :void
-    {
-        if (_selectedIndex != 0 && _tabs.length > 0) {
-            (_tabs[0] as ChatTab).setVisualState(ChatTab.ATTENTION);
-        }
-    }
-
-    public function reinitController (channel :ChatChannel, ccobj :ChatChannelObject) :void
-    {
-        var controller :ChatChannelController = getController(channel);
-        if (controller != null) {
-            controller.init(ccobj);
+            addAndSelect(new ChatTab(_ctx, this, channel));
         }
     }
 
     public function containsTab (channel :ChatChannel) :Boolean
     {
-        return getControllerIndex(channel) != -1;
+        return getLocalTypeIndex(channel.toLocalType()) != -1;
     }
 
-    public function getCurrentController () :ChatChannelController
+    public function getCurrentLocalType () :String
     {
-        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).controller : null;
-    }
-
-    public function getLocationHistory () :HistoryList
-    {
-        if (_chatDirector is GameChatDirector) {
-            return (_chatDirector as GameChatDirector).getGameHistory();
-        }
-
-        log.warning("asked for location history in a non-game");
-        // Log.dumpStack();
-        return null;
-    }
-
-    public function moveTabToFront (channel :ChatChannel) :void
-    {
-        var index :int = getControllerIndex(channel);
-        if (index == -1) {
-            log.debug("asked to move unknown tab to front [" + channel + "]");
-            return;
-        }
-
-        var selected :Boolean = _selectedIndex == index;
-        var tab :ChatTab = _tabs[index];
-        removeTabAt(index);
-        addTab(tab, 0);
-        if (selected) {
-            selectedIndex = 0;
-        }
-    }
-
-    public function displayActiveChat (defaultList :HistoryList) :void
-    {
-        if (_selectedIndex < 0 || _tabs.length <= 0) {
-            _ctx.getTopPanel().getChatOverlay().setHistory(defaultList);
-            return;
-        }
-
-        (_tabs[_selectedIndex] as ChatTab).displayChat();
+        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).localtype : 
+            ChatCodes.PLACE_CHAT_TYPE; 
     }
 
     public function chatTabIndex (tab :ChatTab) :int
@@ -273,7 +167,7 @@ public class ChatTabBar extends HBox
 
     public function tabChecked (channel :ChatChannel) :Boolean
     {
-        var index :int = getControllerIndex(channel);
+        var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index == -1) {
             log.debug("asked for checked on a tab we don't appear to have [" + channel + "]");
             return false;
@@ -291,7 +185,7 @@ public class ChatTabBar extends HBox
 
         // if we don't have a tab for this channel, assume the caller knows what its doing and say
         // yes
-        var index :int = getControllerIndex(channel);
+        var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index == -1) {
             return true;
         }
@@ -304,10 +198,73 @@ public class ChatTabBar extends HBox
     {
         for (var ii :int = 0; ii < _tabs.length; ii++) {
             var tab :ChatTab = _tabs[ii] as ChatTab;
-            if (tab.controller != null && tab.controller.channel.type == ChatChannel.ROOM_CHANNEL &&
-                !tab.checked) {
-                removeTabAt(ii, true);
+            if (ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL && !tab.checked) {
+                removeTabAt(ii);
             }
+        }
+    }
+
+    // from ChatDisplay
+    public function clear () :void
+    {
+        // NOOP
+    }
+
+    // from ChatDisplay
+    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    {
+        log.debug("displayMessage [localtype=" + msg.localtype + ", msg=" + msg + "]");
+        var index :int = getLocalTypeIndex(msg.localtype);
+        if (index != _selectedIndex && index != -1) {
+            var tab :ChatTab = _tabs[index] as ChatTab;
+            tab.setVisualState(ChatTab.ATTENTION);
+            if (_rightScroll.visible && tab.x > (horizontalScrollPosition + width)) {
+                _rightScroll.play();
+            } else if (_leftScroll.visible && (tab.x + tab.width) < horizontalScrollPosition) {
+                _leftScroll.play();
+            }
+        }
+
+        if (index != -1 || !(msg is UserMessage)) {
+            // if we already took care of tab state for the new message, or its not a UserMessage
+            // we can leave here.
+            return false;
+        }
+
+        // if this is a message from a member or from jabber, we can pop up a new tab, and set it 
+        // to ATTENTION
+        var umsg :UserMessage = msg as UserMessage;
+        if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.MEMBER_CHANNEL) {
+            addTab(new ChatTab(_ctx, this, 
+                ChatChannel.makeMemberChannel(umsg.getSpeakerDisplayName() as MemberName)));
+            (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
+        } else if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.JABBER_CHANNEL) {
+            addTab(new ChatTab(_ctx, this, 
+                ChatChannel.makeJabberChannel(umsg.getSpeakerDisplayName() as JabberName)));
+            (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
+        } else {
+            // else this arrived (most likely) after we already closed the channel tab.
+            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + 
+                      msg.localtype + "].");
+        }
+
+        return false;
+    }
+
+    protected function moveTabToFront (localtype :String) :void
+    {
+        var index :int = getLocalTypeIndex(localtype);
+        if (index == -1) {
+            log.debug("asked to move unknown tab to front [" + localtype + "]");
+            return;
+        }
+
+        var selected :Boolean = _selectedIndex == index;
+        var tab :ChatTab = _tabs[index];
+        removeTabAt(index);
+        addTab(tab, 0);
+        if (selected) {
+            selectedIndex = 0;
         }
     }
 
@@ -414,12 +371,6 @@ public class ChatTabBar extends HBox
                 _selectedIndex++;
             }
         }
-
-        // init the controller with its previously set channel
-        if (tab.controller != null) {
-            var channel :ChatChannel = tab.controller.channel;
-            tab.controller.init(_ctx.getMsoyChatDirector().getChannelObject(channel));
-        }
     }
 
     protected function addAndSelect (tab :ChatTab) :void
@@ -453,10 +404,10 @@ public class ChatTabBar extends HBox
             return;
         }
 
-        removeTabAt(index, true);
+        removeTabAt(index);
     }
 
-    protected function removeTabAt (index :int, shutdown :Boolean = false) :void
+    protected function removeTabAt (index :int) :void
     {
         var tab :ChatTab = _tabs[index] as ChatTab;
         for (var ii :int = index; ii < _tabs.length; ii++) {
@@ -473,27 +424,12 @@ public class ChatTabBar extends HBox
 
         // default back to location chat when a tab is closed
         selectedIndex = 0;
-
-        if (shutdown) {
-            tab.controller.shutdown();
-            _ctx.getMsoyChatDirector().closeChannel(tab.controller.channel);
-        }
     }
 
-    protected function getController (channel :ChatChannel) :ChatChannelController
-    {
-        var index :int = getControllerIndex(channel);
-        if (index != -1) {
-            return (_tabs[index] as ChatTab).controller;
-        }
-        return null;
-    }
-
-    protected function getControllerIndex (channel :ChatChannel) :int
+    protected function getLocalTypeIndex (localtype :String) :int
     {
         for (var ii :int = 0; ii < _tabs.length; ii++) {
-            var controller :ChatChannelController = (_tabs[ii] as ChatTab).controller;
-            if (controller != null && controller.channel.equals(channel)) {
+            if ((_tabs[ii] as ChatTab).localtype == localtype) {
                 return ii;
             }
         }
@@ -512,7 +448,6 @@ public class ChatTabBar extends HBox
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;
     protected var _ctx :MsoyContext;
-    protected var _chatDirector :ChatDirector;
     protected var _scrollLayer :Canvas;
     protected var _leftScroll :MovieClip;
     protected var _rightScroll :MovieClip;

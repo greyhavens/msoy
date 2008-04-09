@@ -17,6 +17,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.MsoyContext;
@@ -29,14 +30,9 @@ public class GameChatContainer extends LayeredContainer
         _ctx = ctx;
         _chatDtr = chatDtr;
 
-        var topPanel :TopPanel = _ctx.getTopPanel();
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         height = 500; // games are given 500 vertical pixels, so so are we.
         styleName = "gameChatContainer";
-
-        _overlay = new ChatOverlay(_ctx, ChatOverlay.SCROLL_BAR_RIGHT, false);
-        _overlay.setClickableGlyphs(true);
-        _chatDtr.addChatDisplay(_overlay);
 
         _chatDtr = chatDtr;
         _playerList = playerList;
@@ -53,9 +49,16 @@ public class GameChatContainer extends LayeredContainer
         _tabBar.addChild(tabs);
         addChild(_tabBar);
 
-        _ctx.getTopPanel().getControlBar().inSidebar(true);
+        var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
+        controlBar.inSidebar(true);
+        controlBar.setChatDirector(_chatDtr);
 
-        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.ADDED_TO_STAGE, handleAdd);
+    }
+    
+    public function getChatOverlay () :ChatOverlay
+    {
+        return _overlay;
     }
 
     public function shutdown () :void
@@ -67,7 +70,9 @@ public class GameChatContainer extends LayeredContainer
         }
         _chatDtr.removeChatDisplay(_overlay);
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
-        _ctx.getTopPanel().getControlBar().inSidebar(false);
+        var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
+        controlBar.inSidebar(false);
+        controlBar.setChatDirector(_ctx.getMsoyChatDirector());
     }
 
     public function sendChat (message :String) :void
@@ -101,11 +106,13 @@ public class GameChatContainer extends LayeredContainer
         }
     }
 
-    protected function handleAddRemove (event :Event) :void
+    protected function handleAdd (event :Event) :void
     {
+        _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_RIGHT, false);
+        _overlay.setClickableGlyphs(true);
+        _chatDtr.addChatDisplay(_overlay);
         var chatTop :Number = _tabBar.y + _tabBar.height;
-        _overlay.setTarget(this, new Rectangle(0, chatTop, width, height - chatTop));
-        _overlay.setHistoryEnabled(true);
+        _overlay.setTargetBounds(new Rectangle(0, chatTop, width, height - chatTop));
     }
 
     private static const log :Log = Log.getLog(GameChatContainer);

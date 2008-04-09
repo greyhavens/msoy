@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.BlendMode;
 import flash.display.Graphics;
+import flash.display.Sprite;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -25,10 +27,12 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
+import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.data.all.RoomName;
 
@@ -45,58 +49,77 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Construct a comic chat overlay.
      */
-    public function ComicOverlay (ctx :MsoyContext)
+    public function ComicOverlay (ctx :MsoyContext, target :LayeredContainer)
     {
-        super(ctx);
+        super(ctx, target);
+
+        // overlay for chat that stays in a given place in the scene, and is therefore scrolled
+        // with it.
+        _scrollOverlay.mouseEnabled = false;
+        _scrollOverlay.blendMode = BlendMode.LAYER;
+
+        // overlay for chat that stays in a given place on the screen.
+        _staticOverlay.setComicOverlay(this);
+        _staticOverlay.mouseEnabled = false;
+        _staticOverlay.blendMode = BlendMode.LAYER;
     }
 
-    /**
-     * Called by our target when we've entered a new place.
-     */
-    public function newPlaceEntered (provider :ChatInfoProvider) :void
+    override public function displayChat (display :Boolean) :void
     {
-        _provider = provider;
-        _newPlacePoint = _history.size();
-
-        // and clear place-oriented bubbles
-        clearBubbles(false);
-    }
-
-    override public function setTarget (target :LayeredContainer, 
-        targetBounds :Rectangle = null) :void
-    {
-        if (_target != null) {
-            clearBubbles(true);
-        }
-        super.setTarget(target, targetBounds);
-
-        if (_target != null) {
-            while (_notifications.length > 0) {
-                var msg :NotifyMessage = _notifications.shift() as NotifyMessage;
-                displayBubble(msg, getType(msg, false));
+        super.displayChat(display);
+        var overlays :Array = [ _scrollOverlay, _staticOverlay ];
+        var layers :Array = [ PlaceBox.LAYER_CHAT_SCROLL, PlaceBox.LAYER_CHAT_STATIC ];
+        for (var ii :int = 0; ii < overlays.length; ii++) {
+            if (display && !_target.containsOverlay(overlays[ii])) {
+                _target.addOverlay(overlays[ii], layers[ii]);
+            } else if (!display && _target.containsOverlay(overlays[ii])) {
+                _target.removeOverlay(overlays[ii]);
             }
         }
     }
 
-    override public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
-    {
-        if (msg is NotifyMessage) {
-            if (_target == null) {
-                _notifications.push(msg);
-                // assume we'll succeed when our target is set
-                return true;
-            } else {
-                return displayBubble(msg, getType(msg, false));
-            }
-        }
-
-        return super.displayMessage(msg, alreadyDisplayed);
-    }
-
+    // from ChatDisplay
     override public function clear () :void
     {
         super.clear();
-        clearBubbles(true);
+        for each (var cloud :BubbleCloud in _bubbles.values()) {
+            for each (var bubble :BubbleGlyph in cloud.bubbles) {
+                if (bubble.getType() != NOTIFICATION) {
+                    cloud.removeBubble(bubble);
+                }
+            }
+        }
+    }
+
+    // from ChatDisplay
+    override public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    {
+        var displayed :Boolean = false;
+
+        if (msg is NotifyMessage || msg is SystemMessage) {
+            displayed = displayBubble(msg, getType(msg, false));
+        } else if (_ctx is WorldContext && ChatChannel.typeIsForRoom(msg.localtype, 
+            (_ctx as WorldContext).getSceneDirector().getScene().getId())) {
+            var type :int = getType(msg, false);
+            if (type != IGNORECHAT) {
+                displayed = displayBubble(msg, type);
+            }
+        } 
+
+        return super.displayMessage(msg, alreadyDisplayed) || displayed;
+    }
+
+    public function willEnterPlace (provider :ChatInfoProvider) :void
+    {
+        _provider = provider;
+    }
+
+    public function didLeavePlace (provider :ChatInfoProvider) :void
+    {
+        if (_provider == provider) {
+            _provider = null;
+        }
+        // else we've already received the ChatInfoProvider for the new place
     }
 
     public function speakerMoved (speaker :Name, pos :Point) :void
@@ -108,7 +131,7 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    override public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
         for each (var cloud :BubbleCloud in _bubbles.values()) {
             cloud.viewWidth = unscaledWidth;
@@ -116,182 +139,22 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Get the expire time for the specified chat.
+     * Scrolls the scrollable glyphs by applying a scroll rect to the sprite that they are on.
      */
-    protected function getBubbleExpire (stamp :int, text :String) :int
+    public function setScrollRect (rect :Rectangle) :void
     {
-        // load the configured durations
-        var durations :Array =
-            (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
-
-        // start the computation from the maximum of the timestamp
-        // or our last expire time.
-        var start :int = Math.max(stamp, _lastBubbleExpire);
-
-        // set the next expire to a time proportional to the text length.
-        _lastBubbleExpire = start + Math.min(text.length * int(durations[0]),
-                                       int(durations[2]));
-
-        // but don't let it be longer than the maximum display time.
-        _lastBubbleExpire = Math.min(stamp + int(durations[2]), _lastBubbleExpire);
-
-        // and be sure to pop up the returned time so that it is above the min.
-        return Math.max(stamp + int(durations[1]), _lastBubbleExpire);
+        _scrollOverlay.scrollRect = rect;
     }
 
-    override protected function layout () :void
+    override public function glyphExpired (glyph :ChatGlyph) :void
     {
-        clearBubbles(true); // these will get repopulated from the history
-        super.layout();
-    }
-
-    override protected function createStandardFormats () :void
-    {
-        super.createStandardFormats();
-
-        // Bubbles use copies of the standard subtitle formats, only with align = CENTER.
-        _defaultBubbleFmt = new TextFormat(_defaultFmt.font, _defaultFmt.size,
-            _defaultFmt.color, _defaultFmt.bold, _defaultFmt.italic, _defaultFmt.underline,
-            _defaultFmt.url, _defaultFmt.target, TextFormatAlign.CENTER,
-            _defaultFmt.leftMargin, _defaultFmt.rightMargin, _defaultFmt.indent,
-            _defaultFmt.leading);
-        _userBubbleFmt = new TextFormat(_userSpeakFmt.font, _userSpeakFmt.size,
-            _userSpeakFmt.color, _userSpeakFmt.bold, _userSpeakFmt.italic, _userSpeakFmt.underline,
-            _userSpeakFmt.url, _userSpeakFmt.target, TextFormatAlign.CENTER,
-            _userSpeakFmt.leftMargin, _userSpeakFmt.rightMargin, _userSpeakFmt.indent,
-            _userSpeakFmt.leading);
-    }
-
-    /**
-     * Clear chat bubbles, either all of them or just the place-oriented ones.
-     */
-    protected function clearBubbles (all :Boolean) :void
-    {
-        for each (var cloud :BubbleCloud in _bubbles.values()) {
-            for each (var bubble :BubbleGlyph in cloud.bubbles) {
-                if ((all || isPlaceOrientedType(bubble.getType())) && 
-                        bubble.getType() != NOTIFICATION) {
-                    cloud.removeBubble(bubble);
-                }
-            }
+        if (glyph is BubbleGlyph) {
+            var bubble :BubbleGlyph = glyph as BubbleGlyph;
+            var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
+            cloud.removeBubble(bubble);
+            ArrayUtil.removeFirst(_allBubbles, bubble);
         }
-    }
-
-    override internal function historyUpdated (adjustment :int) :void
-    {
-        _newPlacePoint -= adjustment;
-        super.historyUpdated(adjustment);
-
-        // if this message came in on the channel that is associated with our current room,
-        // display a bubble for it
-        var ident :RoomName = _history.channelIdent as RoomName;
-        var scene :MsoyScene = !(_ctx is WorldContext) ? null :
-            ((_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene);
-        var timed :TimedMessageDisplay = _history.get(_history.size() - 1);
-        if (timed == null) {
-            return;
-        }
-
-        var type :int = getType(timed.msg, false);
-        if (ident != null && scene != null && ident.getSceneId() == scene.getId()) {
-            if (type != IGNORECHAT) {
-                displayBubble(timed.msg, type);
-            }
-
-        } else if (timed.msg is SystemMessage) {
-            displayBubble(timed.msg, type);
-        }
-    }
-
-    override protected function shouldShowFromHistory (msg :ChatMessage, index :int) :Boolean
-    {
-        // only show if the message was received since we last entered a new place, or if it's
-        // place-less chat.
-        return ((index >= _newPlacePoint) || (!isPlaceOrientedType(getType(msg, false))));
-    }
-
-    override protected function isApprovedLocalType (localtype :String) :Boolean
-    {
-        if (ChatCodes.PLACE_CHAT_TYPE == localtype || ChatCodes.USER_CHAT_TYPE == localtype) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Is the type of chat place-oriented.
-     */
-    protected function isPlaceOrientedType (type :int) :Boolean
-    {
-        return (placeOf(type)) == PLACE;
-    }
-
-    protected function displayBubble (msg :ChatMessage, type :int) :Boolean
-    {
-        switch (placeOf(type)) {
-        case INFO:
-        case FEEDBACK:
-        case ATTENTION:
-        case BROADCAST:
-        case NOTIFICATION:
-            return createBubble(msg, type, null, null);
-
-        case PLACE: 
-            var umsg :UserMessage = (msg as UserMessage);
-            var speaker :Name = umsg.getSpeakerDisplayName();
-            var speakerBubblePos :Point = _provider.getBubblePosition(speaker);
-            if (speakerBubblePos == null) {
-                // this just means we have someone chatting in the channel that isn't an occupant.
-                return false;
-            }
-            return createBubble(msg, type, speaker, speakerBubblePos);
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Create a chat bubble with the specified type and text.
-     *
-     * @param speakerBubblePos if non-null, contains the position of where to put the bubbles for 
-     *                         this speaker in screen coordinates
-     *
-     * @return true if we successfully laid out the bubble
-     */
-    protected function createBubble (
-        msg :ChatMessage, type :int, speaker :Name, speakerBubblePos :Point) :Boolean
-    {
-        if (_target == null) {
-            return false;
-        }
-
-        var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
-        var lifetime :int = getBubbleExpire(msg.timestamp, msg.message) - msg.timestamp;
-        var bubble :BubbleGlyph =
-            new BubbleGlyph(this, type, lifetime, speaker, _defaultBubbleFmt, texts);
-
-        var cloud :BubbleCloud = _bubbles.get(speaker);
-        if (cloud == null) {
-            var local :Point = 
-                speakerBubblePos == null ? null : _scrollOverlay.globalToLocal(speakerBubblePos);
-            var maxBubbles :int = speaker == null ? MAX_NOTIFICATION_BUBBLES : MAX_BUBBLES_PER_USER;
-            cloud = new BubbleCloud(this, maxBubbles, local, _target.width, _target.height);
-            _bubbles.put(speaker, cloud);
-        }
-        cloud.addBubble(bubble);
-        if (placeOf(type) == PLACE) {
-            _scrollOverlay.addChild(bubble);
-        } else {
-            _staticOverlay.addChild(bubble);
-        }
-        _allBubbles.unshift(bubble);
-
-        for (var ii :int = 0; ii < _allBubbles.length; ii++) {
-            (_allBubbles[ii] as BubbleGlyph).setAgeLevel(ii);
-        }
-
-        return true;
+        super.glyphExpired(glyph);
     }
 
     /**
@@ -299,7 +162,7 @@ public class ComicOverlay extends ChatOverlay
      *
      * @return the padding that should be applied to the bubble's label.
      */
-    internal function drawBubbleShape (g :Graphics, type :int, txtWidth :int, txtHeight :int,
+    public function drawBubbleShape (g :Graphics, type :int, txtWidth :int, txtHeight :int,
         tail :Boolean) :int
     {
         var outline :uint = getOutlineColor(type);
@@ -332,6 +195,122 @@ public class ComicOverlay extends ChatOverlay
         }
 
         return padding;
+    }
+
+    override protected function getOverlays () :Array
+    {
+        return super.getOverlays().concat(_scrollOverlay, _staticOverlay);
+    }
+
+    /**
+     * Get the expire time for the specified chat.
+     */
+    protected function getBubbleExpire (stamp :int, text :String) :int
+    {
+        // load the configured durations
+        var durations :Array =
+            (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
+
+        // start the computation from the maximum of the timestamp
+        // or our last expire time.
+        var start :int = Math.max(stamp, _lastBubbleExpire);
+
+        // set the next expire to a time proportional to the text length.
+        _lastBubbleExpire = start + Math.min(text.length * int(durations[0]),
+                                       int(durations[2]));
+
+        // but don't let it be longer than the maximum display time.
+        _lastBubbleExpire = Math.min(stamp + int(durations[2]), _lastBubbleExpire);
+
+        // and be sure to pop up the returned time so that it is above the min.
+        return Math.max(stamp + int(durations[1]), _lastBubbleExpire);
+    }
+
+    override protected function createStandardFormats () :void
+    {
+        super.createStandardFormats();
+
+        // Bubbles use copies of the standard subtitle formats, only with align = CENTER.
+        _defaultBubbleFmt = new TextFormat(_defaultFmt.font, _defaultFmt.size,
+            _defaultFmt.color, _defaultFmt.bold, _defaultFmt.italic, _defaultFmt.underline,
+            _defaultFmt.url, _defaultFmt.target, TextFormatAlign.CENTER,
+            _defaultFmt.leftMargin, _defaultFmt.rightMargin, _defaultFmt.indent,
+            _defaultFmt.leading);
+        _userBubbleFmt = new TextFormat(_userSpeakFmt.font, _userSpeakFmt.size,
+            _userSpeakFmt.color, _userSpeakFmt.bold, _userSpeakFmt.italic, _userSpeakFmt.underline,
+            _userSpeakFmt.url, _userSpeakFmt.target, TextFormatAlign.CENTER,
+            _userSpeakFmt.leftMargin, _userSpeakFmt.rightMargin, _userSpeakFmt.indent,
+            _userSpeakFmt.leading);
+    }
+
+    protected function displayBubble (msg :ChatMessage, type :int) :Boolean
+    {
+        switch (placeOf(type)) {
+        case INFO:
+        case FEEDBACK:
+        case ATTENTION:
+        case BROADCAST:
+        case NOTIFICATION:
+            return createAndAddBubble(msg, type, null, null);
+
+        case PLACE: 
+            var umsg :UserMessage = (msg as UserMessage);
+            if (_provider == null) {
+                log.warning(
+                    "Asked to display user message with a null ChatInfoProvider [" + umsg + "]");
+                return false;
+            }
+
+            var speaker :Name = umsg.getSpeakerDisplayName();
+            var speakerBubblePos :Point = _provider.getBubblePosition(speaker);
+            if (speakerBubblePos == null) {
+                // this just means we have someone chatting in the channel that isn't an occupant.
+                return false;
+            }
+            return createAndAddBubble(msg, type, speaker, speakerBubblePos);
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Create a chat bubble with the specified type and text.
+     *
+     * @param speakerBubblePos if non-null, contains the position of where to put the bubbles for 
+     *                         this speaker in screen coordinates
+     *
+     * @return true if we successfully laid out the bubble
+     */
+    protected function createAndAddBubble (
+        msg :ChatMessage, type :int, speaker :Name, speakerBubblePos :Point) :Boolean
+    {
+        var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
+        var lifetime :int = getBubbleExpire(msg.timestamp, msg.message) - msg.timestamp;
+        var bubble :BubbleGlyph =
+            new BubbleGlyph(this, type, lifetime, speaker, _defaultBubbleFmt, texts);
+
+        var cloud :BubbleCloud = _bubbles.get(speaker);
+        if (cloud == null) {
+            var local :Point = 
+                speakerBubblePos == null ? null : _scrollOverlay.globalToLocal(speakerBubblePos);
+            var maxBubbles :int = speaker == null ? MAX_NOTIFICATION_BUBBLES : MAX_BUBBLES_PER_USER;
+            cloud = new BubbleCloud(this, maxBubbles, local, _target.width, _target.height);
+            _bubbles.put(speaker, cloud);
+        }
+        cloud.addBubble(bubble);
+        if (placeOf(type) == PLACE) {
+            _scrollOverlay.addChild(bubble);
+        } else {
+            _staticOverlay.addChild(bubble);
+        }
+        _allBubbles.unshift(bubble);
+
+        for (var ii :int = 0; ii < _allBubbles.length; ii++) {
+            (_allBubbles[ii] as BubbleGlyph).setAgeLevel(ii);
+        }
+
+        return true;
     }
 
     /**
@@ -548,17 +527,6 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    override internal function glyphExpired (glyph :ChatGlyph) :void
-    {
-        if (glyph is BubbleGlyph) {
-            var bubble :BubbleGlyph = glyph as BubbleGlyph;
-            var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
-            cloud.removeBubble(bubble);
-            ArrayUtil.removeFirst(_allBubbles, bubble);
-        }
-        super.glyphExpired(glyph);
-    }
-
     // documentation inherited
     override protected function getDisplayDurationIndex () :int
     {
@@ -567,6 +535,14 @@ public class ComicOverlay extends ChatOverlay
     }
 
     private static const log :Log = Log.getLog(ComicOverlay);
+
+    /** The overlay we place on top of our target that contains all the chat glyphs that can 
+     * scroll. */
+    protected var _scrollOverlay :Sprite = new Sprite();
+
+    /** The overlay we place on top of our target that contains all the chat glyphs that should
+     * not scroll with the scene. */
+    protected var _staticOverlay :StaticOverlay = new StaticOverlay();
 
     /** The provider of info about laying out bubbles. */ 
     protected var _provider :ChatInfoProvider;
@@ -587,8 +563,6 @@ public class ComicOverlay extends ChatOverlay
 
     protected var _lastBubbleExpire :int = 0;
 
-    protected var _notifications :Array = [];
-
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
 
@@ -597,12 +571,16 @@ public class ComicOverlay extends ChatOverlay
 }
 }
 
+import flash.display.Sprite;
+
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.Log;
 
 import com.threerings.flash.DisplayUtil;
+
+import com.threerings.msoy.client.PlaceLayer;
 
 import com.threerings.msoy.chat.client.BubbleGlyph;
 import com.threerings.msoy.chat.client.ComicOverlay;
@@ -718,4 +696,23 @@ class BubbleCloud
     protected var _maxBubbles :int;
     protected var _viewWidth :Number;
     protected var _viewHeight :Number;
+}
+
+class StaticOverlay extends Sprite
+    implements PlaceLayer
+{
+    public function setComicOverlay (comicOverlay :ComicOverlay) :void
+    {
+        _comicOverlay = comicOverlay;
+    }
+
+    // from PlaceLayer
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        if (_comicOverlay != null) {
+            _comicOverlay.setPlaceSize(unscaledWidth, unscaledHeight);
+        }
+    }
+
+    protected var _comicOverlay :ComicOverlay;
 }

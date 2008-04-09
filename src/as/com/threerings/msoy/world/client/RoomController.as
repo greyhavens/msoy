@@ -112,6 +112,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.RadialMenu;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
@@ -662,7 +663,8 @@ public class RoomController extends SceneController
         }
 
         // then avoid any chat glyphs that are clickable
-        if (_roomView.getChatOverlay().hasClickableGlyphsAtPoint(stageX, stageY)) {
+        var overlay :ChatOverlay = _wdctx.getTopPanel().getChatOverlay();
+        if (overlay != null && overlay.hasClickableGlyphsAtPoint(stageX, stageY)) {
             return undefined;
         }
 
@@ -737,7 +739,8 @@ public class RoomController extends SceneController
         if (itemType == Item.PET) {
             var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
             svc.callPet(_wdctx.getClient(), itemId,
-                        new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_called"));
+                        new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, 
+                                              "m.pet_called"));
             return;
         }
 
@@ -1441,7 +1444,10 @@ public class RoomController extends SceneController
                 return;
 
             case Keyboard.F6:
-                _roomView.getChatOverlay().setClickableGlyphs(keyDown);
+                var overlay :ChatOverlay = _wdctx.getTopPanel().getChatOverlay();
+                if (overlay != null) {
+                    overlay.setClickableGlyphs(keyDown);
+                }
                 return;
 
             case Keyboard.SHIFT:

@@ -22,15 +22,5 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
      * Whether or not to put whitespace above and below this view.
      */
     function padVertical () :Boolean;
-
-    /**
-     * Returns this view's chat overlay or null.
-     */
-    function getChatOverlay () :ChatOverlay;
-
-    /**
-     * Tells this view whether or not to display a chat overlay.
-     */
-    function setUseChatOverlay (useOverlay :Boolean) :void;
 }
 }

@@ -85,18 +85,6 @@ public class AbstractRoomView extends Sprite
         return true;
     }
 
-    // from MsoyPlaceView
-    public function getChatOverlay () :ChatOverlay
-    {
-        return null;
-    }
-
-    // from MsoyPlaceView
-    public function setUseChatOverlay (useOverlay :Boolean) :void
-    {
-        // nada
-    }
-
     /**
      * Are we actually showing?
      */

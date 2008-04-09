@@ -8,6 +8,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.util.Hashable;
+import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
@@ -41,8 +42,8 @@ public class ChatChannel extends SimpleStreamableObject
     /** The type of this chat channel. */
     public var type :int;
 
-    /** The name that identifies this channel (either a {@link MemberName}, {@link GroupName} or
-     * {@link ChannelName}. */
+    /** The name that identifies this channel (either a {@link MemberName}, {@link GroupName},
+     * {@link ChannelName}, or {@link JabberName}. */
     public var ident :Name;
 
     /**
@@ -100,6 +101,14 @@ public class ChatChannel extends SimpleStreamableObject
         return type;
     }
 
+    /**
+     * Returns true if the localType matches a room channel with the given scene id.
+     */
+    public static function typeIsForRoom (localType :String, sceneId :int) :Boolean
+    {
+        return localType == ROOM_CHANNEL + ":" + getId(new RoomName(null, sceneId));
+    }
+
     public function ChatChannel (type :int = 0, ident :Name = null)
     {
         this.type = type;
@@ -130,7 +139,31 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public function toLocalType () :String
     {
-        return type + ":" + ident;
+        return type + ":" + getId(ident);
+    }
+
+    protected static function getId (name :Name) :String
+    {
+        if (name is MemberName) {
+            return "" + (name as MemberName).getMemberId();
+
+        } else if (name is GroupName) {
+            return "" + (name as GroupName).getGroupId();
+
+        } else if (name is RoomName) {
+            return "" + (name as RoomName).getSceneId();
+
+        } else if (name is ChannelName) {
+            var channelName :ChannelName = name as ChannelName;
+            return channelName.getCreatorId() + ":" + channelName;
+
+        } else if (name is JabberName) {
+            return (name as JabberName).toJID();
+
+        } else {
+            log.warning("ChatChannel unable to determine id! [" + name + "]");
+            return null;
+        }
     }
 
     // from interface Streamable
@@ -148,5 +181,7 @@ public class ChatChannel extends SimpleStreamableObject
         out.writeInt(type);
         out.writeObject(ident);
     }
+
+    private static const log :Log = Log.getLog(ChatChannel);
 }
 }

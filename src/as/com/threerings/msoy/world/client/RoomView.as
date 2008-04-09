@@ -4,25 +4,17 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 
 import flash.events.Event;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
-
-import mx.binding.utils.BindingUtils;
-import mx.binding.utils.ChangeWatcher;
-
-import mx.core.Container;
 
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
-import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
@@ -34,11 +26,9 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
@@ -56,7 +46,6 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.client.MsoyClient;
@@ -66,19 +55,16 @@ import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
-import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
+
+import com.threerings.msoy.chat.data.ChatChannel;
 
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.Controllable;
 import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.EffectData;
@@ -89,9 +75,6 @@ import com.threerings.msoy.world.data.FurniUpdate_Remove;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
@@ -111,7 +94,6 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
-        _chatOverlay = new ComicOverlay(ctx);
 
         // listen for preferences changes, update zoom
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
@@ -455,8 +437,7 @@ public class RoomView extends AbstractRoomView
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        // this method is only notified of chat on this room's channel
-        if (msg is UserMessage) {
+        if (msg is UserMessage && ChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
             var umsg :UserMessage = (msg as UserMessage);
             if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
                 _ctx.getGameDirector().tutorialEvent("playerSpoke");
@@ -475,27 +456,6 @@ public class RoomView extends AbstractRoomView
         }
 
         return false; // we never display the messages ourselves
-    }
-
-    // from AbstractRoomView
-    override public function setScene (scene :MsoyScene) :void
-    {
-        super.setScene(scene);
-
-        _chatOverlay.setSubtitlePercentage(1);
-    }
-
-    // from AbstractRoomView
-    override public function getChatOverlay () :ChatOverlay
-    {
-        return _chatOverlay;
-    }
-
-    // from AbstractRoomView
-    override public function setUseChatOverlay (useOverlay :Boolean) :void
-    {
-        _useChatOverlay = useOverlay;
-        recheckChatOverlay();
     }
 
     // from AbstractRoomView
@@ -526,12 +486,16 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        recheckChatOverlay();
-
         addAllOccupants();
 
         // we add ourselves as a chat display so that we can trigger speak actions on avatars
         _ctx.getChatDirector().addChatDisplay(this);
+
+        // let the chat overlay know about us so we can be queried for chatter locations
+        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        if (comicOverlay != null) {
+            comicOverlay.willEnterPlace(this);
+        }
 
         // and animate ourselves entering the room (everyone already in the (room will also have
         // seen it)
@@ -554,6 +518,12 @@ public class RoomView extends AbstractRoomView
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
 
+        // tell the comic overlay to forget about us
+        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        if (comicOverlay != null) {
+            comicOverlay.didLeavePlace(this);
+        }
+
         // stop listening for client minimization events
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
@@ -561,8 +531,6 @@ public class RoomView extends AbstractRoomView
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
-
-        recheckChatOverlay();
 
         FurniSprite.setLoadingWatcher(null);
     }
@@ -595,8 +563,10 @@ public class RoomView extends AbstractRoomView
     override public function set scrollRect (r :Rectangle) :void
     {
         super.scrollRect = r;
-
-        _chatOverlay.setScrollRect(r);
+        var overlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        if (overlay != null) {
+            overlay.setScrollRect(r);
+        }
     }
 
     /** Return an array of the MOB sprites associated with the identified game. */
@@ -722,22 +692,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    /**
-     * Re-check whether we should be using our overlay.
-     */
-    protected function recheckChatOverlay () :void
-    {
-        if (_roomObj != null && _useChatOverlay) {
-            _ctx.getChatDirector().addChatDisplay(_chatOverlay);
-            _chatOverlay.newPlaceEntered(this);
-            _chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
-
-        } else {
-            _ctx.getChatDirector().removeChatDisplay(_chatOverlay);
-            _chatOverlay.setTarget(null);
-        }
-    }
-
     override protected function relayout () :void
     {
         super.relayout();
@@ -854,7 +808,10 @@ public class RoomView extends AbstractRoomView
                 return; // we have no visualization for this kind of occupant, no problem
             }
 
-            occupant.setChatOverlay(_chatOverlay);
+            var overlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+            if (overlay != null) {
+                occupant.setChatOverlay(overlay as ComicOverlay);
+            }
             _occupants.put(bodyOid, occupant);
             addChildAt(occupant, 1);
             occupant.setEntering(loc);
@@ -869,7 +826,10 @@ public class RoomView extends AbstractRoomView
         } else {
             // place the sprite back into the set of active sprites
             _occupants.put(bodyOid, occupant);
-            occupant.setChatOverlay(_chatOverlay);
+            overlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+            if (overlay != null) {
+                occupant.setChatOverlay(overlay);
+            }
             occupant.moveTo(loc, _scene);
         }
 
@@ -1124,12 +1084,6 @@ public class RoomView extends AbstractRoomView
 
     /** A map of bodyOid -> OccupantSprite for those that we'll remove when they stop moving. */
     protected var _pendingRemovals :HashMap = new HashMap();
-
-    /** Our chat overlay. */
-    protected var _chatOverlay :ComicOverlay;
-
-    /** Should we be using our chat overlay? */
-    protected var _useChatOverlay :Boolean = true;
 
     /** If true, the scrolling should simply jump to the right position. */
     protected var _jumpScroll :Boolean = true;

@@ -46,18 +46,6 @@ public class MsoyGamePanel extends WhirledGamePanel
         return false;
     }
 
-    // from MsoyPlaceView
-    public function getChatOverlay () :ChatOverlay
-    {
-        return null;
-    }
-
-    // from MsoyPlaceView
-    public function setUseChatOverlay (useOverlay :Boolean) :void
-    {
-        // nada
-    }
-
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {

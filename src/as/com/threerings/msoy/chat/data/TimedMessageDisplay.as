@@ -37,7 +37,7 @@ public class TimedMessageDisplay
         if (_timestamp == -1) {
             _timestamp = getTimer();
         } else {
-            Log.getLog(this).debug("refusing to set timestamp thats already set [cur=" + 
+            Log.getLog(this).debug("refusing to set timestamp that's already set [cur=" + 
                 _timestamp + ", now=" + getTimer() + "]");
         }
     }

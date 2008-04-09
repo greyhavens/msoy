@@ -65,6 +65,8 @@ public class MsoyChatDirector extends ChatDirector
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler());
+
+        addChatDisplay(_chatHistory = new HistoryList());
     }
 
     /**
@@ -74,6 +76,16 @@ public class MsoyChatDirector extends ChatDirector
     public function setChatTabs (tabs :ChatTabBar) :void
     {
         _chatTabs = tabs;
+        addChatDisplay(_chatTabs);
+    }
+
+    /** 
+     * Retrieve the global chat history that contains every message received on this client, 
+     * within a history list size limit.
+     */
+    public function getHistoryList () :HistoryList
+    {
+        return _chatHistory;
     }
 
     /**
@@ -97,33 +109,22 @@ public class MsoyChatDirector extends ChatDirector
         // if this is a member or already open channel, open/select the UI immediately
         if (channel.type == ChatChannel.MEMBER_CHANNEL ||
             channel.type == ChatChannel.JABBER_CHANNEL ||
-                _chandlers.containsKey(channel.toLocalType())) {
-            _chatTabs.displayChat(channel, getHistory(channel), inFront);
+                _channelControllers.containsKey(channel.toLocalType())) {
+            _chatTabs.selectChannelTab(channel, inFront);
             return;
         }
 
         // otherwise we have to subscribe to the channel first
         var displayChat :Boolean = true;
-        var showTabFn :Function = function (ccobj :ChatChannelObject) :void {
+        var showTabFn :Function = function () :void {
             // once the subscription went through, show the chat history the first time.
             if (displayChat) {
-                _chatTabs.displayChat(channel, getHistory(channel), inFront);
+                _chatTabs.selectChannelTab(channel, inFront);
                 displayChat = false;
             }
-            // if this is a tabbed channel, make sure to update its distributed object reference
-            _chatTabs.reinitController(channel, ccobj);
         };
-        _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, showTabFn));
-    }
-
-    /**
-     * Returns the channel object for the specified channel or null if the channel is not open or
-     * has no channel object (is a member channel).
-     */
-    public function getChannelObject (channel :ChatChannel) :ChatChannelObject
-    {
-        var handler :ChannelHandler = _chandlers.get(channel.toLocalType()) as ChannelHandler;
-        return (handler == null) ? null : handler.chanobj;
+        _channelControllers.put(channel.toLocalType(), 
+            new ChatChannelController(_wctx, channel, showTabFn));
     }
 
     /**
@@ -131,12 +132,11 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function closeChannel (channel :ChatChannel) :void
     {
-        var handler :ChannelHandler = _chandlers.remove(channel.toLocalType()) as ChannelHandler;
-        if (handler != null) {
-            handler.shutdown();
+        var controller :ChatChannelController = 
+            _channelControllers.remove(channel.toLocalType()) as ChatChannelController;
+        if (controller != null) {
+            controller.shutdown();
         }
-        // filter out any transient (feedback, etc.) messages from this channel's chat history
-        getHistory(channel).filterTransient();
     }
 
     /**
@@ -223,43 +223,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function pushChatDisplay (display :ChatDisplay) :void
-    {
-        if (display is ChatOverlay) {
-            _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
-            _chatTabs.displayActiveChat(_roomHistory);
-
-            if (display is ComicOverlay) {
-                // show any waiting notifications
-                displayNotifications(display as ComicOverlay);
-            }
-        }
-        super.pushChatDisplay(display);
-    }
-
-    // from ChatDirector
-    override public function addChatDisplay (display :ChatDisplay) :void
-    {
-        if (display is ChatOverlay) {
-            _wctx.getTopPanel().setActiveOverlay(display as ChatOverlay);
-            _chatTabs.displayActiveChat(_roomHistory);
-
-            if (display is ComicOverlay) {
-                // show any waiting notificatiosn
-                displayNotifications(display as ComicOverlay);
-            }
-        }
-        super.addChatDisplay(display);
-    }
-
-    // from ChatDirector
-    override public function clearDisplays () :void
-    {
-        super.clearDisplays();
-        _roomHistory.clear();
-    }
-
-    // from ChatDirector
     override public function requestChat (speakSvc :SpeakService, text :String,
         record :Boolean) :String
     {
@@ -268,61 +231,17 @@ public class MsoyChatDirector extends ChatDirector
             return super.requestChat(speakSvc, text, record);
         }
 
-        var controller :ChatChannelController = _chatTabs.getCurrentController();
+        var controller :ChatChannelController = 
+            _channelControllers.get(_chatTabs.getCurrentLocalType());
         if (controller == null) {
             // this really is going to the room chat.
             return super.requestChat(speakSvc, text, record);
         }
 
-        // let the controller handle its own error reporting.
+        // let the controller format the message as necessary, and handle its own error reporting.
         controller.sendChat(text);
         // this prevents the ChatControl from reporting errors on its own.
         return ChatCodes.SUCCESS;
-    }
-
-    /**
-     * Returns the chat history for the specified channel, creating it if necessary.
-     */
-    public function getHistory (channel :ChatChannel) :HistoryList
-    {
-        var history :HistoryList = (_histories.get(channel) as HistoryList);
-        if (history == null) {
-            _histories.put(channel, history = new HistoryList(channel.ident));
-        }
-        return history;
-    }
-
-    protected function displayNotifications (overlay :ComicOverlay) :void
-    {
-        while (_notifications.length > 0) {
-            overlay.displayMessage((_notifications.shift() as NotifyMessage), false);
-        }
-    }
-
-    // from ChatDirector
-    override protected function dispatchPreparedMessage (msg :ChatMessage) :void
-    {
-        if (msg is NotifyMessage) {
-            // notify messages don't go into the chat history, which is what happens when you
-            // pass it off to the chat tabs
-            var displayed :Boolean = false;
-            _displays.apply(function (overlay :Object) :void {
-                if (overlay is ComicOverlay &&
-                    (overlay as ComicOverlay).displayMessage(msg, displayed)) {
-                    displayed = true;
-                }
-            });
-            if (!displayed) {
-                _notifications.push(msg);
-            }
-        } else {
-            _chatTabs.addMessage(determineChannel(msg), msg);
-
-            if (getCurrentRoomChannel() != null &&
-                getCurrentRoomChannel().equals(determineChannel(msg))) {
-                super.dispatchPreparedMessage(msg);
-            }
-        }
     }
 
     override protected function suppressTooManyCaps () :Boolean
@@ -336,16 +255,15 @@ public class MsoyChatDirector extends ChatDirector
      */
     protected function reconnectChannels (connected :Boolean) :void
     {
-        for each (var chandler :ChannelHandler in _chandlers.values()) {
-            if (connected) {
+        for each (var controller :ChatChannelController in _channelControllers.values()) {
+            if (connected &&
+                (_chatTabs == null || _chatTabs.shouldReconnectChannel(controller.channel))) {
                 // reconnect any open channels
-                if (_chatTabs == null || _chatTabs.shouldReconnectChannel(chandler.channel)) {
-                    chandler.connect();
-                }
+                controller.connect();
             } else {
                 // we're already disconnected, so just clean up our local structures.
                 // we'll fill them in again if we reconnect on a different server.
-                chandler.disconnect();
+                controller.disconnect();
             }
         }
     }
@@ -386,9 +304,10 @@ public class MsoyChatDirector extends ChatDirector
             }
             return ChatChannel.makeMemberChannel(umsg.getSpeakerDisplayName() as MemberName);
         }
-        var handler :ChannelHandler = _chandlers.get(msg.localtype) as ChannelHandler;
-        if (handler != null) {
-            return handler.channel;
+        var controller :ChatChannelController = 
+            _channelControllers.get(msg.localtype) as ChatChannelController;
+        if (controller != null) {
+            return controller.channel;
         }
         return null;
     }
@@ -410,131 +329,9 @@ public class MsoyChatDirector extends ChatDirector
     protected var _wctx :MsoyContext;
     protected var _chatTabs :ChatTabBar;
 
-    /** Contains a mapping from chat localtype to channel handler. */
-    protected var _chandlers :HashMap = new HashMap();
+    /** Contains a mapping from chat localtype to channel controller. */
+    protected var _channelControllers :HashMap = new HashMap();
 
-    protected var _roomHistory :HistoryList = new HistoryList();
-    protected var _histories :HashMap = new HashMap();
-
-    protected var _notifications :Array = [];
+    protected var _chatHistory :HistoryList;
 }
-}
-
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-
-import com.threerings.presents.client.ResultWrapper;
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.util.SafeSubscriber;
-
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.chat.client.ChatChannelService;
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelObject;
-
-/**
- * The handler is a local object change dispatch for a channel. It can be active or shutdown:
- * while active, it can be connected or disconnected as the player moves between servers;
- * once shut down, it remains disconnected until destroyed.
- */
-class ChannelHandler implements Subscriber
-{
-    public var channel :ChatChannel;
-    public var chanobj :ChatChannelObject;
-
-    public function ChannelHandler (ctx :MsoyContext, channel :ChatChannel, showTabFn :Function)
-    {
-        this.channel = channel;
-        _ctx = ctx;
-        _showTabFn = showTabFn;
-        _ccsvc = (_ctx.getClient().requireService(ChatChannelService) as ChatChannelService);
-
-        connect();
-    }
-
-    public function connect () :void
-    {
-        if (_isConnecting) {
-            log.warning("Asked to connect to a channel while still attempting to connect! [" + 
-                channel + "]");
-            Log.dumpStack();
-            return;
-        }
-
-        if (!_isConnected) {
-            _ccsvc.joinChannel(_ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
-            _isConnecting = true;
-        }
-    }
-
-    public function disconnect () :void
-    {
-        if (_isConnected) {
-            if (_ccsub != null) {
-                _ccsub.unsubscribe(_ctx.getClient().getDObjectManager());
-                _ccsub = null;
-            }
-            if (chanobj != null) {
-                _ctx.getChatDirector().removeAuxiliarySource(chanobj);
-                chanobj = null;
-            }
-            _ccsvc.leaveChannel(_ctx.getClient(), channel);
-            _isConnected = false;
-        }
-    }
-
-    public function shutdown () :void
-    {
-        disconnect();
-        _isShutdown = true;
-    }
-
-    // from Subscriber
-    public function objectAvailable (obj :DObject) :void
-    {
-        chanobj = (obj as ChatChannelObject);
-        _ctx.getChatDirector().addAuxiliarySource(chanobj, channel.toLocalType());
-        _showTabFn(chanobj);
-    }
-
-    // from Subscriber
-    public function requestFailed (oid :int, cause :ObjectAccessError) :void
-    {
-        failed(cause.message);
-    }
-
-    protected function gotChannelOid (result :Object) :void
-    {
-        _isConnecting = false;
-        _isConnected = true;
-        if (_isShutdown) {
-            // zoiks! we got shutdown before we got our channel oid, just leave
-            disconnect();
-        } else {
-            _ccsub = new SafeSubscriber(int(result), this);
-            _ccsub.subscribe(_ctx.getClient().getDObjectManager());
-        }
-    }
-
-    protected function failed (cause :String) :void
-    {
-        _isConnecting = false;
-        var msg :String = MessageBundle.compose("m.join_channel_failed", cause);
-        _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
-    }
-
-    private static const log :Log = Log.getLog(ChannelHandler);
-
-    protected var _ctx :MsoyContext;
-    protected var _showTabFn :Function;
-    protected var _isShutdown :Boolean = false;
-    protected var _isConnected :Boolean = false;
-    protected var _isConnecting :Boolean = false;
-
-    protected var _ccsvc :ChatChannelService;
-    protected var _ccsub :SafeSubscriber;
 }

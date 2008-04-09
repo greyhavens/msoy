@@ -158,10 +158,6 @@ public class NotificationDirector extends BasicDirector
                     dispatchChatNotification(MessageBundle.tcompose("m.friend_online", entry.name,
                                                                     entry.name.getMemberId()));
                 }
-                // if we have the tell tab open for this friend, show logging on and off there
-                dispatchTellNotification(entry.name, 
-                    Msgs.NOTIFY.get(entry.online ? "m.friend_online" : "m.friend_offline",
-                    entry.name, entry.name.getMemberId()));
             }
         }
     }
@@ -247,18 +243,6 @@ public class NotificationDirector extends BasicDirector
     {
         var msg :NotifyMessage = new NotifyMessage(text);
         _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
-    }
-
-    /**
-     * Dispatch a friend-specific notification message to the user.
-     */
-    protected function dispatchTellNotification (name :MemberName, text :String) :void
-    {
-        var channel :ChatChannel = ChatChannel.makeMemberChannel(name);
-        var chatTabs :ChatTabBar = _wctx.getTopPanel().getHeaderBar().getChatTabs();
-        if (chatTabs.containsTab(channel)) {
-            chatTabs.addMessage(channel, new NotifyMessage(text));
-        }
     }
 
     /**

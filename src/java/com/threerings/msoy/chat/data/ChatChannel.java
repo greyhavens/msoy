@@ -12,6 +12,8 @@ import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Defines a particular chat channel.
  */
@@ -94,7 +96,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public String toLocalType ()
     {
-        return type + ":" + ident;
+        return type + ":" + getId(ident);
     }
 
     @Override // from Object
@@ -124,4 +126,29 @@ public class ChatChannel extends SimpleStreamableObject
         this.type = type;
         this.ident = ident;
     }
+
+    protected String getId (Name name)
+    {
+        if (name instanceof MemberName) {
+            return "" + ((MemberName) name).getMemberId();
+
+        } else if (name instanceof GroupName) {
+            return "" + ((GroupName) name).getGroupId();
+
+        } else if (name instanceof RoomName) {
+            return "" + ((RoomName) name).getSceneId();
+
+        } else if (name instanceof ChannelName) {
+            ChannelName channelName = (ChannelName) name;
+            return channelName.getCreatorId() + ":" + channelName;
+
+        } else if (name instanceof JabberName) {
+            return ((JabberName) name).toJID();
+
+        } else {
+            log.warning("ChatChannel unable to determine id! [" + name + "]");
+            return null;
+        }
+    }
+
 }

@@ -18,6 +18,8 @@ import mx.core.UIComponent;
 
 import com.threerings.util.Log;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+
 import com.threerings.msoy.chat.data.ChatChannel
 
 import com.threerings.msoy.client.HeaderBar;
@@ -40,17 +42,13 @@ public class ChatTab extends HBox
     public static const UNSELECTED :int = 2;
     public static const ATTENTION :int = 3;
 
-    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :ChatChannel,
-        history :HistoryList, roomName :String = null)
+    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :ChatChannel, 
+        roomName :String = null)
     {
         _ctx = ctx;
         _bar = bar;
-        if (channel != null) {
-            _controller = new ChatChannelController(ctx, channel, history);
-            if (roomName == null) {
-                roomName = "" + channel.ident;
-            }
-        }
+        _channel = channel;
+
         addChild(_label = new Label());
         _label.styleName = this;
         _label.text = roomName;
@@ -94,14 +92,14 @@ public class ChatTab extends HBox
         return _label.text;
     }
 
-    public function get controller () :ChatChannelController
-    {
-        return _controller;
-    }
-
     public function get checked () :Boolean
     {
         return _checkBoxChecked;
+    }
+
+    public function get localtype () :String
+    {
+        return _channel != null ? _channel.toLocalType() : ChatCodes.PLACE_CHAT_TYPE;
     }
 
     public function displayCloseBox (display :Boolean) :void
@@ -122,18 +120,6 @@ public class ChatTab extends HBox
         }
     }
 
-    public function displayChat () :void
-    {
-        if (_controller != null) {
-            _controller.displayChat();
-        } else {
-            var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
-            if (overlay != null) {
-                overlay.setHistory(_bar.getLocationHistory());
-            }
-        }
-    }
-
     public function setVisualState (state :int) :void
     {
         var style :String;
@@ -142,8 +128,8 @@ public class ChatTab extends HBox
             style = "selected";
             displayShine(false);
             displayCloseBox(_bar.chatTabIndex(this) != 0);
-            displayCheckBox(_bar.chatTabIndex(this) == 0 && _controller != null &&
-                            _controller.channel.type == ChatChannel.ROOM_CHANNEL);
+            displayCheckBox(_bar.chatTabIndex(this) == 0 && _channel != null && 
+                            _channel.type == ChatChannel.ROOM_CHANNEL);
             break;
 
         case UNSELECTED:
@@ -165,24 +151,24 @@ public class ChatTab extends HBox
             return;
         }
 
-        if (_controller == null || _controller.channel.type == ChatChannel.ROOM_CHANNEL) {
+        if (_channel == null || _channel.type == ChatChannel.ROOM_CHANNEL) {
             style += "RoomTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_ROOM);
             }
-        } else if (_controller.channel.type == ChatChannel.GROUP_CHANNEL) {
+        } else if (_channel.type == ChatChannel.GROUP_CHANNEL) {
             style += "GroupTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_GROUP);
             }
-        } else if (_controller.channel.type == ChatChannel.MEMBER_CHANNEL ||
-                _controller.channel.type == ChatChannel.JABBER_CHANNEL) {
+        } else if (_channel.type == ChatChannel.MEMBER_CHANNEL ||
+                   _channel.type == ChatChannel.JABBER_CHANNEL) {
             style += "TellTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_TELL);
             }
         } else {
-            log.warning("Unkown channel type for skinning [" + _controller.channel.type + "]");
+            log.warning("Unkown channel type for skinning [" + _channel.type + "]");
             return;
         }
 
@@ -418,7 +404,7 @@ public class ChatTab extends HBox
     protected static const COLOR_GROUP :int = 0xC7DAEA;
 
     protected var _label :Label;
-    protected var _controller :ChatChannelController;
+    protected var _channel :ChatChannel;
     protected var _ctx :MsoyContext;
     protected var _bar :ChatTabBar;
     protected var _currentSkin :DisplayObject;

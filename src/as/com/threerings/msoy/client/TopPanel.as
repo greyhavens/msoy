@@ -33,7 +33,11 @@ import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.ComicOverlay;
+import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
+
+import com.threerings.msoy.game.client.MsoyGamePanel;
 
 public class TopPanel extends Canvas
     implements LocationObserver
@@ -73,6 +77,10 @@ public class TopPanel extends Canvas
         addChild(_placeBox);
 
         if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+            // only create and display an overlay for real clients
+            _comicOverlay = new ComicOverlay(_ctx, _placeBox);
+            _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
+
             // set up the control bar
             _controlBar = controlBar;
             _controlBar.init(ctx, this);
@@ -188,23 +196,16 @@ public class TopPanel extends Canvas
         return _placeBox.getPlaceView();
     }
 
-    public function setActiveOverlay (overlay :ChatOverlay) :void
-    {
-        _activeOverlay = overlay;
-    }
-
     /**
      * Returns the chat overlay that is in use, or null if there is none.
      */
     public function getChatOverlay () :ChatOverlay
     {
-        if (_activeOverlay == null) {
-            var view :MsoyPlaceView = getPlaceView() as MsoyPlaceView;
-            if (view != null) {
-                _activeOverlay = view.getChatOverlay();
-            }
+        if (_rightPanel is GameChatContainer) {
+            return (_rightPanel as GameChatContainer).getChatOverlay();
+        } else {
+            return _comicOverlay;
         }
-        return _activeOverlay;
     }
 
     /**
@@ -214,10 +215,14 @@ public class TopPanel extends Canvas
     {
         _placeBox.setPlaceView(view);
         layoutPanels();
-        // update the overlay later so that it gets the updated width and height from layoutPanels,
-        // which doesn't set the width and height directly, but sets the top and bottom style
-        // properties and lets it figure it out for itself.
-        callLater(updatePlaceViewChatOverlay);
+
+        if (_comicOverlay != null) {
+            if (view is MsoyGamePanel) {
+                _comicOverlay.displayChat(false); 
+            } else {
+                _comicOverlay.displayChat(true);
+            }
+        }
     }
 
     /**
@@ -465,17 +470,6 @@ public class TopPanel extends Canvas
         updatePlaceViewSize();
     }
 
-    /**
-     * Check to see if the placeview should be using its chat overlay.
-     */
-    protected function updatePlaceViewChatOverlay () :void
-    {
-        var pv :PlaceView = getPlaceView();
-        if (pv is MsoyPlaceView) {
-            (pv as MsoyPlaceView).setUseChatOverlay(!_ctx.getMsoyClient().isFeaturedPlaceView());
-        }
-    }
-
     protected function updatePlaceViewSize () :void
     {
         if (_placeBox.parent != this) {
@@ -560,7 +554,7 @@ public class TopPanel extends Canvas
     /** A flag to indicate if we're working in mini-view or not. */
     protected var _minimized :Boolean = false;
 
-    protected var _activeOverlay :ChatOverlay;
+    protected var _comicOverlay :ComicOverlay;
 
     /** When chat is operating in slide mode (non-overlay), we manage it here. */
     protected var _chat :Container;
