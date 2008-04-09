@@ -30,6 +30,9 @@ import flash.utils.ByteArray;
 
 import mx.core.ScrollPolicy;
 
+import mx.styles.CSSStyleDeclaration;
+import mx.styles.StyleManager;
+
 import com.adobe.images.JPGEncoder; 
 import com.adobe.images.PNGEncoder;
 
@@ -93,11 +96,17 @@ public class EditCanvas extends DisplayCanvas
         _unRotLayer = new Sprite();
         _hudLayer = new Sprite();
 
+        _hudLayer.mouseEnabled = false;
+
         _crop = new Sprite();
         _crop.mouseEnabled = false;
-        _brush = new Shape();
-        _brush.visible = false;
-        _dropper.visible = false;
+        _brushCursor = new Shape();
+        _brushCursor.visible = false;
+        _dropperCursor.visible = false;
+        _moveCursor.visible = false;
+        _moveCursor.mouseEnabled = false;
+        _selectCursor.visible = false;
+        _selectCursor.mouseEnabled = false;
 
         _paintLayer.blendMode = BlendMode.LAYER;
 
@@ -109,10 +118,30 @@ public class EditCanvas extends DisplayCanvas
         _baseLayer.addChild(_hudLayer);
 
         _hudLayer.addChild(_crop);
+        _hudLayer.addChild(_dropperCursor);
+        _hudLayer.addChild(_moveCursor);
+        _hudLayer.addChild(_selectCursor);
 
-        _paintLayer.addChild(_brush);
-        _paintLayer.addChild(_dropper);
+        _paintLayer.addChild(_brushCursor);
         _paintInsertionOffset = _paintLayer.numChildren;
+
+        // set up some of our custom cursors
+        iconToCursor(_moveCursor, ".moveButton");
+        iconToCursor(_selectCursor, ".selectButton");
+
+        // we always listen for cursor moves
+        _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleCursorMove);
+        _paintLayer.addEventListener(MouseEvent.ROLL_OVER, handleCursorVis);
+        _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handleCursorVis);
+    }
+
+    protected function iconToCursor (cursor :Sprite, selector :String) :void
+    {
+        var style :CSSStyleDeclaration = StyleManager.getStyleDeclaration(selector);
+        var icon :DisplayObject = new (style.getStyle("upIcon") as Class)() as DisplayObject;
+        icon.x = 10;
+        icon.y = -10;
+        cursor.addChild(icon);
     }
 
     public function canUndo () :Boolean
@@ -274,16 +303,16 @@ public class EditCanvas extends DisplayCanvas
         }
 
         // We have to have the brush on the image layer so that it participates in rotataions
-        var brushVis :Boolean = _brush.visible;
-        var dropperVis :Boolean = _dropper.visible;
-        _brush.visible = false;
-        _dropper.visible = false;
+        var brushVis :Boolean = _brushCursor.visible;
+        var dropperVis :Boolean = _dropperCursor.visible;
+        _brushCursor.visible = false;
+        _dropperCursor.visible = false;
         // screenshot the image
         try {
             bmp.draw(_scaleLayer, matrix);
         } finally {
-            _brush.visible = brushVis;
-            _dropper.visible = dropperVis;
+            _brushCursor.visible = brushVis;
+            _dropperCursor.visible = dropperVis;
         }
 
         return bmp;
@@ -328,6 +357,7 @@ public class EditCanvas extends DisplayCanvas
         var g :Graphics = _paintLayer.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, 0);
+        //g.beginFill(0xFF0000, .1);
         g.drawRect(0, 0, canvWidth, canvHeight);
         g.endFill();
 
@@ -355,52 +385,64 @@ public class EditCanvas extends DisplayCanvas
         // PAINT || ERASE
         on = (_mode == PAINT) || (_mode == ERASE);
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
-        fn(MouseEvent.ROLL_OVER, handleShowBrush);
-        fn(MouseEvent.ROLL_OUT, handleShowBrush);
         fn(MouseEvent.ROLL_OVER, handlePaintEnter);
         fn(MouseEvent.MOUSE_DOWN, handlePaintStart);
-        fn(MouseEvent.MOUSE_MOVE, handlePaintMove);
         fn(MouseEvent.MOUSE_UP, handlePaintEnd);
-        _brush.blendMode = (_mode == ERASE) ? BlendMode.ERASE : BlendMode.NORMAL;
         // special hack to go to painting directly from eyedropping
-        if (on && _dropper.visible) {
-            _dropper.visible = false;
-            _brush.visible = true;
-            _brush.x = _dropper.x;
-            _brush.y = _dropper.y;
+        if (on && _dropperCursor.visible) {
+            _dropperCursor.visible = false;
+            _brushCursor.visible = true;
+            copyLocation(_dropperCursor, _brushCursor);
         }
 
         // SELECT
         on = (_mode == SELECT);
-        fn = on ? _hudLayer.addEventListener : _hudLayer.removeEventListener;
+        fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
         fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
         fn(MouseEvent.MOUSE_UP, handleSelectEnd);
-        fn(MouseEvent.MOUSE_OUT, handleSelectEnd);
-        _hudLayer.mouseEnabled = on;
+        //fn(MouseEvent.MOUSE_OUT, handleSelectEnd);
 
         // MOVE
         on = (_mode == MOVE);
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
-        fn(MouseEvent.MOUSE_DOWN, handleCropSelect);
-        fn(MouseEvent.MOUSE_UP, handleCropUp);
-        //_crop.mouseEnabled = on;
+        fn(MouseEvent.MOUSE_DOWN, handleMoveStart);
+        fn(MouseEvent.MOUSE_UP, handleMoveEnd);
 
         // SELECT_COLOR
         on = (_mode == SELECT_COLOR);
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
         fn(MouseEvent.CLICK, handleDropperClick);
         fn(MouseEvent.MOUSE_MOVE, handleDropperMove)
-        fn(MouseEvent.ROLL_OVER, handleShowDropper);
-        fn(MouseEvent.ROLL_OUT, handleShowDropper);
 
-        // and finally:
-        _paintLayer.mouseEnabled = (_mode == PAINT) || (_mode == ERASE) || (_mode == SELECT_COLOR) ||
-            (_mode == MOVE);
+        // set up the new cursor
+        _cursor = cursorForMode();
+    }
+
+    protected function cursorForMode () :DisplayObject
+    {
+        switch (_mode) {
+        case PAINT:
+        case ERASE:
+            _brushCursor.blendMode = (_mode == ERASE) ? BlendMode.ERASE : BlendMode.NORMAL;
+            return _brushCursor;
+
+        case SELECT:
+            return _selectCursor;
+
+        case MOVE:
+            return _moveCursor;
+
+        case SELECT_COLOR:
+            return _dropperCursor;
+
+        default:
+            return null;
+        }
     }
 
     protected function updateBrush () :void
     {
-        var g :Graphics = _brush.graphics;
+        var g :Graphics = _brushCursor.graphics;
         g.clear();
         g.beginFill(_color);
         const radius :Number = (_brushSize/2) / _scale;
@@ -417,24 +459,39 @@ public class EditCanvas extends DisplayCanvas
         return layer.globalToLocal(new Point(event.stageX, event.stageY));
     }
 
+    protected function copyLocation (from :DisplayObject, to :DisplayObject) :void
+    {
+        var p :Point = from.parent.localToGlobal(new Point(from.x, from.y));
+        p = to.parent.globalToLocal(p);
+        to.x = p.x;
+        to.y = p.y;
+    }
+
     // Editing operations
 
-    protected function handleShowDropper (event :MouseEvent) :void
+    protected function handleCursorMove (event :MouseEvent) :void
     {
-        _dropper.visible = (event.type == MouseEvent.ROLL_OVER) && (_mode == SELECT_COLOR);
+        if (_cursor != null) {
+            var p :Point = layerPoint(_cursor.parent, event);
+            _cursor.x = p.x;
+            _cursor.y = p.y;
+        }
+    }
+
+    protected function handleCursorVis (event :MouseEvent) :void
+    {
+        if (_cursor != null) {
+            _cursor.visible = (event.type == MouseEvent.ROLL_OVER);
+        }
     }
 
     protected function handleDropperMove (event :MouseEvent) :void
     {
-        var p :Point = layerPoint(_paintLayer, event);
-        _dropper.x = p.x;
-        _dropper.y = p.y;
-
-        p = layerPoint(_scaleLayer, event);
+        var p :Point = layerPoint(_scaleLayer, event);
         var value :uint = getDropperColor(p);
         var color :uint = (value & 0xFFFFFF);
         var alpha :Number = ((value >> 24) & 0xFF) / 255;
-        _dropper.setColor(color, alpha);
+        _dropperCursor.setColor(color, alpha);
     }
 
     protected function handleDropperClick (event :MouseEvent) :void
@@ -462,15 +519,8 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleShowBrush (event :MouseEvent) :void
     {
-        _brush.visible = (event.type == MouseEvent.ROLL_OVER) &&
+        _brushCursor.visible = (event.type == MouseEvent.ROLL_OVER) &&
             ((_mode == PAINT) || (_mode == ERASE));
-    }
-
-    protected function handlePaintMove (event :MouseEvent) :void
-    {
-        var p :Point = layerPoint(_paintLayer, event);
-        _brush.x = p.x;
-        _brush.y = p.y;
     }
 
     protected function handlePaintEnter (event :MouseEvent) :void
@@ -561,7 +611,8 @@ public class EditCanvas extends DisplayCanvas
         _cropPoint = layerPoint(_hudLayer, event);
         updateSelection(_cropPoint);
 
-        _hudLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+        _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+        _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handleSelectEnd);
     }
 
     protected function handleSelectUpdate (event :MouseEvent) :void
@@ -575,7 +626,8 @@ public class EditCanvas extends DisplayCanvas
             updateSelection(layerPoint(_hudLayer, event));
             _cropPoint = null;
 
-            _hudLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+            _paintLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+            _paintLayer.removeEventListener(MouseEvent.ROLL_OUT, handleSelectEnd);
         }
     }
 
@@ -612,12 +664,12 @@ public class EditCanvas extends DisplayCanvas
         }
     }
 
-    protected function handleCropSelect (event :MouseEvent) :void
+    protected function handleMoveStart (event :MouseEvent) :void
     {
         _paintLayer.startDrag(false);
     }
 
-    protected function handleCropUp (event :MouseEvent) :void
+    protected function handleMoveEnd (event :MouseEvent) :void
     {
         _paintLayer.stopDrag();
     }
@@ -661,8 +713,14 @@ public class EditCanvas extends DisplayCanvas
 
     /** Sprites used to represent bits. */
     protected var _crop :Sprite;
-    protected var _brush :Shape;
-    protected var _dropper :DropperCursor = new DropperCursor();
+
+    protected var _brushCursor :Shape;
+    protected var _dropperCursor :DropperCursor = new DropperCursor();
+    protected var _moveCursor :Sprite = new Sprite();
+    protected var _selectCursor :Sprite = new Sprite();
+
+    protected var _cursor :DisplayObject;
+    protected var _cursorLayer :DisplayObject;
 
     protected var _cropRect :Rectangle;
     protected var _cropPoint :Point;
@@ -698,7 +756,7 @@ class DropperCursor extends Shape
         g.clear();
         g.beginFill(color, alpha);
         g.lineStyle(1, (max > 127) ? 0x000000 : 0xFFFFFF);
-        g.drawRect(0, 10, 20, 20);
+        g.drawRect(10, -10, 20, 20);
         g.endFill();
     }
 }
