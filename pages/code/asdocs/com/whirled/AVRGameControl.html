@@ -611,7 +611,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Rectangle</code> &mdash; a Rectangle anchored in (0, 0)
+<td width="20"></td><td><code>Rectangle</code> &mdash; a Rectangle anchored at (0, 0)
      </td>
 </tr>
 </table>
@@ -640,22 +640,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getStageSize(full:Boolean = true):Rectangle</code><p>
-     Returns the bounds of the "stage" on which the AVRG will be drawn. By default, it
-     returns the entire available area; if the argument is false, it doesn't include the
-     part of the stage that's empty white when the player is in narrow rooms.
-          Note that this value changes when the browser is resized, and the latter form when
-     the player moves to another room.
-     </p><span class="label">Parameters</span>
+     Returns the bounds of the "stage" on which the AVRG will be drawn.
+     This value changes when the browser is resized, and when the player moves to another room.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">full</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">full</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; If true (the default), return the entire paintable area. If false,
+     return the area occupied by the room's decor, which can be smaller than the entire
+     paintable area in narrow rooms, or when the room view is zoomed out.
+          </td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Rectangle</code></td>
+<td width="20"></td><td><code>Rectangle</code> &mdash; a Rectangle containing the stage bounds
+     </td>
 </tr>
 </table>
 </div>

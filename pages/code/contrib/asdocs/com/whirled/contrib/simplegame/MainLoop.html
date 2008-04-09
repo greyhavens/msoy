@@ -67,7 +67,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#topMode">topMode</a> : <a href="../simplegame/AppMode.html">AppMode</a>
-<div class="summaryTableDescription">[read-only]</div>
+<div class="summaryTableDescription">[read-only]
+     Returns the top mode on the mode stack, or null
+     if the stack is empty.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 </table>
@@ -143,28 +145,33 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#changeMode()">changeMode</a>(mode:<a href="AppMode.html">AppMode</a>):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Pops the top mode from the stack, and pushes
+     a new mode in its place.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#popAllModes()">popAllModes</a>():void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Pops all modes from the mode stack.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#popMode()">popMode</a>():void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Pops the top mode from the mode stack.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#pushMode()">pushMode</a>(mode:<a href="AppMode.html">AppMode</a>):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Pushes a mode to the mode stack.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
@@ -178,28 +185,34 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#run()">run</a>():void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Kicks off the MainLoop.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#setup()">setup</a>():void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Initializes structures required by the framework, including the
+     ResourceLoaderRegistry and the Rand utility.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Call this function before the application shuts down to release
+     memory and disconnect event handlers.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#unwindToMode()">unwindToMode</a>(mode:<a href="AppMode.html">AppMode</a>):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Pops modes from the stack until the specified mode is reached.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 </table>
@@ -384,7 +397,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>topMode:<a href="../simplegame/AppMode.html">AppMode</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>topMode:<a href="../simplegame/AppMode.html">AppMode</a></code>&nbsp;&nbsp;[read-only]<p>
+     Returns the top mode on the mode stack, or null
+     if the stack is empty.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get topMode():<a href="../simplegame/AppMode.html">AppMode</a></code>
 <br>
@@ -437,7 +453,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function changeMode(mode:<a href="AppMode.html">AppMode</a>):void</code><span class="label">Parameters</span>
+<code>public function changeMode(mode:<a href="AppMode.html">AppMode</a>):void</code><p>
+     Pops the top mode from the stack, and pushes
+     a new mode in its place.
+     Mode changes take effect before game updates.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">mode</span>:<a href="AppMode.html">AppMode</a></code></td>
@@ -480,8 +500,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function popAllModes():void</code>
-</div>
+<code>public function popAllModes():void</code><p>
+     Pops all modes from the mode stack.
+     Mode changes take effect before game updates.
+     </p></div>
 <a name="popMode()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -489,8 +511,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function popMode():void</code>
-</div>
+<code>public function popMode():void</code><p>
+     Pops the top mode from the mode stack.
+     Mode changes take effect before game updates.
+     </p></div>
 <a name="pushMode()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -498,7 +522,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function pushMode(mode:<a href="AppMode.html">AppMode</a>):void</code><span class="label">Parameters</span>
+<code>public function pushMode(mode:<a href="AppMode.html">AppMode</a>):void</code><p>
+     Pushes a mode to the mode stack.
+     Mode changes take effect before game updates.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">mode</span>:<a href="AppMode.html">AppMode</a></code></td>
@@ -526,8 +553,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function run():void</code>
-</div>
+<code>public function run():void</code><p>
+     Kicks off the MainLoop. Game updates will start happening after this
+     function is called.
+     </p></div>
 <a name="setup()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -535,8 +564,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setup():void</code>
-</div>
+<code>public function setup():void</code><p>
+     Initializes structures required by the framework, including the
+     ResourceLoaderRegistry and the Rand utility.
+     </p></div>
 <a name="shutdown()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -544,8 +575,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function shutdown():void</code>
-</div>
+<code>public function shutdown():void</code><p>
+     Call this function before the application shuts down to release
+     memory and disconnect event handlers.
+          Most applications will want to install an Event.REMOVED_FROM_STAGE
+     handler on the main sprite, and call shutdown from there.
+     </p></div>
 <a name="unwindToMode()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -553,7 +588,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function unwindToMode(mode:<a href="AppMode.html">AppMode</a>):void</code><span class="label">Parameters</span>
+<code>public function unwindToMode(mode:<a href="AppMode.html">AppMode</a>):void</code><p>
+     Pops modes from the stack until the specified mode is reached.
+     If the specified mode is not reached, it will be pushed to the top
+     of the mode stack.
+     Mode changes take effect before game updates.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">mode</span>:<a href="AppMode.html">AppMode</a></code></td>

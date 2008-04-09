@@ -118,9 +118,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getHeadShot()">getHeadShot</a>(occupant:int, callback:Function):void</div>
+<a class="signatureLink" href="#getHeadShot()">getHeadShot</a>(occupantId:int):DisplayObject</div>
 <div class="summaryTableDescription">
-     Return the headshot image for the given occupant in the form of a Sprite object.</div>
+     Return the headshot for the given occupant in the form of a DisplayObject.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -375,22 +375,23 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getHeadShot(occupant:int, callback:Function):void</code><p>
-     Return the headshot image for the given occupant in the form of a Sprite object.
-          The sprite are cached in the client backend so the user should not worry too much
-     about multiple requests for the same occupant.
+<code>public function getHeadShot(occupantId:int):DisplayObject</code><p>
+     Return the headshot for the given occupant in the form of a DisplayObject.
+          The objects are cached in the client backend so the user should not worry too much
+     about multiple requests for the same occupant, but be aware that you'll get the same
+     instance back. (TODO?)
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">occupant</span>:int</code> &mdash; the playerId to get the headshot for
+<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code> &mdash; the player for which to get a headshot.
      </td>
 </tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; signature: function (sprite :Sprite, success :Boolean) :void
-     </td>
+<td width="20"></td><td><code>DisplayObject</code></td>
 </tr>
 </table>
 </div>

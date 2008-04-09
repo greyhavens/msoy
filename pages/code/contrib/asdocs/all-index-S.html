@@ -241,7 +241,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/MainLoop.html#setup()">setup</a>() &mdash; Method in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/MainLoop.html">MainLoop</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Initializes structures required by the framework, including the
+     ResourceLoaderRegistry and the Rand utility.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/TickedMessageManager.html#setup()">setup</a>(isFirstPlayer, tickIntervalMS) &mdash; Method in class com.whirled.contrib.simplegame.net.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/TickedMessageManager.html">TickedMessageManager</a></td>
@@ -272,7 +274,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/MainLoop.html#shutdown()">shutdown</a>() &mdash; Method in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/MainLoop.html">MainLoop</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Call this function before the application shuts down to release
+     memory and disconnect event handlers.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/TickedMessageManager.html#shutdown()">shutdown</a>() &mdash; Method in class com.whirled.contrib.simplegame.net.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/TickedMessageManager.html">TickedMessageManager</a></td>
@@ -293,12 +297,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObjectRef.html#SimObjectRef()">SimObjectRef</a>() &mdash; Constructor in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObjectRef.html">SimObjectRef</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleSceneObject.html">SimpleSceneObject</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/package-detail.html">com.whirled.contrib.simplegame.objects</a></td>
 </tr>
 <tr>
@@ -306,7 +304,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
  This is just a convenience class that extends SceneObject to manage a displayObject directly.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleSceneObject.html#SimpleSceneObject()">SimpleSceneObject</a>(displayObject) &mdash; Constructor in class com.whirled.contrib.simplegame.objects.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleSceneObject.html">SimpleSceneObject</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleSceneObject.html#SimpleSceneObject()">SimpleSceneObject</a>(displayObject, name) &mdash; Constructor in class com.whirled.contrib.simplegame.objects.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleSceneObject.html">SimpleSceneObject</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleTimer.html">SimpleTimer</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/package-detail.html">com.whirled.contrib.simplegame.objects</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleTimer.html#SimpleTimer()">SimpleTimer</a>(delay, callback, repeating, objectName) &mdash; Constructor in class com.whirled.contrib.simplegame.objects.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/objects/class-list.html');" href="com/whirled/contrib/simplegame/objects/SimpleTimer.html">SimpleTimer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>

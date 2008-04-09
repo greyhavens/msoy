@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleIOError,handleInit,handleProgress,handleVideoError,handleVideoSizeKnown,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaClass,setMediaObject,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
+<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleError,handleInit,handleProgress,handleVideoError,handleVideoSizeKnown,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaClass,setMediaObject,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
 <title>com.threerings.flash.MediaContainer</title>
 </head>
 <body>
@@ -292,17 +292,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#handleInit()">handleInit</a>(event:Event):void</div>
+<a class="signatureLink" href="#handleError()">handleError</a>(event:ErrorEvent):void</div>
 <div class="summaryTableDescription">
-     Handles the INIT event for content loaded with a Loader.</div>
+     A callback to receive IO_ERROR and SECURITY_ERROR events.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#handleIOError()">handleIOError</a>(event:IOErrorEvent):void</div>
+<a class="signatureLink" href="#handleInit()">handleInit</a>(event:Event):void</div>
 <div class="summaryTableDescription">
-     A callback to receive IO_ERROR events.</div>
+     Handles the INIT event for content loaded with a Loader.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -453,6 +453,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when the size of the media being loaded is known.</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:unload">unload</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when we've unloaded our content...</td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 </table>
 </div>
@@ -833,6 +841,22 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="handleError()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleError(event:ErrorEvent):void</code><p>
+     A callback to receive IO_ERROR and SECURITY_ERROR events.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ErrorEvent</code></td>
+</tr>
+</table>
+</div>
 <a name="handleInit()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -846,22 +870,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
-</tr>
-</table>
-</div>
-<a name="handleIOError()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleIOError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleIOError(event:IOErrorEvent):void</code><p>
-     A callback to receive IO_ERROR events.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:IOErrorEvent</code></td>
 </tr>
 </table>
 </div>
@@ -1286,6 +1294,20 @@ showHideInherited();
   </p><p> A ValueEvent we dispatch when our size is known.
      Value: [ width, height ].
           </p></div>
+<a name="event:unload"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">unload</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p><p>
+ Dispatched when we've unloaded our content... always. The LoaderInfo's UNLOAD event
+ is only dispatched if the INIT event has already been dispatched and not if you cancel a
+ load before it INIT.
+ </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
 <a name="log"></a>

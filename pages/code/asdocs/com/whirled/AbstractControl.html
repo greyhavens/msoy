@@ -181,8 +181,8 @@ showHideInherited();
 <span class="label">Example</span>
 <br>     <div class='listing'><pre>
      _ctrl.doBatch(function () :void {
-         _ctrl.net.set("board", new Array());
-         _ctrl.net.set("scores", new Array());
+         _ctrl.net.set("board", new Array(100));
+         _ctrl.net.set("scores", new Dictionary());
          _ctrl.net.set("captures", 0);
      });
      </pre></div>
