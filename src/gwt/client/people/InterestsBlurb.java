@@ -49,11 +49,11 @@ public class InterestsBlurb extends Blurb
 
     protected void displayInterests ()
     {
-        SmartTable contents = new SmartTable(0, 5);
+        SmartTable contents = new SmartTable("Interests", 0, 5);
         for (int ii = 0; ii < _interests.size(); ii++) {
             Interest interest = (Interest) _interests.get(ii);
-            contents.setText(ii, 0, CPeople.dmsgs.getString("interest" + interest.type));
-            contents.setWidget(ii, 1, linkify(interest.interests));
+            contents.setText(ii, 0, CPeople.dmsgs.getString("interest" + interest.type), 1, "Type");
+            contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
         }
         setContent(contents);
 

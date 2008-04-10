@@ -30,6 +30,23 @@
   white-space: nowrap;
 }
 
+.profile .Interests {
+  font-size: 14px;
+}
+
+.profile .Interests .Type {
+  color: #7E7E7E;
+  padding: 0px 25px;
+}
+
+.profile .Interests .Text a {
+  text-decoration: none;
+}
+
+.profile .Interests .Text a:hover {
+  text-decoration: underline;
+}
+
 .profile .Friend, .profile .Group {
   text-align: center;
   font-size: 12px;
