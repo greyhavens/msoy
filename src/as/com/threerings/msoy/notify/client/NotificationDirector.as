@@ -6,6 +6,8 @@ package com.threerings.msoy.notify.client {
 import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
+
+import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.CommandButton;
@@ -49,6 +51,7 @@ public class NotificationDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME, memberExpired);
     }
 
     /**
@@ -82,41 +85,6 @@ public class NotificationDirector extends BasicDirector
         var ids :TypedArray = TypedArray.create(int);
         ids.push(id);
         acknowledgeNotifications(ids);
-    }
-
-    protected function acknowledgeNotifications (notifyIds :TypedArray /* of int */) :void
-    {
-        // record that we've sent off an ack to the server, from here on out we act like
-        // each of these notifications doesn't exist on the client...
-        for each (var id :int in notifyIds) {
-            _acked[id] = true;
-        }
-        _msvc.acknowledgeNotifications(_wctx.getClient(), notifyIds, new ReportingListener(_wctx));
-    }
-
-    // from BasicDirector
-    override protected function clientObjectUpdated (client :Client) :void
-    {
-        super.clientObjectUpdated(client);
-        client.getClientObject().addListener(this);
-
-        // and, let's always update the control bar button
-        updateNotifications();
-        showStartupNotifications();
-    }
-
-    // from BasicDirector
-    override protected function registerServices (client :Client) :void
-    {
-        super.registerServices(client);
-        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
-    }
-
-    // from BasicDirector
-    override protected function fetchServices (client :Client) :void
-    {
-        super.fetchServices(client);
-        _msvc = (client.requireService(MemberService) as MemberService);
     }
 
     // from interface AttributeChangeListener
@@ -155,8 +123,18 @@ public class NotificationDirector extends BasicDirector
             if (entry.online != oldEntry.online) {
                 // show friends logging on in the notification area
                 if (entry.online) {
-                    dispatchChatNotification(MessageBundle.tcompose("m.friend_online", entry.name,
-                                                                    entry.name.getMemberId()));
+                    // FriendEntry implements Equalable.equals() on member id, so this contains()
+                    // check will come up positive for FriendEntrys on the same member.
+                    if (_membersLoggingOff.contains(entry)) {
+                        _membersLoggingOff.remove(entry);
+                    } else {
+                        var memberId :int = entry.name.getMemberId();
+                        dispatchChatNotification(
+                            MessageBundle.tcompose("m.friend_online", entry.name, memberId),
+                            NotifyMessage.LOGON_LOCALTYPE + ":" + memberId);
+                    }
+                } else {
+                    _membersLoggingOff.add(entry);
                 }
             }
         }
@@ -178,6 +156,48 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             dispatchChatNotification(MessageBundle.tcompose("m.friend_removed", oldEntry.name));
         }
+    }
+
+    protected function memberExpired (entry :FriendEntry) :void
+    {
+        var memberId :int = entry.name.getMemberId();
+        dispatchChatNotification(MessageBundle.tcompose("m.friend_offline", entry.name, memberId),
+                                 NotifyMessage.LOGOFF_LOCALTYPE + ":" + memberId);
+    }
+
+    protected function acknowledgeNotifications (notifyIds :TypedArray /* of int */) :void
+    {
+        // record that we've sent off an ack to the server, from here on out we act like
+        // each of these notifications doesn't exist on the client...
+        for each (var id :int in notifyIds) {
+            _acked[id] = true;
+        }
+        _msvc.acknowledgeNotifications(_wctx.getClient(), notifyIds, new ReportingListener(_wctx));
+    }
+
+    // from BasicDirector
+    override protected function clientObjectUpdated (client :Client) :void
+    {
+        super.clientObjectUpdated(client);
+        client.getClientObject().addListener(this);
+
+        // and, let's always update the control bar button
+        updateNotifications();
+        showStartupNotifications();
+    }
+
+    // from BasicDirector
+    override protected function registerServices (client :Client) :void
+    {
+        super.registerServices(client);
+        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
+    }
+
+    // from BasicDirector
+    override protected function fetchServices (client :Client) :void
+    {
+        super.fetchServices(client);
+        _msvc = (client.requireService(MemberService) as MemberService);
     }
 
     /**
@@ -239,10 +259,11 @@ public class NotificationDirector extends BasicDirector
     /**
      * Dispatch a notification chat message to the user.
      */
-    protected function dispatchChatNotification (text :String) :void
+    protected function dispatchChatNotification (text :String, 
+        localtype :String = ChatCodes.USER_CHAT_TYPE) :void
     {
         var msg :NotifyMessage = new NotifyMessage(text);
-        _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
+        _wctx.getChatDirector().dispatchMessage(msg, localtype);
     }
 
     /**
@@ -254,6 +275,9 @@ public class NotificationDirector extends BasicDirector
         (_wctx.getTopPanel().getControlBar() as WorldControlBar).
             setNotificationsShowing(notifsShowing);
     }
+
+    /** Give members 15 seconds to get back on before we announce that they're left */
+    protected static const MEMBER_EXPIRE_TIME :int = 15;
 
     protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
@@ -267,5 +291,8 @@ public class NotificationDirector extends BasicDirector
 
     /** Contains a list of notification popups currently being shown. */
     protected var _popups :Array = new Array();
+
+    /** An ExpiringSet to track members that may only be switching servers. */
+    protected var _membersLoggingOff :ExpiringSet;
 }
 }

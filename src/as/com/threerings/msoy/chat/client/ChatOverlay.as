@@ -34,6 +34,7 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
@@ -58,8 +59,13 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
+
+import com.threerings.msoy.world.client.WorldContext;
+
+import com.threerings.msoy.world.data.MsoyScene;
 
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
@@ -126,15 +132,12 @@ public class ChatOverlay
     {
         log.debug("displayMessage [msg=" + msg.message + ", localtype=" + msg.localtype + 
             ", timestamp=" + msg.timestamp + ", type=" + getType(msg, false) + "]");
-        var type :int = getType(msg, false);
-        if (type == IGNORECHAT) {
-            return false;
-        }
 
-        if (msg is SystemMessage || msg is NotifyMessage || msg.localtype == _localtype) {
-            addSubtitle(createSubtitle(msg, type, true));
+        if (shouldDisplayMessage(msg)) {
+            addSubtitle(createSubtitle(msg, getType(msg, false), true));
             return true;
         }
+
         return false;
     }
 
@@ -342,6 +345,47 @@ public class ChatOverlay
         if (_targetBounds == null) {
             _targetBounds = getDefaultTargetBounds();
         } 
+    }
+
+    protected function shouldDisplayMessage (msg :ChatMessage) :Boolean
+    {
+        var type :int = getType(msg, false);
+        if (type == IGNORECHAT) {
+            return false;
+        }
+
+        if (msg.localtype == _localtype) {
+            return true;
+        }
+
+        // let the notify message decide if the notification it dispatched is at all related
+        // to our current localtype
+        if (msg is NotifyMessage && (msg as NotifyMessage).isRelated(_localtype)) {
+            return true;
+        }
+
+        // TODO: This is spammy and not how it current works in the wild.  It will get more 
+        // tuning
+        // display all system messages and notify messages in the current location tab
+        if (msg is SystemMessage || msg is NotifyMessage) {
+            // in WorldContext we pull out the scene and check the id against the current localtype
+            if (_ctx is WorldContext) {
+                var currentScene :MsoyScene = 
+                    (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
+                if (currentScene != null && 
+                    ChatChannel.typeIsForRoom(_localtype, currentScene.getId())) {
+                    return true;
+                }
+
+            // in non-WorldContext we just watch for PLACE_CHAT_TYPE
+            } else {
+                if (_localtype == ChatCodes.PLACE_CHAT_TYPE) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
