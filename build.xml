@@ -395,7 +395,7 @@
          <arg value="${gsrc.dir}/msoy.gwt.xml"/>
        </exec>
     </else></if>
-    <java fork="true" maxmemory="768M" failonerror="false" resultproperty="gwt.result"
+    <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
           classname="com.google.gwt.dev.GWTCompiler">
       <classpath>
         <pathelement location="${classes.dir}"/>
