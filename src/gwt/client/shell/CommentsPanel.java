@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.CommentService;
 
 import client.msgs.ComplainPopup;
@@ -32,11 +33,16 @@ public class CommentsPanel extends PagedGrid
 {
     public CommentsPanel (int entityType, int entityId)
     {
-        super(Comment.COMMENTS_PER_PAGE, 1, NAV_ON_BOTTOM);
+        this(entityType, entityId, Comment.COMMENTS_PER_PAGE);
+    }
+
+    public CommentsPanel (int entityType, int entityId, int commentsPerPage)
+    {
+        super(commentsPerPage, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
-        _entityType = entityType;
+        _etype = entityType;
         _entityId = entityId;
 
         add(new Label(CShell.cmsgs.loadingComments()));
@@ -79,17 +85,47 @@ public class CommentsPanel extends PagedGrid
             _post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _post.setEnabled(false);
-                    add(new PostPanel());
+                    showPostComment();
                 }
             });
             controls.setWidget(0, 0, _post);
         }
     }
 
+    /**
+     * Returns the size of thumbnail image to use next to our comments.
+     */
+    protected int getThumbnailSize ()
+    {
+        return MediaDesc.THUMBNAIL_SIZE;
+    }
+
+    /**
+     * Returns true if the viewer can delete the supplied comment.
+     */
+    protected boolean canDelete (Comment comment)
+    {
+        return CShell.isSupport() || Comment.canDelete(
+            _etype, _entityId, comment.commentor.getMemberId(), CShell.getMemberId());
+    }
+
+    /**
+     * Returns true if the viewer can complain about the supplied comment.
+     */
+    protected boolean canComplain (Comment comment)
+    {
+        return (_etype != Comment.TYPE_PROFILE_WALL) && (CShell.getMemberId() != 0) &&
+            (CShell.getMemberId() != comment.commentor.getMemberId());
+    }
+
+    protected void showPostComment ()
+    {
+        add(new PostPanel());
+    }
+
     protected void postComment (String text)
     {
-        CShell.commentsvc.postComment(
-            CShell.ident, _entityType, _entityId, text, new MsoyCallback() {
+        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text, new MsoyCallback() {
             public void onSuccess (Object result) {
                 postedComment((Comment)result);
             }
@@ -107,12 +143,18 @@ public class CommentsPanel extends PagedGrid
         }
     }
 
+    protected void clearPostPanel (PostPanel panel)
+    {
+        remove(panel);
+        _post.setEnabled(true);
+    }
+
     protected Command deleteComment (final Comment comment)
     {
         return new Command() {
             public void execute () {
                 CShell.commentsvc.deleteComment(
-                    CShell.ident, _entityType, _entityId, comment.posted, new MsoyCallback() {
+                    CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback() {
                     public void onSuccess (Object result) {
                         MsoyUI.info(CShell.cmsgs.commentDeleted());
                         _commentCount = -1;
@@ -125,13 +167,13 @@ public class CommentsPanel extends PagedGrid
 
     protected void complainComment (Comment comment)
     {
-        new CommentComplainPopup(comment, _entityType, _entityId).show();
+        new CommentComplainPopup(comment, _etype, _entityId).show();
     }
 
     protected class CommentModel extends ServiceBackedDataModel
     {
         protected void callFetchService (int start, int count, boolean needCount) {
-            CShell.commentsvc.loadComments(_entityType, _entityId, start, count, needCount, this);
+            CShell.commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
         }
         protected int getCount (Object result) {
             return ((CommentService.CommentResult)result).commentCount;
@@ -152,21 +194,16 @@ public class CommentsPanel extends PagedGrid
             RowPanel buttons = new RowPanel();
             buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    clearPost();
+                    clearPostPanel(PostPanel.this);
                 }
             }));
             buttons.add(new Button(CShell.cmsgs.submit(), new ClickListener() {
                 public void onClick (Widget sender) {
+                    clearPostPanel(PostPanel.this);
                     postComment(_text.getText());
-                    clearPost();
                 }
             }));
             add(buttons);
-        }
-
-        protected void clearPost () {
-            CommentsPanel.this.remove(this);
-            _post.setEnabled(true);
         }
 
         protected TextArea _text;
@@ -194,7 +231,7 @@ public class CommentsPanel extends PagedGrid
         protected int _type, _id;
     }
 
-    protected int _entityType, _entityId;
+    protected int _etype, _entityId;
     protected int _commentCount = -1;
 
     protected VerticalPanel _comments;

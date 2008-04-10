@@ -127,7 +127,8 @@ public class CommentServlet extends MsoyServiceServlet
             // if we're not support personel, ensure that we are the poster of this comment
             if (!mrec.isSupport()) {
                 CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
-                if (record == null || record.memberId != mrec.memberId) {
+                if (record == null ||
+                    !Comment.canDelete(etype, eid, record.memberId, mrec.memberId)) {
                     return false;
                 }
             }

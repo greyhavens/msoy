@@ -28,6 +28,9 @@ import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 
+/**
+ * Displays a member's interests and other random bits.
+ */
 public class InterestsBlurb extends Blurb
 {
     // @Override // from Blurb

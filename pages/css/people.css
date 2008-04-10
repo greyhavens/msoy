@@ -62,6 +62,18 @@
   margin-right: auto;
 }
 
+.profile .Wall {
+  margin-left: 20px;
+}
+
+.profile .Wall .TopCell, .profile .Wall .MiddleCell {
+  border-bottom: 1px solid #DADADA;
+}
+
+.profile .Wall .messagePanel .Scroller {
+  width: 535px;
+}
+
 .ratingWidget {
   height: 44px;
 }

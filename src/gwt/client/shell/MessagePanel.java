@@ -43,7 +43,7 @@ public class MessagePanel extends FlexTable
                 Application.go(Page.PEOPLE, "" + poster.name.getMemberId());
             }
         };
-        setWidget(0, 0, new ThumbBox(poster.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
+        setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(), onClick));
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");
         getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
@@ -75,7 +75,7 @@ public class MessagePanel extends FlexTable
         getFlexCellFormatter().setStyleName(0, 1, "LeftPad");
 
         ScrollPanel scroller = new ScrollPanel();
-        scroller.setWidth("565px");
+        scroller.addStyleName("Scroller");
         if (textIsHTML()) {
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
             scroller.add(new HTML(text));
@@ -104,6 +104,14 @@ public class MessagePanel extends FlexTable
     protected String getIconPath ()
     {
         return null;
+    }
+
+    /**
+     * Returns the size of thumbnail image to use next to our message.
+     */
+    protected int getThumbnailSize ()
+    {
+        return MediaDesc.THUMBNAIL_SIZE;
     }
 
     /**

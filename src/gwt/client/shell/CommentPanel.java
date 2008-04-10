@@ -37,7 +37,7 @@ public class CommentPanel extends MessagePanel
     {
         super.addInfo(info);
 
-        if (CShell.getMemberId() == _comment.commentor.getMemberId() || CShell.isSupport()) {
+        if (_parent.canDelete(_comment)) {
             InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
             delete.addClickListener(new PromptPopup(CShell.cmsgs.deletePostConfirm(),
                                                     _parent.deleteComment(_comment)).
@@ -47,7 +47,7 @@ public class CommentPanel extends MessagePanel
             info.add(delete);
         }
 
-        if (CShell.getMemberId() != 0 && CShell.getMemberId() != _comment.commentor.getMemberId()) {
+        if (_parent.canComplain(_comment)) {
             InlineLabel complain = new InlineLabel(CShell.cmsgs.complainPost(), false, true, false);
             complain.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -58,6 +58,12 @@ public class CommentPanel extends MessagePanel
             complain.addStyleName("actionLabel");
             info.add(complain);
         }
+    }
+
+    // @Override // from MessagePanel
+    protected int getThumbnailSize ()
+    {
+        return _parent.getThumbnailSize();
     }
 
     protected CommentsPanel _parent;

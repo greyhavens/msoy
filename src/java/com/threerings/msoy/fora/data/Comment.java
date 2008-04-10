@@ -54,6 +54,15 @@ public class Comment
         }
     }
 
+    /**
+     * Returns true if the specified member can delete a comment.
+     */
+    public static boolean canDelete (int type, int entityId, int commentorId, int memberId)
+    {
+        return (memberId == commentorId) ||
+            (type == Comment.TYPE_PROFILE_WALL && entityId == memberId);
+    }
+
     /** The member that made this comment. */
     public MemberName commentor;
 
