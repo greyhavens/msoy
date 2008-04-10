@@ -40,6 +40,13 @@ public class ItemDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case ItemMarshaller.GET_CATALOG_ID:
+            ((ItemProvider)provider).getCatalogId(
+                source,
+                (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case ItemMarshaller.GET_ITEM_NAMES:
             ((ItemProvider)provider).getItemNames(
                 source,

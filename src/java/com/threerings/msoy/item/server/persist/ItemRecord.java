@@ -123,8 +123,14 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** The id of the catalog listing for which this item is either the listed prototype (in which
-     * case ownerId == 0) or the original (in which case ownerId != 0). */
+    /** The catalog listing associated with this item. Set to 0 if this item is not listed.
+     * If nonzero, the item is either:
+     * the original item (sourceId == 0 && ownerId != 0)
+     * the prototype item (sourceId == 0 && ownerId == 0)
+     * or just a purchased item (sourceId != 0)
+     * 
+     * See {@link isCatalogOriginal()} and {@link isCatalogPrototype()}
+     */
     public int catalogId;
 
     /** The current rating of this item, from 1 to 5. */
@@ -192,6 +198,24 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Returns true if this item is a catalog original, rather than just a clone of
+     * something listed or the prototype from which all clones are made.
+     */
+    public boolean isCatalogOriginal ()
+    {
+        return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
+    }
+
+    /**
+     * Returns true if this item is a catalog prototype from which clones are configured,
+     * rather than just a clone, or the original item.
+     */
+    public boolean isCatalogPrototype ()
+    {
+        return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
+    }
+
+    /**
      * Tests whether a given flag is set on this item.
      */
     public boolean isSet (byte flag)
@@ -252,8 +276,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         this.sourceId = this.itemId;
         this.itemId = clone.itemId;
 
-        // clear out our catalog id; clones are never catalog originals
-        this.catalogId = 0;
+        // we now keep our catalogId set to the correct value
 
         this.ownerId = clone.ownerId;
         this.used = clone.used;

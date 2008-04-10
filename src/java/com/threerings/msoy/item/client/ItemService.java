@@ -30,4 +30,14 @@ public interface ItemService extends InvocationService
      */
     public void reclaimItem (
         Client client, ItemIdent item, ConfirmListener listener);
+
+    /**
+     * Retrieve the catalog id for the specified item.
+     * @return to the listener, an Integer object or null.
+     * null - the specified item is owned by the player, we should just show the detail
+     * page.
+     * 0 - the item is not listed in the catalog
+     * any other Integer - the catalog id.
+     */
+    public void getCatalogId (Client client, ItemIdent item, ResultListener listener);
 }

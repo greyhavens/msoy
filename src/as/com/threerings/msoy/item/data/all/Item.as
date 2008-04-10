@@ -93,9 +93,8 @@ public /*abstract*/ class Item
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public var ownerId :int;
 
-    /** Either the item id of the catalog prototype created from this mutable item (and ownerId !=
-     * 0), or the item id of the mutable item from which this catalog prototype was created (and
-     * ownerId == 0), or zero. */
+    /** The id of the catalog listing associated with this item. This item may be the
+     * original item or a purchased clone. Use isCatalogOriginal() to check. */
     public var catalogId :int;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
@@ -248,6 +247,15 @@ public /*abstract*/ class Item
     public function getPrototypeId () :int
     {
         return (sourceId == 0) ? itemId : sourceId;
+    }
+
+    /**
+     * Returns true if this item is a catalog original, rather than just a clone of
+     * something listed in the catalog.
+     */
+    public function isCatalogOriginal () :Boolean
+    {
+        return (sourceId == 0) && (catalogId != 0);
     }
 
     /**

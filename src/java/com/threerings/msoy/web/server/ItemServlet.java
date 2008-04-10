@@ -310,7 +310,7 @@ public class ItemServlet extends MsoyServiceServlet
             if (item.used != 0) {
                 throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
             }
-            if (item.catalogId != 0) {
+            if (item.isCatalogOriginal()) {
                 throw new ServiceException(ItemCodes.E_ITEM_LISTED);
             }
             repo.deleteItem(iident.itemId);
@@ -577,7 +577,8 @@ public class ItemServlet extends MsoyServiceServlet
             int deletionCount = 0;
             owners.add(item.creatorId);
 
-            // if this is the prototype for a listed item, delist it
+            // we've loaded the original item, if it represents the original listing
+            // or a prototype item, we want to squish the original catalog listing.
             if (item.catalogId != 0) {
                 CatalogRecord catrec = repo.loadListing(item.catalogId, false);
                 if (catrec != null && catrec.listedItemId == item.itemId) {

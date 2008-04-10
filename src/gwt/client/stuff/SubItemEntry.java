@@ -23,9 +23,14 @@ public class SubItemEntry extends ItemEntry
         SubItem sitem = (SubItem)item;
         addText(sitem.ident, getColumns(), "Ident");
 
+        // If this item is a clone, that's all folks
+        if (item.sourceId != 0) {
+            return;
+        }
+
         int row = getRowCount();
-        String btitle = (item.catalogId == 0) ?
-            CStuff.msgs.detailList() : CStuff.msgs.detailSubUplist();
+        String btitle = item.isCatalogOriginal() ?
+            CStuff.msgs.detailSubUplist() : CStuff.msgs.detailList();
         _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
                 DoListItemPopup.show(item, null, SubItemEntry.this);
@@ -47,7 +52,7 @@ public class SubItemEntry extends ItemEntry
     public void itemListed (Item item, boolean updated)
     {
         // if this was a first time listing, change "List..." to "Update listing..."
-        if (!updated && item.catalogId != 0) {
+        if (!updated && item.isCatalogOriginal()) {
             _list.setText(CStuff.msgs.detailUplist());
         }
     }

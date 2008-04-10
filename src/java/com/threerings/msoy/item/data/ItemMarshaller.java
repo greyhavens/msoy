@@ -20,8 +20,21 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
+    /** The method id used to dispatch {@link #getCatalogId} requests. */
+    public static final int GET_CATALOG_ID = 1;
+
+    // from interface ItemService
+    public void getCatalogId (Client arg1, ItemIdent arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_CATALOG_ID, new Object[] {
+            arg2, listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #getItemNames} requests. */
-    public static final int GET_ITEM_NAMES = 1;
+    public static final int GET_ITEM_NAMES = 2;
 
     // from interface ItemService
     public void getItemNames (Client arg1, ItemIdent[] arg2, InvocationService.ResultListener arg3)
@@ -34,7 +47,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #peepItem} requests. */
-    public static final int PEEP_ITEM = 2;
+    public static final int PEEP_ITEM = 3;
 
     // from interface ItemService
     public void peepItem (Client arg1, ItemIdent arg2, InvocationService.ResultListener arg3)
@@ -47,7 +60,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reclaimItem} requests. */
-    public static final int RECLAIM_ITEM = 3;
+    public static final int RECLAIM_ITEM = 4;
 
     // from interface ItemService
     public void reclaimItem (Client arg1, ItemIdent arg2, InvocationService.ConfirmListener arg3)

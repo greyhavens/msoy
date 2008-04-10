@@ -27,8 +27,21 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
+    /** The method id used to dispatch {@link #getCatalogId} requests. */
+    public static const GET_CATALOG_ID :int = 1;
+
+    // from interface ItemService
+    public function getCatalogId (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
+    {
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_CATALOG_ID, [
+            arg2, listener3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #getItemNames} requests. */
-    public static const GET_ITEM_NAMES :int = 1;
+    public static const GET_ITEM_NAMES :int = 2;
 
     // from interface ItemService
     public function getItemNames (arg1 :Client, arg2 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg3 :InvocationService_ResultListener) :void
@@ -41,7 +54,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #peepItem} requests. */
-    public static const PEEP_ITEM :int = 2;
+    public static const PEEP_ITEM :int = 3;
 
     // from interface ItemService
     public function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
@@ -54,7 +67,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reclaimItem} requests. */
-    public static const RECLAIM_ITEM :int = 3;
+    public static const RECLAIM_ITEM :int = 4;
 
     // from interface ItemService
     public function reclaimItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void

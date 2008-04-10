@@ -895,6 +895,26 @@ public class ItemManager
     }
 
     // from ItemProvider
+    public void getCatalogId (
+        ClientObject caller, final ItemIdent ident, final InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+
+        getItem(ident, new ResultAdapter<Item>(rl) {
+            public void requestCompleted (Item item) {
+                if (item.ownerId == user.getMemberId()) {
+                    rl.requestProcessed(null);
+
+                } else {
+                    rl.requestProcessed(Integer.valueOf(item.catalogId));
+                }
+                // do NOT call super
+            }
+        });
+    }
+
+    // from ItemProvider
     public void getItemNames (ClientObject caller, final ItemIdent[] idents,
                               InvocationService.ResultListener rl)
         throws InvocationException

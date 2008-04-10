@@ -124,8 +124,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** The id of the catalog listing for which this item is either the listed prototype (in which
-     * case ownerId == 0) or the original (in which case ownerId != 0). */
+    /** The id of the catalog listing associated with this item. This item may be the
+     * original item of a purchased clone. Use isCatalogOriginal() to check. */
     public int catalogId;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
@@ -279,6 +279,15 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public int getPrototypeId ()
     {
         return (sourceId == 0) ? itemId : sourceId;
+    }
+
+    /**
+     * Returns true if this item is a catalog original, rather than just a clone of
+     * something listed in the catalog.
+     */
+    public boolean isCatalogOriginal ()
+    {
+        return (sourceId == 0) && (catalogId != 0);
     }
 
     /**

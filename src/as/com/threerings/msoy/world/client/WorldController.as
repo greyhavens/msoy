@@ -31,6 +31,7 @@ import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ChatChannelController;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -354,8 +355,24 @@ public class WorldController extends MsoyController
      */
     public function handleViewItem (ident :ItemIdent) :void
     {
-        // TODO: use a proper item info page
-        displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
+        var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
+        isvc.getCatalogId(_wctx.getClient(), ident, new ResultWrapper(
+            function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+            },
+            function (result :Object) :void {
+                if (result == null) {
+                    // it's an object we own
+                    displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
+
+                } else if (result == 0) {
+                    _wctx.displayFeedback(MsoyCodes.ITEM_MSGS,
+                        MessageBundle.compose("m.not_listed", Item.getTypeKey(ident.type)));
+
+                } else {
+                    displayPage("shop", "l_" + ident.type + "_" + result);
+                }
+            }));
     }
 
     /**

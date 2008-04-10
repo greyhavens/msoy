@@ -141,9 +141,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is listed in the catalog or listable, add a UI for that
-        if (_item.catalogId != 0 || _item.sourceId == 0) {
+        boolean original = _item.isCatalogOriginal();
+        if (original || _item.sourceId == 0) {
             String tip, butlbl;
-            if (_item.catalogId != 0) {
+            if (original) {
                 tip = CStuff.msgs.detailUplistTip();
                 butlbl = CStuff.msgs.detailUplist();
             } else {
@@ -163,7 +164,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             buttons.add(_listBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, onClick));
 
             boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
-            if (_item.catalogId != 0 && salable) {
+            if (original && salable) {
                 // add a button for repricing the listing
                 butlbl = CStuff.msgs.detailUpprice();
                 buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
@@ -183,7 +184,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is giftable, add a UI for that
-        if (_item.catalogId == 0 && _item.used == Item.UNUSED) {
+        if (!original && _item.used == Item.UNUSED) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
