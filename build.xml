@@ -170,7 +170,7 @@
   </path>
 
   <!-- prepares the application directories -->
-  <target name="prepare" depends="copydistlibs,copydistprops">
+  <target name="prepare" depends="copydistprops">
     <mkdir dir="${deploy.dir}"/>
     <mkdir dir="${deploy.dir}/lib"/>
     <mkdir dir="${deploy.dir}/tmp"/>
@@ -181,6 +181,11 @@
        <include name="**/*"/>
       </fileset>
     </copy>
+
+    <!-- Copy all the libs we depend on. -->
+    <copyfilelist dest="${deploy.dir}/lib">
+      <filelist refid="dist.libs"/>
+    </copyfilelist>
 
     <!-- create our toybox propertis from server.properties -->
     <exec executable="egrep">
