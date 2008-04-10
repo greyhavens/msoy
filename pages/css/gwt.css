@@ -752,6 +752,7 @@ img, embed, applet, object {
 }
 
 .borderedDialog {
+  max-width: 600px;
 }
 
 .borderedDialog .HeaderTitle, .borderedDialog .CloseCell {
