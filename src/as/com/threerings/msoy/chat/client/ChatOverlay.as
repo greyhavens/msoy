@@ -108,6 +108,8 @@ public class ChatOverlay
         layout();
         displayChat(true);
 
+        _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME, localtypeExpired);
+
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
@@ -140,7 +142,7 @@ public class ChatOverlay
     // from TabbedChatDisplay
     public function tabClosed (localtype :String) :void
     {
-        // TODO
+        _closedTabs.add(localtype);
     }
 
     public function displayChat (display :Boolean) :void
@@ -187,6 +189,15 @@ public class ChatOverlay
     {
         if (_localtype == localtype) {
             return;
+        }
+
+        if (_localtype != null) {
+            // note when we stopped looking at the given localtype
+            _localtypeDisplayTimes.put(_localtype, getTimer());
+        }
+
+        if (_closedTabs.contains(localtype)) {
+            _closedTabs.remove(localtype);
         }
 
         _localtype = localtype;
@@ -268,6 +279,11 @@ public class ChatOverlay
         g.endFill();
 
         return PAD;
+    }
+
+    protected function localtypeExpired (localtype :String) :void
+    {
+        _localtypeDisplayTimes.remove(localtype);
     }
 
     protected function getOverlays () :Array
@@ -901,11 +917,15 @@ public class ChatOverlay
     /** The font for all chat. */
     protected static const FONT :String = "Arial";
 
+    /** Expire localtype display time rememberings after a minute. */
+    protected static const LOCALTYPE_EXPIRE_TIME :Number = 60;
+
     protected var _ctx :MsoyContext;
     protected var _chatContainer :ChatContainer;
     protected var _includeOccList :Boolean;
     protected var _localtype :String;
     protected var _localtypeDisplayTimes :HashMap = new HashMap();
+    protected var _closedTabs :ExpiringSet;
 
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;
