@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -161,8 +160,7 @@ public class EditIssuePanel extends TableFooterPanel
                 MsoyUI.error(CMsgs.serverError(caught));
             }
         });
-        _description = MsoyUI.createTextArea(_issue.description, 50, 3);
-        _table.setWidget(row++, 1, _description);
+        _table.setWidget(row++, 1, _description = MsoyUI.createTextArea(_issue.description, 50, 3));
 
         _table.setWidget(row++, 1, _stateBox = new ListBox());
         for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
@@ -188,23 +186,17 @@ public class EditIssuePanel extends TableFooterPanel
             }
         }
 
-        _comment = MsoyUI.createTextArea(_issue.closeComment, 50, 3);
-        _table.setWidget(row++, 1, _comment);
+        _table.setWidget(row++, 1, _comment = MsoyUI.createTextArea(_issue.closeComment, 50, 3));
 
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.setSpacing(5);
-        _table.getFlexCellFormatter().setColSpan(row, 0, 2);
-        _table.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        _table.setWidget(row++, 0, buttons);
-
+        Button left, right;
         if (_tpanel != null) {
-            buttons.add(new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
+            left = new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget source) {
                     _tpanel.showMessages();
                 }
-            }));
-            Button create = new Button(CMsgs.mmsgs.create());
-            new ClickCallback(create) {
+            });
+            right = new Button(CMsgs.mmsgs.create());
+            new ClickCallback(right) {
                 public boolean callService () {
                     return commitEdit(true, this);
                 }
@@ -214,15 +206,15 @@ public class EditIssuePanel extends TableFooterPanel
                     return false;
                 }
             };
-            buttons.add(create);
+
         } else {
-            buttons.add(new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
+            left = new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget source) {
                     _ipanel.redisplayIssues();
                 }
-            }));
-            Button update = new Button(_newIssue ? CMsgs.mmsgs.create() : CMsgs.mmsgs.update());
-            new ClickCallback(update) {
+            });
+            right = new Button(_newIssue ? CMsgs.mmsgs.create() : CMsgs.mmsgs.update());
+            new ClickCallback(right) {
                 public boolean callService () {
                     return commitEdit(_newIssue, this);
                 }
@@ -231,8 +223,10 @@ public class EditIssuePanel extends TableFooterPanel
                     return false;
                 }
             };
-            buttons.add(update);
         }
+        _table.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        _table.setWidget(row++, 0, MsoyUI.createButtonPair(left, right), 2, null);
+
         _messagesRow = row;
     }
 

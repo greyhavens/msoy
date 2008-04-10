@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -83,17 +82,11 @@ public class InterestsBlurb extends Blurb
             editor.setWidget(row++, 1, _iEditors[ii]);
         }
 
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.setSpacing(5);
-        editor.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        editor.setWidget(row++, 0, buttons, 2, null);
-
-        buttons.add(new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+        Button cancel = new Button(CPeople.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayInterests();
             }
-        }));
-
+        });
         Button update = new Button(CPeople.cmsgs.update());
         new ClickCallback(update) {
             public boolean callService () {
@@ -117,7 +110,9 @@ public class InterestsBlurb extends Blurb
 
             protected List _newInterests;
         };
-        buttons.add(update);
+
+        editor.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        editor.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, update), 2, null);
 
         setContent(editor);
     }

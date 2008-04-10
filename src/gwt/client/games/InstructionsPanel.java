@@ -7,7 +7,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -100,14 +99,12 @@ public class InstructionsPanel extends VerticalPanel
         }
 
         setHorizontalAlignment(ALIGN_RIGHT);
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.setSpacing(5);
-        buttons.add(new Button("Cancel", new ClickListener() {
+        Button cancel = new Button("Cancel", new ClickListener() {
             public void onClick (Widget source) {
                 showInstructions();
             }
-        }));
-        buttons.add(new Button("Update", new ClickListener() {
+        });
+        Button update = new Button("Update", new ClickListener() {
             public void onClick (Widget source) {
                 String instructions = editor.getHTML();
                 String bgcolor = toolbar.getBackgroundColor();
@@ -120,8 +117,8 @@ public class InstructionsPanel extends VerticalPanel
                 }
                 saveInstructions(instructions);
             }
-        }));
-        add(buttons);
+        });
+        add(MsoyUI.createButtonPair(cancel, update));
     }
 
     protected void saveInstructions (final String instructions)

@@ -11,14 +11,12 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -82,8 +80,7 @@ public class ComposePanel extends FlowPanel
         _body.setVisibleLines(10);
         _body.setWidth("390px");
 
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.add(_send = new Button(CMail.msgs.composeSend()));
+        _send = new Button(CMail.msgs.composeSend());
         _send.setEnabled(false);
         new StartConvoCallback(_send, _subject, _body) {
             public boolean gotResult (Object result) {
@@ -104,13 +101,12 @@ public class ComposePanel extends FlowPanel
                 return _payload;
             }
         };
-        buttons.add(WidgetUtil.makeShim(10, 10));
-        buttons.add(new Button(CMail.msgs.composeDiscard(), new ClickListener() {
+        Button discard = new Button(CMail.msgs.composeDiscard(), new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
-        }));
-        _contents.setWidget(4, 1, buttons);
+        });
+        _contents.setWidget(4, 1, MsoyUI.createButtonPair(_send, discard));
 
         add(_contents);
 

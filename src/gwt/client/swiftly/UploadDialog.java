@@ -14,11 +14,13 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
+
+import client.util.MsoyUI;
 
 /**
  * Display a dialog to upload a file into a Swiftly project.
@@ -83,25 +85,21 @@ public class UploadDialog extends FlexTable
             }
         });
 
-        // Upload button
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
+        setWidget(0, 0, _status);
+        setWidget(1, 0, form);
+
+        getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
+        Button submit = new Button(CSwiftly.msgs.upload(), new ClickListener() {
             public void onClick (Widget sender) {
                 form.submit();
             }
-        }));
-
-        // Cancel button
-        buttons.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
+        });
+        Button cancel = new Button(CSwiftly.msgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }
-        }));
-
-        setWidget(0, 0, _status);
-        setWidget(1, 0, form);
-        getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
-        setWidget(1, 1, buttons);
+        });
+        setWidget(1, 1, MsoyUI.createButtonPair(submit, cancel));
     }
 
     /**

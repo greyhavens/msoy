@@ -204,6 +204,18 @@ public class MsoyUI
     }
 
     /**
+     * Puts a pair buttons in a horizontal panel with a small gap betwixt them.
+     */
+    public static Widget createButtonPair (Button left, Button right)
+    {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(left);
+        panel.add(WidgetUtil.makeShim(5, 5));
+        panel.add(right);
+        return panel;
+    }
+
+    /**
      * Creates an arrow that does History.back().
      */
     public static Image createBackArrow ()

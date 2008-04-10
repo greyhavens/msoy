@@ -230,22 +230,18 @@ public class ProfileBlurb extends Blurb
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
 
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.setSpacing(5);
-        econtent.getFlexCellFormatter().setColSpan(row, 0, 2);
-        econtent.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        econtent.setWidget(row++, 0, buttons);
-
-        buttons.add(new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+        Button cancel = new Button(CPeople.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayProfile();
             }
-        }));
-        buttons.add(new Button(CPeople.cmsgs.update(), new ClickListener() {
+        });
+        Button commit = new Button(CPeople.cmsgs.update(), new ClickListener() {
             public void onClick (Widget source) {
                 commitEdit();
             }
-        }));
+        });
+        econtent.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        econtent.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, commit), 2, null);
 
         setContent(econtent);
         setFooter(null);
