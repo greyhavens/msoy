@@ -41,6 +41,14 @@ public class Interest implements IsSerializable
     /** The maximum length of a single interest. */
     public static final int MAX_INTEREST_LENGTH = 2048;
 
+    /**
+     * Returns true if this type is meant to contain a comma separated list of interests.
+     */
+    public static boolean isLinkedType (int type)
+    {
+        return (type != RANDOM);
+    }
+
     /** The type of interest, e.g. {@link #ACTIVITIES}. */
     public int type;
 

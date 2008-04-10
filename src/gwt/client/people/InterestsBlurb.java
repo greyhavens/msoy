@@ -53,7 +53,11 @@ public class InterestsBlurb extends Blurb
         for (int ii = 0; ii < _interests.size(); ii++) {
             Interest interest = (Interest) _interests.get(ii);
             contents.setText(ii, 0, CPeople.dmsgs.getString("interest" + interest.type), 1, "Type");
-            contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
+            if (Interest.isLinkedType(interest.type)) {
+                contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
+            } else {
+                contents.setText(ii, 1, interest.interests, 1, "Text");
+            }
         }
         setContent(contents);
 
@@ -64,21 +68,24 @@ public class InterestsBlurb extends Blurb
                     startEdit();
                 }
             });
+        } else {
+            setFooter(null);
         }
     }
 
     protected void startEdit ()
     {
-        SmartTable editor = new SmartTable(0, 5);
+        SmartTable editor = new SmartTable("Interests", 0, 5);
 
         _iEditors = new TextBox[Interest.TYPES.length];
 
         int row = 0;
         for (int ii = 0; ii < _iEditors.length; ii++) {
             int type = Interest.TYPES[ii];
-            editor.setText(row, 0, CPeople.dmsgs.getString("interest" + type));
+            editor.setText(row, 0, CPeople.dmsgs.getString("interest" + type), 1, "Type");
             _iEditors[ii] = MsoyUI.createTextBox(
                 getCurrentInterest(type), Interest.MAX_INTEREST_LENGTH, -1);
+            _iEditors[ii].addStyleName("Editor");
             editor.setWidget(row++, 1, _iEditors[ii]);
         }
 
@@ -115,6 +122,7 @@ public class InterestsBlurb extends Blurb
         editor.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, update), 2, null);
 
         setContent(editor);
+        setFooter(null);
     }
 
     protected List getNewInterests ()

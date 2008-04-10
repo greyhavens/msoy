@@ -47,6 +47,10 @@
   text-decoration: underline;
 }
 
+.profile .Interests .Editor {
+  width: 400px;
+}
+
 .profile .Friend, .profile .Group {
   text-align: center;
   font-size: 12px;
