@@ -31,6 +31,10 @@ public class Group
     /** A policy constant for groups that are not visible to non-members. */
     public static final byte POLICY_EXCLUSIVE = 3;
 
+    /** A policy constant for groups that are announcment blogs, only managers can start threads or
+     * reply to them. */
+    public static final byte POLICY_BLOG = 4;
+
     /** Indicates read access for a group's forums. */
     public static final int ACCESS_READ = 1;
 
@@ -84,6 +88,14 @@ public class Group
     }
 
     /**
+     * Returns true if anyone can join a group of the specified policy without an invitation.
+     */
+    public static boolean canJoin (byte policy)
+    {
+        return (policy == POLICY_PUBLIC) || (policy == POLICY_BLOG);
+    }
+
+    /**
      * Returns true if a person of the specified rank can invite someone to join a group with the
      * specified policy.
      */
@@ -91,7 +103,7 @@ public class Group
     {
         switch (rank) {
         case GroupMembership.RANK_MANAGER: return true;
-        case GroupMembership.RANK_MEMBER: return (policy == Group.POLICY_PUBLIC);
+        case GroupMembership.RANK_MEMBER: return (policy == POLICY_PUBLIC);
         default: return false;
         }
     }
@@ -120,30 +132,35 @@ public class Group
      */
     public boolean checkAccess (byte rank, int access, int flags)
     {
+        // managers can always dowhattheylike
+        if (rank == GroupMembership.RANK_MANAGER) {
+            return true;
+        }
+
         switch (access) {
         case ACCESS_READ:
             // members can always read, non-members can read messages in non-exclusive groups
             return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != POLICY_EXCLUSIVE);
 
         case ACCESS_THREAD:
-            switch (rank) {
-            default:
-            case GroupMembership.RANK_NON_MEMBER:
-                return false; // non-members can never create threads
-            case GroupMembership.RANK_MEMBER:
-                return (flags == 0); // members can only create non-stick/announce threads
-            case GroupMembership.RANK_MANAGER:
-                return true; // managers can dowhattheylike
+            // members can start non-sticky/non-announce threads in certain groups
+            if (rank == GroupMembership.RANK_MEMBER) {
+                return (policy != POLICY_BLOG) && (flags == 0);
             }
+            return false;
 
         case ACCESS_POST:
             // non-managers cannot post to locked threads
-            if (rank != GroupMembership.RANK_MANAGER && (flags & ForumThread.FLAG_LOCKED) != 0) {
+            if ((flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
             }
-            // non-members can only post to public groups
-            if (rank == GroupMembership.RANK_NON_MEMBER && policy != POLICY_PUBLIC) {
+            // particular policies disallow posts by non-members (or non-managers)
+            switch (policy) {
+            case POLICY_BLOG:
                 return false;
+            case POLICY_INVITE_ONLY:
+            case POLICY_EXCLUSIVE:
+                return (rank == GroupMembership.RANK_MEMBER);
             }
             // otherwise we're good to go
             return true;

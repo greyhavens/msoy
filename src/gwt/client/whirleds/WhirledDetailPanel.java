@@ -192,7 +192,7 @@ public class WhirledDetailPanel extends VerticalPanel
                                               Args.compose("edit", _group.groupId)));
         }
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            if (_group.policy == Group.POLICY_PUBLIC && CWhirleds.getMemberId() > 0) {
+            if (Group.canJoin(_group.policy) && CWhirleds.getMemberId() > 0) {
                 extras.add(MsoyUI.createActionLabel(
                                CWhirleds.msgs.detailJoin(), new PromptPopup(
                                    CWhirleds.msgs.detailJoinPrompt(), joinGroup()).setContext(

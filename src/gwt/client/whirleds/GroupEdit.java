@@ -67,6 +67,7 @@ public class GroupEdit extends FlexTable
         _policy.addItem(CWhirleds.msgs.policyPublic());
         _policy.addItem(CWhirleds.msgs.policyInvite());
         _policy.addItem(CWhirleds.msgs.policyExclusive());
+        _policy.addItem(CWhirleds.msgs.policyBlog());
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
         addRow(CWhirleds.msgs.editPolicy(), _policy);
 
