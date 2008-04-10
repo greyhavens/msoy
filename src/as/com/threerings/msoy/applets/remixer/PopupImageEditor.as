@@ -37,7 +37,7 @@ public class PopupImageEditor extends TitleWindow
         var box :VBox = new VBox();
         addChild(box);
 
-        _image = new ImageManipulator(600, 450, true, cutWidth, cutHeight);
+        _image = new ImageManipulator(600, 450, cutWidth, cutHeight);
         box.addChild(_image);
 
         var bar :ButtonBar = new ButtonBar();

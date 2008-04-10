@@ -12,6 +12,7 @@ import flash.display.Sprite;
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.TextEvent;
 
 import flash.ui.Keyboard;
 
@@ -56,8 +57,7 @@ public class ImageManipulator extends HBox
     public static const SIZE_KNOWN :String = EditCanvas.SIZE_KNOWN;
 
     public function ImageManipulator (
-        maxW :int = 400, maxH :int = 400, allowEdit :Boolean = false,
-        cutWidth :Number = NaN, cutHeight :Number = NaN)
+        maxW :int = 400, maxH :int = 400, cutWidth :Number = NaN, cutHeight :Number = NaN)
     {
         this.maxWidth = maxW;
         this.maxHeight = maxH;
@@ -65,22 +65,17 @@ public class ImageManipulator extends HBox
         this.height = maxH;
         this.minWidth = 100;
         this.minHeight = 100;
-        _maxWidth = maxW;
+        _maxWidth = maxW - CONTROL_BAR_WIDTH;
         _maxHeight = maxH;
-        if (allowEdit) {
-            _maxWidth -= CONTROL_BAR_WIDTH;
-        }
 
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xDCDCDC);
-        _editor = new EditCanvas(_maxWidth, _maxHeight, allowEdit);
+        _editor = new EditCanvas(_maxWidth, _maxHeight);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
-        if (allowEdit) {
-            addChild(_controlBar = createControlBar());
-        }
+        addChild(_controlBar = createControlBar());
         addChild(_editor);
         setImage(null);
 
@@ -89,7 +84,7 @@ public class ImageManipulator extends HBox
             disableMode(EditCanvas.SELECT);
             setMode(EditCanvas.MOVE);
         } else {
-            setMode(allowEdit ? EditCanvas.PAINT : EditCanvas.NONE);
+            setMode(EditCanvas.PAINT);
         }
     }
 
@@ -170,16 +165,29 @@ public class ImageManipulator extends HBox
 
         box = new HBox();
         box.addChild(addModeBtn("select", EditCanvas.SELECT));
-        box.addChild(_selectionWidth = new TextInput());
+
+        var innerBox :HBox = new HBox();
+        innerBox.setStyle("horizontalGap", 0);
+        innerBox.addChild(_selectionWidth = new TextInput());
         var lbl :Label = new Label();
         lbl.text = "x";
-        box.addChild(lbl);
-        box.addChild(_selectionHeight = new TextInput());
+        innerBox.addChild(lbl);
+        innerBox.addChild(_selectionHeight = new TextInput());
+        _selectionWidth.restrict = "0-9";
+        _selectionHeight.restrict = "0-9";
         _selectionWidth.maxChars = 4;
         _selectionHeight.maxChars = 4;
         _selectionWidth.maxWidth = 40;
         _selectionHeight.maxWidth = 40;
+
+
+        box.addChild(innerBox);
+
         bar.addChild(box);
+
+        _editor.addEventListener(EditCanvas.SELECTION_CHANGE, handleSelectionChange);
+        _selectionWidth.addEventListener(Event.CHANGE, handleSelectionTyped);
+        _selectionHeight.addEventListener(Event.CHANGE, handleSelectionTyped);
     }
 
     protected function createPaintControls (bar :VBox) :void
@@ -373,6 +381,31 @@ public class ImageManipulator extends HBox
             _rotSlider.value = 0;
             _scaleSlider.value = 1;
         }
+    }
+
+    /**
+     * Update the selection when a user types a new value.
+     */
+    protected function handleSelectionTyped (event :Event) :void
+    {
+        var w :Number = parseInt(_selectionWidth.text);
+        var h :Number = parseInt(_selectionHeight.text);
+        if (isNaN(w)) {
+            w = 0;
+        }
+        if (isNaN(h)) {
+            h = 0;
+        }
+        _editor.updateWorkingSize(w, h);
+    }
+
+    /**
+     * Update the displayed selection size.
+     */
+    protected function handleSelectionChange (event :ValueEvent) :void
+    {
+        _selectionWidth.text = event.value[0];
+        _selectionHeight.text = event.value[1]
     }
 
     protected static const CONTROL_BAR_WIDTH :int = 150;

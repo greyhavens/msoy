@@ -51,6 +51,12 @@ import com.threerings.flash.GraphicsUtil;
 [Event(name="UndoRedoChange", type="com.threerings.util.ValueEvent")]
 
 /**
+ * Dispatched when the selection area has changed.
+ * value - an Array of [width, height]
+ */
+[Event(name="SelChange", type="com.threerings.util.ValueEvent")]
+
+/**
  * Allows primitive editing of an image. Note that this is merely the model/view, the
  * controller is ImageManipulator.
  */
@@ -64,9 +70,10 @@ public class EditCanvas extends DisplayCanvas
 {
     public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
 
+    // Event constants
     public static const COLOR_SELECTED :String = "ColorSelected";
-
     public static const UNDO_REDO_CHANGE :String = "UndoRedoChange";
+    public static const SELECTION_CHANGE :String = "SelChange";
 
     /** Formatting constants. */
     public static const IMAGE_FORMAT_JPG :String = "jpg";
@@ -80,15 +87,13 @@ public class EditCanvas extends DisplayCanvas
     public static const SELECT :int = 3;
     public static const MOVE :int = 4;
 
-    public function EditCanvas (maxW :int, maxH :int, editMode :Boolean)
+    public function EditCanvas (maxW :int, maxH :int)
     {
         super(maxW, maxH);
-        if (editMode) {
-            width = maxW;
-            height = maxH;
-            horizontalScrollPolicy = ScrollPolicy.ON;
-            verticalScrollPolicy = ScrollPolicy.ON;
-        }
+        width = maxW;
+        height = maxH;
+        horizontalScrollPolicy = ScrollPolicy.ON;
+        verticalScrollPolicy = ScrollPolicy.ON;
 
         _paintLayer = new Sprite();
         _scaleLayer = new Sprite();
@@ -202,6 +207,21 @@ public class EditCanvas extends DisplayCanvas
         _cropPoint = null;
     }
 
+    /**
+     * Update the working area size from numbers entered by the user.
+     */
+    public function updateWorkingSize (wid :Number, hei :Number) :void
+    {
+        _workingArea.x += Math.floor((_workingArea.width - wid)/2);
+        _workingArea.width = wid;
+
+        _workingArea.y += Math.floor((_workingArea.height - hei)/2);
+        _workingArea.height = hei;
+
+        updateEditCanvasSize(false);
+        //setWorkingArea(_workingArea);
+    }
+
     public function doCrop () :void
     {
         if (_cropRect != null) {
@@ -222,8 +242,8 @@ public class EditCanvas extends DisplayCanvas
         setRotation(0);
 
         // remove all paint layers
-        for each (var layer :Shape in _undoStack) {
-            _paintLayer.removeChild(layer);
+        while (_paintLayer.numChildren > _paintInsertionOffset) {
+            _paintLayer.removeChildAt(_paintLayer.numChildren - 1);
         }
         _undoStack.length = 0;
         _redoStack.length = 0;
@@ -233,7 +253,7 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.x = 0;
         _paintLayer.y = 0;
         clearSelection();
-        setWorkingArea(null);
+        setWorkingArea(new Rectangle());
     }
 
     /**
@@ -242,11 +262,6 @@ public class EditCanvas extends DisplayCanvas
     override public function setImage (image :Object) :void
     {
         super.setImage(image);
-
-        if (_image != null) {
-            _image.x = GUTTER;
-            _image.y = GUTTER;
-        }
 
         configureMode();
     }
@@ -327,8 +342,32 @@ public class EditCanvas extends DisplayCanvas
     {
         // We DON'T call super
 
-        const canvWidth :int = _imgWidth + (2 * GUTTER);
-        const canvHeight :int = _imgHeight + (2 * GUTTER);
+        updateEditCanvasSize(true);
+
+//        if (_image != null) {
+//            _image.x = _hGutter;
+//            _image.y = _vGutter;
+//        }
+
+        // jiggle the canvas width. See notes in super.updateCanvasSize()
+        this.width = this.maxWidth;
+        this.height = this.maxHeight;
+    }
+
+    protected function updateEditCanvasSize (basedOnImage :Boolean) :void
+    {
+        var ww :Number = _imgWidth;
+        var hh :Number = _imgHeight;
+        if (!basedOnImage) {
+            ww = Math.max(ww, _workingArea.width);
+            hh = Math.max(hh, _workingArea.height);
+        }
+
+        _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ww) / 2);
+        _vGutter = Math.max(MIN_GUTTER, (this.maxHeight - hh) / 2);
+
+        const canvWidth :int = ww + (2 * _hGutter);
+        const canvHeight :int = hh + (2 * _vGutter);
 
         _holder.width = canvWidth;
         _holder.height = canvHeight;
@@ -338,14 +377,20 @@ public class EditCanvas extends DisplayCanvas
         _unRotLayer.x = canvWidth/-2;
         _unRotLayer.y = canvHeight/-2;
 
+        setWorkingArea(new Rectangle(_hGutter, _vGutter,
+            basedOnImage ? ww : _workingArea.width,
+            basedOnImage ? hh : _workingArea.height));
+
+        // TODO: we actually want to maybe position the paint layer?
+
+        // recenter the image
+        if (_image != null) {
+            _image.x = (canvWidth - _imgWidth) / 2;
+            _image.y = (canvHeight - _imgHeight) / 2;
+        }
+
         // color some layers so we can click on them
         paintLayerPositioned();
-
-        setWorkingArea(new Rectangle(GUTTER, GUTTER, _imgWidth, _imgHeight));
-
-        // jiggle the canvas width. See notes in super.updateCanvasSize()
-        this.width = this.maxWidth;
-        this.height = this.maxHeight;
     }
 
     protected function paintLayerPositioned () :void
@@ -365,18 +410,20 @@ public class EditCanvas extends DisplayCanvas
         var g :Graphics = _hudLayer.graphics;
         g.clear();
 
-        if (_workingArea != null) {
-            g.lineStyle(1, 0x000000);
-            GraphicsUtil.dashRect(g, r.x, r.y, r.width, r.height);
+        g.lineStyle(1, 0x000000);
+        GraphicsUtil.dashRect(g, r.x, r.y, r.width, r.height);
 
-            g.lineStyle(0, 0, 0);
-            g.beginFill(0xF9F9F9, .5);
-            g.drawRect(0, 0, _holder.width, r.y);
+        g.lineStyle(0, 0, 0);
+        g.beginFill(0xF9F9F9, .5);
+        g.drawRect(0, 0, _holder.width, r.y);
+        if (r.height > 0) {
             g.drawRect(0, r.y, r.x, r.height);
             g.drawRect(r.x + r.width, r.y, _holder.width - (r.x + r.width), r.height);
-            g.drawRect(0, r.y + r.height, _holder.width, _holder.height - (r.y + r.height));
-            g.endFill();
         }
+        g.drawRect(0, r.y + r.height, _holder.width, _holder.height - (r.y + r.height));
+        g.endFill();
+
+        dispatchEvent(new ValueEvent(SELECTION_CHANGE, [ r.width, r.height ]));
     }
 
     /**
@@ -815,8 +862,14 @@ public class EditCanvas extends DisplayCanvas
     protected var _brushCircle :Boolean = true;
     protected var _forceCrop :Boolean = false;
 
-    /** The number of pixels around the image that we provide as "working area". */
-    protected static const GUTTER :int = 150;
+    /** The size of the horizontal gutter. */
+    protected var _hGutter :int;
+
+    /** The size of the vertical gutter. */
+    protected var _vGutter :int;
+
+    /** The minimum number of pixels around the image that we provide as "working area". */
+    protected static const MIN_GUTTER :int = 150;
 }
 }
 

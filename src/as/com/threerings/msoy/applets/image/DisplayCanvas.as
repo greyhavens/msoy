@@ -100,13 +100,7 @@ public class DisplayCanvas extends Canvas
             // TODO: explore PixelSnapping options
             image = new Bitmap(image as BitmapData, PixelSnapping.ALWAYS, true);
         }
-        if (image is Bitmap) {
-            var bmp :BitmapData = (image as Bitmap).bitmapData;
-            if (bmp != null) {
-                imageSizeKnown(bmp.width, bmp.height);
-            }
-
-        } else if ((image is URLRequest) || (image is ByteArray)) {
+        if ((image is URLRequest) || (image is ByteArray)) {
             var notBytes :Boolean = (image is URLRequest);
             var loader :Loader = new Loader();
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleImageLoadComplete);
@@ -120,11 +114,22 @@ public class DisplayCanvas extends Canvas
             }
             image = loader;
         }
-        if (image is DisplayObject) {
-            _image = image as DisplayObject;
-            getImageLayer().addChildAt(_image, 0);
-        } else {
+
+        // by now, we should have transformed it into a DisplayObject of some sort
+        if (!(image is DisplayObject)) {
             throw new Error("Unknown image source: " + image);
+        }
+
+        // set up the image
+        _image = image as DisplayObject;
+        getImageLayer().addChildAt(_image, 0);
+
+        // see if we can report the size now (otherwise, we'll know when the loader completes)
+        if (image is Bitmap) {
+            var bmp :BitmapData = (image as Bitmap).bitmapData;
+            if (bmp != null) {
+                imageSizeKnown(bmp.width, bmp.height);
+            }
         }
     }
 
