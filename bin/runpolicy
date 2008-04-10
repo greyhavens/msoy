@@ -23,7 +23,7 @@ else
     exit 255
 fi
 
-CLASS=com.threerings.msoy.server.PolicyServer
+CLASS=com.threerings.msoy.server.MsoyPolicyServer
 JAVA_ARGS="-server"
 
 # make sure we have a JVM and set up our classpath and bits
