@@ -68,6 +68,52 @@ public class ProfileServlet extends MsoyServiceServlet
     implements ProfileService
 {
     // from interface ProfileService
+    public ProfileResult loadProfile (WebIdent ident, int memberId)
+        throws ServiceException
+    {
+        MemberRecord memrec = getAuthedUser(ident);
+
+        try {
+            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
+                return null;
+            }
+
+            ProfileResult result = new ProfileResult();
+            result.name = tgtrec.getName();
+
+            // load profile info
+            result.profile = resolveProfileData(memrec, tgtrec);
+
+            // load up the member's interests
+            List<Interest> interests = Lists.newArrayList();
+            for (InterestRecord iRec : _profileRepo.loadInterests(memberId)) {
+                interests.add(iRec.toRecord());
+            }
+            result.interests = interests;
+
+            // load friend info
+            result.friends = resolveFriendsData(memrec, tgtrec);
+            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
+            result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
+            result.totalFriendCount = friendIds.size();
+
+            // load rating and trophy info
+            result.trophies = resolveTrophyData(memrec, tgtrec);
+            result.ratings = resolveRatingsData(memrec, tgtrec);
+
+            // load group info
+            result.groups = resolveGroupsData(memrec, tgtrec);
+
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ProfileService
     public void updateProfile (WebIdent ident, String displayName, Profile profile)
         throws ServiceException
     {
@@ -135,52 +181,6 @@ public class ProfileServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to update member's interests " +
                 "[who=" + memrec.who() +
                 ", interests=" + StringUtil.toString(interests) + "].", pe);
-        }
-    }
-
-    // from interface ProfileService
-    public ProfileResult loadProfile (WebIdent ident, int memberId)
-        throws ServiceException
-    {
-        MemberRecord memrec = getAuthedUser(ident);
-
-        try {
-            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
-            if (tgtrec == null) {
-                return null;
-            }
-
-            ProfileResult result = new ProfileResult();
-            result.name = tgtrec.getName();
-
-            // load profile info
-            result.profile = resolveProfileData(memrec, tgtrec);
-
-            // load up the member's interests
-            List<Interest> interests = Lists.newArrayList();
-            for (InterestRecord iRec : _profileRepo.loadInterests(memberId)) {
-                interests.add(iRec.toRecord());
-            }
-            result.interests = interests;
-
-            // load friend info
-            result.friends = resolveFriendsData(memrec, tgtrec);
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
-            result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
-            result.totalFriendCount = friendIds.size();
-
-            // load rating and trophy info
-            result.trophies = resolveTrophyData(memrec, tgtrec);
-            result.ratings = resolveRatingsData(memrec, tgtrec);
-
-            // load group info
-            result.groups = resolveGroupsData(memrec, tgtrec);
-
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

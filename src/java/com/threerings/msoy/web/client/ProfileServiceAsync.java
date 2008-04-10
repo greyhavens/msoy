@@ -16,6 +16,11 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface ProfileServiceAsync
 {
     /**
+     * The asynchronous version of {@link ProfileService#loadProfile}.
+     */
+    public void loadProfile (WebIdent ident, int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ProfileService#updateProfile}.
      */
     public void updateProfile (WebIdent ident, String displayName, Profile profile,
@@ -25,11 +30,6 @@ public interface ProfileServiceAsync
      * The asynchronous version of {@link ProfileService#updateInterests}.
      */
     public void updateInterests (WebIdent ident, List interests, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link ProfileService#loadProfile}.
-     */
-    public void loadProfile (WebIdent ident, int memberId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.

@@ -87,6 +87,12 @@ public interface ProfileService extends RemoteService
     }
 
     /**
+     * Loads the specified member's profile information.
+     */
+    public ProfileResult loadProfile (WebIdent ident, int memberId)
+        throws ServiceException;
+
+    /**
      * Requests that this user's profile be updated.
      */
     public void updateProfile (WebIdent ident, String displayName, Profile profile)
@@ -98,12 +104,6 @@ public interface ProfileService extends RemoteService
      * @gwt.typeArgs interests <com.threerings.msoy.person.data.Interest>
      */
     public void updateInterests (WebIdent ident, List interests)
-        throws ServiceException;
-
-    /**
-     * Loads the specified member's profile information.
-     */
-    public ProfileResult loadProfile (WebIdent ident, int memberId)
         throws ServiceException;
 
     /**
