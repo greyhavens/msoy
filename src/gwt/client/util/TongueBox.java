@@ -90,11 +90,11 @@ public class TongueBox extends SmartTable
 
     public void setFooter (Widget widget)
     {
-        if (widget == null) {
-            clearCell(2, 0);
-        } else {
+        if (widget != null) {
             setWidget(2, 0, widget, 1, "Footer");
             getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+        } else if (getRowCount() > 2) {
+            clearCell(2, 0);
         }
     }
 }
