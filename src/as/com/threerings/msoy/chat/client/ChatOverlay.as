@@ -124,8 +124,8 @@ public class ChatOverlay
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        log.debug("displayMessage [msg=" + msg + ", localtype=" + msg.localtype + ", type=" + 
-            getType(msg, false) + ", already=" + alreadyDisp + "]");
+        log.debug("displayMessage [msg=" + msg.message + ", localtype=" + msg.localtype + 
+            ", timestamp=" + msg.timestamp + ", type=" + getType(msg, false) + "]");
         var type :int = getType(msg, false);
         if (type == IGNORECHAT) {
             return false;

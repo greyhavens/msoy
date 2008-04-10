@@ -234,38 +234,40 @@ public class ChatChannelController
 
     protected function redispatchMissedMessages () :void
     {
-        // TODO: this is going to have to be rethought
-//        var recentMessageCount :int = _ccobj.recentMessages.length;
-//        var missedMessages :Array = new Array();
-//
-//        // find the last chat message this client knows about
-//        var lastHistoryMessage :ChannelMessage = null;
-//        for (var hc :int = _history.size(), hi :int = hc - 1; hi >= 0; hi--) {
-//            lastHistoryMessage = _history.get(hi) as ChannelMessage;
-//            if (lastHistoryMessage != null) {
-//                break;
-//            }
-//        }
-//
-//        // now try to find it in the server's recent history. looking backwards from newest to
-//        // olders, remember all messages up to the one we've already seen.
-//        for (var ii :int = _ccobj.recentMessages.length - 1; ii >= 0; ii--) {
-//            var serverMessage :ChannelMessage = _ccobj.recentMessages[ii];
-//            // compare by timestamp - since those have millisecond resolution, there's minimal
-//            // chance of false positives. also, if history is empty, just store all server messages
-//            if (lastHistoryMessage != null &&
-//                lastHistoryMessage.creationTime.equals(serverMessage.creationTime)) {
-//                break;
-//            } else {
-//                missedMessages.push(serverMessage);
-//            }
-//        }
-//
-//        // we have them all - redispatch on this channel
-//        while (missedMessages.length > 0) {
-//            var msg :ChannelMessage = missedMessages.pop() as ChannelMessage;
-//            _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
-//        }
+        var recentMessageCount :int = _ccobj.recentMessages.length;
+        var missedMessages :Array = new Array();
+        var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
+
+        // find the last chat message for this channel that this client knows about
+        var lastHistoryMessage :ChannelMessage = null;
+        for (var ii :int = history.size() - 1; ii >= 0; ii--) {
+            lastHistoryMessage = history.get(ii) as ChannelMessage;
+            if (lastHistoryMessage != null && 
+                lastHistoryMessage.localtype == _channel.toLocalType()) {
+                break;
+            }
+            lastHistoryMessage = null;
+        }
+
+        // now try to find it in the server's recent history. looking backwards from newest to
+        // olders, remember all messages up to the one we've already seen.
+        for (ii = _ccobj.recentMessages.length - 1; ii >= 0; ii--) {
+            var serverMessage :ChannelMessage = _ccobj.recentMessages[ii];
+            // compare by timestamp - since those have millisecond resolution, there's minimal
+            // chance of false positives. also, if history is empty, just store all server messages
+            if (lastHistoryMessage != null &&
+                lastHistoryMessage.creationTime.equals(serverMessage.creationTime)) {
+                break;
+            } else {
+                missedMessages.push(serverMessage);
+            }
+        }
+
+        // we have them all - redispatch on this channel
+        while (missedMessages.length > 0) {
+            var msg :ChannelMessage = missedMessages.pop() as ChannelMessage;
+            _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
+        }
     }
 
     private static const log :Log = Log.getLog(ChatChannelController);
