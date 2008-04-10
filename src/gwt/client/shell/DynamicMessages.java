@@ -29,7 +29,7 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String itemType13 ();
     public String itemType14 ();
     public String itemType15 ();
-    
+
     public String pItemType1 ();
     public String pItemType2 ();
     public String pItemType3 ();
@@ -45,7 +45,7 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String pItemType13 ();
     public String pItemType14 ();
     public String pItemType15 ();
-    
+
     public String catIntro1 ();
     public String catIntro2 ();
     public String catIntro3 ();
@@ -142,4 +142,9 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String shopTitle ();
     public String createTitle ();
     public String helpTitle ();
+
+    public String interest1 ();
+    public String interest2 ();
+    public String interest3 ();
+    public String interest4 ();
 }

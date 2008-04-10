@@ -39,6 +39,13 @@ public interface ProfileService extends RemoteService
         /**
          * This user's featured friends.
          *
+         * @gwt.typeArgs <com.threerings.msoy.person.data.Interest>
+         */
+        public List interests;
+
+        /**
+         * This user's featured friends.
+         *
          * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
          */
         public List friends;
@@ -83,6 +90,14 @@ public interface ProfileService extends RemoteService
      * Requests that this user's profile be updated.
      */
     public void updateProfile (WebIdent ident, String displayName, Profile profile)
+        throws ServiceException;
+
+    /**
+     * Updates the calling user's interests.
+     *
+     * @gwt.typeArgs interests <com.threerings.msoy.person.data.Interest>
+     */
+    public void updateInterests (WebIdent ident, List interests)
         throws ServiceException;
 
     /**

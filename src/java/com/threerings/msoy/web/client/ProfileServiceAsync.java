@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.person.data.Profile;
@@ -18,6 +20,11 @@ public interface ProfileServiceAsync
      */
     public void updateProfile (WebIdent ident, String displayName, Profile profile,
                                AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#updateInterests}.
+     */
+    public void updateInterests (WebIdent ident, List interests, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadProfile}.

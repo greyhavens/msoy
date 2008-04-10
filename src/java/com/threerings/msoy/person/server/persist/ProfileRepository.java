@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -21,6 +22,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -46,7 +48,7 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
-     * Loads the profile photos for all of the specified members.
+     * Loads the profiles for all of the specified members.
      */
     public List<ProfileRecord> loadProfiles (Set<Integer> memberIds)
         throws PersistenceException
@@ -72,6 +74,37 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
+     * Loads the interests for the specified member.
+     */
+    public List<InterestRecord> loadInterests (int memberId)
+        throws PersistenceException
+    {
+        return findAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Stores the supplied list of interests in the repository, overwriting
+     * any previously stored interests for this member. Any interests with the
+     * empty string as {@link Interest#interests} will be deleted.
+     */
+    public void storeInterests (int memberId, List<Interest> interests)
+        throws PersistenceException
+    {
+        InterestRecord record = new InterestRecord();
+        record.memberId = memberId;
+
+        for (Interest interest : interests) {
+            record.type = interest.type;
+            if (interest.interests.equals("")) {
+                delete(record);
+            } else {
+                record.interests = interest.interests;
+                store(record);
+            }
+        }
+    }
+
+    /**
      * Finds the ids of members who's real names match the search parameter.
      */
     public List<Integer> findMembersByRealName (String search, int limit)
@@ -93,9 +126,27 @@ public class ProfileRepository extends DepotRepository
         return ids;
     }
 
+    /**
+     * Finds the ids of members who list the supplied term among their interests.
+     */
+    public List<Integer> findMembersByInterest (String search, int limit)
+        throws PersistenceException
+    {
+        Where where = new Where(
+            new FullTextMatch(InterestRecord.class, InterestRecord.FTS_INTERESTS, search));
+        Set<Integer> ids = Sets.newHashSet();
+
+        for (InterestRecord irec : findAll(InterestRecord.class, where, new Limit(0, limit))) {
+            ids.add(irec.memberId);
+        }
+
+        return Lists.newArrayList(ids);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(ProfileRecord.class);
+        classes.add(InterestRecord.class);
     }
 }

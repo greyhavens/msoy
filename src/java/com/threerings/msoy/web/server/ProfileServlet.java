@@ -43,9 +43,12 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
+import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCodes;
+import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.EmailContact;
@@ -116,6 +119,26 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
+    public void updateInterests (WebIdent ident, List interests)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+
+        try {
+            // store the supplied interests in the repository.
+            // blank interests will be deleted.
+            @SuppressWarnings("unchecked") List<Interest> tinterests = interests;
+            _profileRepo.storeInterests(memrec.memberId, tinterests);
+            log.info("stored " + tinterests);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update member's interests " +
+                "[who=" + memrec.who() +
+                ", interests=" + StringUtil.toString(interests) + "].", pe);
+        }
+    }
+
+    // from interface ProfileService
     public ProfileResult loadProfile (WebIdent ident, int memberId)
         throws ServiceException
     {
@@ -132,6 +155,13 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // load profile info
             result.profile = resolveProfileData(memrec, tgtrec);
+
+            // load up the member's interests
+            List<Interest> interests = Lists.newArrayList();
+            for (InterestRecord iRec : _profileRepo.loadInterests(memberId)) {
+                interests.add(iRec.toRecord());
+            }
+            result.interests = interests;
 
             // load friend info
             result.friends = resolveFriendsData(memrec, tgtrec);
@@ -178,8 +208,10 @@ public class ProfileServlet extends MsoyServiceServlet
                 mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(
                                 search, MAX_PROFILE_MATCHES));
                 // look for a real name match
-                mids.addAll(MsoyServer.profileRepo.findMembersByRealName(
+                mids.addAll(_profileRepo.findMembersByRealName(
                                 search, MAX_PROFILE_MATCHES));
+                // look for an interests match
+                mids.addAll(_profileRepo.findMembersByInterest(search, MAX_PROFILE_MATCHES));
             }
 
             // finally resolve cards for these members
@@ -386,6 +418,7 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
+    protected ProfileRepository _profileRepo = MsoyServer.profileRepo;
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _waCleared = System.currentTimeMillis();
 
