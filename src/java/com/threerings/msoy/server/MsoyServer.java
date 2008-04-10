@@ -406,8 +406,8 @@ public class MsoyServer extends MsoyBaseServer
         // if we're a dev deployment and our policy port is not privileged, run the policy server
         // right in the msoy server to simplify life for developers
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
-            ServerConfig.nodeName.equals("msoy1")) {
-            _policyServer = PolicyServer.init();
+                ServerConfig.nodeName.equals("msoy1")) {
+            _policyServer = MsoyPolicyServer.init();
         }
 
         // start up an interval that checks to see if our code has changed and auto-restarts the
