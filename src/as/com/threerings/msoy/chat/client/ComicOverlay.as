@@ -28,7 +28,6 @@ import com.threerings.util.Name;
 import com.threerings.flash.ColorUtil;
 
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;

@@ -7,8 +7,6 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 
-import com.threerings.msoy.chat.data.TimedMessageDisplay;
-
 public class HistoryList
     implements ChatDisplay
 {
@@ -23,9 +21,9 @@ public class HistoryList
     /**
      * Get the history entry at the specified index.
      */
-    public function get (index :int) :TimedMessageDisplay
+    public function get (index :int) :ChatMessage
     {
-        return (_history[index] as TimedMessageDisplay);
+        return (_history[index] as ChatMessage);
     }
 
     // from interface ChatDisplay
@@ -41,7 +39,7 @@ public class HistoryList
         if (_history.length == MAX_HISTORY) {
             _history.splice(0, PRUNE_HISTORY);
         }
-        _history.push(new TimedMessageDisplay(msg));
+        _history.push(msg);
         return false;
     }
 

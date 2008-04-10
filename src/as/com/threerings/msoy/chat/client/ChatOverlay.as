@@ -52,7 +52,6 @@ import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.TimedMessageDisplay;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
@@ -383,7 +382,8 @@ public class ChatOverlay
         }
 
         // it looks like we've got to create a new one
-        var msg :ChatMessage = _ctx.getMsoyChatDirector().getHistoryList().get(index).msg;
+        var msg :ChatMessage = 
+            _ctx.getMsoyChatDirector().getHistoryList().get(index) as ChatMessage;
         glyph = createSubtitle(msg, getType(msg, true), false);
         glyph.histIndex = index;
         _showingHistory.push(glyph);
