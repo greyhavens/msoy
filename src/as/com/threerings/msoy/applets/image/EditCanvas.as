@@ -135,15 +135,6 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.addEventListener(MouseEvent.ROLL_OUT, handleCursorVis);
     }
 
-    protected function iconToCursor (cursor :Sprite, selector :String) :void
-    {
-        var style :CSSStyleDeclaration = StyleManager.getStyleDeclaration(selector);
-        var icon :DisplayObject = new (style.getStyle("upIcon") as Class)() as DisplayObject;
-        icon.x = 10;
-        icon.y = -10;
-        cursor.addChild(icon);
-    }
-
     public function canUndo () :Boolean
     {
         return _undoStack.length > 0;
@@ -156,18 +147,12 @@ public class EditCanvas extends DisplayCanvas
 
     public function doUndo () :void
     {
-        var layer :Shape = _undoStack.pop() as Shape;
-        _paintLayer.removeChild(layer);
-        _redoStack.push(layer);
-        fireUndoRedoChange();
+        doUndoRedo(true);
     }
 
     public function doRedo () :void
     {
-        var layer :Shape = _redoStack.pop() as Shape;
-        _paintLayer.addChildAt(layer, _paintLayer.numChildren - _paintInsertionOffset);
-        _undoStack.push(layer);
-        fireUndoRedoChange();
+        doUndoRedo(false);
     }
 
     public function setMode (mode :int) :void
@@ -247,8 +232,8 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.graphics.clear();
         _paintLayer.x = 0;
         _paintLayer.y = 0;
-        _hudLayer.graphics.clear();
         clearSelection();
+        setWorkingArea(null);
     }
 
     /**
@@ -354,27 +339,61 @@ public class EditCanvas extends DisplayCanvas
         _unRotLayer.y = canvHeight/-2;
 
         // color some layers so we can click on them
-        var g :Graphics = _paintLayer.graphics;
-        g.clear();
-        g.beginFill(0xFFFFFF, 0);
-        //g.beginFill(0xFF0000, .1);
-        g.drawRect(0, 0, canvWidth, canvHeight);
-        g.endFill();
+        paintLayerPositioned();
 
-        g = _hudLayer.graphics;
-        g.clear();
-        g.beginFill(0xFFFFFF, 0);
-        g.drawRect(0, 0, canvWidth, canvHeight);
-        g.endFill();
+        setWorkingArea(new Rectangle(GUTTER, GUTTER, _imgWidth, _imgHeight));
 
         // jiggle the canvas width. See notes in super.updateCanvasSize()
         this.width = this.maxWidth;
         this.height = this.maxHeight;
-
-        // TODO: needed?
-        //configureMode();
     }
 
+    protected function paintLayerPositioned () :void
+    {
+        var g :Graphics = _paintLayer.graphics;
+        g.clear();
+        g.beginFill(0xFFFFFF, 0);
+        //g.beginFill(0xFF0000, .1);
+        g.drawRect(-_paintLayer.x, -_paintLayer.y, _holder.width, _holder.height);
+        g.endFill();
+    }
+
+    protected function setWorkingArea (r :Rectangle) :void
+    {
+        _workingArea = r;
+
+        var g :Graphics = _hudLayer.graphics;
+        g.clear();
+
+        if (_workingArea != null) {
+            g.lineStyle(1, 0x000000);
+            GraphicsUtil.dashRect(g, r.x, r.y, r.width, r.height);
+
+            g.lineStyle(0, 0, 0);
+            g.beginFill(0xF9F9F9, .5);
+            g.drawRect(0, 0, _holder.width, r.y);
+            g.drawRect(0, r.y, r.x, r.height);
+            g.drawRect(r.x + r.width, r.y, _holder.width - (r.x + r.width), r.height);
+            g.drawRect(0, r.y + r.height, _holder.width, _holder.height - (r.y + r.height));
+            g.endFill();
+        }
+    }
+
+    /**
+     * Helper function to turn an icon specified in a style selector into a cursor.
+     */
+    protected function iconToCursor (cursor :Sprite, selector :String) :void
+    {
+        var style :CSSStyleDeclaration = StyleManager.getStyleDeclaration(selector);
+        var icon :DisplayObject = new (style.getStyle("upIcon") as Class)() as DisplayObject;
+        icon.x = 10;
+        icon.y = -10;
+        cursor.addChild(icon);
+    }
+
+    /**
+     * Configure interaction based on the currently selected mode.
+     */
     protected function configureMode () :void
     {
         endCurrentPaint();
@@ -454,11 +473,18 @@ public class EditCanvas extends DisplayCanvas
         g.endFill();
     }
 
+    /**
+     * Returns the point of the specified MouseEvent, local to the specified layer.
+     */
     protected function layerPoint (layer :DisplayObject, event :MouseEvent) :Point
     {
         return layer.globalToLocal(new Point(event.stageX, event.stageY));
     }
 
+    /**
+     * Copy the screen location from one object to another, even if they're on different
+     * layers.
+     */
     protected function copyLocation (from :DisplayObject, to :DisplayObject) :void
     {
         var p :Point = from.parent.localToGlobal(new Point(from.x, from.y));
@@ -469,6 +495,19 @@ public class EditCanvas extends DisplayCanvas
 
     // Editing operations
 
+    /**
+     * Take care of hiding/showing the cursor when the mouse enters the canvas.
+     */
+    protected function handleCursorVis (event :MouseEvent) :void
+    {
+        if (_cursor != null) {
+            _cursor.visible = (event.type == MouseEvent.ROLL_OVER);
+        }
+    }
+
+    /**
+     * Update the cursor position as the mouse moves around the canvas.
+     */
     protected function handleCursorMove (event :MouseEvent) :void
     {
         if (_cursor != null) {
@@ -478,13 +517,9 @@ public class EditCanvas extends DisplayCanvas
         }
     }
 
-    protected function handleCursorVis (event :MouseEvent) :void
-    {
-        if (_cursor != null) {
-            _cursor.visible = (event.type == MouseEvent.ROLL_OVER);
-        }
-    }
-
+    /**
+     * The dropper cursor needs an extra special step to update its displayed color.
+     */
     protected function handleDropperMove (event :MouseEvent) :void
     {
         var p :Point = layerPoint(_scaleLayer, event);
@@ -507,6 +542,9 @@ public class EditCanvas extends DisplayCanvas
         }
     }
 
+    /**
+     * Returns the color under the specified point.
+     */
     protected function getDropperColor (p :Point) :uint
     {
         // paint into a 1x1 bitmapdata and see what color we get
@@ -515,12 +553,6 @@ public class EditCanvas extends DisplayCanvas
         bmp.draw(_scaleLayer, matrix);
 
         return bmp.getPixel32(0, 0);
-    }
-
-    protected function handleShowBrush (event :MouseEvent) :void
-    {
-        _brushCursor.visible = (event.type == MouseEvent.ROLL_OVER) &&
-            ((_mode == PAINT) || (_mode == ERASE));
     }
 
     protected function handlePaintEnter (event :MouseEvent) :void
@@ -599,9 +631,7 @@ public class EditCanvas extends DisplayCanvas
     protected function endCurrentPaint () :void
     {
         if (_curPaint != null) {
-            _undoStack.push(_curPaint);
-            _redoStack.length = 0;
-            fireUndoRedoChange();
+            pushUndo(_curPaint);
             _curPaint = null;
         }
     }
@@ -666,12 +696,18 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleMoveStart (event :MouseEvent) :void
     {
+        _movePoint = new Point(_paintLayer.x, _paintLayer.y);
         _paintLayer.startDrag(false);
     }
 
     protected function handleMoveEnd (event :MouseEvent) :void
     {
         _paintLayer.stopDrag();
+        _movePoint.x = _paintLayer.x - _movePoint.x;
+        _movePoint.y = _paintLayer.y - _movePoint.y;
+        paintLayerPositioned();
+        pushUndo([ _paintLayer, _movePoint ]);
+        _movePoint = null;
     }
 
     /** 
@@ -682,6 +718,45 @@ public class EditCanvas extends DisplayCanvas
         // we just clear the objects that might be used to short-cut a return object
         _bitmapData = null;
         _bytes = null;
+    }
+
+    protected function pushUndo (undoObject :Object) :void
+    {
+        _undoStack.push(undoObject);
+        _redoStack.length = 0;
+        fireUndoRedoChange();
+    }
+
+    protected function doUndoRedo (undo :Boolean) :void
+    {
+        // shift the object from one stack to another
+        var obj :Object = (undo ? _undoStack : _redoStack).pop();
+        (undo ? _redoStack : _undoStack).push(obj);
+
+        // make the change
+        if (obj is Shape) {
+            var paint :Shape = obj as Shape;
+            if (undo){
+                _paintLayer.removeChild(paint);
+            } else {
+                _paintLayer.addChildAt(paint, _paintLayer.numChildren - _paintInsertionOffset);
+            }
+
+        } else if (obj is Array) {
+            var layer :DisplayObject = obj[0] as DisplayObject;
+            var offset :Point = obj[1] as Point;
+            if (undo) {
+                layer.x -= offset.x;
+                layer.y -= offset.y;
+            } else {
+                layer.x += offset.x;
+                layer.y += offset.y;
+            }
+            paintLayerPositioned();
+        }
+
+        // notify watchers that the undo/redo stacks have changed
+        fireUndoRedoChange();
     }
 
     protected function fireUndoRedoChange () :void
@@ -725,7 +800,10 @@ public class EditCanvas extends DisplayCanvas
     protected var _cropRect :Rectangle;
     protected var _cropPoint :Point;
 
+    protected var _workingArea :Rectangle = new Rectangle();
+
     protected var _paintPoint :Point;
+    protected var _movePoint :Point;
 
     protected var _scale :Number = 1;
 
