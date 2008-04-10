@@ -130,7 +130,7 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientDidLogon (Client client)
     {
-        SwiftlyService ssvc = (SwiftlyService)client.requireService(SwiftlyService.class);
+        SwiftlyService ssvc = client.requireService(SwiftlyService.class);
         ssvc.enterProject(client, _projectId, new SwiftlyService.ResultListener() {
             public void requestProcessed (Object result) {
                 _ctx.getLocationDirector().moveTo((Integer)result);

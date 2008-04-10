@@ -139,7 +139,7 @@ public class WorldServerClient
 
         public void clientDidLogon (Client client) {
             log.info("Connected to world server.");
-            _gssvc = (GameServerService)_client.requireService(GameServerService.class);
+            _gssvc = _client.requireService(GameServerService.class);
             _gssvc.sayHello(client, _port);
             client.getClientObject().addListener(WorldServerClient.this);
         }
