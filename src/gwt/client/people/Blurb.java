@@ -31,7 +31,6 @@ public abstract class Blurb extends TongueBox
 
     protected Blurb ()
     {
-        addStyleName("Blurb");
     }
 
     protected MemberName _name;

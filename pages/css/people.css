@@ -8,12 +8,45 @@
   width: 100%;
 }
 
+.profile .ProfileTongue .Content {
+  border: none; /* override tongueBox */
+}
+
 .profile .Profile {
   width: 100%;
 }
 
 .profile .Profile .Photo {
-  width: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 0px 10px 10px;
+}
+
+.profile .Profile .Info {
+  padding: 10px 0px;
+}
+
+.profile .Profile .Details {
+  padding: 0px 10px 10px 0px;
+}
+
+.profile .Profile .Details .Level {
+  background: url(/images/profile/level_bg.png) top left no-repeat;
+  width: 79px;
+  height: 40px;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  text-align: center;
+  margin: 0px 0px 5px 105px;
+  font-weight: bold;
+}
+
+.profile .Profile .Details .Level .Label {
+  font-size: 10px;
+}
+.profile .Profile .Details .Level .Value {
+  padding-left: 15px;
+  font-size: 18px;
 }
 
 .profile .Profile .Photo .actionLabel, .profile .Profile .Photo a {
@@ -29,7 +62,7 @@
 
 .profile .Profile .Name {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .profile .Profile .Headline {
