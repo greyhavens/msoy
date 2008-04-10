@@ -7,7 +7,6 @@ import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.CommandButton;
@@ -23,6 +22,8 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
+
+import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.client.MemberService;
 

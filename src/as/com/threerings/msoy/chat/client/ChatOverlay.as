@@ -34,7 +34,6 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
@@ -50,6 +49,8 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.flash.ColorUtil;
 
 import com.threerings.whirled.spot.data.SpotCodes;
+
+import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;

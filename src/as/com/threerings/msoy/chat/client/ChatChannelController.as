@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.util.ExpiringSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -23,6 +22,8 @@ import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SystemMessage;
+
+import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.client.MsoyContext;
 
