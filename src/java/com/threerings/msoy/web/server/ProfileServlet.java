@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import octazen.addressbook.AddressBookAuthenticationException;
@@ -19,6 +20,7 @@ import octazen.http.HttpException;
 import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -321,9 +323,9 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-        for (FriendEntry entry :
-                 MsoyServer.memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
+        Map<Integer,MemberCard> cards = Maps.newLinkedHashMap();
+        for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(
+                 tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
             MemberCard card = new MemberCard();
             card.name = entry.name;
             cards.put(entry.name.getMemberId(), card);
@@ -408,7 +410,7 @@ public class ProfileServlet extends MsoyServiceServlet
         return list;
     }
 
-    protected static void resolveCardData (IntMap<? extends MemberCard> cards)
+    protected static void resolveCardData (Map<Integer,? extends MemberCard> cards)
         throws PersistenceException
     {
         for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.keySet())) {
