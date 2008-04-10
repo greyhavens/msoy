@@ -85,7 +85,7 @@ public class CommentsPanel extends PagedGrid
             _post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _post.setEnabled(false);
-                    showPostComment();
+                    showPostPanel();
                 }
             });
             controls.setWidget(0, 0, _post);
@@ -118,7 +118,7 @@ public class CommentsPanel extends PagedGrid
             (CShell.getMemberId() != comment.commentor.getMemberId());
     }
 
-    protected void showPostComment ()
+    protected void showPostPanel ()
     {
         add(new PostPanel());
     }

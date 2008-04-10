@@ -55,7 +55,7 @@ public class CommentsBlurb extends Blurb
         }
 
         public void startPost () {
-            showPostComment();
+            showPostPanel();
         }
 
         // @Override // from PagedGrid
