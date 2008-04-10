@@ -54,7 +54,7 @@ public class InterestRecord extends PersistentRecord
     @Id public int type;
 
     /** A raw string provided by the user. */
-    @Column(length=2048)
+    @Column(length=Interest.MAX_INTEREST_LENGTH)
     public String interests;
 
     /** Converts this persistent record to a runtime record. */

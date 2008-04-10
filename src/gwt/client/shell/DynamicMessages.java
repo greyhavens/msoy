@@ -147,4 +147,8 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String interest2 ();
     public String interest3 ();
     public String interest4 ();
+    public String interest5 ();
+    public String interest6 ();
+    public String interest7 ();
+    public String interest8 ();
 }

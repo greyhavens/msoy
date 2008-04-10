@@ -27,6 +27,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.MsoyUI;
 
 public class InterestsBlurb extends Blurb
 {
@@ -74,12 +75,12 @@ public class InterestsBlurb extends Blurb
         _iEditors = new TextBox[Interest.TYPES.length];
 
         int row = 0;
-
         for (int ii = 0; ii < _iEditors.length; ii++) {
             int type = Interest.TYPES[ii];
             editor.setText(row, 0, CPeople.dmsgs.getString("interest" + type));
-            editor.setWidget(row++, 1, _iEditors[ii] = new TextBox());
-            _iEditors[ii].setText(getCurrentInterest(type));
+            _iEditors[ii] = MsoyUI.createTextBox(
+                getCurrentInterest(type), Interest.MAX_INTEREST_LENGTH, -1);
+            editor.setWidget(row++, 1, _iEditors[ii]);
         }
 
         HorizontalPanel buttons = new HorizontalPanel();

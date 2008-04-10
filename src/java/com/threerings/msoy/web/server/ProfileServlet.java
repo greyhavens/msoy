@@ -173,16 +173,13 @@ public class ProfileServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(ident);
 
         try {
-            // store the supplied interests in the repository.
-            // blank interests will be deleted.
+            // store the supplied interests in the repository; blank interests will be deleted
             @SuppressWarnings("unchecked") List<Interest> tinterests = interests;
             _profileRepo.storeInterests(memrec.memberId, tinterests);
-            log.info("stored " + tinterests);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update member's interests " +
-                "[who=" + memrec.who() +
-                ", interests=" + StringUtil.toString(interests) + "].", pe);
+            log.log(Level.WARNING, "Failed to update member's interests [who=" + memrec.who() +
+                    ", interests=" + StringUtil.toString(interests) + "].", pe);
         }
     }
 
