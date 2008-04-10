@@ -45,19 +45,6 @@ public class ItemRemixer extends FlexTable
         setCellPadding(0);
         setCellSpacing(5);
 
-        FlexTable.FlexCellFormatter formatter = getFlexCellFormatter();
-        formatter.setVerticalAlignment(0, 0, VerticalPanel.ALIGN_TOP);
-        formatter.setRowSpan(0, 0, 2);
-        setWidget(0, 0, MsoyUI.createBackArrow(new ClickListener() {
-            public void onClick (Widget sender) {
-                if (_item == null) {
-                    History.back();
-                } else {
-                    CStuff.viewItem(_item.getType(), _item.itemId);
-                }
-            }
-        }));
-
         configureBridges();
     }
 
@@ -75,7 +62,7 @@ public class ItemRemixer extends FlexTable
         _item = item;
         HorizontalPanel hpan = new HorizontalPanel();
         hpan.add(createRemixControls(item));
-        setWidget(0, 1, hpan);
+        setWidget(0, 0, hpan);
     }
 
     protected Widget createRemixControls (Item item)
@@ -90,7 +77,7 @@ public class ItemRemixer extends FlexTable
             "auth=" + URL.encodeComponent(CShell.ident.token);
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
-            665, 550, flashVars);
+            680, 550, flashVars);
     }
 
     protected void setHash (
