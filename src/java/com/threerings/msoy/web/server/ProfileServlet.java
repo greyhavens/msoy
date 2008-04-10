@@ -411,7 +411,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected static void resolveCardData (IntMap<? extends MemberCard> cards)
         throws PersistenceException
     {
-        for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.intKeySet())) {
+        for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.keySet())) {
             MemberCard card = cards.get(profile.memberId);
             card.photo = profile.getPhoto();
             card.headline = profile.headline;
