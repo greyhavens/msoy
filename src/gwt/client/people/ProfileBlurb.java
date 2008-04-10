@@ -60,45 +60,39 @@ public class ProfileBlurb extends Blurb
 
     protected void displayProfile ()
     {
-        VerticalPanel bits = new VerticalPanel();
-        bits.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        bits.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.setSpacing(5);
-        bits.add(buttons);
         boolean isMe = (_name.getMemberId() == CPeople.getMemberId());
 
-        // add our various buttons: homepage, send mail, visit, admin info
-        if (!isBlank(_profile.homePageURL)) {
-            Anchor homepage = new Anchor(_profile.homePageURL, "");
-            homepage.setHTML("<img border=\"0\" src=\"/images/profile/homepage.png\">");
-            homepage.setFrameTarget("_blank");
-            homepage.setTitle(CPeople.msgs.showHomepage());
-            buttons.add(homepage);
-        }
-        if (CPeople.getMemberId() != 0 && !isMe) {
-            buttons.add(Application.createImageLink("/images/profile/sendmail.png",
-                                                    CPeople.msgs.sendMail(), Page.MAIL,
-                                                    Args.compose("w", "m", ""+_name.getMemberId())));
-        }
-        buttons.add(Application.createImageLink("/images/profile/visithome.png",
-                                                CPeople.msgs.visitHome(),
-                                                Page.WORLD, "m" + _name.getMemberId()));
+        // add our photo and various buttons
+        SmartTable buttons = new SmartTable("Photo", 0, 5);
+        buttons.addWidget(
+            MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE), 2, null);
+
+        // add as friend
         if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend && !isMe) {
-            buttons.add(MsoyUI.createActionImage("/images/profile/addfriend.png",
-                                                 CPeople.msgs.inviteFriend(),
-                                                 InviteFriendPopup.createListener(_name)));
+            addButton(buttons, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
+                      InviteFriendPopup.createListener(_name));
         }
+
+        // send mail
+        if (CPeople.getMemberId() != 0 && !isMe) {
+            addButton(buttons, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
+                      Page.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
+        }
+
+        // visit home
+        addButton(buttons, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
+                  Page.WORLD, "m" + _name.getMemberId());
+
+        // admin info
         if (CPeople.isAdmin()) {
-            buttons.add(Application.createImageLink("/images/profile/admininfo.png",
-                                                    CPeople.msgs.adminBrowse(), Page.ADMIN,
-                                                    Args.compose("browser", _name.getMemberId())));
+            addButton(buttons, "/images/profile/admininfo.png", CPeople.msgs.adminBrowse(),
+                      Page.ADMIN, Args.compose("browser", _name.getMemberId()));
         }
 
         // create the info table with their name, a/s/l, etc.
         SmartTable info = new SmartTable(0, 5);
-        info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         info.addText(_name.toString(), 1, "Name");
+        info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         // add our informational bits (headline, A/S/L)
         if (!isBlank(_profile.headline)) {
@@ -126,7 +120,7 @@ public class ProfileBlurb extends Blurb
             info.addText(_profile.location, 1, null);
         }
 
-        // create our detail bits
+        // create our detail display
         SmartTable details = new SmartTable(0, 5);
 
         // add our various detail bits (level, permaname, first/last logon dates)
@@ -142,12 +136,21 @@ public class ProfileBlurb extends Blurb
             addDetail(details, CPeople.msgs.lastOnline(),
                       _lfmt.format(new Date(_profile.lastLogon)));
         }
+        if (!isBlank(_profile.homePageURL)) {
+            Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL);
+            // homepage.setHTML("<img border=\"0\" src=\"/images/profile/homepage.png\">");
+            homepage.setFrameTarget("_blank");
+            int row = details.addText(CPeople.msgs.homepage(), 1, "Detail");
+            details.setWidget(row, 1, homepage, 1, "Detail");
+        }
 
         SmartTable content = new SmartTable("Profile", 0, 0);
-        content.setWidget(0, 0, bits, 1, "Photo");
+        content.setWidget(0, 0, buttons, 1, "Photo");
         content.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
         content.setWidget(0, 1, info);
+        content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         content.setWidget(0, 2, details);
+        content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         setContent(content);
 
         // display the edit button if this is our profile
@@ -160,12 +163,22 @@ public class ProfileBlurb extends Blurb
         }
     }
 
-    protected void addDetail (SmartTable detail, String label, String text)
+    protected void addButton (SmartTable buttons, String path, String text, String page, String args)
     {
-        int row = detail.getRowCount();
-        detail.setText(row, 0, label, 1, "Detail");
-        // detail.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        detail.setText(row, 1, text, 1, "Detail");
+        int row = buttons.addWidget(Application.createImageLink(path, text, page, args), 1, null);
+        buttons.setWidget(row, 1, Application.createLink(text, page, args), 1, null);
+    }
+
+    protected void addButton (SmartTable buttons, String path, String text, ClickListener listener)
+    {
+        int row = buttons.addWidget(MsoyUI.createActionImage(path, text, listener), 1, null);
+        buttons.setWidget(row, 1, MsoyUI.createActionLabel(text, listener), 1, null);
+    }
+
+    protected void addDetail (SmartTable details, String label, String text)
+    {
+        int row = details.addText(label, 1, "Detail");
+        details.setText(row, 1, text, 1, "Detail");
     }
 
     protected void startEdit ()

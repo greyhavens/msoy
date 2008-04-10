@@ -13,7 +13,18 @@
 }
 
 .profile .Profile .Photo {
-  width: 100px;
+  width: 120px;
+}
+
+.profile .Profile .Photo .actionLabel, .profile .Profile .Photo a {
+  font-size: 12px;
+  text-decoration: none;
+  color: #3382AD;
+  white-space: nowrap;
+}
+
+.profile .Profile .Photo .actionLabel:hover, .profile .Profile .Photo a:hover {
+  text-decoration: underline;
 }
 
 .profile .Profile .Name {
@@ -31,12 +42,14 @@
 }
 
 .profile .Interests {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .profile .Interests .Type {
   color: #7E7E7E;
-  padding: 0px 25px 0px 5px;
+  padding: 0px 70px 0px 30px;
+  white-space: nowrap;
+  vertical-align: top;
 }
 
 .profile .Interests .Text a {

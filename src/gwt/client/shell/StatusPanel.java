@@ -140,19 +140,25 @@ public class StatusPanel extends SmartTable
         return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
+    protected static Image makeSymbol (String type, String tip)
+    {
+        Image image = new Image("/images/header/symbol_" + type + ".png");
+        image.setTitle(tip);
+        return image;
+    }
+
     protected static class MailDisplay extends SmartTable
     {
         public MailDisplay () {
             super("Mail", 0, 0);
 
             int idx = 0;
-            Image image = new Image("/images/header/symbol_mail.png");
-            image.addClickListener(new ClickListener() {
+            String mpath = "/images/header/symbol_mail.png";
+            setWidget(0, idx++, MsoyUI.createActionImage(mpath, new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.MAIL, "");
                 }
-            });
-            setWidget(0, idx++, image, 1, "Icon");
+            }), 1, "Icon");
             _mailIx = idx; // the next cell will hold our count
             setCount(0);
         }
@@ -176,21 +182,20 @@ public class StatusPanel extends SmartTable
             super(0, 0);
 
             int idx = 0;
-            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            setWidget(0, idx++, new Image("/images/header/symbol_flow.png"), 1, "Icon");
+            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            setWidget(0, idx++, makeSymbol("coins", CShell.cmsgs.coinsTip()), 1, "Icon");
             setText(0, _flowIdx = idx++, "0");
 
             // TODO: display once we've implemented gold!
-            /*getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            getFlexCellFormatter().setStyleName(0, idx, "Icon");
-            setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
-            setText(0, _goldIdx = idx++, "0");*/
+//             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+//             setWidget(0, idx++, makeSymbol("gold", CShell.cmsgs.goldTip()), 1, "Icon");
+//             setText(0, _goldIdx = idx++, "0");
 
-            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-            setWidget(0, idx++, new Image("/images/header/symbol_level.png"), 1, "Icon");
+            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            setWidget(0, idx++, makeSymbol("level", CShell.cmsgs.levelTip()), 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
-            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
         }
 
         public void setLevel (int level) {

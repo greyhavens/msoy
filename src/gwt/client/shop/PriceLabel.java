@@ -19,11 +19,11 @@ public class PriceLabel extends FlowPanel
         setStyleName("Price");
         add(new InlineLabel(CShop.msgs.price(), false, false, true));
         if (goldCost > 0) {
-            add(MsoyUI.createInlineImage("/images/header/symbol_gold.png"));
+            add(MsoyUI.createInlineImage("/images/ui/gold.png"));
             add(new InlineLabel(""+goldCost, false, false, true));
         }
         if (flowCost > 0) {
-            add(MsoyUI.createInlineImage("/images/header/symbol_flow.png"));
+            add(MsoyUI.createInlineImage("/images/ui/coins.png"));
             add(new InlineLabel(""+flowCost, false, false, true));
         }
     }

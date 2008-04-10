@@ -36,13 +36,13 @@ public class ListingBox extends ItemBox
         SmartTable cost = new SmartTable(0, 0);
         setWidget(row, 1, cost);
 
-        cost.setWidget(0, 0, new Image("/images/header/symbol_flow.png"));
+        cost.setWidget(0, 0, new Image("/images/ui/coins.png"));
         cost.getFlexCellFormatter().setWidth(0, 0, "15px");
         cost.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
         cost.setText(0, 1, String.valueOf(listing.flowCost), 1, "Cost");
 
         if (listing.goldCost > 0) {
-            cost.setWidget(1, 0, new Image("/images/header/symbol_gold.png"));
+            cost.setWidget(1, 0, new Image("/images/ui/gold.png"));
             cost.getFlexCellFormatter().setWidth(1, 0, "15px");
             cost.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
             cost.setText(1, 1, String.valueOf(listing.goldCost), 1, "Cost");
