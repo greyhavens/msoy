@@ -871,7 +871,8 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads the FriendEntry record for all friends of the specified member. The online status of
-     * each friend will be false.
+     * each friend will be false. The friends will be returned in order of most recently online to
+     * least.
      *
      * TODO: Bring back full collection caching to this method.
      *
@@ -892,6 +893,7 @@ public class MemberRepository extends DepotRepository
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
+        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
         List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
         List<FriendEntry> list = Lists.newArrayList();
         for (MemberCardRecord record : records) {
