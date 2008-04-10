@@ -63,7 +63,7 @@
 }
 
 .profile .Wall {
-  margin-left: 20px;
+  margin-left: 5px;
 }
 
 .profile .Wall .TopCell, .profile .Wall .MiddleCell {
@@ -71,7 +71,7 @@
 }
 
 .profile .Wall .messagePanel .Scroller {
-  width: 535px;
+  width: 550px;
 }
 
 .ratingWidget {
