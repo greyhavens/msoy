@@ -40,7 +40,6 @@ import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
-import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
@@ -68,7 +67,7 @@ import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.notify.data.NotifyMessage;
 
 public class ChatOverlay
-    implements ChatDisplay
+    implements TabbedChatDisplay
 {
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
@@ -136,6 +135,12 @@ public class ChatOverlay
             return true;
         }
         return false;
+    }
+
+    // from TabbedChatDisplay
+    public function tabClosed (localtype :String) :void
+    {
+        // TODO
     }
 
     public function displayChat (display :Boolean) :void
@@ -900,6 +905,7 @@ public class ChatOverlay
     protected var _chatContainer :ChatContainer;
     protected var _includeOccList :Boolean;
     protected var _localtype :String;
+    protected var _localtypeDisplayTimes :HashMap = new HashMap();
 
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;

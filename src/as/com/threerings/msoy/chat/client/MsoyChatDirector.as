@@ -139,6 +139,12 @@ public class MsoyChatDirector extends ChatDirector
         if (controller != null) {
             controller.shutdown();
         }
+
+        _displays.apply(function (disp :ChatDisplay) :void {
+            if (disp is TabbedChatDisplay) {
+                (disp as TabbedChatDisplay).tabClosed(localtype);
+            }
+        });
     }
 
     /**

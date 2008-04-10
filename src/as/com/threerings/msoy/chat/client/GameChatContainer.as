@@ -110,7 +110,9 @@ public class GameChatContainer extends LayeredContainer
     {
         _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_RIGHT, false);
         _overlay.setClickableGlyphs(true);
+        // this overlay needs to listen on both the msoy and game chat directors
         _chatDtr.addChatDisplay(_overlay);
+        _ctx.getMsoyChatDirector().addChatDisplay(_overlay);
         var chatTop :Number = _tabBar.y + _tabBar.height;
         _overlay.setTargetBounds(new Rectangle(0, chatTop, width, height - chatTop));
     }
