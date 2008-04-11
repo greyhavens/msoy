@@ -219,14 +219,11 @@ public class EditCanvas extends DisplayCanvas
         _workingArea.height = hei;
 
         updateEditCanvasSize(false);
-        //setWorkingArea(_workingArea);
     }
 
     public function doCrop () :void
     {
-        if (_cropRect != null) {
-            setImage(getRawImage());
-        }
+        setImage(getRawImage());
     }
 
     /**
@@ -243,7 +240,7 @@ public class EditCanvas extends DisplayCanvas
 
         // remove all paint layers
         while (_paintLayer.numChildren > _paintInsertionOffset) {
-            _paintLayer.removeChildAt(_paintLayer.numChildren - 1);
+            _paintLayer.removeChildAt(0);
         }
         _undoStack.length = 0;
         _redoStack.length = 0;
@@ -273,7 +270,7 @@ public class EditCanvas extends DisplayCanvas
     {
         // see if we can skip re-encoding
         // TODO: this should probably be removed unless we're in preview-only mode?
-        if (forceFormat == null && _bytes != null && _cropRect == null) {
+        if (forceFormat == null && _bytes != null) {
             return [ _bytes ];
         }
 
@@ -288,31 +285,35 @@ public class EditCanvas extends DisplayCanvas
 
     public function getRawImage () :BitmapData
     {
-        if (_bitmapData != null && _cropRect == null) {
+        if (_bitmapData != null) {
             return _bitmapData;
         }
 
-        var bmp :BitmapData;
-        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY);
-        if (_cropRect == null) {
-            bmp = new BitmapData(_imgWidth, _imgHeight, true, 0);
-        } else {
-            bmp = new BitmapData(_cropRect.width, _cropRect.height, true, 0);
-            matrix.tx = -_cropRect.x;
-            matrix.ty = -_cropRect.y;
-        }
+        var bmp :BitmapData = new BitmapData(_workingArea.width, _workingArea.height, true, 0);
+        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY,
+            -_workingArea.x, -_workingArea.y);
+
+        // dammit, this should work, but it appears that bmp.draw() renders things slightly
+        // differently than regular flash display. On regular flash display if you have a ERASE
+        // layer in front of something transparent, the ERASE layer doesn't show up.
+        // However, in bmp.draw() any portion of the ERASE layer that ends up not actually erasing
+        // anything ends up getting rendered in its default color/alpha
+//        var s :Shape = new Shape();
+//        var g :Graphics = s.graphics;
+//        g.beginFill(0xFFFFFF, 1);
+//        g.drawRect(-1000, -1000, 2000, 2000);
+//        g.endFill();
+//        _paintLayer.addChildAt(s, 0);
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brushCursor.visible;
-        var dropperVis :Boolean = _dropperCursor.visible;
         _brushCursor.visible = false;
-        _dropperCursor.visible = false;
         // screenshot the image
         try {
             bmp.draw(_scaleLayer, matrix);
         } finally {
             _brushCursor.visible = brushVis;
-            _dropperCursor.visible = dropperVis;
+//            _paintLayer.removeChildAt(0);
         }
 
         return bmp;
@@ -344,10 +345,11 @@ public class EditCanvas extends DisplayCanvas
 
         updateEditCanvasSize(true);
 
-//        if (_image != null) {
-//            _image.x = _hGutter;
-//            _image.y = _vGutter;
-//        }
+        // recenter the image
+        if (_image != null) {
+            _image.x = _imgWidth / -2;
+            _image.y = _imgHeight / -2;
+        }
 
         // jiggle the canvas width. See notes in super.updateCanvasSize()
         this.width = this.maxWidth;
@@ -383,11 +385,9 @@ public class EditCanvas extends DisplayCanvas
 
         // TODO: we actually want to maybe position the paint layer?
 
-        // recenter the image
-        if (_image != null) {
-            _image.x = (canvWidth - _imgWidth) / 2;
-            _image.y = (canvHeight - _imgHeight) / 2;
-        }
+        // put the paint layer at the center???
+        _paintLayer.x = canvWidth/2;
+        _paintLayer.y = canvHeight/2;
 
         // color some layers so we can click on them
         paintLayerPositioned();
@@ -423,7 +423,12 @@ public class EditCanvas extends DisplayCanvas
         g.drawRect(0, r.y + r.height, _holder.width, _holder.height - (r.y + r.height));
         g.endFill();
 
-        dispatchEvent(new ValueEvent(SELECTION_CHANGE, [ r.width, r.height ]));
+        dispatchWorkingAreaSelection();
+    }
+
+    protected function dispatchWorkingAreaSelection () :void
+    {
+        dispatchEvent(new ValueEvent(SELECTION_CHANGE, [ _workingArea.width, _workingArea.height ]));
     }
 
     /**
@@ -466,7 +471,6 @@ public class EditCanvas extends DisplayCanvas
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
         fn(MouseEvent.MOUSE_DOWN, handleSelectStart);
         fn(MouseEvent.MOUSE_UP, handleSelectEnd);
-        //fn(MouseEvent.MOUSE_OUT, handleSelectEnd);
 
         // MOVE
         on = (_mode == MOVE);
@@ -613,14 +617,10 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handlePaintStart (event :MouseEvent) :void
     {
-        setPainted();
-
         if (_curPaint == null) {
             // create a new paintlayer
             _curPaint =  new Shape();
-            if (_mode == ERASE) {
-                _curPaint.blendMode = BlendMode.ERASE;
-            }
+            _curPaint.blendMode = _brushCursor.blendMode; // copy the ERASE mode, if applicable
             _paintLayer.addChildAt(_curPaint, _paintLayer.numChildren - _paintInsertionOffset);
         }
 
@@ -699,32 +699,44 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleSelectEnd (event :MouseEvent) :void
     {
-        if (_cropPoint != null) {
-            updateSelection(layerPoint(_hudLayer, event));
-            _cropPoint = null;
-
-            _paintLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
-            _paintLayer.removeEventListener(MouseEvent.ROLL_OUT, handleSelectEnd);
-        }
-    }
-
-    protected function updateSelection (p :Point) :void
-    {
-        _cropRect = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
-            Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
-
-        if (_cropRect.width == 0 || _cropRect.height == 0) {
-            clearSelection();
+        if (_cropPoint == null) {
             return;
         }
 
-        _crop.x = _cropRect.x;
-        _crop.y = _cropRect.y;
+        _paintLayer.removeEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
+        _paintLayer.removeEventListener(MouseEvent.ROLL_OUT, handleSelectEnd);
+
+        var r :Rectangle = updateSelection(layerPoint(_hudLayer, event));
+        _cropPoint = null;
+
+        if (r != null) {
+            setWorkingArea(r);
+            clearSelection();
+        }
+    }
+
+    protected function updateSelection (p :Point) :Rectangle
+    {
+        var r :Rectangle = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
+            Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
+
+        if (r.width == 0 || r.height == 0) {
+            dispatchWorkingAreaSelection();
+            clearSelection();
+            return null;
+        }
+
+        _crop.x = r.x;
+        _crop.y = r.y;
 
         var g :Graphics = _crop.graphics;
         g.clear();
         g.lineStyle(1);
-        GraphicsUtil.dashRect(g, 0, 0, _cropRect.width, _cropRect.height)
+        GraphicsUtil.dashRect(g, 0, 0, r.width, r.height)
+
+        dispatchEvent(new ValueEvent(SELECTION_CHANGE, [ r.width, r.height ]));
+
+        return r;
     }
 
     protected function clearSelection () :void
@@ -732,12 +744,9 @@ public class EditCanvas extends DisplayCanvas
         if (_forceCrop) { // just reset it
             _crop.x = 0;
             _crop.y = 0;
-            _cropRect.x = 0;
-            _cropRect.y = 0;
 
         } else { // actually clear it
             _crop.graphics.clear();
-            _cropRect = null;
         }
     }
 
@@ -760,7 +769,7 @@ public class EditCanvas extends DisplayCanvas
     /** 
      * Sets that we've painted on the image.
      */
-    protected function setPainted () :void
+    protected function setModified () :void
     {
         // we just clear the objects that might be used to short-cut a return object
         _bitmapData = null;
@@ -769,6 +778,8 @@ public class EditCanvas extends DisplayCanvas
 
     protected function pushUndo (undoObject :Object) :void
     {
+        setModified();
+
         _undoStack.push(undoObject);
         _redoStack.length = 0;
         fireUndoRedoChange();
@@ -844,7 +855,6 @@ public class EditCanvas extends DisplayCanvas
     protected var _cursor :DisplayObject;
     protected var _cursorLayer :DisplayObject;
 
-    protected var _cropRect :Rectangle;
     protected var _cropPoint :Point;
 
     protected var _workingArea :Rectangle = new Rectangle();
