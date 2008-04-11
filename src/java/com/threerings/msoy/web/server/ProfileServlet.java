@@ -205,7 +205,7 @@ public class ProfileServlet extends MsoyServiceServlet
             } else {
                 // look for a display name match
                 mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(
-                                search, MAX_PROFILE_MATCHES));
+                                search, false, MAX_PROFILE_MATCHES));
                 // look for a real name match
                 mids.addAll(_profileRepo.findMembersByRealName(
                                 search, MAX_PROFILE_MATCHES));

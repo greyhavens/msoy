@@ -292,11 +292,14 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members who's display name matches the supplied search string.
      */
-    public List<Integer> findMembersByDisplayName (String search, int limit)
+    public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
         throws PersistenceException
     {
-        Where where = new Where(
-            new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search.toLowerCase()));
+        search = search.toLowerCase();
+
+        FunctionExp col = new FunctionExp("LOWER", MemberRecord.NAME_C);
+        SQLOperator op = exact ? new Equals(col, search) : new Like(col, formatLike(search));
+        Where where = new Where(op);
         List<Integer> ids = Lists.newArrayList();
 
         // TODO: turn this into a findAllKeys query
@@ -1071,6 +1074,19 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberWarningRecord.class, memberId);
+    }
+
+    /**
+     * TODO: this should almost certainly make its way back to Depot,
+     * but I'm not sure if it can live in Like or whether it needs to hook
+     * in at some MySQL-specific layer.
+     */
+    protected String formatLike (String search)
+    {
+        search = search.replace("\\", "\\\\");
+        search = search.replace("_", "\\_");
+        search = search.replace("%", "\\%");
+        return "%" + search + "%";
     }
 
     protected String randomInviteId ()

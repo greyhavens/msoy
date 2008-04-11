@@ -60,7 +60,7 @@ public class MsoyGameInfoProvider extends GameInfoProvider
         throws PersistenceException
     {
         List<Integer> memberIds =
-            MsoyBaseServer.memberRepo.findMembersByDisplayName(gameName, LOOKUP_LIMIT);
+            MsoyBaseServer.memberRepo.findMembersByDisplayName(gameName, true, LOOKUP_LIMIT);
         ArrayList<String> names = new ArrayList<String>(memberIds.size());
         for (Integer memberId : memberIds) {
             names.add(memberId.toString());
