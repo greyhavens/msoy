@@ -27,6 +27,7 @@ import com.threerings.util.Log;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
@@ -42,6 +43,8 @@ import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
+
+import com.threerings.msoy.notify.data.NotifyMessage;
 
 public class ChatTabBar extends HBox
     implements ChatDisplay
@@ -214,7 +217,7 @@ public class ChatTabBar extends HBox
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
         var index :int = getLocalTypeIndex(msg.localtype);
-        if (index != _selectedIndex && index != -1) {
+        if (index != -1 && index != _selectedIndex) {
             var tab :ChatTab = _tabs[index] as ChatTab;
             tab.setVisualState(ChatTab.ATTENTION);
             if (_rightScroll.visible && tab.x > (horizontalScrollPosition + width)) {
@@ -222,6 +225,12 @@ public class ChatTabBar extends HBox
             } else if (_leftScroll.visible && (tab.x + tab.width) < horizontalScrollPosition) {
                 _leftScroll.play();
             }
+        }
+
+        // we currently show all system and notify messages in the room tab, so make it blink
+        // for them.
+        if ((msg is SystemMessage || msg is NotifyMessage) && _selectedIndex > 0) {
+            (_tabs[0] as ChatTab).setVisualState(ChatTab.ATTENTION);                
         }
 
         if (index != -1 || !(msg is UserMessage)) {
