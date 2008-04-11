@@ -95,6 +95,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // if we're not viewing the actual prototype item, create a link to it
         if (_item.catalogId != 0 && _item.ownerId != 0) {
+            _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("l", "" + _item.getType(), "" + _item.catalogId);
             _details.add(Application.createLink(CShell.imsgs.viewInShop(), Page.SHOP, args));
         }
