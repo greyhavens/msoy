@@ -25,6 +25,9 @@ import com.threerings.msoy.web.data.WebCreds;
     @Index(name="ixName", fields={ MemberRecord.NAME }),
     @Index(name="ixInvitingFriend", fields={ MemberRecord.INVITING_FRIEND_ID })
     // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
+},
+fullTextIndexes={
+    @FullTextIndex(name=MemberRecord.FTS_NAME, fieldNames={ MemberRecord.NAME })
 })
 public class MemberRecord extends PersistentRecord
 {
@@ -211,6 +214,9 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp LEVEL_C =
         new ColumnExp(MemberRecord.class, LEVEL);
     // AUTO-GENERATED: FIELDS END
+
+    /** The identifer for the full text index on the display name. */
+    public static final String FTS_NAME = "ftixName";
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */

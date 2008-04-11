@@ -297,9 +297,12 @@ public class MemberRepository extends DepotRepository
     {
         search = search.toLowerCase();
 
-        FunctionExp col = new FunctionExp("LOWER", MemberRecord.NAME_C);
-        SQLOperator op = exact ? new Equals(col, search) : new Like(col, formatLike(search));
-        Where where = new Where(op);
+        SQLOperator op;
+        if (exact) {
+            op = new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search);
+        } else {
+            op = new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
+        }
         List<Integer> ids = Lists.newArrayList();
 
         // TODO: turn this into a findAllKeys query
@@ -307,7 +310,7 @@ public class MemberRepository extends DepotRepository
 //                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
 //             ids.add((Integer)key.condition.getValues().get(0));
 //         }
-        for (MemberRecord mrec : findAll(MemberRecord.class, where, new Limit(0, limit))) {
+        for (MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
             ids.add(mrec.memberId);
         }
 
@@ -1074,19 +1077,6 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberWarningRecord.class, memberId);
-    }
-
-    /**
-     * TODO: this should almost certainly make its way back to Depot,
-     * but I'm not sure if it can live in Like or whether it needs to hook
-     * in at some MySQL-specific layer.
-     */
-    protected String formatLike (String search)
-    {
-        search = search.replace("\\", "\\\\");
-        search = search.replace("_", "\\_");
-        search = search.replace("%", "\\%");
-        return "%" + search + "%";
     }
 
     protected String randomInviteId ()
