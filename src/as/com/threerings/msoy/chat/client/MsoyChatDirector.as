@@ -247,14 +247,16 @@ public class MsoyChatDirector extends ChatDirector
             var channel :ChatChannel
             if (channeltype == ChatChannel.MEMBER_CHANNEL) {
                 try {
-                    channel = ChatChannel.makeMemberChannel(new MemberName("", 
+                    channel = ChatChannel.makeMemberChannel(new MemberName(
+                        _chatTabs.getName(localtype), 
                         StringUtil.parseInteger(ChatChannel.infoOf(localtype))));
                 } catch (err :ArgumentError) {
                     // NOOP
                 }
             } else if (channeltype == ChatChannel.JABBER_CHANNEL) {
-                channel = ChatChannel.makeJabberChannel(
-                    new JabberName(ChatChannel.infoOf(localtype)));
+                channel = ChatChannel.makeJabberChannel(new JabberName(
+                    ChatChannel.infoOf(localtype),
+                    _chatTabs.getName(localtype)));
             }
 
             if (channel != null) {
