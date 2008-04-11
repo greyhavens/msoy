@@ -28,21 +28,29 @@ public class ChatGlyph extends Sprite
         mouseEnabled = false;
         _overlay = overlay;
         _type = type;
-
-        // set up an expire timer, if needed
-        if (lifetime != int.MAX_VALUE) {
-            // TODO: possibly have the overlay manage all this with
-            // just one Timer
-            var timer :Timer = new Timer(lifetime, 1);
-            timer.addEventListener(
-                TimerEvent.TIMER, handleStartExpire, false, 0, true);
-            timer.start();
-        }
+        setLifetime(lifetime);
     }
 
     public function getType () :int
     {
         return _type;
+    }
+
+    public function setLifetime (lifetime :int) :void
+    {
+        var exists :Boolean = _lifetimeTimer != null;
+        if (exists) {
+            _lifetimeTimer.stop();
+        }
+        // set up an expire timer, if needed
+        if (lifetime != int.MAX_VALUE) {
+            _lifetimeTimer = new Timer(lifetime, 1);
+            if (!exists) {
+                _lifetimeTimer.addEventListener(
+                    TimerEvent.TIMER, handleStartExpire, false, 0, true);
+            }
+            _lifetimeTimer.start();
+        }
     }
 
     /**
@@ -171,6 +179,8 @@ public class ChatGlyph extends Sprite
         }
     }
 
+    protected static const FADE_DURATION :int = 600;
+
     protected var _overlay :ChatOverlay;
 
     protected var _type :int;
@@ -181,7 +191,6 @@ public class ChatGlyph extends Sprite
     /** A reference to our textfield. Subclasses are responsible for adding it. */
     protected var _txt :TextField;
 
-
-    protected static const FADE_DURATION :int = 600;
+    protected var _lifetimeTimer :Timer;
 }
 }

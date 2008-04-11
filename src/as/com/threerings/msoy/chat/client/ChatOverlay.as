@@ -126,6 +126,7 @@ public class ChatOverlay
     {
         clearGlyphs(_subtitles);
         clearGlyphs(_showingHistory);
+        _lastExpire = 0;
     }
 
     // from ChatDisplay
@@ -204,7 +205,15 @@ public class ChatOverlay
         }
 
         _localtype = localtype;
-        // TODO: display refreshery
+
+        if (isHistoryMode()) {
+            clearGlyphs(_showingHistory);
+            showCurrentHistory();
+        } else {
+            _lastExpire = 0;
+            clearGlyphs(_subtitles);
+            showCurrentSubtitles();
+        }
     }
 
     /**
@@ -282,6 +291,57 @@ public class ChatOverlay
         g.endFill();
 
         return PAD;
+    }
+
+    protected function showCurrentHistory () :void
+    {
+        // TODO
+    }
+
+    protected function showCurrentSubtitles () :void
+    {
+        var lastDisplayed :int = int(_localtypeDisplayTimes.get(_localtype));
+        if (lastDisplayed == 0) {
+            // nothing to show here
+            return;
+        }
+
+        var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
+        var messages :Array = [];
+        var glyphs :Array = [];
+        var totalHeight :int = 0;
+        for (var ii :int = history.size() - 1; ii >= 0; ii--) {
+            var msg :ChatMessage = history.get(ii) as ChatMessage;
+            if (shouldDisplayMessage(msg)) {
+                // let it calculate the expire date from the timestamp
+                _lastExpire = 0;
+                var expire :int = getChatExpire(msg.timestamp, msg.message);
+                if (expire < lastDisplayed) { 
+                    break;
+                }
+
+                var glyph :SubtitleGlyph = createSubtitle(msg, getType(msg, false), false);
+                totalHeight += glyph.height;
+                if (totalHeight > _targetBounds.height) {
+                    break;
+                }
+                messages.unshift(msg);
+                glyphs.unshift(glyph);
+            }
+        }
+
+        if (messages.length == 0) {
+            return;
+        }
+
+        _lastExpire = 0;
+        var time :int = getTimer();
+        for (ii = 0; ii < messages.length; ii++) {
+            msg = messages[ii] as ChatMessage;
+            glyph = glyphs[ii] as SubtitleGlyph;
+            glyph.setLifetime(getChatExpire(time, msg.message) - time);
+            addSubtitle(glyph);
+        }
     }
 
     protected function localtypeExpired (localtype :String) :void
@@ -408,7 +468,10 @@ public class ChatOverlay
     protected function createSubtitle (msg :ChatMessage, type :int, expires :Boolean) :SubtitleGlyph
     {
         var texts :Array = formatMessage(msg, type, true, _userSpeakFmt);
-        var lifetime :int = getLifetime(msg, expires);
+        var lifetime :int = int.MAX_VALUE;
+        if (expires) {
+            lifetime = getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
+        }
         return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
     }
 
@@ -562,17 +625,6 @@ public class ChatOverlay
     }
 
     /**
-     * Get the lifetime, in milliseconds, of the specified chat message.
-     */
-    protected function getLifetime (msg :ChatMessage, expires :Boolean) :int
-    {
-        if (expires) {
-            return getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
-        }
-        return int.MAX_VALUE;
-    }
-
-    /**
      * Get the expire time for the specified chat.
      */
     protected function getChatExpire (stamp :int, text :String) :int
@@ -590,9 +642,9 @@ public class ChatOverlay
                                        int(durations[2]));
 
         // but don't let it be longer than the maximum display time.
-        _lastExpire = Math.min(stamp + int(durations[2]), _lastExpire);
+        _lastExpire = Math.min(start + int(durations[2]), _lastExpire);
 
-        // and be sure to pop up the returned time so that it is above the min.
+        // and be sure to pop up the returned time so that it is above the min.  
         return Math.max(stamp + int(durations[1]), _lastExpire);
     }
 
