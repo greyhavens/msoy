@@ -132,9 +132,6 @@ public class ChatOverlay
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        log.debug("displayMessage [msg=" + msg.message + ", localtype=" + msg.localtype + 
-            ", timestamp=" + msg.timestamp + ", type=" + getType(msg, false) + "]");
-
         if (shouldDisplayMessage(msg)) {
             addSubtitle(createSubtitle(msg, getType(msg, false), true));
             return true;
