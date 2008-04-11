@@ -103,13 +103,13 @@ public class MsoyClient extends WhirledClient
 
         // let our various server entities know that this member logged off
         MsoyServer.memberLoggedOff(_memobj);
-        final int idleSeconds = _idleTracker.getIdleTime(), activeSeconds = _connectTime - idleSeconds;
+        final int idleSeconds = _idleTracker.getIdleTime();
+        final int activeSeconds = _connectTime - idleSeconds;
 
-        // if this is a real logoff event, and this was a player, log what they did.
-        // (otherwise, if it's not a logoff, do nothing - the memobj was already forwarded to the new host.)
+        // if this is a real logoff event, and this was a player, log what they did; (otherwise, if
+        // it's not a logoff, do nothing - the memobj was already forwarded to the new host.)
         if (! _sessionForwarded && ! (_memobj.username instanceof LurkerName)) {
             String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
-
             _memobj.metrics.save(_memobj);
             _eventLog.logPlayerMetrics(_memobj, sessTok); 
         }
