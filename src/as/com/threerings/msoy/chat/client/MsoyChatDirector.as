@@ -22,8 +22,10 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.SpeakService;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
@@ -199,20 +201,21 @@ public class MsoyChatDirector extends ChatDirector
     /**
      * Requests that a tell message be delivered to the specified jabber user.
      */
-    public function requestJabber (target :JabberName, msg :String) :void
+    public function requestJabber (target :JabberName, msg :String, feedbackLocaltype :String) :void
     {
         var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
         svc.sendMessage(_wctx.getClient(), target, msg, new ResultWrapper(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_tell_failed", MessageBundle.taint(cause));
-                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
+                displaySystem(MsoyCodes.CHAT_MSGS, msg, SystemMessage.FEEDBACK, feedbackLocaltype);
             },
             function (result :Object) :void {
                 if (result != null && result is String) {
-                    _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, (result as String));
+                    displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
+                                  feedbackLocaltype);
                 }
-                dispatchMessage(new TellFeedbackMessage(target, msg), ChatCodes.PLACE_CHAT_TYPE);
+                dispatchMessage(new TellFeedbackMessage(target, msg), feedbackLocaltype);
             }));
     }
 

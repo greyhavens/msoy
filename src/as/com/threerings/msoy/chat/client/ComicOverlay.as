@@ -95,7 +95,10 @@ public class ComicOverlay extends ChatOverlay
     {
         var displayed :Boolean = false;
 
-        if (msg is NotifyMessage || msg is SystemMessage) {
+        // display all notify messages, and system messages if they don't have a custom localtype.
+        if (msg is NotifyMessage || (msg is SystemMessage &&
+            (msg.localtype == ChatCodes.PLACE_CHAT_TYPE || 
+             msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
             displayed = displayBubble(msg, getType(msg, false));
         } else if (_ctx is WorldContext) {
             var scene :MsoyScene = 

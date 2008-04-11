@@ -210,13 +210,25 @@ public class ChatTabBar extends HBox
     // from ChatDisplay
     public function clear () :void
     {
-        // NOOP
+        // remove any shinies
+        for each (var tab :ChatTab in _tabs) {
+            if (tab.getVisualState() == ChatTab.ATTENTION) {
+                tab.setVisualState(ChatTab.UNSELECTED);
+            }
+        }
     }
 
-    // from ChatDisplay
+    // from ChatDisplay - always returns false, as this ChatDisplay does no actual message display
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        var index :int = getLocalTypeIndex(msg.localtype);
+        var index :int = -1;
+        if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE &&
+            (msg is SystemMessage || msg is NotifyMessage)) {
+            index == 0;
+        } else {
+            index = getLocalTypeIndex(msg.localtype);
+        }
+
         if (index != -1 && index != _selectedIndex) {
             var tab :ChatTab = _tabs[index] as ChatTab;
             tab.setVisualState(ChatTab.ATTENTION);
@@ -225,12 +237,6 @@ public class ChatTabBar extends HBox
             } else if (_leftScroll.visible && (tab.x + tab.width) < horizontalScrollPosition) {
                 _leftScroll.play();
             }
-        }
-
-        // we currently show all system and notify messages in the room tab, so make it blink
-        // for them.
-        if ((msg is SystemMessage || msg is NotifyMessage) && _selectedIndex > 0) {
-            (_tabs[0] as ChatTab).setVisualState(ChatTab.ATTENTION);                
         }
 
         if (index != -1 || !(msg is UserMessage)) {
@@ -251,8 +257,7 @@ public class ChatTabBar extends HBox
             addTab(new ChatTab(_ctx, this, ChatChannel.makeJabberChannel(jabberer), "" + jabberer));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
-            // else this arrived (most likely) after we already closed the channel tab.
-            log.info("Dropping late arriving channel chat message [msg=" + msg + ", localtype=" + 
+            log.info("Dropping unknown user message [msg=" + msg + ", localtype=" + 
                       msg.localtype + "].");
         }
 

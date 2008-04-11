@@ -434,10 +434,10 @@ public class ChatOverlay
             return true;
         }
 
-        // TODO: This is spammy and not how it current works in the wild.  It will get more 
-        // tuning
-        // display all system messages and notify messages in the current location tab
-        if (msg is SystemMessage || msg is NotifyMessage) {
+        // If we're on the room tab, display all NotifyMessages, and any System message that does
+        // not have a custom localtype
+        if (msg is NotifyMessage || (msg is SystemMessage && 
+            msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
             // in WorldContext we pull out the scene and check the id against the current localtype
             if (_ctx is WorldContext) {
                 var currentScene :MsoyScene = 

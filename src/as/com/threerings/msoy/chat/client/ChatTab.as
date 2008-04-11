@@ -120,6 +120,20 @@ public class ChatTab extends HBox
         }
     }
 
+    public function getVisualState () :int
+    {
+        if (styleName.indexOf("selected") == 0) {
+            return SELECTED;
+        } else if (styleName.indexOf("unselected") == 0) {
+            return UNSELECTED;
+        } else if (styleName.indexOf("attention") == 0) {
+            return ATTENTION;
+        } else {
+            log.warning("Tab is in an unknown state [" + styleName + "]");
+            return -1;
+        }
+    }
+
     public function setVisualState (state :int) :void
     {
         var style :String;

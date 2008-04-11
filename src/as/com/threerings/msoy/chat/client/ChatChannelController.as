@@ -186,10 +186,12 @@ public class ChatChannelController
     public function sendChat (message :String) :void
     {
         if (_channel.type == ChatChannel.MEMBER_CHANNEL) {
-            _ctx.getChatDirector().requestTell(_channel.ident as Name, message, null);
+            _ctx.getChatDirector().requestTell(
+                _channel.ident as Name, message, null, _channel.toLocalType());
 
         } else if (_channel.type == ChatChannel.JABBER_CHANNEL) {
-            _ctx.getMsoyChatDirector().requestJabber(_channel.ident as JabberName, message);
+            _ctx.getMsoyChatDirector().requestJabber(_channel.ident as JabberName, message,
+                _channel.toLocalType());
 
         } else {
             var result :String =
