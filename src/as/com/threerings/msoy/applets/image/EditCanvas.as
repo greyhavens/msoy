@@ -64,8 +64,6 @@ import com.threerings.flash.GraphicsUtil;
 // - If you paint a fat stroke right next to the scrollbar, you can actually paint onto
 //   a portion of the image that's offscreen. Fix so that _curPaint has a mask of the currently
 //   viewable area...?
-//
-// - erasing needs to work on a drawn area or the cropping snapshot will pick up the eraser strokes
 public class EditCanvas extends DisplayCanvas
 {
     public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
@@ -293,17 +291,18 @@ public class EditCanvas extends DisplayCanvas
         var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY,
             -_workingArea.x, -_workingArea.y);
 
-        // dammit, this should work, but it appears that bmp.draw() renders things slightly
-        // differently than regular flash display. On regular flash display if you have a ERASE
-        // layer in front of something transparent, the ERASE layer doesn't show up.
-        // However, in bmp.draw() any portion of the ERASE layer that ends up not actually erasing
-        // anything ends up getting rendered in its default color/alpha
-//        var s :Shape = new Shape();
-//        var g :Graphics = s.graphics;
-//        g.beginFill(0xFFFFFF, 1);
-//        g.drawRect(-1000, -1000, 2000, 2000);
-//        g.endFill();
-//        _paintLayer.addChildAt(s, 0);
+        // It appears that bmp.draw() renders slightly differently than screen display.
+        // An element with blendMode == ERASE will actually show up if portions of it are not
+        // erasing something. Placing drawn transparent pixels behind it doesn't fix things,
+        // but putting transparent image pixels behind it does work.
+        var eraseBlocker :Bitmap = new Bitmap(new BitmapData(1, 1, true, 0));
+        eraseBlocker.scaleX = _holder.width;
+        eraseBlocker.scaleY = _holder.height;
+        eraseBlocker.rotation = -_rotLayer.rotation;
+        var p :Point = _paintLayer.globalToLocal(_scaleLayer.localToGlobal(new Point()));
+        eraseBlocker.x = p.x;
+        eraseBlocker.y = p.y;
+        _paintLayer.addChildAt(eraseBlocker, 0);
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brushCursor.visible;
@@ -313,7 +312,7 @@ public class EditCanvas extends DisplayCanvas
             bmp.draw(_scaleLayer, matrix);
         } finally {
             _brushCursor.visible = brushVis;
-//            _paintLayer.removeChildAt(0);
+            _paintLayer.removeChild(eraseBlocker);
         }
 
         return bmp;

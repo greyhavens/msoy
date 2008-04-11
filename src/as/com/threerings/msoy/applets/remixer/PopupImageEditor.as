@@ -5,8 +5,6 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.utils.ByteArray;
 
-import mx.controls.ButtonBar;
-
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
@@ -37,24 +35,20 @@ public class PopupImageEditor extends TitleWindow
         var box :VBox = new VBox();
         addChild(box);
 
-        _image = new ImageManipulator(600, 450, cutWidth, cutHeight);
+        _image = new ImageManipulator(600, 480, cutWidth, cutHeight);
         box.addChild(_image);
 
-        var bar :ButtonBar = new ButtonBar();
-        bar.addChild(new CommandButton("Save", close, true));
-        bar.addChild(new CommandButton("Cancel", close, false));
-        box.addChild(bar);
-
         _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
+        _image.addEventListener(ImageManipulator.CLOSE, handleClosed);
         _image.setImage(bytes);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpUtil.center(this);
     }
 
-    protected function close (save :Boolean) :void
+    protected function handleClosed (event :ValueEvent) :void
     {
-        if (save) {
+        if (event.value)  {
             dispatchEvent(new ValueEvent(IMAGE_UPDATED, _image.getImage()));
         }
 

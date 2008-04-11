@@ -50,11 +50,19 @@ import com.threerings.flex.ScrollBox;
 [Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
 
 /**
+ * Dispatched when the image manipulator is closed.
+ * value- true or false, indicating save or cancel.
+ */
+[Event(name="close", type="com.threerings.util.ValueEvent")]
+
+/**
  * Displays or allows editing of an image.
  */
 public class ImageManipulator extends HBox
 {
     public static const SIZE_KNOWN :String = EditCanvas.SIZE_KNOWN;
+
+    public static const CLOSE :String = Event.CLOSE;
 
     public function ImageManipulator (
         maxW :int = 400, maxH :int = 400, cutWidth :Number = NaN, cutHeight :Number = NaN)
@@ -127,6 +135,15 @@ public class ImageManipulator extends HBox
         createPositionControls(bar);
         createPaintControls(bar);
         createUndoControls(bar);
+
+        var buts :HBox = new HBox();
+        buts.percentWidth = 100;
+        buts.setStyle("backgroundColor", 0x9AA1AA);
+        buts.setStyle("paddingTop", 8);
+        buts.setStyle("paddingBottom", 8);
+        buts.addChild(new CommandButton("Save", doClose, true));
+        buts.addChild(new CommandButton("Cancel", doClose, false));
+        bar.addChild(buts);
 
         _editor.setBrushSize(10);
         _editor.setBrushShape(true); // circular
@@ -381,6 +398,11 @@ public class ImageManipulator extends HBox
             _rotSlider.value = 0;
             _scaleSlider.value = 1;
         }
+    }
+
+    protected function doClose (save :Boolean) :void
+    {
+        dispatchEvent(new ValueEvent(CLOSE, save));
     }
 
     /**
