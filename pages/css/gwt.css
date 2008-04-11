@@ -14,7 +14,7 @@ img, embed, applet, object {
 
 /** Our top-level loading indicator. */
 .loading {
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   text-align: center;
   padding-top: 25px;
   font-size: 18px;
@@ -88,7 +88,7 @@ img, embed, applet, object {
   border: none;
   color: #FFFFFF;
   font-weight: bold;
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   text-align: center;
   white-space: nowrap;
 }
@@ -252,7 +252,7 @@ img, embed, applet, object {
 }
 
 .frameHeader .Button {
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
@@ -327,7 +327,7 @@ img, embed, applet, object {
 }
 
 .pageTitle .Title {
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
   height: 34px;
@@ -451,7 +451,7 @@ img, embed, applet, object {
 
 .tongueBox .Header .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;

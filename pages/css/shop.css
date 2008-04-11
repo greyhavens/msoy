@@ -6,7 +6,7 @@
 
 .marquee {
   background: url(/images/shop/marquee_tile.png) repeat-x top;
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: white;
@@ -39,7 +39,7 @@
 
 .sideBar .NaviPanel {
   background: url(/images/shop/navi_bg.png) no-repeat top;
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
   width: 89px;
