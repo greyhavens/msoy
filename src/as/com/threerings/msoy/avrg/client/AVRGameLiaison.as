@@ -44,6 +44,7 @@ public class AVRGameLiaison extends GameLiaison
         _gctx.getClient().addServiceGroup(MsoyCodes.WORLD_GROUP);
 
     }
+
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);

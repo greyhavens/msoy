@@ -54,6 +54,7 @@ public class StateControlBackend
     {
         // StateControl (sub)
         o["getProperty_v1"] = getProperty_v1;
+        o["getProperties_v1"] = getProperties_v1;
         o["setProperty_v1"] = setProperty_v1;
         o["getRoomProperty_v1"] = getRoomProperty_v1;
         o["setRoomProperty_v1"] = setRoomProperty_v1;
@@ -72,6 +73,17 @@ public class StateControlBackend
         }
         var entry :GameState = GameState(_gameObj.state.get(key));
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
+    }
+
+    protected function getProperties_v1 () :Object
+    {
+        var props :Object = { };
+        for each (var entry :GameState in _gameObj.state.toArray()) {
+            if (entry.value != null) {
+                props[entry.key] = ObjectMarshaller.decode(entry.value);
+            }
+        }
+        return props;
     }
 
     protected function setProperty_v1 (
@@ -104,7 +116,6 @@ public class StateControlBackend
         var props :Object = { };
         var roomObj :RoomObject = view.getRoomObject();
         for each (var entry :RoomPropertyEntry in roomObj.roomProperties.toArray()) {
-            // filter out memories with null as the value, those will not be persisted
             if (entry.value != null) {
                 props[entry.key] = ObjectMarshaller.decode(entry.value);
             }
