@@ -140,6 +140,15 @@ public class ChatOverlay
             return true;
         }
 
+        // if a member/jabber tell tab gets popped open behind the scenes, pretend that we just
+        // saw it so that the messages will get displayed in subtitle mode when we switch to it.
+        var channelType :int = ChatChannel.typeOf(msg.localtype);
+        if ((channelType == ChatChannel.MEMBER_CHANNEL || 
+             channelType == ChatChannel.JABBER_CHANNEL) &&
+            !_localtypeDisplayTimes.containsKey(msg.localtype)) {
+            _localtypeDisplayTimes.put(msg.localtype, getTimer());
+        }
+
         return false;
     }
 
