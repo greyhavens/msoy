@@ -154,6 +154,13 @@ public class GroupRecord extends PersistentRecord
     public static final ColumnExp POLICY_C =
         new ColumnExp(GroupRecord.class, POLICY);
 
+    /** The column identifier for the {@link #forumPerms} field. */
+    public static final String FORUM_PERMS = "forumPerms";
+
+    /** The qualified column identifier for the {@link #forumPerms} field. */
+    public static final ColumnExp FORUM_PERMS_C =
+        new ColumnExp(GroupRecord.class, FORUM_PERMS);
+
     /** The column identifier for the {@link #memberCount} field. */
     public static final String MEMBER_COUNT = "memberCount";
 
@@ -179,7 +186,9 @@ public class GroupRecord extends PersistentRecord
     /** The identifier for the full text search index on Name, Blurb, Charter */
     public static final String FTS_NBC = "NBC";
 
-    public static final int SCHEMA_VERSION = 17;
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 18;
 
     /** The unique id of this group. */
     @Id
@@ -237,6 +246,9 @@ public class GroupRecord extends PersistentRecord
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
     public byte policy;
 
+    /** This group's forum permissions, see {@link Group#FORUM_PERMS}. */
+    public byte forumPerms;
+
     /** The number of people that are currently members of this group. */
     public int memberCount;
 
@@ -263,6 +275,7 @@ public class GroupRecord extends PersistentRecord
         group.creatorId = creatorId;
         group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;
+        group.forumPerms = forumPerms;
         group.memberCount = memberCount;
         return group;
     }
@@ -331,6 +344,9 @@ public class GroupRecord extends PersistentRecord
         }
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);
+        }
+        if (groupDef.forumPerms != forumPerms) {
+            updates.put(FORUM_PERMS, groupDef.forumPerms);
         }
         if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
             updates.put(CHARTER, extrasDef.charter);

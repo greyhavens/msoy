@@ -31,9 +31,24 @@ public class Group
     /** A policy constant for groups that are not visible to non-members. */
     public static final byte POLICY_EXCLUSIVE = 3;
 
-    /** A policy constant for groups that are announcment blogs, only managers can start threads or
-     * reply to them. */
-    public static final byte POLICY_BLOG = 4;
+    /** A mask used for the {@link #forumPerms} constants. */
+    public static final int ALL_MASK = 0x11;
+
+    /** A mask used for the {@link #forumPerms} constants. */
+    public static final int MEMBER_MASK = 0x01;
+
+    /** A mask used for the {@link #forumPerms} constants. */
+    public static final int MANAGER_MASK = 0x10;
+
+    /** The set of valid {@link #forumPerms} permissions. */
+    public static final byte[] FORUM_PERMS = {
+        makePerms(ALL_MASK, ALL_MASK),        // anyone can start threads, anyone can reply
+        makePerms(MEMBER_MASK, ALL_MASK),     // members can start threads, anyone can reply
+        makePerms(MEMBER_MASK, MEMBER_MASK),  // members can start threads, members can reply
+        makePerms(MANAGER_MASK, ALL_MASK),    // managers can start threads, anyone can reply
+        makePerms(MANAGER_MASK, MEMBER_MASK), // managers can start threads, members can reply
+        makePerms(MANAGER_MASK, MANAGER_MASK) // managers can start threads, managers can reply
+    };
 
     /** Indicates read access for a group's forums. */
     public static final int ACCESS_READ = 1;
@@ -74,6 +89,9 @@ public class Group
     /** This group's political policy (e.g. {@link #POLICY_PUBLIC}). */
     public byte policy;
 
+    /** This group's forum permissions (see {@link #FORUM_PERMS}). */
+    public byte forumPerms;
+
     /** A snapshot of the number of members in this group. */
     public int memberCount;
 
@@ -92,7 +110,7 @@ public class Group
      */
     public static boolean canJoin (byte policy)
     {
-        return (policy == POLICY_PUBLIC) || (policy == POLICY_BLOG);
+        return (policy == POLICY_PUBLIC);
     }
 
     /**
@@ -137,33 +155,22 @@ public class Group
             return true;
         }
 
+        int rankMask = (rank == GroupMembership.RANK_MEMBER) ? MEMBER_MASK : ALL_MASK;
         switch (access) {
         case ACCESS_READ:
             // members can always read, non-members can read messages in non-exclusive groups
             return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != POLICY_EXCLUSIVE);
 
         case ACCESS_THREAD:
-            // members can start non-sticky/non-announce threads in certain groups
-            if (rank == GroupMembership.RANK_MEMBER) {
-                return (policy != POLICY_BLOG) && (flags == 0);
-            }
-            return false;
+            // the thread must be non-sticky/non-announce and they must have permissions
+            return (flags == 0) && ((forumPerms >> 2) == rankMask);
 
         case ACCESS_POST:
             // non-managers cannot post to locked threads
             if ((flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
             }
-            // particular policies disallow posts by non-members (or non-managers)
-            switch (policy) {
-            case POLICY_BLOG:
-                return false;
-            case POLICY_INVITE_ONLY:
-            case POLICY_EXCLUSIVE:
-                return (rank == GroupMembership.RANK_MEMBER);
-            }
-            // otherwise we're good to go
-            return true;
+            return (forumPerms & 0x11) == rankMask;
 
         default:
             throw new IllegalArgumentException(
@@ -185,5 +192,11 @@ public class Group
         } else {
             return nameComparison;
         }
+    }
+
+    /** Helper function for {@link #FORUM_PERMS}. */
+    protected static byte makePerms (int threadMask, int postMask)
+    {
+        return (byte)((threadMask << 2) | postMask);
     }
 }

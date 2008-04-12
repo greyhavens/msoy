@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
@@ -22,7 +25,10 @@ import com.samskivert.util.Tuple;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -54,6 +60,8 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages the persistent store of group data.
  */
@@ -84,6 +92,39 @@ public class GroupRepository extends DepotRepository
                 return new GroupTagHistoryRecord();
             }
         };
+
+        // TEMP
+        ctx.registerMigration(GroupRecord.class, new EntityMigration(18) {
+            public boolean runBeforeDefault () {
+                return false;
+            }
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tName = liaison.tableSQL("GroupRecord");
+                String pName = liaison.columnSQL(GroupRecord.POLICY);
+                String fName = liaison.columnSQL(GroupRecord.FORUM_PERMS);
+
+                int[] policies = {
+                    Group.POLICY_PUBLIC, Group.POLICY_INVITE_ONLY, Group.POLICY_EXCLUSIVE };
+                int[] forumPerms = {
+                    Group.FORUM_PERMS[1], Group.FORUM_PERMS[2], Group.FORUM_PERMS[2] };
+
+                Statement stmt = conn.createStatement();
+                try {
+                    int totalRows = 0;
+                    for (int ii = 0; ii < policies.length; ii++) {
+                        int rows = stmt.executeUpdate(
+                            "UPDATE " + tName + " set " + fName + " = " + forumPerms[ii] +
+                            " where " + pName + " = " + policies[ii]);
+                        log.info("Updated " + rows + " groups with policy " + policies[ii] + ".");
+                        totalRows += rows;
+                    }
+                    return totalRows;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+        // END TEMP
     }
 
     /**
