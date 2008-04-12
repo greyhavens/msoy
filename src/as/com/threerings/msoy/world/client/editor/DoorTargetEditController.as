@@ -118,6 +118,7 @@ public class DoorTargetEditController
                 _ctx.getLocationDirector().getPlaceController() as RoomController;
 
             var newdata :FurniData = doorData.clone() as FurniData;
+            // note: the destinationName may have colons in it, so we split with care in  FurniData
             newdata.actionData = _destinationScene + ":" + roundCoord(_destinationLoc.x) + ":" +
                 roundCoord(_destinationLoc.y) + ":" +  roundCoord(_destinationLoc.z) + ":" +
                 _destinationLoc.orient + ":" + _destinationName;

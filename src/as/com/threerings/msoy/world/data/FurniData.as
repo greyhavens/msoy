@@ -108,7 +108,15 @@ public class FurniData
             return [ actionData ];
         }
         if (actionType == ACTION_PORTAL) {
-            return actionData.split(sep, 6);
+            var data :Array = actionData.split(sep);
+            if (data.length > 5) {
+                // if it's a newstyle portal, the last field is the target scene name,
+                // which may have colons in it.
+                data[5] = data.slice(5).join(sep);
+                data.length = 6; // truncate
+            }
+            return data;
+
         } else {
             return [ actionData.substring(0, sepDex),
                      actionData.substring(sepDex + sep.length) ];
