@@ -5,6 +5,7 @@ package client.stuff;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -95,34 +96,47 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         RowPanel buttons = new RowPanel();
 
         // if this item is in use, mention that
-        if (_item.used != Item.UNUSED) {
-            // TODO: tell them where this item is used
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new Label(CStuff.msgs.detailInUse()));
+        boolean used = (_item.used != Item.UNUSED);
+        if (used) {
+            // tell the user that the item is in use, and maybe where
+            String msg;
+            switch (_item.used) {
+            case Item.USED_AS_FURNITURE:
+            case Item.USED_AS_PET:
+            case Item.USED_AS_BACKGROUND:
+                msg = CStuff.msgs.detailInUseInRoom("" + _item.location);
+                break;
 
-        } else {
-            // add a button for deleting this item
-            PushButton delete = MsoyUI.createButton(
-                MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
-            new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
-                public boolean callService () {
-                    CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
-                    return true;
-                }
-                public boolean gotResult (Object result) {
-                    // remove the item from our cached models
-                    int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
-                    DataModel model = _models.getModel(_item.getType(), suiteId);
-                    if (model != null) {
-                        model.removeItem(_item);
-                    }
-                    MsoyUI.info(CStuff.msgs.msgItemDeleted());
-                    History.back(); // back up to the page that contained the item
-                    return false;
-                }
-            };
-            buttons.add(delete);
+            default:
+                msg = CStuff.msgs.detailInUse();
+                break;
+            }
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(new HTML(msg));
         }
+
+        // add a button for deleting this item
+        PushButton delete = MsoyUI.createButton(
+            MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
+        delete.setEnabled(!used);
+        new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
+            public boolean callService () {
+                CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                // remove the item from our cached models
+                int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
+                DataModel model = _models.getModel(_item.getType(), suiteId);
+                if (model != null) {
+                    model.removeItem(_item);
+                }
+                MsoyUI.info(CStuff.msgs.msgItemDeleted());
+                History.back(); // back up to the page that contained the item
+                return false;
+            }
+        };
+        buttons.add(delete);
 
         // add a button for editing this item, if it's an original
         if (_item.sourceId == 0) {

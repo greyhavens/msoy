@@ -131,6 +131,9 @@ img, embed, applet, object {
   background-image: url(/images/ui/orange/long_thin_over.png);
   cursor: pointer;
 }
+.longThinOrangeButton-up-disabled {
+  background-image: url(/images/ui/orange/long_thin_disabled.png);
+}
 
 .shortThickOrangeButton {
   background-image: url(/images/ui/orange/short_thick.png);
