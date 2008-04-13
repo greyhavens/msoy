@@ -348,13 +348,9 @@ public class Frame
 
         if (pageId.equals(Page.ME)) {
             subnavi.addLink(null, "Me", Page.ME, "");
-            if (CShell.roomCount > 1) {
-                subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
-                subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
-            } else {
-                subnavi.addLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
-            }
-            subnavi.addLink(null, "My Profile", Page.PEOPLE, "me");
+            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
+            subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
+            subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + CShell.getMemberId());
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Account", Page.ME, "account");
             if (CShell.isAdmin()) {
