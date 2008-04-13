@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
@@ -158,9 +159,7 @@ public class ItemPanel extends VerticalPanel
         _upload.setText(0, 0, CStuff.dmsgs.getString("itemUploadTitle" + _type), 2, "Header");
 
         // add the various "why to upload" pitches
-        String why = (CStuff.dmsgs.getString("itemUploadPitch" + _type + "a") + "<br>" +
-                      CStuff.dmsgs.getString("itemUploadPitch" + _type + "b") + "<br>" +
-                      CStuff.dmsgs.getString("itemUploadPitch" + _type + "c"));
+        String why = getPitch("a") + "<br>" + getPitch("b") + "<br>" + getPitch("c");
         _upload.setHTML(1, 0, why);
         _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
 
@@ -171,6 +170,15 @@ public class ItemPanel extends VerticalPanel
             }
         }), 1, "Button");
         _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
+    }
+
+    protected String getPitch (String postfix) 
+    {
+        String pitch = CStuff.dmsgs.getString("itemUploadPitch" + _type + postfix);
+        if (-1 != pitch.indexOf("@MEMBER_ID@")) {
+            return pitch.replaceAll("@MEMBER_ID@", "" + CShell.getMemberId());
+        }
+        return pitch;
     }
 
     /**
