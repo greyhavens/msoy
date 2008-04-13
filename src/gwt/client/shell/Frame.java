@@ -345,12 +345,14 @@ public class Frame
     protected static TitleBar createTitleBar (String pageId)
     {
         SubNaviPanel subnavi = new SubNaviPanel();
+        int memberId = CShell.getMemberId();
 
         if (pageId.equals(Page.ME)) {
             subnavi.addLink(null, "Me", Page.ME, "");
-            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD, "h");
+            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD,
+                "m" + memberId);
             subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
-            subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + CShell.getMemberId());
+            subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + memberId);
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Account", Page.ME, "account");
             if (CShell.isAdmin()) {
@@ -358,7 +360,7 @@ public class Frame
             }
 
         } else if (pageId.equals(Page.PEOPLE)) {
-            if (CShell.getMemberId() == 0) {
+            if (memberId == 0) {
                 subnavi.addLink(null, "Search", Page.PEOPLE, "");
             } else {
                 subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
@@ -367,7 +369,7 @@ public class Frame
 
         } else if (pageId.equals(Page.GAMES)) {
             subnavi.addLink(null, "Games", Page.GAMES, "");
-            if (CShell.getMemberId() != 0) {
+            if (memberId != 0) {
                 subnavi.addLink(null, "My Trophies", Page.GAMES,
                                 Args.compose("t", CShell.getMemberId()));
             }
@@ -375,7 +377,7 @@ public class Frame
 
         } else if (pageId.equals(Page.WHIRLEDS)) {
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
-            if (CShell.getMemberId() != 0) {
+            if (memberId != 0) {
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
                 if (CShell.isAdmin()) {
                     subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
@@ -560,10 +562,13 @@ public class Frame
         public void onClick (Widget sender) {
             if (closeContent()) {
                 // peachy, nothing else to do
-            } else if (CShell.getMemberId() != 0) {
-                Application.go(Page.WORLD, "h");
             } else {
-                History.newItem("");
+                int memberId = CShell.getMemberId();
+                if (memberId != 0) {
+                    Application.go(Page.WORLD, "m" + memberId);
+                } else {
+                    History.newItem("");
+                }
             }
         }
 

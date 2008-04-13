@@ -89,7 +89,8 @@ public class WhatsNextPanel extends SmartTable
     {
         RoundBox box = new RoundBox(RoundBox.BLUE);
         SmartTable contents = new SmartTable(0, 0);
-        ClickListener onClick = Application.createLinkListener(Page.WORLD, "h");
+        ClickListener onClick = Application.createLinkListener(Page.WORLD,
+            "m" + CMe.getMemberId());
         contents.setWidget(0, 0, _images.home_shot().createImage(), 1, "Screen");
         contents.getFlexCellFormatter().setRowSpan(0, 0, 2);
         contents.setWidget(0, 1, MsoyUI.createButton(
