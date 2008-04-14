@@ -37,7 +37,7 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
-import com.threerings.msoy.game.client.MsoyGamePanel;
+import com.threerings.msoy.world.client.AbstractRoomView;
 
 public class TopPanel extends Canvas
     implements LocationObserver
@@ -217,11 +217,7 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         if (_comicOverlay != null) {
-            if (view is MsoyGamePanel) {
-                _comicOverlay.displayChat(false); 
-            } else {
-                _comicOverlay.displayChat(true);
-            }
+            _comicOverlay.displayChat(view is AbstractRoomView);
         }
     }
 

@@ -66,6 +66,15 @@ public class ComicOverlay extends ChatOverlay
     override public function displayChat (display :Boolean) :void
     {
         super.displayChat(display);
+
+        // this call signals a move to a new room - we want to clear out our glyphs
+        for each (var cloud :BubbleCloud in _bubbles.values()) {
+            for each (var bubble :BubbleGlyph in cloud.bubbles) {
+                cloud.removeBubble(bubble);
+            }
+        }
+        _bubbles = new HashMap();
+
         var overlays :Array = [ _scrollOverlay, _staticOverlay ];
         var layers :Array = [ PlaceBox.LAYER_CHAT_SCROLL, PlaceBox.LAYER_CHAT_STATIC ];
         for (var ii :int = 0; ii < overlays.length; ii++) {
@@ -83,11 +92,10 @@ public class ComicOverlay extends ChatOverlay
         super.clear();
         for each (var cloud :BubbleCloud in _bubbles.values()) {
             for each (var bubble :BubbleGlyph in cloud.bubbles) {
-                if (bubble.getType() != NOTIFICATION) {
-                    cloud.removeBubble(bubble);
-                }
+                cloud.removeBubble(bubble);
             }
         }
+        _bubbles = new HashMap();
     }
 
     // from ChatDisplay

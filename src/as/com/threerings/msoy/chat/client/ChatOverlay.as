@@ -112,7 +112,6 @@ public class ChatOverlay
 
         _target = target;
         layout();
-        displayChat(true);
 
         _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME, localtypeExpired);
 
@@ -167,8 +166,8 @@ public class ChatOverlay
 
     public function displayChat (display :Boolean) :void
     {
-        // if in sliding mode, this is a noop
         if (Prefs.getSlidingChatHistory()) {
+            setHistorySliding(display);
             return;
         }
 
