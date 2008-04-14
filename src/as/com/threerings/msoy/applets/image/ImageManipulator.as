@@ -166,7 +166,7 @@ public class ImageManipulator extends HBox
         box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
         bar.addChild(box);
 
-        _scaleSlider = addSlider(bar, "Scale Image", .01, 10, 1, _editor.setScale);
+        _scaleSlider = addSlider(bar, "Scale Image", .25, 4, 1, _editor.setScale);
         _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
 

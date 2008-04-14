@@ -208,13 +208,9 @@ public class EditCanvas extends DisplayCanvas
      */
     public function updateWorkingSize (wid :Number, hei :Number) :void
     {
-        _workingArea.x += Math.floor((_workingArea.width - wid)/2);
         _workingArea.width = wid;
-
-        _workingArea.y += Math.floor((_workingArea.height - hei)/2);
         _workingArea.height = hei;
-
-        updateEditCanvasSize(false);
+        setWorkingArea(_workingArea);
     }
 
     public function doCrop () :void
@@ -325,51 +321,29 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.scaleY = scale;
 
         updateBrush();
-
-        // TODO: combine with below...
-        _holder.width = _canvasWidth * _scale;
-        _holder.height = _canvasHeight * _scale;
-        // complexity is more complex than we are
     }
 
     override protected function updateCanvasSize () :void
     {
         // We DON'T call super
 
-        updateEditCanvasSize(true);
+        const ww :Number = _imgWidth;
+        const hh :Number = _imgHeight;
 
-        // recenter the image
+        // recenter the image within the paint layer
         if (_image != null) {
-            _image.x = _imgWidth / -2;
-            _image.y = _imgHeight / -2;
-        }
-
-        // jiggle the canvas width. See notes in super.updateCanvasSize()
-        this.width = this.maxWidth;
-        this.height = this.maxHeight;
-    }
-
-    protected function updateEditCanvasSize (basedOnImage :Boolean) :void
-    {
-        var ww :Number = _imgWidth;
-        var hh :Number = _imgHeight;
-        if (!basedOnImage) {
-            ww = Math.max(ww, _workingArea.width);
-            hh = Math.max(hh, _workingArea.height);
+            _image.x = ww / -2;
+            _image.y = hh / -2;
         }
 
         _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ww) / 2);
         _vGutter = Math.max(MIN_GUTTER, (this.maxHeight - hh) / 2);
-
         _canvasWidth = ww + (2 * _hGutter);
         _canvasHeight = hh + (2 * _vGutter);
-
         _holder.width = _canvasWidth;
         _holder.height = _canvasHeight;
 
-        setWorkingArea(new Rectangle(_hGutter, _vGutter,
-            basedOnImage ? ww : _workingArea.width,
-            basedOnImage ? hh : _workingArea.height));
+        setWorkingArea(new Rectangle(_hGutter, _vGutter, ww, hh));
 
         // put the paint layer at the center???
         _paintLayer.x = _canvasWidth/2;
@@ -377,6 +351,10 @@ public class EditCanvas extends DisplayCanvas
 
         // color some layers so we can click on them
         paintLayerPositioned();
+
+        // jiggle the canvas width. See notes in super.updateCanvasSize()
+        this.width = this.maxWidth;
+        this.height = this.maxHeight;
     }
 
     protected function paintLayerPositioned () :void
