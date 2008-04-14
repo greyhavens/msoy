@@ -296,8 +296,8 @@ public class EditCanvas extends DisplayCanvas
         // erasing something. Placing drawn transparent pixels behind it doesn't fix things,
         // but putting transparent image pixels behind it does work.
         var eraseBlocker :Bitmap = new Bitmap(new BitmapData(1, 1, true, 0));
-        eraseBlocker.scaleX = _holder.width;
-        eraseBlocker.scaleY = _holder.height;
+        eraseBlocker.scaleX = _canvasWidth;
+        eraseBlocker.scaleY = _canvasHeight;
         eraseBlocker.rotation = -_rotLayer.rotation;
         var p :Point = _paintLayer.globalToLocal(_scaleLayer.localToGlobal(new Point()));
         eraseBlocker.x = p.x;
@@ -336,6 +336,11 @@ public class EditCanvas extends DisplayCanvas
         _scaleLayer.scaleX = scale;
         _scaleLayer.scaleY = scale;
         updateBrush();
+
+        // TODO: combine with below...
+        _holder.width = _canvasWidth * _scale;
+        _holder.height = _canvasHeight * _scale;
+        // complexity is more complex than we are
     }
 
     override protected function updateCanvasSize () :void
@@ -367,16 +372,16 @@ public class EditCanvas extends DisplayCanvas
         _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ww) / 2);
         _vGutter = Math.max(MIN_GUTTER, (this.maxHeight - hh) / 2);
 
-        const canvWidth :int = ww + (2 * _hGutter);
-        const canvHeight :int = hh + (2 * _vGutter);
+        _canvasWidth = ww + (2 * _hGutter);
+        _canvasHeight = hh + (2 * _vGutter);
 
-        _holder.width = canvWidth;
-        _holder.height = canvHeight;
+        _holder.width = _canvasWidth;
+        _holder.height = _canvasHeight;
 
-        _rotLayer.x = canvWidth/2;
-        _rotLayer.y = canvHeight/2;
-        _unRotLayer.x = canvWidth/-2;
-        _unRotLayer.y = canvHeight/-2;
+        _rotLayer.x = _canvasWidth/2;
+        _rotLayer.y = _canvasHeight/2;
+        _unRotLayer.x = _canvasWidth/-2;
+        _unRotLayer.y = _canvasHeight/-2;
 
         setWorkingArea(new Rectangle(_hGutter, _vGutter,
             basedOnImage ? ww : _workingArea.width,
@@ -385,8 +390,8 @@ public class EditCanvas extends DisplayCanvas
         // TODO: we actually want to maybe position the paint layer?
 
         // put the paint layer at the center???
-        _paintLayer.x = canvWidth/2;
-        _paintLayer.y = canvHeight/2;
+        _paintLayer.x = _canvasWidth/2;
+        _paintLayer.y = _canvasHeight/2;
 
         // color some layers so we can click on them
         paintLayerPositioned();
@@ -398,7 +403,7 @@ public class EditCanvas extends DisplayCanvas
         g.clear();
         g.beginFill(0xFFFFFF, 0);
         //g.beginFill(0xFF0000, .1);
-        g.drawRect(-_paintLayer.x, -_paintLayer.y, _holder.width, _holder.height);
+        g.drawRect(-_paintLayer.x, -_paintLayer.y, _canvasWidth, _canvasHeight);
         g.endFill();
     }
 
@@ -414,12 +419,12 @@ public class EditCanvas extends DisplayCanvas
 
         g.lineStyle(0, 0, 0);
         g.beginFill(0xF9F9F9, .5);
-        g.drawRect(0, 0, _holder.width, r.y);
+        g.drawRect(0, 0, _canvasWidth, r.y);
         if (r.height > 0) {
             g.drawRect(0, r.y, r.x, r.height);
-            g.drawRect(r.x + r.width, r.y, _holder.width - (r.x + r.width), r.height);
+            g.drawRect(r.x + r.width, r.y, _canvasWidth - (r.x + r.width), r.height);
         }
-        g.drawRect(0, r.y + r.height, _holder.width, _holder.height - (r.y + r.height));
+        g.drawRect(0, r.y + r.height, _canvasWidth, _canvasHeight - (r.y + r.height));
         g.endFill();
 
         dispatchWorkingAreaSelection();
@@ -876,6 +881,12 @@ public class EditCanvas extends DisplayCanvas
 
     /** The size of the vertical gutter. */
     protected var _vGutter :int;
+
+    /** The overall canvas width, sans scaling. */
+    protected var _canvasWidth :int;
+
+    /** The overall canvas height, sans scaling. */
+    protected var _canvasHeight :int;
 
     /** The minimum number of pixels around the image that we provide as "working area". */
     protected static const MIN_GUTTER :int = 150;
