@@ -112,6 +112,7 @@ public class ChatOverlay
 
         _target = target;
         layout();
+        displayChat(true);
 
         _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME, localtypeExpired);
 
@@ -166,8 +167,8 @@ public class ChatOverlay
 
     public function displayChat (display :Boolean) :void
     {
-        if (Prefs.getSlidingChatHistory()) {
-            setHistorySliding(display);
+        if (_ctx.getTopPanel() == null) {
+            // we're not really ready yet...
             return;
         }
 
@@ -178,7 +179,12 @@ public class ChatOverlay
             if (_historyBar != null && !_target.contains(_historyBar)) {
                 _target.addChild(_historyBar);
             }
+
+            setHistorySliding(Prefs.getSlidingChatHistory());
+
         } else {
+            setHistorySliding(false);
+
             if (_target.containsOverlay(_historyOverlay)) {
                 _target.removeOverlay(_historyOverlay);
             } 
@@ -459,6 +465,11 @@ public class ChatOverlay
     protected function setHistoryEnabled (historyEnabled :Boolean, 
         forceClear :Boolean = false) :void
     {
+        if (!(_target is PlaceBox)) {
+            // always show history on a non-PlaceBox
+            historyEnabled = true;
+        }
+
         if (!forceClear && historyEnabled == (_historyBar != null)) {
             return;
         }
@@ -480,6 +491,12 @@ public class ChatOverlay
 
     protected function setHistorySliding (sliding :Boolean) :void
     {
+        if (!(_target is PlaceBox)) {
+            // never slide on a non-PlaceBox
+            sliding = false;
+            return;
+        }
+
         if (sliding == (_chatContainer != null)) {
             return; // no change
         }
@@ -497,11 +514,11 @@ public class ChatOverlay
             _ctx.getTopPanel().slideOutChat();
             _chatContainer = null;
             _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
-            var showingHistory :Boolean = Prefs.getShowingChatHistory();
+            var showingHistory :Boolean = Prefs.getShowingChatHistory() || (!(_target is PlaceBox));
             if (showingHistory) {
                 _target.addChild(_historyBar);
             }
-            setHistoryEnabled(Prefs.getShowingChatHistory(), true);
+            setHistoryEnabled(showingHistory, true);
         }
     }
 
@@ -528,7 +545,8 @@ public class ChatOverlay
 
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
-        if (Prefs.getShowingChatHistory() || Prefs.getSlidingChatHistory()) {
+        if (Prefs.getShowingChatHistory() || Prefs.getSlidingChatHistory() || 
+            !(_target is PlaceBox)) {
             if (_historyBar == null) {
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
