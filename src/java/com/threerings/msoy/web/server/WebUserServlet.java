@@ -525,13 +525,6 @@ public class WebUserServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }
 
-        // load up their room count
-        try {
-            data.roomCount = MsoyServer.sceneRepo.getRoomCount(mrec.memberId);
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load room count [id=" + mrec.memberId + "].", pe);
-        }
-
         return data;
     }
 

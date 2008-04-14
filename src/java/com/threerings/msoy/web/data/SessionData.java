@@ -25,7 +25,4 @@ public class SessionData implements IsSerializable
 
     /** This member's new mail message count at the time of session start. */
     public int newMailCount;
-
-    /** The number of rooms owned by this player. */
-    public int roomCount;
 }

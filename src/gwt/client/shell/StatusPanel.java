@@ -101,7 +101,6 @@ public class StatusPanel extends SmartTable
 
         // initialize some global bits
         CShell.level = data.level;
-        CShell.roomCount = data.roomCount;
 
         // configure our 'new mail' indicator
         setWidget(0, idx++, _mail);
