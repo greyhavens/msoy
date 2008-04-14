@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
@@ -181,7 +183,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public ItemDetail loadItemDetail (WebIdent ident, final ItemIdent iident)
+    public IsSerializable loadItemDetail (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -195,8 +197,13 @@ public class ItemServlet extends MsoyServiceServlet
 
             // if you're not the owner or support+, you cannot view original items
             if (record.ownerId != 0 && record.itemId > 0 &&
-                (mrec == null || (!mrec.isSupport() && mrec.memberId != record.ownerId))) {
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                    (mrec == null || (!mrec.isSupport() && mrec.memberId != record.ownerId))) {
+                // if it's listed, send them to the catalog
+                if (record.catalogId != 0) {
+                    return new ItemIdent(iident.type, record.catalogId);
+                } else {
+                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED); // fall back to error
+                }
             }
 
             ItemDetail detail = new ItemDetail();

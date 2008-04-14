@@ -49,7 +49,7 @@ public class index extends Page
 
         // if we're displaying an item's detail, do that
         if ("d".equals(arg0)) {
-            byte type = (byte)args.get(1, Item.AVATAR);
+            final byte type = (byte)args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
@@ -66,8 +66,17 @@ public class index extends Page
             } else {
                 CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, new MsoyCallback() {
                     public void onSuccess (Object result) {
-                        _detail = (ItemDetail)result;
-                        setContent(title, new ItemDetailPanel(_models, _detail));
+                        if (result instanceof ItemDetail) {
+                            _detail = (ItemDetail)result;
+                            setContent(title, new ItemDetailPanel(_models, _detail));
+
+                        } else {
+                            // We didn't have access to that specific item, but have been given
+                            // the catalog id for the prototype.
+                            ItemIdent id = (ItemIdent)result;
+                            Application.go(Page.SHOP,
+                                Args.compose("l", "" + id.type, "" + id.itemId));
+                        }
                     }
                 });
             }

@@ -6,6 +6,7 @@ package com.threerings.msoy.web.client;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -47,8 +48,11 @@ public interface ItemService extends RemoteService
 
     /**
      * Loads the detailed details of a particular item.
+     *
+     * @return an ItemDetail, or if the specified user doesn't have access to the item,
+     * an Integer representing the catalogId for that item.
      */
-    public ItemDetail loadItemDetail (WebIdent ident, ItemIdent item)
+    public IsSerializable loadItemDetail (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**
