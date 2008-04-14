@@ -365,7 +365,7 @@ public class ChatOverlay
                 ScrollBar.THICKNESS : 0);
             glyph.y = ypos;
             ypos -= 1;
-            glyph.setTransparent(_chatContainer == null);
+            glyph.setTransparent(_chatContainer == null && _target is PlaceBox);
         }
 
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
