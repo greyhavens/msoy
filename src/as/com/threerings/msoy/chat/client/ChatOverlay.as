@@ -127,6 +127,7 @@ public class ChatOverlay
         clearGlyphs(_subtitles);
         clearGlyphs(_showingHistory);
         _lastExpire = 0;
+        _filteredMessages = [];
     }
 
     // from ChatDisplay
@@ -453,6 +454,8 @@ public class ChatOverlay
         clearGlyphs(_showingHistory);
         if (historyEnabled) {
             createFilteredMessages();
+            resetHistoryOffset();
+            updateHistoryBar();
             showCurrentHistory();
         } else {
             _lastExpire = 0;
