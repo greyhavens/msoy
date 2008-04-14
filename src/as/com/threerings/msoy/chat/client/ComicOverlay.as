@@ -68,12 +68,11 @@ public class ComicOverlay extends ChatOverlay
         super.displayChat(display);
 
         // this call signals a move to a new room - we want to clear out our glyphs
-        for each (var cloud :BubbleCloud in _bubbles.values()) {
-            for each (var bubble :BubbleGlyph in cloud.bubbles) {
-                cloud.removeBubble(bubble);
-            }
+        for each (var bubble :BubbleGlyph in _allBubbles) {
+            removeGlyph(bubble);
         }
         _bubbles = new HashMap();
+        _allBubbles = [];
 
         var overlays :Array = [ _scrollOverlay, _staticOverlay ];
         var layers :Array = [ PlaceBox.LAYER_CHAT_SCROLL, PlaceBox.LAYER_CHAT_STATIC ];
@@ -90,12 +89,11 @@ public class ComicOverlay extends ChatOverlay
     override public function clear () :void
     {
         super.clear();
-        for each (var cloud :BubbleCloud in _bubbles.values()) {
-            for each (var bubble :BubbleGlyph in cloud.bubbles) {
-                cloud.removeBubble(bubble);
-            }
+        for each (var bubble :BubbleGlyph in _allBubbles) {
+            removeGlyph(bubble);
         }
         _bubbles = new HashMap();
+        _allBubbles = [];
     }
 
     // from ChatDisplay
@@ -164,8 +162,10 @@ public class ComicOverlay extends ChatOverlay
         if (glyph is BubbleGlyph) {
             var bubble :BubbleGlyph = glyph as BubbleGlyph;
             var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
-            cloud.removeBubble(bubble);
-            ArrayUtil.removeFirst(_allBubbles, bubble);
+            if (cloud != null) {
+                cloud.removeBubble(bubble);
+                ArrayUtil.removeFirst(_allBubbles, bubble);
+            }
         }
         super.glyphExpired(glyph);
     }
