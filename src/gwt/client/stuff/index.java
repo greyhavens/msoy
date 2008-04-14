@@ -49,7 +49,7 @@ public class index extends Page
 
         // if we're displaying an item's detail, do that
         if ("d".equals(arg0)) {
-            final byte type = (byte)args.get(1, Item.AVATAR);
+            byte type = (byte)args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
