@@ -439,8 +439,7 @@ public class MsoyController extends Controller
             _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex++;
             break;
         case Keyboard.F9:
-            // temporarily disabled
-            // handleToggleChatHide();
+            handleToggleChatHide();
             break;
         }
 

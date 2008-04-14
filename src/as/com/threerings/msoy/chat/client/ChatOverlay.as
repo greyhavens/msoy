@@ -133,7 +133,16 @@ public class ChatOverlay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
         if (shouldDisplayMessage(msg)) {
-            addSubtitle(createSubtitle(msg, getType(msg, false), true));
+            if (isHistoryMode()) { 
+                _filteredMessages.push(msg);
+                var val :int = _historyBar.scrollPosition;
+                updateHistoryBar();
+                if (val != _historyBar.scrollPosition || !_histOffsetFinal) {
+                    showCurrentHistory();
+                }
+            } else {
+                addSubtitle(createSubtitle(msg, getType(msg, false), true));
+            }
             return true;
         }
 
@@ -214,6 +223,8 @@ public class ChatOverlay
 
         if (isHistoryMode()) {
             clearGlyphs(_showingHistory);
+            createFilteredMessages();
+            updateHistoryBar();
             showCurrentHistory();
         } else {
             _lastExpire = 0;
@@ -299,9 +310,56 @@ public class ChatOverlay
         return PAD;
     }
 
+    protected function createFilteredMessages () :void
+    {
+        var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
+        _filteredMessages = [];
+        for (var ii :int = 0; ii < history.size(); ii++) {
+            var msg :ChatMessage = history.get(ii);
+            if (shouldDisplayMessage(msg)) {
+                _filteredMessages.push(msg);
+            }
+        }
+    }
+
     protected function showCurrentHistory () :void
     {
-        // TODO
+        if (_filteredMessages.length == 0 || _targetBounds == null) {
+            return;
+        }
+
+        var first :int = _historyBar.scrollPosition;
+        var ypos :int = _targetBounds.bottom - PAD;
+        var count :int = 0;
+        for (var ii :int = first; ii >= 0; ii--, count++) {
+            var glyph :SubtitleGlyph = getHistorySubtitle(ii);
+            ypos -= int(glyph.height);
+            if ((count != 0) && ypos <= getMinHistY()) {
+                break;
+            }
+
+            glyph.x = _targetBounds.x + PAD +
+                (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null ?
+                ScrollBar.THICKNESS : 0);
+            glyph.y = ypos;
+            ypos -= 1;
+            glyph.setTransparent(_chatContainer == null);
+        }
+
+        for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
+            glyph = _showingHistory[ii] as SubtitleGlyph;
+            var managed :Boolean = _historyOverlay.contains(glyph);
+            if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
+                if (!managed) {
+                    _historyOverlay.addChild(glyph);
+                }
+            } else {
+                if (managed) {
+                    removeGlyph(glyph);
+                }
+                _showingHistory.splice(ii, 1);
+            }
+        }
     }
 
     protected function showCurrentSubtitles () :void
@@ -384,7 +442,21 @@ public class ChatOverlay
 
     protected function setHistoryEnabled (historyEnabled :Boolean) :void
     {
-        // TODO
+        if (historyEnabled == (_historyBar != null)) {
+            return; // no change
+        }
+
+        layout();
+        clearGlyphs(_subtitles);
+        clearGlyphs(_showingHistory);
+        if (historyEnabled) {
+            createFilteredMessages();
+            showCurrentHistory();
+        } else {
+            _lastExpire = 0;
+            _localtypeDisplayTimes.put(_localtype, getTimer());
+            showCurrentSubtitles();
+        }
     }
 
     protected function setHistorySliding (sliding :Boolean) :void
@@ -412,6 +484,26 @@ public class ChatOverlay
         if (_targetBounds == null) {
             _targetBounds = getDefaultTargetBounds();
         } 
+
+        _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
+
+        if (Prefs.getShowingChatHistory()) {
+            if (_historyBar == null) {
+                _historyBar = new VScrollBar();
+                _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
+                _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
+                _historyBar.includeInLayout = false;
+                _target.addChild(_historyBar);
+                configureHistoryBarSize();
+                resetHistoryOffset();
+                updateHistoryBar();
+            }
+        } else {
+            if (_historyBar != null) {
+                _target.removeChild(_historyBar);
+                _historyBar = null;
+            }
+        }
     }
 
     protected function shouldDisplayMessage (msg :ChatMessage) :Boolean
@@ -496,8 +588,7 @@ public class ChatOverlay
         }
 
         // it looks like we've got to create a new one
-        var msg :ChatMessage = 
-            _ctx.getMsoyChatDirector().getHistoryList().get(index) as ChatMessage;
+        var msg :ChatMessage = _filteredMessages[index] as ChatMessage;
         glyph = createSubtitle(msg, getType(msg, true), false);
         glyph.histIndex = index;
         _showingHistory.push(glyph);
@@ -917,11 +1008,96 @@ public class ChatOverlay
         glyphs.length = 0; // array truncation
     }
 
+    protected function handleHistoryScroll (event :ScrollEvent) :void
+    {
+        if (!_settingBar) {
+            showCurrentHistory();
+        }
+    }
+
+    protected function configureHistoryBarSize (...ignored) :void
+    {
+        if (_targetBounds == null || _historyBar == null) {
+            return;
+        }
+
+        _historyBar.height = _targetBounds.height;
+        if (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null) {
+            _historyBar.move(_targetBounds.x + (ScrollBar.THICKNESS / 2), getMinHistY());
+        } else {
+            _historyBar.move(
+                _targetBounds.x + _targetBounds.width - (ScrollBar.THICKNESS / 2) + 1,
+                getMinHistY());
+        }
+    }
+
+    protected function resetHistoryOffset () :void
+    {
+        _histOffsetFinal = false;
+        _histOffset = 0;
+    }
+
+    protected function updateHistoryBar () :void
+    {
+        if (_historyBar == null) {
+            return;
+        }
+
+        if (!_histOffsetFinal && (_filteredMessages.length > _histOffset)) {
+            figureHistoryOffset();
+        }
+
+        var oldVal :int = Math.max(_filteredMessages.length - 1, _histOffset);
+        var newMaxVal :int = Math.max(_filteredMessages.length - 1, 0);
+        var newVal :int = (oldVal >= newMaxVal - 1) ? newMaxVal : oldVal;
+
+        // _settingBar protects us from reacting to our own change
+        _settingBar = true;
+        try {
+            _historyBar.setScrollProperties(_historyExtent, _histOffset, newMaxVal);
+            _historyBar.scrollPosition = newVal;
+        } finally {
+            _settingBar = false;
+        }
+    }
+
     protected function getMinHistY () :int
     {
         return _targetBounds.y +
             ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ? 
               _occupantList.y + _occupantList.height : 0);
+    }
+
+    /**
+     * Figure out how many of hte first history elements fit in our bounds such that we can set the
+     * bounds on the scrollbar correctly such that the scrolling to the smallest value just barely
+     * puts the first element onscreen.
+     */
+    protected function figureHistoryOffset () :void
+    {
+        if (_targetBounds == null) {
+            return;
+        }
+
+        var hsize :int = _filteredMessages.length;
+        var ypos :int = _targetBounds.bottom - PAD;
+        for (var ii :int = 0; ii < hsize; ii++) {
+            var glyph :ChatGlyph = getHistorySubtitle(ii);
+            ypos -= int(glyph.height);
+
+            if (ypos <= getMinHistY()) {
+                _histOffset = Math.max(0, ii - 1);
+                _histOffsetFinal = true;
+                return;
+            }
+
+            ypos -= 1; // spacing
+        }
+
+        // basically, this means there isn't yet enough history to fill the first 'page' of hte
+        // history scrollback, so we set hte offset to the max value but do not set histOffsetFinal
+        // to be true os that this will be recalculated
+        _histOffset = hsize - 1;
     }
 
     private static const log :Log = Log.getLog(ChatOverlay);
@@ -1029,6 +1205,7 @@ public class ChatOverlay
     protected var _localtype :String;
     protected var _localtypeDisplayTimes :HashMap = new HashMap();
     protected var _closedTabs :ExpiringSet;
+    protected var _filteredMessages :Array = [];
 
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;
