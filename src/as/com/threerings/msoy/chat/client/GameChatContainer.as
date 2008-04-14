@@ -73,6 +73,9 @@ public class GameChatContainer extends LayeredContainer
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
         controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
+        if (_overlay != null) {
+            _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
+        }
     }
 
     public function sendChat (message :String) :void
