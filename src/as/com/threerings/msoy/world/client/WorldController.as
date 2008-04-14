@@ -208,15 +208,15 @@ public class WorldController extends MsoyController
                 var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT_HIDE };
                 menuData.push(toggleHide);
             }
-//            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ?
-//                Msgs.GENERAL.get("m.overlay_chat") : Msgs.GENERAL.get("m.slide_chat");
-//            var toggleSlide :Object = { label: toggleSlideLabel, command: TOGGLE_CHAT_SLIDE };
-//            menuData.push(toggleSlide);
+            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ?
+                Msgs.GENERAL.get("m.overlay_chat") : Msgs.GENERAL.get("m.slide_chat");
+            var toggleSlide :Object = { label: toggleSlideLabel, command: TOGGLE_CHAT_SLIDE };
+            menuData.push(toggleSlide);
 //            var toggleOccListLabel :String = Prefs.getShowingOccupantList() ?
 //                Msgs.GENERAL.get("m.hide_occ_list") : Msgs.GENERAL.get("m.show_occ_list");
 //            var toggleOccList :Object = { label: toggleOccListLabel, command: TOGGLE_OCC_LIST };
 //            menuData.push(toggleOccList);
-//            menuData.push({ type: "separator" });
+            menuData.push({ type: "separator" });
         }
 
         var me :MemberObject = _wctx.getMemberObject();

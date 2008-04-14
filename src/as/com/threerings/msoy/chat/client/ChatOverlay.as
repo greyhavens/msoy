@@ -441,10 +441,11 @@ public class ChatOverlay
         }
     }
 
-    protected function setHistoryEnabled (historyEnabled :Boolean) :void
+    protected function setHistoryEnabled (historyEnabled :Boolean, 
+        forceClear :Boolean = false) :void
     {
-        if (historyEnabled == (_historyBar != null)) {
-            return; // no change
+        if (!forceClear && historyEnabled == (_historyBar != null)) {
+            return;
         }
 
         layout();
@@ -462,7 +463,29 @@ public class ChatOverlay
 
     protected function setHistorySliding (sliding :Boolean) :void
     {
-        // TODO
+        if (sliding == (_chatContainer != null)) {
+            return; // no change
+        }
+
+        // ensure the history bar has been set
+        layout ();
+
+        if (sliding) {
+            _target.removeOverlay(_historyOverlay);
+            _target.removeChild(_historyBar);
+            _ctx.getTopPanel().slideInChat(
+                _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
+            setHistoryEnabled(true, true);
+        } else {
+            _ctx.getTopPanel().slideOutChat();
+            _chatContainer = null;
+            _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+            var showingHistory :Boolean = Prefs.getShowingChatHistory();
+            if (showingHistory) {
+                _target.addChild(_historyBar);
+            }
+            setHistoryEnabled(Prefs.getShowingChatHistory(), true);
+        }
     }
 
     protected function setOccupantListShowing (showing :Boolean) :void
@@ -488,7 +511,7 @@ public class ChatOverlay
 
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
-        if (Prefs.getShowingChatHistory()) {
+        if (Prefs.getShowingChatHistory() || Prefs.getSlidingChatHistory()) {
             if (_historyBar == null) {
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
@@ -500,10 +523,10 @@ public class ChatOverlay
                 updateHistoryBar();
             }
         } else {
-            if (_historyBar != null) {
+            if (_historyBar != null && _target.contains(_historyBar)) {
                 _target.removeChild(_historyBar);
-                _historyBar = null;
             }
+            _historyBar = null;
         }
     }
 
