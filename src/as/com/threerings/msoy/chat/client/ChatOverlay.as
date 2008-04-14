@@ -167,10 +167,25 @@ public class ChatOverlay
 
     public function displayChat (display :Boolean) :void
     {
-        if (display && !_target.containsOverlay(_historyOverlay)) {
-            _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
-        } else if (!display && _target.containsOverlay(_historyOverlay)) {
-            _target.removeOverlay(_historyOverlay);
+        // if in sliding mode, this is a noop
+        if (Prefs.getSlidingChatHistory()) {
+            return;
+        }
+
+        if (display) {
+            if (!_target.containsOverlay(_historyOverlay)) {
+                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+            }
+            if (_historyBar != null && !_target.contains(_historyBar)) {
+                _target.addChild(_historyBar);
+            }
+        } else {
+            if (_target.containsOverlay(_historyOverlay)) {
+                _target.removeOverlay(_historyOverlay);
+            } 
+            if (_historyBar != null && _target.contains(_historyBar)) {
+                _target.removeChild(_historyBar);
+            }
         }
     }
 
