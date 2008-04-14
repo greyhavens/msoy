@@ -170,8 +170,9 @@ public class ImageManipulator extends HBox
         _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
 
-        // TODO: Rick wants this removed. This is here for debug only
-        _zoomSlider = addSlider(bar, "Zoom (temp)", 1, 10, 1, _editor.setZoom);
+        // TODO: this will change to a different UI
+        _zoomSlider = addSlider(bar, "Zoom", 1, 8, 1, _editor.setZoom,
+            [ 1, 2, 3, 4, 5, 6, 7, 8 ], 1);
 
         box = new HBox();
         var crop :CommandButton = new CommandButton(null, _editor.doCrop);
@@ -272,7 +273,7 @@ public class ImageManipulator extends HBox
 
     protected function addSlider (
         container :Container, name :String, min :Number, max :Number, value :Number,
-        changeHandler :Function, tickValues :Array = null) :HSlider
+        changeHandler :Function, tickValues :Array = null, snapInterval :Number = 0) :HSlider
     {
         if (tickValues == null) {
             tickValues = [ value ];
@@ -299,6 +300,7 @@ public class ImageManipulator extends HBox
         slider.maximum = max;
         slider.value = value;
         slider.tickValues = tickValues;
+        slider.snapInterval = snapInterval;
 
         var changeListener :Function = function (event :Event) :void {
             changeHandler(slider.value);
@@ -310,29 +312,30 @@ public class ImageManipulator extends HBox
         box.addChild(lbl);
         box.addChild(slider);
 
-        var but :CommandButton = new CommandButton("Snap", function () :void {
-            // snap it to the closest tickValue
-            var closeValue :Number = value;
-            var closeness :Number = Number.MAX_VALUE;
-
-            const curValue :Number = slider.value;
-            for each (var tickVal :Number in tickValues) {
-                var diff :Number = Math.abs(tickVal - curValue);
-                if (diff < closeness) {
-                    closeness = diff;
-                    closeValue = tickVal;
-                }
-            }
-
-            slider.value = closeValue;
-        });
-        but.scaleY = .8;
-        but.scaleX = .8;
-
         hbox.addChild(box);
-        hbox.addChild(but);
-
         container.addChild(hbox);
+
+        if (snapInterval == 0) {
+            var but :CommandButton = new CommandButton("Snap", function () :void {
+                // snap it to the closest tickValue
+                var closeValue :Number = value;
+                var closeness :Number = Number.MAX_VALUE;
+
+                const curValue :Number = slider.value;
+                for each (var tickVal :Number in tickValues) {
+                    var diff :Number = Math.abs(tickVal - curValue);
+                    if (diff < closeness) {
+                        closeness = diff;
+                        closeValue = tickVal;
+                    }
+                }
+
+                slider.value = closeValue;
+            });
+            but.scaleY = .8;
+            but.scaleX = .8;
+            hbox.addChild(but);
+        }
 
         return slider;
     }

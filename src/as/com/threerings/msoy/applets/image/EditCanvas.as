@@ -39,6 +39,7 @@ import com.adobe.images.PNGEncoder;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.GraphicsUtil;
+import com.threerings.flash.MathUtil;
 
 /** 
  * Dispatched when a color is selected.
@@ -60,10 +61,14 @@ import com.threerings.flash.GraphicsUtil;
  * Allows primitive editing of an image. Note that this is merely the model/view, the
  * controller is ImageManipulator.
  */
-// TODO/Notes:
+// TODO
 // - If you paint a fat stroke right next to the scrollbar, you can actually paint onto
 //   a portion of the image that's offscreen. Fix so that _curPaint has a mask of the currently
 //   viewable area...?
+
+// NOTES
+// - when scaling / zooming, preserve current center
+// - anchor working area to top-left when adjustments are made.
 public class EditCanvas extends DisplayCanvas
 {
     public static const SIZE_KNOWN :String = DisplayCanvas.SIZE_KNOWN;
@@ -94,9 +99,6 @@ public class EditCanvas extends DisplayCanvas
         verticalScrollPolicy = ScrollPolicy.ON;
 
         _paintLayer = new Sprite();
-        _scaleLayer = new Sprite();
-        _rotLayer = new Sprite();
-        _unRotLayer = new Sprite();
         _hudLayer = new Sprite();
 
         _hudLayer.mouseEnabled = false;
@@ -113,11 +115,7 @@ public class EditCanvas extends DisplayCanvas
 
         _paintLayer.blendMode = BlendMode.LAYER;
 
-        _unRotLayer.addChild(_paintLayer);
-        _rotLayer.addChild(_unRotLayer);
-        _scaleLayer.addChild(_rotLayer);
-
-        _baseLayer.addChild(_scaleLayer);
+        _baseLayer.addChild(_paintLayer);
         _baseLayer.addChild(_hudLayer);
 
         _hudLayer.addChild(_crop);
@@ -288,31 +286,19 @@ public class EditCanvas extends DisplayCanvas
         }
 
         var bmp :BitmapData = new BitmapData(_workingArea.width, _workingArea.height, true, 0);
-        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY,
-            -_workingArea.x, -_workingArea.y);
-
-        // It appears that bmp.draw() renders slightly differently than screen display.
-        // An element with blendMode == ERASE will actually show up if portions of it are not
-        // erasing something. Placing drawn transparent pixels behind it doesn't fix things,
-        // but putting transparent image pixels behind it does work.
-        var eraseBlocker :Bitmap = new Bitmap(new BitmapData(1, 1, true, 0));
-        eraseBlocker.scaleX = _canvasWidth;
-        eraseBlocker.scaleY = _canvasHeight;
-        eraseBlocker.rotation = -_rotLayer.rotation;
-        var p :Point = _paintLayer.globalToLocal(_scaleLayer.localToGlobal(new Point()));
-        eraseBlocker.x = p.x;
-        eraseBlocker.y = p.y;
-        _paintLayer.addChildAt(eraseBlocker, 0);
+        var p :Point = _paintLayer.globalToLocal(_baseLayer.localToGlobal(_workingArea.topLeft));
+        var matrix :Matrix = new Matrix(1, 0, 0, 1, -p.x, -p.y);
+        matrix.rotate(MathUtil.toRadians(_paintLayer.rotation));
+        matrix.scale(_paintLayer.scaleX, _paintLayer.scaleY);
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brushCursor.visible;
         _brushCursor.visible = false;
         // screenshot the image
         try {
-            bmp.draw(_scaleLayer, matrix);
+            bmp.draw(_paintLayer, matrix);
         } finally {
             _brushCursor.visible = brushVis;
-            _paintLayer.removeChild(eraseBlocker);
         }
 
         return bmp;
@@ -320,7 +306,9 @@ public class EditCanvas extends DisplayCanvas
 
     public function setRotation (rotation :Number) :void
     {
-        _rotLayer.rotation = rotation;
+        // TODO: make rotations undoable?
+
+        _paintLayer.rotation = rotation;
     }
 
     public function setZoom (zoom :Number) :void
@@ -333,8 +321,9 @@ public class EditCanvas extends DisplayCanvas
     public function setScale (scale :Number) :void
     {
         _scale = scale;
-        _scaleLayer.scaleX = scale;
-        _scaleLayer.scaleY = scale;
+        _paintLayer.scaleX = scale;
+        _paintLayer.scaleY = scale;
+
         updateBrush();
 
         // TODO: combine with below...
@@ -378,16 +367,9 @@ public class EditCanvas extends DisplayCanvas
         _holder.width = _canvasWidth;
         _holder.height = _canvasHeight;
 
-        _rotLayer.x = _canvasWidth/2;
-        _rotLayer.y = _canvasHeight/2;
-        _unRotLayer.x = _canvasWidth/-2;
-        _unRotLayer.y = _canvasHeight/-2;
-
         setWorkingArea(new Rectangle(_hGutter, _vGutter,
             basedOnImage ? ww : _workingArea.width,
             basedOnImage ? hh : _workingArea.height));
-
-        // TODO: we actually want to maybe position the paint layer?
 
         // put the paint layer at the center???
         _paintLayer.x = _canvasWidth/2;
@@ -577,7 +559,7 @@ public class EditCanvas extends DisplayCanvas
      */
     protected function handleDropperMove (event :MouseEvent) :void
     {
-        var p :Point = layerPoint(_scaleLayer, event);
+        var p :Point = layerPoint(_paintLayer, event);
         var value :uint = getDropperColor(p);
         var color :uint = (value & 0xFFFFFF);
         var alpha :Number = ((value >> 24) & 0xFF) / 255;
@@ -586,7 +568,7 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleDropperClick (event :MouseEvent) :void
     {
-        var p :Point = layerPoint(_scaleLayer, event);
+        var p :Point = layerPoint(_paintLayer, event);
         var value :uint = getDropperColor(p);
         var alpha :uint = (value >> 24) & 0xFF;
 
@@ -604,8 +586,8 @@ public class EditCanvas extends DisplayCanvas
     {
         // paint into a 1x1 bitmapdata and see what color we get
         var bmp :BitmapData = new BitmapData(1, 1, true, 0)
-        var matrix :Matrix = new Matrix(_scaleLayer.scaleX, 0, 0, _scaleLayer.scaleY, -p.x, -p.y)
-        bmp.draw(_scaleLayer, matrix);
+        var matrix :Matrix = new Matrix(1, 0, 0, 1, -p.x, -p.y)
+        bmp.draw(_paintLayer, matrix);
 
         return bmp.getPixel32(0, 0);
     }
@@ -689,7 +671,7 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleSelectStart (event :MouseEvent) :void
     {
-        _cropPoint = layerPoint(_hudLayer, event);
+        _cropPoint = snapPoint(layerPoint(_hudLayer, event));
         updateSelection(_cropPoint);
 
         _paintLayer.addEventListener(MouseEvent.MOUSE_MOVE, handleSelectUpdate);
@@ -721,6 +703,7 @@ public class EditCanvas extends DisplayCanvas
 
     protected function updateSelection (p :Point) :Rectangle
     {
+        snapPoint(p);
         var r :Rectangle = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
             Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
 
@@ -743,6 +726,17 @@ public class EditCanvas extends DisplayCanvas
         return r;
     }
 
+    /**
+     * Modify the specified point to be snapped to the nearest pixel.
+     * @return the same point.
+     */
+    protected function snapPoint (p :Point) :Point
+    {
+        p.x = Math.round(p.x);
+        p.y = Math.round(p.y);
+        return p;
+    }
+
     protected function clearSelection () :void
     {
         if (_forceCrop) { // just reset it
@@ -758,11 +752,14 @@ public class EditCanvas extends DisplayCanvas
     {
         _movePoint = new Point(_paintLayer.x, _paintLayer.y);
         _paintLayer.startDrag(false);
+
+        _paintLayer.stage.addEventListener(MouseEvent.MOUSE_UP, handleMoveEnd);
     }
 
     protected function handleMoveEnd (event :MouseEvent) :void
     {
         _paintLayer.stopDrag();
+        _paintLayer.stage.removeEventListener(MouseEvent.MOUSE_UP, handleMoveEnd);
         _movePoint.x = _paintLayer.x - _movePoint.x;
         _movePoint.y = _paintLayer.y - _movePoint.y;
         paintLayerPositioned();
@@ -842,11 +839,6 @@ public class EditCanvas extends DisplayCanvas
 
     /** The current paint layer. */
     protected var _curPaint :Shape;
-
-    /** Layers used to affect the rotation/zoom/etc. */
-    protected var _scaleLayer :Sprite;
-    protected var _rotLayer :Sprite;
-    protected var _unRotLayer :Sprite;
 
     /** Sprites used to represent bits. */
     protected var _crop :Sprite;
