@@ -224,6 +224,7 @@ public class ChatOverlay
         if (isHistoryMode()) {
             clearGlyphs(_showingHistory);
             createFilteredMessages();
+            resetHistoryOffset();
             updateHistoryBar();
             showCurrentHistory();
         } else {
