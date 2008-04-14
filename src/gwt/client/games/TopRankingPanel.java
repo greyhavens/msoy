@@ -4,19 +4,17 @@
 package client.games;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.PlayerRating;
 
 import client.shell.Application;
-import client.shell.Page;
-import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.ThumbBox;
 
 /**
  * Displays top-rankings for a particular game.
@@ -68,10 +66,7 @@ public class TopRankingPanel extends VerticalPanel
             return;
         }
 
-        add(_grid = new FlexTable());
-        _grid.setStyleName("Grid");
-        _grid.setCellSpacing(0);
-        _grid.setCellPadding(3);
+        add(_grid = new SmartTable("Grid", 3, 0));
 
         int col = 0;
         if (results[0].length > 0) {
@@ -100,44 +95,33 @@ public class TopRankingPanel extends VerticalPanel
         }
 
         for (int ii = 0; ii < totalRows; ii++) {
+            final PlayerRating rating = results[ii];
             int row = 1 + ii*2;
-            if (ii >= results.length) {
+            if (ii >= results.length || rating.name == null) {
                 for (int cc = 0; cc < COLUMNS; cc++) {
-                    _grid.setHTML(row, cc+col, "&nbsp;");
-                    _grid.getFlexCellFormatter().setStyleName(row, cc+col, "Cell");
+                    _grid.setHTML(row, cc+col, "&nbsp;", 1, "Cell");
                 }
                 continue;
             }
 
-            final PlayerRating rating = results[ii];
-            _grid.setText(row, col, CGames.msgs.gameRank("" + (ii+1)));
-            _grid.getFlexCellFormatter().setStyleName(row, col, "Cell");
+            _grid.setText(row, col, CGames.msgs.gameRank("" + (ii+1)), 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
 
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.PEOPLE, "" + rating.name.getMemberId());
-                }
-            };
-            _grid.setWidget(row, col+1, MediaUtil.createMediaView(
-                                rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE, onClick));
-            _grid.getFlexCellFormatter().setStyleName(row, col+1, "Cell");
+            ThumbBox box = new ThumbBox(rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE, null);
+            _grid.setWidget(row, col+1, box, 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+1, "Photo");
             _grid.getFlexCellFormatter().setHorizontalAlignment(
                 row, col+1, HasAlignment.ALIGN_CENTER);
             _grid.getFlexCellFormatter().setVerticalAlignment(
                 row, col+1, HasAlignment.ALIGN_MIDDLE);
 
-            _grid.setWidget(row, col+2, MsoyUI.createActionLabel(rating.name.toString(), onClick));
-            _grid.getFlexCellFormatter().setStyleName(row, col+2, "Cell");
+            _grid.setWidget(row, col+2, Application.memberViewLink(rating.name), 1, "Cell");
 
-            _grid.setText(row, col+3, ""+rating.rating);
-            _grid.getFlexCellFormatter().setStyleName(row, col+3, "Cell");
+            _grid.setText(row, col+3, ""+rating.rating, 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(
                 row, col+3, HasAlignment.ALIGN_RIGHT);
 
-            _grid.setHTML(row, col+4, "&nbsp;");
-            _grid.getFlexCellFormatter().setStyleName(row, col+4, "Cell");
+            _grid.setHTML(row, col+4, "&nbsp;", 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
 
             if (rating.name.getMemberId() == CGames.getMemberId()) {
@@ -155,7 +139,7 @@ public class TopRankingPanel extends VerticalPanel
 
     protected int _gameId;
     protected boolean _onlyMyFriends;
-    protected FlexTable _grid;
+    protected SmartTable _grid;
 
     protected static final int COLUMNS = 5;
 }
