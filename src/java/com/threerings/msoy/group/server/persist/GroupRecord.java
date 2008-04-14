@@ -35,8 +35,8 @@ import com.threerings.msoy.group.data.GroupExtras;
  */
 @Entity(indices={
     @Index(name="ixPolicy", fields={ GroupRecord.POLICY })
-}, fullTextIndexes={
-    @FullTextIndex(name=GroupRecord.FTS_NBC, fieldNames={
+}, fullTextIndices={
+    @FullTextIndex(name=GroupRecord.FTS_NBC, fields={
         GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })
 })
 public class GroupRecord extends PersistentRecord

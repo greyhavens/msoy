@@ -28,8 +28,8 @@ import com.threerings.msoy.fora.data.ForumMessage;
 @Entity(indices={
     @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED }),
     @Index(name="ixIssueId", fields={ ForumMessageRecord.ISSUE_ID })
-}, fullTextIndexes={
-    @FullTextIndex(name=ForumMessageRecord.FTS_MESSAGE, fieldNames={ ForumMessageRecord.MESSAGE })
+}, fullTextIndices={
+    @FullTextIndex(name=ForumMessageRecord.FTS_MESSAGE, fields={ ForumMessageRecord.MESSAGE })
 })
 public class ForumMessageRecord extends PersistentRecord
 {

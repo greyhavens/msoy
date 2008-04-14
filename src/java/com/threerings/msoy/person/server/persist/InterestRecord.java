@@ -12,8 +12,8 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.person.data.Interest;
 
-@Entity(fullTextIndexes={
-    @FullTextIndex(name=InterestRecord.FTS_INTERESTS, fieldNames={ InterestRecord.INTERESTS })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=InterestRecord.FTS_INTERESTS, fields={ InterestRecord.INTERESTS })
 })
 public class InterestRecord extends PersistentRecord
 {

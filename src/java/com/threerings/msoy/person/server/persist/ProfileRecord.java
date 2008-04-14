@@ -23,8 +23,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 /**
  * Contains a member's profile data.
  */
-@Entity(fullTextIndexes={
-    @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fieldNames={ ProfileRecord.REAL_NAME })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fields={ ProfileRecord.REAL_NAME })
 })
 public class ProfileRecord extends PersistentRecord
 {

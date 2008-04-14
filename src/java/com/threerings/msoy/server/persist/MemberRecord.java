@@ -26,8 +26,8 @@ import com.threerings.msoy.web.data.WebCreds;
     @Index(name="ixInvitingFriend", fields={ MemberRecord.INVITING_FRIEND_ID })
     // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
 },
-fullTextIndexes={
-    @FullTextIndex(name=MemberRecord.FTS_NAME, fieldNames={ MemberRecord.NAME })
+fullTextIndices={
+    @FullTextIndex(name=MemberRecord.FTS_NAME, fields={ MemberRecord.NAME })
 })
 public class MemberRecord extends PersistentRecord
 {

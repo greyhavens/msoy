@@ -31,8 +31,8 @@ import com.threerings.msoy.item.data.all.MediaDesc;
     @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
     @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
     @Index(name="ixCreator", fields={ ItemRecord.CREATOR_ID })
-}, fullTextIndexes={
-    @FullTextIndex(name=ItemRecord.FTS_ND, fieldNames={ ItemRecord.NAME, ItemRecord.DESCRIPTION })
+}, fullTextIndices={
+    @FullTextIndex(name=ItemRecord.FTS_ND, fields={ ItemRecord.NAME, ItemRecord.DESCRIPTION })
 })
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {

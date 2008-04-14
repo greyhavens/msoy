@@ -30,8 +30,8 @@ import com.threerings.msoy.fora.data.ForumThread;
     @Index(name="ixGroupId", fields={ ForumThreadRecord.GROUP_ID }),
     @Index(name="ixMostRecentPostId", fields={ ForumThreadRecord.MOST_RECENT_POST_ID }),
     @Index(name="ixSticky", fields={ ForumThreadRecord.STICKY })
-}, fullTextIndexes={
-    @FullTextIndex(name=ForumThreadRecord.FTS_SUBJECT, fieldNames={ ForumThreadRecord.SUBJECT })
+}, fullTextIndices={
+    @FullTextIndex(name=ForumThreadRecord.FTS_SUBJECT, fields={ ForumThreadRecord.SUBJECT })
 })
 public class ForumThreadRecord extends PersistentRecord
 {
