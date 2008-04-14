@@ -282,6 +282,14 @@ public class ProfileServlet extends MsoyServiceServlet
                 EmailContact ec = new EmailContact();
                 ec.name = contact.getName();
                 ec.email = contact.getEmail();
+                MemberRecord member = MsoyServer.memberRepo.loadMember(ec.email);
+                if (member != null) {
+                    if (MsoyServer.memberRepo.getFriendStatus(memrec.memberId, member.memberId)) {
+                        // just skip people who are already friends
+                        continue;
+                    }
+                    ec.mname = member.getName();
+                }
                 results.add(ec);
             }
 
@@ -302,6 +310,10 @@ public class ProfileServlet extends MsoyServiceServlet
         } catch (HttpException e) {
             log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
             throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getWebMailAddresses failed [who=" + memrec.who() +
+                    ", email=" + email + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

@@ -5,6 +5,8 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.MemberName;
+
 public class EmailContact
     implements IsSerializable
 {
@@ -13,4 +15,7 @@ public class EmailContact
 
     /** The contact email. */
     public String email;
+
+    /** The memberName. */
+    public MemberName mname;
 }

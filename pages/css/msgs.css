@@ -236,3 +236,7 @@
 .replyPanel .Title {
   font-weight: bold;
 }
+
+.complainPopup {
+  width: 400px;
+}
