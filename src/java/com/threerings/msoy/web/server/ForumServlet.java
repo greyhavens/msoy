@@ -597,6 +597,9 @@ public class ForumServlet extends MsoyServiceServlet
     protected String sanitizeMessage (String message)
         throws ServiceException
     {
+        if (message.length() > HTMLSanitizer.MAX_PRE_SANITIZE_LENGTH) {
+            throw new MessageTooLongException(message.length());
+        }
         String sanitized = HTMLSanitizer.sanitize(message);
         if (sanitized.length() > ForumMessage.MAX_MESSAGE_LENGTH) {
             throw new MessageTooLongException(sanitized.length());
