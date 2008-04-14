@@ -492,7 +492,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().addChatDisplay(this);
 
         // let the chat overlay know about us so we can be queried for chatter locations
-        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
         if (comicOverlay != null) {
             comicOverlay.willEnterPlace(this);
         }
@@ -519,7 +519,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().removeChatDisplay(this);
 
         // tell the comic overlay to forget about us
-        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
         if (comicOverlay != null) {
             comicOverlay.didLeavePlace(this);
         }
@@ -563,7 +563,7 @@ public class RoomView extends AbstractRoomView
     override public function set scrollRect (r :Rectangle) :void
     {
         super.scrollRect = r;
-        var overlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+        var overlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
         if (overlay != null) {
             overlay.setScrollRect(r);
         }
@@ -808,7 +808,7 @@ public class RoomView extends AbstractRoomView
                 return; // we have no visualization for this kind of occupant, no problem
             }
 
-            var overlay :ComicOverlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+            var overlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
             if (overlay != null) {
                 occupant.setChatOverlay(overlay as ComicOverlay);
             }
@@ -826,7 +826,7 @@ public class RoomView extends AbstractRoomView
         } else {
             // place the sprite back into the set of active sprites
             _occupants.put(bodyOid, occupant);
-            overlay = _ctx.getTopPanel().getChatOverlay() as ComicOverlay;
+            overlay = _ctx.getTopPanel().getPlaceChatOverlay();
             if (overlay != null) {
                 occupant.setChatOverlay(overlay);
             }

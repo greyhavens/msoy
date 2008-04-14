@@ -209,6 +209,14 @@ public class TopPanel extends Canvas
     }
 
     /**
+     * Returns the comic overlay that is used for all place view chat
+     */
+    public function getPlaceChatOverlay () :ComicOverlay
+    {
+        return _comicOverlay;
+    }
+
+    /**
      * Sets the specified view as the current place view.
      */
     public function setPlaceView (view :PlaceView) :void
