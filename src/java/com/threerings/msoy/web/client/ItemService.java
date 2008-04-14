@@ -50,7 +50,7 @@ public interface ItemService extends RemoteService
      * Loads the detailed details of a particular item.
      *
      * @return an ItemDetail, or if the specified user doesn't have access to the item,
-     * an Integer representing the catalogId for that item.
+     * an ItemIdent representing the associated catalog listing.
      */
     public IsSerializable loadItemDetail (WebIdent ident, ItemIdent item)
         throws ServiceException;
