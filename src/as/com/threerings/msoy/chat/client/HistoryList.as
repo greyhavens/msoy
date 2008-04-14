@@ -7,6 +7,8 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.util.Log;
+
 public class HistoryList
     implements ChatDisplay
 {
@@ -29,8 +31,9 @@ public class HistoryList
     // from interface ChatDisplay
     public function clear () :void
     {
-        var size :int = _history.length;
-        _history.length = 0; // truncate the array
+        // TODO: clearing the HL is more complicated that just deleting everything.  This will
+        // need to get the current localtype from the ChatTabBar for filtering, and will need to 
+        // be able to ignore logoff clears (See ChatDirector.clientDidLogoff)
     }
 
     // from interface ChatDisplay
@@ -42,6 +45,8 @@ public class HistoryList
         _history.push(msg);
         return false;
     }
+
+    private static const log :Log = Log.getLog(HistoryList);
 
     /** The maximum number of history entries we'll keep. */
     protected static const MAX_HISTORY :int = 1000;
