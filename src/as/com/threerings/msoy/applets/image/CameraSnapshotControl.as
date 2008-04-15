@@ -9,6 +9,7 @@ import mx.controls.ButtonBar;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 
+import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
@@ -36,15 +37,26 @@ public class CameraSnapshotControl extends TitleWindow
 
         _wrapper = new FlexWrapper(_snapper);
         box.addChild(_wrapper);
-        _wrapper.width = _snapper.width;
-        _wrapper.height = _snapper.height;
 
         var sources :ComboBox = new ComboBox();
         sources.prompt = "Choose camera:";
         sources.dataProvider = Camera.names;
         sources.selectedItem = _snapper.getCameraName();
         sources.addEventListener(ListEvent.CHANGE, handleCameraChange);
-        box.addChild(sources);
+
+        _sizes = new ComboBox();
+        _sizes.dataProvider = [
+            { label: "160x120", data: [ 160, 120 ] },
+            { label: "320x240", data: [ 320, 240 ] },
+            { label: "640x480", data: [ 640, 480 ] } ];
+        _sizes.selectedIndex = 1;
+        _sizes.addEventListener(ListEvent.CHANGE, updateCameraSize);
+        updateCameraSize();
+
+        var hbox :HBox = new HBox();
+        hbox.addChild(sources);
+        hbox.addChild(_sizes);
+        box.addChild(hbox);
 
         var bar :ButtonBar = new ButtonBar();
         bar.addChild(new CommandButton("Snapshot", takeSnapshot));
@@ -63,6 +75,15 @@ public class CameraSnapshotControl extends TitleWindow
     protected function handleCameraChange (event :ListEvent) :void
     {
         _snapper.setCameraName(ComboBox(event.target).selectedItem as String);
+        updateCameraSize();
+    }
+
+    protected function updateCameraSize (... ignored) :void
+    {
+        var obj :Object = _sizes.selectedItem;
+
+        // try to use a 320x240 snapshot size
+        _snapper.setMode(int(obj.data[0]), int(obj.data[1]), 15);
         _wrapper.width = _snapper.width;
         _wrapper.height = _snapper.height;
     }
@@ -98,5 +119,7 @@ public class CameraSnapshotControl extends TitleWindow
     protected var _ok :CommandButton;
 
     protected var _clear :CommandButton;
+
+    protected var _sizes :ComboBox;
 }
 }
