@@ -90,9 +90,11 @@ public class EditCanvas extends DisplayCanvas
     public static const SELECT :int = 3;
     public static const MOVE :int = 4;
 
-    public function EditCanvas (maxW :int, maxH :int)
+    public function EditCanvas (maxW :int, maxH :int, forcedSize :Point = null)
     {
         super(maxW, maxH);
+        _forcedSize = forcedSize;
+
         width = maxW;
         height = maxH;
         horizontalScrollPolicy = ScrollPolicy.ON;
@@ -103,8 +105,7 @@ public class EditCanvas extends DisplayCanvas
 
         _hudLayer.mouseEnabled = false;
 
-        _crop = new Sprite();
-        _crop.mouseEnabled = false;
+        _crop = new Shape();
         _brushCursor = new Shape();
         _brushCursor.visible = false;
         _dropperCursor.visible = false;
@@ -195,14 +196,6 @@ public class EditCanvas extends DisplayCanvas
         updateBrush();
     }
 
-    public function setForcedCrop (wid :Number, hei :Number) :void
-    {
-        _forceCrop = true;
-        _cropPoint = new Point(0, 0);
-        updateSelection(new Point(wid, hei));
-        _cropPoint = null;
-    }
-
     /**
      * Update the working area size from numbers entered by the user.
      */
@@ -241,7 +234,6 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.graphics.clear();
         _paintLayer.x = 0;
         _paintLayer.y = 0;
-        clearSelection();
         setWorkingArea(new Rectangle());
     }
 
@@ -327,13 +319,18 @@ public class EditCanvas extends DisplayCanvas
     {
         // We DON'T call super
 
-        const ww :Number = _imgWidth;
-        const hh :Number = _imgHeight;
+        var ww :Number = _imgWidth;
+        var hh :Number = _imgHeight;
 
         // recenter the image within the paint layer
         if (_image != null) {
             _image.x = ww / -2;
             _image.y = hh / -2;
+        }
+
+        if (_forcedSize != null) {
+            ww = Math.max(ww, _forcedSize.x);
+            hh = Math.max(hh, _forcedSize.y);
         }
 
         _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ww) / 2);
@@ -343,7 +340,19 @@ public class EditCanvas extends DisplayCanvas
         _holder.width = _canvasWidth;
         _holder.height = _canvasHeight;
 
-        setWorkingArea(new Rectangle(_hGutter, _vGutter, ww, hh));
+        // set up the working area
+        var r :Rectangle = new Rectangle(_hGutter, _vGutter, ww, hh);
+        if (_forcedSize != null) {
+            if (_forcedSize.x < ww) {
+                r.width = _forcedSize.x;
+                r.x += (ww - _forcedSize.x)/2;
+            }
+            if (_forcedSize.y < hh) {
+                r.height = _forcedSize.y;
+                r.y += (hh - _forcedSize.y)/2;
+            }
+        }
+        setWorkingArea(r);
 
         // put the paint layer at the center???
         _paintLayer.x = _canvasWidth/2;
@@ -362,7 +371,6 @@ public class EditCanvas extends DisplayCanvas
         var g :Graphics = _paintLayer.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, 0);
-        //g.beginFill(0xFF0000, .1);
         g.drawRect(-_paintLayer.x, -_paintLayer.y, _canvasWidth, _canvasHeight);
         g.endFill();
     }
@@ -675,7 +683,7 @@ public class EditCanvas extends DisplayCanvas
 
         if (r != null) {
             setWorkingArea(r);
-            clearSelection();
+            _crop.graphics.clear();
         }
     }
 
@@ -685,9 +693,10 @@ public class EditCanvas extends DisplayCanvas
         var r :Rectangle = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
             Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
 
+        _crop.graphics.clear();
+
         if (r.width == 0 || r.height == 0) {
             dispatchWorkingAreaSelection();
-            clearSelection();
             return null;
         }
 
@@ -695,7 +704,6 @@ public class EditCanvas extends DisplayCanvas
         _crop.y = r.y;
 
         var g :Graphics = _crop.graphics;
-        g.clear();
         g.lineStyle(1);
         GraphicsUtil.dashRect(g, 0, 0, r.width, r.height)
 
@@ -713,17 +721,6 @@ public class EditCanvas extends DisplayCanvas
         p.x = Math.round(p.x);
         p.y = Math.round(p.y);
         return p;
-    }
-
-    protected function clearSelection () :void
-    {
-        if (_forceCrop) { // just reset it
-            _crop.x = 0;
-            _crop.y = 0;
-
-        } else { // actually clear it
-            _crop.graphics.clear();
-        }
     }
 
     protected function handleMoveStart (event :MouseEvent) :void
@@ -806,6 +803,9 @@ public class EditCanvas extends DisplayCanvas
         return _paintLayer;
     }
 
+    /** If non-null, defines the maximum boundaries of our resulting image. */
+    protected var _forcedSize :Point;
+
     /** Layers that contain things. */
     protected var _paintLayer :Sprite;
     protected var _hudLayer :Sprite;
@@ -818,8 +818,8 @@ public class EditCanvas extends DisplayCanvas
     /** The current paint layer. */
     protected var _curPaint :Shape;
 
-    /** Sprites used to represent bits. */
-    protected var _crop :Sprite;
+    /** Used to draw the current selection while selecting. */
+    protected var _crop :Shape;
 
     protected var _brushCursor :Shape;
     protected var _dropperCursor :DropperCursor = new DropperCursor();
@@ -844,7 +844,6 @@ public class EditCanvas extends DisplayCanvas
     protected var _color :uint;
     protected var _brushSize :Number = 1;
     protected var _brushCircle :Boolean = true;
-    protected var _forceCrop :Boolean = false;
 
     /** The size of the horizontal gutter. */
     protected var _hGutter :int;

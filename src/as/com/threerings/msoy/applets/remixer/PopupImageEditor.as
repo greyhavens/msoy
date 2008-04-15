@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.applets.remixer {
 
+import flash.geom.Point;
+
 import flash.utils.ByteArray;
 
 import mx.containers.TitleWindow;
@@ -29,13 +31,12 @@ public class PopupImageEditor extends TitleWindow
 {
     public static const IMAGE_UPDATED :String = "ImageUpdated";
 
-    public function PopupImageEditor (
-        bytes :ByteArray, cutWidth :Number = NaN, cutHeight :Number = NaN)
+    public function PopupImageEditor (bytes :ByteArray, forcedSize :Point = null)
     {
         var box :VBox = new VBox();
         addChild(box);
 
-        _image = new ImageManipulator(600, 480, cutWidth, cutHeight);
+        _image = new ImageManipulator(600, 480, forcedSize);
         box.addChild(_image);
 
         _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);

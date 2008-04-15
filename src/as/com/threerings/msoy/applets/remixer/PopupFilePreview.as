@@ -7,6 +7,8 @@ import flash.display.BitmapData;
 
 import flash.events.Event;
 
+import flash.geom.Point;
+
 import flash.net.FileFilter;
 
 import flash.utils.ByteArray;
@@ -231,8 +233,11 @@ public class PopupFilePreview extends TitleWindow
 
     protected function doEdit (entry :Object) :void
     {
-        var editor :PopupImageEditor = new PopupImageEditor(_bytes,
-            Number(entry.width), Number(entry.height));
+        var forcedSize :Point = new Point(Number(entry.width), Number(entry.height));
+        if (isNaN(forcedSize.x) || isNaN(forcedSize.y)) {
+            forcedSize = null;
+        }
+        var editor :PopupImageEditor = new PopupImageEditor(_bytes, forcedSize);
         editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
         editor.title = _name;
     }

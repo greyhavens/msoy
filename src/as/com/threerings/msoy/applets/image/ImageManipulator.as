@@ -14,6 +14,8 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.TextEvent;
 
+import flash.geom.Point;
+
 import flash.ui.Keyboard;
 
 import flash.utils.ByteArray;
@@ -64,8 +66,7 @@ public class ImageManipulator extends HBox
 
     public static const CLOSE :String = Event.CLOSE;
 
-    public function ImageManipulator (
-        maxW :int = 400, maxH :int = 400, cutWidth :Number = NaN, cutHeight :Number = NaN)
+    public function ImageManipulator (maxW :int = 400, maxH :int = 400, forcedSize :Point = null)
     {
         this.maxWidth = maxW;
         this.maxHeight = maxH;
@@ -80,20 +81,18 @@ public class ImageManipulator extends HBox
         verticalScrollPolicy = ScrollPolicy.OFF;
 
         setStyle("backgroundColor", 0xDCDCDC);
-        _editor = new EditCanvas(_maxWidth, _maxHeight);
+        _editor = new EditCanvas(_maxWidth, _maxHeight, forcedSize);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
-        addChild(_controlBar = createControlBar());
+        addChild(_controlBar = createControlBar(forcedSize != null));
         addChild(_editor);
         setImage(null);
 
-        if (!isNaN(cutWidth) && !isNaN(cutHeight)) {
-            _editor.setForcedCrop(cutWidth, cutHeight);
+        if (forcedSize != null) {
             disableMode(EditCanvas.SELECT);
-            setMode(EditCanvas.MOVE);
-        } else {
-            setMode(EditCanvas.PAINT);
         }
+
+        setMode(EditCanvas.PAINT);
     }
 
     public function setImage (image :Object) :void
@@ -121,7 +120,7 @@ public class ImageManipulator extends HBox
         return _editor.getImage(forceFormat, formatArg);
     }
 
-    protected function createControlBar () :VBox
+    protected function createControlBar (sizeForced :Boolean) :VBox
     {
         var bar :VBox = new VBox();
         bar.setStyle("paddingLeft", 0);
@@ -132,7 +131,7 @@ public class ImageManipulator extends HBox
 
         // TODO: add a scrollbox?
 
-        createPositionControls(bar);
+        createPositionControls(bar, sizeForced);
         createPaintControls(bar);
         createUndoControls(bar);
 
@@ -157,7 +156,7 @@ public class ImageManipulator extends HBox
         return bar;
     }
 
-    protected function createPositionControls (bar :VBox) :void
+    protected function createPositionControls (bar :VBox, sizeForced :Boolean) :void
     {
         bar.addChild(createControlHeader("Position Image"));
 
@@ -171,15 +170,17 @@ public class ImageManipulator extends HBox
             [ -180, -90, 0, 90, 180 ]);
 
         // TODO: this will change to a different UI
-        _zoomSlider = addSlider(bar, "Zoom", 1, 8, 1, _editor.setZoom,
-            [ 1, 2, 3, 4, 5, 6, 7, 8 ], 1);
+        _zoomSlider = addSlider(bar, "Zoom", .25, 4, 1, _editor.setZoom,
+            [ .25, .5, 1, 2, 4, 8 ]);
 
-        box = new HBox();
-        var crop :CommandButton = new CommandButton(null, _editor.doCrop);
-        crop.styleName = "cropButton";
-        box.addChild(crop);
-        box.addChild(createTip("Crop the image to the selected region"));
-        bar.addChild(box);
+        if (!sizeForced) {
+            box = new HBox();
+            var crop :CommandButton = new CommandButton(null, _editor.doCrop);
+            crop.styleName = "cropButton";
+            box.addChild(crop);
+            box.addChild(createTip("Crop the image to the selected region"));
+            bar.addChild(box);
+        }
 
         box = new HBox();
         box.addChild(addModeBtn("select", EditCanvas.SELECT));
@@ -197,7 +198,8 @@ public class ImageManipulator extends HBox
         _selectionHeight.maxChars = 4;
         _selectionWidth.maxWidth = 40;
         _selectionHeight.maxWidth = 40;
-
+        _selectionWidth.editable = !sizeForced;
+        _selectionHeight.editable = !sizeForced;
 
         box.addChild(innerBox);
 
@@ -221,6 +223,7 @@ public class ImageManipulator extends HBox
         box.addChild(addModeBtn("brush", EditCanvas.PAINT));
         box.addChild(addModeBtn("eyedropper", EditCanvas.SELECT_COLOR));
         _colorPicker = new ColorPicker();
+        _colorPicker.selectedColor = 0x0000FF;
         _colorPicker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
         box.addChild(_colorPicker);
         bar.addChild(box);
@@ -392,12 +395,7 @@ public class ImageManipulator extends HBox
 
         // at the minimum zoom level we want the longest side to just fit
         if (_controlBar != null) {
-            var w :Number = event.value[0];
-            var h :Number = event.value[1];
-            if (_zoomSlider != null) {
-                _zoomSlider.minimum = Math.min(1, Math.min(_maxWidth / w, _maxHeight / h));
-                _zoomSlider.value = 1;
-            }
+            _zoomSlider.value = 1;
             _rotSlider.value = 0;
             _scaleSlider.value = 1;
         }
