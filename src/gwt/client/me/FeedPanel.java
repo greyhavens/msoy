@@ -262,13 +262,6 @@ public class FeedPanel extends TongueBox
                 return profileLink(message.data[0], message.data[1]);
 
             case 101: // FRIEND_UPDATED_ROOM
-                // TEMP: remove after servers are 2 weeks past 11/06/2007
-                if (message.data.length == 1) {
-                    return Application.createLinkHtml(
-                            CMe.msgs.room(((FriendFeedMessage)message).friend.toString()),
-                            Page.WORLD, "s" + message.data[0]);
-                }
-                // ENDTEMP
                 return Application.createLinkHtml(
                         message.data[1], Page.WORLD, "s" + message.data[0]);
 
@@ -298,19 +291,10 @@ public class FeedPanel extends TongueBox
             ClickListener clicker;
             switch (message.type) {
             case 102: // FRIEND_WON_TROPHY
-                // TEMP: remove after servers are 4 weeks past 01/10/2008
-                if (message.data.length < 3) {
-                    return null;
-                }
-                // ENDTEMP
                 media = MediaDesc.stringToMD(message.data[2]);
                 if (media == null) {
                     return null;
                 }
-                // TEMP: remove after servers are 4 weeks past 01/15/2008
-                media.constraint = MediaDesc.computeConstraint(MediaDesc.THUMBNAIL_SIZE,
-                        TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT);
-                // ENDTEMP
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
                         Application.go(Page.GAMES, Args.compose("d", message.data[1],
@@ -320,11 +304,6 @@ public class FeedPanel extends TongueBox
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
             case 103: // FRIEND_LISTED_ITEM
-                // TEMP: remove after servers are 4 weeks past 01/10/2008
-                if (message.data.length < 4) {
-                    return null;
-                }
-                // ENDTEMP
                 media = MediaDesc.stringToMD(message.data[3]);
                 if (media == null) {
                     return null;
