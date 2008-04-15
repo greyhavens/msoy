@@ -7,11 +7,10 @@ import java.io.File;
 import java.net.InetAddress;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
-import com.threerings.msoy.world.data.IdleMetrics;
-import com.threerings.msoy.world.data.RoomVisitMetrics;
 
 import com.threerings.panopticon.client.net.EventLogger;
 import com.threerings.panopticon.client.net.OTPConnection;
@@ -97,11 +96,12 @@ public class MsoyEventLogger
 
     public void logPlayerMetrics (MemberObject member, String sessionToken)
     {
-        RoomVisitMetrics room = member.metrics.room;
-        IdleMetrics idle = member.metrics.idle;
-        post(new MsoyEvents.SessionMetrics(member.getMemberId(), 
-                room.timeInMyRoom, room.timeInFriendRooms, room.timeInStrangerRooms, room.timeInWhirleds,
-                idle.timeActive, idle.timeIdle, sessionToken));
+        PlayerMetrics.RoomVisit room = member.metrics.room;
+        PlayerMetrics.Idle idle = member.metrics.idle;
+        post(new MsoyEvents.SessionMetrics(
+                 member.getMemberId(), room.timeInMyRoom, room.timeInFriendRooms,
+                 room.timeInStrangerRooms, room.timeInWhirleds,
+                 idle.timeActive, idle.timeIdle, sessionToken));
     }
 
     public void mailSent (int senderId, int recipientId, int payloadType)

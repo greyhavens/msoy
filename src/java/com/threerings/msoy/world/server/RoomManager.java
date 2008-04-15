@@ -641,7 +641,9 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             ensureAVRGameControl(member);
-            member.metrics.room.init((MsoySceneModel) getScene().getSceneModel());
+            MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
+            member.metrics.room.init(
+                model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER, model.ownerId);
         }
     }
     

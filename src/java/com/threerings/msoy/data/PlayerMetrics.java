@@ -1,54 +1,138 @@
+//
+// $Id$
+
 package com.threerings.msoy.data;
 
-import java.io.IOException;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
-
-import com.threerings.msoy.world.data.IdleMetrics;
-import com.threerings.msoy.world.data.RoomVisitMetrics;
 
 /** Collection of player metrics objects, with serialization accessors. */
 public class PlayerMetrics
     implements Streamable
 {
+    /** Interface for all components of PlayerMetrics; enforces implementation of Streamable. */
+    public interface Entry extends Streamable
+    {
+        /** Called to update current metrics when switching servers. */
+        public void save (MemberObject player);
+    };
+
+    /** Tracks idle time. */
+    public static class Idle implements Entry
+    {
+        /** Seconds spent active. */
+        public int timeActive;
+
+        /** Seconds spent idle. */
+        public int timeIdle;
+
+        /** Initializes metrics for a given state (active or idle). */
+        public void init (boolean isActive)
+        {
+            _currentlyActive = isActive;
+            _timestamp = System.currentTimeMillis();
+        }
+
+        /** Computes the delta, and adds to the appropriate field. */
+        public void save (MemberObject player)
+        {
+            if (_timestamp == 0L) {
+                return; // not initialized
+            }
+
+            int seconds = (int) (System.currentTimeMillis() - _timestamp) / 1000;
+            if (_currentlyActive) {
+                timeActive += seconds;
+            } else {
+                timeIdle += seconds;
+            }
+
+            _timestamp = 0L;
+        }
+
+        /** Non-streamable current state. */
+        protected transient boolean _currentlyActive;
+
+        /** Non-streamable timestamp when we entered the current state. */
+        protected transient long _timestamp;
+    }
+
+    /** Tracks time spent in rooms. */
+    public class RoomVisit implements Entry
+    {
+        /** Seconds spent in the player's own room. */
+        public int timeInMyRoom;
+
+        /** Seconds spent in a room belonging to my friend. */
+        public int timeInFriendRooms;
+
+        /** Seconds spent in an unknown person's room. */
+        public int timeInStrangerRooms;
+
+        /** Seconds spent in a whirled. */
+        public int timeInWhirleds;
+
+        /** Starts a counter for the given scene. */
+        public void init (boolean memberScene, int ownerId)
+        {
+            _currentSceneIsMember = memberScene;
+            _currentSceneOwnerId = ownerId;
+            _currentSceneEntryTime = System.currentTimeMillis();
+        }
+
+        /** Finishes counting the current scene and updates the metrics. */
+        public void save (MemberObject player)
+        {
+            if (_currentSceneEntryTime == 0L) {
+                return; // not initialized
+            }
+
+            // get time in seconds (rounded down)
+            int seconds = (int) ((System.currentTimeMillis() - _currentSceneEntryTime) / 1000);
+
+            if (_currentSceneIsMember) {
+
+                if (_currentSceneOwnerId == player.getMemberId()) {
+                    // my room
+                    this.timeInMyRoom += seconds;
+
+                } else if (player.friends.containsKey(_currentSceneOwnerId)) {
+                    // a friend's room
+                    this.timeInFriendRooms += seconds;
+
+                } else {
+                    // stranger's room
+                    this.timeInStrangerRooms += seconds;
+                }
+
+            } else {
+
+                this.timeInWhirleds += seconds;
+            }
+
+            // we're done with this scene
+            _currentSceneEntryTime = 0L;
+        }
+
+        /** Non-streamable data about the current scene. */
+        protected transient boolean _currentSceneIsMember;
+
+        /** Non-streamable data about the current scene. */
+        protected transient int _currentSceneOwnerId;
+
+        /** Non-streamable timestamp when we entered the current scene. */
+        protected transient long _currentSceneEntryTime;
+    }
+
     /** Reference to the room visit metrics. */
-    public RoomVisitMetrics room = new RoomVisitMetrics();
-    
+    public RoomVisit room = new RoomVisit();
+
     /** Keeps track of the player's active/idle times across different server sessions. */
-    public IdleMetrics idle = new IdleMetrics();
-    
+    public Idle idle = new Idle();
+
     /** Flush all metrics before a server switch. */
-    public void save (MemberObject player) 
+    public void save (MemberObject player)
     {
         room.save(player);
         idle.save(player);
     }
-    
-    public void writeObject (ObjectOutputStream out)
-        throws IOException
-    {
-        out.writeObject(room);
-        out.writeObject(idle);
-    }
-    
-    public void readObject (ObjectInputStream in)
-        throws IOException, ClassNotFoundException
-    {
-        try {
-            room = (RoomVisitMetrics) in.readObject();
-            idle = (IdleMetrics) in.readObject();
-
-        } catch (ClassCastException cce) {
-            throw new IOException("Malformed PlayerMetrics object: " + cce);
-        }
-    }
-    
-    /** Interface for all components of PlayerMetrics; enforces implementation of Streamable. */ 
-    public interface Entry extends Streamable 
-    { 
-        /** Called to update current metrics when switching servers. */
-        public void save (MemberObject player);
-    };
 }
