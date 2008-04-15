@@ -1,5 +1,5 @@
 //
-// $Id: MsoyPlaceView.as 6166 2007-10-12 19:15:51Z mdb $
+// $Id$
 
 package com.threerings.msoy.client {
 

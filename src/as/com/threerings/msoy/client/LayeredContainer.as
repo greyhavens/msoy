@@ -1,5 +1,5 @@
 //
-// $Id: PlaceBox.as 6357 2007-10-25 16:24:55Z zell $
+// $Id$
 
 package com.threerings.msoy.client {
 

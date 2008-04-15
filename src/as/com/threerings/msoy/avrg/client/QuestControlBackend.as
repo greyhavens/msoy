@@ -1,5 +1,5 @@
 //
-// $Id: QuestControlBackend.as 6424 2007-10-28 23:20:25Z zell $
+// $Id$
 
 package com.threerings.msoy.avrg.client {
 

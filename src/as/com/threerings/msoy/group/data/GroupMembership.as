@@ -1,5 +1,5 @@
 //
-// $Id: GroupMembership.as 5409 2007-08-10 20:49:34Z robert $
+// $Id$
 
 package com.threerings.msoy.group.data {
 

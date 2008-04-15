@@ -1,5 +1,5 @@
 //
-// $Id: Toy.as 4826 2007-06-20 20:07:25Z mdb $
+// $Id$
 
 package com.threerings.msoy.item.data.all {
 

@@ -1,5 +1,5 @@
 //
-// $Id: MovementXZHotspot.as 7528 2008-01-31 23:45:03Z mdb $
+// $Id$
 
 package com.threerings.msoy.world.client.editor {
 
