@@ -34,7 +34,7 @@ public abstract class BorderedDialog extends BorderedPopup
     {
         this(autoHide, omitCloseBox, true);
     }
-    
+
     public BorderedDialog (boolean autoHide, boolean omitCloseBox, boolean enableDrag)
     {
         super(autoHide);
