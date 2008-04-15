@@ -40,6 +40,7 @@ import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.DisplayCanvas;
+import com.threerings.msoy.applets.image.NewImageDialog;
 
 import com.threerings.msoy.applets.upload.Uploader;
 
@@ -71,6 +72,8 @@ public class PopupFilePreview extends TitleWindow
         controlBox.addChild(makeHeader("Change..."));
         controlBox.addChild(makeBullet(
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
+        controlBox.addChild(makeBullet(
+            new CommandLinkButton("Create a new image...", handleChooseNewImage)));
 // Flash security prevents us from using most loaded content as 'data'
 //        controlBox.addChild(makeBullet(
 //            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
@@ -93,7 +96,7 @@ public class PopupFilePreview extends TitleWindow
         _label = new Label();
 
         hbox = new HBox();
-        hbox.addChild(new CommandButton("Edit", doEdit, entry));
+        hbox.addChild(_edit = new CommandButton("Edit", doEdit));
         hbox.addChild(_label);
         previewBox.addChild(hbox);
 
@@ -127,6 +130,7 @@ public class PopupFilePreview extends TitleWindow
         _bytes = bytes;
         _image.setImage(bytes);
         _ok.enabled = (bytes != null);
+        _edit.enabled = (bytes != null);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -153,6 +157,12 @@ public class PopupFilePreview extends TitleWindow
         uploader.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
+    protected function handleChooseNewImage () :void
+    {
+        var newImage :NewImageDialog = new NewImageDialog(getForcedSize());
+        newImage.addEventListener(Event.COMPLETE, handleImageCreated);
+    }
+
     protected function handleChooseURL () :void
     {
         var ufc :URLFileChooser = new URLFileChooser();
@@ -171,6 +181,12 @@ public class PopupFilePreview extends TitleWindow
         if (value != null) {
             setImage(value[0] as String, value[1] as ByteArray);
         }
+    }
+
+    protected function handleImageCreated (event :ValueEvent) :void
+    {
+        // go straight to editing mode
+        doEdit(event.value, "drawn.png");
     }
 
     protected function handleChooseCamera () :void
@@ -231,13 +247,11 @@ public class PopupFilePreview extends TitleWindow
         }
     }
 
-    protected function doEdit (entry :Object) :void
+    protected function doEdit (image :Object = null, newFilename :String = null) :void
     {
-        var forcedSize :Point = new Point(Number(entry.width), Number(entry.height));
-        if (isNaN(forcedSize.x) || isNaN(forcedSize.y)) {
-            forcedSize = null;
-        }
-        var editor :PopupImageEditor = new PopupImageEditor(_bytes, forcedSize);
+        _newFilename = newFilename;
+        var source :Object = (image != null) ? image : _bytes;
+        var editor :PopupImageEditor = new PopupImageEditor(source, getForcedSize());
         editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
         editor.title = _name;
     }
@@ -246,9 +260,23 @@ public class PopupFilePreview extends TitleWindow
     {
         var array :Array = event.value as Array;
 
+        var file :String = (_newFilename != null) ? _newFilename : _filename;
+        _newFilename = null;
+
         var ba :ByteArray = ByteArray(array[0]);
-        _filename = _ctx.createFilename(_filename, ba, array[1] as String);
+        _filename = _ctx.createFilename(file, ba, array[1] as String);
         setImage(_filename, ba);
+    }
+
+    /**
+     * Get the forced size of this entry, or null if none.
+     */
+    protected function getForcedSize () :Point
+    {
+        var entry :Object = _ctx.pack.getFileEntry(_name);
+        var ww :Number = Number(entry.width);
+        var hh :Number = Number(entry.height);
+        return (isNaN(ww) || isNaN(hh)) ? null : new Point(ww, hh);
     }
 
     protected var _parent :FileEditor;
@@ -265,10 +293,15 @@ public class PopupFilePreview extends TitleWindow
 
     protected var _ok :CommandButton;
 
+    protected var _edit :CommandButton;
+
     protected var _image :DisplayCanvas;
 
     protected var _label :Label;
 
     protected var _bytes :ByteArray;
+
+    /* If non-null when we return from the editor, the base filename to use. */
+    protected var _newFilename :String;
 }
 }

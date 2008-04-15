@@ -31,7 +31,7 @@ public class PopupImageEditor extends TitleWindow
 {
     public static const IMAGE_UPDATED :String = "ImageUpdated";
 
-    public function PopupImageEditor (bytes :ByteArray, forcedSize :Point = null)
+    public function PopupImageEditor (image :Object, forcedSize :Point = null)
     {
         var box :VBox = new VBox();
         addChild(box);
@@ -41,7 +41,7 @@ public class PopupImageEditor extends TitleWindow
 
         _image.addEventListener(ImageManipulator.SIZE_KNOWN, handleSizeKnown);
         _image.addEventListener(ImageManipulator.CLOSE, handleClosed);
-        _image.setImage(bytes);
+        _image.setImage(image);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpUtil.center(this);
