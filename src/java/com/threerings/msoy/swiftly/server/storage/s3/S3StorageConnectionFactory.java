@@ -1,4 +1,4 @@
-// $Id: $
+// $Id$
 //
 
 package com.threerings.msoy.swiftly.server.storage.s3;
