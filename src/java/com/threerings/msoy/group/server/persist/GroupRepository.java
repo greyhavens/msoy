@@ -106,7 +106,9 @@ public class GroupRepository extends DepotRepository
                 int[] policies = {
                     Group.POLICY_PUBLIC, Group.POLICY_INVITE_ONLY, Group.POLICY_EXCLUSIVE };
                 int[] forumPerms = {
-                    Group.FORUM_PERMS[1], Group.FORUM_PERMS[2], Group.FORUM_PERMS[2] };
+                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL),
+                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_MEMBER),
+                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_MEMBER) };
 
                 Statement stmt = conn.createStatement();
                 try {

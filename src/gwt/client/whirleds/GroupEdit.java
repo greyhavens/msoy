@@ -59,16 +59,33 @@ public class GroupEdit extends FlexTable
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
         addRow(CWhirleds.msgs.editName(), _name);
 
-        // make sure the group's configured policy is consistent with what's shown in the GUI
+        // if this is a blank group, set up some defaults
         if (_group.policy == 0) {
             _group.policy = Group.POLICY_PUBLIC;
+            _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
         }
+
+        // make sure the group's configured policy is consistent with what's shown in the GUI
         _policy = new ListBox();
         _policy.addItem(CWhirleds.msgs.policyPublic());
         _policy.addItem(CWhirleds.msgs.policyInvite());
         _policy.addItem(CWhirleds.msgs.policyExclusive());
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
         addRow(CWhirleds.msgs.editPolicy(), _policy);
+
+        _thread = new ListBox();
+        _thread.addItem(CWhirleds.msgs.forumPermsAll());
+        _thread.addItem(CWhirleds.msgs.forumPermsMember());
+        _thread.addItem(CWhirleds.msgs.forumPermsManager());
+        _thread.setSelectedIndex(_group.getThreadPerm() - Group.PERM_ALL);
+        addRow(CWhirleds.msgs.editThread(), _thread);
+
+        _post = new ListBox();
+        _post.addItem(CWhirleds.msgs.forumPermsAll());
+        _post.addItem(CWhirleds.msgs.forumPermsMember());
+        _post.addItem(CWhirleds.msgs.forumPermsManager());
+        _post.setSelectedIndex(_group.getPostPerm() - Group.PERM_ALL);
+        addRow(CWhirleds.msgs.editPost(), _post);
 
         addRow(CWhirleds.msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
         _logo.setMedia(_group.getLogo());
@@ -137,6 +154,8 @@ public class GroupEdit extends FlexTable
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
         _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
+        _group.forumPerms = Group.makePerms(_thread.getSelectedIndex()+Group.PERM_ALL,
+                                            _post.getSelectedIndex()+Group.PERM_ALL);
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.backgroundControl = _bgmode.getSelectedIndex();
@@ -188,7 +207,7 @@ public class GroupEdit extends FlexTable
 
     protected TextBox _name, _blurb, _homepage, _catalogTag;
     protected PhotoChoiceBox _logo, _background;
-    protected ListBox _policy, _bgmode, _catalogType;
+    protected ListBox _policy, _thread, _post, _bgmode, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
 }

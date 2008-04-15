@@ -31,24 +31,14 @@ public class Group
     /** A policy constant for groups that are not visible to non-members. */
     public static final byte POLICY_EXCLUSIVE = 3;
 
-    /** A mask used for the {@link #forumPerms} constants. */
-    public static final int ALL_MASK = 0x11;
+    /** Used for the {@link #forumPerms} setting. */
+    public static final int PERM_ALL = 1;
 
-    /** A mask used for the {@link #forumPerms} constants. */
-    public static final int MEMBER_MASK = 0x01;
+    /** Used for the {@link #forumPerms} setting. */
+    public static final int PERM_MEMBER = 2;
 
-    /** A mask used for the {@link #forumPerms} constants. */
-    public static final int MANAGER_MASK = 0x10;
-
-    /** The set of valid {@link #forumPerms} permissions. */
-    public static final byte[] FORUM_PERMS = {
-        makePerms(ALL_MASK, ALL_MASK),        // anyone can start threads, anyone can reply
-        makePerms(MEMBER_MASK, ALL_MASK),     // members can start threads, anyone can reply
-        makePerms(MEMBER_MASK, MEMBER_MASK),  // members can start threads, members can reply
-        makePerms(MANAGER_MASK, ALL_MASK),    // managers can start threads, anyone can reply
-        makePerms(MANAGER_MASK, MEMBER_MASK), // managers can start threads, members can reply
-        makePerms(MANAGER_MASK, MANAGER_MASK) // managers can start threads, managers can reply
-    };
+    /** Used for the {@link #forumPerms} setting. */
+    public static final int PERM_MANAGER = 3;
 
     /** Indicates read access for a group's forums. */
     public static final int ACCESS_READ = 1;
@@ -89,7 +79,7 @@ public class Group
     /** This group's political policy (e.g. {@link #POLICY_PUBLIC}). */
     public byte policy;
 
-    /** This group's forum permissions (see {@link #FORUM_PERMS}). */
+    /** This group's forum permissions (see {@link #makePerms}). */
     public byte forumPerms;
 
     /** A snapshot of the number of members in this group. */
@@ -127,6 +117,14 @@ public class Group
     }
 
     /**
+     * Composes thread and post permissions into a {@link #forumPerms} value.
+     */
+    public static byte makePerms (int threadPerm, int postPerm)
+    {
+        return (byte)((threadPerm << 4) | postPerm);
+    }
+
+    /**
      * Returns this group's logo, or the default.
      */
     public MediaDesc getLogo ()
@@ -143,6 +141,22 @@ public class Group
     }
 
     /**
+     * Gets this group's thread permissions. See {@link #makePerms}.
+     */
+    public int getThreadPerm ()
+    {
+        return (forumPerms >> 4) & 0xF;
+    }
+
+    /**
+     * Gets this group's post permissions. See {@link #makePerms}.
+     */
+    public int getPostPerm ()
+    {
+        return forumPerms & 0xF;
+    }
+
+    /**
      * Returns true if a member of the specified rank (or non-member) has the specified access.
      *
      * @param flags only used when checking {@link #ACCESS_THREAD}, indicates the flags of the
@@ -155,7 +169,7 @@ public class Group
             return true;
         }
 
-        int rankMask = (rank == GroupMembership.RANK_MEMBER) ? MEMBER_MASK : ALL_MASK;
+        int havePerm = (rank == GroupMembership.RANK_MEMBER) ? PERM_MEMBER : PERM_ALL;
         switch (access) {
         case ACCESS_READ:
             // members can always read, non-members can read messages in non-exclusive groups
@@ -163,14 +177,14 @@ public class Group
 
         case ACCESS_THREAD:
             // the thread must be non-sticky/non-announce and they must have permissions
-            return (flags == 0) && ((forumPerms >> 2) == rankMask);
+            return (flags == 0) && (getThreadPerm() <= havePerm);
 
         case ACCESS_POST:
             // non-managers cannot post to locked threads
             if ((flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
             }
-            return (forumPerms & 0x11) == rankMask;
+            return getPostPerm() <= havePerm;
 
         default:
             throw new IllegalArgumentException(
@@ -192,11 +206,5 @@ public class Group
         } else {
             return nameComparison;
         }
-    }
-
-    /** Helper function for {@link #FORUM_PERMS}. */
-    protected static byte makePerms (int threadMask, int postMask)
-    {
-        return (byte)((threadMask << 2) | postMask);
     }
 }
