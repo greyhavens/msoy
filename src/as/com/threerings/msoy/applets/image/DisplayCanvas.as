@@ -232,7 +232,7 @@ class ImageHolder extends UIComponent
         var g :Graphics = _mask.graphics;
         g.clear();
         g.beginFill(0xFFFFFF);
-        g.drawRect(0, 0, w, h);
+        g.drawRect(0, 0, w / scaleX, h / scaleY);
         g.endFill();
 
         // draw the checkerboard on the background, which isn't even
