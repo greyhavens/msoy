@@ -53,7 +53,7 @@ public class FeedRepository extends DepotRepository
      * @param since a timestamp before which not to load messages or null if all available messages
      * should be loaded.
      */
-    public List<FeedMessageRecord> loadMemberFeed (
+    public List<FeedMessageRecord> loadPersonalFeed (
         int memberId, IntSet friendIds, IntSet groupIds, Timestamp since)
         throws PersistenceException
     {
@@ -78,7 +78,7 @@ public class FeedRepository extends DepotRepository
      * @param since a timestamp before which not to load messages of null if lal available messages
      * should be loaded.
      */
-    public List <FeedMessageRecord> loadPersonalFeed (int memberId, Timestamp since)
+    public List <FeedMessageRecord> loadMemberFeed (int memberId, Timestamp since)
         throws PersistenceException
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();

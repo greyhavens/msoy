@@ -284,7 +284,7 @@ public class WorldServlet extends MsoyServiceServlet
 
         List<FeedMessage> messages = Lists.newArrayList();
         IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
-        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadMemberFeed(
+        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadPersonalFeed(
             mrec.memberId, friendIds, groupIds, since);
 
         // find out which member and group names we'll need
