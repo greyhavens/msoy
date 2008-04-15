@@ -406,10 +406,6 @@ public class GroupServlet extends MsoyServiceServlet
             }
             grec.homepageUrl = extras.homepageUrl;
             grec.charter = extras.charter;
-            if (extras.background != null) {
-                grec.backgroundMimeType = extras.background.mimeType;
-                grec.backgroundHash = extras.background.hash;
-            }
             grec.catalogItemType = extras.catalogItemType;
             grec.catalogTag = extras.catalogTag;
 

@@ -221,17 +221,17 @@ public class GroupRecord extends PersistentRecord
     /** The constraint for the logo image. */
     public byte logoMediaConstraint;
 
-    /** Flag to indicate page flow control */
+    /** Flag to indicate page flow control. TODO: drop this some time. */
     public int backgroundControl;
 
-    /** The MIME type for the background of the info area. */
+    /** The MIME type for the background of the info area. TODO: drop this some time. */
     public byte backgroundMimeType;
 
-    /** A hash code identifying the media for the background of the info area. */
+    /** The hash code for the info area background media. TODO: drop this some time. */
     @Column(nullable=true)
     public byte[] backgroundHash;
 
-    /** The constraint for the thumbnail of this image. */
+    /** The constraint for the thumbnail of this image. TODO: drop this some time. */
     public byte backgroundThumbConstraint;
 
     /** The member id of the person who created the group. */
@@ -288,11 +288,6 @@ public class GroupRecord extends PersistentRecord
         GroupExtras extras = new GroupExtras();
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
-        extras.backgroundControl = backgroundControl;
-        if (backgroundHash != null) {
-            extras.background = new MediaDesc(
-                backgroundHash, backgroundMimeType, backgroundThumbConstraint);
-        }
         extras.catalogItemType = catalogItemType;
         extras.catalogTag = catalogTag;
         return extras;
@@ -353,16 +348,6 @@ public class GroupRecord extends PersistentRecord
         }
         if (extrasDef.homepageUrl != null && !extrasDef.homepageUrl.equals(homepageUrl)) {
             updates.put(HOMEPAGE_URL, extrasDef.homepageUrl);
-        }
-        if (extrasDef.backgroundControl != backgroundControl) {
-            updates.put(BACKGROUND_CONTROL, extrasDef.backgroundControl);
-        }
-        if (extrasDef.background != null && (backgroundHash == null || !extrasDef.background.equals(
-                new MediaDesc(backgroundHash, backgroundMimeType, backgroundThumbConstraint)))) {
-            updates.put(BACKGROUND_HASH, extrasDef.background.hash);
-            updates.put(BACKGROUND_MIME_TYPE, extrasDef.background.mimeType);
-            // the thumbnail instead of photo constraint is stored here - see GroupEdit
-            updates.put(BACKGROUND_THUMB_CONSTRAINT, extrasDef.background.constraint);
         }
         if (extrasDef.catalogItemType != catalogItemType) {
             updates.put(CATALOG_ITEM_TYPE, extrasDef.catalogItemType);

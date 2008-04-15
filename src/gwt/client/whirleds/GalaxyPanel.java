@@ -94,7 +94,7 @@ public class GalaxyPanel extends VerticalPanel
         add(contents);
 
         // if they're high level, add info on creating a Whirled
-        if (CWhirleds.level >= MIN_WHIRLED_CREATE_LEVEL) {
+        if (CWhirleds.isSupport() || CWhirleds.level >= MIN_WHIRLED_CREATE_LEVEL) {
             add(WidgetUtil.makeShim(10, 10));
             SmartTable create = new SmartTable("Create", 0, 0);
             create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");

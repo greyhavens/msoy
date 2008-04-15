@@ -100,15 +100,6 @@ public class GroupEdit extends FlexTable
         _charter.setText(_extras.charter);
         addRow(CWhirleds.msgs.editCharter(), _charter);
 
-        addRow(CWhirleds.msgs.editBackground(), _background = new PhotoChoiceBox(false, null));
-        _background.setMedia(_extras.background);
-
-        _bgmode = new ListBox();
-        _bgmode.addItem(CWhirleds.msgs.editTile());
-        _bgmode.addItem(CWhirleds.msgs.editAnchor());
-        _bgmode.setSelectedIndex(_extras.backgroundControl);
-        addRow(CWhirleds.msgs.editMode(), _bgmode);
-
         _catalogType = new ListBox();
         for (int ii = 0; ii < Item.TYPES.length; ii++) {
             _catalogType.addItem(CWhirleds.dmsgs.getString("itemType" + Item.TYPES[ii]));
@@ -158,8 +149,6 @@ public class GroupEdit extends FlexTable
                                             _post.getSelectedIndex()+Group.PERM_ALL);
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
-        _extras.backgroundControl = _bgmode.getSelectedIndex();
-        _extras.background = _background.getMedia();
         _extras.catalogItemType = Item.TYPES[_catalogType.getSelectedIndex()];
         _extras.catalogTag = _catalogTag.getText().trim();
 
@@ -206,8 +195,8 @@ public class GroupEdit extends FlexTable
     protected GroupExtras _extras;
 
     protected TextBox _name, _blurb, _homepage, _catalogTag;
-    protected PhotoChoiceBox _logo, _background;
-    protected ListBox _policy, _thread, _post, _bgmode, _catalogType;
+    protected PhotoChoiceBox _logo;
+    protected ListBox _policy, _thread, _post, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
 }
