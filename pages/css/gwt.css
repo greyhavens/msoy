@@ -133,6 +133,7 @@ img, embed, applet, object {
 }
 .longThinOrangeButton-up-disabled {
   background-image: url(/images/ui/orange/long_thin_disabled.png);
+  color: #CCCCCC;
 }
 
 .shortThickOrangeButton {
