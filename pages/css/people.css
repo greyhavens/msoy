@@ -244,22 +244,13 @@
   padding-right: 10px;
 }
 
-.sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {
+.sendInvites .Header, .invitation .Header {
   font-weight: bold;
   font-size: 18px;
 }
 
-.sendInvitesResultsPopup .ResultsHeader {
-  background: #222222;
-  color: #EAEFF1;
-  font-size: 22px;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
 .sendInvitesResultsPopup .ScrollPanel {
   max-height: 300px;
-  border: 1px solid black;
   margin-bottom: 10px;
   text-align: left;
 }

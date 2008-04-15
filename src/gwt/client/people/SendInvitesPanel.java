@@ -33,6 +33,7 @@ import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
+import client.util.BorderedDialog;
 import client.util.BorderedPopup;
 import client.util.ClickCallback;
 import client.util.DefaultTextListener;
@@ -275,8 +276,7 @@ public class SendInvitesPanel extends VerticalPanel
                     contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful());
                     success = true;
                 }
-                contents.setText(
-                        row++, 0, CPeople.msgs.inviteResultsComma(ec.name, ec.email), 3, null);
+                contents.setText(row++, 0, CPeople.msgs.inviteMember(ec.name, ec.email), 3, null);
             }
         }
         if (success) {
@@ -291,7 +291,7 @@ public class SendInvitesPanel extends VerticalPanel
                     contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
                     members = true;
                 }
-                contents.setText(row, 0, CPeople.msgs.inviteResultsComma(ec.name, ec.email));
+                contents.setText(row, 0, CPeople.msgs.inviteMember(ec.name, ec.email));
                 ClickListener onClick = InviteFriendPopup.createListener(invRes.names[ii]);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
@@ -313,14 +313,11 @@ public class SendInvitesPanel extends VerticalPanel
                 failed = true;
             }
             EmailContact ec = (EmailContact)addrs.get(ii);
-            String name = CPeople.msgs.inviteResultsComma(ec.name, ec.email);
-            if (invRes.results[ii].startsWith("e.")) {
-                contents.setText(row++, 0, CPeople.msgs.inviteResultsComma(
-                                     name, CPeople.serverError(invRes.results[ii])), 3, null);
-            } else {
-                contents.setText(row++, 0, CPeople.msgs.inviteResultsComma(
-                                     name, invRes.results[ii]), 3, null);
-            }
+            String name = CPeople.msgs.inviteMember(ec.name, ec.email);
+            String result = invRes.results[ii].startsWith("e.") ?
+                CPeople.msgs.inviteResultsNote(name, CPeople.serverError(invRes.results[ii])) :
+                CPeople.msgs.inviteResultsNote(name, invRes.results[ii]);
+            contents.setText(row++, 0, result, 3, null);
         }
         rp.show();
     }
@@ -337,7 +334,7 @@ public class SendInvitesPanel extends VerticalPanel
             EmailContact ec = (EmailContact)contacts.get(ii);
             if (ec.mname != null) {
                 showResults = true;
-                contents.setText(row, 0, CPeople.msgs.inviteResultsComma(ec.name, ec.email));
+                contents.setText(row, 0, CPeople.msgs.inviteMember(ec.name, ec.email));
                 ClickListener onClick = InviteFriendPopup.createListener(ec.mname);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
@@ -351,28 +348,24 @@ public class SendInvitesPanel extends VerticalPanel
         }
     }
 
-    protected class ResultsPopup extends BorderedPopup
+    protected class ResultsPopup extends BorderedDialog
     {
         public ResultsPopup (String title)
         {
-            VerticalPanel top = new VerticalPanel();
-            top.setStyleName("sendInvitesResultsPopup");
-            top.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-            top.add(MsoyUI.createLabel(title, "ResultsHeader"));
+            addStyleName("sendInvitesResultsPopup");
+            setHeaderTitle(title);
 
             _contents = new SmartTable();
             _contents.setCellSpacing(3);
             ScrollPanel scroll = new ScrollPanel(_contents);
             scroll.setStyleName("ScrollPanel");
-            top.add(scroll);
+            setContents(scroll);
 
-            top.add(new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
+            addButton(new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }
             }));
-
-            setWidget(top);
         }
 
         public SmartTable getContents ()
