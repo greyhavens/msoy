@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.net.InetAddress;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
@@ -13,8 +12,8 @@ import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import com.threerings.panopticon.client.net.EventLogger;
-import com.threerings.panopticon.client.net.OTPConnection;
-import com.threerings.panopticon.client.net.OTPEventSender;
+import com.threerings.panopticon.client.net.EventLoggerConfig;
+import com.threerings.panopticon.client.net.EventLoggerFactory;
 
 import static com.threerings.msoy.Log.log;
 
@@ -42,11 +41,10 @@ public class MsoyEventLogger
         try {
             if (host != null && host.length() > 0 && port > 0) {
                 log.info("Events logged remotely to: " + host + ":" + port);
-                OTPConnection conn = new OTPConnection(
-                    InetAddress.getByName(host), port, TIMEOUT, username, password);  
-                    
-                _remote = new EventLogger(QUEUE_SIZE, RETRY, new OTPEventSender(conn));
-                _remote.start();
+                
+                EventLoggerConfig config = new EventLoggerConfig(host, port, username, password);
+                config.setPersistPath(ServerConfig.serverRoot.getAbsolutePath());
+                _remote = EventLoggerFactory.createLogger(config);
             } 
         } catch (Exception e) {
             log.severe("Failed to connect to remote logging server, will only log locally. " +
@@ -57,11 +55,17 @@ public class MsoyEventLogger
     // from interface MsoyBaseServer.Shutdowner
     public void shutdown ()
     {
-        if (_remote != null) {
-            _remote.stop();
-        }
-        if (_local != null) {
-            _local.shutdown();
+        try {
+            if (_remote != null) {
+                _remote.dispose();
+            }
+            if (_local != null) {
+                _local.shutdown();
+            }
+        } catch (InterruptedException ie) {
+            // Thread interrupted while shutting down the logger, could not complete.
+            Thread.interrupted();
+            log.warning("Thread interrupted while shutting down event logger.");
         }
     }
 
