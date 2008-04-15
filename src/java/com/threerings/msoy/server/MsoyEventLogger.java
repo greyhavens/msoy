@@ -55,17 +55,11 @@ public class MsoyEventLogger
     // from interface MsoyBaseServer.Shutdowner
     public void shutdown ()
     {
-        try {
-            if (_remote != null) {
-                _remote.dispose();
-            }
-            if (_local != null) {
-                _local.shutdown();
-            }
-        } catch (InterruptedException ie) {
-            // Thread interrupted while shutting down the logger, could not complete.
-            Thread.interrupted();
-            log.warning("Thread interrupted while shutting down event logger.");
+        if (_remote != null) {
+            _remote.dispose();
+        }
+        if (_local != null) {
+            _local.shutdown();
         }
     }
 
