@@ -253,8 +253,7 @@ public class PopupFilePreview extends TitleWindow
         _newFilename = newFilename;
         var source :Object = (image != null) ? image : _bytes;
         var editor :ImageEditor = new ImageEditor(_ctx, source, getForcedSize());
-        editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
-        //editor.title = _name;
+        editor.addEventListener(ImageEditor.IMAGE_UPDATED, handleEditorClosed);
     }
 
     protected function handleEditorClosed (event :ValueEvent) :void

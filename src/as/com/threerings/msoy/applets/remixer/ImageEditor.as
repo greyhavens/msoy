@@ -5,19 +5,13 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.geom.Point;
 
-import flash.utils.ByteArray;
-
-import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
 import mx.core.Application;
 
-import mx.managers.PopUpManager;
-
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.PopUpUtil;
 
 import com.threerings.msoy.applets.image.ImageManipulator;
 
