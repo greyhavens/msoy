@@ -19,6 +19,7 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -109,9 +110,16 @@ public class MsoySceneDirector extends SceneDirector
 
         _departingPortalId = -1;
         super.requestFailed(reason);
-        (_ctx as WorldContext).displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
 
-        // let's deal with the player getting bumped back from a locked scene
+        var wctx :WorldContext = _ctx as WorldContext;
+        wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
+
+        // if we're in the featured place view...
+        if (wctx.getMsoyClient().isFeaturedPlaceView()) {
+            return; // ...there's nothing we can do but display a black scene
+        }
+
+        // otherwise try to deal with the player getting bumped back from a locked scene
         if (reason == RoomCodes.E_ENTRANCE_DENIED) {
             bounceBack(_sceneId, pendingPreviousScene, reason);
         }
@@ -211,7 +219,7 @@ public class MsoySceneDirector extends SceneDirector
 
         // we have nowhere to go back. let's just go home.
         var memberId :int = wctx.getMemberObject().getMemberId();
-        if (memberId != 0) {
+        if (!MemberName.isGuest(memberId)) {
             log.info("Scene locked, returning home [memberId=" + memberId + "].");
             ctrl.handleGoMemberHome(memberId);
             return;
