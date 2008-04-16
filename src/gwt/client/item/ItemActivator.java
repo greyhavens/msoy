@@ -79,7 +79,7 @@ public class ItemActivator extends FlowPanel
                         FlashClients.useAvatar(0, 0);
                     } else {
                         FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
-                        Frame.closeContent();
+                        // Frame.closeContent();
                     }
                 }
             };
@@ -93,7 +93,7 @@ public class ItemActivator extends FlowPanel
                         FlashClients.clearItem(_item.getType(), _item.itemId);
                     } else {
                         FlashClients.useItem(_item.getType(), _item.itemId);
-                        Frame.closeContent();
+                        // Frame.closeContent();
                     }
                 }
             };
