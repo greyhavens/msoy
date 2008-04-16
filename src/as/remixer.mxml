@@ -4,7 +4,7 @@
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     width="100%" height="100%"
     preloader="com.threerings.msoy.client.Preloader"
-    applicationComplete="addChild(new RemixControls(this));">
+    applicationComplete="viewStack.addChild(new RemixControls(this, viewStack));">
 <mx:Style source="msoy.css"/>
 <mx:Style source="com/threerings/msoy/applets/image/image.css"/>
 <mx:Style>
@@ -17,4 +17,5 @@
         import com.threerings.msoy.applets.remixer.RemixControls;
     ]]>
 </mx:Script>
+<mx:ViewStack id="viewStack"/>
 </mx:Application>
