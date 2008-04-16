@@ -5,6 +5,10 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.utils.ByteArray;
 
+import mx.containers.ViewStack;
+
+import mx.core.UIComponent;
+
 import com.threerings.util.Util;
 
 import com.whirled.remix.data.EditableDataPack;
@@ -17,9 +21,22 @@ public class RemixContext
     /**
      * Create a RemixContext.
      */
-    public function RemixContext (pack :EditableDataPack)
+    public function RemixContext (pack :EditableDataPack, viewStack :ViewStack)
     {
         this.pack = pack;
+        _viewStack = viewStack;
+    }
+
+    public function pushView (view :UIComponent) :void
+    {
+        _viewStack.addChild(view);
+        _viewStack.selectedIndex++;
+    }
+
+    public function popView () :void
+    {
+        _viewStack.selectedIndex--;
+        _viewStack.removeChildAt(_viewStack.selectedIndex + 1);
     }
 
     /**
@@ -79,5 +96,8 @@ public class RemixContext
         // once we've tried 1000 times, just fucking stick a fork in it.
         return origname;
     }
+
+    /** The ViewStack hosting the remixer. */
+    protected var _viewStack :ViewStack;
 }
 }

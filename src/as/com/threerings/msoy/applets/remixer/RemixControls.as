@@ -22,6 +22,7 @@ import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.containers.ViewStack;
 
 import mx.controls.HRule;
 import mx.controls.Label;
@@ -53,7 +54,7 @@ public class RemixControls extends HBox
 
     public static const PREVIEW_WIDTH :int = 340;
 
-    public function RemixControls (app :Application)
+    public function RemixControls (app :Application, viewStack :ViewStack)
     {
         percentWidth = 100;
         percentHeight = 100;
@@ -99,7 +100,14 @@ public class RemixControls extends HBox
         _previewer.load("/clients/" + DeploymentConfig.version + "/avatarviewer.swf");
         vbox.addChild(_previewer);
 
-        ParameterUtil.getParameters(app, gotParams);
+        ParameterUtil.getParameters(app, function (params :Object) :void  {
+            _params = params;
+            var media :String = params["media"] as String;
+
+            _ctx = new RemixContext(new EditableDataPack(media), viewStack);
+            _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
+            _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
+        });
     }
 
     protected function createPreviewHeader () :UIComponent
@@ -118,16 +126,6 @@ public class RemixControls extends HBox
         box.addChild(lbl);
 
         return box;
-    }
-
-    protected function gotParams (params :Object) :void
-    {
-        _params = params;
-        var media :String = params["media"] as String;
-
-        _ctx = new RemixContext(new EditableDataPack(media));
-        _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
-        _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
     }
 
     protected function handlePreviewerEvent (event :Event) :void

@@ -113,8 +113,7 @@ public class PopupFilePreview extends TitleWindow
 
         setImage(entry.value, ctx.pack.getFile(name));
 
-        PopUpManager.addPopUp(this, parent, true);
-        PopUpUtil.center(this);
+        setPopped(true);
     }
 
     public function setImage (filename :String, bytes :ByteArray) :void
@@ -142,13 +141,13 @@ public class PopupFilePreview extends TitleWindow
 
     protected function close (save :Boolean) :void
     {
+        setPopped(false);
+
         if (save && _bytes != null) {
             _parent.updateValue(_filename, _bytes);
         } else {
             _parent.updateValue(null, null);
         }
-
-        PopUpManager.removePopUp(this);
     }
 
     protected function handleChooseFile () :void
@@ -249,23 +248,28 @@ public class PopupFilePreview extends TitleWindow
 
     protected function doEdit (image :Object = null, newFilename :String = null) :void
     {
+        setPopped(false);
+
         _newFilename = newFilename;
         var source :Object = (image != null) ? image : _bytes;
-        var editor :PopupImageEditor = new PopupImageEditor(source, getForcedSize());
+        var editor :ImageEditor = new ImageEditor(_ctx, source, getForcedSize());
         editor.addEventListener(PopupImageEditor.IMAGE_UPDATED, handleEditorClosed);
-        editor.title = _name;
+        //editor.title = _name;
     }
 
     protected function handleEditorClosed (event :ValueEvent) :void
     {
+        setPopped(true);
+
         var array :Array = event.value as Array;
+        if (array != null) {
+            var file :String = (_newFilename != null) ? _newFilename : _filename;
+            _newFilename = null;
 
-        var file :String = (_newFilename != null) ? _newFilename : _filename;
-        _newFilename = null;
-
-        var ba :ByteArray = ByteArray(array[0]);
-        _filename = _ctx.createFilename(file, ba, array[1] as String);
-        setImage(_filename, ba);
+            var ba :ByteArray = ByteArray(array[0]);
+            _filename = _ctx.createFilename(file, ba, array[1] as String);
+            setImage(_filename, ba);
+        }
     }
 
     /**
@@ -277,6 +281,16 @@ public class PopupFilePreview extends TitleWindow
         var ww :Number = Number(entry.width);
         var hh :Number = Number(entry.height);
         return (isNaN(ww) || isNaN(hh)) ? null : new Point(ww, hh);
+    }
+
+    protected function setPopped (vis :Boolean) :void
+    {
+        if (vis) {
+            PopUpManager.addPopUp(this, _parent, true);
+            PopUpUtil.center(this);
+        } else {
+            PopUpManager.removePopUp(this);
+        }
     }
 
     protected var _parent :FileEditor;
