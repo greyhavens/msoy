@@ -43,10 +43,11 @@ public class FlashClients
     public static void embedWorldClient (Panel container, String flashVars)
     {
         if (shouldShowFlash(container, 0, 0)) {
+            String height = DeploymentConfig.devDeployment ? "100%" : (""+Frame.CLIENT_HEIGHT);
             WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                    "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+                    "100%", height, flashVars));
         }
     }
 
@@ -57,10 +58,11 @@ public class FlashClients
     public static void embedGameClient (Panel container, String flashVars)
     {
         if (shouldShowFlash(container, 0, 0)) {
+            String height = DeploymentConfig.devDeployment ? "100%" : (""+Frame.CLIENT_HEIGHT);
             WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                    "100%", String.valueOf(Frame.CLIENT_HEIGHT), flashVars));
+                    "100%", height, flashVars));
         }
     }
 
