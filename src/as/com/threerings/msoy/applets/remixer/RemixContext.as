@@ -27,6 +27,16 @@ public class RemixContext
         _viewStack = viewStack;
     }
 
+    public function getViewWidth () :int
+    {
+        return _viewStack.width;
+    }
+
+    public function getViewHeight () :int
+    {
+        return _viewStack.height;
+    }
+
     public function pushView (view :UIComponent) :void
     {
         _viewStack.addChild(view);

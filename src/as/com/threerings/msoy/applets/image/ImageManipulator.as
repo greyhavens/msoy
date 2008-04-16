@@ -74,14 +74,16 @@ public class ImageManipulator extends HBox
         this.height = maxH;
         this.minWidth = 100;
         this.minHeight = 100;
-        _maxWidth = maxW - CONTROL_BAR_WIDTH;
-        _maxHeight = maxH;
 
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
-
         setStyle("backgroundColor", 0xDCDCDC);
-        _editor = new EditCanvas(_maxWidth, _maxHeight, forcedSize);
+        setStyle("horizontalGap", HGAP);
+
+        // this is so annoying. We define and set the HGAP ourselves, otherwise we can't
+        // read the inherited style here in the constructor.
+        maxW -= CONTROL_BAR_WIDTH + HGAP;
+        _editor = new EditCanvas(maxW, maxH, forcedSize);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
         addChild(_controlBar = createControlBar(forcedSize != null));
@@ -439,8 +441,7 @@ public class ImageManipulator extends HBox
 
     protected static const CONTROL_BAR_WIDTH :int = 150;
 
-    protected var _maxWidth :int;
-    protected var _maxHeight :int;
+    protected static const HGAP :int = 8;
 
     protected var _controlBar :VBox;
 

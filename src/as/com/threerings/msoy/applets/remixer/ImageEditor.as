@@ -29,7 +29,7 @@ public class ImageEditor extends VBox
     {
         _ctx = ctx;
 
-        _image = new ImageManipulator(600, 480, forcedSize);
+        _image = new ImageManipulator(ctx.getViewWidth(), ctx.getViewHeight(), forcedSize);
         addChild(_image);
 
         _image.addEventListener(ImageManipulator.CLOSE, handleClosed);

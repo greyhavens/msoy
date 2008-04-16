@@ -30,6 +30,8 @@ import flash.utils.ByteArray;
 
 import mx.core.ScrollPolicy;
 
+import mx.controls.scrollClasses.ScrollBar;
+
 import mx.styles.CSSStyleDeclaration;
 import mx.styles.StyleManager;
 
@@ -333,8 +335,8 @@ public class EditCanvas extends DisplayCanvas
             hh = Math.max(hh, _forcedSize.y);
         }
 
-        _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ww) / 2);
-        _vGutter = Math.max(MIN_GUTTER, (this.maxHeight - hh) / 2);
+        _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ScrollBar.THICKNESS - ww) / 2);
+        _vGutter = Math.max(MIN_GUTTER, (this.maxHeight - ScrollBar.THICKNESS - hh) / 2);
         _canvasWidth = ww + (2 * _hGutter);
         _canvasHeight = hh + (2 * _vGutter);
         _holder.width = _canvasWidth;
@@ -366,6 +368,10 @@ public class EditCanvas extends DisplayCanvas
         this.height = this.maxHeight;
     }
 
+    /**
+     * Called after the paint layer's position is changed, updates mouse-grabbable
+     * transparent drawn pixels.
+     */
     protected function paintLayerPositioned () :void
     {
         var g :Graphics = _paintLayer.graphics;
