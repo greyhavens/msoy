@@ -11,6 +11,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -44,10 +45,11 @@ public class FlashClients
     {
         if (shouldShowFlash(container, 0, 0)) {
             String height = DeploymentConfig.devDeployment ? "100%" : (""+Frame.CLIENT_HEIGHT);
-            WidgetUtil.embedFlashObject(
+            Widget embed = WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
                     "100%", height, flashVars));
+            embed.setHeight("100%");
         }
     }
 
