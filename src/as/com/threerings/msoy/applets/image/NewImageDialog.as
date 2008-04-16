@@ -54,8 +54,8 @@ public class NewImageDialog extends TitleWindow
         if (forcedSize != null) {
             _width.text = String(forcedSize.x);
             _height.text = String(forcedSize.y);
-            _width.editable = false;
-            _height.editable = false;
+            _width.enabled = false;
+            _height.enabled = false;
         } else {
             _width.text = "200";
             _height.text = "200";

@@ -161,7 +161,7 @@ public class ImageManipulator extends HBox
         bar.addChild(createControlHeader("Position Image"));
 
         var box :HBox = new HBox();
-        box.addChild(addModeBtn("move", EditCanvas.MOVE));
+        box.addChild(addModeBtn(EditCanvas.MOVE, "move", "Adjust the image position"));
         box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
         bar.addChild(box);
 
@@ -177,13 +177,14 @@ public class ImageManipulator extends HBox
             box = new HBox();
             var crop :CommandButton = new CommandButton(null, _editor.doCrop);
             crop.styleName = "cropButton";
+            crop.toolTip = "Crop";
             box.addChild(crop);
             box.addChild(createTip("Crop the image to the selected region"));
             bar.addChild(box);
         }
 
         box = new HBox();
-        box.addChild(addModeBtn("select", EditCanvas.SELECT));
+        box.addChild(addModeBtn(EditCanvas.SELECT, "select", "Select the active area"));
 
         var innerBox :HBox = new HBox();
         innerBox.setStyle("horizontalGap", 0);
@@ -198,8 +199,8 @@ public class ImageManipulator extends HBox
         _selectionHeight.maxChars = 4;
         _selectionWidth.maxWidth = 40;
         _selectionHeight.maxWidth = 40;
-        _selectionWidth.editable = !sizeForced;
-        _selectionHeight.editable = !sizeForced;
+        _selectionWidth.enabled = !sizeForced;
+        _selectionHeight.enabled = !sizeForced;
 
         box.addChild(innerBox);
 
@@ -215,14 +216,15 @@ public class ImageManipulator extends HBox
         bar.addChild(createControlHeader("Erase and Paint"));
 
         var box :HBox = new HBox();
-        box.addChild(addModeBtn("eraser", EditCanvas.ERASE));
+        box.addChild(addModeBtn(EditCanvas.ERASE, "eraser", "Erase to transparency"));
         box.addChild(createTip("Erase around the image. Paint your own touches!"));
         bar.addChild(box);
 
         box = new HBox();
-        box.addChild(addModeBtn("brush", EditCanvas.PAINT));
-        box.addChild(addModeBtn("eyedropper", EditCanvas.SELECT_COLOR));
+        box.addChild(addModeBtn(EditCanvas.PAINT, "brush", "Paint a color"));
+        box.addChild(addModeBtn(EditCanvas.SELECT_COLOR, "eyedropper", "Pick a color"));
         _colorPicker = new ColorPicker();
+        _colorPicker.toolTip = "The current painting color";
         _colorPicker.selectedColor = 0x0000FF;
         _colorPicker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
         box.addChild(_colorPicker);
@@ -241,6 +243,8 @@ public class ImageManipulator extends HBox
         box.addChild(_redo = new CommandButton(null, _editor.doRedo));
         bar.addChild(box);
 
+        _undo.toolTip = "Undo";
+        _redo.toolTip = "Redo";
         _undo.styleName = "undoButton";
         _redo.styleName = "redoButton";
         KeyboardManager.setShortcut(_undo, 26/*should be: Keyboard.Z*/, Keyboard.CONTROL);
@@ -269,7 +273,8 @@ public class ImageManipulator extends HBox
         var tip :Text = new Text();
         tip.selectable = false;
         tip.width = 100; // TODO: constant
-        tip.setStyle("fontSize", 8);
+        tip.setStyle("fontFamily", "_sans");
+        tip.setStyle("fontSize", 10);
         tip.text = text;
         return tip;
     }
@@ -293,7 +298,7 @@ public class ImageManipulator extends HBox
         box.setStyle("verticalGap", 0);
 
         var lbl :Label = new Label();
-        lbl.setStyle("fontSize", 8);
+        lbl.setStyle("fontSize", 10);
         lbl.text = name;
 
         var slider :HSlider = new HSlider();
@@ -335,20 +340,21 @@ public class ImageManipulator extends HBox
 
                 slider.value = closeValue;
             });
-            but.scaleY = .8;
-            but.scaleX = .8;
+            but.toolTip = "Snap this slider to the closest value";
+            but.setStyle("fontSize", 8);
             hbox.addChild(but);
         }
 
         return slider;
     }
 
-    protected function addModeBtn (styleBase :String, mode :int) :CommandButton
+    protected function addModeBtn (mode :int, styleBase :String, toolTip :String) :CommandButton
     {
         var but :CommandButton = new CommandButton(null, setMode, mode);
         but.data = mode;
         but.styleName = styleBase + "Button";
         but.toggle = true;
+        but.toolTip = toolTip;
         _buttons.push(but);
         return but;
     }
