@@ -50,6 +50,8 @@ import com.threerings.msoy.person.data.GroupFeedMessage;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
@@ -294,6 +296,21 @@ public class WorldServlet extends MsoyServiceServlet
                 feedFriendIds.add(((FriendFeedMessageRecord)record).actorId);
             } else if (record instanceof GroupFeedMessageRecord) {
                 feedGroupIds.add(((GroupFeedMessageRecord)record).groupId);
+            } else if (record instanceof SelfFeedMessageRecord && 
+                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+                String[] fields = record.data.split("\t");
+                if (fields.length < 3) {
+                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
+                        record.data + "]");
+                    continue;
+                }
+
+                try {
+                    feedFriendIds.add(Integer.parseInt(fields[2]));
+                } catch (NumberFormatException nfe) {
+                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
+                        "comment feed message [" + fields[2] + "]");
+                }
             }
         }
 
@@ -324,6 +341,22 @@ public class WorldServlet extends MsoyServiceServlet
             } else if (record instanceof GroupFeedMessageRecord) {
                 ((GroupFeedMessage)message).group =
                     groupLookup.get(((GroupFeedMessageRecord)record).groupId);
+            } else if (record instanceof SelfFeedMessageRecord &&
+                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+                if (message.data.length < 3) {
+                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
+                        record.data + "]");
+                    continue;
+                }
+
+                try {
+                    String data = record.data;
+                    data += "\t" + memberLookup.get(Integer.parseInt(message.data[2]));
+                    message.data = data.split("\t");
+                } catch (NumberFormatException nfe) {
+                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
+                        "comment feed message [" + message.data[2] + "]");
+                }
             }
             messages.add(message);
         }

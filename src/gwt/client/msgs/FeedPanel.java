@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.me;
+package client.msgs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +30,7 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
+import com.threerings.msoy.person.data.SelfFeedMessage;
 
 import client.games.GameDetailPanel;
 import client.shell.Application;
@@ -42,9 +43,16 @@ import client.util.TongueBox;
 
 public class FeedPanel extends TongueBox
 {
-    public FeedPanel (String emptyMessage)
+    public static interface FeedLoader
     {
-        setHeader(CMe.msgs.headerFeed());
+        public void loadFeed (int feedDays, AsyncCallback callback);
+    }
+
+    public FeedPanel (String emptyMessage, boolean setHeader, FeedLoader feedLoader)
+    {
+        if (setHeader) {
+            setHeader(CMsgs.mmsgs.headerFeed());
+        }
         setContent(_feeds = new FeedList());
         _emptyMessage = emptyMessage;
         _moreLabel = setFooterLabel("", new ClickListener() {
@@ -52,6 +60,7 @@ public class FeedPanel extends TongueBox
                 loadFeed(!_fullPage);
             }
         });
+        _feedLoader = feedLoader;
     }
 
     public void setFeed (List feed, boolean fullPage)
@@ -59,18 +68,18 @@ public class FeedPanel extends TongueBox
         _fullPage = fullPage;
         _feeds.clear();
         _feeds.populate(feed, _emptyMessage, _fullPage);
-        _moreLabel.setText(_fullPage ? CMe.msgs.shortFeed() : CMe.msgs.fullFeed());
+        _moreLabel.setText(_fullPage ? CMsgs.mmsgs.shortFeed() : CMsgs.mmsgs.fullFeed());
     }
 
     protected void loadFeed (final boolean fullPage)
     {
         int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        CMe.worldsvc.loadFeed(CMe.ident, feedDays, new AsyncCallback() {
+        _feedLoader.loadFeed(feedDays, new AsyncCallback() {
             public void onSuccess (Object result) {
                 setFeed((List)result, fullPage);
             }
             public void onFailure(Throwable caught) {
-                MsoyUI.error(CMe.serverError(caught));
+                MsoyUI.error(CMsgs.serverError(caught));
             }
         });
     }
@@ -177,6 +186,8 @@ public class FeedPanel extends TongueBox
                         addFriendMessage((FriendFeedMessage)message);
                     } else if (message instanceof GroupFeedMessage) {
                         addGroupMessage((GroupFeedMessage)message);
+                    } else if (message instanceof SelfFeedMessage) {
+                        addSelfMessage((SelfFeedMessage)message);
                     } else {
                         addMessage(message);
                     }
@@ -184,7 +195,7 @@ public class FeedPanel extends TongueBox
                 if (header > message.posted) {
                     header = startofDay(message.posted);
                     if (yesterday < message.posted) {
-                        add(new DateWidget(CMe.msgs.yesterday()));
+                        add(new DateWidget(CMsgs.mmsgs.yesterday()));
                     } else if (!fullPage) {
                         // stop after displaying today and yesterday; we let the server send us 48
                         // hours of feed messages to account for timezone differences, but we
@@ -270,7 +281,7 @@ public class FeedPanel extends TongueBox
                     Args.compose("d", message.data[1], GameDetailPanel.TROPHIES_TAB));
 
             case 103: // FRIEND_LISTED_ITEM
-                return CMe.msgs.descCombine(
+                return CMsgs.mmsgs.descCombine(
                             CShell.dmsgs.getString("itemType" + message.data[1]),
                             Application.createLinkHtml(message.data[0], Page.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
@@ -324,27 +335,27 @@ public class FeedPanel extends TongueBox
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriend(
+                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriend(
                                 friendLink, buildString(message))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
-                add(new IconWidget("friend_updated_room", CMe.msgs.friendUpdatedRoom(
+                add(new IconWidget("friend_updated_room", CMsgs.mmsgs.friendUpdatedRoom(
                                 friendLink, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendWonTrophy(
                                 friendLink, buildString(message))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendListedItem(
                                 friendLink, buildString(message))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
-                add(new IconWidget("friend_gained_level", CMe.msgs.friendGainedLevel(
+                add(new IconWidget("friend_gained_level", CMsgs.mmsgs.friendGainedLevel(
                                 friendLink, buildString(message))));
                 break;
             }
@@ -352,7 +363,6 @@ public class FeedPanel extends TongueBox
 
         protected String standardCombine (ArrayList list)
         {
-
             return standardCombine(list, new StringBuilder() {
                 public String build (FeedMessage message) {
                     return buildString(message);
@@ -364,7 +374,7 @@ public class FeedPanel extends TongueBox
         {
             return standardCombine(list, new StringBuilder() {
                 public String build (FeedMessage message) {
-                    return CMe.msgs.colonCombine(
+                    return CMsgs.mmsgs.colonCombine(
                         profileLink(((FriendFeedMessage)message).friend), buildString(message));
                 }
             });
@@ -389,9 +399,9 @@ public class FeedPanel extends TongueBox
             for (int ii = 1, ll = list.size(); ii < ll; ii++) {
                 FeedMessage message = (FeedMessage)list.get(ii);
                 if (ii + 1 == ll) {
-                    combine = CMe.msgs.andCombine(combine, builder.build(message));
+                    combine = CMsgs.mmsgs.andCombine(combine, builder.build(message));
                 } else {
-                    combine = CMe.msgs.commaCombine(combine, builder.build(message));
+                    combine = CMsgs.mmsgs.commaCombine(combine, builder.build(message));
                 }
             }
             return combine;
@@ -421,28 +431,28 @@ public class FeedPanel extends TongueBox
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriends(
+                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriends(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
                 add(new IconWidget("friend_updated_room",
-                            CMe.msgs.friendsUpdatedRoom(friendLinkCombine(list))));
+                            CMsgs.mmsgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMediaArray(list), CMe.msgs.friendWonTrophies(
+                add(new ThumbnailWidget(buildMediaArray(list), CMsgs.mmsgs.friendWonTrophies(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMediaArray(list), CMe.msgs.friendListedItem(
+                add(new ThumbnailWidget(buildMediaArray(list), CMsgs.mmsgs.friendListedItem(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
                 add(new IconWidget("friend_gained_level",
-                            CMe.msgs.friendsGainedLevel(friendLinkCombine(list))));
+                            CMsgs.mmsgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
@@ -453,12 +463,12 @@ public class FeedPanel extends TongueBox
             String friendLinks = profileCombine(list);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMe.msgs.friendAddedFriendsRight(
+                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriendsRight(
                                 friendLinks, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CMe.msgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
@@ -471,7 +481,22 @@ public class FeedPanel extends TongueBox
             case 200: // GROUP_ANNOUNCEMENT
                 String threadLink = Application.createLinkHtml(
                     message.data[1], Page.WHIRLEDS, Args.compose("t", message.data[2]));
-                add(new BasicWidget(CMe.msgs.groupAnnouncement(message.data[0], threadLink)));
+                add(new BasicWidget(CMsgs.mmsgs.groupAnnouncement(message.data[0], threadLink)));
+                break;
+            }
+        }
+
+        protected void addSelfMessage (SelfFeedMessage message) 
+        {
+            switch (message.type) {
+            case 300: // SELF_ROOM_COMMENT
+                String memberLink = profileLink(message.data[3], message.data[2]);
+                String roomLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(), 
+                    Page.WORLD, Args.compose("room", message.data[0]));
+                String roomPageLink = Application.createLinkHtml(
+                    message.data[1], Page.WORLD, Args.compose("s", message.data[0]));
+                add(new BasicWidget(
+                    CMsgs.mmsgs.selfRoomComment(memberLink, roomLink, roomPageLink)));
                 break;
             }
         }
@@ -612,6 +637,7 @@ public class FeedPanel extends TongueBox
     protected Label _moreLabel;
     protected String _emptyMessage;
     protected boolean _fullPage;
+    protected FeedLoader _feedLoader;
 
     /** The default number of days of feed information to show. */
     protected static final int SHORT_CUTOFF = 2;

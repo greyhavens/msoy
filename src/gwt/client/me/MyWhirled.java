@@ -3,10 +3,13 @@
 
 package client.me;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.MyWhirledData;
+
+import client.msgs.FeedPanel;
 
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -30,8 +33,13 @@ public class MyWhirled extends VerticalPanel
         add(new StuffNaviBar(Item.NOT_A_TYPE));
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
         add(new WhatsNextPanel(data));
-        String empty = data.friendCount > 0 ? CMe.msgs.emptyFeed() : CMe.msgs.emptyFeedNoFriends();
-        FeedPanel feed = new FeedPanel(empty);
+        String empty = 
+            data.friendCount > 0 ? CMe.mmsgs.emptyFeed() : CMe.mmsgs.emptyFeedNoFriends();
+        FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
+            public void loadFeed (int feedDays, AsyncCallback callback) {
+                CMe.worldsvc.loadFeed(CMe.ident, feedDays, callback);
+            }
+        });
         feed.setFeed(data.feed, false);
         add(feed);
     }

@@ -70,6 +70,13 @@ public interface ProfileService extends RemoteService
          * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
          */
         public List trophies;
+
+        /** 
+        * This member's recent self feed messages.
+        *
+        * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
+        */
+        public List feed;
     }
 
     /** Provides results for {@link #loadFriends}. */
@@ -127,5 +134,13 @@ public interface ProfileService extends RemoteService
      * @gwt.typeArgs <com.threerings.msoy.web.data.EmailContact>
      */
     public List getWebMailAddresses (WebIdent ident, String email, String password)
+        throws ServiceException;
+
+    /**
+     * Loads the self feed for the specified member
+     *
+     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
+     */
+    public List loadSelfFeed (WebIdent ident, int cutoffDays)
         throws ServiceException;
 }

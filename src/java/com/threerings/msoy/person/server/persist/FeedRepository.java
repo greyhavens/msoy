@@ -59,6 +59,8 @@ public class FeedRepository extends DepotRepository
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
+        SQLOperator self = new Conditionals.Equals(SelfFeedMessageRecord.TARGET_ID_C, memberId);
+        loadFeedMessages(messages, SelfFeedMessageRecord.class, self, since);
         if (!friendIds.isEmpty()) {
             SQLOperator actors = null;
             actors = new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds);
@@ -75,7 +77,7 @@ public class FeedRepository extends DepotRepository
     /**
      * Loads all applicable feed messages by the specified member.
      *
-     * @param since a timestamp before which not to load messages of null if lal available messages
+     * @param since a timestamp before which not to load messages of null if all available messages
      * should be loaded.
      */
     public List <FeedMessageRecord> loadMemberFeed (int memberId, Timestamp since)
@@ -84,6 +86,8 @@ public class FeedRepository extends DepotRepository
         List<FeedMessageRecord> messages = Lists.newArrayList();
         SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
+        SQLOperator self = new Conditionals.Equals(SelfFeedMessageRecord.TARGET_ID_C, memberId);
+        loadFeedMessages(messages, SelfFeedMessageRecord.class, self, since);
         return messages;
     }
 
@@ -96,6 +100,21 @@ public class FeedRepository extends DepotRepository
         throws PersistenceException
     {
         GlobalFeedMessageRecord message = new GlobalFeedMessageRecord();
+        message.type = type.getCode();
+        message.data = data;
+        message.posted = new Timestamp(System.currentTimeMillis());
+        insert(message);
+    }
+
+    /**
+     * Publishes a self feed message, that will show up on the target's profile.  These are 
+     * currently not throttled.
+     */
+    public void publishSelfMessage (int targetId, FeedMessageType type, String data)
+        throws PersistenceException
+    {
+        SelfFeedMessageRecord message = new SelfFeedMessageRecord();
+        message.targetId = targetId;
         message.type = type.getCode();
         message.data = data;
         message.posted = new Timestamp(System.currentTimeMillis());
@@ -205,6 +224,15 @@ public class FeedRepository extends DepotRepository
                         return (record != null) && record.posted.before(cutoff);
                     }
                 });
+        deleteAll(SelfFeedMessageRecord.class,
+                new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED_C, cutoff)),
+                new CacheInvalidator.TraverseWithFilter<SelfFeedMessageRecord>(
+                    SelfFeedMessageRecord.class) {
+                    public boolean testForEviction (
+                        Serializable key, SelfFeedMessageRecord record) {
+                        return (record != null) && record.posted.before(cutoff);
+                    }
+                });
     }
 
     /**
@@ -232,6 +260,7 @@ public class FeedRepository extends DepotRepository
         classes.add(FriendFeedMessageRecord.class);
         classes.add(GroupFeedMessageRecord.class);
         classes.add(GlobalFeedMessageRecord.class);
+        classes.add(SelfFeedMessageRecord.class);
     }
 
     /** Feed messages expire after two weeks. */

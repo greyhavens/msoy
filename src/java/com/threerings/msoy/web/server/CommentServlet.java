@@ -24,11 +24,16 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+
+import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -102,6 +107,17 @@ public class CommentServlet extends MsoyServiceServlet
         try {
             // record the comment to the data-ma-base
             MsoyServer.commentRepo.postComment(etype, eid, mrec.memberId, text);
+            
+            // if this is a comment on a user room, post a self feed message
+            if (etype == Comment.TYPE_ROOM) {
+                SceneRecord scene = MsoyServer.sceneRepo.loadScene(eid);
+                if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    // the member name gets looked up at feed display time.
+                    String data = scene.sceneId + "\t" + scene.name + "\t" + mrec.memberId;
+                    MsoyServer.feedRepo.publishSelfMessage(
+                        scene.ownerId, FeedMessageType.SELF_ROOM_COMMENT, data);
+                }
+            }
 
             // fake up a comment record to return to the client
             Comment comment = new Comment();

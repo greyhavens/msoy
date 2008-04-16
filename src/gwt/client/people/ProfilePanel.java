@@ -51,5 +51,6 @@ public class ProfilePanel extends VerticalPanel
     protected Blurb[] _blurbs = {
         new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(),
         new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(), new CommentsBlurb(),
+        new FeedBlurb(),
     };
 }

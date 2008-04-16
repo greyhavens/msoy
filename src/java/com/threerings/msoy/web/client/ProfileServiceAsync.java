@@ -46,4 +46,9 @@ public interface ProfileServiceAsync
      */
     public void getWebMailAddresses (WebIdent ident, String email, String password,
                                      AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#loadSelfFeed}.
+     */
+    public void loadSelfFeed (WebIdent ident, int cutoffDays, AsyncCallback callback);
 }

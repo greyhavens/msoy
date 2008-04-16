@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.sql.Timestamp;
 
 import octazen.addressbook.AddressBookAuthenticationException;
 import octazen.addressbook.AddressBookException;
@@ -46,11 +47,17 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.data.Interest;
+import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCodes;
 import com.threerings.msoy.person.server.persist.InterestRecord;
+import com.threerings.msoy.person.server.persist.FeedMessageRecord;
+import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.EmailContact;
@@ -106,6 +113,9 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // load group info
             result.groups = resolveGroupsData(memrec, tgtrec);
+
+            // load feed
+            result.feed = loadFeed(memrec, DEFAULT_FEED_DAYS);
 
             return result;
 
@@ -317,6 +327,93 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface ProfileService
+    public List loadSelfFeed (WebIdent ident, int cutoffDays)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            return loadFeed(mrec, cutoffDays);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Helper function for {@link #loadProfile}.
+     */
+    protected List<FeedMessage> loadFeed (MemberRecord mrec, int cutoffDays)
+        throws PersistenceException
+    {
+        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
+
+        List<FeedMessage> messages = Lists.newArrayList();
+        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadMemberFeed(mrec.memberId, since);
+
+        // find out which member name we'll need
+        IntSet feedMemberIds = new ArrayIntSet();
+        for (FeedMessageRecord record : records) {
+            if (record instanceof FriendFeedMessageRecord) {
+                feedMemberIds.add(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof SelfFeedMessageRecord && 
+                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+                String[] fields = record.data.split("\t");
+                if (fields.length < 3) {
+                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
+                        record.data + "]");
+                    continue;
+                }
+
+                try {
+                    feedMemberIds.add(Integer.parseInt(fields[2]));
+                } catch (NumberFormatException nfe) {
+                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
+                        "comment feed message [" + fields[2] + "]");
+                }
+            }
+        }
+
+        // generate a lookup for the member names
+        IntMap<MemberName> memberLookup = null;
+        if (!feedMemberIds.isEmpty()) {
+            memberLookup = IntMaps.newHashIntMap();
+            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(feedMemberIds)) {
+                memberLookup.put(name.getMemberId(), name);
+            }
+        }
+
+        // create our list of feed messages
+        for (FeedMessageRecord record : records) {
+            FeedMessage message = record.toMessage();
+            if (record instanceof FriendFeedMessageRecord) {
+                ((FriendFeedMessage)message).friend =
+                    memberLookup.get(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof SelfFeedMessageRecord &&
+                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+                if (message.data.length < 3) {
+                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
+                        record.data + "]");
+                    continue;
+                }
+
+                try {
+                    String data = record.data;
+                    data += "\t" + memberLookup.get(Integer.parseInt(message.data[2]));
+                    message.data = data.split("\t");
+                } catch (NumberFormatException nfe) {
+                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
+                        "comment feed message [" + message.data[2] + "]");
+                }
+            }
+            messages.add(message);
+        }
+
+        return messages;
+    }
+
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
@@ -440,4 +537,6 @@ public class ProfileServlet extends MsoyServiceServlet
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
+
+    protected static final int DEFAULT_FEED_DAYS = 2;
 }

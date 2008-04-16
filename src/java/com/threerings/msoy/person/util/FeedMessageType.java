@@ -26,6 +26,9 @@ public enum FeedMessageType
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),
 
+    // self messages
+    SELF_ROOM_COMMENT(300),
+
     UNUSED(999);
 
     /**
