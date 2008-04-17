@@ -96,39 +96,28 @@ public class MemberList extends PagedGrid
             }
             setWidget(2, 0, new MemberStatusLabel(card.status));
 
+            boolean isNotMe = CPeople.getMemberId() != card.name.getMemberId();
             SmartTable extras = new SmartTable("Extras", 0, 5);
-            int row = 0;
             ClickListener onClick;
+            int row = 0;
 
-            // if this is me, skip most of this stuff
-            if (CPeople.getMemberId() != card.name.getMemberId()) {
-                // if they are our friend, show the remove friend button
-                if (card.isFriend) {
-                    onClick = new PromptPopup(
-                        CPeople.msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
-                    extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                         "/images/profile/remove.png", onClick));
-                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                         CPeople.msgs.mlRemoveFriend(), onClick));
+            // potentially show the add friend button
+            if (isNotMe && !card.isFriend && CPeople.getMemberId() != 0) {
+                onClick = InviteFriendPopup.createListener(card.name);
+                extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                     "/images/profile/addfriend.png", onClick));
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                     CPeople.msgs.mlAddFriend(), onClick));
+            }
 
-                // otherwise if we're not a guest, show the add friend button
-                } else if (CPeople.getMemberId() != 0) {
-                    onClick = InviteFriendPopup.createListener(card.name);
-                    extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                         "/images/profile/addfriend.png", onClick));
-                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                         CPeople.msgs.mlAddFriend(), onClick));
-                }
-
-                // if we're not a guest, we can send them mail
-                if (CPeople.getMemberId() != 0) {
-                    onClick = Application.createLinkListener(
-                        Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
-                    extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                         "/images/profile/sendmail.png", onClick));
-                    extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                         CPeople.msgs.mlSendMail(), onClick));
-                }
+            // if we're not a guest, we can send them mail
+            if (isNotMe && CPeople.getMemberId() != 0) {
+                onClick = Application.createLinkListener(
+                    Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
+                extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                     "/images/profile/sendmail.png", onClick));
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                     CPeople.msgs.mlSendMail(), onClick));
             }
 
             // always show the visit home button
@@ -137,6 +126,16 @@ public class MemberList extends PagedGrid
                                  "/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1, MsoyUI.createActionLabel(
                                  CPeople.msgs.mlVisitHome(), onClick));
+
+            // if they are our friend, show the remove friend button
+            if (isNotMe && card.isFriend) {
+                onClick = new PromptPopup(
+                    CPeople.msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
+                extras.setWidget(row, 0, MsoyUI.createActionImage(
+                                     "/images/profile/remove.png", onClick));
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
+                                     CPeople.msgs.mlRemoveFriend(), onClick));
+            }
 
             setWidget(0, 2, extras);
             getFlexCellFormatter().setRowSpan(0, 2, getRowCount());
