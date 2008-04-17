@@ -91,14 +91,15 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function typeOf (localType :String) :int
     {
-        var type :int = -1;
-        try {
-            type = StringUtil.parseInteger(localType.charAt(0));
-        } catch (err :ArgumentError) {
-            // NOOP, return -1
+        if (localType != null) {
+            try {
+                return StringUtil.parseInteger(localType.charAt(0));
+            } catch (err :ArgumentError) {
+                // NOOP, fall through to -1
+            }
         }
 
-        return type;
+        return -1;
     }
 
     /**
