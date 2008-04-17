@@ -1102,19 +1102,11 @@ public class MemberRepository extends DepotRepository
         classes.add(MemberWarningRecord.class);
     }
 
-    @Entity @Computed
-    protected static class FriendCount extends PersistentRecord
-    {
-        public static final String COUNT = "count";
-        @Computed
-        public int count;
-    }
-
-    protected static final int INVITE_ID_LENGTH = 10;
-    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
-
     /** Reference to the event logger. */
     protected MsoyEventLogger _eventLog;
 
     protected FlowRepository _flowRepo;
+
+    protected static final int INVITE_ID_LENGTH = 10;
+    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 }
