@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
@@ -26,8 +27,9 @@ public class FriendManager
     implements MsoyPeerManager.RemoteMemberObserver
 {
     /**
-     * Called to report that a friendship request was accepted. May be called from any thread.
+     * Called to report that a friendship request was accepted.
      */
+    @AnyThread
     public static void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
         // add them to the friends list of both parties if/whereever they are online
