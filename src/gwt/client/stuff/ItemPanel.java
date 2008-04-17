@@ -236,6 +236,8 @@ public class ItemPanel extends VerticalPanel
         CStuff.msgs.ipfAll(),
         CStuff.msgs.ipfUploaded(),
         CStuff.msgs.ipfPurchased(),
+        CStuff.msgs.ipfUnused(),
+        CStuff.msgs.ipfUsed()
     };
 
     protected static final Predicate[] FILTERS = {
@@ -248,6 +250,16 @@ public class ItemPanel extends VerticalPanel
         new Predicate() { // purchased
             public boolean isMatch (Object o) {
                 return ((Item)o).sourceId != 0;
+            }
+        },
+        new Predicate() { // unused
+            public boolean isMatch (Object o) {
+                return !((Item)o).isUsed();
+            }
+        },
+        new Predicate() { // used
+            public boolean isMatch (Object o) {
+                return ((Item)o).isUsed();
             }
         }
     };
