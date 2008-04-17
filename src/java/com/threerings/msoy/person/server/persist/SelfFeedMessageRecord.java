@@ -27,6 +27,13 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
     public static final ColumnExp TARGET_ID_C =
         new ColumnExp(SelfFeedMessageRecord.class, TARGET_ID);
 
+    /** The column identifier for the {@link #actorId} field. */
+    public static final String ACTOR_ID = "actorId";
+
+    /** The qualified column identifier for the {@link #actorId} field. */
+    public static final ColumnExp ACTOR_ID_C =
+        new ColumnExp(SelfFeedMessageRecord.class, ACTOR_ID);
+
     /** The qualified column identifier for the {@link #messageId} field. */
     public static final ColumnExp MESSAGE_ID_C =
         new ColumnExp(SelfFeedMessageRecord.class, MESSAGE_ID);
@@ -46,10 +53,13 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The member id of the target for this message. */
     public int targetId;
+
+    /** The member id of the originator of this message (if any). */
+    public int actorId;
 
     @Override // from FeedMessageRecord
     protected FeedMessage createMessage ()

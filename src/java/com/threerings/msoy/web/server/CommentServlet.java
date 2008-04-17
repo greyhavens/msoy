@@ -112,10 +112,9 @@ public class CommentServlet extends MsoyServiceServlet
             if (etype == Comment.TYPE_ROOM) {
                 SceneRecord scene = MsoyServer.sceneRepo.loadScene(eid);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    // the member name gets looked up at feed display time.
-                    String data = scene.sceneId + "\t" + scene.name + "\t" + mrec.memberId;
+                    String data = scene.sceneId + "\t" + scene.name;
                     MsoyServer.feedRepo.publishSelfMessage(
-                        scene.ownerId, FeedMessageType.SELF_ROOM_COMMENT, data);
+                        scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
                 }
             }
 

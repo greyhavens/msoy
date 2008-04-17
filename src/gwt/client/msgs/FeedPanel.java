@@ -493,13 +493,15 @@ public class FeedPanel extends TongueBox
         {
             switch (message.type) {
             case 300: // SELF_ROOM_COMMENT
-                String memberLink = profileLink(message.data[3], message.data[2]);
-                String roomLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(), 
+                if (message.actor == null) {
+                    return; // TEMP: skip old pre-actor messages
+                }
+                String roomPageLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(), 
                     Page.WORLD, Args.compose("room", message.data[0]));
-                String roomPageLink = Application.createLinkHtml(
+                String roomLink = Application.createLinkHtml(
                     message.data[1], Page.WORLD, Args.compose("s", message.data[0]));
-                add(new BasicWidget(
-                    CMsgs.mmsgs.selfRoomComment(memberLink, roomLink, roomPageLink)));
+                add(new BasicWidget(CMsgs.mmsgs.selfRoomComment(
+                                        profileLink(message.actor), roomPageLink, roomLink)));
                 break;
             }
         }

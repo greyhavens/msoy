@@ -110,11 +110,12 @@ public class FeedRepository extends DepotRepository
      * Publishes a self feed message, that will show up on the target's profile.  These are 
      * currently not throttled.
      */
-    public void publishSelfMessage (int targetId, FeedMessageType type, String data)
+    public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, String data)
         throws PersistenceException
     {
         SelfFeedMessageRecord message = new SelfFeedMessageRecord();
         message.targetId = targetId;
+        message.actorId = actorId;
         message.type = type.getCode();
         message.data = data;
         message.posted = new Timestamp(System.currentTimeMillis());
