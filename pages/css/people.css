@@ -216,52 +216,52 @@
   color: #B4E0F1;
 }
 
-.sendInvites {
+.invite {
   color: #316C94;
   font-size: 12px;
 }
 
-.sendInvites .roundBox {
+.invite .roundBox {
   color: white;
 }
 
-.sendInvites .gwt-TextBox {
+.invite .gwt-TextBox {
   width: 200px;
 }
-.sendInvites .gwt-PasswordTextBox {
+.invite .gwt-PasswordTextBox {
   width: 130px;
 }
-.sendInvites .gwt-TextBox, .sendInvites .gwt-PasswordTextBox, .sendInvites .gwt-TextArea {
+.invite .gwt-TextBox, .invite .gwt-PasswordTextBox, .invite .gwt-TextArea {
   border: 1px solid #316C94;
 }
 
-.sendInvites .Title {
+.invite .Title {
   font-weight: bold;
 }
 
-.sendInvites .Tip {
+.invite .Tip {
   font-size: 11px;
   padding-right: 10px;
 }
 
-.sendInvites .Header, .invitation .Header {
+.invite .Header, .invitation .Header {
   font-weight: bold;
   font-size: 18px;
 }
 
-.sendInvitesResultsPopup .ScrollPanel {
+.inviteResultsPopup .ScrollPanel {
   max-height: 300px;
   margin-bottom: 10px;
   text-align: left;
 }
 
-.sendInvites .InviteList {
+.invite .InviteList {
   width: 100%;
   border: 1px solid #316C94;
   background: #E9F6FB;
 }
 
-.sendInvites .InviteList .Header {
+.invite .InviteList .Header {
   height: 20px;
   color: #316C94;
   font-weight: normal;
@@ -270,24 +270,24 @@
   padding: 5px;
 }
 
-.sendInvites .InviteList .Scroll {
+.invite .InviteList .Scroll {
   height: 130px;
   background: #FFFFFF;
   width: 100%;
 }
 
-.sendInvites .InviteListTable {
+.invite .InviteListTable {
   background: #FFFFFF;
   font-size: 12px;
   color: #316C94;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
-.sendInvites .InviteListTable td {
+.invite .InviteListTable td {
   padding: 1px 5px;
 }
 
-.sendInvites .ImportSupportLink {
+.invite .ImportSupportLink {
   font-size: 10px;
 }
 

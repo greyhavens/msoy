@@ -37,7 +37,6 @@ import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.people.SendInvitesPanel;
 import client.shell.Application;
 import client.shell.CShell;
 import client.shell.Page;
@@ -71,7 +70,7 @@ public class CreateAccountPanel extends VerticalPanel
             }
         }));
         if (Application.activeInvite != null &&
-            Application.activeInvite.inviteeEmail.matches(SendInvitesPanel.EMAIL_REGEX)) {
+            Application.activeInvite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
             // provide the invitation email as the default
             _email.setText(Application.activeInvite.inviteeEmail);
         }

@@ -45,6 +45,12 @@ public class MsoyUI
     /** A button size constant for use with {@link #createButton}. */
     public static final String LONG_THICK = "longThick";
 
+    /** A regexp that matches valid email addresses. Thanks to lambert@nas.nasa.gov. This isn't the
+     * ideal place for this but I don't want to create a whole separate utility class just for this
+     * one regular expression. */
+    public static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
+        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
+
     /**
      * Creates a label with the supplied text and style.
      */

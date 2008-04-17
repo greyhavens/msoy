@@ -42,19 +42,15 @@ import client.util.MsoyUI;
 import client.util.RoundBox;
 
 /**
- * Display a UI allowing users to send out the invites that have been granted to them, as well
- * as view pending invites they've sent in the past.
+ * Display a UI allowing users to send out the invites that have been granted to them, as well as
+ * view pending invites they've sent in the past.
  */
-public class SendInvitesPanel extends VerticalPanel
+public class InvitePanel extends VerticalPanel
 {
-    /** Originally formulated by lambert@nas.nasa.gov. */
-    public static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
-        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
-
-    public SendInvitesPanel ()
+    public InvitePanel ()
     {
         setSpacing(10);
-        setStyleName("sendInvites");
+        setStyleName("invite");
 
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         ClickListener addEmail = new ClickListener() {
@@ -181,7 +177,7 @@ public class SendInvitesPanel extends VerticalPanel
         if ("".equals(_friendEmail.getText())) {
             return;
 
-        } else if (!_friendEmail.getText().matches(EMAIL_REGEX)) {
+        } else if (!_friendEmail.getText().matches(MsoyUI.EMAIL_REGEX)) {
             MsoyUI.info(CPeople.msgs.inviteInvalidEmail());
 
         } else {
@@ -236,7 +232,7 @@ public class SendInvitesPanel extends VerticalPanel
         ArrayList contacts = _emailList.getItems();
         for (int ii = 0; ii < contacts.size(); ii++) {
             EmailContact contact = (EmailContact)contacts.get(ii);
-            if (!contact.email.matches(EMAIL_REGEX)) {
+            if (!contact.email.matches(MsoyUI.EMAIL_REGEX)) {
                 MsoyUI.error(CPeople.msgs.inviteInvalidAddress(contact.email));
                 return;
             }

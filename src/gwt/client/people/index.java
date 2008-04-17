@@ -60,7 +60,7 @@ public class index extends MsgsEntryPoint
             setContent(new ProfilePanel(CPeople.getMemberId()));
 
         } else if (action.equals("invites")) { // memberId != 0
-            setContent(CPeople.msgs.inviteTitle(), new SendInvitesPanel());
+            setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
 
         } else { // memberId != 0
             setContent(new FriendsPanel(CPeople.getMemberId()));
