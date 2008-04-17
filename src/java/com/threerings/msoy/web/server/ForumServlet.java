@@ -308,8 +308,13 @@ public class ForumServlet extends MsoyServiceServlet
             _forumRepo.noteLastReadPostId(
                 mrec.memberId, thread.threadId, thread.mostRecentPostId, 1);
 
-            // if the thread is an announcement thread, post a feed message about it
-            if (thread.isAnnouncement()) {
+            // if we're posting to the announcement group, add a global feed post about it
+            if (groupId == ServerConfig.getAnnounceGroupId()) {
+                MsoyServer.feedRepo.publishGlobalMessage(
+                    FeedMessageType.GLOBAL_ANNOUNCEMENT, subject + "\t" + thread.threadId);
+
+            // otherwise, if the thread is an announcement thread, post a feed message about it
+            } else if (thread.isAnnouncement()) {
                 MsoyServer.feedRepo.publishGroupMessage(
                     groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
                     group.name + "\t" + subject + "\t" + thread.threadId);

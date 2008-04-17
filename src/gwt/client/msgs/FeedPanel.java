@@ -259,10 +259,6 @@ public class FeedPanel extends TongueBox
             return date.getTime();
         }
 
-        protected void addMessage (FeedMessage message)
-        {
-        }
-
         /**
          * Helper function which creates translated strings of a feed messages data.
          */
@@ -502,6 +498,17 @@ public class FeedPanel extends TongueBox
                     message.data[1], Page.WORLD, Args.compose("s", message.data[0]));
                 add(new BasicWidget(CMsgs.mmsgs.selfRoomComment(
                                         profileLink(message.actor), roomPageLink, roomLink)));
+                break;
+            }
+        }
+
+        protected void addMessage (FeedMessage message)
+        {
+            switch (message.type) {
+            case 1: // GLOBAL_ANNOUNCEMENT
+                String threadLink = Application.createLinkHtml(
+                    message.data[0], Page.WHIRLEDS, Args.compose("t", message.data[1]));
+                add(new BasicWidget(CMsgs.mmsgs.globalAnnouncement(threadLink)));
                 break;
             }
         }

@@ -216,9 +216,8 @@ public class IssueServlet extends MsoyServiceServlet
         List<MemberName> owners = Lists.newArrayList();
 
         try {
-            int groupId = ServerConfig.config.getValue("issue_group_id", -1);
             List<GroupMembershipRecord> gmrs = MsoyServer.groupRepo.getMembers(
-                    groupId, GroupMembership.RANK_MANAGER);
+                ServerConfig.getIssueGroupId(), GroupMembership.RANK_MANAGER);
             ArrayIntSet memberIds = new ArrayIntSet();
             for (GroupMembershipRecord gmr : gmrs) {
                 memberIds.add(gmr.memberId);

@@ -93,6 +93,11 @@ server_root = /export/msoy
 # issue_group_id = 0
 
 #
+# Configures the group used for global announcements
+
+# announce_group_id = 0
+
+#
 # Defines the directory into which uploaded media will be stored (in addition
 # to S3, if that is enabled) and the URL from which media will be downloaded.
 

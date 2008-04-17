@@ -155,6 +155,22 @@ public class ServerConfig
         return config.getValue(nodeName + ".http_port", httpPort);
     }
 
+    /**
+     * Returns the group id of the announcement group, or 0 if none is configured.
+     */
+    public static int getAnnounceGroupId ()
+    {
+        return config.getValue("announce_group_id", 0);
+    }
+
+    /**
+     * Returns the group id of the bug tracking group, or 0 if none is configured.
+     */
+    public static int getIssueGroupId ()
+    {
+        return config.getValue("issue_group_id", 0);
+    }
+
     /** The pattern via which we obtain our node id from our name. */
     protected static final Pattern NODE_ID_PATTERN = Pattern.compile("msoy([0-9]+)");
 
