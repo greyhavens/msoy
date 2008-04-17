@@ -383,6 +383,10 @@ public class EditCanvas extends DisplayCanvas
 
     protected function setWorkingArea (r :Rectangle) :void
     {
+        // bound the working area into reasonable values.
+        r.width = ImageUtil.normalizeImageDimension(r.width);
+        r.height = ImageUtil.normalizeImageDimension(r.height);
+
         _workingArea = r;
 
         var g :Graphics = _hudLayer.graphics;

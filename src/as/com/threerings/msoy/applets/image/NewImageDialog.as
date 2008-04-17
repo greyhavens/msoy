@@ -102,7 +102,8 @@ public class NewImageDialog extends TitleWindow
             (0xFF000000 | _fillColor.selectedColor) : 0x00000000;
 
             var bmp :BitmapData = new BitmapData(
-                Number(_width.text), Number(_height.text), true, fillColor);
+                ImageUtil.normalizeImageDimension(int(_width.text)),
+                ImageUtil.normalizeImageDimension(int(_height.text)), true, fillColor);
             dispatchEvent(new ValueEvent(Event.COMPLETE, bmp));
         }
     }

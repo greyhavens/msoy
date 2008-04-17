@@ -127,6 +127,7 @@ public class ImageManipulator extends HBox
         var bar :VBox = new VBox();
         bar.setStyle("paddingLeft", 0);
         bar.setStyle("paddingRight", 0);
+        bar.percentHeight = 100;
         bar.width = CONTROL_BAR_WIDTH;
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
         bar.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -139,7 +140,9 @@ public class ImageManipulator extends HBox
 
         var buts :HBox = new HBox();
         buts.percentWidth = 100;
+        buts.percentHeight = 100;
         buts.setStyle("backgroundColor", 0x9AA1AA);
+        buts.setStyle("horizontalAlign", "center");
         buts.setStyle("paddingTop", 8);
         buts.setStyle("paddingBottom", 8);
         buts.addChild(new CommandButton("Save", doClose, true));
@@ -301,6 +304,7 @@ public class ImageManipulator extends HBox
 
         var lbl :Label = new Label();
         lbl.setStyle("fontSize", 10);
+        lbl.setStyle("fontWeight", "bold");
         lbl.text = name;
 
         var slider :HSlider = new HSlider();
