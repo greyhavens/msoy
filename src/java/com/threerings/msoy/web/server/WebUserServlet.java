@@ -51,6 +51,7 @@ import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
@@ -181,8 +182,22 @@ public class WebUserServlet extends MsoyServiceServlet
                 }
 
                 // update the two friends' runtime objects if they are online
-                FriendManager.friendshipEstablished(
-                    new MemberName(displayName, mrec.memberId), inviter.getName());
+                FriendManager.friendshipEstablished(mrec.getName(), inviter.getName());
+
+                // publish a notification to the inviter's feed
+                try {
+                    MsoyServer.feedRepo.publishMemberMessage(
+                        inviter.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
+                        displayName + "\t" + mrec.memberId);
+
+                    // pay out a sign up bonus to the inviter
+                    MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                        new UserActionDetails(inviter.memberId, UserAction.INVITED_FRIEND_JOINED));
+
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to wire up friendship for created account " +
+                            "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", pe);
+                }
 
                 // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;

@@ -28,6 +28,7 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
@@ -536,14 +537,13 @@ public class MsoyAuthenticator extends Authenticator
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow
-        MsoyServer.memberRepo.getFlowRepository().logUserAction(
+        MemberFlowRecord mfr = MsoyServer.memberRepo.getFlowRepository().logUserAction(
             new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
 
-        // pay out a sign up bonus to their inviting friend (if they have one)
-        if (mrec.invitingFriendId != 0) {
-            MsoyServer.memberRepo.getFlowRepository().logUserAction(
-                new UserActionDetails(mrec.invitingFriendId, UserAction.INVITED_FRIEND_JOINED));
-        }
+        // apply that directly to the member record we're returning to the caller so that it has
+        // their accurate starting flow and gold values
+        mrec.flow = mfr.flow;
+        // mrec.gold = mfr.gold;
 
         // record to the event log that we created a new account
         _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
