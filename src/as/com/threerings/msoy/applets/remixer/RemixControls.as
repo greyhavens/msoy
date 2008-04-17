@@ -25,6 +25,7 @@ import mx.containers.VBox;
 import mx.containers.ViewStack;
 
 import mx.controls.HRule;
+import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.Spacer;
 import mx.controls.SWFLoader;
@@ -60,10 +61,33 @@ public class RemixControls extends HBox
         percentHeight = 100;
 
         var vbox :VBox = new VBox();
+        vbox.width = PREVIEW_WIDTH;
+        addChild(vbox);
+        vbox.addChild(createPreviewHeader());
+
+        _previewer = new SWFLoader();
+        _previewer.width = PREVIEW_WIDTH;
+        _previewer.height = 488;
+        _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
+        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
+        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
+        _previewer.load("/clients/" + DeploymentConfig.version + "/avatarviewer.swf");
+        vbox.addChild(_previewer);
+
+        vbox = new VBox();
+
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.width = CONTROLS_WIDTH;
         vbox.maxHeight = 550;
         addChild(vbox);
+
+        var label :Label = new Label();
+        label.percentWidth = 100;
+        label.text = "Remixable Options";
+        label.setStyle("color", 0x4995C6);
+        label.setStyle("textAlign", "center");
+        label.setStyle("fontSize", 16);
+        vbox.addChild(label);
 
         _controls = new Grid();
         _controls.setStyle("top", 0);
@@ -83,22 +107,6 @@ public class RemixControls extends HBox
         butBox.addChild(_saveBtn = new CommandButton("Save", commit));
         _saveBtn.enabled = false;
 
-        vbox = new VBox();
-        vbox.width = PREVIEW_WIDTH;
-        addChild(vbox);
-        var lbl :Label = new Label();
-        lbl.text = "Remixer beta build: " + DeploymentConfig.buildTime;
-        vbox.addChild(lbl);
-        vbox.addChild(createPreviewHeader());
-
-        _previewer = new SWFLoader();
-        _previewer.width = PREVIEW_WIDTH;
-        _previewer.height = 488;
-        _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
-        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
-        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
-        _previewer.load("/clients/" + DeploymentConfig.version + "/avatarviewer.swf");
-        vbox.addChild(_previewer);
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
@@ -114,16 +122,28 @@ public class RemixControls extends HBox
     {
         var box :HBox = new HBox();
         box.percentWidth = 100;
-        box.setStyle("backgroundColor", 0x000000);
+        box.setStyle("horizontalGap", 0);
+
+        var left :Image = new Image();
+        left.source = new HEADER_BAR_LEFT();
+        box.addChild(left);
+
+        var mid :HBox = new HBox();
+        mid.styleName = "headerMid";
+        mid.percentWidth = 100;
+        box.addChild(mid);
+
+        var right :Image = new Image();
+        right.source = new HEADER_BAR_RIGHT();
+        box.addChild(right);
 
         var lbl :Label = new Label();
         lbl.text = "Preview";
         lbl.percentWidth = 100;
         lbl.setStyle("color", 0xFFFFFF);
         lbl.setStyle("textAlign", "center");
-        lbl.setStyle("fontWeight", "bold");
-        lbl.setStyle("fontSize", 18);
-        box.addChild(lbl);
+        lbl.setStyle("fontSize", 16);
+        mid.addChild(lbl);
 
         return box;
     }
@@ -298,5 +318,11 @@ public class RemixControls extends HBox
     protected var _bytes :ByteArray;
 
     protected var _params :Object;
+
+    [Embed(source="../../../../../../../pages/images/ui/box/header_left.png")]
+    protected static const HEADER_BAR_LEFT :Class;
+
+    [Embed(source="../../../../../../../pages/images/ui/box/header_right.png")]
+    protected static const HEADER_BAR_RIGHT :Class;
 }
 }
