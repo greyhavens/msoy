@@ -13,6 +13,7 @@ import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ShopUtil;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -57,7 +58,7 @@ public class index extends Page
                 if (!_catalog.isAttached()) {
                     setContent(_catalog);
                 }
-                _catalog.display(CShop.parseArgs(args), args.get(3, 0));
+                _catalog.display(ShopUtil.parseArgs(args), args.get(3, 0));
             }
         }
     }

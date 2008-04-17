@@ -29,7 +29,6 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.shop.CShop;
 import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.HeaderBox;
@@ -39,6 +38,7 @@ import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.RoundBox;
+import client.util.ShopUtil;
 import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
 
@@ -87,7 +87,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                         CatalogQuery query = new CatalogQuery();
                         query.itemType = _detail.item.getType();
                         query.creatorId = _detail.creator.getMemberId();
-                        Application.go(Page.SHOP, CShop.composeArgs(query, 0));
+                        Application.go(Page.SHOP, ShopUtil.composeArgs(query, 0));
                     }
                 });
             }

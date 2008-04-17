@@ -24,14 +24,12 @@ import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
-import client.shop.CShop;
 import client.util.CreatorLabel;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -39,6 +37,7 @@ import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
 import client.util.RoundBox;
+import client.util.ShopUtil;
 import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
 
@@ -215,13 +214,9 @@ public class WhirledDetailPanel extends VerticalPanel
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
             String label = CWhirleds.msgs.detailBrowseShop(
                 CWhirleds.dmsgs.getString("pItemType" + _extras.catalogItemType));
-            CatalogQuery query = new CatalogQuery();
-            query.itemType = _extras.catalogItemType;
-            query.tag = _extras.catalogTag;
-            Button browseButton = new Button(
-                label, Application.createLinkListener(Page.SHOP, CShop.composeArgs(query, 0)));
             bitsColumn.add(WidgetUtil.makeShim(10, 10));
-            bitsColumn.add(browseButton);
+            String args = ShopUtil.composeArgs(_extras.catalogItemType, _extras.catalogTag, null, 0);
+            bitsColumn.add(new Button(label, Application.createLinkListener(Page.SHOP, args)));
         }
         main.add(bitsColumn);
 

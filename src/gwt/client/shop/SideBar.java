@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.SmartTable;
 import client.shell.Application;
 import client.shell.Page;
 import client.util.MsoyUI;
+import client.util.ShopUtil;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.
@@ -58,7 +59,7 @@ public class SideBar extends SmartTable
         {
             CatalogQuery copy = new CatalogQuery(query);
             copy.itemType = newtype;
-            return CShop.composeArgs(copy, page);
+            return ShopUtil.composeArgs(copy, page);
         }
     }
 }

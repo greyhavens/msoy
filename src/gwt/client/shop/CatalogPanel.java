@@ -38,6 +38,7 @@ import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.MsoyUI;
+import client.util.ShopUtil;
 
 /**
  * Displays a tabbed panel containing the catalog.
@@ -67,7 +68,7 @@ public class CatalogPanel extends SmartTable
         ClickListener clickListener = new ClickListener() {
             public void onClick (Widget sender) {
                 String query = _searchBox.getText().trim();
-                Application.go(Page.SHOP, CShop.composeArgs(_query, null, query, 0));
+                Application.go(Page.SHOP, ShopUtil.composeArgs(_query, null, query, 0));
             }
         };
         _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
@@ -88,7 +89,7 @@ public class CatalogPanel extends SmartTable
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 _query.sortBy = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
-                Application.go(Page.SHOP, CShop.composeArgs(_query, 0));
+                Application.go(Page.SHOP, ShopUtil.composeArgs(_query, 0));
             }
         });
 
@@ -96,7 +97,7 @@ public class CatalogPanel extends SmartTable
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
-                Application.go(Page.SHOP, CShop.composeArgs(_query, page));
+                Application.go(Page.SHOP, ShopUtil.composeArgs(_query, page));
             }
             protected Widget createWidget (Object item) {
                 return new ListingBox((ListingCard)item);
@@ -186,7 +187,7 @@ public class CatalogPanel extends SmartTable
     // from interface TagCloud.TagListener
     public void tagClicked (String tag)
     {
-        Application.go(Page.SHOP, CShop.composeArgs(_query, tag, null, 0));
+        Application.go(Page.SHOP, ShopUtil.composeArgs(_query, tag, null, 0));
     }
 
     protected void setFilteredBy (String text)
@@ -202,7 +203,7 @@ public class CatalogPanel extends SmartTable
             query.itemType = _query.itemType;
             query.sortBy = _query.sortBy;
             filter.add(Application.createLink(CShop.msgs.catalogClearFilter(),
-                                              Page.SHOP, CShop.composeArgs(query, 0)));
+                                              Page.SHOP, ShopUtil.composeArgs(query, 0)));
             _listings.setWidget(0, 0, filter, 1, "Blurb");
         }
     }
