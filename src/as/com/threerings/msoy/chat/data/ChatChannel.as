@@ -89,14 +89,17 @@ public class ChatChannel extends SimpleStreamableObject
     /**
      * Returns the static type of the given localType.
      */
-    public static function typeOf (localType :String) :int
+    public static function typeOf (localtype :String) :int
     {
-        if (localType != null) {
-            try {
-                return StringUtil.parseInteger(localType.charAt(0));
-            } catch (err :ArgumentError) {
-                // NOOP, fall through to -1
-            }
+        if (localtype == null) {
+            log.warning("asked to determine typeOf a null localtype");
+            return -1;
+        }
+
+        try {
+            return StringUtil.parseInteger(localtype.charAt(0));
+        } catch (err :ArgumentError) {
+            // NOOP, fall through to -1
         }
 
         return -1;
