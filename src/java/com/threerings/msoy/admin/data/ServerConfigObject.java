@@ -59,7 +59,7 @@ public class ServerConfigObject extends ConfigObject
     public float dailyFlowEvaporation = 0.20f;
     
     /** The amount of flow per hour that a game can award a player. */
-    public int hourlyGameFlowRate = 6000;
+    public int hourlyGameFlowRate = 3000;
 
     /** The number of player minutes between reassessments of a game's payout factor. */
     public int payoutFactorReassessment = 1000;
