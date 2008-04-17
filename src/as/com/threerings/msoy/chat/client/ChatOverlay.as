@@ -78,6 +78,9 @@ public class ChatOverlay
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
 
+    public static const DEFAULT_WIDTH :int = 300;
+    public static const DEFAULT_HEIGHT :int = 500;
+
     /** Pixel padding surrounding most things. */
     public static const PAD :int = 10;
 
@@ -474,7 +477,7 @@ public class ChatOverlay
             return;
         }
 
-        layout();
+        layout(false);
         clearGlyphs(_subtitles);
         clearGlyphs(_showingHistory);
         if (historyEnabled) {
@@ -502,7 +505,7 @@ public class ChatOverlay
         }
 
         // ensure the history bar has been set
-        layout ();
+        layout(false);
 
         if (sliding) {
             _target.removeOverlay(_historyOverlay);
@@ -537,7 +540,7 @@ public class ChatOverlay
         return new Rectangle(0, 0, DEFAULT_WIDTH + ScrollBar.THICKNESS, DEFAULT_HEIGHT);
     }
 
-    protected function layout () :void
+    protected function layout (redraw :Boolean = true) :void
     {
         if (_targetBounds == null) {
             _targetBounds = getDefaultTargetBounds();
@@ -553,15 +556,27 @@ public class ChatOverlay
                 _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
                 _historyBar.includeInLayout = false;
                 _target.addChild(_historyBar);
-                configureHistoryBarSize();
-                resetHistoryOffset();
-                updateHistoryBar();
             }
+            configureHistoryBarSize();
+            resetHistoryOffset();
+            updateHistoryBar();
         } else {
             if (_historyBar != null && _target.contains(_historyBar)) {
                 _target.removeChild(_historyBar);
             }
             _historyBar = null;
+        }
+
+        if (redraw) {
+            clearGlyphs(_subtitles);
+            clearGlyphs(_showingHistory);
+            _lastExpire = 0;
+            _localtypeDisplayTimes.put(_localtype, getTimer());
+            if (isHistoryMode()) {
+                showCurrentHistory();
+            } else {
+                showCurrentSubtitles();
+            }
         }
     }
 
@@ -1234,12 +1249,6 @@ public class ChatOverlay
 
     /** Our internal code for a chat type we will ignore. */
     protected static const IGNORECHAT :int = -1;
-
-    /** The default width to use for the chat history */
-    protected static const DEFAULT_WIDTH :int = 300;
-
-    /** The default height to use for the chat history */
-    protected static const DEFAULT_HEIGHT :int = 500;
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;

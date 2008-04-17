@@ -514,7 +514,10 @@ public class TopPanel extends Canvas
             _chat.setStyle("bottom", bottom);
             _chat.setStyle("left", 0);
             _chat.setStyle("right", getRightPanelWidth() + w + CHAT_PADDING);
+            _chatBounds.height = h;
         }
+        _comicOverlay.setTargetBounds(_chatBounds != null ? _chatBounds : 
+            new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("left", left);
