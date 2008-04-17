@@ -57,7 +57,7 @@ public class PlayerMetrics
     }
 
     /** Tracks time spent in rooms. */
-    public class RoomVisit implements Entry
+    public static class RoomVisit implements Entry
     {
         /** Seconds spent in the player's own room. */
         public int timeInMyRoom;
