@@ -713,10 +713,14 @@ public class MemberRepository extends DepotRepository
 
         if (inviterId > 0) {
             InviterRecord inviterRec = load(InviterRecord.class, inviterId);
+            if (inviterRec == null) {
+                inviterRec = new InviterRecord();
+                inviterRec.memberId = inviterId;
+            }
 // TODO: nix this when we nix invite limiting
 //             inviterRec.invitesGranted--;
             inviterRec.invitesSent++;
-            update(inviterRec);
+            store(inviterRec);
         }
     }
 
