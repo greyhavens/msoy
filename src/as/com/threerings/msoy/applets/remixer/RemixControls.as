@@ -104,9 +104,13 @@ public class RemixControls extends HBox
         butBox.percentWidth = 100;
         vbox.addChild(butBox);
 
-        butBox.addChild(_saveBtn = new CommandButton("Save", commit));
+        butBox.addChild(_saveBtn = new CommandButton("Save Remixes", commit));
+        _saveBtn.styleName = "longThinOrangeButton";
         _saveBtn.enabled = false;
 
+        var cancel :CommandButton = new CommandButton("Cancel", cancel);
+        cancel.styleName = "longThinOrangeButton";
+        butBox.addChild(cancel);
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
@@ -267,6 +271,19 @@ public class RemixControls extends HBox
         }
     }
 
+    /**
+     * Called to cancel remixing.
+     */
+    protected function cancel () :void
+    {
+        if (ExternalInterface.available) {
+            ExternalInterface.call("cancelRemix");
+        }
+    }
+
+    /**
+     * Called to save the changes and commit the remix.
+     */
     protected function commit () :void
     {
         var uploader :MediaUploader = new MediaUploader(_params["server"], _params["auth"]);
@@ -291,7 +308,6 @@ public class RemixControls extends HBox
         var uploader :MediaUploader = event.target as MediaUploader;
 
         var result :Object = uploader.getResult();
-        trace("Got result: " + result);
 
         if (ExternalInterface.available) {
             ExternalInterface.call("setHash", result.mediaId, result.hash, result.mimeType,

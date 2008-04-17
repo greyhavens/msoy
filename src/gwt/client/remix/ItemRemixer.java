@@ -80,6 +80,11 @@ public class ItemRemixer extends FlexTable
             680, 550, flashVars);
     }
 
+    protected void cancelRemix ()
+    {
+        _parent.editComplete(null);
+    }
+
     protected void setHash (
         String id, String mediaHash, int mimeType, int constraint, int width, int height)
     {
@@ -118,9 +123,17 @@ public class ItemRemixer extends FlexTable
         _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
     }
 
+    protected static void bridgeCancelRemix ()
+    {
+        _singleton.cancelRemix();
+    }
+
     protected static native void configureBridges () /*-{
         $wnd.setHash = function (id, hash, type, constraint, width, height) {
             @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+        };
+        $wnd.cancelRemix = function () {
+            @client.remix.ItemRemixer::bridgeCancelRemix()();
         };
     }-*/;
 
