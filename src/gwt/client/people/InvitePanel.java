@@ -52,6 +52,8 @@ public class InvitePanel extends VerticalPanel
         setSpacing(10);
         setStyleName("invite");
 
+        add(MsoyUI.createHTML(CPeople.msgs.inviteBanner(), "Banner"));
+
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         ClickListener addEmail = new ClickListener() {
             public void onClick (Widget sender) {
@@ -386,7 +388,7 @@ public class InvitePanel extends VerticalPanel
             getFlexCellFormatter().setWidth(0, 1, "40px");
             getFlexCellFormatter().setStyleName(0, 1, "Header");
             setText(0, 2, CPeople.msgs.inviteListEmail());
-            getFlexCellFormatter().setWidth(0, 2, "340px");
+            getFlexCellFormatter().setWidth(0, 2, "364px");
             getFlexCellFormatter().setStyleName(0, 2, "Header");
 
             _listTable = new SmartTable("InviteListTable", 0, 0);

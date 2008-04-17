@@ -221,6 +221,15 @@
   font-size: 12px;
 }
 
+.invite .Banner {
+  background: url(/images/people/invite_header.png) no-repeat top left;
+  width: 322px;
+  height: 58px;
+  padding: 20px 20px 10px 310px;
+  text-align: center;
+  color: #FFFFFF;
+}
+
 .invite .roundBox {
   color: white;
 }

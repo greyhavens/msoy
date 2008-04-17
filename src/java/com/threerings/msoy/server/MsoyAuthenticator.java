@@ -518,29 +518,12 @@ public class MsoyAuthenticator extends Authenticator
         final MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
         mrec.name = displayName;
-        String portalAction = null;
         if (invite != null) {
             mrec.invitingFriendId = invite.inviterId;
-            try {
-                MemberRecord inviterMemRec = MsoyServer.memberRepo.loadMember(invite.inviterId);
-                if (inviterMemRec != null) {
-                    MsoySceneModel scene = (MsoySceneModel)MsoyServer.sceneRepo.loadSceneModel(
-                        inviterMemRec.homeSceneId);
-                    if (scene != null) {
-                        portalAction = scene.sceneId + ":" + scene.name;
-                    }
-                }
-            } catch (NoSuchSceneException nsse) {
-                // If we can't load this scene, its not that big of a deal - just let the new
-                // portal point to the default room.
-            }
         }
 
         // store their member record in the repository making them a real Whirled citizen
         MsoyServer.memberRepo.insertMember(mrec);
-
-        // TEMP: grant this new member 10 invitations
-        MsoyServer.memberRepo.grantInvites(mrec.memberId, 10);
 
         // use the tokens filled in by the domain to assign privileges
         mrec.setFlag(MemberRecord.Flag.SUPPORT, account.tokens.isSupport());
@@ -548,16 +531,22 @@ public class MsoyAuthenticator extends Authenticator
 
         // create a blank room for them, store it
         String name = MsoyServer.msgMan.getBundle("server").get("m.new_room_name", mrec.name);
-        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-            mrec.memberId, name, portalAction, true);
+        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
+            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
+
+        // emit a created_account action which will grant them some starting flow
+        MsoyServer.memberRepo.getFlowRepository().logUserAction(
+            new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
+
+        // pay out a sign up bonus to their inviting friend (if they have one)
+        if (mrec.invitingFriendId != 0) {
+            MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                new UserActionDetails(mrec.invitingFriendId, UserAction.INVITED_FRIEND_JOINED));
+        }
 
         // record to the event log that we created a new account
         _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
-
-        // lastly, emit a created_account action which will grant them some starting flow
-        MsoyServer.memberRepo.getFlowRepository().logUserAction(
-            new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
 
         return mrec;
     }
