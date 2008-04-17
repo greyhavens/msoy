@@ -26,7 +26,7 @@ public class FeedBlurb extends Blurb
         super.init(pdata);
 
         setHeader(CPeople.msgs.feedTitle());
-        String empty = CPeople.msgs.emptySelfFeed();
+        String empty = CPeople.msgs.emptySelfFeed(pdata.name.toString());
         FeedPanel feed = new FeedPanel(empty, false, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback callback) {
                 CPeople.profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
