@@ -21,7 +21,7 @@ public class FeedBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    public void init (ProfileService.ProfileResult pdata)
+    public void init (final ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
 
@@ -29,7 +29,7 @@ public class FeedBlurb extends Blurb
         String empty = CPeople.msgs.emptySelfFeed();
         FeedPanel feed = new FeedPanel(empty, false, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback callback) {
-                CPeople.profilesvc.loadSelfFeed(CPeople.ident, feedDays, callback);
+                CPeople.profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
             }
         });
         feed.setFeed(pdata.feed, false);

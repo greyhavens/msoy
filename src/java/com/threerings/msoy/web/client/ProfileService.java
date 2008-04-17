@@ -141,6 +141,6 @@ public interface ProfileService extends RemoteService
      *
      * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
      */
-    public List loadSelfFeed (WebIdent ident, int cutoffDays)
+    public List loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException;
 }

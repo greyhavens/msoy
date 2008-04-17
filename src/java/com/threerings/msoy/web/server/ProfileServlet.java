@@ -115,7 +115,7 @@ public class ProfileServlet extends MsoyServiceServlet
             result.groups = resolveGroupsData(memrec, tgtrec);
 
             // load feed
-            result.feed = loadFeed(memrec, DEFAULT_FEED_DAYS);
+            result.feed = loadFeed(memberId, DEFAULT_FEED_DAYS);
 
             return result;
 
@@ -328,30 +328,29 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List loadSelfFeed (WebIdent ident, int cutoffDays)
+    public List loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
-
         try {
-            return loadFeed(mrec, cutoffDays);
+            return loadFeed(profileMemberId, cutoffDays);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
+            log.log(Level.WARNING, "Load feed failed [memberId=" + profileMemberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     /**
-     * Helper function for {@link #loadProfile}.
+     * Helper function for {@link #loadSelfFeed} and {@link #loadProfile}.
      */
-    protected List<FeedMessage> loadFeed (MemberRecord mrec, int cutoffDays)
+    protected List<FeedMessage> loadFeed (int profileMemberId, int cutoffDays)
         throws PersistenceException
     {
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
 
         List<FeedMessage> messages = Lists.newArrayList();
-        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadMemberFeed(mrec.memberId, since);
+        List<FeedMessageRecord> records = 
+            MsoyServer.feedRepo.loadMemberFeed(profileMemberId, since);
 
         // find out which member name we'll need
         IntSet feedMemberIds = new ArrayIntSet();

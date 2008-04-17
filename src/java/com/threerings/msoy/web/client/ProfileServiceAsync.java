@@ -50,5 +50,6 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#loadSelfFeed}.
      */
-    public void loadSelfFeed (WebIdent ident, int cutoffDays, AsyncCallback callback);
+    public void loadSelfFeed (int profileMemberId, int cutoffDays, 
+        AsyncCallback callback);
 }
