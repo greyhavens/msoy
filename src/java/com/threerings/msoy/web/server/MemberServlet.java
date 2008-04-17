@@ -89,7 +89,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
             MsoyServer.feedRepo.publishMemberMessage(
                 memrec.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                friendName.toString() + "\t" + String.valueOf(friendId) );
+                friendName.toString() + "\t" + String.valueOf(friendId));
             FriendManager.friendshipEstablished(memrec.getName(), friendName);
 
         } catch (PersistenceException pe) {
