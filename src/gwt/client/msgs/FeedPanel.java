@@ -315,6 +315,9 @@ public class FeedPanel extends TongueBox
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
             case 103: // FRIEND_LISTED_ITEM
+                if (message.data.length < 4) {
+                    return null;
+                }
                 media = MediaDesc.stringToMD(message.data[3]);
                 if (media == null) {
                     return null;
