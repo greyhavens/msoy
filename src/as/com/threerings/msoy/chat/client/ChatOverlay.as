@@ -513,7 +513,13 @@ public class ChatOverlay
             _ctx.getTopPanel().slideInChat(
                 _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
             setHistoryEnabled(true, true);
+            for each (var glyph :ChatGlyph in _showingHistory) {
+                glyph.setClickable(true);
+            }
         } else {
+            for each (glyph in _showingHistory) {
+                glyph.setClickable(false);
+            }
             _ctx.getTopPanel().slideOutChat();
             _chatContainer = null;
             _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
@@ -667,6 +673,9 @@ public class ChatOverlay
         var msg :ChatMessage = _filteredMessages[index] as ChatMessage;
         glyph = createSubtitle(msg, getType(msg, true), false);
         glyph.histIndex = index;
+        if (_chatContainer != null) {
+            glyph.setClickable(true);
+        }
         _showingHistory.push(glyph);
         return glyph;
     }
