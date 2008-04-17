@@ -44,18 +44,10 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.FriendFeedMessage;
-import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.server.persist.FeedMessageRecord;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
-
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.person.data.FeedMessage;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -283,85 +275,9 @@ public class WorldServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
-
-        List<FeedMessage> messages = Lists.newArrayList();
         IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
-        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadPersonalFeed(
-            mrec.memberId, friendIds, groupIds, since);
-
-        // find out which member and group names we'll need
-        IntSet feedFriendIds = new ArrayIntSet(), feedGroupIds = new ArrayIntSet();
-        for (FeedMessageRecord record : records) {
-            if (record instanceof FriendFeedMessageRecord) {
-                feedFriendIds.add(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                feedGroupIds.add(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord && 
-                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
-                String[] fields = record.data.split("\t");
-                if (fields.length < 3) {
-                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
-                        record.data + "]");
-                    continue;
-                }
-
-                try {
-                    feedFriendIds.add(Integer.parseInt(fields[2]));
-                } catch (NumberFormatException nfe) {
-                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
-                        "comment feed message [" + fields[2] + "]");
-                }
-            }
-        }
-
-        // generate a lookup for the member names
-        IntMap<MemberName> memberLookup = null;
-        if (!feedFriendIds.isEmpty()) {
-            memberLookup = IntMaps.newHashIntMap();
-            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(feedFriendIds)) {
-                memberLookup.put(name.getMemberId(), name);
-            }
-        }
-
-        // generate a lookup for the group names
-        IntMap<GroupName> groupLookup = null;
-        if (!feedGroupIds.isEmpty()) {
-            groupLookup = IntMaps.newHashIntMap();
-            for (GroupRecord group : MsoyServer.groupRepo.loadGroups(feedGroupIds)) {
-                groupLookup.put(group.groupId, group.toGroupName());
-            }
-        }
-
-        // create our list of feed messages
-        for (FeedMessageRecord record : records) {
-            FeedMessage message = record.toMessage();
-            if (record instanceof FriendFeedMessageRecord) {
-                ((FriendFeedMessage)message).friend =
-                    memberLookup.get(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                ((GroupFeedMessage)message).group =
-                    groupLookup.get(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord &&
-                record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
-                if (message.data.length < 3) {
-                    log.log(Level.WARNING, "Unrecognized data format for self feed message [" + 
-                        record.data + "]");
-                    continue;
-                }
-
-                try {
-                    String data = record.data;
-                    data += "\t" + memberLookup.get(Integer.parseInt(message.data[2]));
-                    message.data = data.split("\t");
-                } catch (NumberFormatException nfe) {
-                    log.log(Level.WARNING, "failed to parse poster member id from self room " + 
-                        "comment feed message [" + message.data[2] + "]");
-                }
-            }
-            messages.add(message);
-        }
-
-        return messages;
+        return ServletUtil.resolveFeedMessages(
+            MsoyServer.feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
     }
 
     /**

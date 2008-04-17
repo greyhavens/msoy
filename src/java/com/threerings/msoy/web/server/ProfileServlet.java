@@ -47,18 +47,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCodes;
-import com.threerings.msoy.person.data.SelfFeedMessage;
-import com.threerings.msoy.person.server.persist.FeedMessageRecord;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.EmailContact;
@@ -349,39 +343,8 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         // load up the feed records for the target member
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
-        List<FeedMessageRecord> records = MsoyServer.feedRepo.loadMemberFeed(profileMemberId, since);
-
-        // find out which member names we'll need
-        IntSet feedMemberIds = new ArrayIntSet();
-        for (FeedMessageRecord record : records) {
-            if (record instanceof FriendFeedMessageRecord) {
-                feedMemberIds.add(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                feedMemberIds.add(((SelfFeedMessageRecord)record).actorId);
-            }
-        }
-
-        // generate a lookup for the member names
-        IntMap<MemberName> feedMembers = IntMaps.newHashIntMap();
-        for (MemberName name : MsoyServer.memberRepo.loadMemberNames(feedMemberIds)) {
-            feedMembers.put(name.getMemberId(), name);
-        }
-
-        // create our list of feed messages
-        List<FeedMessage> messages = Lists.newArrayList();
-        for (FeedMessageRecord record : records) {
-            FeedMessage message = record.toMessage();
-            if (record instanceof FriendFeedMessageRecord) {
-                ((FriendFeedMessage)message).friend =
-                    feedMembers.get(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                ((SelfFeedMessage)message).actor =
-                    feedMembers.get(((SelfFeedMessageRecord)record).actorId);
-            }
-            messages.add(message);
-        }
-
-        return messages;
+        return ServletUtil.resolveFeedMessages(
+            MsoyServer.feedRepo.loadMemberFeed(profileMemberId, since));
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
