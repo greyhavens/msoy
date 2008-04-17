@@ -83,6 +83,9 @@ public class ServerConfig
     /** Event logging server host name. */
     public static String eventLogPassword;
 
+    /** Event logging server spooling directory. */
+    public static String eventLogSpoolDir;
+
     /** The port on which we listen to socket policy requests. */
     public static int socketPolicyPort;
 
@@ -231,6 +234,7 @@ public class ServerConfig
         eventLogPort = config.getValue("event_log_port", 0);
         eventLogUsername = config.getValue("event_log_username", "");
         eventLogPassword = config.getValue("event_log_password", "");
+        eventLogSpoolDir = config.getValue("event_log_spool_dir", "");
         recaptchaPublicKey = config.getValue("recaptcha_public", "");
         recaptchaPrivateKey = config.getValue("recaptcha_private", "");
     }

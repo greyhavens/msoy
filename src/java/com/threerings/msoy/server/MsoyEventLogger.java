@@ -4,6 +4,9 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.util.logging.Level;
+
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
@@ -26,30 +29,38 @@ public class MsoyEventLogger
     implements MsoyBaseServer.Shutdowner
 {
     /** Initializes the logger; this must happen before any events can be logged. */
-    public MsoyEventLogger (String ident, String host, int port, String username, String password)
+    public MsoyEventLogger (String ident)
     {
         MsoyBaseServer.registerShutdowner(this);
 
         // log locally (always for now)
-        File logloc = new File(
-                new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
+        File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
         log.info("Events logged locally to: " + logloc);
         _local = new LocalEventLogger(logloc);
         _local.start();
 
-        // also, depending on server properties, log remotely
-        try {
-            if (host != null && host.length() > 0 && port > 0) {
+        // if we're configure to log to panopticon, do so
+        String host = ServerConfig.eventLogHostname;
+        int port = ServerConfig.eventLogPort;
+        if (!StringUtil.isBlank(host) && port > 0) {
+            try {
+                EventLoggerConfig config = new EventLoggerConfig(
+                    host, port, ServerConfig.eventLogUsername, ServerConfig.eventLogPassword);
+
+                // if our spool directory is not an absolute path, prefix it with the server root
+                File spoolDir = new File(ServerConfig.eventLogSpoolDir);
+                if (!spoolDir.getAbsolutePath().equals(ServerConfig.eventLogSpoolDir)) {
+                    spoolDir = new File(ServerConfig.serverRoot, ServerConfig.eventLogSpoolDir);
+                }
+                config.setPersistPath(spoolDir.getAbsolutePath());
+
                 log.info("Events logged remotely to: " + host + ":" + port);
-                
-                EventLoggerConfig config = new EventLoggerConfig(host, port, username, password);
-                config.setPersistPath(ServerConfig.serverRoot.getAbsolutePath());
                 _remote = EventLoggerFactory.createLogger(config);
-            } 
-        } catch (Exception e) {
-            log.severe("Failed to connect to remote logging server, will only log locally. " +
-            		"[host=" + host + ", port=" + port + ", exception=" + e + "]"); 
-        }
+
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Failed to connect to remote logging server.", e);
+            }
+        } 
     }
 
     // from interface MsoyBaseServer.Shutdowner
