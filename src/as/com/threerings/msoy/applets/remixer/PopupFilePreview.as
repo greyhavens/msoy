@@ -90,7 +90,7 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader("Preview"));
-        _image = new DisplayCanvas(450, 450);
+        _image = new DisplayCanvas(400, 400);
         _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
         previewBox.addChild(_image);
         _label = new Label();

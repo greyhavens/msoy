@@ -33,6 +33,7 @@ public class CameraSnapshotControl extends TitleWindow
         _returnFn = returnFn;
 
         var box :VBox = new VBox();
+        box.setStyle("horizontalAlign", "center");
         addChild(box);
 
         _wrapper = new FlexWrapper(_snapper);
@@ -49,9 +50,8 @@ public class CameraSnapshotControl extends TitleWindow
             { label: "160x120", data: [ 160, 120 ] },
             { label: "320x240", data: [ 320, 240 ] },
             { label: "640x480", data: [ 640, 480 ] } ];
-        _sizes.selectedIndex = 1;
+        _sizes.selectedIndex = 1; // default to 320x240
         _sizes.addEventListener(ListEvent.CHANGE, updateCameraSize);
-        updateCameraSize();
 
         var hbox :HBox = new HBox();
         hbox.addChild(sources);
@@ -59,17 +59,15 @@ public class CameraSnapshotControl extends TitleWindow
         box.addChild(hbox);
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(new CommandButton("Snapshot", takeSnapshot));
-        _clear = new CommandButton("Clear", clearSnapshot);
+        bar.addChild(_cancel = new CommandButton("Cancel", doCancel));
+        bar.addChild(_snap = new CommandButton("Snapshot", takeSnapshot));
         _ok = new CommandButton("OK", close, true);
         _ok.enabled = false;
-        bar.addChild(_clear);
         bar.addChild(_ok);
-        bar.addChild(new CommandButton("Cancel", close, false));
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, parent, true);
-        PopUpManager.centerPopUp(this);
+        updateCameraSize();
     }
 
     protected function handleCameraChange (event :ListEvent) :void
@@ -82,24 +80,35 @@ public class CameraSnapshotControl extends TitleWindow
     {
         var obj :Object = _sizes.selectedItem;
 
-        // try to use a 320x240 snapshot size
         _snapper.setMode(int(obj.data[0]), int(obj.data[1]), 15);
         _wrapper.width = _snapper.width;
         _wrapper.height = _snapper.height;
+        PopUpManager.centerPopUp(this);
+
+        if (!_snap.enabled) {
+            doCancel();
+        }
+    }
+
+    protected function doCancel () :void
+    {
+        if (_snap.enabled) {
+            close(false);
+
+        } else {
+            _snapper.clearSnapshot();
+            _ok.enabled = false;
+            _snap.enabled = true;
+            _cancel.label = "Cancel";
+        }
     }
 
     protected function takeSnapshot () :void
     {
         _snapper.takeSnapshot();
         _ok.enabled = true;
-        _clear.enabled = true;
-    }
-
-    protected function clearSnapshot () :void
-    {
-        _snapper.clearSnapshot();
-        _ok.enabled = false;
-        _clear.enabled = false;
+        _snap.enabled = false;
+        _cancel.label = "Clear"
     }
 
     protected function close (save :Boolean) :void
@@ -117,8 +126,8 @@ public class CameraSnapshotControl extends TitleWindow
     protected var _wrapper :FlexWrapper;
 
     protected var _ok :CommandButton;
-
-    protected var _clear :CommandButton;
+    protected var _snap :CommandButton;
+    protected var _cancel :CommandButton;
 
     protected var _sizes :ComboBox;
 }
