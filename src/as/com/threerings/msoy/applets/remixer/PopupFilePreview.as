@@ -178,8 +178,22 @@ public class PopupFilePreview extends TitleWindow
     protected function handleFileChosen (event :ValueEvent) :void
     {
         var value :Array = event.value as Array;
-        if (value != null) {
-            setImage(value[0] as String, value[1] as ByteArray);
+        if (value == null) {
+            // nothing
+            return;
+        }
+
+        var fname :String = value[0] as String;
+        var image :ByteArray = value[1] as ByteArray;
+
+        var p :Point = getForcedSize();
+        if (p == null) {
+            setImage(fname, image);
+
+        } else {
+            // otherwise, for now, let's just always route it through the editor
+            // TODO: check the size, if it's cool then use it directly...
+            doEdit(image, fname);
         }
     }
 
@@ -191,9 +205,19 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseCamera () :void
     {
-        new CameraSnapshotControl(this, function (bitmapData :BitmapData) :void {
-            setImage("cameragrab.png", PNGEncoder.encode(bitmapData));
-        });
+        new CameraSnapshotControl(this, handleSnapshotTaken);
+    }
+    
+    protected function handleSnapshotTaken (bitmapData :BitmapData) :void
+    {
+        const fname :String = "cameragrab.png";
+        var p :Point = getForcedSize();
+        // if we have no forced size or we meet the forced size, we're good
+        if (p == null || ((p.x == bitmapData.width) && (p.y == bitmapData.height))) {
+            setImage(fname, PNGEncoder.encode(bitmapData));
+        } else {
+            doEdit(bitmapData, fname);
+        }
     }
 
     protected function makeHeader (title :String) :UIComponent
