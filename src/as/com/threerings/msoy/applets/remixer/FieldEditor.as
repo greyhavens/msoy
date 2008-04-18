@@ -60,7 +60,6 @@ public class FieldEditor extends VBox
         }
 
         var lbl :Label = new Label();
-        lbl.toolTip = entry.info;
         lbl.setStyle("fontWeight", "bold");
         lbl.setStyle("color", NAME_AND_VALUE_COLOR);
         lbl.text = name;
@@ -69,6 +68,7 @@ public class FieldEditor extends VBox
         var configgers :Array = getUI(entry);
         var topConfigger :UIComponent = UIComponent(configgers[0]);
         topConfigger.setStyle("color", NAME_AND_VALUE_COLOR);
+        topConfigger.maxWidth = 150;
         configArea.addChild(topConfigger);
 
         var botBox :HBox = new HBox();

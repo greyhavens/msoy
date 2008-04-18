@@ -94,6 +94,7 @@ public class PopupFilePreview extends TitleWindow
         _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
         previewBox.addChild(_image);
         _label = new Label();
+        _label.maxWidth = 250;
 
         hbox = new HBox();
         hbox.addChild(_edit = new CommandButton("Edit", doEdit));
