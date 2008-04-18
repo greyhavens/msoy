@@ -104,16 +104,6 @@ public class FieldEditor extends VBox
         return [ label, new Spacer(), label ];
     }
 
-    protected function addDescriptionLabel (entry :Object) :void
-    {
-//        var lbl :Label = new Label();
-//        var tip :String = entry.info;
-//        if (tip != null) {
-//            lbl.text = "[ " + tip + " ]";
-//        }
-//        addComp(lbl);
-    }
-
     protected function createEditButton (callback :Function) :CommandButton
     {
         var edit :CommandButton = new CommandButton("View/Edit", callback);
