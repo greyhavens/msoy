@@ -59,6 +59,8 @@ public class RemixControls extends HBox
     {
         percentWidth = 100;
         percentHeight = 100;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+//        verticalScrollPolicy = ScrollPolicy.OFF;
 
         var vbox :VBox = new VBox();
         vbox.width = PREVIEW_WIDTH;
@@ -75,11 +77,19 @@ public class RemixControls extends HBox
         vbox.addChild(_previewer);
 
         vbox = new VBox();
+        // TODO: sort out making the controls scroll but the buttons fixed to the bottom
+//        vbox.percentHeight = 100;
+//        vbox.verticalScrollPolicy = ScrollPolicy.OFF;
 
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.width = CONTROLS_WIDTH;
-        vbox.maxHeight = 550;
         addChild(vbox);
+
+        if (DeploymentConfig.devDeployment) {
+            var build :Label = new Label();
+            build.text = DeploymentConfig.buildTime;
+            vbox.addChild(build);
+        }
 
         var label :Label = new Label();
         label.percentWidth = 100;
@@ -89,14 +99,16 @@ public class RemixControls extends HBox
         label.setStyle("fontSize", 16);
         vbox.addChild(label);
 
-        _controls = new Grid();
+        _controls = new VBox();
+        _controls.addChild(createControlsHeader());
+
+//        _controls.verticalScrollPolicy = ScrollPolicy.ON;
         _controls.setStyle("top", 0);
         _controls.setStyle("left", 0);
         _controls.setStyle("right", 0);
         _controls.setStyle("verticalGap", 0);
         _controls.percentWidth = 100;
         _controls.percentHeight = 100;
-        //_controls.maxWidth = CONTROLS_WIDTH;
         vbox.addChild(_controls);
 
         var butBox :HBox = new HBox();
@@ -120,6 +132,32 @@ public class RemixControls extends HBox
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
             _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
         });
+    }
+
+    protected function createControlsHeader () :UIComponent
+    {
+        var box :HBox = new HBox();
+        box.percentWidth = 100;
+        box.setStyle("backgroundColor", 0xDEEDF7);
+        box.setStyle("paddingTop", 2);
+        box.setStyle("paddingLeft", 8);
+        box.setStyle("paddingRight", 8);
+
+        var label :Label = new Label();
+        label.text = "Component";
+        label.setStyle("textAlign", "left");
+        label.setStyle("color", 0x2270A5);
+        label.percentWidth = 50;
+        box.addChild(label);
+
+        label = new Label();
+        label.text = "Value / Remix";
+        label.setStyle("textAlign", "right");
+        label.setStyle("color", 0x2270A5);
+        label.percentWidth = 50;
+        box.addChild(label);
+
+        return box;
     }
 
     protected function createPreviewHeader () :UIComponent
@@ -169,68 +207,87 @@ public class RemixControls extends HBox
 
         addEventListener(FieldEditor.FIELD_CHANGED, handleFieldChanged);
 
-        GridUtil.addRow(_controls, "Field", "Used?", "Value", [2, 1]);
-        addRule();
+        // TODO: add the little header
 
         var name :String;
-        var datas :Array = _ctx.pack.getDataFields();
-        var rowCount :int = 0;
-        if (datas.length > 0) {
-            for each (name in datas) {
-                colorRow(addSpacer(), rowCount);
-                var de :DataEditor = new DataEditor(_ctx, name);
-                colorRow(de, rowCount);
-                _controls.addChild(de);
-                colorRow(addDescription(_ctx.pack.getDataEntry(name)), rowCount);
-                rowCount++;
-            }
+        for each (name in _ctx.pack.getDataFields()) {
+            _controls.addChild(new DataEditor(_ctx, name));
         }
 
-        var files :Array = _ctx.pack.getFileFields();
-        if (files.length > 0) {
-            for each (name in files) {
-                colorRow(addSpacer(), rowCount);
-                var fe :FileEditor = new FileEditor(_ctx, name, _params["server"]);
-                colorRow(fe, rowCount);
-                _controls.addChild(fe);
-                colorRow(addDescription(_ctx.pack.getFileEntry(name)), rowCount);
-                rowCount++;
-            }
+        var serverURL :String = _params["server"];
+        for each (name in _ctx.pack.getFileFields()) {
+            _controls.addChild(new FileEditor(_ctx, name, serverURL));
         }
     }
 
-    protected function addDescription (entry :Object) :GridRow
-    {
-        var lbl :Text = new Text();
-        lbl.width = CONTROLS_WIDTH;
-        lbl.setStyle("paddingLeft", 20);
-        lbl.text = entry.info;
-
-        return GridUtil.addRow(_controls, lbl, [4, 1]);
-    }
-
-    protected function addSpacer () :GridRow
-    {
-        var spacer :Spacer = new Spacer();
-        spacer.height = 5;
-        return GridUtil.addRow(_controls, spacer, [4, 1]);
-    }
-
-    protected function colorRow (row :GridRow, rowCount :int) :void
-    {
-        if (rowCount % 2 == 1) {
-            row.setStyle("backgroundColor", 0xFFFFCC);
-        }
-    }
-
-    protected function addRule () :void
-    {
-        var rule :HRule = new HRule();
-        rule.percentWidth = 100;
-        rule.setStyle("strokeWidth", 1);
-        rule.setStyle("strokeColor", 0x000000);
-        GridUtil.addRow(_controls, rule, [5, 1]);
-    }
+//    protected function handlePackComplete (event :Event) :void
+//    {
+//        updatePreview();
+//
+//        addEventListener(FieldEditor.FIELD_CHANGED, handleFieldChanged);
+//
+//        GridUtil.addRow(_controls, "Field", "Used?", "Value", [2, 1]);
+//        addRule();
+//
+//        var name :String;
+//        var datas :Array = _ctx.pack.getDataFields();
+//        var rowCount :int = 0;
+//        if (datas.length > 0) {
+//            for each (name in datas) {
+//                colorRow(addSpacer(), rowCount);
+//                var de :DataEditor = new DataEditor(_ctx, name);
+//                colorRow(de, rowCount);
+//                _controls.addChild(de);
+//                colorRow(addDescription(_ctx.pack.getDataEntry(name)), rowCount);
+//                rowCount++;
+//            }
+//        }
+//
+//        var files :Array = _ctx.pack.getFileFields();
+//        if (files.length > 0) {
+//            for each (name in files) {
+//                colorRow(addSpacer(), rowCount);
+//                var fe :FileEditor = new FileEditor(_ctx, name, _params["server"]);
+//                colorRow(fe, rowCount);
+//                _controls.addChild(fe);
+//                colorRow(addDescription(_ctx.pack.getFileEntry(name)), rowCount);
+//                rowCount++;
+//            }
+//        }
+//    }
+//
+//    protected function addDescription (entry :Object) :GridRow
+//    {
+//        var lbl :Text = new Text();
+//        lbl.width = CONTROLS_WIDTH;
+//        lbl.setStyle("paddingLeft", 20);
+//        lbl.text = entry.info;
+//
+//        return GridUtil.addRow(_controls, lbl, [4, 1]);
+//    }
+//
+//    protected function addSpacer () :GridRow
+//    {
+//        var spacer :Spacer = new Spacer();
+//        spacer.height = 5;
+//        return GridUtil.addRow(_controls, spacer, [4, 1]);
+//    }
+//
+//    protected function colorRow (row :GridRow, rowCount :int) :void
+//    {
+//        if (rowCount % 2 == 1) {
+//            row.setStyle("backgroundColor", 0xFFFFCC);
+//        }
+//    }
+//
+//    protected function addRule () :void
+//    {
+//        var rule :HRule = new HRule();
+//        rule.percentWidth = 100;
+//        rule.setStyle("strokeWidth", 1);
+//        rule.setStyle("strokeColor", 0x000000);
+//        GridUtil.addRow(_controls, rule, [5, 1]);
+//    }
 
     /**
      * Handle the FIELD_CHANGED event dispatched by FieldEditors.
@@ -323,7 +380,7 @@ public class RemixControls extends HBox
 
     protected var _previewer :SWFLoader;
 
-    protected var _controls :Grid;
+    protected var _controls :VBox;
 
     protected var _saveBtn :CommandButton;
 

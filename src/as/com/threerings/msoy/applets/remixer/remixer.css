@@ -2,3 +2,7 @@
   backgroundImage: Embed(source="../../../../../../../pages/images/ui/box/header_tile.png");
   backgroundSize: "100%";
 }
+
+.mixButton {
+  fontWeight: "normal";
+}

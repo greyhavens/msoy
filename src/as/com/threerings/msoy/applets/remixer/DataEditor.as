@@ -10,6 +10,7 @@ import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
+import mx.controls.Spacer;
 import mx.controls.TextInput;
 
 import mx.validators.NumberValidator;
@@ -30,58 +31,50 @@ public class DataEditor extends FieldEditor
         super(ctx, name, entry);
 
         _value = entry.value;
-
-        addUsedCheckBox(entry);
-
-        try {
-            Object(this)["setup" + entry.type](entry, ctx);
-
-        } catch (err :Error) {
-            setupUnknown(entry);
-        }
-
-        // and specify whether the component is selected
-        if (_component != null) {
-            _component.enabled = _used.selected;
-            _component.toolTip = entry.info;
-        }
     }
 
-    protected function setupBoolean (entry :Object, ctx :RemixContext) :void
+    override protected function getUI (entry :Object) :Array
+    {
+        try {
+            return Object(this)["setup" + entry.type](entry);
+        } catch (err :Error) {
+            // fall through to super
+        }
+        return super.getUI(entry);
+    }
+
+    protected function setupBoolean (entry :Object) :Array
     {
         var tog :CheckBox = new CheckBox();
         tog.selected = Boolean(entry.value);
         tog.addEventListener(Event.CHANGE, function (... ignored) :void {
             updateValue(tog.selected);
         });
-        _component = tog;
 
-        addComp(tog, 2);
-        addDescriptionLabel(entry);
+        return [ tog, new Spacer(), tog ];
     }
 
-    protected function setupString (
-        entry :Object, ctx :RemixContext, validator :Validator = null) :void
+    protected function setupString (entry :Object, validator :Validator = null) :Array
     {
         var label :Label = new Label();
+        label.setStyle("color", NAME_AND_VALUE_COLOR);
         updateLabel(label, entry);
-        ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED, function (event :ValueEvent) :void {
-            if (event.value === entry.name) {
-                updateLabel(label, ctx.pack.getDataEntry(entry.name));
-            }
-        });
-        addComp(label);
+        _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED,
+            function (event :ValueEvent) :void {
+                if (event.value === entry.name) {
+                    updateLabel(label, _ctx.pack.getDataEntry(entry.name));
+                }
+            });
 
         var dataEditor :DataEditor = this;
-        var change :CommandButton = new CommandButton("View/Change", function () :void {
-            new PopupEditor(dataEditor, ctx.pack.getDataEntry(entry.name), validator);
+        var change :CommandButton = createEditButton(function () :void {
+            new PopupEditor(dataEditor, _ctx.pack.getDataEntry(entry.name), validator);
         });
-        _component = change;
-        addComp(change);
-        addDescriptionLabel(entry);
+
+        return [ label, change, change ];
     }
 
-    protected function setupNumber (entry :Object, ctx :RemixContext) :void
+    protected function setupNumber (entry :Object) :Array
     {
         var min :Number = Number(entry.min);
         var max :Number = Number(entry.max);
@@ -95,19 +88,18 @@ public class DataEditor extends FieldEditor
             hslider.addEventListener(Event.CHANGE, function (... ignored) :void {
                 updateValue(hslider.value);
             });
-            _component = hslider;
-            addComp(hslider, 2);
-            addDescriptionLabel(entry);
+
+            return [ hslider, new Spacer(), hslider ];
 
         } else {
             var val :NumberValidator = new NumberValidator();
             val.minValue = min;
             val.maxValue = max;
-            setupString(entry, ctx, val);
+            return setupString(entry, val);
         }
     }
 
-    protected function setupColor (entry :Object, ctx :RemixContext) :void
+    protected function setupColor (entry :Object) :Array
     {
         var picker :ColorPicker = new ColorPicker();
         picker.selectedColor = uint(entry.value);
@@ -115,18 +107,8 @@ public class DataEditor extends FieldEditor
         picker.addEventListener(Event.CLOSE, function (... ignored) :void {
             updateValue(picker.selectedColor);
         });
-        _component = picker;
 
-        addComp(picker, 2);
-        addDescriptionLabel(entry);
-    }
-
-    protected function setupUnknown (entry :Object) :void
-    {
-        var lbl :Label = new Label();
-        lbl.text = "Unknown entry of type '" + entry.type + "'.";
-
-        addComp(lbl, 3);
+        return [ picker, new Spacer(), picker ];
     }
 
     protected function updateLabel (label :Label, entry :Object) :void

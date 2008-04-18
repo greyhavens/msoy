@@ -27,6 +27,32 @@ public class RemixContext
         _viewStack = viewStack;
     }
 
+    /**
+     * Does this remix contain any fields that are optional?
+     */
+    public function hasOptionalFields () :Boolean
+    {
+        if (null == _hasOptionalFields) {
+            _hasOptionalFields = false;
+            var name :String;
+            for each (name in pack.getDataFields()) {
+                if (pack.getDataEntry(name)["optional"]) {
+                    _hasOptionalFields = true;
+                    break;
+                }
+            }
+            if (!_hasOptionalFields) {
+                for each (name in pack.getFileFields()) {
+                    if (pack.getFileEntry(name)["optional"]) {
+                        _hasOptionalFields = false;
+                        break;
+                    }
+                }
+            }
+        }
+        return _hasOptionalFields;
+    }
+
     public function getViewWidth () :int
     {
         return _viewStack.width;
@@ -109,5 +135,8 @@ public class RemixContext
 
     /** The ViewStack hosting the remixer. */
     protected var _viewStack :ViewStack;
+
+    /** Lazy-initialized with a Boolean value. */
+    protected var _hasOptionalFields :Object;
 }
 }

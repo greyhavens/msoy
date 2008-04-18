@@ -18,29 +18,18 @@ public class FileEditor extends FieldEditor
         var entry :Object = ctx.pack.getFileEntry(name);
         super(ctx, name, entry);
         _serverURL = serverURL;
-
-        addUsedCheckBox(entry);
-
-        _label = new Label();
-        _label.text = entry.value as String;
-        addComp(_label);
-
-        // TODO, this'll change
-        var change :CommandButton = new CommandButton("View/Change", showFile);
-        _component = change;
-        _component.toolTip = entry.info;
-        addComp(change);
-        change.enabled = (entry.value != null);
-        addDescriptionLabel(entry);
     }
 
-    // Necessary?
-    protected function setupUnknown (entry :Object) :void
+    override protected function getUI (entry :Object) :Array
     {
-        var lbl :Label = new Label();
-        lbl.text = "Unknown entry of type '" + entry.type + "'.";
+        _label = new Label();
+        //_label.setStyle("color", NAME_AND_VALUE_COLOR);
+        _label.text = entry.value as String;
 
-        addComp(lbl, 3);
+        var change :CommandButton = createEditButton(showFile);
+        change.enabled = (entry.value != null);
+
+        return [ _label, change, change ];
     }
 
     internal function updateValue (filename :String, bytes :ByteArray) :void

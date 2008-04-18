@@ -19,5 +19,6 @@
         import com.threerings.msoy.applets.remixer.RemixControls;
     ]]>
 </mx:Script>
-<mx:ViewStack id="viewStack"/>
+<mx:ViewStack id="viewStack" horizontalScrollPolicy="off" verticalScrollPolicy="off"
+    width="100%" height="100%"/>
 </mx:Application>
