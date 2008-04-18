@@ -361,7 +361,7 @@ public class WorldController extends MsoyController
             },
             function (result :Object) :void {
                 if (result == null) {
-                    // it's an object we own
+                    // it's an object we own, or it's not listed but we are support+
                     displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
 
                 } else if (result == 0) {

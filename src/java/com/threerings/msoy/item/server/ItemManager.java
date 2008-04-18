@@ -903,10 +903,13 @@ public class ItemManager
 
         getItem(ident, new ResultAdapter<Item>(rl) {
             public void requestCompleted (Item item) {
-                if (item.ownerId == user.getMemberId()) {
-                    rl.requestProcessed(null);
+                if ((item.ownerId == user.getMemberId()) || // if the user owns it,
+                        // OR, it's not in the catalog but the user is support
+                        ((item.catalogId == 0) && user.tokens.isSupport())) {
+                    rl.requestProcessed(null); // send them straight through to the detail page
 
                 } else {
+                    // otherwise, redirect them to the catalog
                     rl.requestProcessed(Integer.valueOf(item.catalogId));
                 }
                 // do NOT call super
