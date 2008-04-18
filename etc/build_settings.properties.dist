@@ -1,0 +1,14 @@
+#
+# $Id$
+#
+# Configuration for the Whirled build
+
+#
+# Indicates which ehcache configuration file to use.
+
+ehcache_config = etc/ehcache.xml
+
+#
+# Used for signing our Java client code
+
+# cert_dir = /export/threerings

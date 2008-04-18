@@ -9,8 +9,8 @@ MSOY_HOME=`dirname $0`
 MSOY_HOME=`cd $MSOY_HOME/..; pwd`
 
 # read in the server configuration
-if [ -f $MSOY_HOME/server.conf ]; then
-    . $MSOY_HOME/server.conf
+if [ -f $MSOY_HOME/dist/server.conf ]; then
+    . $MSOY_HOME/dist/server.conf
 fi
 
 NOW=`date "+%F-%H:%M"`

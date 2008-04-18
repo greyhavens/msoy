@@ -1,9 +1,6 @@
 <!-- build configuration -->
 <project name="msoy" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
 
-  <!-- read in our server properties -->
-  <property file="server.properties"/>
-
   <!-- define some basic project parameters -->
   <property name="app.name"     value="msoy"/>
 
@@ -18,8 +15,13 @@
   <property name="extlibs.dir"   value="extlibs/java"/>
   <property name="javadoc.title" value="Metasoy API"/>
 
+  <!-- define various packaging properties -->
+  <property name="msoy.user"        value="_msoy"/>
+  <property name="maintainer.name"  value="Three Rings Design"/>
+  <property name="maintainer.email" value="msoy-dev@threerings.net"/>
+
   <!-- defines the build version (normally zero unless we're doing a package build) -->
-  <property name="build_version" value="0"/>
+  <property name="version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
   <property name="projects" value="facebook"/>
@@ -41,23 +43,9 @@
     </dirset>
   </path>
 
-  <!-- declare artifacts to be deployed using maven -->
-  <filelist dir="." id="msoy.deploy">
-    <file name="${deploy.dir}/msoy-code.jar"/>
-  </filelist>
-
-  <!-- declare the properties files. -->
-  <property name="props.list" value="server.properties"/>
-
-  <!-- declare the files from bin needed in the package -->
-  <property name="bin.list1" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,rungame,mysql"/>
-  <property name="bin.list2" value="process_stats,roll_logs,swiftlycompiler,runcommon,runpolicy"/>
-  <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
-
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
     <file name="${extlibs.dir}/activation.jar"/>
-    <file name="${extlibs.dir}/ant.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/commons-beanutils.jar"/>
     <file name="${extlibs.dir}/commons-codec.jar"/>
@@ -155,100 +143,6 @@
     <file name="lib/tweener.swc"/>
   </filelist>
 
-  <!-- enumerate our translation files -->
-  <property name="msgs1.list" value="shell.Shell,account.Account,admin.Admin,shop.Shop"/>
-  <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
-  <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
-  <property name="msgs4.list" value="world.World,me.Me,remix.Remix,help.Help"/>
-  <property name="gmsgs.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
-
-  <!-- declare our classpath -->
-  <path id="classpath">
-    <pathelement location="${classes.dir}"/>
-    <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-    <fileset dir="lib" includes="plugin.jar"/>
-  </path>
-
-  <!-- prepares the application directories -->
-  <target name="prepare" depends="copydistprops">
-    <mkdir dir="${deploy.dir}"/>
-    <mkdir dir="${deploy.dir}/lib"/>
-    <mkdir dir="${deploy.dir}/tmp"/>
-    <mkdir dir="${classes.dir}"/>
-    <mkdir dir="${classes.dir}/rsrc"/>
-    <copy todir="${classes.dir}/rsrc">
-      <fileset dir="rsrc">
-       <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    <!-- Copy all the libs we depend on. -->
-    <copyfilelist dest="${deploy.dir}/lib">
-      <filelist refid="dist.libs"/>
-    </copyfilelist>
-
-    <!-- create our toybox propertis from server.properties -->
-    <exec executable="egrep">
-      <arg line="^toybox\."/>
-      <arg line="${deploy.dir}/server.properties"/>
-      <redirector output="${classes.dir}/toybox.properties">
-        <outputfilterchain>
-          <replacestring from="toybox." to=""/>
-        </outputfilterchain>
-      </redirector>
-    </exec>
-
-    <!-- copy logging.properties -->
-    <copy file="${basedir}/etc/logging.properties" todir="${deploy.dir}"/>
-    <copy file="${basedir}/etc/log4j.properties" todir="${deploy.dir}"/>
-
-    <!-- copy ehcache.xml to a classpath location -->
-    <if><equals arg1="${props.dist}" arg2="production"/>
-    <then>
-      <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/etc/ehcache-production.xml"/>
-    </then><else>
-      <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
-    </else></if>
-
-    <!-- generate our index.html and crossdomain.xml -->
-    <propertyregex property="server_url_host_port" input="${server_url}"
-                   regexp="http://" replace=""/>
-    <if><isset property="recaptcha_public"/><then>
-      <property name="recaptcha_in" value=""/>
-      <property name="recaptcha_out" value=""/>
-      <property name="recaptcha_public" value=""/>
-    </then><else>
-      <property name="recaptcha_in" value="&#60;!--"/>
-      <property name="recaptcha_out" value="--&#62;"/>
-    </else></if>
-    <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
-      <filterset>
-        <filter token="SERVER_URL" value="${server_url}"/>
-        <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
-        <filter token="RECAPTCHA_IN" value="${recaptcha_in}"/>
-        <filter token="RECAPTCHA_OUT" value="${recaptcha_out}"/>
-        <filter token="RECAPTCHA_KEY" value="${recaptcha_public}"/>
-      </filterset>
-    </copy>
-    <propertyregex property="server_url_host" input="${server_url}"
-                   regexp="http://([^:/]*):?.*" replace="\1"/>
-    <copy file="pages/crossdomain.xml.in" tofile="pages/crossdomain.xml" overwrite="true">
-      <filterset><filter token="SERVER_URL_HOST" value="${server_url_host}"/></filterset>
-    </copy>
-
-    <!-- copy our HTML sanitizer configuration -->
-    <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
-
-    <!-- create dev usable security.policy and swiftly.policy files -->
-    <!-- real ones are created in prepare-server-extra -->
-    <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
-      <filterset><filter token="PREFIX" value="${server_root}"/></filterset>
-    </copy>
-    <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
-      <filterset><filter token="PREFIX" value="${basedir}"/></filterset>
-    </copy>
-  </target>
-
   <!-- fetches our library dependencies -->
   <target name="mavendeps" depends="prepare">
     <artifact:dependencies filesetId="dependency.fileset">
@@ -288,12 +182,112 @@
     </copy>
   </target>
 
-  <!-- install maven artifacts int the local ~/.m2 repository. useful for development only. -->
-  <target name="maven-install"
-          description="Installs locally built libraries into your local Maven repository." >
-    <antcall target="maven-install-filelist">
-      <reference refid="msoy.deploy" torefid="install.maven.filelist"/>
-    </antcall>
+  <!-- enumerate our translation files -->
+  <property name="msgs1.list" value="shell.Shell,account.Account,admin.Admin,shop.Shop"/>
+  <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
+  <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
+  <property name="msgs4.list" value="world.World,me.Me,remix.Remix,help.Help"/>
+  <property name="gmsgs.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
+
+  <!-- declare our classpath -->
+  <path id="classpath">
+    <pathelement location="${classes.dir}"/>
+    <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+    <fileset dir="lib" includes="plugin.jar"/>
+  </path>
+
+  <!-- gets our various properties files and sticks them in dist -->
+  <target name="config">
+    <mkdir dir="${deploy.dir}"/>
+
+    <!-- grab the deployment et al properties from the configuration location. -->
+    <gatherconfiguration app="${app.name}" distribution="${ooo.distribution}" dest="${deploy.dir}">
+      <sources refid="ooo.buildserver.source"/>
+      <sources><directory path="${basedir}/etc"/></sources>
+      <files>
+        <file name="server.properties"/>
+        <file name="server.conf"/>
+        <file name="build_settings.properties"/>
+      </files>
+    </gatherconfiguration>
+
+    <!-- Read in all the deployment & build configuration bits. -->
+    <property file="${deploy.dir}/server.properties"/>
+    <property file="${deploy.dir}/build_settings.properties"/>
+  </target>
+
+  <!-- prepares the application directories -->
+  <target name="prepare" depends="config">
+    <mkdir dir="${deploy.dir}/lib"/>
+    <mkdir dir="${deploy.dir}/tmp"/>
+    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${classes.dir}/rsrc"/>
+    <copy todir="${classes.dir}/rsrc">
+      <fileset dir="rsrc">
+       <include name="**/*"/>
+      </fileset>
+    </copy>
+
+    <!-- Copy all the libs we depend on. -->
+    <copyfilelist dest="${deploy.dir}/lib">
+      <filelist refid="dist.libs"/>
+    </copyfilelist>
+
+    <!-- create our toybox propertis from server.properties -->
+    <exec executable="egrep">
+      <arg line="^toybox\."/>
+      <arg line="${deploy.dir}/server.properties"/>
+      <redirector output="${classes.dir}/toybox.properties">
+        <outputfilterchain>
+          <replacestring from="toybox." to=""/>
+        </outputfilterchain>
+      </redirector>
+    </exec>
+
+    <!-- copy logging.properties -->
+    <copy file="${basedir}/etc/logging.properties" todir="${deploy.dir}"/>
+    <copy file="${basedir}/etc/log4j.properties" todir="${deploy.dir}"/>
+
+    <!-- copy ehcache.xml to a classpath location -->
+    <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
+
+    <!-- generate our index.html and crossdomain.xml -->
+    <propertyregex property="server_url_host_port" input="${server_url}"
+                   regexp="http://" replace=""/>
+    <if><isset property="${recaptcha_public}"/><then>
+      <property name="recaptcha_in" value=""/>
+      <property name="recaptcha_out" value=""/>
+      <property name="recaptcha_public" value=""/>
+    </then><else>
+      <property name="recaptcha_in" value="&#60;!--"/>
+      <property name="recaptcha_out" value="--&#62;"/>
+    </else></if>
+    <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
+      <filterset>
+        <filter token="SERVER_URL" value="${server_url}"/>
+        <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
+        <filter token="RECAPTCHA_IN" value="${recaptcha_in}"/>
+        <filter token="RECAPTCHA_OUT" value="${recaptcha_out}"/>
+        <filter token="RECAPTCHA_KEY" value="${recaptcha_public}"/>
+      </filterset>
+    </copy>
+    <propertyregex property="server_url_host" input="${server_url}"
+                   regexp="http://([^:/]*):?.*" replace="\1"/>
+    <copy file="pages/crossdomain.xml.in" tofile="pages/crossdomain.xml" overwrite="true">
+      <filterset><filter token="SERVER_URL_HOST" value="${server_url_host}"/></filterset>
+    </copy>
+
+    <!-- copy our HTML sanitizer configuration -->
+    <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
+
+    <!-- create dev usable security.policy and swiftly.policy files -->
+    <!-- real ones are created in prepare-server-extra -->
+    <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
+      <filterset><filter token="PREFIX" value="${server_root}"/></filterset>
+    </copy>
+    <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
+      <filterset><filter token="PREFIX" value="${basedir}"/></filterset>
+    </copy>
   </target>
 
   <!-- runs the GWT debugging shell -->
@@ -377,7 +371,7 @@
           tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
-        <filter token="build_version" value="${build_version}"/>
+        <filter token="build_version" value="${version}"/>
         <filter token="media_url" value="${media_url}"/>
         <filter token="server_url" value="${server_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
@@ -445,7 +439,7 @@
 
   <!-- prepares to build our Flash client -->
   <target name="asprepare" depends="prepare">
-    <mkdir dir="pages/clients/${build_version}"/>
+    <mkdir dir="pages/clients/${version}"/>
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
@@ -458,7 +452,7 @@
           overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
-        <filter token="build_version" value="${build_version}"/>
+        <filter token="build_version" value="${version}"/>
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
         <filter token="socket_policy_port" value="${socket_policy_port}"/>
@@ -485,7 +479,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/${astype}.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/${astype}-client.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/${astype}-client.swf" todir="pages/clients/${version}"/>
   </target>
 
   <target name="generate-link-report">
@@ -515,7 +509,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/${astype}.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds the preloader that's used to load our large clients -->
@@ -529,7 +523,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/Preloader.as"/>
     </exec>
-    <copy file="${deploy.dir}/preloader.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/preloader.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds the mediastub that's used to wrap SWF media -->
@@ -565,7 +559,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds our video viewer thingy -->
@@ -580,7 +574,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/VideoViewer.as"/>
     </exec>
-    <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds our awesome decor viewer -->
@@ -596,13 +590,13 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/DecorViewer.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds our neighborhood visualization client -->
   <target name="neighborhood">
     <ant dir="projects/neighborhood" target="dist" inheritAll="false"/>
-    <copy file="${deploy.dir}/neighborhood.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/neighborhood.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds our tutorial game -->
@@ -676,16 +670,16 @@
     </if>
 
     <!-- Copy the resulting jar file into the document tree. -->
-    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds the media chooser applet -->
   <target name="mchooser">
     <ant dir="projects/mchooser" target="proguard" inheritAll="false"/>
     <copy file="projects/mchooser/${deploy.dir}/mchooser-applet.jar"
-          todir="pages/clients/${build_version}"/>
+          todir="pages/clients/${version}"/>
     <copy file="projects/mchooser/${deploy.dir}/mchooser-retro-pro.jar"
-          tofile="pages/clients/${build_version}/mchooser.jar"/>
+          tofile="pages/clients/${version}/mchooser.jar"/>
     <if><isset property="cert_dir"/><then>
       <property file="${cert_dir}/certificate.properties"/>
     </then><else>
@@ -693,7 +687,7 @@
       <property name="sign.storepass" value="secret"/>
       <property name="sign.alias" value="threerings-dev"/>
     </else></if>
-    <signjar jar="pages/clients/${build_version}/mchooser.jar" keystore="${sign.keystore}"
+    <signjar jar="pages/clients/${version}/mchooser.jar" keystore="${sign.keystore}"
              lazy="true" alias="${sign.alias}" storepass="${sign.storepass}"/>
   </target>
 
@@ -707,7 +701,7 @@
       </sequential>
     </for>
     <!-- build the howdy pardner jar -->
-    <jar file="pages/clients/${build_version}/howdy.jar" basedir="${classes.dir}">
+    <jar file="pages/clients/${version}/howdy.jar" basedir="${classes.dir}">
       <include name="com/threerings/msoy/client/HowdyPardner.class"/>
     </jar>
   </target>
@@ -888,15 +882,9 @@
   <target name="javadoc" depends="prepare,common-javadoc"/>
 
   <!-- convenience targets that build specific projects and copy the results -->
-  <target name="toybox">
-    <antcall target="distprojects"><param name="projects" value="toybox"/></antcall>
-  </target>
   <target name="facebook">
     <antcall target="distprojects"><param name="projects" value="facebook"/></antcall>
   </target>
-
-  <!-- a target for rebuilding everything -->
-  <target name="all" depends="clean,prepare,compile,dist"/>
 
   <!-- builds the distribution jar files -->
   <target name="dist" depends="prepare,compile,procstream">
@@ -933,24 +921,6 @@
         description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
-    </antcall>
-  </target>
-
-  <!-- assigns a version number to this build -->
-  <target name="assignversion">
-    <var name="build_version" unset="true"/>
-    <exec executable="${basedir}/build/bin/buildstamp" outputproperty="build_version"
-          failonerror="true">
-    </exec>
-    <echo>Assigned build version ${build_version}</echo>
-  </target>
-
-  <!-- rebuilds everything and extra bits for packaging -->
-  <target name="distpkg" depends="assignversion,distall">
-    <!-- deploy the msoy-code artifact to the maven repository to a namespace that
-         includes the current "distribution", e.g. "devel" -->
-    <antcall target="maven-deploy-to-dist">
-      <reference refid="msoy.deploy" torefid="deploy.dist.filelist"/>
     </antcall>
   </target>
 
@@ -996,54 +966,106 @@
   <target name="distcleanall" depends="distcleanprojects,distclean"
         description="Fully cleans out the application and all subprojects."/>
 
-  <!-- prepare ${destroot} for all the packages being built -->
-  <target name="preppkg">
-    <antcallback target="prepare-server" return="pkg.base"/>
-    <antcall target="prepare-server-extra"/>
+  <!-- assigns a version number to this build -->
+  <target name="assignversion">
+    <var name="version" unset="true"/>
+    <tstamp><format property="version" pattern="yyyyMMddHHmmss"/></tstamp>
+    <echo>Assigned build version ${version}</echo>
   </target>
 
-  <!-- install project specific server code into ${pkg.base} -->
-  <target name="prepare-server-extra">
-    <antcall target="copywithperms">
-      <param name="copy.perms" value="755"/>
-      <param name="copy.src"   value="tools/bin"/>
-      <param name="copy.list"  value="lfilter,filter_interesting,sum_invokers"/>
-      <param name="copy.dest"  value="${pkg.base}/tools/bin"/>
-    </antcall>
-    <copy file="tools/lib/perl/GrindUtil.pm" todir="${pkg.base}/tools/lib/perl"/>
-    <antcall target="prepare-server-rcscript"/>
-    <mkdir dir="${pkg.base}/data"/>
-    <copy todir="${pkg.base}/data">
+  <!-- defines properties needed by the individual foo-package targets -->
+  <target name="prepare-package">
+    <!-- define the directory from which we're going to build our packages -->
+    <property name="pkgroot.root" value="${deploy.dir}/packages"/>
+    <mkdir dir="${pkgroot.root}"/>
+    <!-- TEMP: define where our .dpkg files will be written -->
+    <propertycopy name="package.output" from="ooo.deprecated.package.deploy"/>
+  </target>
+
+  <!-- prepares and builds the msoy package(s) -->
+  <target name="package" depends="assignversion,distall,prepare-package">
+
+    <!-- define the root of the msoy-server package -->
+    <property name="pkgroot.server" value="${pkgroot.root}/${app.name}-server"/>
+    <property name="approot.server" value="${pkgroot.server}/${ooo.prefix}/${app.name}"/>
+    <mkdir dir="${approot.server}"/>
+
+    <!-- copy the external jars needed by the server -->
+    <copy todir="${approot.server}/${deploy.dir}/lib">
+      <fileset dir="${deploy.dir}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- copy this project's jar files and configuration -->
+    <copy todir="${approot.server}/${deploy.dir}">
+      <fileset dir="${deploy.dir}">
+        <include name="*.jar"/>
+        <exclude name="*-client.jar"/>
+        <include name="*.properties"/>
+        <include name="*.policy"/>
+        <!-- skip build_settings.properties since it's only needed at build time -->
+        <exclude name="build_settings.properties"/>
+      </fileset>
+    </copy>
+
+    <!-- remove a few conflicting buildtime libraries from the runtime set -->
+    <delete file="${approot.server}/${deploy.dir}/lib/proguard.jar"/>
+
+    <!-- copy various scripts needed by the server -->
+    <copyfilelist dest="${approot.server}/bin">
+      <filelist dir="bin">
+        <file name="msoy"/>
+        <file name="msoyrespawn"/>
+        <file name="msoyserver"/>
+        <file name="msoyjava"/>
+        <file name="runmsoy"/>
+        <file name="rungame"/>
+        <file name="roll_logs"/>
+        <file name="swiftlycompiler"/>
+        <file name="runcommon"/>
+        <file name="runpolicy"/>
+      </filelist>
+    </copyfilelist>
+    <copyfilelist dest="${approot.server}/tools/bin">
+      <filelist dir="tools/bin">
+        <file name="lfilter"/>
+        <file name="filter_interesting"/>
+        <file name="sum_invokers"/>
+      </filelist>
+    </copyfilelist>
+
+    <!-- copy in the swiftly build stuff -->
+    <mkdir dir="${approot.server}/data"/>
+    <copy todir="${approot.server}/data">
       <fileset dir="data" includes="**"/>
     </copy>
-    <chmod perm="755">
-      <fileset dir="${pkg.base}/data/swiftly/flex_sdk/bin"/>
-    </chmod>
+
     <!-- need some xml files -->
-    <copy file="${deploy.dir}/ehcache.xml" todir="${pkg.base}/${deploy.dir}"/>
-    <copy file="${deploy.dir}/antisamy-config.xml" todir="${pkg.base}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/ehcache.xml" todir="${approot.server}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/antisamy-config.xml" todir="${approot.server}/${deploy.dir}"/>
     <!-- and logging.properties -->
-    <copy file="${deploy.dir}/logging.properties" todir="${pkg.base}/${deploy.dir}"/>
-    <copy file="${deploy.dir}/log4j.properties" todir="${pkg.base}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/logging.properties" todir="${approot.server}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/log4j.properties" todir="${approot.server}/${deploy.dir}"/>
     <!-- create some runtime directories -->
-    <copy file="log/README" todir="${pkg.base}/log"/>
-    <mkdir dir="${pkg.base}/log/lighttpd"/>
-    <mkdir dir="${pkg.base}/logs"/>
-    <mkdir dir="${pkg.base}/run"/>
-    <mkdir dir="${pkg.base}/tmp"/>
+    <mkdir dir="${approot.server}/log/lighttpd"/>
+    <mkdir dir="${approot.server}/logs"/>
+    <mkdir dir="${approot.server}/run"/>
+
     <!-- create our production security.policy file -->
-    <copy file="etc/security.policy.in" tofile="${pkg.base}/${deploy.dir}/security.policy">
+    <copy file="etc/security.policy.in" tofile="${approot.server}/${deploy.dir}/security.policy">
       <filterset>
         <filter token="PREFIX" value="${prefix.app}"/>
       </filterset>
     </copy>
-    <copy file="etc/swiftly.policy.in" tofile="${pkg.base}/${deploy.dir}/swiftly.policy">
+    <copy file="etc/swiftly.policy.in" tofile="${approot.server}/${deploy.dir}/swiftly.policy">
       <filterset>
         <filter token="PREFIX" value="${prefix.app}"/>
       </filterset>
     </copy>
+
     <!-- set up our pages/ contents -->
-    <copy todir="${pkg.base}/pages">
+    <copy todir="${approot.server}/pages">
       <fileset dir="pages">
         <exclude name="**/*.in"/>
         <exclude name="source/**"/>
@@ -1051,14 +1073,85 @@
       </fileset>
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
-    <mkdir dir="${pkg.base}/pages/buildresults"/>
-    <mkdir dir="${pkg.base}/pages/stats"/>
-    <!-- set up our policy server startup stuff -->
+    <mkdir dir="${approot.server}/pages/buildresults"/>
+
+    <!-- create our msoy server startup script -->
+    <startupscript name="msoy_server" runas="${msoy.user}"
+                   output="${approot.node}/etc/rc.d/${app.name}-server.sh">
+      <commands>
+        <start cmdline="${ooo.prefix}/${app.name}/bin/msoy start"/>
+        <stop cmdline="${ooo.prefix}/${app.name}/bin/msoy stop"/>
+      </commands>
+    </startupscript>
+
+    <!-- create our policy server startup script -->
     <startupscript name="policy_server" runas="root"
                    pidfile="${prefix.app}/run/policy-server.pid"
-                   output="${pkg.base}/etc/rc.d/policy-server.sh">
-     <command cmd="/usr/sbin/daemon" args="-f ${prefix.app}/bin/runpolicy" procname="*java*"/>
+                   output="${approot.server}/etc/rc.d/policy-server.sh">
+      <command cmd="/usr/sbin/daemon" args="-f ${prefix.app}/bin/runpolicy" procname="*java*"/>
     </startupscript>
+
+    <!-- build the actual Debian package -->
+    <dpkg output="${package.output}" prefix="${ooo.prefix}/${app.name}"
+          distribution="${ooo.distribution}">
+      <package destroot="${pkgroot.server}">
+        <info>
+          <name>${app.name}-server</name>
+          <version>${version}</version>
+          <arch>${ooo.architecture}</arch>
+          <description>Msoy Game Server</description>
+          <maintainer>
+            <name>${maintainer.name}</name>
+            <email>${maintainer.email}</email>
+          </maintainer>
+        </info>
+        <permissions>
+          <permission user="${msoy.user}" group="${msoy.user}" mode="755" recursive="false">
+            <path>log/</path>
+            <path>logs/</path>
+            <path>run/</path>
+            <path>pages/media/</path>
+            <path>pages/buildresults/</path>
+            <path>data/swiftly/projects/</path>
+            <path>data/swiftly/build/</path>
+          </permission>
+          <permission mode="555" recursive="true">
+            <path>bin/</path>
+            <path>tools/bin/</path>
+            <path>data/swiftly/flex_sdk_bin/bin</path>
+          </permission>
+        </permissions>
+      </package>
+    </dpkg>
+  </target>
+
+  <!-- builds our javadocs and packages them up (TODO: add asdocs) -->
+  <target name="package-docs" depends="distall,javadoc,prepare-package">
+    <property name="pkgroot.docs" value="${pkgroot.root}/msoy-docs"/>
+    <property name="approot.docs" value="${pkgroot.docs}/${ooo.docs.prefix}"/>
+    <mkdir dir="${approot.docs}"/>
+
+    <copy todir="${approot.docs}/msoy">
+      <fileset dir="${deploy.dir}/docs"/>
+    </copy>
+
+    <!-- Set up a version number to use for docs package. -->
+    <tstamp><format property="version" pattern="yyyyMMddHHmmss"/></tstamp>
+
+    <dpkg output="${package.output}" prefix="${ooo.docs.prefix}" distribution="${ooo.distribution}">
+      <package destroot="${pkgroot.docs}">
+        <info>
+          <name>msoy-docs</name>
+          <version>${version}</version>
+          <arch>${ooo.architecture}</arch>
+          <description>Msoy Development Docs</description>
+          <maintainer>
+            <name>${maintainer.name}</name>
+            <email>${maintainer.email}</email>
+          </maintainer>
+        </info>
+      </package>
+    </dpkg>
   </target>
 
 </project>

@@ -7,7 +7,7 @@
 ROOT=`dirname $0`
 ROOT=`cd $ROOT/..; pwd`
 
-CONFIG=$ROOT/server.conf
+CONFIG=$ROOT/dist/server.conf
 if [ -f $CONFIG ]; then
     . $CONFIG
 else

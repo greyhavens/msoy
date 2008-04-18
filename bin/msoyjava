@@ -15,9 +15,9 @@ if [ ! -e $JAVA_VM ]; then
     exit 255
 fi
 
-# Obtain settings from MSOY_HOME/server.conf
-if [ -f $MSOY_HOME/server.conf ]; then
-    . $MSOY_HOME/server.conf
+# Obtain settings from MSOY_HOME/dist/server.conf
+if [ -f $MSOY_HOME/dist/server.conf ]; then
+    . $MSOY_HOME/dist/server.conf
 fi
 
 # set up our java arguments

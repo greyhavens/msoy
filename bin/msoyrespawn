@@ -9,8 +9,8 @@ my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
 my $node = shift or die "Usage: $0 nodename [pidfile]\n";
 
 # figure out what user as which to run the server
-my $msoy_user = read_prop("$root/server.conf", "MSOY_USER");
-die "Unable to determine server user from $root/server.conf\n" unless (defined $msoy_user);
+my $msoy_user = read_prop("$root/dist/server.conf", "MSOY_USER");
+die "Unable to determine server user from $root/dist/server.conf\n" unless (defined $msoy_user);
 
 my $LOG;
 if (!open($LOG, ">$root/log/respawn-$node.log")) {
