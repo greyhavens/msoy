@@ -6,15 +6,16 @@ package client.account;
 import java.util.Date;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -161,7 +162,21 @@ public class CreateAccountPanel extends VerticalPanel
         if (hasRecaptchaKey()) {
             RootPanel.get("recaptchaDiv").add(
                     MsoyUI.createLabel(CAccount.msgs.createCaptcha(), "label"));
-            createRecaptcha("recaptchaDiv");
+            initCaptcha();
+        }
+    }
+
+    protected void initCaptcha ()
+    {
+        // our JavaScript is loaded asynchrnously, so there's a possibility that it won't be set up
+        // by the time we try to initialize ourselves; in that case we have no recourse but to try
+        // again in a short while (there's no way to find out when async JS is loaded)
+        if (!createRecaptcha("recaptchaDiv")) {
+            new Timer() {
+                public void run () {
+                    initCaptcha();
+                }
+            }.schedule(500);
         }
     }
 
@@ -363,8 +378,16 @@ public class CreateAccountPanel extends VerticalPanel
         return !(typeof $wnd.recaptchaPublicKey == "undefined");
     }-*/;
 
-    protected static native void createRecaptcha (String element) /*-{
-        $wnd.Recaptcha.create($wnd.recaptchaPublicKey, element, { theme: "white" });
+    protected static native boolean createRecaptcha (String element) /*-{
+        try {
+            if ($wnd.Recaptcha != null) {
+                $wnd.Recaptcha.create($wnd.recaptchaPublicKey, element, { theme: "white" });
+                return true;
+            }
+        } catch (e) {
+            // fall through, return false
+        }
+        return false;
     }-*/;
 
     protected static native String getRecaptchaChallenge () /*-{
