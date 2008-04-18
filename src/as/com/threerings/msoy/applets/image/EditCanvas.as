@@ -256,7 +256,7 @@ public class EditCanvas extends DisplayCanvas
     {
         // see if we can skip re-encoding
         // TODO: this should probably be removed unless we're in preview-only mode?
-        if (forceFormat == null && _bytes != null) {
+        if (forceFormat == null && _forcedSize == null && _bytes != null) {
             return [ _bytes ];
         }
 
@@ -271,7 +271,7 @@ public class EditCanvas extends DisplayCanvas
 
     public function getRawImage () :BitmapData
     {
-        if (_bitmapData != null) {
+        if (_bitmapData != null && _forcedSize == null) {
             return _bitmapData;
         }
 
@@ -299,13 +299,12 @@ public class EditCanvas extends DisplayCanvas
         // TODO: make rotations undoable?
 
         _paintLayer.rotation = rotation;
+        paintLayerPositioned();
     }
 
     public function setZoom (zoom :Number) :void
     {
-        _holder.scaleX = zoom;
-        _holder.scaleY = zoom;
-        _holder.invalidateSize();
+        _holder.setZoom(zoom);
     }
 
     public function setScale (scale :Number) :void
@@ -314,6 +313,7 @@ public class EditCanvas extends DisplayCanvas
         _paintLayer.scaleX = scale;
         _paintLayer.scaleY = scale;
 
+        paintLayerPositioned();
         updateBrush();
     }
 
@@ -374,10 +374,27 @@ public class EditCanvas extends DisplayCanvas
      */
     protected function paintLayerPositioned () :void
     {
+        setModified();
+
         var g :Graphics = _paintLayer.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, 0);
-        g.drawRect(-_paintLayer.x, -_paintLayer.y, _canvasWidth, _canvasHeight);
+        var p :Point;
+        p = _paintLayer.globalToLocal(_baseLayer.localToGlobal(new Point(0, 0)));
+        var startP :Point = p;
+        g.moveTo(p.x, p.y);
+
+        p = _paintLayer.globalToLocal(_baseLayer.localToGlobal(new Point(_canvasWidth, 0)));
+        g.lineTo(p.x, p.y);
+
+        p = _paintLayer.globalToLocal(_baseLayer.localToGlobal(
+            new Point(_canvasWidth, _canvasHeight)));
+        g.lineTo(p.x, p.y);
+
+        p = _paintLayer.globalToLocal(_baseLayer.localToGlobal(new Point(0, _canvasHeight)));
+        g.lineTo(p.x, p.y);
+
+        g.lineTo(startP.x, startP.y);
         g.endFill();
     }
 

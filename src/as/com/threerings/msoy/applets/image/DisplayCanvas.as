@@ -224,6 +224,13 @@ class ImageHolder extends UIComponent
         return _background;
     }
 
+    public function setZoom (zoom :Number) :void
+    {
+        scaleX = zoom;
+        scaleY = zoom;
+        invalidateSize();
+    }
+
     override public function setActualSize (w :Number, h :Number) :void
     {
         super.setActualSize(w, h);
@@ -240,12 +247,14 @@ class ImageHolder extends UIComponent
         g = _background.graphics;
         g.clear();
         var dark :Boolean;
-        const GRID_SIZE :int = 10;
-        for (var yy :int = 0; yy < h; yy += GRID_SIZE) {
-            dark = ((yy % (GRID_SIZE * 2)) == 0);
-            for (var xx :int = 0; xx < w; xx += GRID_SIZE) {
+        var darkY :Boolean = true;
+        const GRID_SIZE :Number = 10 * scaleX;
+        for (var yy :Number = 0; yy < h; yy += GRID_SIZE) {
+            dark = darkY;
+            darkY = !darkY;
+            for (var xx :Number = 0; xx < w; xx += GRID_SIZE) {
                 g.beginFill(dark ? DARK_BKG : LIGHT_BKG);
-                g.drawRect(xx, yy, GRID_SIZE, GRID_SIZE);
+                g.drawRect(xx, yy, Math.min(GRID_SIZE, w - xx), Math.min(GRID_SIZE, h - yy));
                 g.endFill();
                 dark = !dark;
             }
