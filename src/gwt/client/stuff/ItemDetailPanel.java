@@ -207,9 +207,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick));
         }
 
-        // TODO: enable remixing for everyone
-        boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP) &&
-            CShell.isSupport();
+        // if remixable, add a button for that.
+        boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP);
         if (remixable) {
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
