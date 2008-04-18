@@ -51,7 +51,7 @@ public class NewThreadPanel extends TableFooterPanel
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
         }));
-        Button submit = new Button(CMsgs.cmsgs.submit());
+        Button submit = new Button(CMsgs.mmsgs.ntpSubmit());
         new ForumCallback(submit) {
             public boolean callService () {
                 return submitNewThread(this);

@@ -94,7 +94,7 @@ public class UploadDialog extends FlexTable
                 form.submit();
             }
         });
-        Button cancel = new Button(CSwiftly.msgs.cancel(), new ClickListener() {
+        Button cancel = new Button(CSwiftly.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }

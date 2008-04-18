@@ -59,7 +59,7 @@ public class EditAccountPanel extends FlexTable
             setText(row, 0, CMe.msgs.editPermaName());
             setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
-            _uppname = new Button(CMe.cmsgs.submit(), new ClickListener() {
+            _uppname = new Button(CMe.cmsgs.set(), new ClickListener() {
                 public void onClick (Widget widget) {
                     configurePermaName();
                 }

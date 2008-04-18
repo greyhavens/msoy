@@ -141,7 +141,7 @@ public class ProjectEdit extends FlexTable
 
         cell = new HorizontalPanel();
         // Submit button
-        Button submit = new Button(CSwiftly.msgs.submit());
+        Button submit = new Button(CSwiftly.cmsgs.change());
         cell.add(submit);
         new ClickCallback(submit) {
             public boolean callService () {
@@ -155,7 +155,7 @@ public class ProjectEdit extends FlexTable
         };
 
         // Close button
-        cell.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
+        cell.add(new Button(CSwiftly.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }

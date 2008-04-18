@@ -142,7 +142,7 @@ public class LogonPanel extends SmartTable
             setWidget(0, col++, _email = new TextBox());
             _email.setText(oemail);
 
-            Button forgot = new Button(CShell.cmsgs.submit());
+            Button forgot = new Button(CShell.cmsgs.send());
             setWidget(0, col++, forgot);
             new ClickCallback(forgot) {
                 public boolean callService () {

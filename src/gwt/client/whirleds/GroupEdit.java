@@ -112,7 +112,7 @@ public class GroupEdit extends FlexTable
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(_submit = new Button(CWhirleds.cmsgs.submit(), new ClickListener() {
+        footer.add(_submit = new Button(CWhirleds.cmsgs.change(), new ClickListener() {
             public void onClick (Widget sender) {
                 commitEdit();
             }

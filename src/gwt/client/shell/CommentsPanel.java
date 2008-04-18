@@ -197,7 +197,7 @@ public class CommentsPanel extends PagedGrid
                     clearPostPanel(PostPanel.this);
                 }
             }));
-            buttons.add(new Button(CShell.cmsgs.submit(), new ClickListener() {
+            buttons.add(new Button(CShell.cmsgs.send(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearPostPanel(PostPanel.this);
                     postComment(_text.getText());
@@ -223,7 +223,7 @@ public class CommentsPanel extends PagedGrid
         protected boolean callService ()
         {
             CShell.commentsvc.complainComment(
-                    CShell.ident, _description.getText(), _type, _id, _comment.posted, this);
+                CShell.ident, _description.getText(), _type, _id, _comment.posted, this);
             return true;
         }
 

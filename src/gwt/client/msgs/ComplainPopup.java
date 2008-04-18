@@ -40,7 +40,7 @@ public abstract class ComplainPopup extends BorderedDialog
 
         setContents(vbox);
 
-        Button submit = new Button(CMsgs.mmsgs.complainButton(), sendComplain);
+        Button submit = new Button(CMsgs.cmsgs.send(), sendComplain);
         addButton(submit);
 
         addButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {

@@ -177,7 +177,7 @@ public class ThreadPanel extends TitledListPanel
                     showMessages();
                 }
             }));
-            Button submit = new Button(CMsgs.cmsgs.submit());
+            Button submit = new Button(CMsgs.cmsgs.send());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
             new ForumCallback(submit) {
                 public boolean callService () {
@@ -222,7 +222,7 @@ public class ThreadPanel extends TitledListPanel
                 }
             }));
 
-            Button submit = new Button(CMsgs.cmsgs.submit());
+            Button submit = new Button(CMsgs.cmsgs.change());
             new ForumCallback(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
