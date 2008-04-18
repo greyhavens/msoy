@@ -562,7 +562,8 @@ public class RoomController extends SceneController
                 }
 
                 menuItems.push({ type: "separator"},
-                               { label: Msgs.GENERAL.get("l.flag_menu"), children: flagItems });
+                               { label: Msgs.GENERAL.get("l.item_menu", kind),
+                                 children: flagItems });
             }
         }
 
