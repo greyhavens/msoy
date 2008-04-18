@@ -200,6 +200,7 @@
 
     <!-- copy logging.properties -->
     <copy file="${basedir}/etc/logging.properties" todir="${deploy.dir}"/>
+    <copy file="${basedir}/etc/log4j.properties" todir="${deploy.dir}"/>
 
     <!-- copy ehcache.xml to a classpath location -->
     <if><equals arg1="${props.dist}" arg2="production"/>
@@ -1023,6 +1024,7 @@
     <copy file="${deploy.dir}/antisamy-config.xml" todir="${pkg.base}/${deploy.dir}"/>
     <!-- and logging.properties -->
     <copy file="${deploy.dir}/logging.properties" todir="${pkg.base}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/log4j.properties" todir="${pkg.base}/${deploy.dir}"/>
     <!-- create some runtime directories -->
     <copy file="log/README" todir="${pkg.base}/log"/>
     <mkdir dir="${pkg.base}/log/lighttpd"/>
