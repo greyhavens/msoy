@@ -23,6 +23,7 @@ import flash.utils.ByteArray;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
+import mx.controls.Spacer;
 import mx.controls.Text;
 import mx.controls.TextInput;
 
@@ -135,7 +136,13 @@ public class ImageManipulator extends HBox
         // TODO: add a scrollbox?
 
         createPositionControls(bar, sizeForced);
+        var spacer :Spacer = new Spacer();
+        spacer.height = 10;
+        bar.addChild(spacer);
         createPaintControls(bar);
+        spacer = new Spacer();
+        spacer.height = 10;
+        bar.addChild(spacer);
         createUndoControls(bar);
 
         var buts :HBox = new HBox();
@@ -157,6 +164,8 @@ public class ImageManipulator extends HBox
         handleUndoRedoChange(null); // check now
 
         _editor.addEventListener(EditCanvas.COLOR_SELECTED, handleEyeDropper);
+        _editor.addEventListener(EditCanvas.SCALE_CHANGED, handleScaleChanged);
+        _editor.addEventListener(EditCanvas.ROTATION_CHANGED, handleRotationChanged);
 
         return bar;
     }
@@ -174,19 +183,13 @@ public class ImageManipulator extends HBox
         _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
 
-        // TODO: this will change to a different UI
-        _zoomSlider = addSlider(bar, "Zoom", .25, 4, 1, _editor.setZoom,
-            [ .25, .5, 1, 2, 4, 8 ]);
-
-        if (!sizeForced) {
-            box = new HBox();
-            var crop :CommandButton = new CommandButton(null, _editor.doCrop);
-            crop.styleName = "cropButton";
-            crop.toolTip = "Crop";
-            box.addChild(crop);
-            box.addChild(createTip("Crop the image to the selected region"));
-            bar.addChild(box);
-        }
+        box = new HBox();
+        var crop :CommandButton = new CommandButton(null, _editor.doCrop);
+        crop.styleName = "cropButton";
+        crop.toolTip = "Crop";
+        box.addChild(crop);
+        box.addChild(createTip("Crop the image to the selected region"));
+        bar.addChild(box);
 
         box = new HBox();
         box.addChild(addModeBtn(EditCanvas.SELECT, "select", "Select the active area"));
@@ -210,6 +213,10 @@ public class ImageManipulator extends HBox
         box.addChild(innerBox);
 
         bar.addChild(box);
+
+        // TODO: this will maybe change to a different UI
+        _zoomSlider = addSlider(bar, "Zoom", .25, 4, 1, _editor.setZoom,
+            [ .25, .5, 1, 2, 4, 8 ]);
 
         _editor.addEventListener(EditCanvas.SELECTION_CHANGE, handleSelectionChange);
         _selectionWidth.addEventListener(Event.CHANGE, handleSelectionTyped);
@@ -277,9 +284,9 @@ public class ImageManipulator extends HBox
     {
         var tip :Text = new Text();
         tip.selectable = false;
-        tip.width = 100; // TODO: constant
+        tip.width = 95;
         tip.setStyle("fontFamily", "_sans");
-        tip.setStyle("fontSize", 10);
+        tip.setStyle("fontSize", 9);
         tip.text = text;
         return tip;
     }
@@ -400,17 +407,20 @@ public class ImageManipulator extends HBox
         setMode(EditCanvas.PAINT);
     }
 
+    protected function handleScaleChanged (event :ValueEvent) :void
+    {
+        _scaleSlider.value = Number(event.value);
+    }
+
+    protected function handleRotationChanged (event :ValueEvent) :void
+    {
+        _rotSlider.value = Number(event.value);
+    }
+
     protected function handleSizeKnown (event :ValueEvent) :void
     {
         // redispatch
         dispatchEvent(event);
-
-        // at the minimum zoom level we want the longest side to just fit
-        if (_controlBar != null) {
-            _zoomSlider.value = 1;
-            _rotSlider.value = 0;
-            _scaleSlider.value = 1;
-        }
     }
 
     protected function doClose (save :Boolean) :void

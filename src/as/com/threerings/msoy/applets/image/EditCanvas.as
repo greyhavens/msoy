@@ -60,6 +60,18 @@ import com.threerings.flash.MathUtil;
 [Event(name="SelChange", type="com.threerings.util.ValueEvent")]
 
 /**
+ * Dispatched when the scale has changed.
+ * value - new scale
+ */
+[Event(name="ScaleChanged", type="com.threerings.util.ValueEvent")]
+
+/**
+ * Dispatched when the rotation has changed.
+ * value - new rotation
+ */
+[Event(name="RotationChanged", type="com.threerings.util.ValueEvent")]
+
+/**
  * Allows primitive editing of an image. Note that this is merely the model/view, the
  * controller is ImageManipulator.
  */
@@ -79,6 +91,9 @@ public class EditCanvas extends DisplayCanvas
     public static const COLOR_SELECTED :String = "ColorSelected";
     public static const UNDO_REDO_CHANGE :String = "UndoRedoChange";
     public static const SELECTION_CHANGE :String = "SelChange";
+    public static const SCALE_CHANGED :String = "ScaleChanged";
+    public static const ROTATION_CHANGED :String = "RotationChanged";
+
 
     /** Formatting constants. */
     public static const IMAGE_FORMAT_JPG :String = "jpg";
@@ -296,9 +311,20 @@ public class EditCanvas extends DisplayCanvas
 
     public function setRotation (rotation :Number) :void
     {
-        // TODO: make rotations undoable?
+        if (rotation == _paintLayer.rotation) {
+            return;
+        }
 
-        _paintLayer.rotation = rotation;
+        if (getTopOfUndo() is RotateAction) {
+            // we already have a rotate there, just execute directly. This wasn't
+            // supposed to be so hacky, but we don't want to undo each change of a dragging change
+            _paintLayer.rotation = rotation;
+
+        } else {
+            var action :RotateAction = new RotateAction(rotation);
+            action.doAction(_paintLayer);
+            pushUndo(action);
+        }
         paintLayerPositioned();
     }
 
@@ -307,12 +333,23 @@ public class EditCanvas extends DisplayCanvas
         _holder.setZoom(zoom);
     }
 
-    public function setScale (scale :Number) :void
+    public function setScale (scale :Number, commit :Boolean = false) :void
     {
-        _scale = scale;
-        _paintLayer.scaleX = scale;
-        _paintLayer.scaleY = scale;
+        if (scale == _paintLayer.scaleX) {
+            return;
+        }
 
+        if (getTopOfUndo() is ScaleAction) {
+            // we already have a scale there, just execute directly. This wasn't
+            // supposed to be so hacky, but we don't want to undo each change of a dragging change
+            _paintLayer.scaleX = scale;
+            _paintLayer.scaleY = scale;
+
+        } else {
+            var action :ScaleAction = new ScaleAction(scale);
+            action.doAction(_paintLayer);
+            pushUndo(action);
+        }
         paintLayerPositioned();
         updateBrush();
     }
@@ -765,7 +802,7 @@ public class EditCanvas extends DisplayCanvas
         _movePoint.x = _paintLayer.x - _movePoint.x;
         _movePoint.y = _paintLayer.y - _movePoint.y;
         paintLayerPositioned();
-        pushUndo([ _paintLayer, _movePoint ]);
+        pushUndo(new MoveAction(_movePoint));
         _movePoint = null;
     }
 
@@ -781,11 +818,17 @@ public class EditCanvas extends DisplayCanvas
 
     protected function pushUndo (undoObject :Object) :void
     {
+        trace("pushed undo: " + undoObject);
         setModified();
 
         _undoStack.push(undoObject);
         _redoStack.length = 0;
         fireUndoRedoChange();
+    }
+
+    protected function getTopOfUndo () :Object
+    {
+        return (_undoStack.length == 0) ? null : _undoStack[_undoStack.length - 1];
     }
 
     protected function doUndoRedo (undo :Boolean) :void
@@ -803,17 +846,14 @@ public class EditCanvas extends DisplayCanvas
                 _paintLayer.addChildAt(paint, _paintLayer.numChildren - _paintInsertionOffset);
             }
 
-        } else if (obj is Array) {
-            var layer :DisplayObject = obj[0] as DisplayObject;
-            var offset :Point = obj[1] as Point;
-            if (undo) {
-                layer.x -= offset.x;
-                layer.y -= offset.y;
-            } else {
-                layer.x += offset.x;
-                layer.y += offset.y;
-            }
+        } else if (obj is PaintLayerAction) {
+            var action :PaintLayerAction = obj as PaintLayerAction;
+            var event :Event = action.doAction(_paintLayer, undo);
             paintLayerPositioned();
+            updateBrush();
+            if (event != null) {
+                dispatchEvent(event);
+            }
         }
 
         // notify watchers that the undo/redo stacks have changed
@@ -891,6 +931,15 @@ public class EditCanvas extends DisplayCanvas
 
 import flash.display.Graphics;
 import flash.display.Shape;
+import flash.display.Sprite;
+
+import flash.events.Event;
+
+import flash.geom.Point;
+
+import com.threerings.util.ValueEvent;
+
+import com.threerings.msoy.applets.image.EditCanvas;
 
 class DropperCursor extends Shape
 {
@@ -906,4 +955,72 @@ class DropperCursor extends Shape
         g.drawRect(10, -10, 20, 20);
         g.endFill();
     }
+}
+
+/* abstract */ class PaintLayerAction
+{
+    /**
+     * Do the specified action, return an event if it should then be dispatched.
+     */
+    public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    {
+        return null;
+    }
+}
+
+class MoveAction extends PaintLayerAction
+{
+    public function MoveAction (delta :Point)
+    {
+        _p = delta;
+    }
+
+    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    {
+        var factor :int = undo ? -1 : 1;
+        paintLayer.x += _p.x * factor;
+        paintLayer.y += _p.y * factor;
+        return null;
+    }
+
+    protected var _p :Point;
+}
+
+class RotateAction extends PaintLayerAction
+{
+    public function RotateAction (newRotation :Number)
+    {
+        _r = newRotation;
+    }
+
+    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    {
+        // ignore the undo/redo and just assume it'll all be right
+        var newRot :Number = _r;
+        _r = paintLayer.rotation;
+        paintLayer.rotation = newRot;
+        return new ValueEvent(EditCanvas.ROTATION_CHANGED, newRot);
+    }
+
+    protected var _r :Number;
+}
+
+class ScaleAction extends PaintLayerAction
+{
+    public function ScaleAction (newScale :Number)
+    {
+        _s = newScale;
+    }
+
+    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    {
+        // ignore the undo/redo and just assume it'll all be right
+        var newScale :Number = _s;
+        _s = paintLayer.scaleX;
+        paintLayer.scaleX = newScale;
+        paintLayer.scaleY = newScale;
+        return new ValueEvent(EditCanvas.SCALE_CHANGED, newScale);
+    }
+
+    protected var _s :Number;
 }
