@@ -1077,7 +1077,7 @@
 
     <!-- create our msoy server startup script -->
     <startupscript name="msoy_server" runas="${msoy.user}"
-                   output="${approot.node}/etc/rc.d/${app.name}-server.sh">
+                   output="${approot.server}/etc/rc.d/${app.name}-server.sh">
       <commands>
         <start cmdline="${ooo.prefix}/${app.name}/bin/msoy start"/>
         <stop cmdline="${ooo.prefix}/${app.name}/bin/msoy stop"/>
