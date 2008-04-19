@@ -124,8 +124,10 @@ public class EditCanvas extends DisplayCanvas
 
         _crop = new Shape();
         _brushCursor = new Shape();
+//        _eraseOutline = new Shape();
         _brushCursor.visible = false;
         _dropperCursor.visible = false;
+//        _eraseOutline.visible = false;
         _moveCursor.visible = false;
         _moveCursor.mouseEnabled = false;
         _selectCursor.visible = false;
@@ -141,6 +143,7 @@ public class EditCanvas extends DisplayCanvas
         _hudLayer.addChild(_moveCursor);
         _hudLayer.addChild(_selectCursor);
 
+//        _paintLayer.addChild(_eraseOutline);
         _paintLayer.addChild(_brushCursor);
         _paintInsertionOffset = _paintLayer.numChildren;
 
@@ -298,12 +301,15 @@ public class EditCanvas extends DisplayCanvas
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brushCursor.visible;
+//        var eraseVis :Boolean = _eraseOutline.visible;
         _brushCursor.visible = false;
+//        _eraseOutline.visible = false;
         // screenshot the image
         try {
             bmp.draw(_paintLayer, matrix);
         } finally {
             _brushCursor.visible = brushVis;
+//            _eraseOutline.visible = eraseVis;
         }
 
         return bmp;
@@ -502,6 +508,13 @@ public class EditCanvas extends DisplayCanvas
             copyLocation(_dropperCursor, _brushCursor);
         }
 
+//        // ERASE
+//        on = (_mode == ERASE);
+//        fn(MouseEvent.MOUSE_MOVE, handleEraseCursorMove);
+//        fn(MouseEvent.ROLL_OVER, handleEraseCursorVis);
+//        fn(MouseEvent.ROLL_OUT, handleEraseCursorVis);
+//        _eraseOutline.visible = on;
+
         // SELECT
         on = (_mode == SELECT);
         fn = on ? _paintLayer.addEventListener : _paintLayer.removeEventListener;
@@ -551,13 +564,23 @@ public class EditCanvas extends DisplayCanvas
         var g :Graphics = _brushCursor.graphics;
         g.clear();
         g.beginFill(_color);
-        const radius :Number = (_brushSize/2) / _scale;
+        var radius :Number = (_brushSize/2) / _scale;
         if (_brushCircle) {
             g.drawCircle(0, 0, radius);
         } else {
             g.drawRect(-radius, -radius, radius * 2, radius * 2);
         }
         g.endFill();
+//
+//        radius += 2;
+//        g = _eraseOutline.graphics;
+//        g.clear();
+//        g.lineStyle(1, 0, 1);
+//        if (_brushCircle) {
+//            g.drawCircle(0, 0, radius);
+//        } else {
+//            g.drawRect(-radius, -radius, radius * 2, radius * 2);
+//        }
     }
 
     /**
@@ -603,6 +626,17 @@ public class EditCanvas extends DisplayCanvas
             _cursor.y = p.y;
         }
     }
+
+//    protected function handleEraseCursorMove (event :MouseEvent) :void
+//    {
+//        _eraseOutline.x = _brushCursor.x;
+//        _eraseOutline.y = _brushCursor.y;
+//    }
+//
+//    protected function handleEraseCursorVis (event :MouseEvent) :void
+//    {
+//        _eraseOutline.visible = (event.type == MouseEvent.ROLL_OVER);
+//    }
 
     /**
      * The dropper cursor needs an extra special step to update its displayed color.
@@ -818,7 +852,6 @@ public class EditCanvas extends DisplayCanvas
 
     protected function pushUndo (undoObject :Object) :void
     {
-        trace("pushed undo: " + undoObject);
         setModified();
 
         _undoStack.push(undoObject);
@@ -889,6 +922,7 @@ public class EditCanvas extends DisplayCanvas
     protected var _crop :Shape;
 
     protected var _brushCursor :Shape;
+//    protected var _eraseOutline :Shape;
     protected var _dropperCursor :DropperCursor = new DropperCursor();
     protected var _moveCursor :Sprite = new Sprite();
     protected var _selectCursor :Sprite = new Sprite();
