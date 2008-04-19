@@ -210,13 +210,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // if remixable, add a button for that.
         boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP);
         if (remixable) {
-            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
-            _details.add(MsoyUI.createActionLabel(CStuff.msgs.detailRemix(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    CStuff.remixItem(_item.getType(), _item.itemId);
-                }
-            }));
+            _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CStuff.remixItem(_item.getType(), _item.itemId);
+                    }
+                }));
         }
     }
 
