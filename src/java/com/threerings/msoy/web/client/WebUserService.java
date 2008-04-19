@@ -24,7 +24,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public SessionData login (long clientVersion, String email, String password, int expireDays)
+    public SessionData login (String clientVersion, String email, String password, int expireDays)
         throws ServiceException;
 
     /**
@@ -34,7 +34,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public SessionData register (long clientVersion, String email, String password,
+    public SessionData register (String clientVersion, String email, String password,
                                  String displayName, int[] birthday, MediaDesc photo,
                                  AccountInfo info, int expireDays, String inviteId, int guestId,
                                  String captchaChallenge, String captchaResponse)
@@ -44,7 +44,7 @@ public interface WebUserService extends RemoteService
      * Validates that the supplied session token is still active and refreshes its expiration time
      * if so.
      */
-    public SessionData validateSession (long clientVersion, String authtok, int expireDays)
+    public SessionData validateSession (String clientVersion, String authtok, int expireDays)
         throws ServiceException;
 
     /**

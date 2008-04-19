@@ -62,7 +62,7 @@ public class AdminWrapper
         MsoyCredentials creds = new MsoyCredentials();
         creds.sessionToken = authToken;
         _client.setCredentials(creds);
-        _client.setVersion(String.valueOf(DeploymentConfig.version));
+        _client.setVersion(DeploymentConfig.version);
         _client.logon();
     }
 

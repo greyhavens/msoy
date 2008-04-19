@@ -73,7 +73,7 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public SessionData login (long clientVersion, String username, String password, int expireDays)
+    public SessionData login (String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -83,7 +83,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (long clientVersion, String username, String password,
+    public SessionData register (String clientVersion, String username, String password,
                                  final String displayName, int[] bdayvec, MediaDesc photo,
                                  AccountInfo info, int expireDays, String inviteId, int guestId,
                                  String captchaChallenge, String captchaResponse)
@@ -224,7 +224,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData validateSession (long clientVersion, String authtok, int expireDays)
+    public SessionData validateSession (String clientVersion, String authtok, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, authtok);
@@ -442,10 +442,10 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
-    protected void checkClientVersion (long clientVersion, String who)
+    protected void checkClientVersion (String clientVersion, String who)
         throws ServiceException
     {
-        if (clientVersion != DeploymentConfig.version) {
+        if (!DeploymentConfig.version.equals(clientVersion)) {
             log.info("Refusing wrong version [who=" + who + ", cvers=" + clientVersion +
                      ", svers=" + DeploymentConfig.version + "].");
             throw new ServiceException(MsoyAuthCodes.VERSION_MISMATCH);

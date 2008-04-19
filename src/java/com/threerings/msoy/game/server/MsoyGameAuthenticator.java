@@ -50,18 +50,12 @@ public class MsoyGameAuthenticator extends Authenticator
 
         try {
             // make sure they've got the correct version
-            long cvers = 0L;
-            long svers = DeploymentConfig.version;
-            try {
-                cvers = Long.parseLong(req.getVersion());
-            } catch (Exception e) {
-                // ignore it and fail below
-            }
-            if (svers != cvers) {
+            String cvers = req.getVersion(), svers = DeploymentConfig.version;
+            if (svers.equals(cvers)) {
                 log.info("Refusing wrong version [creds=" + req.getCredentials() +
                          ", cvers=" + cvers + ", svers=" + svers + "].");
                 throw new ServiceException(
-                    (cvers > svers) ? MsoyAuthCodes.NEWER_VERSION :
+                    (cvers.compareTo(svers) > 0) ? MsoyAuthCodes.NEWER_VERSION :
                     MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
             }
 

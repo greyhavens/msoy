@@ -119,7 +119,7 @@ public class GameClient
         MsoyGameCredentials creds = new MsoyGameCredentials();
         creds.sessionToken = authtoken;
         _ctx.getClient().setCredentials(creds);
-        _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.version));
+        _ctx.getClient().setVersion(DeploymentConfig.version);
         _ctx.getClient().addClientObserver(new ClientAdapter() {
             public void clientDidLogon (Client client) {
                 if (gameOid != -1) {

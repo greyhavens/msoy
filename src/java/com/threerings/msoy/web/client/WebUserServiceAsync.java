@@ -17,13 +17,13 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#login}.
      */
-    public void login (long clientVersion, String username, String password, int expireDays,
+    public void login (String clientVersion, String username, String password, int expireDays,
                        AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#register}.
      */
-    public void register (long clientVersion, String username, String password, String displayName,
+    public void register (String clientVersion, String username, String password, String displayName,
                           int[] birthday, MediaDesc photo, AccountInfo info, int expireDays,
                           String inviteId, int guestId, String captchaChallenge,
                           String captchaResponse, AsyncCallback callback);
@@ -31,7 +31,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.
      */
-    public void validateSession (long clientVersion, String authtok, int expireDays,
+    public void validateSession (String clientVersion, String authtok, int expireDays,
                                  AsyncCallback callback);
 
     /**
