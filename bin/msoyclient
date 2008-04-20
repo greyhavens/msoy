@@ -8,7 +8,7 @@
 #   msoyclient [-nodebug] [parameters for world client] [build version]
 
 BINDIR=`dirname $0`
-HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
+HOST=`egrep ^server_host $BINDIR/../etc/server.properties | awk '{print $3}'`
 
 PLAYER="flashplayer-debug"
 if [ "$1" = "-nodebug" ]; then
