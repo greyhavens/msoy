@@ -243,11 +243,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             tiler.recordValue(player.score);
         }
 
-        // convert scores to percentiles, scale available flow
+        // convert scores to percentiles
         for (Player player : players.values()) {
             player.percentile = getPercentile(tiler, player.score);
-            // scale each players' flow award by their percentile performance
-            player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
         }
 
         // award flow according to the rankings and the payout type
@@ -301,13 +299,11 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
             pl.percentile = 49;
-            pl.availFlow = (int)Math.ceil(pl.availFlow * (pl.percentile / 99f));
             players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
             Player pl = new Player(loserOids[ii], 0, getAwardableFlow(true, now, loserOids[ii]));
             pl.percentile = 49;
-            pl.availFlow = (int)Math.ceil(pl.availFlow * (pl.percentile / 99f));
             players.put(loserOids[ii], pl);
         }
 
@@ -574,6 +570,10 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         switch (payoutType) {
         case WhirledGameObject.WINNERS_TAKE_ALL: {
+            // TODO: review and possibly remove
+            // scale all available flow (even losers?) by their performance
+            scaleAvailableFlowToPercentiles(players);
+
             // map the players by score
             TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
             for (Player player : players.values()) {
@@ -601,6 +601,10 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
 
         case WhirledGameObject.CASCADING_PAYOUT: {
+            // TODO: review and possibly remove
+            // scale all available flow (even losers?) by their performance
+            scaleAvailableFlowToPercentiles(players);
+
             // compute the average score
             int totalScores = 0;
             for (Player player : players.values()) {
@@ -636,7 +640,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             break;
         }
 
+        default:
         case WhirledGameObject.TO_EACH_THEIR_OWN:
+            scaleAvailableFlowToPercentiles(players);
             for (Player player : players.values()) {
                 player.flowAward = player.availFlow;
             }
@@ -681,6 +687,16 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile);
             }
+        }
+    }
+
+    /**
+     * Scale each player's flow by their percentile performance.
+     */
+    protected void scaleAvailableFlowToPercentiles (IntMap<Player> players)
+    {
+        for (Player player : players.values()) {
+            player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
         }
     }
 
