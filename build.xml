@@ -1076,6 +1076,7 @@
     <mkdir dir="${approot.server}/pages/buildresults"/>
 
     <!-- create our msoy server startup script -->
+    <mkdir dir="${approot.server}/etc/rc.d"/>
     <startupscript name="msoy_server" runas="${msoy.user}"
                    output="${approot.server}/etc/rc.d/${app.name}-server.sh">
       <commands>
