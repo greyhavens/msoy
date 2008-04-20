@@ -198,6 +198,8 @@ public class TableCreationPanel extends VBox
 }
 }
 
+import flash.events.MouseEvent;
+
 import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.Label;
@@ -218,6 +220,7 @@ class FriendCheckBox extends VBox
         this.friend = friend;
 
         var thumb :ThumbnailPanel = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE);
+        addEventListener(MouseEvent.CLICK, handleThumbClicked);
         thumb.setMediaDesc(friend.photo);
         addChild(thumb);
         var name :Label = MsoyUI.createLabel(friend.name.toString());
@@ -230,6 +233,14 @@ class FriendCheckBox extends VBox
     public function get checked () :Boolean
     {
         return _check.selected;
+    }
+
+    // allow all kinds of sloppy clicking to toggle the checkbox
+    protected function handleThumbClicked (event :MouseEvent) :void
+    {
+        if (event.target != _check) { // because the checkbox will have already handled it
+            _check.selected = !_check.selected;
+        }
     }
 
     protected var _check :CheckBox;
