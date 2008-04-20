@@ -220,7 +220,6 @@ class FriendCheckBox extends VBox
         this.friend = friend;
 
         var thumb :ThumbnailPanel = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE);
-        addEventListener(MouseEvent.CLICK, handleThumbClicked);
         thumb.setMediaDesc(friend.photo);
         addChild(thumb);
         var name :Label = MsoyUI.createLabel(friend.name.toString());
@@ -228,6 +227,8 @@ class FriendCheckBox extends VBox
         addChild(name);
         addChild(_check = new CheckBox());
         _check.width = 14; // don't ask; go punch someone at adobe instead
+
+        addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     public function get checked () :Boolean
@@ -236,7 +237,7 @@ class FriendCheckBox extends VBox
     }
 
     // allow all kinds of sloppy clicking to toggle the checkbox
-    protected function handleThumbClicked (event :MouseEvent) :void
+    protected function handleClick (event :MouseEvent) :void
     {
         if (event.target != _check) { // because the checkbox will have already handled it
             _check.selected = !_check.selected;
