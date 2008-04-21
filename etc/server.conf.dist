@@ -4,17 +4,9 @@
 #
 # Local configuration for this MetaSOY installation.
 
-# Database server configuration
-DBSERVER=localhost
-DBUSER=msoy
-DBPASSWD=PASSWORD
-
 # General configurations
 MSOY_USER=msoy
 LOG_EMAIL=msoy-logs@DOMAIN
-
-# The node names for this server instance: "msoy1 msoy2" or just "msoy1" for example
-NODES=msoy1
 
 # These are passed to the various JVMs
 SERVER_MEMORY=384M
