@@ -281,7 +281,7 @@
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
 
     <!-- create dev usable security.policy and swiftly.policy files -->
-    <!-- real ones are created in prepare-server-extra -->
+    <!-- real ones are created in package -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
       <filterset><filter token="PREFIX" value="${server_root}"/></filterset>
     </copy>
