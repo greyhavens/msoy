@@ -1003,6 +1003,7 @@
         <include name="*.jar"/>
         <exclude name="*-client.jar"/>
         <include name="*.properties"/>
+        <include name="*.conf"/>
         <include name="*.policy"/>
         <!-- skip build_settings.properties since it's only needed at build time -->
         <exclude name="build_settings.properties"/>
