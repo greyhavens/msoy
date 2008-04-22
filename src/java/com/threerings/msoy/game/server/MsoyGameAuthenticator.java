@@ -51,7 +51,7 @@ public class MsoyGameAuthenticator extends Authenticator
         try {
             // make sure they've got the correct version
             String cvers = req.getVersion(), svers = DeploymentConfig.version;
-            if (svers.equals(cvers)) {
+            if (!svers.equals(cvers)) {
                 log.info("Refusing wrong version [creds=" + req.getCredentials() +
                          ", cvers=" + cvers + ", svers=" + svers + "].");
                 throw new ServiceException(
