@@ -80,7 +80,7 @@ public class ItemActivator extends FlowPanel
         case Item.USED_AS_FURNITURE:
         case Item.USED_AS_PET:
         case Item.USED_AS_BACKGROUND:
-            // TODO: getSceneId out so it's used in one place?
+            // TODO: getSceneId out so it's retrieved in one place and shared?
             usedHere = hasClient && (_item.location == FlashClients.getSceneId());
             break;
         }
@@ -88,9 +88,13 @@ public class ItemActivator extends FlowPanel
         clear();
 
         String suff = isUsed ? "used.png" : "unused.png";
-        String tip = isUsed ? CShell.imsgs.inUse() : CShell.imsgs.notInUse();
+        String tip = null;
         String path;
         ClickListener onClick = null;
+
+        if (!hasClient) {
+            tip = isUsed ? CShell.imsgs.inUse() : CShell.imsgs.notInUse();
+        }
 
         byte type = _item.getType();
         final boolean fUsedHere = usedHere;
@@ -112,9 +116,13 @@ public class ItemActivator extends FlowPanel
 
         } else {
             if (hasClient) {
-                tip = usedHere ? CShell.imsgs.removeFromRoom() : CShell.imsgs.addToRoom();
                 if (usedHere) {
+                    tip = CShell.imsgs.removeFromRoom();
                     suff = "usedhere.png";
+                } else if (isUsed) {
+                    tip = CShell.imsgs.moveToRoom();
+                } else {
+                    tip = CShell.imsgs.addToRoom();
                 }
                 onClick = new ClickListener () {
                     public void onClick (Widget sender) {
