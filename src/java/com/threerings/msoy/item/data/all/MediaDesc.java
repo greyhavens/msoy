@@ -17,13 +17,13 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 public class MediaDesc implements Serializable, Streamable, IsSerializable
 {
     /** The unsupported MIME types. */
-    public static final byte INVALID_MIME_TYPE = -1;
+    public static final byte INVALID_MIME_TYPE = 0;
 
     /** The MIME type for plain UTF-8 text. */
-    public static final byte TEXT_PLAIN = 0;
+    public static final byte TEXT_PLAIN = 1;
 
     /** The MIME type for Flash ActionScript files. */
-    public static final byte TEXT_ACTIONSCRIPT = 1;
+    public static final byte TEXT_ACTIONSCRIPT = 2;
 
     /** The MIME type for PNG image data. */
     public static final byte IMAGE_PNG = 10;
@@ -214,7 +214,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
 
     /**
      * Maps the supplied string representation of a mime type to our internal
-     * integer code. Returns -1 if the mime type is unknown.
+     * integer code. Returns INVALID_MIME_TYPE if the mime type is unknown.
      */
     public static byte stringToMimeType (String mimeType)
     {
@@ -256,7 +256,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
     }
 
     /**
-     * Maps the supplied filename suffix to a mime type. Returns -1 if the
+     * Maps the supplied filename suffix to a mime type. Returns INVALID_MIME_TYPE if the
      * suffix is unknown.
      */
     public static byte suffixToMimeType (String filename)
@@ -412,7 +412,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         if (hash == null) {
             return null;
         }
-        byte mimeType = -1;
+        byte mimeType = INVALID_MIME_TYPE;
         byte constraint = 0;
         try {
             mimeType = Byte.parseByte(data[1]);

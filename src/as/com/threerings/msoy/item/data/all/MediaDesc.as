@@ -23,6 +23,9 @@ import com.threerings.msoy.client.DeploymentConfig;
 public class MediaDesc
     implements Streamable, Hashable
 {
+    /** The unsupported MIME types. */
+    public static const INVALID_MIME_TYPE :int = 0;
+
     /** The MIME type for plain UTF-8 text. */
     public static const TEXT_PLAIN :int = 0;
 
@@ -141,10 +144,13 @@ public class MediaDesc
 
     /**
      * Maps the supplied string representation of a mime type to our internal
-     * integer code. Returns -1 if the mime type is unknown.
+     * integer code. Returns INVALID_MIME_TYPE if the mime type is unknown.
      */
     public static function stringToMimeType (mimeType :String) :int
     {
+        if (mimeType == null) {
+            return INVALID_MIME_TYPE;
+        }
         mimeType = mimeType.toLowerCase();
         if (mimeType == "text/plain") {
             return TEXT_PLAIN;
@@ -175,12 +181,12 @@ public class MediaDesc
         } else if (mimeType == "application/zip") {
             return APPLICATION_ZIP;
         } else {
-            return -1;
+            return INVALID_MIME_TYPE;
         }
     }
 
     /**
-     * Maps the supplied filename suffix to a mime type. Returns -1 if the
+     * Maps the supplied filename suffix to a mime type. Returns INVALID_MIME_TYPE if the
      * suffix is unknown.
      */
     public static function suffixToMimeType (filename :String) :int
@@ -215,7 +221,7 @@ public class MediaDesc
         } else if (StringUtil.endsWith(filename, ".zip")) {
             return APPLICATION_ZIP;
         } else {
-            return -1;
+            return INVALID_MIME_TYPE;
         }
     }
 
