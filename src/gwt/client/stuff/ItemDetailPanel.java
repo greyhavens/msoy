@@ -208,8 +208,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if remixable, add a button for that.
-        boolean remixable = (_item.getFurniMedia().mimeType == MediaDesc.APPLICATION_ZIP);
-        if (remixable) {
+        if (_item.getFurniMedia().isRemixable()) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
             _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),

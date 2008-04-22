@@ -339,6 +339,14 @@ public class MediaDesc
     }
 
     /**
+     * Is this media remixable?
+     */
+    public function isRemixable () :Boolean
+    {
+        return (mimeType == APPLICATION_ZIP);
+    }
+
+    /**
      * Is this media merely an image type?
      */
     public function isImage () :Boolean

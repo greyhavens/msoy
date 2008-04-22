@@ -521,6 +521,14 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
     }
 
     /**
+     * Is this media remixable?
+     */
+    public boolean isRemixable ()
+    {
+        return (mimeType == APPLICATION_ZIP);
+    }
+
+    /**
      * Is this media merely an image type?
      */
     public boolean isImage ()
