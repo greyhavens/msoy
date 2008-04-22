@@ -59,7 +59,7 @@ public class SwiftlyMimeTypeIdentifier
             // If a valid type was returned, convert to a string.
             // Otherwise, don't set a mime type.
             // TODO: binary file detection
-            if (miserMimeType != -1) {
+            if (miserMimeType != MediaDesc.INVALID_MIME_TYPE) {
                 mimeType = MediaDesc.mimeTypeToString(miserMimeType);
             }
         }
