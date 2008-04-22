@@ -208,7 +208,7 @@ public class WorldClient extends MsoyClient
 
         if (clobj is MemberObject && !_embedded && !_featuredPlaceView) {
             var member :MemberObject = clobj as MemberObject;
-            member.addListener(new AvatarUpdateNotifier());
+            member.addListener(new AvatarUpdateNotifier(_wctx));
         }
 
         if (!_featuredPlaceView) {
@@ -451,31 +451,33 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 class AvatarUpdateNotifier implements AttributeChangeListener
 {
+    public function AvatarUpdateNotifier (wctx :WorldContext)
+    {
+        _wctx = wctx;
+    }
+
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (MemberObject.AVATAR == event.getName()) {
-            try {
-                if (ExternalInterface.available) {
-                    var value :Object = event.getValue();
-                    if (value is Avatar) {
-                        // TODO: same as MsoyClient.itemUsageChangedToGWT
-                        // TODO: constant 1 should be the memberId, but we don't have that here
-                        ExternalInterface.call("triggerFlashEvent", "ItemUsageChanged",
-                            [ Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR, 1 ]);
-                    }
-                    value = event.getOldValue();
-                    if (value is Avatar) {
-                        ExternalInterface.call("triggerFlashEvent", "ItemUsageChanged",
-                            [ Item.AVATAR, (value as Avatar).itemId, Item.UNUSED, 0 ]);
-                    }
-                }
-            } catch (err :Error) {
-                Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+            var value :Object = event.getValue();
+            if (value is Avatar) {
+                _wctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR,
+                    _wctx.getMyName().getMemberId());
+            }
+            value = event.getOldValue();
+            if (value is Avatar) {
+                _wctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AVATAR, (value as Avatar).itemId, Item.UNUSED, 0);
             }
         }
     }
+
+    protected var _wctx :WorldContext;
 }
 
 class StatusUpdater implements AttributeChangeListener, SetListener
