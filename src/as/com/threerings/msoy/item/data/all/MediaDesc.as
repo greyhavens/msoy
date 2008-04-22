@@ -27,10 +27,10 @@ public class MediaDesc
     public static const INVALID_MIME_TYPE :int = 0;
 
     /** The MIME type for plain UTF-8 text. */
-    public static const TEXT_PLAIN :int = 0;
+    public static const TEXT_PLAIN :int = 1;
 
     /** The MIME type for Flash ActionScript files. */
-    public static const TEXT_ACTIONSCRIPT :int = 1;
+    public static const TEXT_ACTIONSCRIPT :int = 2;
 
     /** The MIME type for PNG image data. */
     public static const IMAGE_PNG :int = 10;
