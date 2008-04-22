@@ -27,7 +27,7 @@ public class ItemEntry extends ItemBox
             getFlexCellFormatter().addStyleName(1, 0, "Original");
         }
 
-        if (!(item instanceof SubItem) && FlashClients.clientExists()) {
+        if (!(item instanceof SubItem)) {
             addWidget(new ItemActivator(item, false), getColumns(), "Activator");
         }
     }

@@ -37,6 +37,22 @@ public class index extends Page
     }
 
     // @Override from Page
+    public void onPageLoad ()
+    {
+        super.onPageLoad();
+
+        _models.startup();
+    }
+
+    // @Override from Page
+    public void onPageUnload ()
+    {
+        _models.shutdown();
+
+        super.onPageUnload();
+    }
+
+    // @Override from Page
     public void onHistoryChanged (Args args)
     {
         if (CStuff.ident == null) {

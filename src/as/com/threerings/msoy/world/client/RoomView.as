@@ -840,8 +840,8 @@ public class RoomView extends AbstractRoomView
 
             // if this occupant is a pet, notify GWT that we've got a new pet in the room.
             if (occupant is PetSprite) {
-                (_ctx.getClient() as WorldClient).dispatchEventToGWT(
-                    PET_EVENT, [true, ident.itemId]);
+                (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
+                    Item.PET, ident.itemId, Item.USED_AS_PET, _scene.getId());
             }
         }
     }
@@ -861,8 +861,8 @@ public class RoomView extends AbstractRoomView
 
         // if this occupant is a pet, notify GWT that we've removed a pet from the room.
         if (sprite is PetSprite) {
-            (_ctx.getClient() as WorldClient).dispatchEventToGWT(
-                PET_EVENT, [false, sprite.getItemIdent().itemId]);
+            (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
+                Item.PET, sprite.getItemIdent().itemId, Item.UNUSED, 0);
         }
     }
 

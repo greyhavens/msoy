@@ -691,41 +691,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Called from JavaScript to determine if the item in question is in use (as decor, furni, the
-     * user's current avatar, an active pet, anything).
-     */
-    public function isItemInUse (itemType :int, itemId :int) :Boolean
-    {
-        if (itemType == Item.AVATAR) {
-            var avatar :Avatar = _wdctx.getMemberObject().avatar;
-            return (avatar == null) ? false : (avatar.itemId == itemId);
-
-        } else if (itemType == Item.PET) {
-            // ensure this pet really is in this room
-            for each (var pet :PetSprite in _roomView.getPets()) {
-                if (pet.getItemIdent().itemId == itemId) {
-                    return true;
-                }
-            }
-            return false;
-
-        } else if (itemType == Item.DECOR) {
-            return (_scene.getDecor() != null) && (_scene.getDecor().itemId == itemId);
-
-        } else if (itemType == Item.AUDIO) {
-            return (_scene.getAudioData() != null) && (_scene.getAudioData().itemId == itemId);
-
-        } else {
-            for each (var furni :FurniData in _scene.getFurni()) {
-                if (furni.itemType == itemType && furni.itemId == itemId) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    /**
      * This is called from JavaScript to select this room's decor, audio, or add a piece of furni.
      */
     public function useItem (itemType :int, itemId :int) :void
@@ -1644,7 +1609,7 @@ public class RoomController extends SceneController
         }
     }
 
-   override protected function sceneUpdated (update :SceneUpdate) :void
+    override protected function sceneUpdated (update :SceneUpdate) :void
     {
         var data :FurniData;
         if (update is SceneAttrsUpdate) {
@@ -1652,25 +1617,37 @@ public class RoomController extends SceneController
             var newId :int = attrsUpdate.decor.itemId;
             var oldId :int = _scene.getDecor().itemId;
             if (newId != oldId) {
-                _wdctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
-                    [ Item.DECOR, newId, oldId ]);
+                if (newId != 0) {
+                    _wdctx.getWorldClient().itemUsageChangedToGWT(
+                        Item.DECOR, newId, Item.USED_AS_BACKGROUND, _scene.getId());
+                }
+                if (oldId != 0) {
+                    _wdctx.getWorldClient().itemUsageChangedToGWT(
+                        Item.DECOR, oldId, Item.UNUSED, 0);
+                }
             }
             newId = attrsUpdate.audioData.itemId;
             oldId = _scene.getAudioData().itemId;
             if (newId != oldId) {
-                _wdctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
-                    [ Item.AUDIO, newId, oldId ]);
+                if (newId != 0) {
+                    _wdctx.getWorldClient().itemUsageChangedToGWT(
+                        Item.AUDIO, newId, Item.USED_AS_BACKGROUND, _scene.getId());
+                }
+                if (oldId != 0) {
+                    _wdctx.getWorldClient().itemUsageChangedToGWT(
+                        Item.AUDIO, oldId, Item.UNUSED, 0);
+                }
             }
 
         } else if (update is FurniUpdate_Add) {
             data = (update as FurniUpdate_Add).data;
-            _wdctx.getWorldClient().dispatchEventToGWT(
-                FURNI_CHANGED_EVENT, [[[ data.itemType, data.itemId ]], []]);
+            _wdctx.getWorldClient().itemUsageChangedToGWT(
+                data.itemType, data.itemId, Item.USED_AS_FURNITURE, _scene.getId());
 
         } else if (update is FurniUpdate_Remove) {
             data = (update as FurniUpdate_Remove).data;
-            _wdctx.getWorldClient().dispatchEventToGWT(
-                FURNI_CHANGED_EVENT, [[], [[ data.itemType, data.itemId ]]]);
+            _wdctx.getWorldClient().itemUsageChangedToGWT(
+                data.itemType, data.itemId, Item.UNUSED, 0);
         }
 
         super.sceneUpdated(update);

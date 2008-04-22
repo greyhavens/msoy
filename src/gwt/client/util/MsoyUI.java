@@ -274,8 +274,10 @@ public class MsoyUI
      */
     public static Image makeActionImage (Image image, String tip, ClickListener onClick)
     {
-        image.addStyleName("actionLabel");
-        image.addClickListener(onClick);
+        if (onClick != null) {
+            image.addStyleName("actionLabel");
+            image.addClickListener(onClick);
+        }
         if (tip != null) {
             image.setTitle(tip);
         }

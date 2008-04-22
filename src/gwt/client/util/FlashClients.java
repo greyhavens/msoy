@@ -159,19 +159,19 @@ public class FlashClients
     }
 
     /**
+     * Get the current sceneId of the flash client, or 0.
+     */
+    public static int getSceneId ()
+    {
+        return getSceneIdNative();
+    }
+
+    /**
      * Checks with the actionscript client to find out if our current scene is in fact a room.
      */
     public static boolean inRoom ()
     {
         return inRoomNative();
-    }
-
-    /**
-     * Returns true if the item in question is in use, false if not.
-     */
-    public static boolean isItemInUse (Item item)
-    {
-        return isItemInUseNative(item.getType(), item.itemId);
     }
 
     /**
@@ -351,6 +351,18 @@ public class FlashClients
     }-*/;
 
     /**
+     * Does the actual <code>getSceneId()</code> call.
+     */
+    protected static native int getSceneIdNative () /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            // exception from JavaScript break GWT; don't let that happen
+            try { return client.getSceneId(); } catch (e) {}
+        }
+        return 0;
+    }-*/;
+
+    /**
      * Does the actual <code>inRoom()</code> call.
      */
     protected static native boolean inRoomNative () /*-{
@@ -360,18 +372,6 @@ public class FlashClients
             try { return client.inRoom(); } catch (e) {}
         }
         return false;
-    }-*/;
-
-    /**
-     * Does the actual <code>isItemInUse()</code> call.
-     */
-    protected static native boolean isItemInUseNative (byte itemType, int itemId) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            // exception from JavaScript break GWT; don't let that happen
-            try { return client.isItemInUse(itemType, itemId); } catch (e) {}
-        }
-        return 0;
     }-*/;
 
     /**

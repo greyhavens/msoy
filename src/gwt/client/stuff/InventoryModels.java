@@ -10,6 +10,10 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import client.util.events.FlashEvents;
+import client.util.events.ItemUsageEvent;
+import client.util.events.ItemUsageListener;
+
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -20,7 +24,18 @@ import com.threerings.msoy.item.data.all.SubItem;
  * Maintains information on our member's inventory.
  */
 public class InventoryModels
+    implements ItemUsageListener
 {
+    public void startup ()
+    {
+        FlashEvents.addListener(this);
+    }
+
+    public void shutdown ()
+    {
+        FlashEvents.removeListener(this);
+    }
+
     public void loadModel (byte type, int suiteId, final AsyncCallback cb)
     {
         final Key key = new Key(type, suiteId);
@@ -76,6 +91,19 @@ public class InventoryModels
             if (key.matches(item)) {
                 ((SimpleDataModel)entry.getValue()).updateItem(item);
             }
+        }
+    }
+
+    // from interface ItemUsageListener
+    public void itemUsageChanged (ItemUsageEvent event)
+    {
+        Item item = findItem(event.getItemType(), event.getItemId());
+        if (item != null) {
+            item.used = event.getUsage();
+            item.location = event.getLocation();
+
+            // TODO: should we dispatch an event here to indicate that we changed the item?
+            // I tend to think so.
         }
     }
 

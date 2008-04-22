@@ -32,6 +32,7 @@ import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.net.Credentials;
 
+import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -283,6 +284,15 @@ public class WorldClient extends MsoyClient
     }
 
     /**
+     * Exposed to javascript so that the it may determine if the scene id.
+     */
+    protected function externalGetSceneId () :int
+    {
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        return (scene == null) ? 0 : scene.getId();
+    }
+
+    /**
      * Exposed to javascript so that it may tell us to use this avatar.  If the avatarId of 0 is
      * passed in, the current avatar is simply cleared away, leaving them with the default.
      */
@@ -301,15 +311,6 @@ public class WorldClient extends MsoyClient
         if (view != null) {
             view.updateAvatarScale(avatarId, newScale);
         }
-    }
-
-    /**
-     * Exposed to javascript so that it may find out if a particular item is in use.
-     */
-    protected function externalIsItemInUse (itemType :int, itemId :int) :Boolean
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        return (view != null) && view.getRoomController().isItemInUse(itemType, itemId);
     }
 
     /**
@@ -373,9 +374,9 @@ public class WorldClient extends MsoyClient
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("inRoom", externalInRoom);
+        ExternalInterface.addCallback("getSceneId", externalGetSceneId);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
-        ExternalInterface.addCallback("isItemInUse", externalIsItemInUse);
         ExternalInterface.addCallback("useItem", externalUseItem);
         ExternalInterface.addCallback("clearItem", externalClearItem);
         ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
@@ -443,6 +444,7 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
@@ -456,18 +458,18 @@ class AvatarUpdateNotifier implements AttributeChangeListener
         if (MemberObject.AVATAR == event.getName()) {
             try {
                 if (ExternalInterface.available) {
-                    var newId :int = 0;
-                    var oldId :int = 0;
                     var value :Object = event.getValue();
                     if (value is Avatar) {
-                        newId = (value as Avatar).itemId;
+                        // TODO: same as MsoyClient.itemUsageChangedToGWT
+                        // TODO: constant 1 should be the memberId, but we don't have that here
+                        ExternalInterface.call("triggerFlashEvent", "ItemUsageChanged",
+                            [ Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR, 1 ]);
                     }
                     value = event.getOldValue();
                     if (value is Avatar) {
-                        oldId = (value as Avatar).itemId;
+                        ExternalInterface.call("triggerFlashEvent", "ItemUsageChanged",
+                            [ Item.AVATAR, (value as Avatar).itemId, Item.UNUSED, 0 ]);
                     }
-                    ExternalInterface.call("triggerFlashEvent", "avatarChanged", 
-                        [ newId, oldId ]);
                 }
             } catch (err :Error) {
                 Log.getLog(this).warning("triggerFlashEvent failed: " + err);

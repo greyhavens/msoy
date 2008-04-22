@@ -232,6 +232,14 @@ public /*abstract*/ class MsoyClient extends Client
     }
 
     /**
+     * Helper to dispatch item usage changes to GWT.
+     */
+    public function itemUsageChangedToGWT (itemType :int, itemId :int, usage :int, loc :int) :void
+    {
+        dispatchEventToGWT("ItemUsageChanged", [ itemType, itemId, usage, loc ]);
+    }
+
+    /**
      * Dispatches an event to GWT.
      */
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void

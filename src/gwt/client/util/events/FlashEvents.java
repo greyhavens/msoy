@@ -76,18 +76,12 @@ public class FlashEvents
 
     protected static String nameForListener (FlashEventListener listener)
     {
-        if (listener instanceof AvatarChangeListener) {
-            return AvatarChangedEvent.NAME;
-        } else if (listener instanceof BackgroundChangeListener) {
-            return BackgroundChangedEvent.NAME;
-        } else if (listener instanceof FurniChangeListener) {
-            return FurniChangedEvent.NAME;
+        if (listener instanceof ItemUsageListener) {
+            return ItemUsageEvent.NAME;
         } else if (listener instanceof StatusChangeListener) {
             return StatusChangeEvent.NAME;
         } else if (listener instanceof NameChangeListener) {
             return NameChangeEvent.NAME;
-        } else if (listener instanceof PetListener) {
-            return PetEvent.NAME;
         } else if (listener instanceof FriendsListener) {
             return FriendEvent.NAME;
         } else if (listener instanceof SceneBookmarkListener) {
@@ -100,18 +94,12 @@ public class FlashEvents
 
     protected static FlashEvent eventForName (String eventName)
     {
-        if (AvatarChangedEvent.NAME.equals(eventName)) {
-            return new AvatarChangedEvent();
-        } else if (BackgroundChangedEvent.NAME.equals(eventName)) {
-            return new BackgroundChangedEvent();
-        } else if (FurniChangedEvent.NAME.equals(eventName)) {
-            return new FurniChangedEvent();
+        if (ItemUsageEvent.NAME.equals(eventName)) {
+            return new ItemUsageEvent();
         } else if (StatusChangeEvent.NAME.equals(eventName)) {
             return new StatusChangeEvent();
         } else if (NameChangeEvent.NAME.equals(eventName)) {
             return new NameChangeEvent();
-        } else if (PetEvent.NAME.equals(eventName)) {
-            return new PetEvent();
         } else if (FriendEvent.NAME.equals(eventName)) {
             return new FriendEvent();
         } else if (SceneBookmarkEvent.NAME.equals(eventName)) {

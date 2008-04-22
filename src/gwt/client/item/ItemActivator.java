@@ -10,16 +10,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.util.events.AvatarChangeListener;
-import client.util.events.AvatarChangedEvent;
-import client.util.events.BackgroundChangeListener;
-import client.util.events.BackgroundChangedEvent;
-import client.util.events.FlashEventListener;
+import client.util.events.ItemUsageEvent;
+import client.util.events.ItemUsageListener;
 import client.util.events.FlashEvents;
-import client.util.events.FurniChangeListener;
-import client.util.events.FurniChangedEvent;
-import client.util.events.PetEvent;
-import client.util.events.PetListener;
 
 import client.shell.CShell;
 import client.shell.Frame;
@@ -32,6 +25,7 @@ import client.util.MsoyUI;
  * FlashClients#clientExists}.
  */
 public class ItemActivator extends FlowPanel
+    implements ItemUsageListener
 {
     public ItemActivator (Item item, boolean bigAss)
     {
@@ -43,60 +37,97 @@ public class ItemActivator extends FlowPanel
     public void setItem (Item item)
     {
         _item = item;
-        updateActionLabel(FlashClients.isItemInUse(_item));
-        setupListener();
+        update();
+    }
+
+    // from ItemUsageListener
+    public void itemUsageChanged (ItemUsageEvent event)
+    {
+        if ((_item != null) && (_item.getType() == event.getItemType()) &&
+                (_item.itemId == event.getItemId())) {
+            update();
+        }
     }
 
     // @Override // from Panel
     protected void onAttach ()
     {
         super.onAttach();
-        updateActionLabel(FlashClients.isItemInUse(_item));
-        setupListener();
+
+        FlashEvents.addListener(this);
+        update();
     }
 
     // @Override // from Panel
     protected void onDetach ()
     {
         super.onDetach();
-        clearListener();
+
+        FlashEvents.removeListener(this);
     }
 
-    protected void updateActionLabel (final boolean active)
+    protected void update ()
     {
+        // TODO: do this in one place?
+        boolean hasClient = FlashClients.clientExists();
+        boolean isUsed = _item.isUsed();
+        boolean usedHere;
+        switch (_item.used) {
+        default:
+            usedHere = false;
+            break;
+
+        case Item.USED_AS_FURNITURE:
+        case Item.USED_AS_PET:
+        case Item.USED_AS_BACKGROUND:
+            // TODO: getSceneId out so it's used in one place?
+            usedHere = hasClient && (_item.location == FlashClients.getSceneId());
+            break;
+        }
+
         clear();
 
-        String suff = (active ? "active.png" : "inactive.png"), tip, path;
-        ClickListener onClick;
+        String suff = isUsed ? "used.png" : "unused.png";
+        String tip = isUsed ? CShell.imsgs.inUse() : CShell.imsgs.notInUse();
+        String path;
+        ClickListener onClick = null;
 
         byte type = _item.getType();
+        final boolean fUsedHere = usedHere;
         if (type == Item.AVATAR) {
-            tip = active ? CShell.imsgs.removeAvatar() : CShell.imsgs.wearAvatar();
-            path = "/images/ui/checkbox_avatar_" + suff;
-            onClick = new ClickListener () {
-                public void onClick (Widget sender) {
-                    if (active) {
-                        FlashClients.useAvatar(0, 0);
-                    } else {
-                        FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
-                        // Frame.closeContent();
+            if (hasClient) {
+                tip = usedHere ? CShell.imsgs.removeAvatar() : CShell.imsgs.wearAvatar();
+                onClick = new ClickListener () {
+                    public void onClick (Widget sender) {
+                        if (fUsedHere) {
+                            FlashClients.useAvatar(0, 0);
+                        } else {
+                            FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
+                            // Frame.closeContent();
+                        }
                     }
-                }
-            };
+                };
+            }
+            path = "/images/ui/checkbox_avatar_" + suff;
 
         } else {
-            tip = active ? CShell.imsgs.removeFromRoom() : CShell.imsgs.addToRoom();
-            path = "/images/ui/checkbox_room_" + suff;
-            onClick = new ClickListener () {
-                public void onClick (Widget sender) {
-                    if (active) {
-                        FlashClients.clearItem(_item.getType(), _item.itemId);
-                    } else {
-                        FlashClients.useItem(_item.getType(), _item.itemId);
-                        // Frame.closeContent();
-                    }
+            if (hasClient) {
+                tip = usedHere ? CShell.imsgs.removeFromRoom() : CShell.imsgs.addToRoom();
+                if (usedHere) {
+                    suff = "usedhere.png";
                 }
-            };
+                onClick = new ClickListener () {
+                    public void onClick (Widget sender) {
+                        if (fUsedHere) {
+                            FlashClients.clearItem(_item.getType(), _item.itemId);
+                        } else {
+                            FlashClients.useItem(_item.getType(), _item.itemId);
+                            // Frame.closeContent();
+                        }
+                    }
+                };
+            }
+            path = "/images/ui/checkbox_room_" + suff;
         }
 
         if (_bigAss) {
@@ -107,67 +138,6 @@ public class ItemActivator extends FlowPanel
         }
     }
 
-    protected void setupListener ()
-    {
-        clearListener();
-
-        byte type = _item.getType();
-        if (type == Item.AVATAR) {
-            FlashEvents.addListener(_listener = new AvatarChangeListener() {
-                public void avatarChanged (AvatarChangedEvent event) {
-                    if (event.getAvatarId() == _item.itemId) {
-                        updateActionLabel(true);
-                    } else if (event.getOldAvatarId() == _item.itemId) {
-                        updateActionLabel(false);
-                    }
-                }
-            });
-
-        } else if (type == Item.DECOR || type == Item.AUDIO) {
-            FlashEvents.addListener(_listener = new BackgroundChangeListener() {
-                public void backgroundChanged (BackgroundChangedEvent event) {
-                    if (event.getType() == _item.getType()) {
-                        if (event.getBackgroundId() == _item.itemId) {
-                            updateActionLabel(true);
-                        } else if (event.getOldBackgroundId() == _item.itemId) {
-                            updateActionLabel(false);
-                        }
-                    }
-                }
-            });
-
-        } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO ||
-                   type == Item.VIDEO || type == Item.TOY) {
-            FlashEvents.addListener(_listener = new FurniChangeListener() {
-                public void furniChanged (FurniChangedEvent event) {
-                    if (event.getAddedFurni().contains(_item.getIdent())) {
-                        updateActionLabel(true);
-                    } else if (event.getRemovedFurni().contains(_item.getIdent())) {
-                        updateActionLabel(false);
-                    }
-                }
-            });
-
-        } else if (type == Item.PET) {
-            FlashEvents.addListener(_listener = new PetListener() {
-                public void petUpdated (PetEvent event) {
-                    if (event.getPetId() == _item.itemId) {
-                        updateActionLabel(event.addedToRoom());
-                    }
-                }
-            });
-        }
-    }
-
-    protected void clearListener ()
-    {
-        if (_listener != null) {
-            FlashEvents.removeListener(_listener);
-            _listener = null;
-        }
-    }
-
     protected boolean _bigAss;
     protected Item _item;
-    protected FlashEventListener _listener;
 }
