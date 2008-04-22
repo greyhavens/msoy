@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
@@ -52,7 +53,11 @@ public class MsoyGameActionHandler extends GameActionHandler
     {
         int memberId = getMemberId(accountName);
         if (memberId > 0) {
-            MsoyServer.memberRepo.updateMemberWarning(memberId, warning);
+            if (StringUtil.isBlank(warning)) {
+                MsoyServer.memberRepo.clearMemberWarning(memberId);
+            } else {
+                MsoyServer.memberRepo.updateMemberWarning(memberId, warning);
+            }
         }
     }
 
