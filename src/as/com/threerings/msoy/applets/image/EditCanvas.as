@@ -143,8 +143,8 @@ public class EditCanvas extends DisplayCanvas
         _hudLayer.addChild(_moveCursor);
         _hudLayer.addChild(_selectCursor);
 
-//        _paintLayer.addChild(_eraseOutline);
         _paintLayer.addChild(_brushCursor);
+//        _paintLayer.addChild(_eraseOutline);
         _paintInsertionOffset = _paintLayer.numChildren;
 
         // set up some of our custom cursors
@@ -572,10 +572,9 @@ public class EditCanvas extends DisplayCanvas
         }
         g.endFill();
 //
-//        radius += 2;
 //        g = _eraseOutline.graphics;
 //        g.clear();
-//        g.lineStyle(1, 0, 1);
+//        g.lineStyle(1, 0x0000FF, .5);
 //        if (_brushCircle) {
 //            g.drawCircle(0, 0, radius);
 //        } else {
