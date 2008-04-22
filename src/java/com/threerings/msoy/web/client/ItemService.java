@@ -62,12 +62,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Remixes a cloned item into a mutable original item.
-     */
-    public Item remixItem (WebIdent ident, ItemIdent item)
-        throws ServiceException;
-
-    /**
      * Deletes an item from the caller's inventory.
      */
     public void deleteItem (WebIdent ident, ItemIdent item)

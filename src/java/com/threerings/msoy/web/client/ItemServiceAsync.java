@@ -40,11 +40,6 @@ public interface ItemServiceAsync
     public void scaleAvatar (WebIdent ident, int avatarId, float newScale, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link ItemService#remixItem}.
-     */
-    public void remixItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link ItemService#deleteItem}.
      */
     public void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback callback);

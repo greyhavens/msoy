@@ -253,51 +253,53 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
-    public Item remixItem (WebIdent ident, final ItemIdent iident)
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
-
-        try {
-            // load a copy of the clone to modify
-            final ItemRecord item = repo.loadClone(iident.itemId);
-            if (item == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-            if (item.ownerId != memrec.memberId) {
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-            }
-            // TODO: make sure item is remixable
-
-            // prep the item for remixing and insert it as a new original item
-            int originalId = item.sourceId;
-            item.prepareForRemixing();
-            repo.insertOriginalItem(item, false);
-
-            // delete the old clone
-            repo.deleteItem(iident.itemId);
-
-            // copy tags from the original to the new item
-            repo.getTagRepository().copyTags(
-                originalId, item.itemId, item.ownerId, System.currentTimeMillis());
-
-            // let the item manager know that we've created a new item
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.itemMan.itemCreated(item);
-                }
-            });
-
-            return item.toItem();
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to remix item [item=" + iident +
-                    ", for=" + memrec.memberId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
+    // TODO: this is dormant right now, but we might need something like it when we
+    // enable listing purchased remixables.
+//    // from interface ItemService
+//    public Item remixItem (WebIdent ident, final ItemIdent iident)
+//        throws ServiceException
+//    {
+//        MemberRecord memrec = requireAuthedUser(ident);
+//        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+//
+//        try {
+//            // load a copy of the clone to modify
+//            final ItemRecord item = repo.loadClone(iident.itemId);
+//            if (item == null) {
+//                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+//            }
+//            if (item.ownerId != memrec.memberId) {
+//                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+//            }
+//            // TODO: make sure item is remixable
+//
+//            // prep the item for remixing and insert it as a new original item
+//            int originalId = item.sourceId;
+//            item.prepareForRemixing();
+//            repo.insertOriginalItem(item, false);
+//
+//            // delete the old clone
+//            repo.deleteItem(iident.itemId);
+//
+//            // copy tags from the original to the new item
+//            repo.getTagRepository().copyTags(
+//                originalId, item.itemId, item.ownerId, System.currentTimeMillis());
+//
+//            // let the item manager know that we've created a new item
+//            MsoyServer.omgr.postRunnable(new Runnable() {
+//                public void run () {
+//                    MsoyServer.itemMan.itemCreated(item);
+//                }
+//            });
+//
+//            return item.toItem();
+//
+//        } catch (PersistenceException pe) {
+//            log.log(Level.WARNING, "Failed to remix item [item=" + iident +
+//                    ", for=" + memrec.memberId + "]", pe);
+//            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+//        }
+//    }
 
     // from interface ItemService
     public void deleteItem (final WebIdent ident, final ItemIdent iident)
