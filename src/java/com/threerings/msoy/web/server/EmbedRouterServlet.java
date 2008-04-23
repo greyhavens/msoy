@@ -28,7 +28,7 @@ public class EmbedRouterServlet extends HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        String info = req.getPathInfo();
+        String info = (req.getPathInfo() == null) ? "" : req.getPathInfo();
         String host;
         int port;
 
