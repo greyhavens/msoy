@@ -408,17 +408,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             totalMinutes = capDuration * _allPlayers.size();
         }
 
-        // update our in-memory game detail record
-        final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
-        if (isMP) {
-            _content.detail.multiPlayerGames += playerGames;
-            _content.detail.multiPlayerMinutes += playerMins;
-        } else {
-            _content.detail.singlePlayerGames += playerGames;
-            _content.detail.singlePlayerMinutes += playerMins;
-        }
-
         // record this game's play time and flow awarded to the repository
+        final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
         final int flowAwarded = _totalAwardedFlow;
         final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
         final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
