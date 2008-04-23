@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +24,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
@@ -834,27 +837,47 @@ public abstract class ItemRepository<
     protected List<T> loadClonedItems (Where where, QueryClause... clauses)
         throws PersistenceException
     {
-        final int OUR_CLAUSE_COUNT = 9;
-        QueryClause[] allClauses = new QueryClause[clauses.length + OUR_CLAUSE_COUNT];
-        allClauses[0] = where;
-        allClauses[1] = new Join(
-            getItemClass(), ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID);
-        allClauses[2] = new FieldDefinition(
-            ItemRecord.SOURCE_ID, getItemClass(), ItemRecord.ITEM_ID);
-        allClauses[3] = new FieldOverride(
-            ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
-        allClauses[4] = new FieldOverride(
-            ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID);
-        allClauses[5] = new FieldOverride(
-            ItemRecord.LOCATION, getCloneClass(), CloneRecord.LOCATION);
-        allClauses[6] = new FieldOverride(
-            ItemRecord.USED, getCloneClass(), CloneRecord.USED);
-        allClauses[7] = new FieldOverride(
-            ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED);
-        allClauses[8] = new FieldOverride(ItemRecord.CATALOG_ID, "0");
-        System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
+        // find the appropriate CloneRecords (in the order specified by the passed-in clauses)
+        List<QueryClause> clauseList = new ArrayList<QueryClause>(clauses.length + 2);
+        clauseList.add(where);
+        Collections.addAll(clauseList, clauses);
+        clauseList.add(new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
+            getItemClass(), ItemRecord.ITEM_ID));
+        List<CLT> clones = findAll(getCloneClass(), clauseList);
 
-        return findAll(getItemClass(), allClauses);
+        // if we didn't find any clones, so our work here is done.
+        if (clones.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // create a set of the corresponding original ids
+        ArrayIntSet origIds = new ArrayIntSet(clones.size());
+        for (CLT clone : clones) {
+            origIds.add(clone.originalItemId);
+        }
+
+        // find all the originals and insert them into a map
+        List<T> originals = findAll(getItemClass(),
+            new Where(new In(getItemColumn(ItemRecord.ITEM_ID), origIds)));
+        HashIntMap<T> records = new HashIntMap<T>(originals.size(), HashIntMap.DEFAULT_LOAD_FACTOR);
+        for (T record : originals) {
+            records.put(record.itemId, record);
+        }
+
+        // now traverse each clone in the originally-returned order and fill in
+        // a clone of the ItemRecord to return.
+        List<T> results = new ArrayList<T>(clones.size());
+        for (CLT clone : clones) {
+            // we could just return the record directly, except that we could be loading
+            // more than one clone that uses the same original
+            T record = records.get(clone.originalItemId);
+            @SuppressWarnings(value="unchecked")
+            T returnCopy = (T) record.clone();
+            returnCopy.initFromClone(clone);
+            results.add(returnCopy);
+        }
+
+        return results;
     }
 
     /**
