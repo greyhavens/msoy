@@ -96,11 +96,18 @@ public class GameDetailRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #lastPayoutRecalc} field. */
     public static final ColumnExp LAST_PAYOUT_RECALC_C =
         new ColumnExp(GameDetailRecord.class, LAST_PAYOUT_RECALC);
+
+    /** The column identifier for the {@link #flowSinceLastRecalc} field. */
+    public static final String FLOW_SINCE_LAST_RECALC = "flowSinceLastRecalc";
+
+    /** The qualified column identifier for the {@link #flowSinceLastRecalc} field. */
+    public static final ColumnExp FLOW_SINCE_LAST_RECALC_C =
+        new ColumnExp(GameDetailRecord.class, FLOW_SINCE_LAST_RECALC);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
@@ -144,6 +151,9 @@ public class GameDetailRecord extends PersistentRecord
      * recalculated the payout factor. */
     public int lastPayoutRecalc;
 
+    /** The amount of flow awarded since our last payout recalculation. */
+    public int flowSinceLastRecalc;
+
     /**
      * Returns the current payout factor for this game, in [0, 1).
      */
@@ -153,13 +163,25 @@ public class GameDetailRecord extends PersistentRecord
     }
 
     /**
-     * Returns true if we should recaculate our payout factor based on the supplied additional
-     * player minutes and the specified recalculation interval.
+     * Called to update an in-memory record after we update our record in the database. This is
+     * needed so that multiple games don't stomp on one another if they end at the same time.
      */
-    public boolean shouldRecalcPayout (int playerMins, int recalcMinutes)
+    public void noteGamePlayed (int playerGames, int playerMins, int flowAwarded, int newFactor)
     {
-        int playerMinutes = multiPlayerMinutes + singlePlayerMinutes;
-        return (playerMinutes - lastPayoutRecalc) + playerMins > recalcMinutes;
+        if (playerGames > 1) {
+            singlePlayerGames += playerGames;
+            singlePlayerMinutes += playerMins;
+        } else {
+            multiPlayerGames += playerGames;
+            multiPlayerMinutes += playerMins;
+        }
+        if (newFactor == 0) {
+            flowSinceLastRecalc += flowAwarded;
+        } else {
+            payoutFactor = newFactor;
+            flowSinceLastRecalc = 0;
+            lastPayoutRecalc = singlePlayerMinutes + multiPlayerMinutes;
+        }
     }
 
     /**

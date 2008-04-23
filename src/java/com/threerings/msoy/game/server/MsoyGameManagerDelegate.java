@@ -51,8 +51,6 @@ import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.server.persist.GameFlowSummaryRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
@@ -388,13 +386,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // update our statistics for this game (plays, duration, etc.)
         int totalSeconds = _totalTrackedSeconds;
-        int now = _tracking ? now() : 0;
-        for (FlowRecord record : _flowRecords.values()) {
-            totalSeconds += record.secondsPlayed;
-            if (_tracking && record.beganStamp != 0) {
-                totalSeconds += (now - record.beganStamp);
-            }
-        }
         int totalMinutes = Math.round(totalSeconds / 60f);
         if (totalMinutes == 0) {
             if (totalSeconds == 0) {
@@ -404,7 +395,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             totalMinutes = 1; // round very short games up to 1 minute.
         }
 
-        // to avoid a single anomalous game freakout out our distribution, cap game duration at
+        // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
         boolean isMP = (_allPlayers.size() > 1);
         int perPlayerDuration = totalMinutes/_allPlayers.size();
@@ -417,44 +408,34 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             totalMinutes = capDuration * _allPlayers.size();
         }
 
-        // record this game's play time to the repository
+        // update our in-memory game detail record
         final int playerGames = _allPlayers.size(), playerMins = totalMinutes;
-        final boolean recalc = (RuntimeConfig.server.payoutFactorReassessment == 0) ? false :
-            _content.detail.shouldRecalcPayout(
-                playerMins, RuntimeConfig.server.payoutFactorReassessment);
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
-            public void invokePersist () throws Exception {
-                GameRepository repo = MsoyGameServer.gameReg.getGameRepository();
-                if (recalc) {
-//                     GameFlowSummaryRecord record =
-//                         repo.summarizeFlowGrants(_content.game.gameId);
-                    _newPayout = 128; // TODO: real algorithm
-                    repo.updatePayoutFactor(
-                        _content.game.gameId, _newPayout,
-                        _content.detail.singlePlayerMinutes + _content.detail.multiPlayerMinutes);
-                    repo.deleteFlowGrants(_content.game.gameId);
-                }
-                repo.noteGamePlayed(_content.game.gameId, playerGames, playerMins);
-            }
-            public void handleSuccess () {
-                if (_newPayout != null) {
-                    _content.detail.payoutFactor = _newPayout;
-                }
-            }
-            protected String getFailureMessage() {
-                return "Failed to note end of game [in=" + where() + "]";
-            }
-            protected Integer _newPayout;
-        });
-
-        // also update our in-memory game detail record
-        if (playerGames > 1) {
+        if (isMP) {
             _content.detail.multiPlayerGames += playerGames;
             _content.detail.multiPlayerMinutes += playerMins;
         } else {
             _content.detail.singlePlayerGames += playerGames;
             _content.detail.singlePlayerMinutes += playerMins;
         }
+
+        // record this game's play time and flow awarded to the repository
+        final int flowAwarded = _totalAwardedFlow;
+        final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
+        final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
+            public void invokePersist () throws Exception {
+                _newFactor = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                    _content.detail, playerGames, playerMins, flowAwarded, recalcMins, hourlyRate);
+            }
+            public void handleSuccess () {
+                // lastly update the in memory detail record
+                _content.detail.noteGamePlayed(playerGames, playerMins, flowAwarded, _newFactor);
+            }
+            protected String getFailureMessage() {
+                return "Failed to note end of game [in=" + where() + "]";
+            }
+            protected int _newFactor;
+        });
     }
 
     @Override // from PlaceManagerDelegate
@@ -804,21 +785,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
-    /**
-     * Return the total number of seconds that players were being tracked.
-     */
-    protected int getTotalTrackedSeconds ()
-    {
-        int total = _totalTrackedSeconds, now = _tracking ? now() : 0;
-        for (FlowRecord record : _flowRecords.values()) {
-            total += record.secondsPlayed;
-            if (_tracking && record.beganStamp != 0) {
-                total += (now - record.beganStamp);
-            }
-        }
-        return total;
-    }
-
     protected int getAwardableFlow (boolean multiplayer, int now, int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
@@ -844,8 +810,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             record.stopTracking(now());
         }
 
-        // since we're dropping this record, we need to record the seconds played
+        // since we're dropping this record, we need to record seconds played and flow awarded
         _totalTrackedSeconds += record.secondsPlayed;
+        _totalAwardedFlow += record.awarded;
 
         // see if we even care
         if (record.awarded == 0 || MemberName.isGuest(record.memberId)) {
@@ -977,15 +944,15 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** The number of samples used to compute {@link #_averageDuration}. */
     protected int _averageSamples;
 
-    /** Used to track whether or not we should recalculate our payout factor. */
-    protected int _minsSinceLastPayoutRecalc;
-
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;
 
     /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
      * tracked member that is no longer present with a FlowRecord. */
     protected int _totalTrackedSeconds = 0;
+
+    /** Counts the total amount of flow awarded to players in this game. */
+    protected int _totalAwardedFlow = 0;
 
     /** Used to track how many players participated in this game. */
     protected ArrayIntSet _allPlayers = new ArrayIntSet();

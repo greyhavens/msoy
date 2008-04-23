@@ -25,13 +25,12 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.msoy.server.persist.CountRecord;
-import com.threerings.msoy.server.persist.GameFlowGrantLogRecord;
-import com.threerings.msoy.server.persist.GameFlowSummaryRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
@@ -141,26 +140,11 @@ public class GameRepository extends ItemRepository<
         return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
     }
 
-    public GameFlowSummaryRecord summarizeFlowGrants (int gameId)
-        throws PersistenceException
-    {
-        return load(
-            GameFlowSummaryRecord.class,
-            new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
-            new FromOverride(GameFlowGrantLogRecord.class),
-            new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-                              GameFlowGrantLogRecord.GAME_ID_C),
-            new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-                              new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
-    }
-    
-    public void deleteFlowGrants (int gameId)
-        throws PersistenceException
-    {
-        deleteAll(GameFlowGrantLogRecord.class,
-            new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
-    }
-
+    /**
+     * Sets the specified game's payout factor to the specified value. This is used for AVRGs which
+     * manage their own payout factor instead of using {@link
+     * #updatePayoutFactor(GameDetailRecord,int)}.
+     */
     public boolean updatePayoutFactor (int gameId, int factor, int minutes)
         throws PersistenceException
     {
@@ -169,43 +153,57 @@ public class GameRepository extends ItemRepository<
                                  GameDetailRecord.PAYOUT_FACTOR, factor,
                                  GameDetailRecord.LAST_PAYOUT_RECALC, minutes);
     }
-    
+
     /**
-     * Updates the specified {@link GameDetailRecord}, recording an increase in games played and
-     * total player minutes.
-     *
-     * @return null or the recalculated payout factor if one was recalculated.
+     * Grinds through a game's recent flow award data and updates its payout factor to adjust for
+     * biases in its payout patterns.
+     */
+    public int noteGamePlayed (GameDetailRecord detail, int playerGames, int playerMins,
+                               int flowAwarded, int recalcMins, int hourlyRate)
+        throws PersistenceException
+    {
+        int currentMins = detail.multiPlayerMinutes + detail.singlePlayerMinutes + playerMins;
+        int accumMins = currentMins - detail.lastPayoutRecalc;
+        int newFactor = 0;
+
+        // if we're ready for a payout factor recalculation, do that as well
+        if (recalcMins > 0 && accumMins > recalcMins) {
+            // compute our average flow per hour award for the period in question
+            int accumFlow = detail.flowSinceLastRecalc + flowAwarded;
+            float awardedPerHour = accumFlow / (accumMins / 60f);
+
+            // sanity checks
+            if (accumMins > 0 && accumFlow > 0) {
+                // our factor is the target hourly rate over our actual rate (because we'll multiply
+                // future awards by this factor to scale them to the target hourly rate)
+                float targetRatio = hourlyRate / awardedPerHour;
+                targetRatio = Math.min(Math.max(0, targetRatio), MAX_PAYOUT_ADJUST);
+                int targetFactor = Math.round(targetRatio * 256);
+
+                // set our factor to the average of these two values; move slowly toward our target
+                newFactor = (detail.payoutFactor + targetFactor)/2;
+
+                log.info("Updating payout factor [game=" + detail.gameId +
+                         ", accumMins=" + accumMins + ", accumFlow=" + accumFlow +
+                         ", aph=" + awardedPerHour + ", targetRatio=" + targetRatio +
+                         ", newFactor=" + newFactor + "].");
+            }
+        }
+
+        noteGamePlayed(detail.gameId, playerGames, playerMins, flowAwarded, newFactor, accumMins);
+
+        return newFactor;
+    }
+
+    /**
+     * Updates the specified {@link GameDetailRecord}, recording an increase in games played, total
+     * player minutes and flow awarded.
      */
     public void noteGamePlayed (int gameId, int playerGames, int playerMins)
         throws PersistenceException
     {
-        gameId = Math.abs(gameId); // how to handle playing the original?
-
-        String gcname, mcname;
-        SQLExpression gcol, mcol;
-        if (playerGames > 1) {
-            gcname = GameDetailRecord.MULTI_PLAYER_GAMES;
-            gcol = GameDetailRecord.MULTI_PLAYER_GAMES_C;
-            mcname = GameDetailRecord.MULTI_PLAYER_MINUTES;
-            mcol = GameDetailRecord.MULTI_PLAYER_MINUTES_C;
-        } else {
-            gcname = GameDetailRecord.SINGLE_PLAYER_GAMES;
-            gcol = GameDetailRecord.SINGLE_PLAYER_GAMES_C;
-            mcname = GameDetailRecord.SINGLE_PLAYER_MINUTES;
-            mcol = GameDetailRecord.SINGLE_PLAYER_MINUTES_C;
-        }
-
-        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
-        fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
-        fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
-
-        // if this addition would cause us to overflow the player minutes field, don't do it
-        int overflow = Integer.MAX_VALUE - playerMins;
-        Where where = new Where(
-            new Logic.And(new Conditionals.Equals(GameDetailRecord.GAME_ID_C, gameId),
-                          new Conditionals.LessThan(mcol, overflow)));
-
-        updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
+        gameId = Math.abs(gameId); // TODO: don't record metrics for the original?
+        noteGamePlayed(gameId, playerGames, playerMins, 0, 0, 0);
     }
 
     /**
@@ -316,6 +314,52 @@ public class GameRepository extends ItemRepository<
     {
         super.getManagedRecords(classes);
         classes.add(GameDetailRecord.class);
-        classes.add(GameFlowGrantLogRecord.class);
     }
+
+    /**
+     * Helper function for the other {@link #noteGamePlayed} methods.
+     */
+    protected void noteGamePlayed (int gameId, int playerGames, int playerMins,
+                                   int flowAwarded, int payoutFactor, int lastPayoutRecalc)
+        throws PersistenceException
+    {
+        String gcname, mcname;
+        SQLExpression gcol, mcol;
+        if (playerGames > 1) {
+            gcname = GameDetailRecord.MULTI_PLAYER_GAMES;
+            gcol = GameDetailRecord.MULTI_PLAYER_GAMES_C;
+            mcname = GameDetailRecord.MULTI_PLAYER_MINUTES;
+            mcol = GameDetailRecord.MULTI_PLAYER_MINUTES_C;
+        } else {
+            gcname = GameDetailRecord.SINGLE_PLAYER_GAMES;
+            gcol = GameDetailRecord.SINGLE_PLAYER_GAMES_C;
+            mcname = GameDetailRecord.SINGLE_PLAYER_MINUTES;
+            mcol = GameDetailRecord.SINGLE_PLAYER_MINUTES_C;
+        }
+
+        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
+        fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
+        fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
+
+        if (payoutFactor > 0) {
+            fieldMap.put(GameDetailRecord.PAYOUT_FACTOR, new ValueExp(payoutFactor));
+            fieldMap.put(GameDetailRecord.LAST_PAYOUT_RECALC, new ValueExp(lastPayoutRecalc));
+            fieldMap.put(GameDetailRecord.FLOW_SINCE_LAST_RECALC, new ValueExp(0));
+        } else if (flowAwarded > 0) {
+            fieldMap.put(GameDetailRecord.FLOW_SINCE_LAST_RECALC,
+                         new Arithmetic.Add(GameDetailRecord.FLOW_SINCE_LAST_RECALC_C, flowAwarded));
+        }
+
+        // if this addition would cause us to overflow the player minutes field, don't do it
+        int overflow = Integer.MAX_VALUE - playerMins;
+        Where where = new Where(
+            new Logic.And(new Conditionals.Equals(GameDetailRecord.GAME_ID_C, gameId),
+                          new Conditionals.LessThan(mcol, overflow)));
+        updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
+    }
+
+    /** We will not adjust a game's payout higher than 2x to bring it in line with our desired
+     * payout rates to avoid potential abuse. Games that consistently award very low amounts can
+     * fix their scoring algorithms. */
+    protected static final float MAX_PAYOUT_ADJUST = 2f;
 }

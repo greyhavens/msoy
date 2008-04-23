@@ -57,12 +57,12 @@ public class ServerConfigObject extends ConfigObject
 
     /** The fraction of a user's flow that evaporates over a 24-hour period. */
     public float dailyFlowEvaporation = 0.20f;
-    
+
     /** The amount of flow per hour that a game can award a player. */
     public int hourlyGameFlowRate = 3000;
 
     /** The number of player minutes between reassessments of a game's payout factor. */
-    public int payoutFactorReassessment = 1000;
+    public int payoutFactorReassessment = 250;
 
     /** The number of seconds between reassessments of a member's humanity factor. */
     public int humanityReassessment = 24 * 3600;
