@@ -255,17 +255,18 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         }
     }
 
-    /**
-     * Clears out any fields that should be reset when remixing an item.
-     */
-    public void prepareForRemixing ()
-    {
-        itemId = 0;
-        sourceId = 0;
-        creatorId = ownerId; // TODO: preserve creator?
-        used = Item.UNUSED;
-        location = 0;
-    }
+    // TODO: this is dormant. See ItemServlet.remixItem.
+//    /**
+//     * Clears out any fields that should be reset when remixing an item.
+//     */
+//    public void prepareForRemixing ()
+//    {
+//        itemId = 0;
+//        sourceId = 0;
+//        creatorId = ownerId; // TODO: preserve creator?
+//        used = Item.UNUSED;
+//        location = 0;
+//    }
 
     /**
      * Initialize this record so that it actually represents the specified clone.

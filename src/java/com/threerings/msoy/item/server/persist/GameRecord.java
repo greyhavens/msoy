@@ -213,14 +213,15 @@ public class GameRecord extends ItemRecord
         gameId = Math.abs(gameId);
     }
 
-    @Override // from ItemRecord
-    public void prepareForRemixing ()
-    {
-        super.prepareForRemixing();
-
-        // clear out our game id; this is now a totally separate game
-        gameId = 0;
-    }
+    // TODO: this is dormant. See ItemServlet.remixItem
+//    @Override // from ItemRecord
+//    public void prepareForRemixing ()
+//    {
+//        super.prepareForRemixing();
+//
+//        // clear out our game id; this is now a totally separate game
+//        gameId = 0;
+//    }
 
     @Override // from ItemRecord
     public byte getType ()
