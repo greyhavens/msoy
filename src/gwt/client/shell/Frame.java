@@ -355,7 +355,7 @@ public class Frame
             subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + memberId);
             subnavi.addLink(null, "Mail", Page.MAIL, "");
             subnavi.addLink(null, "Account", Page.ME, "account");
-            if (CShell.isAdmin()) {
+            if (CShell.isSupport()) {
                 subnavi.addLink(null, "Admin", Page.ADMIN, "");
             }
 
