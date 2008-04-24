@@ -41,6 +41,18 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Requests that the supplied item be remixed to the new media contained within it.
+     */
+    public void remixItem (WebIdent ident, Item item)
+        throws ServiceException;
+
+    /**
+     * Revert the specified clone back its default media.
+     */
+    public Item revertRemixedClone (WebIdent ident, ItemIdent itemIdent)
+        throws ServiceException;
+
+    /**
      * Loads the details of a particular item.
      */
     public Item loadItem (WebIdent ident, ItemIdent item)

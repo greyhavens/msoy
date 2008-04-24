@@ -34,6 +34,18 @@ public class Video extends Item
     }
 
     // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return videoMedia;
+    }
+ 
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        videoMedia = desc;
+    }
+
+    // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         if (videoMedia != null && videoMedia.isExternalVideo()) {

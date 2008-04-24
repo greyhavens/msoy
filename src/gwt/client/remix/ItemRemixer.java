@@ -67,11 +67,11 @@ public class ItemRemixer extends FlexTable
 
     protected Widget createRemixControls (Item item)
     {
-        MediaDesc preview = item.getPreviewMedia();
+        MediaDesc main = item.getPrimaryMedia();
         String serverURL = GWT.isScript() ? GWT.getHostPageBaseURL()
                                           : "http://localhost:8080/";
 
-        String flashVars = "media=" + URL.encodeComponent(preview.getMediaPath()) + "&" +
+        String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) + "&" +
             "server=" + URL.encodeComponent(serverURL) + "&" +
             "mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) + "&" +
             "auth=" + URL.encodeComponent(CShell.ident.token);
@@ -95,17 +95,9 @@ public class ItemRemixer extends FlexTable
 
         MediaDesc desc = new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint);
 
-        // TODO: this logic is in the item editor.. somewhere else?
-        byte type = _item.getType();
-        if (type == Item.AVATAR) {
-            ((Avatar) _item).avatarMedia = desc;
+        _item.setPrimaryMedia(desc);
 
-        } else {
-            CShell.log("setHash() called for unhandled item type: " + _item.getType());
-            return;
-        }
-
-        CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback() {
+        CShell.itemsvc.remixItem(CShell.ident, _item, new MsoyCallback() {
             public void onSuccess (Object result) {
                 MsoyUI.info(CShell.emsgs.msgItemUpdated());
                 _parent.editComplete((Item) result);

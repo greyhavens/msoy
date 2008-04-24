@@ -137,6 +137,18 @@ public class DocumentRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    public byte[] getPrimaryMedia ()
+    {
+        return docMediaHash;
+    }
+
+    @Override // from ItemRecord
+    protected void setPrimaryMedia (byte[] hash)
+    {
+        docMediaHash = hash;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Document object = new Document();

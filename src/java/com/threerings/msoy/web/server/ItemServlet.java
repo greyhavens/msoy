@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import static com.threerings.msoy.Log.log;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -143,8 +145,8 @@ public class ItemServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
 
-            // make sure they own it
-            if (!memrec.isAdmin() && record.ownerId != memrec.memberId) {
+            // make sure they own it (or are admin)
+            if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
 
@@ -165,6 +167,35 @@ public class ItemServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to update item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    // from interface ItemService
+    public void remixItem (WebIdent ident, Item item)
+        throws ServiceException
+    {
+        if (item.sourceId == 0) {
+            // it's an original being remixed, it's the same as updateItem
+            updateItem(ident, item);
+
+        } else {
+            remixClone(ident, item.getIdent(), item);
+        }
+    }
+
+    // from interface ItemService
+    public Item revertRemixedClone (WebIdent ident, ItemIdent itemIdent)
+        throws ServiceException
+    {
+        return remixClone(ident, itemIdent, null);
+    }
+
+    // from interface ItemService
+    public Item renameClone (WebIdent ident, ItemIdent itemIdent, String newName)
+        throws ServiceException
+    {
+        // TODO
+
+        return null;
     }
 
     // from interface ItemService
@@ -621,6 +652,78 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Admin item delete failed [item=" + iident + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Helper method for remixItem and revertRemixedClone.
+     * @param item the updated item, or null to revert to the original mix.
+     */
+    protected Item remixClone (WebIdent ident, ItemIdent itemIdent, Item item)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+
+        // make sure the item isn't boochy
+        if (item != null && !item.isConsistent()) {
+            log.warning("Requested to remix item with invalid version [who=" + memrec.who() +
+                ", item=" + item + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemIdent.type);
+        try {
+            // load up the old version of the item
+            CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
+            if (record == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            // make sure they own it (or are admin)
+            if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
+            // load up the original record so we can see what changed
+            final ItemRecord orig = repo.loadOriginalItem(record.originalItemId);
+            if (orig == null) {
+                log.warning("Unable to locate original of remixed clone [who=" + memrec.who() +
+                    ", item=" + item + "].");
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+
+            if (item == null) {
+                record.mediaHash = null; // we're reverting
+
+            } else {
+                // in all probability, the primary media is different now
+                MediaDesc primary = item.getPrimaryMedia();
+                byte[] primaryHash = (primary == null) ? null : primary.hash;
+                if (Arrays.equals(primaryHash, orig.getPrimaryMedia())) {
+                    record.mediaHash = null; // a revert here, strange, but ok
+                } else {
+                    record.mediaHash = primaryHash;
+                }
+            }
+
+            // save out the updated info
+            repo.updateCloneMedia(itemIdent.itemId, record.mediaHash);
+
+            // create the proper ItemRecord representing the clone
+            orig.initFromClone(record);
+
+            // let the item manager know that we've updated this item
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemUpdated(orig);
+                }
+            });
+
+            return orig.toItem();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to remix item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

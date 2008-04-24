@@ -37,6 +37,18 @@ public class Photo extends Item
     }
 
     // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return photoMedia;
+    }
+ 
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        photoMedia = desc;
+    }
+
+    // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return photoMedia;

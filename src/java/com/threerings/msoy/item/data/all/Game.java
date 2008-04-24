@@ -124,6 +124,18 @@ public class Game extends Item
         return getThumbnailMedia();
     }
 
+    // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return gameMedia;
+    }
+ 
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        gameMedia = desc;
+    }
+
     /**
      * Checks whether this game is an in-world, as opposed to lobbied, game.
      */

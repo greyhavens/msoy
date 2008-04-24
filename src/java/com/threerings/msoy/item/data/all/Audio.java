@@ -29,4 +29,16 @@ public class Audio extends Item
     {
         return getThumbnailMedia(); // TODO: support album art?
     }
+
+    // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return audioMedia;
+    }
+
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        audioMedia = desc;
+    }
 }

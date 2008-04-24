@@ -25,6 +25,16 @@ public interface ItemServiceAsync
     public void updateItem (WebIdent ident, Item item, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService#remixItem}.
+     */
+    public void remixItem (WebIdent ident, Item item, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#revertRemixClone}.
+     */
+    public void revertRemixedClone (WebIdent ident, ItemIdent itemIdent, AsyncCallback callback);
+
+    /**
      * Loads the details of a particular item.
      */
     public void loadItem (WebIdent ident, ItemIdent item, AsyncCallback callback);

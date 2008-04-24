@@ -602,15 +602,14 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Updates the supplied clone item in the database. This should only be done very carefully,
-     * as usually clones are not updated, but we do allow editing a few "override" fields.
+     * Updates a clone item's override media in the database. This is done when we remix.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneItem (CLT clone)
+    public void updateCloneMedia (int itemId, byte[] hash)
         throws PersistenceException
     {
-        clone.lastTouched = new Timestamp(System.currentTimeMillis());
-        update(clone);
+        updatePartial(getCloneClass(), itemId, CloneRecord.MEDIA_HASH, hash,
+                      CloneRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
     }
 
     /**

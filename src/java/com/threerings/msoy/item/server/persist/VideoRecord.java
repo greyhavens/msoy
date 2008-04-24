@@ -137,6 +137,18 @@ public class VideoRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    public byte[] getPrimaryMedia ()
+    {
+        return videoMediaHash;
+    }
+
+    @Override // from ItemRecord
+    protected void setPrimaryMedia (byte[] hash)
+    {
+        videoMediaHash = hash;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Video object = new Video();

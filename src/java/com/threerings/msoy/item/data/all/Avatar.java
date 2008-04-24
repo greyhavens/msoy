@@ -49,6 +49,18 @@ public class Avatar extends Item
     }
 
     // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return avatarMedia;
+    }
+ 
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        avatarMedia = desc;
+    }
+
+    // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return avatarMedia;

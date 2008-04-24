@@ -48,6 +48,14 @@ public class TrophySourceCloneRecord extends CloneRecord<TrophySourceRecord>
     /** The qualified column identifier for the {@link #lastTouched} field. */
     public static final ColumnExp LAST_TOUCHED_C =
         new ColumnExp(TrophySourceCloneRecord.class, LAST_TOUCHED);
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(TrophySourceCloneRecord.class, NAME);
+
+    /** The qualified column identifier for the {@link #mediaHash} field. */
+    public static final ColumnExp MEDIA_HASH_C =
+        new ColumnExp(TrophySourceCloneRecord.class, MEDIA_HASH);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;

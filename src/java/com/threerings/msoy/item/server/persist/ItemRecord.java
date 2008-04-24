@@ -283,6 +283,16 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         this.used = clone.used;
         this.location = clone.location;
         this.lastTouched = clone.lastTouched;
+
+        // use the clone's override name, if present
+        if (clone.name != null) {
+            this.name = clone.name;
+        }
+
+        // use the clone's media override (remix media)
+        if (clone.mediaHash != null) {
+            setPrimaryMedia(clone.mediaHash);
+        }
     }
 
     /**
@@ -355,6 +365,22 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     {
         return (thumbMediaHash == null) ?
             null : new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+    }
+
+    /**
+     * Used when comparing against a clone record.
+     */
+    public byte[] getPrimaryMedia ()
+    {
+        return furniMediaHash;
+    }
+
+    /**
+     * Set the specified hash as the primary media.
+     */
+    protected void setPrimaryMedia (byte[] hash)
+    {
+        furniMediaHash = hash;
     }
 
     /**

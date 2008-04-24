@@ -158,6 +158,18 @@ public class AvatarRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    public byte[] getPrimaryMedia ()
+    {
+        return avatarMediaHash;
+    }
+
+    @Override // from ItemRecord
+    protected void setPrimaryMedia (byte[] hash)
+    {
+        avatarMediaHash = hash;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Avatar object = new Avatar();

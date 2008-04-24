@@ -28,4 +28,16 @@ public class Document extends Item
     {
         return getThumbnailMedia();
     }
+
+    // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return docMedia;
+    }
+ 
+    // @Override // from Item
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        docMedia = desc;
+    }
 }

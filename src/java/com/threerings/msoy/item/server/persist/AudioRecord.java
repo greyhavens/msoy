@@ -137,6 +137,18 @@ public class AudioRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    public byte[] getPrimaryMedia ()
+    {
+        return audioMediaHash;
+    }
+
+    @Override // from ItemRecord
+    protected void setPrimaryMedia (byte[] hash)
+    {
+        audioMediaHash = hash;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Audio object = new Audio();

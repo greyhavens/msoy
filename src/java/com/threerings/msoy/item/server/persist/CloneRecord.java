@@ -42,9 +42,15 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** The column identifier for the {@link #lastTouched} field. */
     public static final String LAST_TOUCHED = "lastTouched";
+
+    /** The column identifier for the {@link #name} field. */
+    public static final String NAME = "name";
+
+    /** The column identifier for the {@link #mediaHash} field. */
+    public static final String MEDIA_HASH = "mediaHash";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 5;
+    public static final int BASE_SCHEMA_VERSION = 6;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
@@ -77,6 +83,16 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** The timestamp at which this item was last used or modified. */
     public Timestamp lastTouched;
+
+    /** An override name or null, provided if the user renames a clone for convenience. */
+    @Column(nullable=true)
+    public String name;
+
+    /** An override of the "main" media hash for this item.
+     * This can currently only be the result of remixing, so the mimeType will be the
+     * same as the original media mimeType, and should only be APPLICATION/ZIP. */
+    @Column(nullable=true)
+    public byte[] mediaHash;
 
     /**
      * Initialize a new clone with the specified values.

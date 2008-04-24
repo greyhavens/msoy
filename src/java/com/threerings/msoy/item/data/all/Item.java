@@ -365,6 +365,24 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     }
 
     /**
+     * Return the "primary" media for this item. Don't do any funny business,
+     * return null if the primary media is null and overridden by something
+     * else.
+     */
+    public MediaDesc getPrimaryMedia ()
+    {
+        return furniMedia;
+    }
+
+    /**
+     * Update the primary media, usually as a result of remixing.
+     */
+    public void setPrimaryMedia (MediaDesc desc)
+    {
+        furniMedia = desc;
+    }
+
+    /**
      * Called during item creation to ensure that media descriptors are not duplicated in this item
      * more than necessary.
      */

@@ -47,6 +47,14 @@ public class PetCloneRecord extends CloneRecord<PetRecord>
     /** The qualified column identifier for the {@link #lastTouched} field. */
     public static final ColumnExp LAST_TOUCHED_C =
         new ColumnExp(PetCloneRecord.class, LAST_TOUCHED);
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(PetCloneRecord.class, NAME);
+
+    /** The qualified column identifier for the {@link #mediaHash} field. */
+    public static final ColumnExp MEDIA_HASH_C =
+        new ColumnExp(PetCloneRecord.class, MEDIA_HASH);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START

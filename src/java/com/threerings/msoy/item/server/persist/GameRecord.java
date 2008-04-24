@@ -249,6 +249,18 @@ public class GameRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    public byte[] getPrimaryMedia ()
+    {
+        return gameMediaHash;
+    }
+
+    @Override // from ItemRecord
+    public void setPrimaryMedia (byte[] hash)
+    {
+        gameMediaHash = hash;
+    }
+
+    @Override // from ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();

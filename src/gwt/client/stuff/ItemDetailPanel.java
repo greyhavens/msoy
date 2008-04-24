@@ -93,10 +93,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(new ItemActivator(_item, false));
         }
 
+        // figure out a few pieces of common info
+        boolean original = (_item.sourceId == 0);
+        boolean catalogOriginal = _item.isCatalogOriginal();
+        MediaDesc primaryMedia = _item.getPrimaryMedia();
+        boolean remixable = (primaryMedia != null) && primaryMedia.isRemixable();
+        boolean used = (_item.used != Item.UNUSED);
+
         RowPanel buttons = new RowPanel();
 
         // if this item is in use, mention that
-        boolean used = (_item.used != Item.UNUSED);
         if (used) {
             // tell the user that the item is in use, and maybe where
             String msg;
@@ -139,13 +145,32 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         buttons.add(delete);
 
         // add a button for editing this item, if it's an original
-        if (_item.sourceId == 0) {
+        if (original) {
             String butlbl = CStuff.msgs.detailEdit();
             buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
                     CStuff.editItem(_item.getType(), _item.itemId);
                 }
             }));
+
+        } else if (!original && remixable) {
+            // if it's a remixed clone, add a button for reverting (we never know if it works..)
+            PushButton revert = MsoyUI.createButton(
+                MsoyUI.LONG_THIN, CStuff.msgs.detailRevert(), null);
+            new ClickCallback(revert, CStuff.msgs.detailConfirmRevert()) {
+                public boolean callService () {
+                    CStuff.itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    Item item = (Item) result;
+                    _models.updateItem(item);
+
+                    // TODO: recreate this page and now display the new item
+                    return false;
+                }
+            };
+            buttons.add(revert);
         }
 
         // add our delete/edit buttons if we have them
@@ -155,10 +180,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is listed in the catalog or listable, add a UI for that
-        boolean original = _item.isCatalogOriginal();
-        if (original || _item.sourceId == 0) {
+        if (catalogOriginal || _item.sourceId == 0) {
             String tip, butlbl;
-            if (original) {
+            if (catalogOriginal) {
                 tip = CStuff.msgs.detailUplistTip();
                 butlbl = CStuff.msgs.detailUplist();
             } else {
@@ -178,7 +202,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             buttons.add(_listBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, onClick));
 
             boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
-            if (original && salable) {
+            if (catalogOriginal && salable) {
                 // add a button for repricing the listing
                 butlbl = CStuff.msgs.detailUpprice();
                 buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
@@ -198,7 +222,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is giftable, add a UI for that
-        if (!original && _item.used == Item.UNUSED) {
+        if (!catalogOriginal && !used) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
@@ -208,7 +232,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if remixable, add a button for that.
-        if (_item.getFurniMedia().isRemixable()) {
+        if (remixable) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailRemixTip()));
             _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
