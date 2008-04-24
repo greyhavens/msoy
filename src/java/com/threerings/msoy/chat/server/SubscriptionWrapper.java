@@ -123,7 +123,8 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         if (host == null) {
-            log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter + "].");
+            log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter + 
+                ", " + _channel + "].");
             return null;
         }
 
