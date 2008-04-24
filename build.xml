@@ -985,9 +985,12 @@
   <!-- prepares and builds the msoy package(s) -->
   <target name="package" depends="assignversion,distall,prepare-package">
 
+    <!-- define the root of our packages on the target machine -->
+    <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
+
     <!-- define the root of the msoy-server package -->
     <property name="pkgroot.server" value="${pkgroot.root}/${app.name}-server"/>
-    <property name="approot.server" value="${pkgroot.server}/${ooo.prefix}/${app.name}"/>
+    <property name="approot.server" value="${pkgroot.server}/${app.prefix}"/>
     <mkdir dir="${approot.server}"/>
 
     <!-- copy the external jars needed by the server -->
@@ -1056,12 +1059,12 @@
     <!-- create our production security.policy file -->
     <copy file="etc/security.policy.in" tofile="${approot.server}/${deploy.dir}/security.policy">
       <filterset>
-        <filter token="PREFIX" value="${prefix.app}"/>
+        <filter token="PREFIX" value="${app.prefix}"/>
       </filterset>
     </copy>
     <copy file="etc/swiftly.policy.in" tofile="${approot.server}/${deploy.dir}/swiftly.policy">
       <filterset>
-        <filter token="PREFIX" value="${prefix.app}"/>
+        <filter token="PREFIX" value="${app.prefix}"/>
       </filterset>
     </copy>
 
@@ -1081,20 +1084,20 @@
     <startupscript name="msoy_server" runas="${msoy.user}"
                    output="${approot.server}/etc/rc.d/${app.name}-server.sh">
       <commands>
-        <start cmdline="${ooo.prefix}/${app.name}/bin/msoy start"/>
-        <stop cmdline="${ooo.prefix}/${app.name}/bin/msoy stop"/>
+        <start cmdline="${app.prefix}/bin/msoy start"/>
+        <stop cmdline="${app.prefix}/bin/msoy stop"/>
       </commands>
     </startupscript>
 
     <!-- create our policy server startup script -->
     <startupscript name="policy_server" runas="root"
-                   pidfile="${prefix.app}/run/policy-server.pid"
+                   pidfile="${app.prefix}/run/policy-server.pid"
                    output="${approot.server}/etc/rc.d/policy-server.sh">
-      <command cmd="/usr/sbin/daemon" args="-f ${prefix.app}/bin/runpolicy" procname="*java*"/>
+      <command cmd="/usr/sbin/daemon" args="-f ${app.prefix}/bin/runpolicy" procname="*java*"/>
     </startupscript>
 
     <!-- build the actual Debian package -->
-    <dpkg output="${package.output}" prefix="${ooo.prefix}/${app.name}"
+    <dpkg output="${package.output}" prefix="${app.prefix}"
           distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server}">
         <info>
