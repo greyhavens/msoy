@@ -101,9 +101,11 @@ public class InventoryModels
         if (item != null) {
             item.used = event.getUsage();
             item.location = event.getLocation();
+            // TODO: update lastTouched time locally?
 
-            // TODO: should we dispatch an event here to indicate that we changed the item?
-            // I tend to think so.
+            // TODO: right now, the ItemActivators listen to the usageChangedEvent just
+            // like we do, but perhaps this class should dispatch a more generic itemChanged
+            // event, and have the ItemActivators respond to that.
         }
     }
 
