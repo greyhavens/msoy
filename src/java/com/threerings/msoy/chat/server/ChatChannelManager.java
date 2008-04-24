@@ -202,7 +202,8 @@ public class ChatChannelManager
         MemberObject user = (MemberObject)caller;
         ChannelWrapper wrapper = _wrappers.get(channel);
         if (wrapper != null && wrapper.ready()) {
-            log.info("Removing " + user.who() + " from " + wrapper + ".");
+            log.info("Removing " + user.who() + " from " + wrapper.getChannel() + " [hosted=" + 
+                (wrapper instanceof HostedWrapper) + "].");
             removeChatter(wrapper, user); // this will also clean up the channel if needed
         }
     }
