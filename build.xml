@@ -1138,13 +1138,13 @@
     </copy>
 
     <!-- Set up a version number to use for docs package. -->
-    <tstamp><format property="version" pattern="yyyyMMddHHmmss"/></tstamp>
+    <tstamp><format property="docsVersion" pattern="yyyyMMddHHmmss"/></tstamp>
 
     <dpkg output="${package.output}" prefix="${ooo.docs.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.docs}">
         <info>
           <name>msoy-docs</name>
-          <version>${version}</version>
+          <version>${docsVersion}</version>
           <arch>${ooo.architecture}</arch>
           <description>Msoy Development Docs</description>
           <maintainer>
