@@ -72,7 +72,7 @@ public abstract class ChannelWrapper
     public boolean hasMember (ClientObject chatter) 
     { 
         MemberObject who = (MemberObject)chatter;
-        return ready() && (who == null || _ccobj.chatters.containsKey(who.memberName.getKey()));
+        return ready() && who != null && _ccobj.chatters.containsKey(who.memberName.getKey());
     }
 
     // from interface MessageListener
