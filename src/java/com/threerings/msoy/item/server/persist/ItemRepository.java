@@ -607,6 +607,7 @@ public abstract class ItemRepository<
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
     public void updateCloneItem (CLT clone)
+        throws PersistenceException
     {
         clone.lastTouched = new Timestamp(System.currentTimeMillis());
         update(clone);
