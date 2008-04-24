@@ -176,7 +176,7 @@ public abstract class ItemRepository<
      */
     public T loadClone (int cloneId) throws PersistenceException
     {
-        CLT cloneRecord = load(getCloneClass(), cloneId);
+        CLT cloneRecord = loadCloneRecord(cloneId);
         if (cloneRecord == null) {
             return null;
         }
@@ -343,16 +343,17 @@ public abstract class ItemRepository<
         Class<T> iclass = getItemClass();
         Class<CLT> cclass = getCloneClass();
 
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         for (int itemId : itemIds) {
             int result;
             if (itemId > 0) {
                 result = updatePartial(
                     iclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
-                    ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
+                    ItemRecord.LAST_TOUCHED, now);
             } else {
                 result = updatePartial(
                     cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
-                    ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
+                    ItemRecord.LAST_TOUCHED, now);
             }
             // if the item didn't update, point that out to log readers
             if (0 == result) {
@@ -601,6 +602,17 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Updates the supplied clone item in the database. This should only be done very carefully,
+     * as usually clones are not updated, but we do allow editing a few "override" fields.
+     * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
+     */
+    public void updateCloneItem (CLT clone)
+    {
+        clone.lastTouched = new Timestamp(System.currentTimeMillis());
+        update(clone);
+    }
+
+    /**
      * Create a row in our catalog table corresponding to the given item record, which should
      * be of the immutable variety.
      */
@@ -845,7 +857,7 @@ public abstract class ItemRepository<
             getItemClass(), ItemRecord.ITEM_ID));
         List<CLT> clones = findAll(getCloneClass(), clauseList);
 
-        // if we didn't find any clones, so our work here is done.
+        // our work here is done if we didn't find any
         if (clones.isEmpty()) {
             return Collections.emptyList();
         }
