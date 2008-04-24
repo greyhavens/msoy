@@ -99,7 +99,12 @@ public class HostedWrapper extends ChannelWrapper
     protected void updateDistributedObject (VizMemberName chatter, boolean addAction)
     {
         if (addAction) {
-            _ccobj.addToChatters(chatter);
+            if (!_ccobj.chatters.contains(chatter)) {
+                _ccobj.addToChatters(chatter);
+            } else {
+                log.warning("Requested to add an already existing chatter to set [channel=" + 
+                    _channel + ", chatter=" + chatter + ", " + _ccobj.chatters.size() + "].");
+            }
         } else {
             if (_ccobj.chatters.contains(chatter)) {
                 _ccobj.removeFromChatters(chatter.getKey());
