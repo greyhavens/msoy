@@ -154,7 +154,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }));
 
         } else if (!original && remixable) {
-            // if it's a remixed clone, add a button for reverting (we never know if it works..)
+            // if it's a remixed clone, add a button for reverting
             boolean mixed = _item.isAttrSet(Item.ATTR_REMIXED_CLONE);
             boolean newOrigAvail = _item.isAttrSet(Item.ATTR_ORIGINAL_UPDATED);
             PushButton revert = MsoyUI.createButton(MsoyUI.LONG_THIN,
@@ -178,10 +178,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     _item = item;
                     _detail.item = item;
 
-                    CStuff.viewParent(_item);
-                    // TODO: redisplay the item detail with the reverted version.
-//                    Application.go(Page.STUFF,
-//                        Args.compose("d", "" + item.getType(), "" + item.itemId), true);
+                    // redisplay the item detail with the reverted version.
+                    Application.go(Page.STUFF, Args.compose(new String[]
+                        { "d", "" + item.getType(), "" + item.itemId, "revert" }));
                     return false;
                 }
             };
