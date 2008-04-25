@@ -15,6 +15,7 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.annotation.Transient;
 
 import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
@@ -45,9 +46,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The column identifier for the {@link #flagged} field. */
     public static final String FLAGGED = "flagged";
-
-    /** The column identifier for the {@link #attrs} field. */
-    public static final String ATTRS = "attrs";
 
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
@@ -122,7 +120,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** A bit-mask of runtime attributes about this item. These are not saved in the database
      * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
      * down from the server. */
-    @Computed(required=false)
+    @Transient
     public byte attrs;
 
     /** The member id of the member that created this item. */

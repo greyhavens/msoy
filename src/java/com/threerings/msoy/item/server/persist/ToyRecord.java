@@ -30,10 +30,6 @@ public class ToyRecord extends ItemRecord
     public static final ColumnExp FLAGGED_C =
         new ColumnExp(ToyRecord.class, FLAGGED);
 
-    /** The qualified column identifier for the {@link #attrs} field. */
-    public static final ColumnExp ATTRS_C =
-        new ColumnExp(ToyRecord.class, ATTRS);
-
     /** The qualified column identifier for the {@link #creatorId} field. */
     public static final ColumnExp CREATOR_ID_C =
         new ColumnExp(ToyRecord.class, CREATOR_ID);
