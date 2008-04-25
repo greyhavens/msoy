@@ -48,6 +48,8 @@ public class ItemPanel extends VerticalPanel
         _models = models;
         _type = type;
 
+        boolean isCatalogType = isCatalogItem(type);
+
         // a drop down for setting filters (eventually it will have user creatable folders)
         _filters = new ListBox();
         for (int ii = 0; ii < FLABELS.length; ii++) {
@@ -59,7 +61,7 @@ public class ItemPanel extends VerticalPanel
             }
         });
 
-        if (isCatalogItem(type)) {
+        if (isCatalogType) {
             _shop = new HorizontalPanel();
             _shop.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
             _shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
@@ -75,8 +77,7 @@ public class ItemPanel extends VerticalPanel
 
         // compute the number of rows of items we can fit on the page
         int used = Frame.HEADER_HEIGHT + NAV_BAR_ETC;
-        boolean showCreate = shouldShowCreate(type);
-        if (showCreate) {
+        if (isCatalogType) {
             used += BLURB_HEIGHT;
         }
         int boxHeight = BOX_HEIGHT;
@@ -109,7 +110,7 @@ public class ItemPanel extends VerticalPanel
         _contents.addStyleName("Contents");
 
         // finally optionally add the "create your own" sales blurb
-        if (showCreate) {
+        if (isCatalogType) {
             createUploadInterface();
         }
     }
@@ -127,12 +128,6 @@ public class ItemPanel extends VerticalPanel
 
         // make sure we're shoing and have our data
         showInventory(page, null);
-    }
-
-    protected boolean shouldShowCreate (byte type)
-    {
-        // if it's catalog, it's createable
-        return isCatalogItem(type);
     }
 
     protected boolean isCatalogItem (byte type)
