@@ -266,9 +266,11 @@ public class CreateAccountPanel extends VerticalPanel
                 CAccount.app.didLogon((SessionData)result);
             }
             public void onFailure (Throwable caught) {
-                if (caught instanceof CaptchaException) {
+                if (hasRecaptchaKey()) {
                     reloadRecaptcha();
-                    focusRecaptcha();
+                    if (caught instanceof CaptchaException) {
+                        focusRecaptcha();
+                    }
                 }
                 setStatus(CAccount.serverError(caught));
             }
