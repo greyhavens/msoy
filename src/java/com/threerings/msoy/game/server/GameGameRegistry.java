@@ -262,6 +262,16 @@ public class GameGameRegistry
     }
 
     /**
+     * Resets our in-memory percentiler for the specified game. This is triggered by a request from
+     * our world server.
+     */
+    public void resetScorePercentiler (int gameId, boolean single)
+    {
+        log.info("Resetting in-memory percentiler [gameId=" + gameId + ", single=" + single + "].");
+        _distribs.put(single ? -gameId : gameId, new Percentiler());
+    }
+
+    /**
      * Awards the supplied trophy and provides a {@link Trophy} instance on success to the supplied
      * listener or failure.
      */

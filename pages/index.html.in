@@ -36,7 +36,7 @@
       <div class="loading">Whirled is loading...</div>
   </td></tr>
   <tr><td valign="top" id="content" style="background: #FFFFFF"></td>
-      <td valign="top" id="client" height="100%"></td></tr>
+      <td valign="top" id="client" height="100%" style="visible: false"></td></tr>
   </table>
   <iframe id="__gwt_historyFrame" style="width:0px;height:0px;border:0px;display:none"></iframe>
   <script language="javascript" src="/msoy/msoy.nocache.js"></script>

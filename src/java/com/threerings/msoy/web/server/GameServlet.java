@@ -38,6 +38,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -196,8 +197,12 @@ public class GameServlet extends MsoyServiceServlet
 
         GameRepository repo = MsoyServer.itemMan.getGameRepository();
         try {
+            // wipe the percentiler in the database
             int uGameId = single ? -gameId : gameId;
             MsoyServer.ratingRepo.updatePercentile(uGameId, new Percentiler());
+
+            // tell any resolved instance of this game to clear its in memory percentiler
+            MsoyServer.peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +
@@ -564,6 +569,22 @@ public class GameServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load game source record to verify ownership " +
                     "[gameId=" + gameId + ", mrec=" + mrec.who() + "].");
         }
+    }
+
+    /** Used by {@link #resetGameScores}. */
+    protected static class ResetScoresAction extends GameNodeAction
+    {
+        public ResetScoresAction (int gameId, boolean single) {
+            super(gameId);
+            _single = single;
+        }
+
+        @Override // from PeerManager.NodeAction
+        protected void execute () {
+            MsoyServer.gameReg.resetGameScores(_gameId, _single);
+        }
+
+        protected boolean _single;
     }
 
     protected static final int MAX_RANKINGS = 10;

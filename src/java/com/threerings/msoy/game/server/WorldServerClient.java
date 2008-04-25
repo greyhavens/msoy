@@ -36,6 +36,9 @@ public class WorldServerClient
     /** A message sent by our world server to let us know a game record has been updated. */
     public static final String GAME_RECORD_UPDATED = "gameRecordUpdated";
 
+    /** A message sent by our world server to request that we reset our percentiler. */
+    public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
+
     public void init (MsoyGameServer server, int listenPort, int connectPort)
     {
         _server = server;
@@ -122,13 +125,13 @@ public class WorldServerClient
             _server.shutdown();
 
         } else if (event.getName().equals(GAME_RECORD_UPDATED)) {
-            Object[] args = event.getArgs();
-            if (args == null || args.length != 1 || !(args[0] instanceof Integer)) {
-                log.warning("Creepy arguments from world server, ignoring [args=" + args + "]");
-                return;
-            }
-            int gameId = ((Integer) args[0]).intValue();
+            int gameId = (Integer)event.getArgs()[0];
             MsoyGameServer.gameReg.gameRecordUpdated(gameId);
+
+        } else if (event.getName().equals(RESET_SCORE_PERCENTILER)) {
+            int gameId = (Integer)event.getArgs()[0];
+            boolean single = (Boolean)event.getArgs()[1];
+            MsoyGameServer.gameReg.resetScorePercentiler(gameId, single);
         }
     }
 

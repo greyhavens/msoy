@@ -34,9 +34,6 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
-
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
@@ -50,8 +47,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-
+import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
@@ -655,8 +651,11 @@ public class ItemManager
             MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
 
         } else if (type == Item.GAME) {
-            MsoyServer.peerMan.invokeNodeAction(
-                new UpdateGameAction(((GameRecord) rec).gameId));
+            MsoyServer.peerMan.invokeNodeAction(new GameNodeAction(((GameRecord) rec).gameId) {
+                protected void execute () {
+                    MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
+                }
+            });
         }
     }
 
@@ -1205,27 +1204,6 @@ public class ItemManager
         /** A mapping of item type to LookupType record of repo / ids. */
         protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
-
-    /** Updates a game record across peers. */
-    protected static class UpdateGameAction extends PeerManager.NodeAction
-    {
-        public UpdateGameAction (int gameId) {
-            _gameId = gameId;
-        }
-
-        @Override
-        public boolean isApplicable (NodeObject nodeObj) {
-            return ((MsoyNodeObject) nodeObj).hostedGames.containsKey(_gameId);
-        }
-
-        @Override
-        protected void execute ()
-        {
-            MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
-        }
-
-        protected int _gameId;
-    } /* End: static class UpdateGameAction. */
 
     /** A reference to our game repository. We'd just look this up from the table but we can't
      * downcast an ItemRepository to a GameRepository, annoyingly. */

@@ -301,7 +301,21 @@ public class MsoyGameRegistry
             log.info("Eek, handler vanished [gameId=" + gameId + "]");
             return;
         }
-        handler.gameRecordUpdated(gameId);
+        handler.postMessage(WorldServerClient.GAME_RECORD_UPDATED, gameId);
+    }
+
+    /**
+     * Forwards a request to our game server to have the specified resolved game reset its
+     * percentiler score trackers in memory.
+     */
+    public void resetGameScores (int gameId, boolean single)
+    {
+        GameServerHandler handler = _handmap.get(gameId);
+        if (handler == null) {
+            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            return;
+        }
+        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
     }
 
     // from interface GameServerProvider
@@ -481,9 +495,9 @@ public class MsoyGameRegistry
             }
         }
 
-        public void gameRecordUpdated (int gameId)
+        public void postMessage (String name, Object... args)
         {
-            _clobj.postMessage(WorldServerClient.GAME_RECORD_UPDATED, gameId);
+            _clobj.postMessage(name, args);
         }
 
         protected ClientObject _clobj;
