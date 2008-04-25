@@ -116,13 +116,13 @@ public class RemixControls extends HBox
         butBox.percentWidth = 100;
         vbox.addChild(butBox);
 
-        butBox.addChild(_saveBtn = new CommandButton("Save Remixes", commit));
-        _saveBtn.styleName = "longThinOrangeButton";
-        _saveBtn.enabled = false;
-
         var cancel :CommandButton = new CommandButton("Cancel", cancel);
         cancel.styleName = "longThinOrangeButton";
         butBox.addChild(cancel);
+
+        butBox.addChild(_saveBtn = new CommandButton("Save Remixes", commit));
+        _saveBtn.styleName = "longThinOrangeButton";
+        _saveBtn.enabled = false;
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
