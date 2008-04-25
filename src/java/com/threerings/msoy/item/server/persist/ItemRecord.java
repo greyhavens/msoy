@@ -225,7 +225,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /**
      * Tests whether a given flag is set on this item.
      */
-    public boolean isSet (byte flag)
+    public boolean isFlagSet (byte flag)
     {
         return (flagged & flag) != 0;
     }

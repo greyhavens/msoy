@@ -39,10 +39,10 @@ public class ReviewItem extends FlowPanel
         // say what flags are set on it
         FlowPanel flaggedAs = new FlowPanel();
         flaggedAs.add(new InlineLabel("Flagged as:"));
-        if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
+        if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
             flaggedAs.add(new InlineLabel("Mature", false, true, false));
         }
-        if (_item.isSet(Item.FLAG_FLAGGED_COPYRIGHT)) {
+        if (_item.isFlagSet(Item.FLAG_FLAGGED_COPYRIGHT)) {
             flaggedAs.add(new InlineLabel("Copyright Violation", false, true, false));
         }
         add(flaggedAs);
@@ -78,7 +78,7 @@ public class ReviewItem extends FlowPanel
 //             }
 
         // a button to mark someting as mature
-        if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
+        if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
             _mark = new Button(CAdmin.msgs.reviewMark());
             new ClickCallback(_mark) {
                 public boolean callService () {

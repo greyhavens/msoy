@@ -314,7 +314,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /**
      * Tests whether a given flag is set on this item.
      */
-    public boolean isSet (byte flag)
+    public boolean isFlagSet (byte flag)
     {
         return (flagged & flag) != 0;
     }
