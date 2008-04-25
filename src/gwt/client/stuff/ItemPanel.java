@@ -131,14 +131,8 @@ public class ItemPanel extends VerticalPanel
 
     protected boolean shouldShowCreate (byte type)
     {
-        // if this is photos, music, videos, or furni always show create
-        if (type == Item.PHOTO || type == Item.AUDIO || type == Item.VIDEO ||
-            type == Item.FURNITURE) {
-            return true;
-        }
-
-        // otherwise it has to be a catalog item and we have to be a minimum level
-        return isCatalogItem(type) && (CStuff.level >= MIN_CREATE_LEVEL);
+        // if it's catalog, it's createable
+        return isCatalogItem(type);
     }
 
     protected boolean isCatalogItem (byte type)
@@ -269,6 +263,4 @@ public class ItemPanel extends VerticalPanel
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;
-
-    protected static final int MIN_CREATE_LEVEL = 5;
 }
