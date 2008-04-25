@@ -86,6 +86,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
  Useful utility methods that wouldn't be needed if the flash API were not so retarded.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html#findIf()">findIf</a>(arr, predicate) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html">ArrayUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the first item in the array for which the predicate function returns true, or
+     undefined if no such item was found.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html#findInHierarchy()">findInHierarchy</a>(top, name, findShallow, maxDepth) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html">DisplayUtil</a></td>
 </tr>
 <tr>
@@ -143,7 +151,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#forEach()">forEach</a>(fn) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td> 
+     Call the specified function, which accepts two args: key and value,
+     for every mapping.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html#forEach()">forEach</a>(fn) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html">Map</a></td>

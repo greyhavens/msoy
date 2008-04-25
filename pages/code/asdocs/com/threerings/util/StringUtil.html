@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="StringUtil,com.threerings.util.StringUtil,HEX,URL_REGEXP,endsWith,fieldsToString,fromBytes,hashCode,hexlate,isBlank,isLowerCase,isUpperCase,isWhitespace,pad,parseInt0,parseInteger,parseURLs,parseUnsignedInteger,prepad,simpleToString,startsWith,substitute,toBytes,toString,trim,truncate,unhexlate" name="keywords">
+<meta content="StringUtil,com.threerings.util.StringUtil,DECIMAL,HEX,URL_REGEXP,endsWith,fieldsToString,fromBytes,hashCode,hexlate,isBlank,isLowerCase,isUpperCase,isWhitespace,pad,parseBoolean,parseInt0,parseInteger,parseNumber,parseURLs,parseUnsignedInteger,prepad,simpleToString,startsWith,substitute,toBytes,toString,trim,truncate,unhexlate,validateDecimal" name="keywords">
 <title>com.threerings.util.StringUtil</title>
 </head>
 <body>
@@ -137,10 +137,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#parseBoolean()">parseBoolean</a>(str:String):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Parse a Boolean from a String, throwing an ArgumentError if the String
+     contains invalid characters.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#parseInteger()">parseInteger</a>(str:String, radix:uint = 0):int</div>
 <div class="summaryTableDescription">[static]
      Parse an integer more anally than the built-in parseInt() function,
      throwing an ArgumentError if there are any invalid characters.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#parseNumber()">parseNumber</a>(str:String):Number</div>
+<div class="summaryTableDescription">[static]
+     Parse a Number from a String, throwing an ArgumentError if there are any
+     invalid characters.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -251,6 +269,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Internal helper function for parseInteger and parseUnsignedInteger.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#validateDecimal()">validateDecimal</a>(str:String, allowDot:Boolean, allowTrailingE:Boolean):String</div>
+<div class="summaryTableDescription">[static]
+     Internal helper function for parseNumber.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
 </table>
 </div>
 <a name="constantSummary"></a><a name="protectedConstantSummary"></a>
@@ -259,6 +285,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DECIMAL">DECIMAL</a> : Array<div class="summaryTableDescription">[static] Decimal digits.</div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#HEX">HEX</a> : Array<div class="summaryTableDescription">[static] Hexidecimal digits.</div>
@@ -527,6 +557,33 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="parseBoolean()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parseBoolean</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function parseBoolean(str:String):Boolean</code><p>
+     Parse a Boolean from a String, throwing an ArgumentError if the String
+     contains invalid characters.
+          "1", "0", and any capitalization variation of "true" and "false" are
+     the only valid input values.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code> &mdash; the String to parse.
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="parseInt0()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -594,6 +651,32 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="parseNumber()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parseNumber</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function parseNumber(str:String):Number</code><p>
+     Parse a Number from a String, throwing an ArgumentError if there are any
+     invalid characters.
+          1.5, 2e-3, -Infinity, Infinity, and NaN are all valid Strings.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code> &mdash; the String to parse.
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
 </tr>
 </table>
 </div>
@@ -905,12 +988,55 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="validateDecimal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">validateDecimal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function validateDecimal(str:String, allowDot:Boolean, allowTrailingE:Boolean):String</code><p>
+     Internal helper function for parseNumber.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">allowDot</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">allowTrailingE</span>:Boolean</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="DECIMAL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DECIMAL</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const DECIMAL:Array</code><p> Decimal digits. </p></div>
 <a name="HEX"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">HEX</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">HEX</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

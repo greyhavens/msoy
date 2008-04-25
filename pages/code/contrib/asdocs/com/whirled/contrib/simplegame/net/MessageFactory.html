@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="MessageFactory,com.whirled.contrib.simplegame.net.MessageFactory,deserialize,serialize" name="keywords">
+<meta content="MessageFactory,com.whirled.contrib.simplegame.net.MessageFactory,deserializeFromNetwork,serializeForNetwork" name="keywords">
 <title>com.whirled.contrib.simplegame.net.MessageFactory</title>
 </head>
 <body>
@@ -53,7 +53,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#deserialize()">deserialize</a>(obj:Object):<a href="../net/Message.html">Message</a>
+<a class="signatureLink" href="#deserializeFromNetwork()">deserializeFromNetwork</a>(obj:Object):<a href="../net/Message.html">Message</a>
 </div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MessageFactory</td>
@@ -61,7 +61,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#serialize()">serialize</a>(msg:<a href="Message.html">Message</a>):Object</div>
+<a class="signatureLink" href="#serializeForNetwork()">serializeForNetwork</a>(msg:<a href="Message.html">Message</a>):Object</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MessageFactory</td>
 </tr>
@@ -74,14 +74,14 @@ showHideInherited();
 <div class="MainContent">
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="deserialize()"></a>
+<a name="deserializeFromNetwork()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">deserialize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">deserializeFromNetwork</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function deserialize(obj:Object):<a href="../net/Message.html">Message</a></code><span class="label">Parameters</span>
+<code>public function deserializeFromNetwork(obj:Object):<a href="../net/Message.html">Message</a></code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">obj</span>:Object</code></td>
@@ -95,14 +95,14 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="serialize()"></a>
+<a name="serializeForNetwork()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">serialize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">serializeForNetwork</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function serialize(msg:<a href="Message.html">Message</a>):Object</code><span class="label">Parameters</span>
+<code>public function serializeForNetwork(msg:<a href="Message.html">Message</a>):Object</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="Message.html">Message</a></code></td>
