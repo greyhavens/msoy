@@ -21,7 +21,7 @@ public abstract class GameNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        return ((MsoyNodeObject)nodeobj).clients.containsKey(_gameId);
+        return ((MsoyNodeObject)nodeobj).hostedGames.containsKey(_gameId);
     }
 
     protected int _gameId;
