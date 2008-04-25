@@ -87,7 +87,7 @@ public class MemberInfoPanel extends SmartTable
         FlowPanel invited = new FlowPanel();
         for (int ii = 0; ii < info.invitees.size(); ii++) {
             if (ii > 0) {
-                invited.add(MsoyUI.createHTML(",&nbsp;", "inline"));
+                invited.add(MsoyUI.createHTML(", ", "inline"));
             }
             invited.add(infoLink((MemberName)info.invitees.get(ii)));
         }
