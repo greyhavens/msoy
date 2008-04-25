@@ -30,10 +30,10 @@ public class FloatingPanel extends TitleWindow
      *
      * Note that button ids also dictate the order in which buttons
      * are added to the button bar, so you may add new buttons with negative
-     * ids to have them placed to the left of OK.
+     * ids to have them placed to the left of cancel.
      */
-    public static const OK_BUTTON :int = 0;
-    public static const CANCEL_BUTTON :int = 1;
+    public static const CANCEL_BUTTON :int = 0;
+    public static const OK_BUTTON :int = int.MAX_VALUE;
 
     public static const DEFAULT_BUTTON_WIDTH :int = 72;
 
@@ -155,6 +155,7 @@ public class FloatingPanel extends TitleWindow
     {
         if (_buttonBar == null) {
             _buttonBar = new ButtonBar();
+            _buttonBar.percentWidth = 100;
         }
         if (width > 0) {
             _buttonBar.setStyle("buttonWidth", width);

@@ -194,6 +194,7 @@ PopUpButton {
 
 ButtonBar {
   horizontalGap: 6;
+  horizontalAlign: "right";
 }
 
 VScrollBar {
