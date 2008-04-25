@@ -27,6 +27,11 @@ public interface AdminServiceAsync
                                   AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link AdminService#getMemberInfo}.
+     */
+    public void getMemberInfo (WebIdent ident, int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link AdminService#getPlayerList}.
      */
     public void getPlayerList (WebIdent ident, int inviterId, AsyncCallback callback);

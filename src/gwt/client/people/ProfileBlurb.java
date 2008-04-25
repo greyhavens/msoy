@@ -133,7 +133,7 @@ public class ProfileBlurb extends Blurb
             if (CPeople.isAdmin()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
                           Application.createLink(
-                              since, Page.ADMIN, Args.compose("browser", _name.getMemberId())));
+                              since, Page.ADMIN, Args.compose("info", _name.getMemberId())));
             } else {
                 addDetail(dbits, CPeople.msgs.memberSince(), since);
             }

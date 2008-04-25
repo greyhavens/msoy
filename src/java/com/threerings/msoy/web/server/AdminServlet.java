@@ -4,10 +4,11 @@
 package com.threerings.msoy.web.server;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
@@ -20,8 +21,10 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.client.AdminService;
+import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.MemberInviteStatus;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -47,7 +50,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         try {
             Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
-            for (int memberId : MsoyServer.memberRepo.grantInvites(numberInvitations, since)) {
+            for (int memberId : _memberRepo.grantInvites(numberInvitations, since)) {
                 sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
             }
 
@@ -68,12 +71,55 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.memberRepo.grantInvites(memberId, numberInvitations);
+            _memberRepo.grantInvites(memberId, numberInvitations);
             sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface AdminService
+    public MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        if (!memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        try {
+            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
+                return null;
+            }
+
+            MemberAdminInfo info = new MemberAdminInfo();
+            info.name = tgtrec.getName();
+            info.accountName = tgtrec.accountName;
+            info.permaName = tgtrec.permaName;
+            info.isSupport = tgtrec.isSupport();
+            info.isAdmin = tgtrec.isAdmin();
+            info.flow = tgtrec.flow;
+            info.accFlow = tgtrec.accFlow;
+            // info.gold = TODO: load gold
+            info.sessions = tgtrec.sessions;
+            info.sessionMinutes = tgtrec.sessionMinutes;
+            if (tgtrec.lastSession != null) {
+                info.lastSession = new Date(tgtrec.lastSession.getTime());
+            }
+            info.humanity = tgtrec.humanity;
+            if (tgtrec.invitingFriendId != 0) {
+                info.inviter = _memberRepo.loadMemberName(tgtrec.invitingFriendId);
+            }
+            info.invitees = _memberRepo.loadMembersInvitedBy(memberId);
+
+            return info;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getMemberInfo failed [id=" + memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -89,8 +135,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         MemberInviteResult res = new MemberInviteResult();
         try {
-            MemberRecord memRec = inviterId == 0 ? null :
-                MsoyServer.memberRepo.loadMember(inviterId);
+            MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
             if (memRec != null) {
                 res.name = memRec.permaName == null || memRec.permaName.equals("") ?
                     memRec.name : memRec.permaName;
@@ -98,9 +143,8 @@ public class AdminServlet extends MsoyServiceServlet
                 res.invitingFriendId = memRec.invitingFriendId;
             }
 
-            List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();
-            for (MemberInviteStatusRecord rec :
-                    MsoyServer.memberRepo.getMembersInvitedBy(inviterId)) {
+            List<MemberInviteStatus> players = Lists.newArrayList();
+            for (MemberInviteStatusRecord rec : _memberRepo.getMembersInvitedBy(inviterId)) {
                 players.add(rec.toWebObject());
             }
             res.invitees = players;
@@ -158,7 +202,7 @@ public class AdminServlet extends MsoyServiceServlet
                 }
 
                 found = 0;
-                for (MemberRecord mrec : MsoyServer.memberRepo.loadMembers(memIds)) {
+                for (MemberRecord mrec : _memberRepo.loadMembers(memIds)) {
                     found++;
 
                     if (mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL)) {
@@ -196,6 +240,8 @@ public class AdminServlet extends MsoyServiceServlet
         String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
         MsoyServer.mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
+
+    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
 
     protected static final int MEMBERS_PER_LOOP = 100;
 }

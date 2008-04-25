@@ -117,3 +117,13 @@
 .spamPlayers { 
   margin: 10px;
 }
+
+.memberInfo .Name {
+  font-size: 18px;
+}
+
+.memberInfo .Label {
+  vertical-align: top;
+  text-align: right;
+  white-space: nowrap;
+}

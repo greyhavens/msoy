@@ -48,6 +48,9 @@ public class index extends Page
         } else if (args.get(0, "").equals("review")) {
             setContent(CAdmin.msgs.reviewTitle(), new ReviewPanel());
 
+        } else if (args.get(0, "").equals("info")) {
+            setContent(CAdmin.msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
+
         } else {
             setContent(CAdmin.msgs.title(), new DashboardPanel());
         }

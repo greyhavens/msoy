@@ -839,6 +839,22 @@ public class MemberRepository extends DepotRepository
         updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
     }
 
+    /**
+     * Loads the names of the members invited by the specified member.
+     */
+    public List<MemberName> loadMembersInvitedBy (int memberId)
+        throws PersistenceException
+    {
+        Join join = new Join(MemberRecord.MEMBER_ID_C,
+                             InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER);
+        Where where = new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId);
+        List<MemberName> names = Lists.newArrayList();
+        for (MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
+            names.add(name.toMemberName());
+        }
+        return names;
+    }
+
     public List<MemberInviteStatusRecord> getMembersInvitedBy (int memberId)
         throws PersistenceException
     {

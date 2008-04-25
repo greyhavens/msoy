@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -28,6 +29,12 @@ public interface AdminService extends RemoteService
      * Grants the given number of invitations to the given user.
      */
     public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
+        throws ServiceException;
+
+    /**
+     * Returns admin information for the specified member.
+     */
+    public MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
         throws ServiceException;
 
     /**
