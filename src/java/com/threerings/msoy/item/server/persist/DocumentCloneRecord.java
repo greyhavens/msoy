@@ -55,6 +55,10 @@ public class DocumentCloneRecord extends CloneRecord<DocumentRecord>
     /** The qualified column identifier for the {@link #mediaHash} field. */
     public static final ColumnExp MEDIA_HASH_C =
         new ColumnExp(DocumentCloneRecord.class, MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #mediaStamp} field. */
+    public static final ColumnExp MEDIA_STAMP_C =
+        new ColumnExp(DocumentCloneRecord.class, MEDIA_STAMP);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START

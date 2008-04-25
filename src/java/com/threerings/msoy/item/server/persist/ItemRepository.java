@@ -605,11 +605,17 @@ public abstract class ItemRepository<
      * Updates a clone item's override media in the database. This is done when we remix.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneMedia (int itemId, byte[] hash)
+    public void updateCloneMedia (CloneRecord cloneRec)
         throws PersistenceException
     {
-        updatePartial(getCloneClass(), itemId, CloneRecord.MEDIA_HASH, hash,
-                      CloneRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        cloneRec.lastTouched = now;
+        cloneRec.mediaStamp = (cloneRec.mediaHash == null) ? null : now;
+
+        updatePartial(getCloneClass(), cloneRec.itemId,
+            CloneRecord.MEDIA_HASH, cloneRec.mediaHash,
+            CloneRecord.MEDIA_STAMP, cloneRec.mediaStamp,
+            CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
     }
 
     /**

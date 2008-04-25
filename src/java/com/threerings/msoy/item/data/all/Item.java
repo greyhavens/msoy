@@ -93,10 +93,16 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final String PLUS_THUMB = "_plus_thumb";
 
     /** Indicates that somebody has flagged this item as mature content. */
-    public static final byte FLAG_FLAGGED_MATURE = 0x1 << 0;
+    public static final byte FLAG_FLAGGED_MATURE = 1 << 0;
 
     /** Indicates that somebody has flagged this item as copyrighted content. */
-    public static final byte FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
+    public static final byte FLAG_FLAGGED_COPYRIGHT = 1 << 1;
+
+    /** Indicates that this item is a "remixed clone", that we can revert to the original mix. */
+    public static final byte ATTR_REMIXED_CLONE = 1 << 0;
+
+    /** Indicates that this item is a remixable clone and the original version is updated. */
+    public static final byte ATTR_ORIGINAL_UPDATED = 1 << 1;
 
     /** The maximum length for item names. */
     public static final int MAX_NAME_LENGTH = 64;
@@ -116,6 +122,11 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public byte flagged;
+
+    /** A bit-mask of runtime attributes about this item. These are not saved in the database
+     * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
+     * down from the server. */
+    public byte attrs;
 
     /** The member id of the member that created this item. */
     public int creatorId;
@@ -314,6 +325,14 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public void setFlag (byte flag, boolean value)
     {
         flagged = (byte) (value ? flagged | flag : flagged ^ ~flag);
+    }
+
+    /**
+     * Tests whether a given attribute is set on this item.
+     */
+    public boolean isAttrSet (byte attr)
+    {
+        return (attrs & attr) != 0;
     }
 
     /**

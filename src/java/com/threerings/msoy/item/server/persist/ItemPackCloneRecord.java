@@ -56,6 +56,10 @@ public class ItemPackCloneRecord extends CloneRecord<ItemPackRecord>
     /** The qualified column identifier for the {@link #mediaHash} field. */
     public static final ColumnExp MEDIA_HASH_C =
         new ColumnExp(ItemPackCloneRecord.class, MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #mediaStamp} field. */
+    public static final ColumnExp MEDIA_STAMP_C =
+        new ColumnExp(ItemPackCloneRecord.class, MEDIA_STAMP);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;

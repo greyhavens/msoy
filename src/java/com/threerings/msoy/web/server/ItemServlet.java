@@ -170,15 +170,16 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void remixItem (WebIdent ident, Item item)
+    public Item remixItem (WebIdent ident, Item item)
         throws ServiceException
     {
         if (item.sourceId == 0) {
             // it's an original being remixed, it's the same as updateItem
             updateItem(ident, item);
+            return item;
 
         } else {
-            remixClone(ident, item.getIdent(), item);
+            return remixClone(ident, item.getIdent(), item);
         }
     }
 
@@ -708,7 +709,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
             // save out the updated info
-            repo.updateCloneMedia(itemIdent.itemId, record.mediaHash);
+            repo.updateCloneMedia(record);
 
             // create the proper ItemRecord representing the clone
             orig.initFromClone(record);

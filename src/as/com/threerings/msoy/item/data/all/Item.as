@@ -86,6 +86,11 @@ public /*abstract*/ class Item
      * database lookups or network requests. */
     public var flagged :int;
 
+    /** A bit-mask of runtime attributes about this item. These are not saved in the database
+     * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
+     * down from the server. */
+    public var attrs :int;
+
     /** The member id of the member that created this item. */
     public var creatorId :int;
 
@@ -354,6 +359,7 @@ public /*abstract*/ class Item
         out.writeInt(itemId);
         out.writeInt(sourceId);
         out.writeByte(flagged);
+        out.writeByte(attrs);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
         out.writeInt(catalogId);
@@ -374,6 +380,7 @@ public /*abstract*/ class Item
         itemId = ins.readInt();
         sourceId = ins.readInt();
         flagged = ins.readByte();
+        attrs = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
         catalogId = ins.readInt();

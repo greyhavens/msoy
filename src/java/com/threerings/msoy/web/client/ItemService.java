@@ -43,7 +43,7 @@ public interface ItemService extends RemoteService
     /**
      * Requests that the supplied item be remixed to the new media contained within it.
      */
-    public void remixItem (WebIdent ident, Item item)
+    public Item remixItem (WebIdent ident, Item item)
         throws ServiceException;
 
     /**

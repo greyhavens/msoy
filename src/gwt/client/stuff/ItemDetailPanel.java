@@ -155,8 +155,18 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         } else if (!original && remixable) {
             // if it's a remixed clone, add a button for reverting (we never know if it works..)
-            PushButton revert = MsoyUI.createButton(
-                MsoyUI.LONG_THIN, CStuff.msgs.detailRevert(), null);
+            boolean mixed = _item.isAttrSet(Item.ATTR_REMIXED_CLONE);
+            boolean newOrigAvail = _item.isAttrSet(Item.ATTR_ORIGINAL_UPDATED);
+            PushButton revert = MsoyUI.createButton(MsoyUI.LONG_THIN,
+                newOrigAvail ? CStuff.msgs.detailUpdate() : CStuff.msgs.detailRevert(), null);
+            if (!newOrigAvail && !mixed) { // if the item is up-to-date, disable the button
+                revert.setEnabled(false);
+                revert.setTitle(CStuff.msgs.detailRevertNotNeeded());
+            } else {
+                _details.add(WidgetUtil.makeShim(10, 10));
+                _details.add(new Label(newOrigAvail ? CStuff.msgs.detailUpdateTip()
+                    : CStuff.msgs.detailRevertTip()));
+            }
             new ClickCallback(revert, CStuff.msgs.detailConfirmRevert()) {
                 public boolean callService () {
                     CStuff.itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
@@ -165,8 +175,13 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 public boolean gotResult (Object result) {
                     Item item = (Item) result;
                     _models.updateItem(item);
+                    _item = item;
+                    _detail.item = item;
 
-                    // TODO: recreate this page and now display the new item
+                    CStuff.viewParent(_item);
+                    // TODO: redisplay the item detail with the reverted version.
+//                    Application.go(Page.STUFF,
+//                        Args.compose("d", "" + item.getType(), "" + item.itemId), true);
                     return false;
                 }
             };

@@ -63,6 +63,10 @@ public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
     /** The qualified column identifier for the {@link #mediaHash} field. */
     public static final ColumnExp MEDIA_HASH_C =
         new ColumnExp(AvatarCloneRecord.class, MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #mediaStamp} field. */
+    public static final ColumnExp MEDIA_STAMP_C =
+        new ColumnExp(AvatarCloneRecord.class, MEDIA_STAMP);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 +

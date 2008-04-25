@@ -48,9 +48,12 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** The column identifier for the {@link #mediaHash} field. */
     public static final String MEDIA_HASH = "mediaHash";
+
+    /** The column identifier for the {@link #mediaStamp} field. */
+    public static final String MEDIA_STAMP = "mediaStamp";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 6;
+    public static final int BASE_SCHEMA_VERSION = 7;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
@@ -93,6 +96,11 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
      * same as the original media mimeType, and should only be APPLICATION/ZIP. */
     @Column(nullable=true)
     public byte[] mediaHash;
+
+    /** The time at which the mediaHash was set, so that we know when there is a new
+     * version available out of the shop. Null when mediaHash is null. */
+    @Column(nullable=true)
+    public Timestamp mediaStamp;
 
     /**
      * Initialize a new clone with the specified values.

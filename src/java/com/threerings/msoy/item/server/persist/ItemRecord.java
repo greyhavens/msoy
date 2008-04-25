@@ -46,6 +46,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The column identifier for the {@link #flagged} field. */
     public static final String FLAGGED = "flagged";
 
+    /** The column identifier for the {@link #attrs} field. */
+    public static final String ATTRS = "attrs";
+
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
 
@@ -115,6 +118,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
     public byte flagged;
+
+    /** A bit-mask of runtime attributes about this item. These are not saved in the database
+     * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
+     * down from the server. */
+    @Computed(required=false)
+    public byte attrs;
 
     /** The member id of the member that created this item. */
     public int creatorId;
@@ -273,6 +282,20 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public void initFromClone (CloneRecord clone)
     {
+        // use the clone's override name, if present
+        if (clone.name != null) {
+            this.name = clone.name;
+        }
+
+        // use the clone's media override (remix media)
+        if (clone.mediaHash != null) {
+            setPrimaryMedia(clone.mediaHash);
+            this.attrs |= Item.ATTR_REMIXED_CLONE;
+            if (clone.mediaStamp.before(this.lastTouched)) {
+                this.attrs |= Item.ATTR_ORIGINAL_UPDATED;
+            }
+        }
+
         // copy our itemId to parent, and take the clone's itemId
         this.sourceId = this.itemId;
         this.itemId = clone.itemId;
@@ -283,16 +306,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         this.used = clone.used;
         this.location = clone.location;
         this.lastTouched = clone.lastTouched;
-
-        // use the clone's override name, if present
-        if (clone.name != null) {
-            this.name = clone.name;
-        }
-
-        // use the clone's media override (remix media)
-        if (clone.mediaHash != null) {
-            setPrimaryMedia(clone.mediaHash);
-        }
     }
 
     /**
@@ -313,6 +326,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.description = description;
         item.creatorId = creatorId;
         item.flagged = flagged;
+        item.attrs = attrs;
         item.mature = mature;
         item.furniMedia = (furniMediaHash == null) ?
             null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
@@ -333,6 +347,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         // rating = not user editable
         // creatorId = not user editable
         // flagged = not user editable
+        // attrs = not user editable
         // mature = not user editable
         // used = not user editable
         // location = not user editable

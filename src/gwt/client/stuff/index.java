@@ -148,6 +148,9 @@ public class index extends Page
                 if (item != null) {
                     _models.updateItem(item);
                     CStuff.viewParent(item);
+                    // TODO: reload the item detail?
+                    //Application.go(Page.STUFF, Args.compose("d", "" + item.getType(), "" + item.itemId), true);
+                    //CStuff.viewItem(item.getType(), item.itemId);
                 } else {
                     History.back();
                 }

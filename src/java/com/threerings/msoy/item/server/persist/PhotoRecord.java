@@ -66,6 +66,10 @@ public class PhotoRecord extends ItemRecord
     public static final ColumnExp FLAGGED_C =
         new ColumnExp(PhotoRecord.class, FLAGGED);
 
+    /** The qualified column identifier for the {@link #attrs} field. */
+    public static final ColumnExp ATTRS_C =
+        new ColumnExp(PhotoRecord.class, ATTRS);
+
     /** The qualified column identifier for the {@link #creatorId} field. */
     public static final ColumnExp CREATOR_ID_C =
         new ColumnExp(PhotoRecord.class, CREATOR_ID);

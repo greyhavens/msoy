@@ -93,9 +93,7 @@ public class ItemRemixer extends FlexTable
             return;
         }
 
-        MediaDesc desc = new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint);
-
-        _item.setPrimaryMedia(desc);
+        _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
         CShell.itemsvc.remixItem(CShell.ident, _item, new MsoyCallback() {
             public void onSuccess (Object result) {

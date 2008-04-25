@@ -55,6 +55,10 @@ public class VideoCloneRecord extends CloneRecord<VideoRecord>
     /** The qualified column identifier for the {@link #mediaHash} field. */
     public static final ColumnExp MEDIA_HASH_C =
         new ColumnExp(VideoCloneRecord.class, MEDIA_HASH);
+
+    /** The qualified column identifier for the {@link #mediaStamp} field. */
+    public static final ColumnExp MEDIA_STAMP_C =
+        new ColumnExp(VideoCloneRecord.class, MEDIA_STAMP);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
