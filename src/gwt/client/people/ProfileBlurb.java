@@ -281,6 +281,10 @@ public class ProfileBlurb extends Blurb
                                 "" + Profile.MAX_DISPLAY_NAME_LENGTH), _ename);
             return;
         }
+        if (!CPeople.isSupport() && !Profile.isValidNonSupportName(name)) {
+            MsoyUI.infoNear(CPeople.msgs.nonSupportNameInvalid(), _ename);
+            return;
+        }
 
         // configure our profile instance with their bits
         _name = new MemberName(name, _name.getMemberId());

@@ -90,4 +90,15 @@ public class Profile implements IsSerializable
         return (name != null && name.length() >= MIN_DISPLAY_NAME_LENGTH &&
                 name.length() <= MAX_DISPLAY_NAME_LENGTH);
     }
+
+    /**
+     * Called after isValidDisplayName, if the user is not support.
+     */
+    public static boolean isValidNonSupportName (String name)
+    {
+        name = name.toLowerCase();
+        return !name.startsWith("agent") && !name.startsWith("agenl ") &&
+            !name.startsWith("agant ") && !name.startsWith("agint ") &&
+            (-1 == name.indexOf(" agent "));
+    }
 }

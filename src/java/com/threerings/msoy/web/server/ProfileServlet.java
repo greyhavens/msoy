@@ -129,7 +129,8 @@ public class ProfileServlet extends MsoyServiceServlet
         if (displayName != null) {
             displayName = displayName.trim();
         }
-        if (!Profile.isValidDisplayName(displayName)) {
+        if (!Profile.isValidDisplayName(displayName) ||
+                (!memrec.isSupport() && !Profile.isValidNonSupportName(displayName))) {
             // you'll only see this with a hacked client
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
