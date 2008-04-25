@@ -80,7 +80,7 @@ public class CShell
      */
     public static boolean isSupport ()
     {
-        return (creds != null) ? creds.isSupport : false;
+        return (creds != null) && creds.isSupport;
     }
 
     /**
@@ -88,7 +88,7 @@ public class CShell
      */
     public static boolean isAdmin ()
     {
-        return (creds != null) ? creds.isAdmin : false;
+        return (creds != null) && creds.isAdmin;
     }
 
     /**
@@ -142,7 +142,7 @@ public class CShell
 
     /** MD5 hashes the supplied text and returns the hex encoded hash value. */
     public native static String md5hex (String text) /*-{
-       return $wnd.hex_md5(text);
+        return $wnd.hex_md5(text);
     }-*/;
 
     /**
