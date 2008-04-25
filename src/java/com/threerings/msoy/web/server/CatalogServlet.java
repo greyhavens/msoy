@@ -484,8 +484,6 @@ public class CatalogServlet extends MsoyServiceServlet
                 catalogId, pricing, salesTarget, flowCost, goldCost, System.currentTimeMillis());
 
             // record the update action
-            // String details = itemType + " " + catalogId + " " + pricing + " " + salesTarget + " " +
-            //    flowCost + " " + goldCost;
             UserActionDetails info = new UserActionDetails(
                 mrec.memberId, UserAction.UPDATED_PRICING, itemType, catalogId);
             logUserAction(info);
