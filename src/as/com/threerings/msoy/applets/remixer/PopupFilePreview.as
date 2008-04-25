@@ -59,6 +59,7 @@ public class PopupFilePreview extends TitleWindow
         this.title = name;
 
         var box :VBox = new VBox();
+        box.setStyle("horizontalAlign", "right");
         addChild(box);
 
         var hbox :HBox = new HBox();
@@ -108,8 +109,8 @@ public class PopupFilePreview extends TitleWindow
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addChild(_ok = new CommandButton("Save", close, true));
         buttonBar.addChild(new CommandButton("Cancel", close, false));
+        buttonBar.addChild(_ok = new CommandButton("Save", close, true));
         box.addChild(buttonBar);
 
         setImage(entry.value, ctx.pack.getFile(name));

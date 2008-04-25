@@ -7,13 +7,13 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.TextEvent;
 
-import mx.controls.ButtonBar;
 import mx.controls.Label;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
 
-import mx.containers.TitleWindow;
 import mx.containers.Grid;
+import mx.containers.HBox;
+import mx.containers.TitleWindow;
 
 import mx.events.ValidationResultEvent;
 
@@ -68,10 +68,12 @@ public class PopupEditor extends TitleWindow
 
         GridUtil.addRow(grid, _txt, [2, 1]);
 
-        var buttonBar :ButtonBar = new ButtonBar();
+        var buttonBar :HBox = new HBox();
+        buttonBar.setStyle("horizontalAlign", "right");
+        buttonBar.percentWidth = 100;
+        buttonBar.addChild(new CommandButton("Cancel", close, false));
         _okBtn = new CommandButton("OK", close, true);
         buttonBar.addChild(_okBtn);
-        buttonBar.addChild(new CommandButton("Cancel", close, false));
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 
         if (_validator != null) {

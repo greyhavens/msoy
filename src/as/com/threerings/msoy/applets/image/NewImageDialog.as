@@ -40,6 +40,7 @@ public class NewImageDialog extends TitleWindow
         title = "Create new image";
 
         var box :VBox = new VBox();
+        box.setStyle("horizontalAlign", "right");
         addChild(box);
 
         _width = new TextInput();
@@ -84,8 +85,8 @@ public class NewImageDialog extends TitleWindow
         box.addChild(grid);
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(new CommandButton("ok", close, true));
         bar.addChild(new CommandButton("Cancel", close));
+        bar.addChild(new CommandButton("OK", close, true));
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);

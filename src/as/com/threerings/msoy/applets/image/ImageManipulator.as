@@ -152,8 +152,8 @@ public class ImageManipulator extends HBox
         buts.setStyle("horizontalAlign", "center");
         buts.setStyle("paddingTop", 8);
         buts.setStyle("paddingBottom", 8);
-        buts.addChild(new CommandButton("Save", doClose, true));
         buts.addChild(new CommandButton("Cancel", doClose, false));
+        buts.addChild(new CommandButton("Save", doClose, true));
         bar.addChild(buts);
 
         _editor.setBrushSize(10);

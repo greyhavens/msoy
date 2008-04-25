@@ -113,6 +113,7 @@ public class RemixControls extends HBox
 
         var butBox :HBox = new HBox();
         butBox.setStyle("bottom", 0);
+        butBox.setStyle("horizontalAlign", "right");
         butBox.percentWidth = 100;
         vbox.addChild(butBox);
 
