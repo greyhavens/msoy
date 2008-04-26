@@ -124,7 +124,9 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // validate the captcha if necessary
-        verifyCaptcha(captchaChallenge, captchaResponse);
+        if (!StringUtil.isBlank(ServerConfig.recaptchaPrivateKey)) {
+            verifyCaptcha(captchaChallenge, captchaResponse);
+        }
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
@@ -452,12 +454,15 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
-    protected void verifyCaptcha (String captchaChallenge, String captchaResponse)
+    protected void verifyCaptcha (String challenge, String response)
         throws ServiceException
     {
-        if (StringUtil.isBlank(ServerConfig.recaptchaPrivateKey)) {
-            return;
+        if (challenge == null || response == null) {
+            log.warning("Registration request with invalid captcha [challenge=" + challenge +
+                        ", response=" + response + "].");
+            throw new CaptchaException(MsoyAuthCodes.FAILED_CAPTCHA);
         }
+
         OutputStream out = null;
         InputStream in = null;
         try {
@@ -471,8 +476,8 @@ public class WebUserServlet extends MsoyServiceServlet
             StringBuilder postData = new StringBuilder("privatekey=");
             postData.append(URLEncoder.encode(ServerConfig.recaptchaPrivateKey, "UTF-8"));
             postData.append("&remoteip=").append(URLEncoder.encode(ip, "UTF-8"));
-            postData.append("&challenge=").append(URLEncoder.encode(captchaChallenge, "UTF-8"));
-            postData.append("&response=").append(URLEncoder.encode(captchaResponse, "UTF-8"));
+            postData.append("&challenge=").append(URLEncoder.encode(challenge, "UTF-8"));
+            postData.append("&response=").append(URLEncoder.encode(response, "UTF-8"));
             out = conn.getOutputStream();
             out.write(postData.toString().getBytes("UTF-8"));
             out.flush();
