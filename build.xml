@@ -257,10 +257,10 @@
     <if><isset property="${recaptcha_public}"/><then>
       <property name="recaptcha_in" value=""/>
       <property name="recaptcha_out" value=""/>
-      <property name="recaptcha_public" value=""/>
     </then><else>
       <property name="recaptcha_in" value="&#60;!--"/>
       <property name="recaptcha_out" value="--&#62;"/>
+      <property name="recaptcha_public" value=""/>
     </else></if>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
       <filterset>
