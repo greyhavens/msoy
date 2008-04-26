@@ -254,7 +254,7 @@
     <!-- generate our index.html and crossdomain.xml -->
     <propertyregex property="server_url_host_port" input="${server_url}"
                    regexp="http://" replace=""/>
-    <if><isset property="${recaptcha_public}"/><then>
+    <if><isset property="recaptcha_public"/><then>
       <property name="recaptcha_in" value=""/>
       <property name="recaptcha_out" value=""/>
     </then><else>
