@@ -190,7 +190,7 @@ public class GameRepository extends ItemRepository<
             }
         }
 
-        noteGamePlayed(detail.gameId, playerGames, playerMins, flowAwarded, newFactor, accumMins);
+        noteGamePlayed(detail.gameId, playerGames, playerMins, flowAwarded, newFactor, currentMins);
 
         return newFactor;
     }
