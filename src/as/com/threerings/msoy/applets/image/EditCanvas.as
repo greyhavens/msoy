@@ -339,7 +339,7 @@ public class EditCanvas extends DisplayCanvas
         _holder.setZoom(zoom);
     }
 
-    public function setScale (scale :Number, commit :Boolean = false) :void
+    public function setScale (scale :Number) :void
     {
         if (scale == _paintLayer.scaleX) {
             return;
@@ -564,7 +564,7 @@ public class EditCanvas extends DisplayCanvas
         var g :Graphics = _brushCursor.graphics;
         g.clear();
         g.beginFill(_color);
-        var radius :Number = (_brushSize/2) / _scale;
+        var radius :Number = (_brushSize/2) / _paintLayer.scaleX;
         if (_brushCircle) {
             g.drawCircle(0, 0, radius);
         } else {
@@ -702,7 +702,7 @@ public class EditCanvas extends DisplayCanvas
     {
         var g :Graphics = _curPaint.graphics;
         if (_paintPoint != null) {
-            g.lineStyle(_brushSize / _scale, _color, 1, false, LineScaleMode.NORMAL,
+            g.lineStyle(_brushSize / _paintLayer.scaleX, _color, 1, false, LineScaleMode.NORMAL,
                 _brushCircle ? CapsStyle.ROUND : CapsStyle.SQUARE,
                 _brushCircle ? JointStyle.ROUND : JointStyle.BEVEL);
             g.moveTo(_paintPoint.x, _paintPoint.y);
@@ -725,7 +725,7 @@ public class EditCanvas extends DisplayCanvas
             // there was never any line drawn, so we just stamp the brush
             var g :Graphics = _curPaint.graphics;
             g.beginFill(_color);
-            const radius :Number = (_brushSize/2) / _scale;
+            const radius :Number = (_brushSize/2) / _paintLayer.scaleX;
             var p :Point = layerPoint(_paintLayer, event);
             if (_brushCircle) {
                 g.drawCircle(p.x, p.y, radius);
@@ -935,8 +935,6 @@ public class EditCanvas extends DisplayCanvas
 
     protected var _paintPoint :Point;
     protected var _movePoint :Point;
-
-    protected var _scale :Number = 1;
 
     protected var _paintInsertionOffset :int;
 
