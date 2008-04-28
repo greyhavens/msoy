@@ -240,9 +240,18 @@ public class ItemServlet extends MsoyServiceServlet
 
             ItemDetail detail = new ItemDetail();
             detail.item = record.toItem();
-            detail.creator = MsoyServer.memberRepo.loadMemberName(record.creatorId);
+            detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId))
+                ? mrec.getName() // shortcut for items we created
+                : MsoyServer.memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
                 detail.memberRating = repo.getRating(iident.itemId, mrec.memberId);
+            }
+            switch (detail.item.used) {
+            case Item.USED_AS_FURNITURE:
+            case Item.USED_AS_PET:
+            case Item.USED_AS_BACKGROUND:
+                detail.useLocation = MsoyServer.sceneRepo.identifyScene(detail.item.location);
+                break;
             }
             return detail;
 

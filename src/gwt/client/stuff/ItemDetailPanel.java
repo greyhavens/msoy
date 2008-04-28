@@ -110,7 +110,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             case Item.USED_AS_FURNITURE:
             case Item.USED_AS_PET:
             case Item.USED_AS_BACKGROUND:
-                msg = CStuff.msgs.detailInUseInRoom("" + _item.location);
+                msg = CStuff.msgs.detailInUseInRoom("" + _item.location, _detail.useLocation);
                 break;
 
             default:

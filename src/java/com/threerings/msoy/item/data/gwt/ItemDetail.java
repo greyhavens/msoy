@@ -28,4 +28,7 @@ public class ItemDetail implements Streamable, IsSerializable
 
     /** The item's rating given by the member specified in the request. */
     public byte memberRating;
+
+    /** If non-null, contains the String name for the usage location specified in the Item. */
+    public String useLocation;
 }

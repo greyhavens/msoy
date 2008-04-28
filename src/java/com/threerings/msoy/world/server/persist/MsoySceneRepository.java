@@ -125,6 +125,18 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Return the scene name for the specified id, or null (no exception) if the scene
+     * doesn't exist.
+     */
+    public String identifyScene (int sceneId)
+        throws PersistenceException
+    {
+        // TODO: use a @Computed record?
+        SceneRecord scene = load(SceneRecord.class, SceneRecord.getKey(sceneId));
+        return (scene == null) ? null : scene.name;
+    }
+
+    /**
      * Given a list of scene ids, return a map containing the current names, indexed by scene id.
      */
     public IntMap<String> identifyScenes (Set<Integer> sceneIds)
