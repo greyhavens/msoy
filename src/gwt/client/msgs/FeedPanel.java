@@ -495,7 +495,7 @@ public class FeedPanel extends TongueBox
                 String roomPageLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(), 
                     Page.WORLD, Args.compose("room", message.data[0]));
                 String roomLink = Application.createLinkHtml(
-                    message.data[1], Page.WORLD, Args.compose("s", message.data[0]));
+                    message.data[1], Page.WORLD, "s" + message.data[0]);
                 add(new BasicWidget(CMsgs.mmsgs.selfRoomComment(
                                         profileLink(message.actor), roomPageLink, roomLink)));
                 break;
