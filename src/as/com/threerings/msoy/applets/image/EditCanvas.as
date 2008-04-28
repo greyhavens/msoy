@@ -117,10 +117,13 @@ public class EditCanvas extends DisplayCanvas
         horizontalScrollPolicy = ScrollPolicy.ON;
         verticalScrollPolicy = ScrollPolicy.ON;
 
+        _captureLayer = new Sprite();
         _paintLayer = new Sprite();
         _hudLayer = new Sprite();
 
         _hudLayer.mouseEnabled = false;
+        _captureLayer.mouseEnabled = false;
+        _paintLayer.blendMode = BlendMode.LAYER;
 
         _crop = new Shape();
         _brushCursor = new Shape();
@@ -133,9 +136,8 @@ public class EditCanvas extends DisplayCanvas
         _selectCursor.visible = false;
         _selectCursor.mouseEnabled = false;
 
-        _paintLayer.blendMode = BlendMode.LAYER;
-
-        _baseLayer.addChild(_paintLayer);
+        _captureLayer.addChild(_paintLayer);
+        _baseLayer.addChild(_captureLayer);
         _baseLayer.addChild(_hudLayer);
 
         _hudLayer.addChild(_crop);
@@ -294,10 +296,8 @@ public class EditCanvas extends DisplayCanvas
         }
 
         var bmp :BitmapData = new BitmapData(_workingArea.width, _workingArea.height, true, 0);
-        var p :Point = _paintLayer.globalToLocal(_baseLayer.localToGlobal(_workingArea.topLeft));
+        var p :Point = _captureLayer.globalToLocal(_baseLayer.localToGlobal(_workingArea.topLeft));
         var matrix :Matrix = new Matrix(1, 0, 0, 1, -p.x, -p.y);
-        matrix.rotate(MathUtil.toRadians(_paintLayer.rotation));
-        matrix.scale(_paintLayer.scaleX, _paintLayer.scaleY);
 
         // We have to have the brush on the image layer so that it participates in rotataions
         var brushVis :Boolean = _brushCursor.visible;
@@ -306,7 +306,7 @@ public class EditCanvas extends DisplayCanvas
 //        _eraseOutline.visible = false;
         // screenshot the image
         try {
-            bmp.draw(_paintLayer, matrix);
+            bmp.draw(_captureLayer, matrix);
         } finally {
             _brushCursor.visible = brushVis;
 //            _eraseOutline.visible = eraseVis;
@@ -906,6 +906,7 @@ public class EditCanvas extends DisplayCanvas
     protected var _forcedSize :Point;
 
     /** Layers that contain things. */
+    protected var _captureLayer :Sprite;
     protected var _paintLayer :Sprite;
     protected var _hudLayer :Sprite;
 
