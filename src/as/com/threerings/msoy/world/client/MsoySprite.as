@@ -503,8 +503,10 @@ public class MsoySprite extends DataPackMediaContainer
         var loader :Loader = super.initLoader();
 
         _backend = createBackend();
-        _backend.init(_ctx, loader);
-        _backend.setSprite(this);
+        if (_backend != null) {
+            _backend.init(_ctx, loader);
+            _backend.setSprite(this);
+        }
 
         return loader;
     }

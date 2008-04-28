@@ -33,7 +33,6 @@ import client.util.CreatorLabel;
 import client.util.FlashClients;
 import client.util.HeaderBox;
 import client.util.ItemUtil;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
@@ -148,8 +147,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
     {
         MediaDesc preview = item.getPreviewMedia();
         if (item instanceof Avatar) {
-            // special avatar viewer: TODO: only display in catalog / inventory
-            // and not for 3rd parties?
             return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
                 allowAvatarScaleEditing());
 
@@ -157,7 +154,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             return FlashClients.createVideoViewer(preview.getMediaPath());
          
         } else {
-            return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
+            return FlashClients.createViewer(preview.getMediaPath());
         }
     }
 

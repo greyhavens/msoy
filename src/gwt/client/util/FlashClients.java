@@ -112,9 +112,24 @@ public class FlashClients
      */
     public static String createSoloGameDefinition (String media)
     {
-        String definition = getUpgradeString(800,600);
+        String definition = getUpgradeString(800, 600);
         return definition != null ? definition :
             WidgetUtil.createFlashObjectDefinition("game", media, 800, 600, null);
+    }
+
+    /**
+     * Creates a generic item viewer.
+     * TODO: this will eventually be removed in favor of smarter viewers for each type.
+     */
+    public static HTML createViewer (String mediaPath)
+    {
+        String definition = getUpgradeString(320, 240);
+        if (definition != null) {
+            return new HTML(definition);
+        }
+        String flashVars = "media=" + URL.encodeComponent(mediaPath);
+        return WidgetUtil.createFlashContainer("viewer",
+            "/clients/" + DeploymentConfig.version + "/viewer.swf", 320, 240, flashVars);
     }
 
     /**
