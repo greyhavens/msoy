@@ -360,7 +360,7 @@
    <target-player>version</target-player>
    -->
    <!-- use-network: toggle whether the SWF is flagged for access to network resources-->
-   <use-network>true</use-network>
+   <use-network>false</use-network>
    <!-- verify-digests: verifies the libraries loaded at runtime are the correct ones.-->
    <!-- verify-digests usage:
    <verify-digests>boolean</verify-digests>
