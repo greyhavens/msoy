@@ -49,11 +49,19 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Perma name:", 1, "Label");
         setText(row, 1, info.permaName == null ? "" : info.permaName);
 
-        row = addText("Support:", 1, "Label");
-        setText(row, 1, ""+info.isSupport);
+        if (CAdmin.isAdmin()) {
+            row = addText("Admin:", 1, "Label");
+            setText(row, 1, ""+info.isAdmin);
 
-        row = addText("Admin:", 1, "Label");
-        setText(row, 1, ""+info.isAdmin);
+            row = addText("Support:", 1, "Label");
+            FlowPanel bits = new FlowPanel();
+
+            setText(row, 1, ""+info.isSupport);
+
+        } else {
+            row = addText("Support:", 1, "Label");
+            setText(row, 1, ""+info.isSupport);
+        }
 
         row = addText("Flow:", 1, "Label");
         setText(row, 1, ""+info.flow);

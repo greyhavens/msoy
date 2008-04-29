@@ -46,6 +46,7 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dnode=$NODE \
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp \
+    -Dcom.sun.management.jmxremote.port=9988 \
     -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy \
     -Djava.rmi.server.hostname=$HOSTNAME \
     -Dlog4j.configuration=log4j.properties \
