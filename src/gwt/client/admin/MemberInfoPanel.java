@@ -3,6 +3,7 @@
 
 package client.admin;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -14,6 +15,7 @@ import com.threerings.msoy.web.data.MemberAdminInfo;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -33,7 +35,7 @@ public class MemberInfoPanel extends SmartTable
         });
     }
 
-    protected void init (MemberAdminInfo info)
+    protected void init (final MemberAdminInfo info)
     {
         if (info == null) {
             setText(0, 0, "No member with that id.");
@@ -53,10 +55,32 @@ public class MemberInfoPanel extends SmartTable
             row = addText("Admin:", 1, "Label");
             setText(row, 1, ""+info.isAdmin);
 
+            final CheckBox support = new CheckBox();
+            support.setChecked(info.isSupport);
+            new ClickCallback(support) {
+                public boolean callService () {
+                    _isSupport = support.isChecked();
+                    if (_isSupport == info.isSupport) {
+                        return false; // we're reverting due to failure, so do nothing
+                    }
+                    CAdmin.adminsvc.setIsSupport(
+                        CAdmin.ident, info.name.getMemberId(), _isSupport, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    info.isSupport = _isSupport;
+                    MsoyUI.info(_isSupport ? CAdmin.msgs.mipMadeSupport() :
+                                CAdmin.msgs.mipMadeNotSupport());
+                    return true;
+                }
+                public void onFailure (Throwable cause) {
+                    super.onFailure(cause);
+                    support.setChecked(!_isSupport);
+                }
+                protected boolean _isSupport;
+            };
             row = addText("Support:", 1, "Label");
-            FlowPanel bits = new FlowPanel();
-
-            setText(row, 1, ""+info.isSupport);
+            setWidget(row, 1, support);
 
         } else {
             row = addText("Support:", 1, "Label");

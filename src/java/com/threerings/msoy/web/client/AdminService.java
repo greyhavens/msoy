@@ -54,4 +54,10 @@ public interface AdminService extends RemoteService
      */
     public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
         throws ServiceException;
+
+    /**
+     * Configures a member as support personnel or not. Only callable by admins.
+     */
+    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
+        throws ServiceException;
 }

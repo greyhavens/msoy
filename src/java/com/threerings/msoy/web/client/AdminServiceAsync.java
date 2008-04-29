@@ -41,4 +41,10 @@ public interface AdminServiceAsync
      */
     public void spamPlayers (WebIdent ident, String subject, String body, int startId, int endId,
                              AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#setIsSupport}.
+     */
+    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport,
+                              AsyncCallback callback);
 }

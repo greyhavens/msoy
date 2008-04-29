@@ -43,10 +43,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        if (!memrec.isAdmin()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
+        MemberRecord memrec = requireAdmin(ident);
 
         try {
             Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
@@ -65,10 +62,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        if (!memrec.isAdmin()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
+        MemberRecord memrec = requireAdmin(ident);
 
         try {
             _memberRepo.grantInvites(memberId, numberInvitations);
@@ -128,11 +122,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        if (!memrec.isAdmin()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
-
+        MemberRecord memrec = requireAdmin(ident);
         MemberInviteResult res = new MemberInviteResult();
         try {
             MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
@@ -161,10 +151,7 @@ public class AdminServlet extends MsoyServiceServlet
     public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-        if (!memrec.isAdmin()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
+        MemberRecord memrec = requireAdmin(ident);
 
         log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject +
                  ", startId=" + startId + ", endId=" + endId + "].");
@@ -231,6 +218,40 @@ public class AdminServlet extends MsoyServiceServlet
                     ", startId=" + startId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * Configures a member as support personnel or not. Only callable by admins.
+     */
+    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAdmin(ident);
+
+        try {
+            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+            if (tgtrec != null) {
+                // log this as a warning so that it shows up in the nightly filtered logs
+                log.warning("Configured support flag [setter=" + memrec.who() +
+                            ", target=" + tgtrec.who() + "].");
+                tgtrec.setFlag(MemberRecord.Flag.SUPPORT, isSupport);
+            }
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "setIsSupport failed [id=" + memberId +
+                    ", isSupport=" + isSupport + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected MemberRecord requireAdmin (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        return memrec;
     }
 
     protected void sendGotInvitesMail (int senderId, int recipientId, int number)
