@@ -22,10 +22,9 @@ import com.threerings.msoy.world.client.Viewer;
  */
 public class UberClient
 {
-    /** Mode constants. */
-    public static const CLIENT :int = 0;
-    public static const AVATAR_VIEWER :int = 100;
-    public static const GENERIC_VIEWER :int = 199;
+    // NOTE: The mode constants are defined in UberClientLoader, so that users of that
+    // class do not also need to include this class, which will drag in all the world client
+    // classes.
 
     public function UberClient (app :Application)
     {
@@ -45,12 +44,15 @@ public class UberClient
 
         // if we never found our mode here, try to determine it from our parameters
         ParameterUtil.getParameters(app, function (params :Object) :void {
-            var mode :int = CLIENT;
+            var mode :int = UberClientLoader.CLIENT;
 
-            if ("avatar" in params) {
-                mode = AVATAR_VIEWER;
+            if ("mode" in params) {
+                // if a mode is specified, that overrides all
+                mode = parseInt(params["mode"]);
+            } else if ("avatar" in params) {
+                mode = UberClientLoader.AVATAR_VIEWER;
             } else if ("media" in params) {
-                mode = GENERIC_VIEWER;
+                mode = UberClientLoader.GENERIC_VIEWER;
             }
 
             setMode(app, mode, params);
@@ -64,11 +66,11 @@ public class UberClient
             new WorldClient(app.stage);
             break;
 
-        case AVATAR_VIEWER:
+        case UberClientLoader.AVATAR_VIEWER:
             Object(app).setViewer(new AvatarViewerComp(params));
             break;
 
-        case GENERIC_VIEWER:
+        case UberClientLoader.GENERIC_VIEWER:
             Object(app).setViewer(new Viewer(params));
             break;
         }
