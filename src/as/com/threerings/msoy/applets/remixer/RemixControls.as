@@ -47,6 +47,8 @@ import com.threerings.msoy.applets.net.MediaUploader;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
+import com.threerings.msoy.utils.UberClientLoader;
+
 /**
  */
 public class RemixControls extends HBox
@@ -67,13 +69,13 @@ public class RemixControls extends HBox
         addChild(vbox);
         vbox.addChild(createPreviewHeader());
 
-        _previewer = new SWFLoader();
+        _previewer = new UberClientLoader(UberClientLoader.AVATAR_VIEWER);
         _previewer.width = PREVIEW_WIDTH;
         _previewer.height = 488;
         _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
         _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
         _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
-        _previewer.load("/clients/" + DeploymentConfig.version + "/avatarviewer.swf");
+        _previewer.load();
         vbox.addChild(_previewer);
 
         vbox = new VBox();

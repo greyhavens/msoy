@@ -530,39 +530,6 @@
     <antcall target="ascompile"><param name="astype" value="remixer"/></antcall>
   </target>
 
-  <!-- builds our generic viewer thingy -->
-  <target name="viewer" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
-      <arg value="-use-network=false"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/viewer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/Viewer.as"/>
-    </exec>
-    <copy file="${deploy.dir}/viewer.swf" todir="pages/clients/${version}"/>
-  </target>
-
-  <!-- builds our avatar viewer thingy -->
-  <target name="avatarviewer" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
-      <arg value="-use-network=false"/>
-      <arg value="-default-size"/>
-      <arg value="600"/> <!-- see note in AvatarViewer.mxml about the size -->
-      <arg value="488"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/avatarviewer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/AvatarViewer.mxml"/>
-    </exec>
-    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${version}"/>
-  </target>
-
   <!-- builds our video viewer thingy -->
   <target name="videoviewer" depends="asprepare">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
@@ -911,7 +878,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,tutorial,viewer,avatarviewer,
+  <target name="flashapps" depends="asprepare,mediastub,tutorial,
                                     videoviewer,decorviewer,remixer">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>

@@ -38,8 +38,9 @@ import com.threerings.msoy.world.client.OccupantSprite;
 
 public class AvatarViewerComp extends VBox
 {
-    public function AvatarViewerComp ()
+    public function AvatarViewerComp (params :Object = null)
     {
+        _params = params;
     }
 
     /**
@@ -124,7 +125,11 @@ public class AvatarViewerComp extends VBox
         BindingUtils.bindSetter(setMode, mode, "selectedIndex");
 
         // finally, load our parameters and see what we should do.
-        ParameterUtil.getParameters(this, gotParams);
+        if (_params != null) {
+            gotParams(_params);
+        } else {
+            ParameterUtil.getParameters(this, gotParams);
+        }
     }
 
     /**
@@ -154,6 +159,7 @@ public class AvatarViewerComp extends VBox
      */
     protected function gotParams (params :Object) :void
     {
+        _params = params;
         var media :String = params["avatar"] as String;
         var scale :Number = Number(params["scale"]);
         if (isNaN(scale) || (scale == 0)) {
@@ -341,6 +347,9 @@ public class AvatarViewerComp extends VBox
 
         CommandMenu.createMenu(menuItems).popUpAtMouse();
     }
+
+    /** Our initialization parameters. */
+    protected var _params :Object;
 
     /** The container that holds our non-flex children. */
     protected var _holder :Canvas;

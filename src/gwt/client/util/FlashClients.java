@@ -129,7 +129,7 @@ public class FlashClients
         }
         String flashVars = "media=" + URL.encodeComponent(mediaPath);
         return WidgetUtil.createFlashContainer("viewer",
-            "/clients/" + DeploymentConfig.version + "/viewer.swf", 320, 240, flashVars);
+            "/clients/" + DeploymentConfig.version + "/world-client.swf", 320, 240, flashVars);
     }
 
     /**
@@ -147,7 +147,7 @@ public class FlashClients
         }
         return WidgetUtil.createFlashContainer(
             "avatarViewer",
-            "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
+            "/clients/" + DeploymentConfig.version + "/world-client.swf",
             360, 385, flashVars);
     }
 

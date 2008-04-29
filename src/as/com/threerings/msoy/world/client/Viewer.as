@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package com.threerings.msoy.world.client {
 
 import flash.display.Bitmap;
 import flash.display.Sprite;
@@ -23,14 +23,18 @@ public class Viewer extends Sprite
     public static const WIDTH :int = 320; // MediaDesc PREVIEW_SIZE
     public static const HEIGHT :int = 240; // MediaDesc PREVIEW_SIZE
 
-    public function Viewer ()
+    public function Viewer (params :Object = null)
     {
         var bmp :Bitmap = Bitmap(new BACKGROUND());
         graphics.beginBitmapFill(bmp.bitmapData);
         graphics.drawRect(0, 0, WIDTH, HEIGHT);
         graphics.endFill();
 
-        ParameterUtil.getParameters(this, gotParams);
+        if (params == null) {
+            ParameterUtil.getParameters(this, gotParams);
+        } else {
+            gotParams(params);
+        }
     }
 
     protected function gotParams (params :Object) :void
@@ -56,7 +60,7 @@ public class Viewer extends Sprite
 
     protected var  _sprite :ViewerSprite;
 
-    [Embed(source="../../pages/images/item/detail_preview_bg.png")]
+    [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
     protected static const BACKGROUND :Class;
 }
 }
