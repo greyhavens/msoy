@@ -465,11 +465,14 @@
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
+  <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <property name="astype" value="world"/>
   <target name="ascompile">
+    <echo message="${flex.debug-arg}"/>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
+      <arg value="${flex.debug-arg}"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
@@ -498,18 +501,7 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.debug"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/${astype}-client.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${astype}.mxml"/>
-    </exec>
-    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${version}"/>
+    <antcall target="ascompile"><param name="flex.debug-arg" value="-compiler.debug"/></antcall>
   </target>
 
   <!-- builds the mediastub that's used to wrap SWF media -->
