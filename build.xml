@@ -465,10 +465,9 @@
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
-  <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <property name="astype" value="world"/>
+  <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <target name="ascompile">
-    <echo message="${flex.debug-arg}"/>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
