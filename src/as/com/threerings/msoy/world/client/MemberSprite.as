@@ -10,6 +10,8 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.game.data.GameSummary;
+
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.data.MemberInfo;
 
@@ -64,14 +66,13 @@ public class MemberSprite extends ActorSprite
         super.setOccupantInfo(newInfo);
 
         // take care of setting up or changing our TableIcon
-        var minfo :MemberInfo = (newInfo as MemberInfo);
-        if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.getGameSummary())) {
+        var newSummary :GameSummary = (newInfo as MemberInfo).getGameSummary();
+        if (_tableIcon != null && !_tableIcon.getGameSummary().equals(newSummary)) {
             _tableIcon.shutdown();
             _tableIcon = null;
         }
-        if (_tableIcon == null && minfo.getGameSummary() != null &&
-            minfo.getGameSummary().gameId != Game.TUTORIAL_GAME_ID) {
-            _tableIcon = new TableIcon(this, minfo.getGameSummary());
+        if (_tableIcon == null && newSummary != null && newSummary.gameId != Game.TUTORIAL_GAME_ID) {
+            _tableIcon = new TableIcon(this, newSummary);
         }
     }
 
@@ -202,6 +203,7 @@ public class MemberSprite extends ActorSprite
 }
 }
 
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.GlowFilter;
 
@@ -217,18 +219,20 @@ import com.threerings.msoy.world.client.WorldController;
 /**
  * A decoration used when this actor is at a table in a lobby.
  */
-class TableIcon extends ScalingMediaContainer
+class TableIcon extends Sprite
 {
     public function TableIcon (host :MemberSprite, gameSummary :GameSummary)
     {
-        super(30, 30);
         _host = host;
         _gameSummary = gameSummary;
-        setMediaDesc(gameSummary.getThumbMedia());
+        _gameThumb = ScalingMediaContainer.createView(gameSummary.getThumbMedia());
+        addChild(_gameThumb);
 
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
+
+        _host.addDecoration(this, { toolTip: _gameSummary.name });
     }
 
     public function getGameSummary () :GameSummary
@@ -236,22 +240,22 @@ class TableIcon extends ScalingMediaContainer
         return _gameSummary;
     }
 
-    override public function shutdown (completely :Boolean = true) :void
+    public function shutdown () :void
     {
-        if (parent != null) {
-            _host.removeDecoration(this);
-        }
-        super.shutdown(completely);
+        _gameThumb.shutdown();
+        _host.removeDecoration(this);
     }
 
-    override protected function contentDimensionsUpdated () :void
+    // this is needed so we're laid out correctly as a decoration
+    override public function get width () :Number
     {
-        super.contentDimensionsUpdated();
+        return _gameThumb.maxW;
+    }
 
-        // we wait until our size is known prior to adding ourselves
-        if (parent == null) {
-            _host.addDecoration(this, { toolTip: _gameSummary.name });
-        }
+    // this is needed so we're laid out correctly as a decoration
+    override public function get height () :Number
+    {
+        return _gameThumb.maxH;
     }
 
     protected function handleMouseIn (... ignored) :void
@@ -266,13 +270,12 @@ class TableIcon extends ScalingMediaContainer
 
     protected function handleMouseClick (... ignored) :void
     {
-        if (_gameSummary.avrGame) {
-            CommandEvent.dispatch(this, WorldController.JOIN_AVR_GAME, _gameSummary.gameId);
-        } else {
-            CommandEvent.dispatch(this, WorldController.JOIN_GAME_LOBBY, _gameSummary.gameId);
-        }
+        var cmd :String = _gameSummary.avrGame ? WorldController.JOIN_AVR_GAME
+                                               : WorldController.JOIN_GAME_LOBBY;
+        CommandEvent.dispatch(this, cmd, _gameSummary.gameId);
     }
 
-    protected var _gameSummary :GameSummary;
     protected var _host :MemberSprite;
+    protected var _gameSummary :GameSummary;
+    protected var _gameThumb :ScalingMediaContainer;
 }
