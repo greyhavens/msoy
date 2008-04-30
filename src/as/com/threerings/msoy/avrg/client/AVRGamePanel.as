@@ -11,7 +11,6 @@ import flash.display.LoaderInfo;
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
 
-import com.threerings.flash.MediaContainer;
 import com.threerings.util.Log;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -21,6 +20,8 @@ import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
+
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
@@ -87,7 +88,7 @@ public class AVRGamePanel extends UIComponent
         }
 
         // create the container for the user media
-        _mediaHolder = new MediaContainer(_gameObj.gameMedia.getMediaPath());
+        _mediaHolder = new MsoyMediaContainer(_gameObj.gameMedia);
         var loader :Loader = Loader(_mediaHolder.getMedia());
 
         // hook the backend up with the media
@@ -159,7 +160,7 @@ public class AVRGamePanel extends UIComponent
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _mediaHolder :MediaContainer;
+    protected var _mediaHolder :MsoyMediaContainer;
     protected var _gameObj :AVRGameObject;
     protected var _backend :AVRGameBackend;
 }

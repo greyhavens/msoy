@@ -6,8 +6,9 @@ package com.threerings.msoy.world.client.editor {
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 
-import com.threerings.flash.MediaContainer;
 import com.threerings.flex.ScrollBox;
+
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.DecorData;
@@ -55,7 +56,7 @@ public class RoomViewScrollBox extends ScrollBox
         }
 
         if (decorData != null) {
-            _bg = new MediaContainer(decorData.media.getMediaPath());
+            _bg = new MsoyMediaContainer(decorData.media);
             _bg.mask = _mask;
             rawChildren.addChildAt(_bg, 0);
             rescaleBackgroundSprite();
