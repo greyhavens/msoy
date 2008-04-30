@@ -128,7 +128,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.world.client.NameField;
 
 import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
