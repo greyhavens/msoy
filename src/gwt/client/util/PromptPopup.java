@@ -74,9 +74,9 @@ public class PromptPopup extends BorderedPopup
             content.add(MsoyUI.createLabel(_context, "Content"));
         }
 
+        Button noButton = new Button(_negative);
         final Button yesButton = new Button(_affirmative);
-        final Button noButton = new Button(_negative);
-        ClickListener listener = new ClickListener () {
+        ClickListener listener = new ClickListener() {
             public void onClick (Widget sender) {
                 if (sender == yesButton) {
                     onAffirmative();
@@ -86,12 +86,12 @@ public class PromptPopup extends BorderedPopup
                 hide();
             }  
         };
-        yesButton.addClickListener(listener);
         noButton.addClickListener(listener);
+        yesButton.addClickListener(listener);
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(10);
-        buttons.add(yesButton);
         buttons.add(noButton);
+        buttons.add(yesButton);
         content.add(buttons);
 
         setWidget(content);
