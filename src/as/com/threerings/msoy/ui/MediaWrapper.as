@@ -15,6 +15,17 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class MediaWrapper extends Container
 {
     /**
+     * Factory to create a MediaWrapper configured to view media represented by a MediaDesc
+     * at the specified size.
+     */
+    public static function createView (desc :MediaDesc, size :int = MediaDesc.THUMBNAIL_SIZE)
+        :MediaWrapper
+    {
+        var smc :ScalingMediaContainer = ScalingMediaContainer.createView(desc, size);
+        return new MediaWrapper(smc, smc.maxW, smc.maxH, true);
+    }
+
+    /**
      * A factory method to create a MediaWrapper holding a scaled instance.
      */
     public static function createScaled (
@@ -25,12 +36,15 @@ public class MediaWrapper extends Container
         return new MediaWrapper(smc, width, height, false);
     }
 
+    // ---- End: static methods
+
+
     /**
      * @param cont the container to wrap
      * @param altReportedWidth a width to report when the media width is 0.
      * @param altReportedHeight a height to report when the media height is 0.
      */
-    public function MediaWrapper (cont :MediaContainer, altReportedWidth :Number = 0,
+    public function MediaWrapper (cont :MsoyMediaContainer, altReportedWidth :Number = 0,
                                   altReportedHeight :Number = 0, alwaysUseAlt :Boolean = false)
     {
         _cont = cont;
@@ -43,9 +57,19 @@ public class MediaWrapper extends Container
         }
     }
 
-    public function getMediaContainer () :MediaContainer
+    public function getMediaContainer () :MsoyMediaContainer
     {
         return _cont;
+    }
+
+    public function setMediaDesc (desc :MediaDesc) :void
+    {
+        _cont.setMediaDesc(desc);
+    }
+
+    public function shutdown () :void
+    {
+        _cont.shutdown();
     }
 
     override protected function measure () :void
@@ -79,7 +103,7 @@ public class MediaWrapper extends Container
         invalidateSize();
     }
 
-    protected var _cont :MediaContainer;
+    protected var _cont :MsoyMediaContainer;
 
     protected var _altWidth :Number;
     protected var _altHeight :Number;
