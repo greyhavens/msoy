@@ -1113,18 +1113,17 @@ public class RoomController extends SceneController
         var avItems :Array = [];
         var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
         ArrayUtil.sort(avatars);
-        var iconW :Number = 20;
-        var iconH :Number = 20; // 1/3 of thumbnail height
         for (var ii :int = 0; ii < avatars.length; ii++) {
             var av :Avatar = avatars[ii] as Avatar;
             avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
-                iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
+                iconObject: MediaWrapper.createView(
+                    av.getThumbnailMedia(), MediaDesc.QUARTER_THUMBNAIL_SIZE),
                 callback: _wdctx.getWorldDirector().setAvatar, arg: av.itemId });
         }
         // add defaults
         avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
-            iconObject: MediaWrapper.createScaled(
-                Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
+            iconObject: MediaWrapper.createView(
+                Item.getDefaultThumbnailMediaFor(Item.AVATAR), MediaDesc.QUARTER_THUMBNAIL_SIZE),
             callback: _wdctx.getWorldDirector().setAvatar, arg: 0 });
 
         avItems.push({ type: "separator" });
