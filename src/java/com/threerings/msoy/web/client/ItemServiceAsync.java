@@ -35,6 +35,12 @@ public interface ItemServiceAsync
     public void revertRemixedClone (WebIdent ident, ItemIdent itemIdent, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService#renameClone}.
+     */
+    public void renameClone (
+        WebIdent ident, ItemIdent itemIdent, String name, AsyncCallback callback);
+
+    /**
      * Loads the details of a particular item.
      */
     public void loadItem (WebIdent ident, ItemIdent item, AsyncCallback callback);

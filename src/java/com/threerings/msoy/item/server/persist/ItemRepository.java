@@ -619,6 +619,20 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Updates a clone item's override name in the database.
+     * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
+     */
+    public void updateCloneName (CloneRecord cloneRec)
+        throws PersistenceException
+    {
+        cloneRec.lastTouched = new Timestamp(System.currentTimeMillis());
+
+        updatePartial(getCloneClass(), cloneRec.itemId,
+            CloneRecord.NAME, cloneRec.name,
+            CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
+    }
+
+    /**
      * Create a row in our catalog table corresponding to the given item record, which should
      * be of the immutable variety.
      */

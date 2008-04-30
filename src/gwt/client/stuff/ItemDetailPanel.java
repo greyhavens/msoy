@@ -245,16 +245,33 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick));
         }
 
+        buttons = new RowPanel();
+        Label label = null;
+
+        // add a button for renaming
+        if (!original) {
+            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(), null);
+            buttons.add(rename);
+            new RenameHandler(rename, _item, _models);
+        }
+
         // if remixable, add a button for that.
         if (remixable) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new Label(CStuff.msgs.detailRemixTip()));
-            _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
+            label = new Label(CStuff.msgs.detailRemixTip());
+            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
                 new ClickListener() {
                     public void onClick (Widget sender) {
                         CStuff.remixItem(_item.getType(), _item.itemId);
                     }
                 }));
+        }
+
+        if (buttons.getWidgetCount() > 0) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            if (label != null) {
+                _details.add(label);
+            }
+            _details.add(buttons);
         }
     }
 

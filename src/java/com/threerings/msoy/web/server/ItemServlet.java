@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
@@ -191,12 +192,33 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Item renameClone (WebIdent ident, ItemIdent itemIdent, String newName)
+    public String renameClone (WebIdent ident, ItemIdent itemIdent, String newName)
         throws ServiceException
     {
-        // TODO
+        if (newName != null) {
+            newName = newName.trim();
+            if (newName.length() > Item.MAX_NAME_LENGTH) {
+                // this'll only happen with a hacked client
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+        }
 
-        return null;
+        final String fname = newName;
+        ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
+            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+                throws PersistenceException
+            {
+                if (StringUtil.isBlank(fname) || fname.equals(orig.name)) {
+                    record.name = null; // revert
+                } else {
+                    record.name = fname;
+                }
+
+                // save the updated info
+                repo.updateCloneName(record);
+            }
+        });
+        return rec.name;
     }
 
     // from interface ItemService
@@ -670,17 +692,48 @@ public class ItemServlet extends MsoyServiceServlet
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.
      */
-    protected Item remixClone (WebIdent ident, ItemIdent itemIdent, Item item)
+    protected Item remixClone (WebIdent ident, ItemIdent itemIdent, final Item item)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
-
         // make sure the item isn't boochy
         if (item != null && !item.isConsistent()) {
-            log.warning("Requested to remix item with invalid version [who=" + memrec.who() +
+            log.warning("Requested to remix item with invalid version [who=" + ident +
                 ", item=" + item + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
+            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+                throws PersistenceException
+            {
+                if (item == null) {
+                    record.mediaHash = null; // we're reverting
+
+                } else {
+                    // in all probability, the primary media is different now
+                    MediaDesc primary = item.getPrimaryMedia();
+                    byte[] primaryHash = (primary == null) ? null : primary.hash;
+                    if (Arrays.equals(primaryHash, orig.getPrimaryMedia())) {
+                        record.mediaHash = null; // a revert here, strange, but ok
+                    } else {
+                        record.mediaHash = primaryHash;
+                    }
+                }
+
+                // save the updated info
+                repo.updateCloneMedia(record);
+            }
+        });
+        return rec.toItem();
+    }
+
+    /**
+     * Helper method for editing clones.
+     */
+    protected ItemRecord editClone (WebIdent ident, ItemIdent itemIdent, CloneEditOp op)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
 
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemIdent.type);
         try {
@@ -699,26 +752,12 @@ public class ItemServlet extends MsoyServiceServlet
             final ItemRecord orig = repo.loadOriginalItem(record.originalItemId);
             if (orig == null) {
                 log.warning("Unable to locate original of remixed clone [who=" + memrec.who() +
-                    ", item=" + item + "].");
+                    ", item=" + itemIdent + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
-            if (item == null) {
-                record.mediaHash = null; // we're reverting
-
-            } else {
-                // in all probability, the primary media is different now
-                MediaDesc primary = item.getPrimaryMedia();
-                byte[] primaryHash = (primary == null) ? null : primary.hash;
-                if (Arrays.equals(primaryHash, orig.getPrimaryMedia())) {
-                    record.mediaHash = null; // a revert here, strange, but ok
-                } else {
-                    record.mediaHash = primaryHash;
-                }
-            }
-
-            // save out the updated info
-            repo.updateCloneMedia(record);
+            // do the operation
+            op.doOp(record, orig, repo);
 
             // create the proper ItemRecord representing the clone
             orig.initFromClone(record);
@@ -730,11 +769,20 @@ public class ItemServlet extends MsoyServiceServlet
                 }
             });
 
-            return orig.toItem();
+            return orig;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to remix item " + item + ".", pe);
+            log.log(Level.WARNING, "Failed to edit clone " + itemIdent + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * A small helper interface for editClone.
+     */
+    protected static interface CloneEditOp
+    {
+        public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+            throws PersistenceException;
     }
 }

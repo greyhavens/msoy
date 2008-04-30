@@ -614,8 +614,11 @@ public abstract class ItemEditor extends FlexTable
      */
     protected static boolean nonBlank (String text, int maxLength)
     {
-        text = (text == null) ? "" : text.trim();
-        return (text.length() > 0 && text.length() <= maxLength);
+        if (text == null) {
+            return false;
+        }
+        int len = text.trim().length();
+        return (len > 0) && (len <= maxLength);
     }
 
     /**

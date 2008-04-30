@@ -53,6 +53,13 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Rename the specified clone.
+     * @param name the new name, or if blank, revert to the original name.
+     */
+    public String renameClone (WebIdent ident, ItemIdent itemIdent, String name)
+        throws ServiceException;
+
+    /**
      * Loads the details of a particular item.
      */
     public Item loadItem (WebIdent ident, ItemIdent item)

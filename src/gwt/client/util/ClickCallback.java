@@ -88,15 +88,7 @@ public abstract class ClickCallback
         // if we have not yet confirmed and desire to do so, show the confirm popup
         if (_confirmMessage != null && !confirmed) {
             setEnabled(false);
-            new PromptPopup(_confirmMessage, null) {
-                public void onAffirmative () {
-                    setEnabled(true);
-                    takeAction(true);
-                }
-                public void onNegative () {
-                    setEnabled(true);
-                }
-            }.prompt();
+            displayPopup();
             return;
         }
 
@@ -104,6 +96,19 @@ public abstract class ClickCallback
         if (callService()) {
             setEnabled(false);
         }
+    }
+
+    protected void displayPopup ()
+    {
+        new PromptPopup(_confirmMessage, null) {
+            public void onAffirmative () {
+                setEnabled(true);
+                takeAction(true);
+            }
+            public void onNegative () {
+                setEnabled(true);
+            }
+        }.prompt();
     }
 
     protected void setEnabled (boolean enabled)
