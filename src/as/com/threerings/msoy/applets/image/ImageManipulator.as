@@ -95,7 +95,7 @@ public class ImageManipulator extends HBox
             disableMode(EditCanvas.SELECT);
         }
 
-        setMode(EditCanvas.PAINT);
+        setMode(EditCanvas.MOVE);
     }
 
     public function setImage (image :Object) :void
