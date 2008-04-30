@@ -168,8 +168,8 @@ import com.threerings.parlor.data.Table;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyUI;
-import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -219,7 +219,7 @@ class SeatPanel extends VBox
 
             var hbox :HBox = new HBox();
             hbox.setStyle("horizontalGap", 5);
-            hbox.addChild(_headShot = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE));
+            hbox.addChild(_headShot = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
             hbox.addChild(_leaveBtn = new CommandButton());
             _leaveBtn.styleName = "closeButton";
             addChild(hbox);
@@ -246,7 +246,7 @@ class SeatPanel extends VBox
     protected var _index :int;
 
     protected var _joinBtn :CommandButton;
-    protected var _headShot :ThumbnailPanel;
+    protected var _headShot :MediaWrapper;
     protected var _name :Label;
     protected var _leaveBtn :CommandButton;
 }

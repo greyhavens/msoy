@@ -30,8 +30,7 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.ui.MsoyUI;
-import com.threerings.msoy.ui.SkinnableImage;
-import com.threerings.msoy.ui.ThumbnailPanel;
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.EmbedDialog;
@@ -152,7 +151,7 @@ public class LobbyPanel extends TitleWindow
 //             _buy.parent.removeChild(_buy);
 //         }
 
-        _logo.setItem(game);
+        _logo.setMediaDesc(game.getThumbnailMedia());
 
         if (_lobbyObj.gameDef == null) {
             _info.text = Msgs.GAME.get("e.no_gamedef");
@@ -427,7 +426,7 @@ public class LobbyPanel extends TitleWindow
         _headerBox.styleName = "descriptionBox";
         _contents.addChild(_headerBox);
 
-        _headerBox.addChild(_logo = new ThumbnailPanel());
+        _headerBox.addChild(_logo = MediaWrapper.createView(null));
 
         var infoBox :HBox = new HBox();
         infoBox.styleName = "infoBox";
@@ -532,7 +531,7 @@ public class LobbyPanel extends TitleWindow
 
     protected var _headerBox :HBox;
     protected var _contents :VBox;
-    protected var _logo :ThumbnailPanel;
+    protected var _logo :MediaWrapper;
     protected var _info :Text;
     protected var _createBtn :CommandButton;
 

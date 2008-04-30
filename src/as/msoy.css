@@ -914,11 +914,6 @@ BasePanel {
   backgroundColor: #000000;
 }
 
-.thumbnailPanel {
-  horizontalAlign: center;
-  verticalAlign: middle;
-}
-
 .contentsBox, .descriptionBox, .titleBox, .infoBox {
   horizontalGap: 0;
   verticalGap: 0;

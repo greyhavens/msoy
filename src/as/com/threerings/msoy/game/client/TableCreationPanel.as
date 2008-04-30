@@ -29,7 +29,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SimpleGrid;
-import com.threerings.msoy.ui.ThumbnailPanel;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -208,7 +207,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.ui.MsoyUI;
-import com.threerings.msoy.ui.ThumbnailPanel;
+import com.threerings.msoy.ui.MediaWrapper;
 
 class FriendCheckBox extends VBox
 {
@@ -219,9 +218,7 @@ class FriendCheckBox extends VBox
         styleName = "friendCheckBox";
         this.friend = friend;
 
-        var thumb :ThumbnailPanel = new ThumbnailPanel(MediaDesc.HALF_THUMBNAIL_SIZE);
-        thumb.setMediaDesc(friend.photo);
-        addChild(thumb);
+        addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
         var name :Label = MsoyUI.createLabel(friend.name.toString());
         name.maxWidth = 2*MediaDesc.THUMBNAIL_WIDTH/3;
         addChild(name);
