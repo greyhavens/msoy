@@ -206,8 +206,15 @@ public class MemberSprite extends ActorSprite
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.GlowFilter;
+import flash.geom.Rectangle;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextField;
 
 import com.threerings.util.CommandEvent;
+
+import com.threerings.flash.TextFieldUtil;
+
+import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.ui.ScalingMediaContainer;
@@ -226,13 +233,35 @@ class TableIcon extends Sprite
         _host = host;
         _gameSummary = gameSummary;
         _gameThumb = ScalingMediaContainer.createView(gameSummary.getThumbMedia());
+        _gameThumb.x = _gameThumb.maxW / -2; // position with 0 at center
         addChild(_gameThumb);
+
+        var width :int = _gameThumb.maxW;
+        var height :int = _gameThumb.maxH
+
+        if (!gameSummary.avrGame) {
+            var label :TextField = TextFieldUtil.createField(
+                Msgs.GAME.get("m.join_game", gameSummary.name),
+                {
+                    autoSize: TextFieldAutoSize.CENTER,
+                    textColor: 0xFFFFFF,
+                    outlineColor: 0x000000
+                });
+            label.x = label.width / -2; // position with 0 at center
+            label.y = height + GAP;
+            addChild(label);
+
+            width = Math.max(width, label.width);
+            height += GAP + label.height;
+        }
 
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
 
-        _host.addDecoration(this, { toolTip: _gameSummary.name });
+        _host.addDecoration(this,
+            // specify our bounds explicitly, as our width is centered at 0.
+            { toolTip: gameSummary.name, bounds: new Rectangle(width/-2, 0, width, height) });
     }
 
     public function getGameSummary () :GameSummary
@@ -244,18 +273,6 @@ class TableIcon extends Sprite
     {
         _gameThumb.shutdown();
         _host.removeDecoration(this);
-    }
-
-    // this is needed so we're laid out correctly as a decoration
-    override public function get width () :Number
-    {
-        return _gameThumb.maxW;
-    }
-
-    // this is needed so we're laid out correctly as a decoration
-    override public function get height () :Number
-    {
-        return _gameThumb.maxH;
     }
 
     protected function handleMouseIn (... ignored) :void
@@ -274,6 +291,8 @@ class TableIcon extends Sprite
                                                : WorldController.JOIN_GAME_LOBBY;
         CommandEvent.dispatch(this, cmd, _gameSummary.gameId);
     }
+
+    private static const GAP :int = 10;
 
     protected var _host :MemberSprite;
     protected var _gameSummary :GameSummary;
