@@ -7,6 +7,7 @@ package com.threerings.msoy.ui {
  * A MediaContainer that will stretch its underlying image to take up the full area allotted to it
  * by the surrounding MediaWrapper.
  */
+// TODO: deprecate, remove
 public class StretchingMediaContainer extends MsoyMediaContainer
 {
     public function StretchingMediaContainer (desc :MediaDesc = null)

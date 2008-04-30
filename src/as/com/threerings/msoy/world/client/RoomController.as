@@ -110,7 +110,6 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.RadialMenu;
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.MsoyChatDirector;

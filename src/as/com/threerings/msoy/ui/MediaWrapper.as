@@ -25,17 +25,6 @@ public class MediaWrapper extends Container
         return new MediaWrapper(smc, smc.maxW, smc.maxH, true);
     }
 
-    /**
-     * A factory method to create a MediaWrapper holding a scaled instance.
-     */
-    public static function createScaled (
-        desc :MediaDesc, width :Number, height :Number) :MediaWrapper
-    {
-        var smc :ScalingMediaContainer = new ScalingMediaContainer(width, height);
-        smc.setMediaDesc(desc);
-        return new MediaWrapper(smc, width, height, false);
-    }
-
     // ---- End: static methods
 
 
