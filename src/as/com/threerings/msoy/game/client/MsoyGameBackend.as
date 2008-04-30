@@ -72,7 +72,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 
-import com.threerings.msoy.ui.MsoyMediaContainer;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -84,9 +84,7 @@ class Headshot extends Sprite
 {
     public function Headshot (desc :MediaDesc)
     {
-        _container = new MsoyMediaContainer(desc);
-        _container.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeKnown);
-        super.addChild(_container);
+        super.addChild(ScalingMediaContainer.createView(desc));
     }
 
     override public function get width () :Number
@@ -171,12 +169,4 @@ class Headshot extends Sprite
     {
         throw new Error("Operation not permitted.");
     }
-
-    protected function handleMediaSizeKnown (event :ValueEvent) :void
-    {
-        _container.x = (this.width - Number(event.value[0])) / 2;
-        _container.y = (this.height - Number(event.value[1])) / 2;
-    }
-
-    protected var _container :MsoyMediaContainer;
 }
