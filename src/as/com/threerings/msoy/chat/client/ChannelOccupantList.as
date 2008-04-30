@@ -194,14 +194,8 @@ class ChatterRenderer extends HBox
     {
         super.createChildren(); 
 
-        const wid :int = MediaDesc.THUMBNAIL_WIDTH / 4;
-        const hei :int = MediaDesc.THUMBNAIL_HEIGHT / 4;
-
-        _headshot = new ScalingMediaContainer(wid, hei);
-        var wrapper :MediaWrapper = new MediaWrapper(_headshot, wid, hei, true);
-        wrapper.setStyle("verticalAlign", "middle");
-        wrapper.setStyle("horizontalAlign", "center");
-        addChild(wrapper);
+        _headshot = MediaWrapper.createView(null, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        addChild(_headshot);
 
         addChild(new FlexWrapper(_nameField = new NameField()));
         _nameField.autoSize = TextFieldAutoSize.LEFT;
@@ -230,8 +224,8 @@ class ChatterRenderer extends HBox
         }
     }
 
-    private static const log :Log = Log.getLog(ChatterRenderer);
+//    private static const log :Log = Log.getLog(ChatterRenderer);
 
-    protected var _headshot :ScalingMediaContainer;
+    protected var _headshot :MediaWrapper;
     protected var _nameField :NameField;
 }
