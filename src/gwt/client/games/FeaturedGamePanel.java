@@ -47,12 +47,10 @@ public class FeaturedGamePanel extends SmartTable
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         FlowPanel sashBox = new FlowPanel();
-        if (WidgetUtil.supportsRelativeAbsolute()) {
-            sashBox.setStyleName("SashBox"); // woe is us, conditional code
-            Image sash = MsoyUI.createActionImage("/images/game/featured_banner.png", onClick);
-            sash.addStyleName("Sash");
-            sashBox.add(sash);
-        }
+        sashBox.setStyleName("SashBox");
+        Image sash = MsoyUI.createActionImage("/images/game/featured_banner.png", onClick);
+        sash.addStyleName("Sash");
+        sashBox.add(sash);
         sashBox.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
         left.add(sashBox);
         left.add(WidgetUtil.makeShim(5, 5));
