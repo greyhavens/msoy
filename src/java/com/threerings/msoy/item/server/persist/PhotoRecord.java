@@ -177,6 +177,12 @@ public class PhotoRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    protected byte getPrimaryMimeType ()
+    {
+        return photoMimeType;
+    }
+
+    @Override // from ItemRecord
     protected void setPrimaryMedia (byte[] hash)
     {
         photoMediaHash = hash;

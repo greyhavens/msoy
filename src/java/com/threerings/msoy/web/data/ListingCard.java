@@ -33,6 +33,9 @@ public class ListingCard implements IsSerializable
     /** The item's description. */
     public String descrip;
 
+    /** Is this item remixable? */
+    public boolean remixable;
+
     /** The item's rating. */
     public float rating;
 

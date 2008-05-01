@@ -164,6 +164,12 @@ public class AvatarRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    protected byte getPrimaryMimeType ()
+    {
+        return avatarMimeType;
+    }
+
+    @Override // from ItemRecord
     protected void setPrimaryMedia (byte[] hash)
     {
         avatarMediaHash = hash;

@@ -143,6 +143,12 @@ public class AudioRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    protected byte getPrimaryMimeType ()
+    {
+        return audioMimeType;
+    }
+
+    @Override // from ItemRecord
     protected void setPrimaryMedia (byte[] hash)
     {
         audioMediaHash = hash;

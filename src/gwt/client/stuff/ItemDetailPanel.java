@@ -257,7 +257,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // if remixable, add a button for that.
         if (remixable) {
-            label = new Label(CStuff.msgs.detailRemixTip());
+            label = new Label(CStuff.imsgs.remixTip());
             buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
                 new ClickListener() {
                     public void onClick (Widget sender) {

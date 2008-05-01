@@ -381,11 +381,27 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Return true if the primary media is remixable.
+     */
+    public boolean isRemixable ()
+    {
+        return MediaDesc.isRemixable(getPrimaryMimeType());
+    }
+
+    /**
      * Used when comparing against a clone record.
      */
     public byte[] getPrimaryMedia ()
     {
         return furniMediaHash;
+    }
+
+    /**
+     * Get the mimeType of the primary media.
+     */
+    protected byte getPrimaryMimeType ()
+    {
+        return furniMimeType;
     }
 
     /**

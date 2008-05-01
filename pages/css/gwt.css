@@ -530,6 +530,11 @@ img, embed, applet, object {
   width: 80px;
 }
 
+.itemThumbBox {
+  width: 100px;
+  height: 60px;
+}
+
 .itemThumbnail .Image {
   height: 60px;
   text-align: center;

@@ -143,6 +143,12 @@ public class DocumentRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
+    protected byte getPrimaryMimeType ()
+    {
+        return docMimeType;
+    }
+
+    @Override // from ItemRecord
     protected void setPrimaryMedia (byte[] hash)
     {
         docMediaHash = hash;

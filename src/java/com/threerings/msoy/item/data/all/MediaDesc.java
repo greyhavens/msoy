@@ -362,6 +362,14 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
     }
 
     /**
+     * Returns true if the supplied mimeType represents a remixable type.
+     */
+    public static boolean isRemixable (byte mimeType)
+    {
+        return (mimeType == APPLICATION_ZIP);
+    }
+
+    /**
      * Computes the constraining dimension for an image (if any) based on the supplied target and
      * actual dimensions.
      */
@@ -525,7 +533,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
      */
     public boolean isRemixable ()
     {
-        return (mimeType == APPLICATION_ZIP);
+        return isRemixable(mimeType);
     }
 
     /**

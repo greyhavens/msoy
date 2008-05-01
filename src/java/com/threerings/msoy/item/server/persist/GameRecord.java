@@ -255,7 +255,13 @@ public class GameRecord extends ItemRecord
     }
 
     @Override // from ItemRecord
-    public void setPrimaryMedia (byte[] hash)
+    protected byte getPrimaryMimeType ()
+    {
+        return gameMimeType;
+    }
+
+    @Override // from ItemRecord
+    protected void setPrimaryMedia (byte[] hash)
     {
         gameMediaHash = hash;
     }

@@ -222,7 +222,7 @@ public class GalaxyPanel extends VerticalPanel
     {
         public GroupWidget (GroupCard group) {
             super(group.logo, group.name.toString(), Page.WHIRLEDS,
-                  Args.compose("d", group.name.getGroupId()));
+                  Args.compose("d", group.name.getGroupId()), false);
             int row = getRowCount();
             if (group.population == 0) {
                 setHTML(row, 0, "&nbsp;");

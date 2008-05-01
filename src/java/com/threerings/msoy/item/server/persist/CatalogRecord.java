@@ -137,6 +137,7 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         card.thumbMedia = item.getThumbMediaDesc();
         card.creator = new MemberName(null, item.creatorId); // name filled in by caller
         card.descrip = item.description;
+        card.remixable = item.isRemixable();
         card.rating = item.rating;
         card.flowCost = flowCost;
         card.goldCost = goldCost;

@@ -25,7 +25,7 @@ public class ListingBox extends ItemBox
     public ListingBox (ListingCard listing)
     {
         super(listing.getThumbnailMedia(), listing.name, Page.SHOP,
-              Args.compose("l", "" + listing.itemType, "" + listing.catalogId));
+              Args.compose("l", "" + listing.itemType, "" + listing.catalogId), listing.remixable);
 
         String cname = CShop.msgs.itemBy(listing.creator.toString());
         addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
