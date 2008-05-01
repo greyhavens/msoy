@@ -135,8 +135,8 @@ public class RoomController extends SceneController
      */
     public function getEntityInstanceId () :int
     {
-        // every sprite uses our own OID as the instanceid.
-        return _wdctx.getMemberObject().getOid();
+        // every sprite uses our own memberId as the instanceid.
+        return _wdctx.getMemberObject().getMemberId();
     }
 
     /**
@@ -150,8 +150,15 @@ public class RoomController extends SceneController
         }
 
         // otherwise, locate the name in the OccupantInfos
-        var occInfo :OccupantInfo = _roomObj.occupantInfo.get(instanceId) as OccupantInfo;
-        return (occInfo == null) ? null : occInfo.username.toString();
+        for each (var obj :Object in _roomObj.occupantInfo.toArray()) {
+            if (obj is MemberInfo) {
+                var memInfo :MemberInfo = obj as MemberInfo;
+                if (memInfo.getMemberId() == instanceId) {
+                    return memInfo.username.toString();
+                }
+            }
+        }
+        return null;
     }
 
     /**
