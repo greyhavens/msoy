@@ -143,9 +143,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
-    public void gamePlayed (int gameGenre, int gameId, int itemId, int payout, int secondsPlayed) 
+    public void gamePlayed (
+        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId) 
     {
-        post(new MsoyEvents.GamePlayed(gameGenre, gameId, itemId, payout, secondsPlayed));
+        post(new MsoyEvents.GamePlayed(
+            gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
     }
     
     public void trophyEarned (int recipientId, int gameId, String trophyIdent)

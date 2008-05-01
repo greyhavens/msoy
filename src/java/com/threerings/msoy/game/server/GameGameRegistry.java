@@ -310,7 +310,8 @@ public class GameGameRegistry
      */
     public void gamePayout (UserActionDetails info, Game game, int payout, int secondsPlayed)
     {
-        _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed);
+        _eventLog.gamePlayed(
+            game.genre, game.gameId, game.itemId, payout, secondsPlayed, info.memberId);
     }
     
     // from AVRProvider

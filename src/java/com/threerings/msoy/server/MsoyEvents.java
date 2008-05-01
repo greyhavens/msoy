@@ -237,8 +237,10 @@ public class MsoyEvents
         @Field final public int itemId;
         @Field final public int payout;
         @Field final public int secondsPlayed;
+        @Field final public int playerId;
         
-        public GamePlayed (int gameGenre, int gameId, int itemId, int payout, int secondsPlayed)
+        public GamePlayed (
+            int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
         {
             this.timestamp = new Date();
             this.gameGenre = gameGenre;
@@ -246,6 +248,7 @@ public class MsoyEvents
             this.itemId = itemId;
             this.payout = payout;
             this.secondsPlayed = secondsPlayed;
+            this.playerId = playerId;
         }
     }
 
