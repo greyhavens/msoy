@@ -3,10 +3,11 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -32,21 +33,23 @@ public class ItemBox extends SmartTable
             }
         };
 
-        AbsolutePanel panel = new AbsolutePanel();
-        panel.setStyleName("itemThumbBox"); // sets width=100, height=60
-
         ThumbBox thumb = new ThumbBox(media, onClick);
-        panel.add(thumb, 10, 0); // thumbnail (80px) centered in itemThumbBox (100px)
+        Widget mainWidget = thumb;
 
         if (remixable) {
             Image remix = new Image("/images/item/remixable_icon.png");
             remix.setTitle(CShell.imsgs.remixTip());
-            remix.addClickListener(onClick); // make the remix icon also do the main action
-            remix.addStyleName("actionLabel"); // act clickable..
-            panel.add(remix, 70, 30); // the icon is 30x30, so only overlap as much as necessary
+
+            // but now our mainWidget will be something else...
+            HorizontalPanel hpan = new HorizontalPanel();
+            hpan.add(thumb);
+            VerticalPanel vpan = new VerticalPanel();
+            vpan.add(remix);
+            hpan.add(vpan);
+            mainWidget = hpan;
         }
 
-        addWidget(panel, getColumns(), null);
+        addWidget(mainWidget, getColumns(), null);
         getFlexCellFormatter().setHorizontalAlignment(getRowCount()-1, 0, HasAlignment.ALIGN_CENTER);
         addWidget(MsoyUI.createActionLabel(name, "Name", onClick), getColumns(), null);
     }
