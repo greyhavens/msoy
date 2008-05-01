@@ -298,6 +298,9 @@ public class Frame
             Window.enableScrolling(true);
         } else {
             content = (_scroller = new ScrollPanel(_contlist));
+            // this works around a pesky IE bug wherein absolutely positioned things inside an
+            // overflow: auto (or scroll) element are le booched
+            DOM.setStyleAttribute(_scroller.getElement(), "position", "relative");
             _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             Window.enableScrolling(false);
         }
