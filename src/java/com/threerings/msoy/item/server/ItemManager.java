@@ -651,11 +651,7 @@ public class ItemManager
             MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
 
         } else if (type == Item.GAME) {
-            MsoyServer.peerMan.invokeNodeAction(new GameNodeAction(((GameRecord) rec).gameId) {
-                protected void execute () {
-                    MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
-                }
-            });
+            MsoyServer.peerMan.invokeNodeAction(new GameUpdatedAction(((GameRecord) rec).gameId));
         }
     }
 
@@ -1204,6 +1200,18 @@ public class ItemManager
         /** A mapping of item type to LookupType record of repo / ids. */
         protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
+
+    /** Notifies other nodes when a game record is updated. */
+    protected static class GameUpdatedAction extends GameNodeAction
+    {
+        public GameUpdatedAction (int gameId) {
+            super(gameId);
+        }
+
+        @Override protected void execute () {
+            MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
+        }
+    }
 
     /** A reference to our game repository. We'd just look this up from the table but we can't
      * downcast an ItemRepository to a GameRepository, annoyingly. */
