@@ -1,11 +1,10 @@
-//
+/
 // $Id$
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.crowd.data.OccupantInfo;
-
 import com.whirled.data.WhirledOccupantInfo;
+import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.data.VizMemberName;
 
@@ -14,7 +13,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * Contains information on occupants in a game.
  */
-public class PlayerInfo extends OccupantInfo
+public class PlayerInfo extends WhirledGameOccupantInfo
     implements WhirledOccupantInfo
 {
     public function PlayerInfo (who :PlayerObject = null)
