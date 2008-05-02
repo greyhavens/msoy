@@ -90,8 +90,7 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            RootPanel.get(Frame.CLIENT).clear();
-            FlashClients.embedWorldClient(RootPanel.get(Frame.CLIENT), flashArgs);
+            FlashClients.embedWorldClient(Frame.getClientContainer(), flashArgs);
 
         } else {
             // note our new current flash args
@@ -115,8 +114,7 @@ public class WorldClient extends Widget
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }
-        RootPanel.get(Frame.CLIENT).clear();
-        FlashClients.embedGameClient(RootPanel.get(Frame.CLIENT), flashArgs);
+        FlashClients.embedGameClient(Frame.getClientContainer(), flashArgs);
     }
 
     public static void displayJava (Widget client)
@@ -129,8 +127,7 @@ public class WorldClient extends Widget
 
         if (_jclient != client) {
             clientWillClose(); // clear out our flash client if we have one
-            RootPanel.get(Frame.CLIENT).clear();
-            RootPanel.get(Frame.CLIENT).add(_jclient = client);
+            Frame.getClientContainer().add(_jclient = client);
         } else {
             clientMinimized(false);
         }

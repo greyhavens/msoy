@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -43,8 +44,11 @@ import client.util.MsoyUI;
  */
 public class Frame
 {
-    /** The height of our frame header and page title bar. */
-    public static final int HEADER_HEIGHT = 50 /* header */ + 37 /* title bar */;
+    /** The height of our frame navigation header. */
+    public static final int NAVI_HEIGHT = 50 /* header */;
+
+    /** The height of our frame navigation header and page title bar. */
+    public static final int HEADER_HEIGHT = NAVI_HEIGHT + 37 /* title bar */;
 
     /** The height of our Flash or Java client in pixels. */
     public static final int CLIENT_HEIGHT = 544;
@@ -60,8 +64,7 @@ public class Frame
      */
     public static void init ()
     {
-        // if we're tall enough, handle scrolling ourselves
-        Window.enableScrolling(windowTooShort());
+        // listen for window resize so that we can adjust the size of our scrollers
         Window.addWindowResizeListener(_resizer);
 
         // set up the callbackd that our flash clients can call
@@ -155,6 +158,7 @@ public class Frame
 
         WorldClient.clientWillClose();
         _closeToken = null;
+        _cscroller = null;
         RootPanel.get(CLIENT).clear();
         RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
@@ -263,6 +267,23 @@ public class Frame
     }
 
     /**
+     * Clears out the client section of the frame and creates a new scroll pane to contain a new
+     * client (and other bits if desired).
+     */
+    public static Panel getClientContainer ()
+    {
+        RootPanel.get(CLIENT).clear();
+        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
+            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
+            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+            return _cscroller;
+        } else {
+            _cscroller = null;
+            return RootPanel.get(CLIENT);
+        }
+    }
+
+    /**
      * Displays the supplied page content.
      */
     protected static void showContent (String pageId, Widget pageContent)
@@ -290,10 +311,9 @@ public class Frame
         int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
         RootPanel.get(CLIENT).setWidth(clientWidth + "px");
 
-        // if we're not showing a Page.Content page or the browser is too short; don't try to do
-        // our own custom scrolling, just let everything scroll
+        // if we're not showing a Page.Content page, don't do our custom scrolling
         Widget content;
-        if (windowTooShort() || pageId == null) {
+        if (pageId == null) {
             content = _contlist;
             Window.enableScrolling(true);
         } else {
@@ -322,11 +342,6 @@ public class Frame
         if (_bar != null) {
             _bar.setCloseVisible(FlashClients.clientExists());
         }
-    }
-
-    protected static boolean windowTooShort ()
-    {
-        return Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT);
     }
 
     protected static int clearDialog (ComplexPanel panel, Predicate pred)
@@ -666,6 +681,9 @@ public class Frame
             if (_scroller != null) {
                 _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             }
+            if (_cscroller != null) {
+                _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+            }
         }
     };
 
@@ -676,6 +694,7 @@ public class Frame
 
     protected static FlowPanel _contlist;
     protected static ScrollPanel _scroller;
+    protected static ScrollPanel _cscroller;
 
     /** Our navigation menu images. */
     protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
