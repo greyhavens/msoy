@@ -52,6 +52,8 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -419,8 +421,10 @@ public abstract class ItemRepository<
 
     /**
      * Counts all items in the catalog that match the supplied query terms.
+     *
+     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
      */
-    public int countListings (boolean mature, String search, int tag, int creator)
+    public int countListings (boolean mature, String search, int tag, int creator, float minRating)
         throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
@@ -429,7 +433,7 @@ public abstract class ItemRepository<
                              getItemClass(), ItemRecord.ITEM_ID));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator);
+        addSearchClause(clauses, mature, search, tag, creator, minRating);
 
         // finally fetch all the catalog records of interest
         ListingCountRecord crec = load(
@@ -440,6 +444,8 @@ public abstract class ItemRepository<
     /**
      * Loads all items in the catalog.
      *
+     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
+     *
      * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
      *       and then executes a second query against ItemRecord only. This really really has
      *       to be a single join in a sane universe, but that makes significant demands on the
@@ -447,7 +453,7 @@ public abstract class ItemRepository<
      *       the Item vs Catalog class hierarchies).
      */
     public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                  int creator, int offset, int rows)
+                                  int creator, float minRating, int offset, int rows)
         throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
@@ -460,6 +466,7 @@ public abstract class ItemRepository<
         List<OrderBy.Order> obOrders = Lists.newArrayList();
         switch(sortBy) {
         case CatalogQuery.SORT_BY_LIST_DATE:
+        case CatalogQuery.SORT_BY_NEW_AND_HOT:
             addOrderByListDate(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
             break;
@@ -487,7 +494,7 @@ public abstract class ItemRepository<
                                 obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator);
+        addSearchClause(clauses, mature, search, tag, creator, minRating);
 
         // finally fetch all the catalog records of interest
         List<CAT> records = findAll(
@@ -914,9 +921,11 @@ public abstract class ItemRepository<
 
     /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
+     *
+     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
      */
     protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
-                                    int tag, int creator)
+                                    int tag, int creator, float minRating)
         throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
@@ -973,6 +982,11 @@ public abstract class ItemRepository<
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
             whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
+        }
+
+        if (!Float.isNaN(minRating)) {
+            whereBits.add(new Conditionals.GreaterThanEquals(
+                getItemColumn(ItemRecord.RATING), minRating));
         }
 
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),

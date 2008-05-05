@@ -25,12 +25,14 @@ public class CatalogQuery
     public static final byte SORT_BY_PRICE_DESC = 5;
     /** Indicates the order in which catalog search results should be returned. */
     public static final byte SORT_BY_PURCHASES = 6;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_NEW_AND_HOT = 7;
 
     /** The type of item being browsed. */
     public byte itemType = Item.NOT_A_TYPE;
 
     /** The order in which to return the catalog listings. */
-    public byte sortBy = SORT_BY_RATING;
+    public byte sortBy = SORT_BY_NEW_AND_HOT;
 
     /** The tag by which to filter the listings or null. */
     public String tag;
@@ -53,7 +55,7 @@ public class CatalogQuery
         this.search = source.search;
         this.creatorId = source.creatorId;
     }
-    
+
     // @Override // from Object
     public int hashCode ()
     {

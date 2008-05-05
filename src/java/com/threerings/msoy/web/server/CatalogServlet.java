@@ -114,6 +114,8 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
+        float minRating = (query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) ? 4.0f : Float.NaN;
+
         try {
             TagNameRecord tagRecord = (query.tag != null) ?
                 repo.getTagRepository().getTag(query.tag) : null;
@@ -122,7 +124,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // fetch catalog records and loop over them
             for (CatalogRecord record : repo.loadCatalog(query.sortBy, showMature(mrec),
                                                          query.search, tagId, query.creatorId,
-                                                         offset, rows)) {
+                                                         minRating, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListingCard());
             }
@@ -133,7 +135,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // if they want the total number of matches, compute that as well
             if (includeCount) {
                 result.listingCount = repo.countListings(
-                    showMature(mrec), query.search, tagId, query.creatorId);
+                    showMature(mrec), query.search, tagId, query.creatorId, minRating);
             }
 
         } catch (PersistenceException pe) {
@@ -605,7 +607,7 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         List<ListingCard> cards = Lists.newArrayList();
         for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
-                                                   null, 0, 0, 0, ShopData.TOP_ITEM_COUNT)) {
+                null, 0, 0, Float.NaN, 0, ShopData.TOP_ITEM_COUNT)) {
             cards.add(crec.toListingCard());
         }
         return cards.toArray(new ListingCard[cards.size()]);
