@@ -5,6 +5,8 @@ package com.threerings.msoy.ui {
 
 import flash.events.MouseEvent;
 
+import flash.text.TextFieldAutoSize;
+
 import mx.containers.HBox;
 
 import mx.controls.Label;
@@ -16,6 +18,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.flex.CommandMenu;
+import com.threerings.flex.FlexWrapper;
 import com.threerings.flex.NameLabelCreator;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -25,6 +28,8 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.world.client.NameField;
 
 public class MsoyNameLabelCreator implements NameLabelCreator
 {
@@ -44,15 +49,18 @@ public class MsoyNameLabelCreator implements NameLabelCreator
             labelBox.addChild(MediaWrapper.createView(
                 (name as VizMemberName).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
         }
-        var label :Label = new Label();
+
+        var label :NameField = new NameField();
+        label.autoSize = TextFieldAutoSize.LEFT;
         label.text = "" + name;
+        labelBox.addChild(new FlexWrapper(label));
+
         var memberName :MemberName = name as MemberName;
         if (memberName != null) {
             labelBox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 handlePlayerClicked(memberName);
             });
         }
-        labelBox.addChild(label);
         return labelBox;
     }
     
