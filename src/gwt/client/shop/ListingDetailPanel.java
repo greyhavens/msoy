@@ -28,6 +28,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
+import client.stuff.DoListItemPopup;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.ItemUtil;
@@ -83,6 +84,21 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
+            Label reprice = new Label(CShop.msgs.listingReprice());
+            reprice.addStyleName("actionLabel");
+            reprice.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
+                        public void itemListed (Item item, boolean updated) {
+                            Application.go(Page.SHOP, Args.compose(new String[] {
+                                "l", "" + _item.getType(), "" + _listing.catalogId,
+                                "repriced_from_" + _listing.flowCost}));
+                        }
+                    });
+                }
+            });
+            info.addWidget(reprice, 2, null);
+
             Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {

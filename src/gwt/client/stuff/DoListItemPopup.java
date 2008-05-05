@@ -159,7 +159,7 @@ public class DoListItemPopup extends VerticalPanel
                 public boolean callService () {
                     CStuff.catalogsvc.listItem(
                         CStuff.ident, _item.getIdent(), _description.getText(), getPricing(),
-                        getSalesTarget(), getFlowCost(), 0 /* getGoldCost() */, this);
+                        getSalesTarget(), getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
@@ -175,14 +175,14 @@ public class DoListItemPopup extends VerticalPanel
             new ClickCallback(_doIt) {
                 public boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();
-                    if (getPricing() == CatalogListing.PRICING_LIMITED_EDITION &&
-                        listing != null && salesTarget <= listing.purchases) {
+                    if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&
+                            listing != null && salesTarget <= listing.purchases) {
                         MsoyUI.error(CStuff.msgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
                     CStuff.catalogsvc.updatePricing(
-                        CStuff.ident, _item.getType(), _item.catalogId, getPricing(),
-                        salesTarget, getFlowCost(), 0 /* getGoldCost() */, this);
+                        CStuff.ident, _item.getType(), _item.catalogId, pricing,
+                        salesTarget, getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
