@@ -246,7 +246,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         buttons = new RowPanel();
-        Label label = null;
 
         // add a button for renaming
         if (!original) {
@@ -257,7 +256,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // if remixable, add a button for that.
         if (remixable) {
-            label = new Label(CStuff.imsgs.remixTip());
             buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
                 new ClickListener() {
                     public void onClick (Widget sender) {
@@ -268,9 +266,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         if (buttons.getWidgetCount() > 0) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            if (label != null) {
-                _details.add(label);
-            }
             _details.add(buttons);
         }
     }

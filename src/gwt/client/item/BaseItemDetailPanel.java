@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -104,6 +105,17 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.addStyleName("Description");
         _details.add(_indeets);
         _indeets.add(new Label(ItemUtil.getDescription(_item)));
+
+        MediaDesc prim = _item.getPrimaryMedia();
+        boolean remixable = (prim != null) && prim.isRemixable();
+        if (remixable) {
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.setSpacing(10);
+            panel.add(new Image("images/item/remixable_icon.png"));
+            panel.add(new Label(CShell.imsgs.remixTip()));
+            _indeets.add(WidgetUtil.makeShim(10, 10));
+            _indeets.add(panel);
+        }
 
         if (_item instanceof Game) {
             _details.add(WidgetUtil.makeShim(10, 10));
