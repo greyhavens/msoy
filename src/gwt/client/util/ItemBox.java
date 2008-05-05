@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -43,8 +44,8 @@ public class ItemBox extends SmartTable
 
             // arrange it next to the thumbnail
             HorizontalPanel hpan = new HorizontalPanel();
-            hpan.setSpacing(2);
             hpan.add(thumb);
+            hpan.add(WidgetUtil.makeShim(2, 2));
             hpan.add(remix);
             mainWidget = hpan;
         }
