@@ -162,6 +162,7 @@ public class GroupServlet extends MsoyServiceServlet
             detail.group = grec.toGroupObject();
             detail.extras = grec.toExtrasObject();
             detail.creator = MsoyServer.memberRepo.loadMemberName(grec.creatorId);
+            detail.memberCount = _groupRepo.countMembers(grec.groupId);
 
             // determine our rank info if we're a member
             if (mrec != null) {

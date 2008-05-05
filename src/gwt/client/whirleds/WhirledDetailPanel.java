@@ -174,6 +174,9 @@ public class WhirledDetailPanel extends VerticalPanel
             bits.add(blurb);
         }
 
+        bits.add(WidgetUtil.makeShim(10, 10));
+        bits.add(MsoyUI.createLabel(CWhirleds.msgs.detailMembers(""+_group.memberCount), null));
+
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CWhirleds.msgs.detailEnter(),
                                         Application.createLinkListener(

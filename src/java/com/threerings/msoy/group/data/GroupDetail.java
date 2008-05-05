@@ -25,6 +25,9 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
+    /** The number of members in this group. */
+    public int memberCount;
+
     /** My rank in this group ({@link GroupMembership#RANK_NON_MEMBER} if we're not a member). */
     public byte myRank;
 

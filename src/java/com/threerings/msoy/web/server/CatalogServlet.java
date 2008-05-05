@@ -670,7 +670,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     /**
-     * Ensures that the specified user or an admin is taking the requested action.
+     * Ensures that the specified user or a support user is taking the requested action.
      */
     protected void requireIsUser (MemberRecord mrec, int targetId, String action, ItemRecord item)
         throws ServiceException
