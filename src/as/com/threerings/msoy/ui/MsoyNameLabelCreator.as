@@ -48,7 +48,7 @@ public class MsoyNameLabelCreator implements NameLabelCreator
         label.text = "" + name;
         var memberName :MemberName = name as MemberName;
         if (memberName != null) {
-            label.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            labelBox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 handlePlayerClicked(memberName);
             });
         }
