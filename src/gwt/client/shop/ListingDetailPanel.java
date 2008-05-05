@@ -82,7 +82,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         info.setText(1, 1, "" + listing.purchases);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isAdmin()) {
+        if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
             Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {

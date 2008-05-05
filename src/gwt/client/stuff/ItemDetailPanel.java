@@ -47,8 +47,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
-        // only add owner buttons for owners and admins
-        if (_item.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
+        // only add owner buttons for owners and support
+        if (_item.ownerId == CShell.getMemberId() || CShell.isSupport()) {
             addOwnerButtons();
         }
 
