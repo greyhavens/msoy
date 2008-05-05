@@ -110,8 +110,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
         boolean remixable = (prim != null) && prim.isRemixable();
         if (remixable) {
             HorizontalPanel panel = new HorizontalPanel();
-            panel.setSpacing(10);
             panel.add(new Image("images/item/remixable_icon.png"));
+            panel.add(WidgetUtil.makeShim(10, 10));
             panel.add(new Label(CShell.imsgs.remixTip()));
             _indeets.add(WidgetUtil.makeShim(10, 10));
             _indeets.add(panel);
