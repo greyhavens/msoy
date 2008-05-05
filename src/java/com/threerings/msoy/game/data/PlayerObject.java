@@ -12,6 +12,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -147,7 +148,7 @@ public class PlayerObject extends BodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new PlayerInfo(this);
+        return new WhirledGameOccupantInfo(this);
     }
 
     // AUTO-GENERATED: METHODS START

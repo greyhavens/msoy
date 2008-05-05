@@ -5,16 +5,23 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
+
 import flash.geom.Point;
+
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+
 import flash.utils.Dictionary;
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.whirled.game.client.GameBackend;
+
 import com.whirled.game.data.WhirledGameObject;
 
+import com.threerings.msoy.data.VizMemberName;
+
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.PlayerInfo;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
@@ -30,16 +37,19 @@ public class MsoyGameBackend extends GameBackend
     override protected function getHeadShot_v2 (occupant :int) :DisplayObject
     {
         validateConnected();
-        var info :PlayerInfo = _gameObj.occupantInfo.get(occupant) as PlayerInfo;
+        var info :OccupantInfo = _gameObj.occupantInfo.get(occupant) as OccupantInfo;
         if (info != null) {
-            var headshot :Headshot = _headshots[occupant];
-            if (headshot == null) {
-                _headshots[occupant] = headshot = new Headshot(info.getHeadshot());
+            var vizName :VizMemberName = info.username as VizMemberName;
+            if (vizName != null) {
+                var headshot :Headshot = _headshots[occupant];
+                if (headshot == null) {
+                    _headshots[occupant] = headshot = new Headshot(vizName.getPhoto());
+                }
+                return headshot;
             }
-            return headshot;
         }
 
-        log.warning("Unable to find occupant: " + occupant);
+        log.warning("Unable to find occupant, or username is not a VizMemberName: " + occupant);
         return super.getHeadShot_v2(occupant); // return something that works anyway
     }
 
@@ -67,6 +77,8 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.geom.Point;
+
+import com.threerings.util.Log;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 

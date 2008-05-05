@@ -6,17 +6,23 @@ package com.threerings.msoy.game.client {
 import flash.display.Loader;
 
 import com.threerings.crowd.data.PlaceObject;
+
 import com.whirled.game.client.GameBackend;
 
-import com.whirled.game.client.PlayerList;
+import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
+
 import com.whirled.game.data.WhirledGameObject;
 
+import com.threerings.msoy.ui.MsoyNameLabelCreator;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
+
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyPlaceView;
+
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class MsoyGamePanel extends WhirledGamePanel
@@ -86,9 +92,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
-    override protected function createPlayerList () :PlayerList
+    override protected function createPlayerList () :GamePlayerList
     {
-        return new MsoyPlayerList(_ctx as GameContext);
+        return new GamePlayerList(new MsoyNameLabelCreator((_ctx as GameContext).getMsoyContext()));
     }
 
     // from WhirledGamePanel
@@ -104,34 +110,4 @@ public class MsoyGamePanel extends WhirledGamePanel
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
 }
-}
-
-import com.threerings.flex.CommandMenu;
-
-import com.threerings.crowd.data.OccupantInfo;
-
-import com.whirled.game.client.PlayerList;
-
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.client.GameContext;
-
-class MsoyPlayerList extends PlayerList
-{
-    public function MsoyPlayerList (gctx :GameContext)
-    {
-        _gctx = gctx;
-    }
-
-    override protected function handlePlayerClicked (occInfo :OccupantInfo) :void
-    {
-        var menuItems :Array = [];
-        _gctx.getMsoyContext().getMsoyController().addMemberMenuItems(
-            occInfo.username as MemberName, menuItems);
-
-        var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-        menu.setDispatcher(_gctx.getMsoyContext().getTopPanel());
-        menu.popUpAtMouse();
-    }
-
-    protected var _gctx :GameContext;
 }
