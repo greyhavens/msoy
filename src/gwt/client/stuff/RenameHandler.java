@@ -47,7 +47,7 @@ public class RenameHandler extends ClickCallback
         _item.name = (String) result;
         _models.updateItem(_item);
         // just force a reload of the detail page
-        Application.go(Page.STUFF, Args.compose(new String[] {
+        Application.replace(Page.STUFF, Args.compose(new String[] {
             "d", "" + _item.getType(), "" + _item.itemId, _item.name.replaceAll(" ", "-") }));
         return true;
     }

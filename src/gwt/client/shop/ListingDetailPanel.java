@@ -90,7 +90,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
-                            Application.go(Page.SHOP, Args.compose(new String[] {
+                            Application.replace(Page.SHOP, Args.compose(new String[] {
                                 "l", "" + _item.getType(), "" + _listing.catalogId,
                                 "repriced_from_" + _listing.flowCost}));
                         }

@@ -179,7 +179,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     _detail.item = item;
 
                     // redisplay the item detail with the reverted version.
-                    Application.go(Page.STUFF, Args.compose(new String[]
+                    Application.replace(Page.STUFF, Args.compose(new String[]
                         { "d", "" + item.getType(), "" + item.itemId, "revert" }));
                     return false;
                 }
@@ -249,7 +249,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // add a button for renaming
         if (!original) {
-            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(), null);
+            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(),
+                null);
             buttons.add(rename);
             new RenameHandler(rename, _item, _models);
         }

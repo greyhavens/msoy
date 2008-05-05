@@ -157,6 +157,15 @@ public class Application
     }
 
     /**
+     * Replace the current page with the one specified.
+     */
+    public static void replace (String page, String args)
+    {
+        History.back();
+        go(page, args);
+    }
+
+    /**
      * Configures our current history token (normally this is done automatically as the user
      * navigates, but sometimes we want to override the current token). This does not take any
      * action based on the token, but the token will be used if the user subsequently logs in or
