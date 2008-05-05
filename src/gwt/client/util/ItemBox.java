@@ -37,15 +37,15 @@ public class ItemBox extends SmartTable
         Widget mainWidget = thumb;
 
         if (remixable) {
+            // add a wee icon indicating remixable
             Image remix = new Image("/images/item/remixable_icon.png");
             remix.setTitle(CShell.imsgs.remixTip());
 
-            // but now our mainWidget will be something else...
+            // arrange it next to the thumbnail
             HorizontalPanel hpan = new HorizontalPanel();
+            hpan.setSpacing(2);
             hpan.add(thumb);
-            VerticalPanel vpan = new VerticalPanel();
-            vpan.add(remix);
-            hpan.add(vpan);
+            hpan.add(remix);
             mainWidget = hpan;
         }
 
