@@ -421,10 +421,8 @@ public abstract class ItemRepository<
 
     /**
      * Counts all items in the catalog that match the supplied query terms.
-     *
-     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
      */
-    public int countListings (boolean mature, String search, int tag, int creator, float minRating)
+    public int countListings (boolean mature, String search, int tag, int creator, Float minRating)
         throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
@@ -444,8 +442,6 @@ public abstract class ItemRepository<
     /**
      * Loads all items in the catalog.
      *
-     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
-     *
      * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
      *       and then executes a second query against ItemRecord only. This really really has
      *       to be a single join in a sane universe, but that makes significant demands on the
@@ -453,7 +449,7 @@ public abstract class ItemRepository<
      *       the Item vs Catalog class hierarchies).
      */
     public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                  int creator, float minRating, int offset, int rows)
+                                  int creator, Float minRating, int offset, int rows)
         throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
@@ -921,11 +917,9 @@ public abstract class ItemRepository<
 
     /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
-     *
-     * @param minRating the minimum rating, or Float.NaN to not filter by rating.
      */
     protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
-                                    int tag, int creator, float minRating)
+                                    int tag, int creator, Float minRating)
         throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
@@ -984,7 +978,7 @@ public abstract class ItemRepository<
             whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
         }
 
-        if (!Float.isNaN(minRating)) {
+        if (minRating != null) {
             whereBits.add(new Conditionals.GreaterThanEquals(
                 getItemColumn(ItemRecord.RATING), minRating));
         }

@@ -114,7 +114,8 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
-        float minRating = (query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) ? 4.0f : Float.NaN;
+        Float minRating = (query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT)
+            ? Float.valueOf(4) : null;
 
         try {
             TagNameRecord tagRecord = (query.tag != null) ?
