@@ -246,13 +246,14 @@ class TableIcon extends Sprite
                     autoSize: TextFieldAutoSize.CENTER,
                     textColor: 0xFFFFFF,
                     outlineColor: 0x000000
-                });
+                },
+                { size: 10, bold: true });
             label.x = label.width / -2; // position with 0 at center
-            label.y = height + GAP;
+            label.y = height; // no gap between icon!
             addChild(label);
 
             width = Math.max(width, label.width);
-            height += GAP + label.height;
+            height += label.height;
         }
 
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
@@ -291,8 +292,6 @@ class TableIcon extends Sprite
                                                : WorldController.JOIN_GAME_LOBBY;
         CommandEvent.dispatch(this, cmd, _gameSummary.gameId);
     }
-
-    private static const GAP :int = 10;
 
     protected var _host :MemberSprite;
     protected var _gameSummary :GameSummary;
