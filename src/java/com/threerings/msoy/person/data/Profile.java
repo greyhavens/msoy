@@ -94,6 +94,8 @@ public class Profile implements IsSerializable
     /**
      * Called after isValidDisplayName, if the user is not support.
      */
+    // @SuppressWarnings("deprecation") // GWT needs isSpace(), but it's deprecated in favor of
+    // isWhitespace() in the Java library.
     public static boolean isValidNonSupportName (String name)
     {
         name = name.toLowerCase();
