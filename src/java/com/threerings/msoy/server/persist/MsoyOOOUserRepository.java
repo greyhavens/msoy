@@ -65,7 +65,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(OOOUserRecord.class, userId);
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public User loadUser (int userId)
         throws PersistenceException
     {
@@ -83,7 +83,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(OOOUserRecord.class, new Where(OOOUserRecord.USERNAME_C, username));
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public OOOUser loadUser (String username, boolean loadIdents)
         throws PersistenceException
     {
@@ -95,7 +95,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return user;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public OOOUser loadUserByAccountName (String accountName)
         throws PersistenceException
     {
@@ -111,7 +111,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public User loadUserBySession (String sessionKey)
         throws PersistenceException
     {
@@ -146,7 +146,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return user;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public String[] getUsernames (String email)
         throws PersistenceException
     {
@@ -158,7 +158,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return usernames.toArray(new String[usernames.size()]);
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public List<String> getTokenUsernames (Collection<String> usernames, byte token)
         throws PersistenceException
     {
@@ -195,14 +195,14 @@ public class MsoyOOOUserRepository extends DepotRepository
         return machIdents;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public void loadMachineIdents (OOOUser user)
         throws PersistenceException
     {
         user.machIdents = loadMachineIdents(user.userId);
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public List<Tuple<Integer, String>> getUsersOfMachIdent (String machIdent)
         throws PersistenceException
     {
@@ -251,7 +251,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(TaintedIdentRecord.class, machIdent) != null;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public Collection<String> filterTaintedIdents (String[] idents)
         throws PersistenceException
     {
@@ -281,7 +281,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         }
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public void removeTaintedIdent (String machIdent)
         throws PersistenceException
     {
@@ -301,7 +301,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return load(BannedIdentRecord.class, BannedIdentRecord.getKey(machIdent, siteId)) != null;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public Collection<String> filterBannedIdents (String[] idents, int siteId)
         throws PersistenceException
     {
@@ -326,7 +326,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         insert(new BannedIdentRecord(machIdent, siteId));
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public void removeBannedIdent (String machIdent, int siteId)
         throws PersistenceException
     {
@@ -398,7 +398,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         updatePartial(OOOUserRecord.class, userId, OOOUserRecord.PASSWORD, password);
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public boolean updateUser (User user)
         throws PersistenceException
     {
@@ -438,7 +438,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return session.token;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public boolean refreshSession (String sessionKey, int expireDays)
         throws PersistenceException
     {
@@ -449,7 +449,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return updatePartial(SessionRecord.class, sessionKey, SessionRecord.EXPIRES, expires) == 1;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public boolean ban (int site, String username)
         throws PersistenceException
     {
@@ -467,7 +467,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         return true;
     }
 
-    // documentation inherited from SupportRepository
+    // from SupportRepository
     public boolean unban (int site, String username, boolean untaint)
         throws PersistenceException
     {
