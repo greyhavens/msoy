@@ -91,7 +91,7 @@ public /*abstract*/ class MsoyClient extends Client
 
     public function MsoyClient (stage :Stage)
     {
-        super(null, stage);
+        super(null);
         setVersion(DeploymentConfig.version);
         _creds = createStartupCreds(null);
 
