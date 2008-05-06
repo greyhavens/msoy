@@ -97,8 +97,29 @@ public class Profile implements IsSerializable
     public static boolean isValidNonSupportName (String name)
     {
         name = name.toLowerCase();
-        return !name.startsWith("agent") && !name.startsWith("agenl ") &&
-            !name.startsWith("agant ") && !name.startsWith("agint ") &&
-            (-1 == name.indexOf(" agent "));
+        if (isPossibleA(name.charAt(0)) && (
+                name.startsWith("gent", 1) || name.startsWith("genl ", 1) ||
+                name.startsWith("gant ", 1) || name.startsWith("gint ", 1))) {
+            return false;
+        }
+
+        int lastDex = 2;
+        do {
+            int dex = name.indexOf("gent ", lastDex);
+            if (dex != -1 && Character.isSpace(name.charAt(dex - 2)) &&
+                    isPossibleA(name.charAt(dex - 1))) {
+                return false;
+            }
+            lastDex = dex + 1;
+        } while (lastDex > 0);
+        return true;
+    }
+
+    /** Helper for isValidNonSupportName. */
+    private static boolean isPossibleA (char c)
+    {
+        // it's an A, or it's something unicodey: kill.
+        // I don't want to enumerate all possible unicode A characters.
+        return (c == 'a') || (c > 127);
     }
 }
