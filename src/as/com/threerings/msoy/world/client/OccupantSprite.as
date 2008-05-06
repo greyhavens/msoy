@@ -14,9 +14,11 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.ValueEvent;
+
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -116,12 +118,12 @@ public class OccupantSprite extends MsoySprite
         }
         // store the decoration inside the constraints object
         constraints["dec"] = dec;
+
+        // add the new decoration and stabley sort the list
         _decorations.push(constraints);
+        ArrayUtil.stableSort(_decorations, decorationSort);
 
-        // TODO: is there no stable sort available to us?
-        // For now, I'll just sort, but I don't like it!
-        _decorations.sort(decorationSort);
-
+        // add it and lay it out
         _extras.addChild(dec);
         arrangeDecorations();
     }
@@ -597,11 +599,9 @@ public class OccupantSprite extends MsoySprite
                 if (rect == null) {
                     rect = dec.getRect(dec);
                 }
-                baseY -= (rect.height + DECORATION_PAD) / _extras.scaleX;
+                baseY -= (rect.height + DECORATION_PAD);
                 dec.x = (hotX - (rect.width/2) - rect.x) / _extras.scaleX;
                 dec.y = (baseY - rect.y);
-
-                // TODO: I believe something is booched in the Y positioning calculations
             }
         }
 
