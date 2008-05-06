@@ -576,8 +576,6 @@ public class OccupantSprite extends MsoySprite
         var baseY :Number = isNaN(_height) ? 0 :
             Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
         _label.y = (baseY - _label.height) / _extras.scaleY;
-
-        // TODO: I believe something's booched in the y position calculations with _extras.scaleY
     }
 
     /**
