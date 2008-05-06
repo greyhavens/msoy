@@ -92,6 +92,8 @@ public /*abstract*/ class MsoyClient extends Client
     public function MsoyClient (stage :Stage)
     {
         super(null);
+        _stage = stage;
+
         setVersion(DeploymentConfig.version);
         _creds = createStartupCreds(null);
 
@@ -161,6 +163,14 @@ public /*abstract*/ class MsoyClient extends Client
         if (rdata.warning != null) {
             new WarningDialog(_ctx, rdata.warning);
         }
+    }
+
+    /**
+     * Return the Stage.
+     */
+    public function getStage () :Stage
+    {
+        return _stage;
     }
 
     /**
@@ -369,6 +379,7 @@ public /*abstract*/ class MsoyClient extends Client
     }
 
     protected var _ctx :MsoyContext;
+    protected var _stage :Stage;
 
     protected var _minimized :Boolean;
     protected var _embedded :Boolean;

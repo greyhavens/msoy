@@ -46,7 +46,7 @@ public class LiaisonGameContext
         }
         var gcreds :MsoyGameCredentials = new MsoyGameCredentials(name);
         gcreds.sessionToken = wcreds.sessionToken;
-        _client = new Client(gcreds, wctx.getStage());
+        _client = new Client(gcreds);
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);
 
         // create our directors
