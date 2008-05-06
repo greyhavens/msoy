@@ -150,6 +150,11 @@ public class MsoyController extends Controller
     {
         if (!NetUtil.navigateToURL(url, false)) {
             _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
+
+            // TODO
+            // experimental: display a popup with the URL (this could be moved to handleLink()
+            // if this method is altered to return a success Boolean
+            new MissedURLDialog(_mctx, url);
         }
     }
 
