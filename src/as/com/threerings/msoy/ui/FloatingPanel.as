@@ -16,9 +16,11 @@ import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.flex.CommandButton;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
@@ -99,23 +101,14 @@ public class FloatingPanel extends TitleWindow
      * want to call this at the bottom of your createChildren() method. Note that this is just for
      * standard buttons in the button bar. You can certainly add your own buttons elsewhere.
      *
+     * Any already instantiated buttons will be given a button value of 100, but their
+     * relative order will not change.
+     *
      * TODO: consider instead creating a content area and a button area in createChildren() and
      * letting subclasses just populate those.
      */
     public function addButtons (... buttonSources) :void
     {
-        // separate sources into ids an UIComponents
-        var ids :Array = [];
-        var comps :Array = [];
-
-        for each (var buttonSource :Object in buttonSources) {
-            if (buttonSource is int) {
-                ids.push(buttonSource);
-            } else {
-                comps.push(buttonSource);
-            }
-        }
-
         if (_buttonBar == null) {
             // only set to the default width if no width has already been set
             setButtonWidth(DEFAULT_BUTTON_WIDTH);
@@ -124,9 +117,14 @@ public class FloatingPanel extends TitleWindow
             addChild(_buttonBar);
         }
 
-        // id buttons first
-        ids.sort(Array.NUMERIC);
-        for each (var buttonId :int in ids) {
+        ArrayUtil.stableSort(buttonSources, buttonSort);
+        for each (var source :Object in buttonSources) {
+            if (source is Button) {
+                _buttonBar.addChild(source as Button);
+                continue;
+            }
+
+            var buttonId :int = source as int;
             var but :Button = createButton(buttonId);
             // if not a CommandButton, add our own event handling...
             if (!(but is CommandButton)) {
@@ -140,11 +138,6 @@ public class FloatingPanel extends TitleWindow
             if (buttonId == CANCEL_BUTTON) {
                 showCloseButton = true;
             }
-        }
-
-        // then custom buttons
-        for each (var comp :Button in comps) {
-            _buttonBar.addChild(comp);
         }
     }
 
@@ -245,6 +238,21 @@ public class FloatingPanel extends TitleWindow
     private function handleClose (event :CloseEvent) :void
     {
         buttonClicked(CANCEL_BUTTON);
+    }
+
+    /** Handles sorting the buttons to be added. */
+    protected function buttonSort (o1 :Object, o2 :Object) :int
+    {
+        var v1 :Number = (o1 is Number) ? (o1 as Number) : 100;
+        var v2 :Number = (o2 is Number) ? (o2 as Number) : 100;
+
+        if (v1 > v2) {
+            return 1;
+        } else if (v1 < v2) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
     /** Provides client services. */
