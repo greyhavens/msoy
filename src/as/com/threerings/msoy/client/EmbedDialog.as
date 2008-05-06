@@ -40,8 +40,9 @@ public class EmbedDialog extends FloatingPanel
         html.text = embedCode;
         addChild(html);
 
-        addButtons(FloatingPanel.OK_BUTTON,
-            new CommandButton(Msgs.GENERAL.get("b.copy_to_clipboard"), System.setClipboard, embedCode));
+        addButtons(new CommandButton(
+            Msgs.GENERAL.get("b.copy_to_clipboard"), System.setClipboard, embedCode),
+            OK_BUTTON);
         setButtonWidth(0); // free-size
         open(true);
     }
