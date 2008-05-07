@@ -378,7 +378,7 @@ public class Frame
             }
 
         } else if (pageId.equals(Page.PEOPLE)) {
-            if (memberId == 0) {
+            if (CShell.isGuest()) {
                 subnavi.addLink(null, "Search", Page.PEOPLE, "");
             } else {
                 subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
@@ -387,15 +387,14 @@ public class Frame
 
         } else if (pageId.equals(Page.GAMES)) {
             subnavi.addLink(null, "Games", Page.GAMES, "");
-            if (memberId != 0) {
-                subnavi.addLink(null, "My Trophies", Page.GAMES,
-                                Args.compose("t", CShell.getMemberId()));
+            if (!CShell.isGuest()) {
+                subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", memberId));
             }
             subnavi.addLink(null, "All Games", Page.GAMES, "g");
 
         } else if (pageId.equals(Page.WHIRLEDS)) {
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
-            if (memberId != 0) {
+            if (!CShell.isGuest()) {
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
                 if (CShell.isAdmin()) {
                     subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
@@ -581,11 +580,10 @@ public class Frame
             if (closeContent()) {
                 // peachy, nothing else to do
             } else {
-                int memberId = CShell.getMemberId();
-                if (memberId != 0) {
-                    Application.go(Page.WORLD, "m" + memberId);
-                } else {
+                if (CShell.isGuest()) {
                     History.newItem("");
+                } else {
+                    Application.go(Page.WORLD, "m" + CShell.getMemberId());
                 }
             }
         }
@@ -652,7 +650,7 @@ public class Frame
             ClickListener go = new ClickListener() {
                 public void onClick (Widget sender) {
                     // if a guest clicks on "me", send them to create account
-                    if (pageId.equals(Page.ME) && CShell.getMemberId() == 0) {
+                    if (pageId.equals(Page.ME) && CShell.isGuest()) {
                         Application.go(Page.ACCOUNT, "create");
                     } else {
                         Application.go(pageId, "");

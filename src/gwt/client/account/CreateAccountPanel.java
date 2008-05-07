@@ -29,7 +29,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
@@ -248,8 +247,7 @@ public class CreateAccountPanel extends VerticalPanel
         String password = _password.getText().trim();
         String inviteId = (Application.activeInvite == null) ?
             null : Application.activeInvite.inviteId;
-        int guestId = (CAccount.ident != null && MemberName.isGuest(CAccount.ident.memberId)) ?
-            CAccount.ident.memberId : 0;
+        int guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
 

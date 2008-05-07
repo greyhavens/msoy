@@ -53,16 +53,16 @@ public class index extends MsgsEntryPoint
         } else if (action.equals("f")) {
             setContent(new FriendsPanel(args.get(1, 0)));
 
-        } else if (CPeople.getMemberId() == 0) {
+        } else if (CPeople.isGuest()) {
             setContent(new PeoplePanel());
 
-        } else if (action.equals("me")) { // memberId != 0
+        } else if (action.equals("me")) { // !guest
             setContent(new ProfilePanel(CPeople.getMemberId()));
 
-        } else if (action.equals("invites")) { // memberId != 0
+        } else if (action.equals("invites")) { // !guest
             setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
 
-        } else { // memberId != 0
+        } else { // !guest
             setContent(new FriendsPanel(CPeople.getMemberId()));
         }
     }

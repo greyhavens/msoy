@@ -217,8 +217,7 @@ public class MessagesPanel extends PagedGrid
         {
             super.addInfo(info);
 
-            if (CMsgs.getMemberId() != 0 &&
-                CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
+            if (!CMsgs.isGuest() && CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(),
                                        Application.createLinkListener(Page.MAIL, args)));
@@ -252,8 +251,7 @@ public class MessagesPanel extends PagedGrid
                 }));
             }
 
-            if (CMsgs.getMemberId() != 0 &&
-                CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
+            if (!CMsgs.isGuest() && CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
                 info.add(makeInfoImage(_images.complain_post(), CMsgs.mmsgs.inlineComplain(),
                     new ClickListener() {
                         public void onClick (Widget sender) {

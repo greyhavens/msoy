@@ -98,7 +98,7 @@ public class GameTrophyPanel extends PagedGrid
                 } else {
                     setText(1, 0, trophy.description);
                 }
-                if (CGames.getMemberId() != 0 && trophy.whenEarned != null) {
+                if (trophy.whenEarned != null) {
                     setText(2, 0, CGames.msgs.gameTrophyEarnedOn(
                                 _pfmt.format(new Date(trophy.whenEarned.longValue()))));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");

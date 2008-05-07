@@ -37,7 +37,7 @@ public class TopRankingPanel extends VerticalPanel
         }
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
-        if (_onlyMyFriends && (CGames.getMemberId() == 0)) {
+        if (_onlyMyFriends && CGames.isGuest()) {
             addNote(CGames.msgs.trpLogin());
             return;
         }

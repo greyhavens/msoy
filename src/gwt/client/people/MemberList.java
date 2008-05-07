@@ -102,7 +102,7 @@ public class MemberList extends PagedGrid
             int row = 0;
 
             // potentially show the add friend button
-            if (isNotMe && !card.isFriend && CPeople.getMemberId() != 0) {
+            if (isNotMe && !card.isFriend && !CPeople.isGuest()) {
                 onClick = InviteFriendPopup.createListener(card.name);
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
                                      "/images/profile/addfriend.png", onClick));
@@ -111,7 +111,7 @@ public class MemberList extends PagedGrid
             }
 
             // if we're not a guest, we can send them mail
-            if (isNotMe && CPeople.getMemberId() != 0) {
+            if (isNotMe && !CPeople.isGuest()) {
                 onClick = Application.createLinkListener(
                     Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
                 extras.setWidget(row, 0, MsoyUI.createActionImage(

@@ -84,7 +84,7 @@ public class index extends Page
                 // display popular places
                 displayHotSpots();
 
-            } else if (CWorld.getMemberId() == 0) {
+            } else if (CWorld.isGuest()) {
                 setContent(MsoyUI.createLabel(CWorld.msgs.logonForHome(), "infoLabel"));
 
             } else if (action.startsWith("h")) {

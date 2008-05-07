@@ -35,7 +35,7 @@ public class SearchControls extends SmartTable
         super("searchControls", 0, 5);
 
         PushButton action;
-        if (CPeople.getMemberId() == 0) {
+        if (CPeople.isGuest()) {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchJoin(),
                                          Application.createLinkListener(Page.ACCOUNT, "create"));
         } else {

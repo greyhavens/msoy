@@ -81,7 +81,7 @@ public class CommentsPanel extends PagedGrid
         super.addCustomControls(controls);
 
         // if we're logged in, display a button for posting a comment
-        if (CShell.getMemberId() != 0) {
+        if (!CShell.isGuest()) {
             _post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _post.setEnabled(false);
@@ -114,7 +114,7 @@ public class CommentsPanel extends PagedGrid
      */
     protected boolean canComplain (Comment comment)
     {
-        return (_etype != Comment.TYPE_PROFILE_WALL) && (CShell.getMemberId() != 0) &&
+        return (_etype != Comment.TYPE_PROFILE_WALL) && !CShell.isGuest() &&
             (CShell.getMemberId() != comment.commentor.getMemberId());
     }
 

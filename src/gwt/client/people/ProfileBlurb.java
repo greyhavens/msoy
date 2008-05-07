@@ -72,11 +72,11 @@ public class ProfileBlurb extends Blurb
         SmartTable photo = new SmartTable("Photo", 0, 5);
         photo.addWidget(
             MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE), 2, null);
-        if (CPeople.getMemberId() != 0 && !_pdata.isOurFriend && !isMe) {
+        if (!CPeople.isGuest() && !_pdata.isOurFriend && !isMe) {
             addButton(photo, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
                       InviteFriendPopup.createListener(_name));
         }
-        if (CPeople.getMemberId() != 0 && !isMe) {
+        if (!CPeople.isGuest() && !isMe) {
             addButton(photo, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
                       Page.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
         }

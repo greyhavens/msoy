@@ -48,7 +48,7 @@ public class index extends MsgsEntryPoint
         } else if (action.equals("rooms")) {
             setContent(CMe.msgs.titleRooms(), new MyRoomsPanel());
 
-        } else if (action.equals("i") && CMe.getMemberId() == 0) {
+        } else if (action.equals("i") && CMe.isGuest()) {
             // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");
             if (Application.activeInvite != null &&
@@ -63,7 +63,7 @@ public class index extends MsgsEntryPoint
                 });
             }
 
-        } else if (CMe.getMemberId() != 0) {
+        } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
             FlashClients.tutorialEvent("myWhirledVisited");
 

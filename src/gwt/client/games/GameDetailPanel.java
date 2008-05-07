@@ -118,7 +118,7 @@ public class GameDetailPanel extends SmartTable
         addTab(TROPHIES_TAB, CGames.msgs.tabTrophies(), new GameTrophyPanel(detail.gameId));
 
         // add top rankings tabs
-        if (CGames.getMemberId() != 0) {
+        if (!CGames.isGuest()) {
             addTab(MYRANKINGS_TAB, CGames.msgs.tabMyRankings(),
                    new TopRankingPanel(detail.gameId, true));
         }

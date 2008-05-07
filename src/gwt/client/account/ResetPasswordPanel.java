@@ -39,7 +39,7 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "Intro");
 
         // make sure we're not currently logged in
-        if (CAccount.getMemberId() != 0) {
+        if (!CAccount.isGuest()) {
             setText(row, 0, CAccount.msgs.resetLogout());
             return;
         }

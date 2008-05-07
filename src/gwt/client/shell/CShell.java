@@ -7,6 +7,8 @@ import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.ItemServiceAsync;
@@ -73,6 +75,14 @@ public class CShell
     public static int getMemberId ()
     {
         return (creds != null) ? creds.getMemberId() : 0;
+    }
+
+    /**
+     * Returns true if we're a guest, false if we're a member.
+     */
+    public static boolean isGuest ()
+    {
+        return MemberName.isGuest(getMemberId());
     }
 
     /**
