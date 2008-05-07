@@ -404,30 +404,6 @@ public class RoomView extends AbstractRoomView
         return (sprite == null) ? null : sprite.getBubblePosition();
     }
 
-    // from ChatInfoProvider
-    public function getAvoidables (speaker :Name, high :Array, low :Array) :void
-    {
-        // TODO: avoid any open dialog?
-        // TODO: avoid the speaker's cluster?
-
-        // iterate over occupants
-        var myOid :int = _ctx.getClient().getClientOid();
-        for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-            var sprite :OccupantSprite = getOccupant(_roomObj.occupants.get(ii));
-            if (sprite == null) {
-                continue;
-            }
-            var occInfo :OccupantInfo = sprite.getOccupantInfo();
-            if ((occInfo.bodyOid == myOid) ||
-                (speaker != null && speaker.equals(occInfo.username))) {
-                high.push(sprite.getStageRect());
-
-            } else if (low != null) {
-                low.push(sprite.getStageRect());
-            }
-        }
-    }
-
     // from ChatDisplay
     public function clear () :void
     {

@@ -15,10 +15,5 @@ public interface ChatInfoProvider
      * Null may be returned if the speaker is not known.
      */
     function getBubblePosition (speaker :Name) :Point;
-
-    /**
-     * Add the bounding rectangles of things that should be avoided.
-     */
-    function getAvoidables (speaker :Name, high :Array, low :Array) :void;
 }
 }
