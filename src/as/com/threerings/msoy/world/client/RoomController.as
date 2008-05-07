@@ -1644,6 +1644,12 @@ public class RoomController extends SceneController
                 }
             }
 
+            var newName :String = attrsUpdate.name;
+            var oldName :String = _scene.getName();
+            if (newName != oldName) {
+                _wdctx.getMsoyClient().setWindowTitle(newName);
+            }
+
         } else if (update is FurniUpdate_Add) {
             data = (update as FurniUpdate_Add).data;
             _wdctx.getWorldClient().itemUsageChangedToGWT(
