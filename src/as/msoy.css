@@ -1151,6 +1151,7 @@ BasePanel {
 .playerList {
   backgroundAlpha: 0;
   borderStyle: none;
+  selectionColor: #437393;
 }
 
 .gameListContainer {
