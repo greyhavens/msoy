@@ -881,7 +881,9 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :FurniSprite = (_effects.get(effect.id) as FurniSprite);
         if (sprite != null) {
+            spriteWillUpdate(sprite);
             sprite.update(_ctrl.adjustEffectData(effect));
+            spriteDidUpdate(sprite);
         } else {
             addEffect(effect);
         }
