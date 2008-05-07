@@ -71,6 +71,13 @@ public class ActorSprite extends OccupantSprite
 
         super.setOccupantInfo(newInfo);
 
+        // update our item ident, if needed
+        if (newInfo is ActorInfo) {
+            setItemIdent((newInfo as ActorInfo).getItemIdent());
+        } else {
+            setItemIdent(null);
+        }
+
         // if the state has changed, dispatch an event 
         if (stateChanged) {
             callUserCode("stateSet_v1", getActorInfo().getState());

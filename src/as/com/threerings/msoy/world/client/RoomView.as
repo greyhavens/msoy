@@ -789,7 +789,7 @@ public class RoomView extends AbstractRoomView
                 occupant.setChatOverlay(overlay as ComicOverlay);
             }
             _occupants.put(bodyOid, occupant);
-            addChildAt(occupant, 1);
+            addSprite(occupant);
             occupant.setEntering(loc);
             occupant.roomScaleUpdated();
 
@@ -801,7 +801,9 @@ public class RoomView extends AbstractRoomView
 
         } else {
             // update the sprite
+            spriteWillUpdate(occupant);
             occupant.setOccupantInfo(occInfo);
+            spriteDidUpdate(occupant);
 
             // place the sprite back into the set of active sprites
             _occupants.put(bodyOid, occupant);
@@ -812,16 +814,11 @@ public class RoomView extends AbstractRoomView
             occupant.moveTo(loc, _scene);
         }
 
-        // map the occupant sprite in the entities table
-        if (occupant is ActorSprite) {
-            var ident :ItemIdent = (occInfo as ActorInfo).getItemIdent();
-            _entities.put(ident, occupant);
-
-            // if this occupant is a pet, notify GWT that we've got a new pet in the room.
-            if (occupant is PetSprite) {
-                (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
-                    Item.PET, ident.itemId, Item.USED_AS_PET, _scene.getId());
-            }
+        // if this occupant is a pet, notify GWT that we've got a new pet in the room.
+        if (occupant is PetSprite) {
+            var ident :ItemIdent = occupant.getItemIdent();
+            (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
+                Item.PET, ident.itemId, Item.USED_AS_PET, _scene.getId());
         }
     }
 
@@ -865,19 +862,15 @@ public class RoomView extends AbstractRoomView
             // and haven't yet set up the occupant's sprite. Ignore.
             return;
         }
+        spriteWillUpdate(sprite);
         sprite.setOccupantInfo(newInfo);
-
-        // update the entities table
-        if (newInfo is ActorInfo) {
-            _entities.remove((oldInfo as ActorInfo).getItemIdent());
-            _entities.put((newInfo as ActorInfo).getItemIdent(), sprite);
-        }
+        spriteDidUpdate(sprite);
     }
 
     protected function addEffect (effect :EffectData) :FurniSprite
     {
         var sprite :EffectSprite = new EffectSprite(_ctx, _ctrl.adjustEffectData(effect));
-        addChildAt(sprite, 1);
+        addSprite(sprite);
         sprite.setLocation(effect.loc);
         sprite.roomScaleUpdated();
         _effects.put(effect.id, sprite);
@@ -981,25 +974,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    override protected function removeSprite (sprite :MsoySprite) :void
-    {
-        super.removeSprite(sprite);
-
-        // clear any popup associated with it
-        _ctrl.clearEntityPopup(sprite);
-
-        if (sprite is ActorSprite) {
-            // remove the sprite from the entities table
-            _entities.remove((sprite as ActorSprite).getActorInfo().getItemIdent());
-
-        } else if (sprite is MobSprite) {
-            MobSprite(sprite).removed();
-        }
-        if (sprite == _centerSprite) {
-            _centerSprite = null;
-        }
-    }
-
     protected function addAllOccupants () :void
     {
         if (!shouldLoadAll()) {
@@ -1020,21 +994,69 @@ public class RoomView extends AbstractRoomView
         removeAll(_pendingRemovals);
     }
 
-    // from AbstractRoomView
-    override protected function addFurni (furni :FurniData) :FurniSprite
-    {
-        var fsprite :FurniSprite = super.addFurni(furni);
-        _entities.put(furni.getItemIdent(), fsprite);
-        return fsprite;
-    }
-
     protected function removeFurni (furni :FurniData) :void
     {
         var sprite :FurniSprite = (_furni.remove(furni.id) as FurniSprite);
         if (sprite != null) {
             removeSprite(sprite);
         }
-        _entities.remove(furni.getItemIdent());
+    }
+
+    override protected function addSprite (sprite :MsoySprite) :void
+    {
+        super.addSprite(sprite);
+
+        addToEntityMap(sprite);
+    }
+
+    override protected function removeSprite (sprite :MsoySprite) :void
+    {
+        super.removeSprite(sprite);
+
+        removeFromEntityMap(sprite);
+
+        // clear any popup associated with it
+        _ctrl.clearEntityPopup(sprite);
+
+        if (sprite is MobSprite) {
+            MobSprite(sprite).removed();
+        }
+        if (sprite == _centerSprite) {
+            _centerSprite = null;
+        }
+    }
+
+    override protected function spriteWillUpdate (sprite :MsoySprite) :void
+    {
+        super.spriteWillUpdate(sprite);
+
+        removeFromEntityMap(sprite);
+    }
+
+    override protected function spriteDidUpdate (sprite :MsoySprite) :void
+    {
+        super.spriteDidUpdate(sprite);
+
+        addToEntityMap(sprite);
+    }
+
+    /**
+     * Add the specified sprite to our entity map, if applicable.
+     */
+    protected function addToEntityMap (sprite :MsoySprite) :void
+    {
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident != null) {
+            _entities.put(ident, sprite);
+        }
+    }
+
+    /**
+     * Remove the specified sprite to our entity map, if applicable.
+     */
+    protected function removeFromEntityMap (sprite :MsoySprite) :void
+    {
+        _entities.remove(sprite.getItemIdent()); // could be a no-op
     }
 
     /** Event specific constants for notifying GWT */

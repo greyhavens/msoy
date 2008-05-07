@@ -250,7 +250,7 @@ public class AbstractRoomView extends Sprite
     public function addOtherSprite (sprite :MsoySprite) :void
     {
         _otherSprites.push(sprite);
-        addChildAt(sprite, 1);
+        addSprite(sprite);
         relayoutSprite(sprite);
     }
 
@@ -274,7 +274,7 @@ public class AbstractRoomView extends Sprite
         }
         if (decor != null) {
             _bg = _ctx.getMediaDirector().getDecor(decor);
-            addChildAt(_bg, 0);
+            addSprite(_bg);
             _bg.setEditing(_editing);
         }
     }
@@ -336,7 +336,9 @@ public class AbstractRoomView extends Sprite
     {
         var decor :Decor = _scene.getDecor();
         if (_bg != null && decor != null) {
+            spriteWillUpdate(_bg);
             _bg.updateFromDecor(decor);
+            spriteDidUpdate(_bg);
         }
     }
 
@@ -477,7 +479,7 @@ public class AbstractRoomView extends Sprite
     protected function addFurni (furni :FurniData) :FurniSprite
     {
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
-        addChildAt(sprite, 1);
+        addSprite(sprite);
         sprite.setLocation(furni.loc);
         sprite.roomScaleUpdated();
         sprite.setEditing(_editing);
@@ -489,10 +491,21 @@ public class AbstractRoomView extends Sprite
     {
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
+            spriteWillUpdate(sprite);
             sprite.update(furni);
+            spriteDidUpdate(sprite);
         } else {
             addFurni(furni);
         }
+    }
+
+    /**
+     * Add the specified sprite to the view.
+     */
+    protected function addSprite (sprite :MsoySprite) :void
+    {
+        var index :int = (sprite is DecorSprite) ? 0 : 1;
+        addChildAt(sprite, index);
     }
 
     /**
@@ -502,6 +515,22 @@ public class AbstractRoomView extends Sprite
     {
         removeChild(sprite);
         _ctx.getMediaDirector().returnSprite(sprite);
+    }
+
+    /**
+     * Should be called prior to a sprite updating.
+     */
+    protected function spriteWillUpdate (sprite :MsoySprite) :void
+    {
+        // nothing here
+    }
+
+    /**
+     * Should be called after updating a sprite.
+     */
+    protected function spriteDidUpdate (sprite :MsoySprite) :void
+    {
+        // nothing here
     }
 
     /** For logging. */
