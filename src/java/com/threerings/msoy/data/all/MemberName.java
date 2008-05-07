@@ -45,6 +45,7 @@ public class MemberName extends Name
      */
     public static boolean isGuest (int memberId)
     {
+        // memberId == 0 is not technically a guest, but is used for "viewers"
         return memberId <= 0;
     }
 
@@ -94,17 +95,16 @@ public class MemberName extends Name
     // @Override // from Name
     public boolean equals (Object other)
     {
-        if (other instanceof MemberName) {
-            return ((MemberName) other).getMemberId() == _memberId;
-        } else {
-            return false;
-        }
+        return (other instanceof MemberName) && (((MemberName) other).getMemberId() == _memberId);
     }
 
     // @Override // from Name
     public int compareTo (Name o)
     {
-        return _memberId - ((MemberName) o)._memberId;
+        // oh right, FFS, we can't use our Comparators.compare() static method for this
+        // because this is compiled into GWT
+        int otherId = ((MemberName) o)._memberId;
+        return (_memberId > otherId) ? 1 : ((_memberId == otherId) ? 0 : -1);
     }
 
     // @Override // from Name
