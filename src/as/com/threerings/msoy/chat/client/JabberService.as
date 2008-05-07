@@ -3,11 +3,15 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
+import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
  * An ActionScript version of the Java JabberService interface.

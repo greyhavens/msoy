@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
+import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 
 /**
  * An ActionScript version of the Java AVRGameService interface.
