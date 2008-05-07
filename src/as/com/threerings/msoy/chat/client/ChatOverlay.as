@@ -629,6 +629,10 @@ public class ChatOverlay
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
                 _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
                 _historyBar.includeInLayout = false;
+                // oddly, the scroll bar that flex containers use is 1 pixel narrower than what is
+                // created with new VScrollBar().  That width looks better with our scrollbar skin,
+                // so for that reason and for consistency, we decrement the bar's width.
+                _historyBar.width--;
                 _target.addChild(_historyBar);
             }
             configureHistoryBarSize();
