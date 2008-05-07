@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
@@ -44,12 +43,6 @@ public class index extends Page
     // @Override from Page
     public void onHistoryChanged (Args args)
     {
-//         // if we're not a dev deployment, disallow guests
-//         if (!DeploymentConfig.devDeployment && CGames.ident == null) {
-//             setContent(MsoyUI.createLabel(CGames.cmsgs.noGuests(), "infoLabel"));
-//             return;
-//         }
-
         // if we have d-NNN then we want to see game detail
         String action = args.get(0, "");
         if (action.equals("d")) {

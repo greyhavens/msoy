@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.fora.data.Issue;
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
@@ -34,12 +33,6 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (Args args)
     {
-//         // if we're not a dev deployment, disallow guests
-//         if (!DeploymentConfig.devDeployment && CWhirleds.ident == null) {
-//             setContent(MsoyUI.createLabel(CWhirleds.cmsgs.noGuests(), "infoLabel"));
-//             return;
-//         }
-
         String action = args.get(0, "");
         if (action.equals("d")) {
             setContent(_detail);
