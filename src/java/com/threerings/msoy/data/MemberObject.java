@@ -352,7 +352,18 @@ public class MemberObject extends MsoyBodyObject
      */
     public void updateDisplayName (String displayName)
     {
-        setMemberName(new VizMemberName(displayName, getMemberId(), memberName.getPhoto()));
+        updateDisplayName(displayName, null);
+    }
+
+    /**
+     * Publishes this member's updated display name and profile image to their member object.
+     */
+    public void updateDisplayName (String displayName, MediaDesc image) 
+    {
+        if (image == null) {
+            image = memberName.getPhoto();
+        }
+        setMemberName(new VizMemberName(displayName, getMemberId(), image));
     }
 
     /**

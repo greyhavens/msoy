@@ -35,6 +35,7 @@ import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -159,10 +160,12 @@ public class ProfileServlet extends MsoyServiceServlet
             _eventLog.profileUpdated(memrec.memberId);
 
             // handle a display name change if necessary
-            if (memrec.name == null || !memrec.name.equals(displayName)) {
+            if (memrec.name == null || !memrec.name.equals(displayName) || 
+                !oprof.getPhoto().equals(nrec.getPhoto())) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, displayName);
                 // let the world servers know about the display name change
-                MemberNodeActions.displayNameChanged(new MemberName(displayName, memrec.memberId));
+                MemberNodeActions.displayNameChanged(
+                    new VizMemberName(displayName, memrec.memberId, nrec.getPhoto()));
             }
 
         } catch (PersistenceException pe) {

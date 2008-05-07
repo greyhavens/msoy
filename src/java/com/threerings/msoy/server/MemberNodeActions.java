@@ -4,7 +4,9 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 
 import com.threerings.msoy.group.data.GroupMembership;
@@ -92,14 +94,18 @@ public class MemberNodeActions
         public DisplayNameChanged (MemberName name) {
             super(name.getMemberId());
             _name = name.toString();
+            if (name instanceof VizMemberName) {
+                _image = ((VizMemberName) name).getPhoto();
+            }
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.updateDisplayName(_name);
+            memobj.updateDisplayName(_name, _image);
             MsoyServer.memberMan.updateOccupantInfo(memobj);
         }
 
         protected String _name;
+        protected MediaDesc _image;
     }
 
     protected static class FlowUpdated extends MemberNodeAction
