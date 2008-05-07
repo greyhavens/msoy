@@ -572,7 +572,9 @@ public class ChatOverlay
         }
 
         if (showing && _occupantList == null) {
-            return; // no list to show
+            // no list to show, and we need to make sure chat history takes up the full height.
+            layout(true);
+            return;
         }
 
         _occupantList.scrollBarOnLeft = true;
