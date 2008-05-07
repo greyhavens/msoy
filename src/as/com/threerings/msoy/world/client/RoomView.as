@@ -824,6 +824,9 @@ public class RoomView extends AbstractRoomView
             }
 
         } else {
+            // update the sprite
+            occupant.setOccupantInfo(occInfo);
+
             // place the sprite back into the set of active sprites
             _occupants.put(bodyOid, occupant);
             overlay = _ctx.getTopPanel().getPlaceChatOverlay();
