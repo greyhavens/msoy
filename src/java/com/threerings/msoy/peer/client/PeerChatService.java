@@ -39,4 +39,10 @@ public interface PeerChatService extends InvocationService
      */
     public void updateUser (Client client, VizMemberName chatter, ChatChannel channel,
                             PeerChatService.InvocationListener listener);
+
+    /**
+     * Asks the host to update the channel attribute on the ChatChannelObject.
+     */
+    public void updateChannel (Client client, ChatChannel channel,
+                               PeerChatService.InvocationListener listener);
 }

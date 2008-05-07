@@ -12,6 +12,8 @@ import com.threerings.util.Util;
 
 import com.threerings.presents.client.ResultWrapper;
 
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -47,7 +49,7 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
  * Controlles the connection to the channel object, including reconnecting when switching servers
  */
 public class ChatChannelController
-    implements SetListener, Subscriber
+    implements SetListener, AttributeChangeListener, Subscriber
 {
     public function ChatChannelController (ctx :MsoyContext, channel :ChatChannel, 
         showTabFn :Function = null)
@@ -181,6 +183,23 @@ public class ChatChannelController
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
             _departing.add(event.getOldEntry());
+        }
+    }
+
+    // from interface AttributeChangeListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == ChatChannelObject.CHANNEL) {
+            // channel changes on the ChatChannelObject should be purely cosmetic.  It should
+            // not change the ChatChannel's hashCode(), or it's toLocalType().  
+            _channel = event.getValue() as ChatChannel;
+
+            // It can, however, change the visual name of the channel, and the text in the tab
+            // should be changed accordingly.
+            var chatTabs :ChatTabBar = _ctx.getTopPanel().getHeaderBar().getChatTabs();
+            if (chatTabs != null) {
+                chatTabs.setName(_channel.toLocalType(), _channel.ident.toString());
+            }
         }
     }
 

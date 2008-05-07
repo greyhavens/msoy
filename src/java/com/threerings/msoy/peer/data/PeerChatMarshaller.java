@@ -60,8 +60,21 @@ public class PeerChatMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #updateChannel} requests. */
+    public static final int UPDATE_CHANNEL = 4;
+
+    // from interface PeerChatService
+    public void updateChannel (Client arg1, ChatChannel arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_CHANNEL, new Object[] {
+            arg2, listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #updateUser} requests. */
-    public static final int UPDATE_USER = 4;
+    public static final int UPDATE_USER = 5;
 
     // from interface PeerChatService
     public void updateUser (Client arg1, VizMemberName arg2, ChatChannel arg3, InvocationService.InvocationListener arg4)

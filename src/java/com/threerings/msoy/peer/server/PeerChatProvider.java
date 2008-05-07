@@ -35,6 +35,12 @@ public interface PeerChatProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link PeerChatService#updateChannel} request.
+     */
+    public void updateChannel (ClientObject caller, ChatChannel arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link PeerChatService#updateUser} request.
      */
     public void updateUser (ClientObject caller, VizMemberName arg1, ChatChannel arg2, InvocationService.InvocationListener arg3)

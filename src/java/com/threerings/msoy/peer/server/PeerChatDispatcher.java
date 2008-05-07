@@ -61,6 +61,13 @@ public class PeerChatDispatcher extends InvocationDispatcher
             );
             return;
 
+        case PeerChatMarshaller.UPDATE_CHANNEL:
+            ((PeerChatProvider)provider).updateChannel(
+                source,
+                (ChatChannel)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case PeerChatMarshaller.UPDATE_USER:
             ((PeerChatProvider)provider).updateUser(
                 source,

@@ -236,7 +236,7 @@ public class ChatChannelManager
     {
         ChannelWrapper wrapper = _wrappers.get(channel);
         if (wrapper == null || ! wrapper.ready()) {
-            listener.requestFailed("Channel not found or not initialized.");
+            listener.requestFailed("Channel not found or not initialized. [" + channel + "]");
             return;
         }
 
@@ -259,7 +259,7 @@ public class ChatChannelManager
             return;
         }
 
-        listener.requestFailed("Channel not found or not initialized.");
+        listener.requestFailed("Channel not found or not initialized. [" + channel + "]");
     }
 
     // from interface PeerChatProvider
@@ -274,7 +274,7 @@ public class ChatChannelManager
             return;
         }
 
-        listener.requestFailed("Channel not found or not initialized.");
+        listener.requestFailed("Channel not found or not initialized. [" + channel + "]");
     }
 
     // from interface PeerChatProvider
@@ -288,7 +288,21 @@ public class ChatChannelManager
             return;
         }
 
-        listener.requestFailed("Channel not found or not initialized.");
+        listener.requestFailed("Channel not found or not initialized. [" + channel + "]");
+    }
+
+    // from interface PeerChatProvider
+    public void updateChannel (ClientObject caller, ChatChannel channel, 
+                               PeerChatService.InvocationListener listener)
+        throws InvocationException
+    {
+        ChannelWrapper wrapper = _wrappers.get(channel);
+        if (wrapper instanceof HostedWrapper && wrapper.ready()) {
+            ((HostedWrapper)wrapper).updateChannelOnObject(channel);
+            return;
+        }
+
+        listener.requestFailed("Channel not found or not initialized. [" + channel + "]");
     }
 
     /**
@@ -309,6 +323,25 @@ public class ChatChannelManager
                 wrapper.updateChatter(chatter);
             }
         }
+    }
+
+    /**
+     * Update the channel for a room's name.  
+     *
+     * @param room A RoomName to look for.  It should reference the same sceneId as a currently 
+     *             hosted room.
+     */
+    public void updateRoomChannelName (RoomName room) 
+    {
+        ChatChannel roomChannel = ChatChannel.makeRoomChannel(room);
+        ChannelWrapper wrapper = _wrappers.get(roomChannel);
+        if (wrapper == null) {
+            log.warning(
+                "Channel for locally realized room not found for name update! [" + room + "]");
+            return;
+        }
+
+        wrapper.updateChannel(roomChannel);
     }
 
     /**

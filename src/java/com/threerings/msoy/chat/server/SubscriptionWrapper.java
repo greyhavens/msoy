@@ -130,6 +130,28 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
     }
 
+    // from abstract class ChannelWrapper
+    public void updateChannel (final ChatChannel channel)
+    {
+        if (!_channel.equals(channel)) {
+            log.warning("Attempted to update ChatChannel on wrapper with incompatible channel!  " +
+                        "Only cosmetic channel updates are supported. [current=" + _channel + 
+                        ", new=" + channel + "]");
+            return;
+        }
+
+        Tuple<MsoyNodeObject,Client> bits = getChannelHost("updateChannel", null);
+        if (bits != null) {
+            bits.left.peerChatService.updateChannel(bits.right, channel, 
+                new PeerChatService.InvocationListener() {
+                    public void requestFailed (String cause) {
+                        log.info("Update channel failed [channel=" + channel + ", cause=" + 
+                            cause + "].");
+                    }
+                });
+        }
+    }
+
     /**
      * Gets our host node object and client, but logs a warning and returns null if either of the
      * two are missing for strange reasons.

@@ -105,6 +105,27 @@ public class HostedWrapper extends ChannelWrapper
         }
     }
 
+    // from abstract class ChannelWrapper
+    public void updateChannel (final ChatChannel channel)
+    {
+        if (!_channel.equals(channel)) {
+            log.warning("Attempted to update ChatChannel on wrapper with incompatible channel!  " +
+                        "Only cosmetic channel updates are supported. [current=" + _channel + 
+                        ", new=" + channel + "]");
+            return;
+        }
+
+        try {
+            _mgr.updateChannel(null, channel, new PeerChatService.InvocationListener() {
+                public void requestFailed (String cause) {
+                    log.info("Hosted Wrapper failed to update channel [channel=" + channel + "]");
+                }
+            });
+        } catch (Exception ex) {
+            log.warning("Host failed to update channel on ccobj [channel=" + channel + "]");
+        }
+    }
+
     /**
      * Wrapper around the distributed channel object, to let chat manager add or remove
      * users from the chatter list. It is assumed the caller already checked whether
@@ -133,6 +154,17 @@ public class HostedWrapper extends ChannelWrapper
                             ", chatter=" + chatter + "].");
             }
         }
+    }
+
+    /**
+     * Updates the channel attribute on the ChatChannelObject.  It is assumed that the caller has
+     * checked to make sure that the hashCode() and toLocalType() of this new channel are the
+     * same as the previous channel attribute.  This should only be used to make cosmetic changes
+     * to the ChatChannel on the object (room name change, etc).
+     */
+    protected void updateChannelOnObject (ChatChannel channel) 
+    {
+        _ccobj.setChannel(channel);
     }
 
     protected void checkShutdownInterval ()

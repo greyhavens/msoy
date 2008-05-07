@@ -65,6 +65,9 @@ public abstract class ChannelWrapper
     /** Asks the hosting server to update the specified user from the wrapped channel. */
     public abstract void updateChatter (VizMemberName chatter);
 
+    /** Asks the hosting server to update the channel attributed on the wrapped channel obj. */
+    public abstract void updateChannel (ChatChannel channel);
+
     /** Does this channel contain the specified chatter? */
     public boolean hasMember (VizMemberName chatter)
     {

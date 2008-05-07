@@ -274,6 +274,16 @@ public class ChatTabBar extends HBox
         return (_tabs[index] as ChatTab).text;
     }
 
+    public function setName (localtype :String, name :String) :void
+    {
+        var index :int = getLocalTypeIndex(localtype);
+        if (index < 0) {
+            return;
+        }
+
+        (_tabs[index] as ChatTab).text = name;
+    }
+
     protected function moveTabToFront (localtype :String) :void
     {
         var index :int = getLocalTypeIndex(localtype);

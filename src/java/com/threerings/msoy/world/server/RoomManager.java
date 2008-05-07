@@ -46,6 +46,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -760,11 +761,18 @@ public class RoomManager extends SpotSceneManager
             }
 
             // if the name or access controls were modified, we need to update our HostedPlace
-            if (msoyScene.getAccessControl() != up.accessControl ||
-                !msoyScene.getName().equals(up.name)) {
+            boolean nameChange = !msoyScene.getName().equals(up.name);
+            if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
                 MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name, 
                                                msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                                                up.accessControl);
+            }
+
+            // if the name was modified, we need to notify the chat channel manager so it can
+            // update the channel name.
+            if (nameChange) {
+                MsoyServer.channelMan.updateRoomChannelName(
+                    new RoomName(up.name, msoyScene.getId()));
             }
         }
 
