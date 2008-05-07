@@ -86,7 +86,7 @@ public class GameChatContainer extends LayeredContainer
         }
     }
 
-    public function displayOccupantList (occList :ChannelOccupantList) :void
+    public function displayOccupantList (occList :UIComponent) :void
     {
         if (_playerList.parent == this) {
             removeChild(_playerList);
@@ -126,7 +126,7 @@ public class GameChatContainer extends LayeredContainer
     protected var _overlay :ChatOverlay;
     protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
-    protected var _channelOccList :ChannelOccupantList;
+    protected var _channelOccList :UIComponent;
     protected var _tabBar :HBox;
 }
 }

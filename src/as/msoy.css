@@ -1156,3 +1156,8 @@ BasePanel {
 .gameChatContainer {
   backgroundColor: white;
 }
+
+.playerList {
+  backgroundAlpha: 0;
+  borderStyle: none;
+}

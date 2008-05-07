@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.whirled.ui.PlayerList;
+
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -22,6 +24,8 @@ import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SystemMessage;
+
+import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 import com.threerings.msoy.utils.ExpiringSet;
 
@@ -54,7 +58,7 @@ public class ChatChannelController
 
         if (_channel.type != ChatChannel.MEMBER_CHANNEL &&
             _channel.type != ChatChannel.JABBER_CHANNEL) {
-            _occList = new ChannelOccupantList();
+            _occList = new PlayerList(new MsoyNameLabelCreator(ctx));
 
             _departing = new ExpiringSet(3.0, handleDeparted);
 
@@ -66,6 +70,11 @@ public class ChatChannelController
     public function get channel () :ChatChannel
     {
         return _channel;
+    }
+
+    public function get occupantList () :PlayerList
+    {
+        return _occList;
     }
 
     public function connect () :void
@@ -127,7 +136,7 @@ public class ChatChannelController
         if (_occList != null) {
             _occList.clear();
             for each (var chatter :VizMemberName in _ccobj.chatters.toArray()) {
-                _occList.addChatter(chatter);
+                _occList.addItem(chatter);
             }
         }
     }
@@ -155,7 +164,7 @@ public class ChatChannelController
                 return;
             }
 
-            _occList.addChatter(chatter);
+            _occList.addItem(chatter);
         }
     }
 
@@ -163,10 +172,7 @@ public class ChatChannelController
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
-            var chatter :VizMemberName = (event.getOldEntry() as VizMemberName);
-            _occList.removeChatter(chatter);
-            chatter = (event.getEntry() as VizMemberName);
-            _occList.addChatter(chatter);
+            _occList.itemUpdated(event.getEntry() as VizMemberName);
         }
     }
 
@@ -174,8 +180,7 @@ public class ChatChannelController
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
-            var chatter :VizMemberName = (event.getOldEntry() as VizMemberName);
-            _departing.add(chatter);
+            _departing.add(event.getOldEntry());
         }
     }
 
@@ -232,7 +237,7 @@ public class ChatChannelController
     protected function handleDeparted (name :MemberName) :void
     {
         if (_occList != null) {
-            _occList.removeChatter(name);
+            _occList.removeItem(name);
         }
     }
 
@@ -290,6 +295,6 @@ public class ChatChannelController
     protected var _departing :ExpiringSet;
 
     protected var _channel :ChatChannel;
-    protected var _occList :ChannelOccupantList;
+    protected var _occList :PlayerList;
 }
 }

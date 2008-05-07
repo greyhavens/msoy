@@ -10,6 +10,8 @@ import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.dobj.MessageEvent;
 
+import com.whirled.ui.PlayerList;
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -217,6 +219,13 @@ public class MsoyChatDirector extends ChatDirector
                 }
                 dispatchMessage(new TellFeedbackMessage(target, msg), feedbackLocaltype);
             }));
+    }
+
+    public function getPlayerList (localtype :String) :PlayerList
+    {
+        var controller :ChatChannelController = 
+            _channelControllers.get(localtype) as ChatChannelController;
+        return controller == null ? null : controller.occupantList;
     }
 
     // from parent superclass BasicDirector

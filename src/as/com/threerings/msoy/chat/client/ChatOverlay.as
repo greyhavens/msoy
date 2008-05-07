@@ -32,6 +32,8 @@ import mx.core.UIComponent;
 import mx.controls.scrollClasses.ScrollBar;
 import mx.controls.VScrollBar;
 
+import com.whirled.ui.PlayerList;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
@@ -184,9 +186,11 @@ public class ChatOverlay
             }
 
             setHistorySliding(Prefs.getSlidingChatHistory());
+            setOccupantListShowing(Prefs.getShowingOccupantList());
 
         } else {
             setHistorySliding(false);
+            setOccupantListShowing(false);
 
             if (_target.containsOverlay(_historyOverlay)) {
                 _target.removeOverlay(_historyOverlay);
@@ -244,6 +248,19 @@ public class ChatOverlay
         }
 
         _localtype = localtype;
+
+        // remove old occ list.
+        var occListShowing :Boolean = occupantListShowing();
+        if (occListShowing) {
+            if (_target.containsOverlay(_occupantList)) {
+                _target.removeOverlay(_occupantList);
+            } else if (_chatContainer != null) {
+                _chatContainer.clearOccupantList();
+            }
+        }
+        occListShowing = _occupantList != null ? occListShowing : Prefs.getShowingOccupantList();
+        _occupantList = _ctx.getMsoyChatDirector().getPlayerList(localtype);
+        setOccupantListShowing(occListShowing);
 
         if (isHistoryMode()) {
             clearGlyphs(_showingHistory);
@@ -495,9 +512,7 @@ public class ChatOverlay
     protected function setHistorySliding (sliding :Boolean) :void
     {
         if (!(_target is PlaceBox)) {
-            // never slide on a non-PlaceBox
-            sliding = false;
-            return;
+            return; // never slide on a non-PlaceBox
         }
 
         if (sliding == (_chatContainer != null)) {
@@ -512,6 +527,10 @@ public class ChatOverlay
             _target.removeChild(_historyBar);
             _ctx.getTopPanel().slideInChat(
                 _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
+            if (_occupantList != null && _target.containsOverlay(_occupantList)) {
+                _target.removeOverlay(_occupantList);
+                _chatContainer.displayOccupantList(_occupantList);
+            }
             setHistoryEnabled(true, true);
             for each (var glyph :ChatGlyph in _showingHistory) {
                 glyph.setClickable(true);
@@ -521,6 +540,9 @@ public class ChatOverlay
                 glyph.setClickable(false);
             }
             _ctx.getTopPanel().slideOutChat();
+            if (_chatContainer.containsOccupantList()) {
+                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
+            }
             _chatContainer = null;
             _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
             var showingHistory :Boolean = Prefs.getShowingChatHistory() || (!(_target is PlaceBox));
@@ -533,12 +555,55 @@ public class ChatOverlay
 
     protected function setOccupantListShowing (showing :Boolean) :void
     {
-        // TODO
+        // if we need to ship it off to a game chat container, do that.
+        if (!_includeOccList) {
+            var rightPanel :UIComponent = _ctx.getTopPanel().getRightPanel();
+            if (rightPanel is GameChatContainer) {
+                if (_occupantList != null) {
+                    _occupantList.scrollBarOnLeft = false;
+                }
+            }
+            return;
+        }
+
+        if (showing == occupantListShowing()) {
+            return; // no change
+        }
+
+        if (showing && _occupantList == null) {
+            return; // no list to show
+        }
+
+        _occupantList.scrollBarOnLeft = true;
+
+        if (showing) {
+            if (_chatContainer != null) {
+                _chatContainer.displayOccupantList(_occupantList);
+            } else {
+                _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
+            }
+
+        } else {
+            if (_chatContainer != null) {
+                _chatContainer.clearOccupantList();
+            } else if (_target.containsOverlay(_occupantList)) {
+                _target.removeOverlay(_occupantList);
+            }
+        }
+
+        layout(true);
     }
 
     protected function isHistoryMode () :Boolean
     {
         return (_historyBar != null);
+    }
+
+    protected function occupantListShowing () :Boolean
+    {
+        return _occupantList != null && 
+            (_target.containsOverlay(_occupantList) ||
+            (_chatContainer != null && _chatContainer.containsOccupantList()));
     }
 
     protected function getDefaultTargetBounds () :Rectangle
@@ -1106,7 +1171,9 @@ public class ChatOverlay
             return;
         }
 
-        _historyBar.height = _targetBounds.height;
+        _historyBar.height = _targetBounds.height -
+            ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
+            _occupantList.height + _occupantList.y : 0);
         if (_scrollBarSide == SCROLL_BAR_LEFT || _chatContainer != null) {
             _historyBar.move(_targetBounds.x + (ScrollBar.THICKNESS / 2), getMinHistY());
         } else {
@@ -1295,7 +1362,7 @@ public class ChatOverlay
 
     /** The list that contains names and headshots of everyone current subscribed to the currently
      * shown channel */
-    protected var _occupantList :ChannelOccupantList;
+    protected var _occupantList :PlayerList;
 
     /** The target container over which we're overlaying chat. */
     protected var _target :LayeredContainer;
@@ -1357,11 +1424,12 @@ import mx.core.UIComponent;
 
 import com.threerings.flex.FlexWrapper;
 
+import com.whirled.ui.PlayerList;
+
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.PlaceLayer;
 
-import com.threerings.msoy.chat.client.ChannelOccupantList;
 import com.threerings.msoy.chat.client.ChatOverlay;
 
 class ChatContainer extends Container
@@ -1375,7 +1443,12 @@ class ChatContainer extends Container
         addChild(new FlexWrapper(chat));
     }
 
-    public function addOccupantList (occList :ChannelOccupantList) :void
+    public function containsOccupantList () :Boolean
+    {
+        return _occList != null;
+    }
+
+    public function displayOccupantList (occList :PlayerList) :void
     {
         if (_occList != null && _occList != occList) {
             removeChild(_occList);
@@ -1394,5 +1467,5 @@ class ChatContainer extends Container
 
     private static const log :Log = Log.getLog(ChatContainer);
 
-    protected var _occList :ChannelOccupantList;
+    protected var _occList :PlayerList;
 }

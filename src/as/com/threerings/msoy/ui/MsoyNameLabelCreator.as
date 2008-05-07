@@ -19,7 +19,8 @@ import com.threerings.util.Name;
 
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexWrapper;
-import com.threerings.flex.NameLabelCreator;
+
+import com.whirled.ui.NameLabelCreator;
 
 import com.threerings.msoy.client.MsoyContext;
 
