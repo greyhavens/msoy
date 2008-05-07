@@ -1134,15 +1134,6 @@ BasePanel {
   paddingBottom: 5px;
 }
 
-.chatterRenderer {
-  borderThickness: 0;
-  borderStyle: "none";
-  paddingTop: 2px;
-  paddingBottom: 2px;
-  paddingLeft: 2px;
-  verticalAlign: middle;
-}
-
 .chatContainer {
   borderThickness: 0;
   borderStyle: "solid";
@@ -1160,4 +1151,11 @@ BasePanel {
 .playerList {
   backgroundAlpha: 0;
   borderStyle: none;
+}
+
+.gameListContainer {
+  backgroundColor: black;
+  borderStyle: none;
+  horizontalGap: 0;
+  verticalGap: 0;
 }

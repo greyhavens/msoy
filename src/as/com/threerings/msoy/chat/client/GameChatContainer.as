@@ -37,7 +37,12 @@ public class GameChatContainer extends LayeredContainer
         _chatDtr = chatDtr;
         _playerList = playerList;
         _playerList.width = width;
-        addChild(playerList);
+        _listContainer = new HBox();
+        _listContainer.styleName = "gameListContainer";
+        _listContainer.height = _playerList.height;
+        _listContainer.width = width;
+        _listContainer.addChild(_playerList);
+        addChild(_listContainer);
 
         var tabs :UIComponent = _ctx.getTopPanel().getHeaderBar().removeTabsContainer();
         _tabBar = new HBox();
@@ -88,24 +93,24 @@ public class GameChatContainer extends LayeredContainer
 
     public function displayOccupantList (occList :UIComponent) :void
     {
-        if (_playerList.parent == this) {
-            removeChild(_playerList);
+        if (_playerList.parent == _listContainer) {
+            _listContainer.removeChild(_playerList);
         }
 
         if (_channelOccList != null) {
-            if (_channelOccList.parent == this) {
-                removeChild(_channelOccList);
+            if (_channelOccList.parent == _listContainer) {
+                _listContainer.removeChild(_channelOccList);
             }
             _channelOccList.width = 316;
             _channelOccList = null;
         }
 
         if (occList == null) {
-            addChild(_playerList);
+            _listContainer.addChild(_playerList);
         } else {
             _channelOccList = occList;
             _channelOccList.width = 300;
-            addChild(_channelOccList);
+            _listContainer.addChild(_channelOccList);
         }
     }
 
@@ -126,6 +131,7 @@ public class GameChatContainer extends LayeredContainer
     protected var _overlay :ChatOverlay;
     protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
+    protected var _listContainer :HBox;
     protected var _channelOccList :UIComponent;
     protected var _tabBar :HBox;
 }
