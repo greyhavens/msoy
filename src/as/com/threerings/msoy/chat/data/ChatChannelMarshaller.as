@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.chat.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.MemberName;
@@ -14,9 +10,6 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
  * Provides the implementation of the {@link ChatChannelService} interface

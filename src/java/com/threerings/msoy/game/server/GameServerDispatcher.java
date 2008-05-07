@@ -3,12 +3,10 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameServerMarshaller;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;

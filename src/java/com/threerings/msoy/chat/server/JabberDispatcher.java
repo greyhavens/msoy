@@ -3,10 +3,8 @@
 
 package com.threerings.msoy.chat.server;
 
-import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.data.all.JabberName;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;

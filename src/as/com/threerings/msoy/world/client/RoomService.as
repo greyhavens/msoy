@@ -3,17 +3,13 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.utils.ByteArray;
-import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 

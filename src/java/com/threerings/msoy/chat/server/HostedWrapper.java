@@ -88,22 +88,39 @@ public class HostedWrapper extends ChannelWrapper
         }
     }
 
+    // from abstract class ChannelWrapper
+    public void updateChatter (final VizMemberName chatter)
+    {
+        try {
+            _mgr.updateUser(null, chatter, _channel, 
+                new PeerChatService.InvocationListener() {
+                    public void requestFailed (String cause) {
+                        log.info("Hosted Wrapper updateChatter failed [channel=" + _channel +
+                            ", user=" + chatter + ", cause=" + cause + "].");
+                    }
+                });
+        } catch (Exception ex) {
+            log.warning("Host failed to update a user [user=" + chatter + 
+                        ", channel=" + _channel + ", error=" + ex.getMessage() + "].");
+        }
+    }
+
     /**
      * Wrapper around the distributed channel object, to let chat manager add or remove
      * users from the chatter list. It is assumed the caller already checked whether
      * this modification is valid.
      *
      * @param chatter user to be added or removed from this channel
-     * @param addAction if true, the user will be added, otherwise they will be removed
+     * @param addAction if true, the user will be added, otherwise they will be removed.  If true
+     *                  and the chatter is already in the channel, and update will be done.
      */
     protected void updateDistributedObject (VizMemberName chatter, boolean addAction)
     {
         if (addAction) {
-            if (!_ccobj.chatters.contains(chatter)) {
-                _ccobj.addToChatters(chatter);
+            if (_ccobj.chatters.contains(chatter)) {
+                _ccobj.updateChatters(chatter);
             } else {
-                log.warning("Requested to add an already existing chatter to set [channel=" + 
-                    _channel + ", chatter=" + chatter + ", " + _ccobj.chatters.size() + "].");
+                _ccobj.addToChatters(chatter);
             }
         } else {
             if (_ccobj.chatters.contains(chatter)) {

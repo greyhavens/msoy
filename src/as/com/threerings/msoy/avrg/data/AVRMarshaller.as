@@ -3,18 +3,12 @@
 
 package com.threerings.msoy.avrg.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the {@link AVRService} interface

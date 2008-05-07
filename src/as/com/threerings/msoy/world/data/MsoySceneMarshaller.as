@@ -3,17 +3,12 @@
 
 package com.threerings.msoy.world.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.util.Integer;
 import com.threerings.whirled.client.SceneService_SceneMoveListener;
-import com.threerings.whirled.data.SceneMarshaller_SceneMoveMarshaller;
 
 /**
  * Provides the implementation of the {@link MsoySceneService} interface

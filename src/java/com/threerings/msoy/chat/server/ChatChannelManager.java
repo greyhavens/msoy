@@ -277,12 +277,38 @@ public class ChatChannelManager
         listener.requestFailed("Channel not found or not initialized.");
     }
 
+    // from interface PeerChatProvider
+    public void updateUser (ClientObject caller, VizMemberName chatter, ChatChannel channel,
+                            PeerChatService.InvocationListener listener)
+        throws InvocationException
+    {
+        ChannelWrapper wrapper = _wrappers.get(channel);
+        if (wrapper instanceof HostedWrapper && wrapper.ready()) {
+            ((HostedWrapper)wrapper).updateDistributedObject(chatter, true);
+            return;
+        }
+
+        listener.requestFailed("Channel not found or not initialized.");
+    }
+
     /**
      * Enumerate all the existing chat channels, both subscribed and hosted.
      */
     public Iterable<ChatChannel> getChatChannels ()
     {
         return _wrappers.keySet();
+    }
+
+    /**
+     * Updates the user's VizMemberName on all subscribed channels.
+     */
+    public void updateMemberOnChannels (VizMemberName chatter)
+    {
+        for (ChannelWrapper wrapper : _wrappers.values()) {
+            if (wrapper.hasMember(chatter)) {
+                wrapper.updateChatter(chatter);
+            }
+        }
     }
 
     /**

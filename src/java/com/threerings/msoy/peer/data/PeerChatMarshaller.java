@@ -9,7 +9,6 @@ import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.util.Name;
 
 /**
@@ -57,6 +56,19 @@ public class PeerChatMarshaller extends InvocationMarshaller
         InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, REMOVE_USER, new Object[] {
+            arg2, arg3, listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateUser} requests. */
+    public static final int UPDATE_USER = 4;
+
+    // from interface PeerChatService
+    public void updateUser (Client arg1, VizMemberName arg2, ChatChannel arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, UPDATE_USER, new Object[] {
             arg2, arg3, listener4
         });
     }

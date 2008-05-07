@@ -3,16 +3,11 @@
 
 package com.threerings.msoy.world.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the {@link PetService} interface

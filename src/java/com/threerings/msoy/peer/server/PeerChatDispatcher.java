@@ -5,9 +5,7 @@ package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.VizMemberName;
-import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.PeerChatMarshaller;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -60,6 +58,13 @@ public class PeerChatDispatcher extends InvocationDispatcher
             ((PeerChatProvider)provider).removeUser(
                 source,
                 (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case PeerChatMarshaller.UPDATE_USER:
+            ((PeerChatProvider)provider).updateUser(
+                source,
+                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.InvocationListener)args[2]
             );
             return;
 

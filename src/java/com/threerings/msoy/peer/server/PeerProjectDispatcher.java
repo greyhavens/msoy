@@ -4,10 +4,8 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.client.PeerProjectService;
 import com.threerings.msoy.peer.data.PeerProjectMarshaller;
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;

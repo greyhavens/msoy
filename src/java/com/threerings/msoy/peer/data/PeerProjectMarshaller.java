@@ -8,7 +8,6 @@ import com.threerings.msoy.peer.client.PeerProjectService;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link PeerProjectService} interface

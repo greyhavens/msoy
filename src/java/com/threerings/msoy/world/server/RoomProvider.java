@@ -4,10 +4,8 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;

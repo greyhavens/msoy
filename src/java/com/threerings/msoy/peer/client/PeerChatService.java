@@ -33,4 +33,10 @@ public interface PeerChatService extends InvocationService
      */
     public void removeUser (Client client, VizMemberName chatter, ChatChannel channel,
                             PeerChatService.ConfirmListener listener);
+
+    /**
+     * Asks the host to update an existing user in the channel.
+     */
+    public void updateUser (Client client, VizMemberName chatter, ChatChannel channel,
+                            PeerChatService.InvocationListener listener);
 }

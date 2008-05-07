@@ -59,8 +59,11 @@ public abstract class ChannelWrapper
     /** Asks the hosting server to add the specified user to the wrapped channel. */
     public abstract void addChatter (VizMemberName chatter);
 
-    /** Asks the hosting server to remove the speficied user from the wrapped channel. */
+    /** Asks the hosting server to remove the specified user from the wrapped channel. */
     public abstract void removeChatter (VizMemberName chatter);
+
+    /** Asks the hosting server to update the specified user from the wrapped channel. */
+    public abstract void updateChatter (VizMemberName chatter);
 
     /** Does this channel contain the specified chatter? */
     public boolean hasMember (VizMemberName chatter)

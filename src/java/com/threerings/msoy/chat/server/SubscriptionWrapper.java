@@ -115,6 +115,21 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
     }
 
+    // from abstract class ChannelWrapper
+    public void updateChatter (final VizMemberName chatter)
+    {
+        Tuple<MsoyNodeObject,Client> bits = getChannelHost("updateChatter", chatter);
+        if (bits != null) {
+            bits.left.peerChatService.updateUser(bits.right, chatter, _channel, 
+                new PeerChatService.InvocationListener() {
+                    public void requestFailed (String cause) {
+                        log.info("Update chatter failed [channel=" + _channel +
+                            ", user=" + chatter + ", cause=" + cause + "].");
+                    }
+                });
+        }
+    }
+
     /**
      * Gets our host node object and client, but logs a warning and returns null if either of the
      * two are missing for strange reasons.

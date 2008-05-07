@@ -8,7 +8,6 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.stats.data.StatSet;
 
 /**

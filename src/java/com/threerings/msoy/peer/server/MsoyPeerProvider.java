@@ -5,10 +5,7 @@ package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
-import com.threerings.msoy.peer.client.MsoyPeerService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 import com.threerings.stats.data.StatSet;
 

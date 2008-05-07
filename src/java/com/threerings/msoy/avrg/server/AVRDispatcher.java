@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.avrg.server;
 
-import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
