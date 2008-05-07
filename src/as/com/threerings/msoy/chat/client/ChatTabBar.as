@@ -282,6 +282,12 @@ public class ChatTabBar extends HBox
         }
 
         (_tabs[index] as ChatTab).text = name;
+
+        // if this is the first tab, then we're currently in this room and the browser title
+        // needs to be updated
+        if (index == 0) {
+            _ctx.getMsoyClient().setWindowTitle(name);
+        }
     }
 
     protected function moveTabToFront (localtype :String) :void
