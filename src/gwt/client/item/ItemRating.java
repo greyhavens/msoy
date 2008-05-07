@@ -26,7 +26,7 @@ public class ItemRating extends FlexTable
         _averageStars = new Stars(_item.rating, true, false, null);
 
         // if we're not logged in, force read-only mode
-        if (CShell.getMemberId() == 0 || !item.isRatable()) {
+        if (CShell.isGuest() || !item.isRatable()) {
             setWidget(0, 0, _averageStars);
             return;
         }
