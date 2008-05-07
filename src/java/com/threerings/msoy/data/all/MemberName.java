@@ -101,6 +101,10 @@ public class MemberName extends Name
     // @Override // from Name
     public int compareTo (Name o)
     {
+        // Note: You may be tempted to have names sort by the String value, but Names are used
+        // as DSet keys in various places and so each user's must be unique.
+        // Use BY_DISPLAY_NAME to sort names for display.
+
         // oh right, FFS, we can't use our Comparators.compare() static method for this
         // because this is compiled into GWT
         int otherId = ((MemberName) o)._memberId;

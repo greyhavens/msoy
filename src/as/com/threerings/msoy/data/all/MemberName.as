@@ -75,6 +75,9 @@ public class MemberName extends Name
     // from Name
     override public function compareTo (o :Object) :int
     {
+        // Note: You may be tempted to have names sort by the String value, but Names are used
+        // as DSet keys in various places and so each user's must be unique.
+        // Use BY_DISPLAY_NAME to sort names for display.
         return Integer.compare(_memberId, (o as MemberName)._memberId);
     }
 
