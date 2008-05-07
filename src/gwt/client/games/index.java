@@ -64,6 +64,10 @@ public class index extends Page
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(args.get(1, 0)));
 
+        } else if (action.equals("ct")) {
+            setContent(CGames.msgs.compareTitle(),
+                       new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
+
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel((byte)args.get(1, (byte)-1)));
 

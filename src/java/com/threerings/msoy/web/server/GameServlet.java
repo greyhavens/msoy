@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -54,6 +55,7 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.HTMLSanitizer;
@@ -65,6 +67,7 @@ import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameMetrics;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -218,11 +221,10 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
-        TrophySourceRepository tsrepo = MsoyServer.itemMan.getTrophySourceRepository();
 
         // we only provide trophies for listed games
         if (gameId < 0) {
-            log.warning("Requested trophies for non-listed game [id=" + gameId + "].");
+            log.warning("Requested trophy info for non-listed game [id=" + gameId + "].");
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
 
@@ -231,48 +233,49 @@ public class GameServlet extends MsoyServiceServlet
             if (grec == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
-
-            Map<String,Trophy> trophies = Maps.newHashMap();
-            List<TrophySourceRecord> trecords = tsrepo.loadOriginalItemsBySuite(-grec.catalogId);
-            for (TrophySourceRecord record : trecords) {
-                Trophy trophy = new Trophy();
-                trophy.gameId = gameId;
-                trophy.name = record.name;
-                trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
-                trophies.put(record.ident, trophy);
-            }
-
-            // fill in earned dates if the caller is authenticated
-            if (mrec != null) {
-                for (TrophyRecord record : _trophyRepo.loadTrophies(gameId, mrec.memberId)) {
-                    Trophy trophy = trophies.get(record.ident);
-                    if (trophy != null) {
-                        trophy.whenEarned = record.whenEarned.getTime();
-                    }
-                }
-            }
-
-            // sort the trophies in the creator's desired order
-            Collections.sort(trecords, new Comparator<TrophySourceRecord>() {
-                public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
-                    return t1.sortOrder - t2.sortOrder;
-                }
-            });
-
-            // and populate the result array in the correct order
-            List<Trophy> results = Lists.newArrayList();
-            for (TrophySourceRecord record : trecords) {
-                Trophy trophy = trophies.get(record.ident);
-                // only provide the description for non-secret or earned trophies
-                if (!record.secret || trophy.whenEarned != null) {
-                    trophy.description = record.description;
-                }
-                results.add(trophy);
-            }
-            return results;
+            return loadTrophyInfo(grec, (mrec == null) ? 0 : mrec.memberId, null, null);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Compares the trophy earnings for the specified set of members in the specified game.
+     */
+    public CompareResult compareTrophies (WebIdent ident, int gameId, int[] memberIds)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser(ident);
+        int callerId = (mrec == null) ? 0 : mrec.memberId;
+
+        try {
+            GameRecord grec = _gameRepo.loadGameRecord(gameId);
+            if (grec == null) {
+                return null;
+            }
+
+            CompareResult result = new CompareResult();
+            result.gameName = grec.name;
+            result.gameThumb = grec.getThumbMediaDesc();
+
+            // load up the trophy and earned information
+            result.whenEarneds = new Long[memberIds.length][];
+            List<Trophy> trophies = loadTrophyInfo(grec, callerId, memberIds, result.whenEarneds);
+            result.trophies = trophies.toArray(new Trophy[trophies.size()]);
+
+            // load up cards for the members in question
+            result.members = new MemberCard[memberIds.length];
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(new ArrayIntSet(memberIds))) {
+                result.members[IntListUtil.indexOf(memberIds, mcr.memberId)] = mcr.toMemberCard();
+            }
+
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure comparing game trophies [id=" + gameId +
+                    ", mids=" + StringUtil.toString(memberIds) + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -565,6 +568,83 @@ public class GameServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load game source record to verify ownership " +
                     "[gameId=" + gameId + ", mrec=" + mrec.who() + "].");
         }
+    }
+
+    /**
+     * Helper function for {@link #loadGameTrophies} and {@link #compareTrophies}.
+     */
+    protected List<Trophy> loadTrophyInfo (GameRecord grec, int callerId,
+                                           int[] earnerIds, Long[][] whenEarneds)
+        throws ServiceException, PersistenceException
+    {
+        TrophySourceRepository tsrepo = MsoyServer.itemMan.getTrophySourceRepository();
+
+        // the negative catalog id is the id for listed items in a game's suite
+        int gameSuiteId = -grec.catalogId;
+
+        // load up the (listed) trophy source records for this game
+        Map<String,Trophy> trophies = Maps.newHashMap();
+        List<TrophySourceRecord> trecords = tsrepo.loadOriginalItemsBySuite(gameSuiteId);
+        for (TrophySourceRecord record : trecords) {
+            Trophy trophy = new Trophy();
+            trophy.gameId = grec.gameId;
+            trophy.name = record.name;
+            trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
+            trophies.put(record.ident, trophy);
+        }
+
+        // fill in earned dates for the caller if one was specified
+        if (callerId != 0) {
+            for (TrophyRecord record : _trophyRepo.loadTrophies(grec.gameId, callerId)) {
+                Trophy trophy = trophies.get(record.ident);
+                if (trophy != null) {
+                    trophy.whenEarned = record.whenEarned.getTime();
+                }
+            }
+        }
+
+        // sort the trophies in the creator's desired order
+        Collections.sort(trecords, new Comparator<TrophySourceRecord>() {
+                public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
+                    return t1.sortOrder - t2.sortOrder;
+                }
+            });
+
+        // populate the result lists in the correct order
+        List<Trophy> results = Lists.newArrayList();
+        for (TrophySourceRecord record : trecords) {
+            Trophy trophy = trophies.get(record.ident);
+            // only provide the description for non-secret or earned trophies
+            if (!record.secret || trophy.whenEarned != null) {
+                trophy.description = record.description;
+            }
+            results.add(trophy);
+        }
+
+        // if we also want to load when earned info for other players, do so
+        int ecount = (earnerIds != null) ? earnerIds.length : 0;
+        for (int ee = 0; ee < ecount; ee++) {
+            Map<String,Long> earned = Maps.newHashMap();
+            int earnerId = earnerIds[ee];
+            if (earnerId == callerId) {
+                // if this earner is the caller, we already have their earned times
+                for (TrophySourceRecord record : trecords) {
+                    earned.put(record.ident, trophies.get(record.ident).whenEarned);
+                }
+            } else {
+                for (TrophyRecord record : _trophyRepo.loadTrophies(grec.gameId, earnerId)) {
+                    earned.put(record.ident, record.whenEarned.getTime());
+                }
+            }
+
+            Long[] whenEarned = new Long[results.size()];
+            for (int tt = 0; tt < whenEarned.length; tt++) {
+                whenEarned[tt] = earned.get(trecords.get(tt).ident);
+            }
+            whenEarneds[ee] = whenEarned;
+        }
+
+        return results;
     }
 
     /** Used by {@link #resetGameScores}. */

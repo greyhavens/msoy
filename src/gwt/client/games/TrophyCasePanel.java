@@ -3,12 +3,14 @@
 
 package client.games;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.web.data.TrophyCase;
 
+import client.shell.Args;
 import client.shell.Frame;
+import client.shell.Page;
+import client.util.MsoyCallback;
 import client.util.TongueBox;
 
 /**
@@ -26,12 +28,9 @@ public class TrophyCasePanel extends VerticalPanel
         }
 
         setHeader(CGames.msgs.caseLoading());
-        CGames.gamesvc.loadTrophyCase(CGames.ident, memberId, new AsyncCallback() {
+        CGames.gamesvc.loadTrophyCase(CGames.ident, memberId, new MsoyCallback() {
             public void onSuccess (Object result) {
                 setTrophyCase((TrophyCase)result);
-            }
-            public void onFailure (Throwable cause) {
-                setHeader(CGames.serverError(cause));
             }
         });
     }
@@ -53,7 +52,13 @@ public class TrophyCasePanel extends VerticalPanel
         setHeader(CGames.msgs.caseBlurb());
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
-            add(new TongueBox(shelf.name, new TrophyGrid(shelf.trophies)));
+            TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
+            int ownerId = tcase.owner.getMemberId();
+            if (!CGames.isGuest() && CGames.getMemberId() != ownerId) {
+                box.setFooterLink(CGames.msgs.caseCompare(),
+                                  Page.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
+            }
+            add(box);
         }
     }
 

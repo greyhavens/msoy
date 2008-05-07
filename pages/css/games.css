@@ -331,3 +331,28 @@
   border: none;
   width: 220px;
 }
+
+.trophyCompare {
+}
+
+.trophyCompare .Row {
+  border-top: 1px solid;
+}
+
+.trophyCompare .Descrip {
+  font-size: 12px;
+  width: 300px;
+}
+
+.trophyCompare .Descrip .Trophy {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.trophyCompare .Earned {
+  font-size: 14px;
+}
+
+.trophyCompare .Italic {
+  font-style: italic;
+}

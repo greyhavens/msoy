@@ -38,11 +38,8 @@ public class MessagePanel extends FlexTable
 
     public void setMessage (final MemberCard poster, Date whenPosted, String text)
     {
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.PEOPLE, "" + poster.name.getMemberId());
-            }
-        };
+        ClickListener onClick = Application.createLinkListener(
+            Page.PEOPLE, "" + poster.name.getMemberId());
         setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(), onClick));
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");

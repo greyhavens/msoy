@@ -5,13 +5,18 @@ package com.threerings.msoy.web.client;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TrophyCase;
@@ -22,6 +27,26 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface GameService extends RemoteService
 {
+    /** Return result for {@link #compareTrophies}. */
+    public static class CompareResult implements IsSerializable
+    {
+        /** The name of the game for which we're comparing trophies. */
+        public String gameName;
+
+        /** The thumbnail icon for the game in question. */
+        public MediaDesc gameThumb;
+
+        /** The trophies for the game in question, in display order. */
+        public Trophy[] trophies;
+
+        /** The members being compared. */
+        public MemberCard[] members;
+
+        /** When the members earned the trophies. Array elements may be null if the a member has
+         * not earned a particular trophy. */
+        public Long[][] whenEarneds;
+    }
+
     /**
      * Loads the details for the specified game.
      */
@@ -58,6 +83,12 @@ public interface GameService extends RemoteService
      * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
      */
     public List loadGameTrophies (WebIdent ident, int gameId)
+        throws ServiceException;
+
+    /**
+     * Compares the trophy earnings for the specified set of members in the specified game.
+     */
+    public CompareResult compareTrophies (WebIdent ident, int gameId, int[] memberIds)
         throws ServiceException;
 
     /**
