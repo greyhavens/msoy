@@ -562,6 +562,7 @@ public class ChatOverlay
                 if (_occupantList != null) {
                     _occupantList.scrollBarOnLeft = false;
                 }
+                (rightPanel as GameChatContainer).displayOccupantList(_occupantList);
             }
             return;
         }
