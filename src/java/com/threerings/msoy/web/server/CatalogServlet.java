@@ -164,8 +164,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // determine the flow cost for this item
             int flowCost = listing.flowCost;
-            if (mrec.isAdmin()) {
-                // let admins spend flow they have before they get stuff for free
+            if (mrec.isSupport()) {
+                // let support+ spend flow they have before they get stuff for free
                 flowCost = Math.min(listing.flowCost, mrec.flow);
             }
 
