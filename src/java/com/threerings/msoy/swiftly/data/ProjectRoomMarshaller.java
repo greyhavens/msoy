@@ -4,7 +4,6 @@
 package com.threerings.msoy.swiftly.data;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
-import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;

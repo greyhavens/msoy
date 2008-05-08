@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
 import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -16,6 +13,10 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Byte;
+import com.threerings.util.Float;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the {@link MemberService} interface

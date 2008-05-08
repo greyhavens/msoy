@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.chat.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.presents.client.Client;

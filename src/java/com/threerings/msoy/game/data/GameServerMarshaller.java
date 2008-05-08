@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.msoy.game.client.GameServerService;
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;

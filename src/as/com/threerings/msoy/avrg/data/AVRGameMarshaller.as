@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.avrg.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -14,6 +10,10 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.util.Float;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
+import flash.utils.ByteArray;
 
 /**
  * Provides the implementation of the {@link AVRGameService} interface

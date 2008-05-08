@@ -3,22 +3,19 @@
 
 package com.threerings.msoy.world.data {
 
-import flash.utils.ByteArray;
-import com.threerings.util.*; // for Float, Integer, etc.
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.EntityMemoryEntry;
-import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
+import flash.utils.ByteArray;
 
 /**
  * Provides the implementation of the {@link RoomService} interface

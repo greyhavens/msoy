@@ -4,7 +4,6 @@
 package com.threerings.msoy.chat.data;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
-import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
