@@ -130,7 +130,7 @@ public class ProfileBlurb extends Blurb
         }
         if (_profile.memberSince > 0L) {
             String since = _sfmt.format(new Date(_profile.memberSince));
-            if (CPeople.isAdmin()) {
+            if (CPeople.isSupport()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
                           Application.createLink(
                               since, Page.ADMIN, Args.compose("info", _name.getMemberId())));
