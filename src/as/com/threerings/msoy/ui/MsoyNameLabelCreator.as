@@ -93,7 +93,7 @@ class LabelBox extends HBox
 
     public function setStatus (status :String) :void
     {
-        if (status == PlayerList.STATUS_LEFT) {
+        if (status == PlayerList.STATUS_GONE) {
             _label.setStatus(OccupantInfo.DISCONNECTED);
         } else {
             _label.setStatus(OccupantInfo.ACTIVE);
