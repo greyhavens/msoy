@@ -74,7 +74,7 @@ public class EditIssuePanel extends TableFooterPanel
         _issue = issue;
         _messageId = messageId;
         _page = page;
-        if (CMsgs.isAdmin() && _issue.state == Issue.STATE_OPEN && messageId == 0) {
+        if (CMsgs.isSupport() && _issue.state == Issue.STATE_OPEN && messageId == 0) {
             fillEditPanel();
         } else {
             fillViewPanel();

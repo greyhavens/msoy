@@ -66,13 +66,13 @@ public class index extends MsgsEntryPoint
             tpanel.showThread(_fmodels, args.get(1, 0), args.get(2, 0), args.get(3, 0));
             setContent(CWhirleds.msgs.forumsTitle(), tpanel);
 
-        } else if (action.equals("owned") && CWhirleds.isAdmin()) {
+        } else if (action.equals("owned") && CWhirleds.isSupport()) {
             int type = args.get(1, Issue.TYPE_BUG);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
             setContent(CWhirleds.msgs.myIssuesTitle(), issues);
 
-        } else if (action.equals("assign") && CWhirleds.isAdmin()) {
+        } else if (action.equals("assign") && CWhirleds.isSupport()) {
             int messageId = args.get(1, 0), page = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayAssignIssues(Issue.TYPE_BUG, messageId, page);
@@ -87,7 +87,7 @@ public class index extends MsgsEntryPoint
         } else if (action.equals("a")) {
             int messageId = args.get(1, 0), page = args.get(2, 0), issueId = args.get(3, 0);
             IssuePanel issues = new IssuePanel(_imodels);
-            if (CWhirleds.isAdmin()) {
+            if (CWhirleds.isSupport()) {
                 issues.displayIssue(issueId, 0, messageId, page);
             } else {
                 issues.displayIssue(issueId, 0);

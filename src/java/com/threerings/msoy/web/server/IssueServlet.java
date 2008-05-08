@@ -135,7 +135,7 @@ public class IssueServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
         try {
-            if (!mrec.isAdmin()) {
+            if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
 
@@ -161,7 +161,7 @@ public class IssueServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
         try {
-            if (!mrec.isAdmin()) {
+            if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
             IssueRecord irec = MsoyServer.issueRepo.loadIssue(issue.issueId);
@@ -191,7 +191,7 @@ public class IssueServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
         try {
-            if (!mrec.isAdmin()) {
+            if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
             IssueRecord irec = MsoyServer.issueRepo.loadIssue(issueId);

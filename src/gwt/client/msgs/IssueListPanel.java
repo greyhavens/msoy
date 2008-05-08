@@ -95,7 +95,7 @@ public class IssueListPanel extends PagedGrid
             }
         });
         controls.setWidget(0, 0, _refresh);
-        if (CMsgs.isAdmin()) {
+        if (CMsgs.isSupport()) {
             controls.setWidget(0, 1, new Button(
                 CMsgs.mmsgs.newIssue(), new ClickListener() {
                     public void onClick (Widget sender) {

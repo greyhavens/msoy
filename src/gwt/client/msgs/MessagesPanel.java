@@ -261,7 +261,7 @@ public class MessagesPanel extends PagedGrid
             }
 
             // TODO: if whirled manager, also allow forum moderation
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId() || CMsgs.isAdmin()) {
+            if (CMsgs.getMemberId() == _message.poster.name.getMemberId() || CMsgs.isSupport()) {
                 info.add(makeInfoImage(_images.delete_post(),
                                                 CMsgs.mmsgs.inlineDelete(),
                                                 new PromptPopup(CMsgs.mmsgs.confirmDelete(),
@@ -274,7 +274,7 @@ public class MessagesPanel extends PagedGrid
                 info.add(makeInfoImage(_images.view_issue(),
                                                 CMsgs.mmsgs.inlineIssue(), viewClick));
 
-            } else if (CMsgs.isAdmin()) {
+            } else if (CMsgs.isSupport()) {
                 ClickListener newClick = new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.newIssue(_message);
