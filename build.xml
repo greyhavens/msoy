@@ -468,6 +468,8 @@
   <property name="astype" value="world"/>
   <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <target name="ascompile">
+    <!-- set default properties -->
+    <property name="dev_deployment" value="true"/>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
