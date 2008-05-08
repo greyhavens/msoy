@@ -5,67 +5,43 @@ package com.threerings.msoy.ui {
 
 import flash.events.MouseEvent;
 
-import flash.text.TextFieldAutoSize;
-
-import mx.containers.HBox;
-
-import mx.controls.Label;
-
-import mx.core.ScrollPolicy;
-import mx.core.UIComponent;
-
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.flex.CommandMenu;
-import com.threerings.flex.FlexWrapper;
 
+import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.VizMemberName;
 
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import com.threerings.msoy.world.client.NameField;
-
-public class MsoyNameLabelCreator implements NameLabelCreator
+public class MsoyNameLabelCreator 
+    implements NameLabelCreator
 {
     public function MsoyNameLabelCreator (mctx :MsoyContext) 
     {
         _mctx = mctx;
     }
 
-    public function createLabel (name :Name) :UIComponent
+    public function createLabel (name :Name) :NameLabel
     {
-        var labelBox :HBox = new HBox();
-        labelBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        labelBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        labelBox.setStyle("borderThickness", 0);
-        labelBox.setStyle("borderStyle", "none");
-        if (name is VizMemberName) {
-            labelBox.addChild(MediaWrapper.createView(
-                (name as VizMemberName).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+        if (!(name is VizMemberName)) {
+            log.warning("MsoyNameLabelCreator only supports creating labels for VizMemberNames [" + 
+                name + "]");
+            return null;
         }
-
-        var label :NameField = new NameField();
-        label.autoSize = TextFieldAutoSize.LEFT;
-        label.text = "" + name;
-        labelBox.addChild(new FlexWrapper(label));
-
-        var memberName :MemberName = name as MemberName;
-        if (memberName != null) {
-            labelBox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                handlePlayerClicked(memberName);
-            });
-        }
+        
+        var vizName :VizMemberName = name as VizMemberName;
+        var labelBox :LabelBox = new LabelBox(vizName);
+        labelBox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            handlePlayerClicked(vizName);
+        });
         return labelBox;
     }
     
-    protected function handlePlayerClicked (name :MemberName) :void
+    protected function handlePlayerClicked (name :VizMemberName) :void
     {
         var menuItems :Array = [];
         _mctx.getMsoyController().addMemberMenuItems(name, menuItems);
@@ -78,4 +54,64 @@ public class MsoyNameLabelCreator implements NameLabelCreator
 
     protected var _mctx :MsoyContext;
 }
+}
+
+import flash.text.TextFieldAutoSize;
+
+import mx.containers.HBox;
+
+import mx.core.ScrollPolicy;
+
+import com.whirled.ui.NameLabel;
+import com.whirled.ui.PlayerList;
+
+import com.threerings.flex.FlexWrapper;
+
+import com.threerings.crowd.data.OccupantInfo;
+
+import com.threerings.msoy.ui.MediaWrapper;
+
+import com.threerings.msoy.data.VizMemberName;
+
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.world.client.NameField;
+
+class LabelBox extends HBox
+    implements NameLabel
+{
+    public function LabelBox (name :VizMemberName)
+    {
+        _name = name;
+
+        verticalScrollPolicy = ScrollPolicy.OFF;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+
+        setStyle("borderThickness", 0);
+        setStyle("borderStyle", "none");
+    }
+
+    public function setStatus (status :String) :void
+    {
+        if (status == PlayerList.STATUS_LEFT) {
+            _label.setStatus(OccupantInfo.DISCONNECTED);
+        } else {
+            _label.setStatus(OccupantInfo.ACTIVE);
+        }
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        addChild(MediaWrapper.createView(_name.getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+
+        _label = new NameField();
+        _label.autoSize = TextFieldAutoSize.LEFT;
+        _label.text = "" + _name;
+        addChild(new FlexWrapper(_label));
+    }
+
+    protected var _name :VizMemberName;
+    protected var _label :NameField;
 }
