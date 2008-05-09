@@ -51,12 +51,15 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
     -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger"
 
-# not using these currently but we'll leave them in for future fiddling
-#     -Dcom.sun.management.jmxremote.port=9988 \
-#     -Dcom.sun.management.jmxremote.authenticate=false \
-#     -Dcom.sun.management.jmxremote.ssl=false \
+# If we're running on dev1, add some JMX configuration
+if [ "$PROCID" = "dev1" ]; then
+    JAVA_ARGS="$JAVA_ARGS \
+        -Dcom.sun.management.jmxremote.port=9988 \
+        -Dcom.sun.management.jmxremote.authenticate=false \
+        -Dcom.sun.management.jmxremote.ssl=false"
+fi
 
-# make sure we have a JVM and set up our classpath and bits
+# Make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon
 
 # Create the logfile
