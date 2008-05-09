@@ -69,14 +69,10 @@ public class index extends Page
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
-            Item item = _models.findItem(type, itemId);
             ItemIdent ident = new ItemIdent(type, itemId);
 
             final String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
-                if (item != null) {
-                    _detail.item = item;
-                }
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
@@ -84,6 +80,7 @@ public class index extends Page
                     public void onSuccess (Object result) {
                         if (result instanceof ItemDetail) {
                             _detail = (ItemDetail)result;
+                            _models.updateItem(_detail.item);
                             setContent(title, new ItemDetailPanel(_models, _detail));
 
                         } else {
