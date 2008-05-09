@@ -444,6 +444,10 @@ img, embed, applet, object {
   background: #3F8EBA;
 }
 
+.roundBox .MediumBlueCenter, .roundBox .MediumBlueSide {
+  background: #C9E9FE;
+}
+
 /** Misc styles. */
 .tongueBox {
   width: 100%;

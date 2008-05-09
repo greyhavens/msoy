@@ -21,6 +21,7 @@ public class RoundBox extends SmartTable
     public static final String WHITE = "White";
     public static final String BLUE = "Blue";
     public static final String DARK_BLUE = "DarkBlue";
+    public static final String MEDIUM_BLUE = "MediumBlue";
 
     /**
      * Creates a round box in either {@link #WHITE} or {@link #BLUE}.
@@ -44,6 +45,11 @@ public class RoundBox extends SmartTable
             setWidget(0, 2, _images.darkblue_upper_right().createImage(), 1, "Corner");
             setWidget(2, 0, _images.darkblue_lower_left().createImage(), 1, "Corner");
             setWidget(2, 2, _images.darkblue_lower_right().createImage(), 1, "Corner");
+        } else if (color.equals(MEDIUM_BLUE)) {
+            setWidget(0, 0, _images.medblue_upper_left().createImage(), 1, "Corner");
+            setWidget(0, 2, _images.medblue_upper_right().createImage(), 1, "Corner");
+            setWidget(2, 0, _images.medblue_lower_left().createImage(), 1, "Corner");
+            setWidget(2, 2, _images.medblue_lower_right().createImage(), 1, "Corner");
         }
 
         setWidget(1, 1, _contents = new FlowPanel(), 1, "Center");

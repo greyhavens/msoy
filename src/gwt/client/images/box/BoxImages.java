@@ -70,4 +70,24 @@ public interface BoxImages extends ImageBundle
      * @gwt.resource darkblue_lower_right.png
      */
     AbstractImagePrototype darkblue_lower_right ();
+
+    /**
+     * @gwt.resource medblue_upper_left.png
+     */
+    AbstractImagePrototype medblue_upper_left ();
+
+    /**
+     * @gwt.resource medblue_upper_right.png
+     */
+    AbstractImagePrototype medblue_upper_right ();
+
+    /**
+     * @gwt.resource medblue_lower_left.png
+     */
+    AbstractImagePrototype medblue_lower_left ();
+
+    /**
+     * @gwt.resource medblue_lower_right.png
+     */
+    AbstractImagePrototype medblue_lower_right ();
 }

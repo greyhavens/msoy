@@ -52,7 +52,7 @@ public class HelpPanel extends VerticalPanel
         SmartTable questions = new SmartTable(0, 0);
         questions.setHTML(0, 0, CHelp.msgs.helpQuestionsIntro());
         questions.setWidget(1, 0, WidgetUtil.makeShim(5, 10));
-        RoundBox faqBox = new RoundBox(RoundBox.BLUE);
+        RoundBox faqBox = new RoundBox(RoundBox.MEDIUM_BLUE);
         faqBox.add(new HTML(CHelp.msgs.helpQuestions()));
         questions.setWidget(2, 0, faqBox);       
         add(new TongueBox(CHelp.msgs.helpQuestionsTitle(), questions));
