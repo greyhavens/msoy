@@ -233,8 +233,9 @@ public class AdminServlet extends MsoyServiceServlet
             if (tgtrec != null) {
                 // log this as a warning so that it shows up in the nightly filtered logs
                 log.warning("Configured support flag [setter=" + memrec.who() +
-                            ", target=" + tgtrec.who() + "].");
+                            ", target=" + tgtrec.who() + ", isSupport=" + isSupport + "].");
                 tgtrec.setFlag(MemberRecord.Flag.SUPPORT, isSupport);
+                _memberRepo.storeFlags(tgtrec);
             }
 
         } catch (PersistenceException pe) {
