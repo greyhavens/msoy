@@ -1,0 +1,74 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the Catalog interfaces.
+ */
+
+.helpPanel, .helpPanel a {
+  color: #2E729F;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.helpPanel .reportBug {
+  background-color: #FF9602;
+  width: 130px;
+  padding: 3px 0 3px 0;
+}
+
+.helpPanel .reportBug a {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+  text-decoration: none;
+}
+
+.helpPanel .helpIntro {
+  background-image: url(/images/help/thankyoumsg.png);
+  background-repeat: no-repeat;
+  background-position: top center;
+  height: 72px;
+  color: white;
+  padding-right: 20px;
+  padding-left: 50px;
+  text-indent: -30px;
+}
+
+.helpPanel .helpIntro h2 {
+  display: inline;
+  padding-right: 10px;
+  font-weight: bold;
+  font-size: 18pt;
+}
+
+.helpPanel .helpIntro a {
+  color: white;
+}
+
+.helpPanel .roundBox ul {
+  list-style-image: url(/images/help/bullet_star.png);
+  margin-left: 0;
+  padding-left: 20px;
+}
+.helpPanel .roundBox li {
+  font-size: 10pt;
+  margin-bottom: 10px;
+}
+
+.helpPanel .tongueBox .Content {
+  padding-left: 30px;
+}
+
+.helpPanel .helpTeam h3 {
+  margin-bottom: 5px;
+}
+
+.helpPanel .helpTeam table {
+  padding-left: 30px;
+  width: 400px;
+  margin-bottom: 10px;
+}
+.helpPanel .helpTeam td {
+  width: 50%;
+}

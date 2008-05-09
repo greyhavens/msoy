@@ -3,13 +3,21 @@
 
 package client.help;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.util.RoundBox;
 import client.util.TongueBox;
 
 /**
@@ -19,24 +27,68 @@ public class HelpPanel extends VerticalPanel
 {
     public HelpPanel ()
     {
-        add(new TongueBox(null, CHelp.msgs.helpIntro(), false));
-        add(new TongueBox(CHelp.msgs.helpQuestionsTitle(), CHelp.msgs.helpQuestions(), true));
-        add(new TongueBox(CHelp.msgs.helpBugsTitle(), CHelp.msgs.helpBugs(), true));
+        setStyleName("helpPanel");
+        
+        // header table includes report bug tab, help title, and thank you box
+        SmartTable header = new SmartTable(0, 0);
+        HTML reportBug = new HTML(CHelp.msgs.helpReportBug());
+        reportBug.setStyleName("reportBug");
+        header.setWidget(0, 0, reportBug);
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+        header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        header.setWidget(0, 1, new Image("/images/help/help_header.png"), 1, "helpTitle");
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        header.setWidget(1, 0, WidgetUtil.makeShim(10, 10), 2, "");
+        header.setWidget(2, 0, new HTML(CHelp.msgs.helpIntro()), 2, "helpIntro");
+        header.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_CENTER);
+        add(header);
+        add(WidgetUtil.makeShim(10, 15));
+        
+        // wiki info
         add(new TongueBox(CHelp.msgs.helpWikiTitle(), CHelp.msgs.helpWiki(), true));
-
-        // TODO: add a way to restart the tutorial
-
-        SmartTable credits = new SmartTable(0, 0);
-        int row = 0;
-        credits.setHTML(row++, 0, CHelp.msgs.helpTeamEngineers());
-        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
-        credits.setHTML(row++, 0, CHelp.msgs.helpTeamArtists());
-        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
-        credits.setHTML(row++, 0, CHelp.msgs.helpTeamDPW());
-        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
-        credits.setHTML(row++, 0, CHelp.msgs.helpTeamWaving());
-        credits.setWidget(row++, 0, WidgetUtil.makeShim(5, 10));
-        credits.setHTML(row++, 0, CHelp.msgs.helpCopyright("" + (1900 + new Date().getYear())));
-        add(new TongueBox(CHelp.msgs.helpTeamTitle(), credits));
+        add(WidgetUtil.makeShim(10, 10));
+        
+        // asking questions
+        SmartTable questions = new SmartTable(0, 0);
+        questions.setHTML(0, 0, CHelp.msgs.helpQuestionsIntro());
+        questions.setWidget(1, 0, WidgetUtil.makeShim(5, 10));
+        RoundBox faqBox = new RoundBox(RoundBox.BLUE);
+        faqBox.add(new HTML(CHelp.msgs.helpQuestions()));
+        questions.setWidget(2, 0, faqBox);       
+        add(new TongueBox(CHelp.msgs.helpQuestionsTitle(), questions));
+        add(WidgetUtil.makeShim(10, 10));
+        
+        // technical info
+        add(new TongueBox(CHelp.msgs.helpTechTitle(), CHelp.msgs.helpTech(), true));
+        
+        // whirled team
+        FlowPanel team = new FlowPanel();
+        team.setStyleName("helpTeam");
+        
+        team.add(new HTML(CHelp.msgs.helpTeamEngineers()));
+        List helpTeamEngineersList = Arrays.asList(CHelp.msgs.helpTeamEngineersList().split(",")); 
+        ColumnList helpTeamEngineers = new ColumnList(helpTeamEngineersList, 2);
+        team.add(helpTeamEngineers);
+        team.add(WidgetUtil.makeShim(10, 10));
+        
+        team.add(new HTML(CHelp.msgs.helpTeamArtists()));
+        List helpTeamArtistsList = Arrays.asList(CHelp.msgs.helpTeamArtistsList().split(","));    
+        ColumnList helpTeamArtists = new ColumnList(helpTeamArtistsList, 2);
+        team.add(helpTeamArtists);
+        team.add(WidgetUtil.makeShim(10, 10));
+        
+        team.add(new HTML(CHelp.msgs.helpTeamInfra()));
+        List helpTeamInfraList = Arrays.asList(CHelp.msgs.helpTeamInfraList().split(","));
+        ColumnList helpTeamInfra = new ColumnList(helpTeamInfraList, 2);
+        team.add(helpTeamInfra);
+        team.add(WidgetUtil.makeShim(10, 10));
+        
+        team.add(new HTML(CHelp.msgs.helpTeamWaving()));
+        List helpTeamWavingList = Arrays.asList(CHelp.msgs.helpTeamWavingList().split(","));
+        ColumnList helpTeamWaving = new ColumnList(helpTeamWavingList, 2);
+        team.add(helpTeamWaving);
+        
+        add(new TongueBox(CHelp.msgs.helpTeamTitle(), team));
+        add(WidgetUtil.makeShim(10, 20));
     }
 }
