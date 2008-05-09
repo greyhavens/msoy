@@ -608,7 +608,7 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         List<ListingCard> cards = Lists.newArrayList();
         for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
-                null, 0, 0, Float.NaN, 0, ShopData.TOP_ITEM_COUNT)) {
+                null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
             cards.add(crec.toListingCard());
         }
         return cards.toArray(new ListingCard[cards.size()]);
