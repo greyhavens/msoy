@@ -6,15 +6,15 @@
 # it exits cleanly each time.
 
 my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
-my $node = shift or die "Usage: $0 nodename [pidfile]\n";
+my $procid = shift or die "Usage: $0 procid [pidfile]\n";
 
 # figure out what user as which to run the server
 my $msoy_user = read_prop("$root/dist/server.conf", "MSOY_USER");
 die "Unable to determine server user from $root/dist/server.conf\n" unless (defined $msoy_user);
 
 my $LOG;
-if (!open($LOG, ">$root/log/respawn-$node.log")) {
-    warn "Unable to log to $root/log/respawn-$node.log: $!\n";
+if (!open($LOG, ">$root/log/respawn-$procid.log")) {
+    warn "Unable to log to $root/log/respawn-$procid.log: $!\n";
     $LOG = STDERR;
 }
 
@@ -42,8 +42,8 @@ while (1) {
     }
 
     # now run the server
-    print $LOG "$now Running msoy server: $root/bin/runmsoy $node $server_pidfile\n";
-    my $rcode = system("su -m $msoy_user -c \"$root/bin/runmsoy $node $server_pidfile\"");
+    print $LOG "$now Running msoy server: $root/bin/runmsoy $procid $server_pidfile\n";
+    my $rcode = system("su -m $msoy_user -c \"$root/bin/runmsoy $procid $server_pidfile\"");
 
     # note the time again
     my $finish = time();

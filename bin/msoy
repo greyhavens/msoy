@@ -20,8 +20,8 @@ fi
 # Read in our configuration
 . $MSOY_HOME/dist/server.conf
 
-# Use our hostname as a node identifier for log files and such
-HOSTNAME=`hostname`
+# Use our hostname to compute an identifier for log files and such
+PROCID=`hostname | sed 's:\..*::'`
 
 # Let's blow that file descriptor limit wide open baby!
 ulimit -n 4096
@@ -33,20 +33,20 @@ ulimit -d 1572864
 case "$1" in
   start)
         # Make sure msoyrespawn is not currently running
-        if [ -f $MSOY_HOME/run/respawn-$HOSTNAME.pid ]; then
-            echo "msoyrespawn appears to be already running for $HOSTNAME."
+        if [ -f $MSOY_HOME/run/respawn-$PROCID.pid ]; then
+            echo "msoyrespawn appears to be already running for $PROCID."
             echo "Run '$0 stop' to stop it first."
             exit 1
         fi
 
         # Make sure there are no hung MetaSOY server processes
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$HOSTNAME.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
         if [ -f $SERVER_PIDFILE ]; then
             PID=`cat $SERVER_PIDFILE`
             RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | \
                 sort -n | head -1`
             if [ ! -z "$RPIDS" ]; then
-                echo "WARNING: A $HOSTNAME MsoyServer process is currently running."
+                echo "WARNING: A $PROCID MsoyServer process is currently running."
                 echo "If it has failed and you wish to forcibly restart it, please"
                 echo "execute the following commands:"
                 echo ""
@@ -60,22 +60,22 @@ case "$1" in
 
         # Go ahead and start things up
         DAEMON=$MSOY_HOME/bin/msoyrespawn
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$HOSTNAME.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$HOSTNAME.pid
-        LOGFILE=$MSOY_HOME/log/respawn-$HOSTNAME.log
+        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
+        LOGFILE=$MSOY_HOME/log/respawn-$PROCID.log
         echo -n "Starting $DAEMON: "
         touch $RESPAWN_PIDFILE $LOGFILE
-        $DAEMON $HOSTNAME $RESPAWN_PIDFILE $SERVER_PIDFILE >>$LOGFILE 2>&1 </dev/null &
+        $DAEMON $PROCID $RESPAWN_PIDFILE $SERVER_PIDFILE >>$LOGFILE 2>&1 </dev/null &
         echo "started."
         ;;
 
   stop)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$HOSTNAME.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$HOSTNAME.pid
+        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
             echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
         else
-            echo -n "Shutting down msoy node $HOSTNAME, "
+            echo -n "Shutting down msoy $PROCID, "
             kill -INT `cat $SERVER_PIDFILE`
             echo -n "msoyrespawn: "
             kill `cat $RESPAWN_PIDFILE`
@@ -85,7 +85,7 @@ case "$1" in
         ;;
 
   unspawn)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$HOSTNAME.pid
+        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
             echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
         else
