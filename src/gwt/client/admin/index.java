@@ -35,7 +35,7 @@ public class index extends Page
         if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
 
-        } else if (!CAdmin.isSupport() && !CAdmin.isAdmin()) {
+        } else if (!CAdmin.isSupport()) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
 
         } else if (args.get(0, "").equals("browser")) {
