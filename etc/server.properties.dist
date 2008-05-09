@@ -36,6 +36,13 @@ http_port = 8080
 game_server_port = 47625
 
 #
+# A regular expression used to extract the node id from our hostname. In
+# production we use this instead of explicit node names to determine our node
+# id and name. Developer installations should leave this commented out.
+
+# host_node_pattern = whirled([0-9]+).luna.threerings.net
+
+#
 # A pattern used to generate the server_host value for nodes based on their
 # node id using printf-style formatting. In production we would use:
 #

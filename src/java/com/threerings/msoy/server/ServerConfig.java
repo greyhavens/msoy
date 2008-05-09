@@ -4,9 +4,12 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.collect.Lists;
 
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.Config;
@@ -187,27 +190,50 @@ public class ServerConfig
 
         // if we're a server node (not the webapp or a tool) do some extra stuff
         if (Boolean.getBoolean("is_node")) {
-            // our node name and hostname come from system properties passed by our startup scripts
-            nodeName = System.getProperty("node");
-            if (StringUtil.isBlank(nodeName)) {
-                log.warning("Missing 'node' system property. Cannot start.");
-            }
-            backChannelHost = System.getProperty("hostname");
-            if (StringUtil.isBlank(backChannelHost)) {
-                log.warning("Missing 'hostname' system property. Cannot start.");
-            }
-            if (StringUtil.isBlank(nodeName) || StringUtil.isBlank(backChannelHost)) {
-                System.exit(-1);
+            List<String> errors = Lists.newArrayList();
+            String hostname = System.getProperty("hostname");
+
+            // if we have a host node pattern, use that to determine our node id and name
+            String hostNodePattern = config.getValue("host_node_pattern", "");
+            if (!StringUtil.isBlank(hostNodePattern)) {
+                try {
+                    Matcher m = Pattern.compile(hostNodePattern).matcher(hostname);
+                    if (!m.matches()) {
+                        errors.add("Unable to determine node from hostname [hostname=" + hostname +
+                                   ", pattern=" + hostNodePattern + "].");
+                    } else {
+                        nodeId = Integer.parseInt(m.group(1));
+                        nodeName = "msoy" + nodeId;
+                    }
+                } catch (Exception e) {
+                    errors.add("Unable to determine node from hostname [hostname=" + hostname +
+                               ", pattern=" + hostNodePattern + "].");
+                    errors.add(e.getMessage());
+                }
+
+            } else {
+                // otherwise we should get our node name as a system property
+                nodeName = System.getProperty("node", "");
+                // ...or we'll determine it from our hostname
+                if (StringUtil.isBlank(nodeName)) {
+                    errors.add("Must have either 'node' sysprop or 'host_node_pattern' config.");
+                }
+
+                // obtain our node id from the node name
+                Matcher m = NODE_ID_PATTERN.matcher(nodeName);
+                if (m.matches()) {
+                    nodeId = Integer.parseInt(m.group(1));
+                } else {
+                    errors.add("Unable to determine node id from name [name=" + nodeName + "]. " +
+                               "Node name must match pattern '" + NODE_ID_PATTERN + "'.");
+                }
             }
 
-            // obtain our node id from the node name
-            Matcher m = NODE_ID_PATTERN.matcher(nodeName);
-            if (!m.matches()) {
-                log.warning("Unable to determine node if from name [name=" + nodeName + "]. " +
-                            "Node name must match pattern '" + NODE_ID_PATTERN + "'.");
-                System.exit(-1);
+            // we tell other nodes to connect to us using our back channel hostname
+            backChannelHost = hostname;
+            if (StringUtil.isBlank(backChannelHost)) {
+                errors.add("Missing 'hostname' system property.");
             }
-            nodeId = Integer.parseInt(m.group(1));
 
             // configure our server hostname based on our server_host_pattern
             String hostPattern = config.getValue("server_host_pattern", "");
@@ -215,8 +241,7 @@ public class ServerConfig
                 try {
                     serverHost = String.format(hostPattern, nodeId);
                 } catch (Exception e) {
-                    log.warning("Invalid 'server_host_pattern' supplied: " + hostPattern);
-                    System.exit(-1);
+                    errors.add("Invalid 'server_host_pattern' supplied: " + hostPattern);
                 }
             }
 
@@ -231,9 +256,16 @@ public class ServerConfig
                     httpPort = httpPort + offset + nodeId;
                     gameServerPort = gameServerPort + offset + nodeId;
                 } catch (Exception e) {
-                    log.warning("Invalid 'node_port_offset' supplied: " + nodePortOffset);
-                    System.exit(-1);
+                    errors.add("Invalid 'node_port_offset' supplied: " + nodePortOffset);
                 }
+            }
+
+            // if we have any errors, report them and exit
+            if (errors.size() > 0) {
+                for (String error : errors) {
+                    log.warning(error);
+                }
+                System.exit(255);
             }
         }
 
