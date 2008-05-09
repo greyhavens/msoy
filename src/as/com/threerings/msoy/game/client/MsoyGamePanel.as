@@ -94,7 +94,8 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override protected function createPlayerList () :GamePlayerList
     {
-        return new GamePlayerList(new MsoyNameLabelCreator((_ctx as GameContext).getMsoyContext()));
+        return new MsoyGamePlayerList(
+            new MsoyNameLabelCreator((_ctx as GameContext).getMsoyContext()));
     }
 
     // from WhirledGamePanel
