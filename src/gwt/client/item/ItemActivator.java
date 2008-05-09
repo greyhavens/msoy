@@ -45,13 +45,6 @@ public class ItemActivator extends FlowPanel
     {
         if ((_item != null) && (_item.getType() == event.getItemType()) &&
                 (_item.itemId == event.getItemId())) {
-            // TODO: What the fucking fuck? This should NOT be necessary.
-            // We get this event after the InventoryModels, so the usage should already
-            // be updated. I think we have a different copy of the item here. That is fucked-up.
-            // This used to work, but I've traced through and can't figure out what changed.
-            // The following two lines are pure hack.
-            _item.used = event.getUsage();
-            _item.location = event.getLocation();
             update();
         }
     }
