@@ -11,6 +11,8 @@ import flash.text.TextFormat;
 
 import com.threerings.util.Log;
 
+import com.threerings.flash.TextFieldUtil;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -45,7 +47,7 @@ public class NameField extends TextField
     /**
      * Sets the color we should use when drawing our name label.
      */
-    public function setStatus (status :int, italic :Boolean = false) :void 
+    public function setStatus (status :int, italicize :Boolean = false) :void 
     {
         if (_ignoreStatus) {
             return;
@@ -56,7 +58,7 @@ public class NameField extends TextField
             textColor = 0x777777;
             break;
         case OccupantInfo.DISCONNECTED:
-            textColor = 0xFF0000;
+            textColor = 0x80803C;
             break;
         case MsoyBodyObject.AWAY:
             textColor = 0xFFFF77;
@@ -65,11 +67,8 @@ public class NameField extends TextField
             textColor = 0x99BFFF;
         }
 
-        // turn on or off italicizing. (All 4 lines needed. Thanks flash.)
-        var fmt :TextFormat = defaultTextFormat;
-        fmt.italic = italic;
-        defaultTextFormat = fmt; // re-set to have change noticed
-        text = text; // re-set to apply new format
+        // turn on or off italicizing.
+        TextFieldUtil.updateFormat(this, { italic: italicize });
     }
 
 //    private static const log :Log = Log.getLog(NameField);
