@@ -62,6 +62,8 @@ import mx.containers.HBox;
 
 import mx.core.ScrollPolicy;
 
+import com.threerings.util.Log;
+
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.PlayerList;
 
@@ -93,11 +95,31 @@ class LabelBox extends HBox
 
     public function setStatus (status :String) :void
     {
-        if (status == PlayerList.STATUS_GONE) {
-            _label.setStatus(OccupantInfo.DISCONNECTED);
-        } else {
-            _label.setStatus(OccupantInfo.ACTIVE);
+        // translate the PlayerList status into an OccupantInfo status
+        var occStatus :int;
+        switch (status) {
+        default:
+            Log.dumpStack();
+            // but fall through to STATUS_NORMAL
+
+        case PlayerList.STATUS_NORMAL:
+        case PlayerList.STATUS_UNINITIALIZED:
+            occStatus = OccupantInfo.ACTIVE;
+            break;
+
+        case PlayerList.STATUS_IDLE:
+            occStatus = OccupantInfo.IDLE;
+            break;
+
+        case PlayerList.STATUS_GONE:
+            occStatus = OccupantInfo.DISCONNECTED;
+            break;
         }
+
+        // and show uninitialized-ness with italics
+        var italicize :Boolean = (status == PlayerList.STATUS_UNINITIALIZED);
+
+        _label.setStatus(occStatus, italicize);
     }
 
     override protected function createChildren () :void

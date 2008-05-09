@@ -28,6 +28,7 @@ public class NameField extends TextField
     {
         _ignoreStatus = ignoreStatus;
 
+        textColor = 0xFFFFFF; // set up default color
         selectable = false;
         autoSize = TextFieldAutoSize.CENTER;
         filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
@@ -39,20 +40,16 @@ public class NameField extends TextField
         format.size = 12;
         format.bold = true;
         defaultTextFormat = format;
-
-        // make sure we get initialized to the default color first
-        setStatus(-1);
     }
 
     /**
      * Sets the color we should use when drawing our name label.
      */
-    public function setStatus (status :int) :void 
+    public function setStatus (status :int, italic :Boolean = false) :void 
     {
         if (_ignoreStatus) {
-            textColor = 0xFFFFFF;
             return;
-        } 
+        }
 
         switch (status) {
         case OccupantInfo.IDLE:
@@ -67,9 +64,11 @@ public class NameField extends TextField
         default:
             textColor = 0x99BFFF;
         }
+
+        defaultTextFormat.italic = italic;
     }
 
-    private static const log :Log = Log.getLog(NameField);
+//    private static const log :Log = Log.getLog(NameField);
 
     protected var _ignoreStatus :Boolean;
 }
