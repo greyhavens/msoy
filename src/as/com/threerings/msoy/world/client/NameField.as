@@ -65,7 +65,11 @@ public class NameField extends TextField
             textColor = 0x99BFFF;
         }
 
-        defaultTextFormat.italic = italic;
+        // turn on or off italicizing. (All 4 lines needed. Thanks flash.)
+        var fmt :TextFormat = defaultTextFormat;
+        fmt.italic = italic;
+        defaultTextFormat = fmt; // re-set to have change noticed
+        text = text; // re-set to apply new format
     }
 
 //    private static const log :Log = Log.getLog(NameField);
