@@ -73,6 +73,11 @@ public class index extends Page
 
             final String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
+                // update the detail with the one in our models
+                Item item = _models.findItem(type, itemId);
+                if (item != null) {
+                    _detail.item = item;
+                }
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
