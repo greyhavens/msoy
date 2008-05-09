@@ -33,11 +33,15 @@ import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
+import client.util.events.FlashEvents;
+import client.util.events.ItemUsageEvent;
+import client.util.events.ItemUsageListener;
+
 /**
  * Displays a popup detail view of an item from the user's inventory.
  */
 public class ItemDetailPanel extends BaseItemDetailPanel
-    implements DoListItemPopup.ListedListener
+    implements ItemUsageListener, DoListItemPopup.ListedListener
 {
     public ItemDetailPanel (InventoryModels models, ItemDetail detail)
     {
@@ -72,6 +76,31 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _listTip.setText(CStuff.msgs.detailUplistTip());
             _listBtn.setText(CStuff.msgs.detailUplist());
         }
+    }
+
+    // from interface ItemUsageListener
+    public void itemUsageChanged (ItemUsageEvent event)
+    {
+        if ((event.getItemType() == _item.getType()) && (event.getItemId() == _item.itemId)) {
+            // make any changes
+            adjustButtonsBasedOnUsage();
+        }
+    }
+
+    // @Override
+    protected void onAttach ()
+    {
+        super.onAttach();
+
+        FlashEvents.addListener(this);
+    }
+
+    // @Override
+    protected void onDetach ()
+    {
+        super.onDetach();
+
+        FlashEvents.removeListener(this);
     }
 
     // @Override // BaseItemDetailPanel
@@ -122,10 +151,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // add a button for deleting this item
-        PushButton delete = MsoyUI.createButton(
+        _deleteBtn = MsoyUI.createButton(
             MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
-        delete.setEnabled(!used);
-        new ClickCallback(delete, CStuff.msgs.detailConfirmDelete()) {
+        new ClickCallback(_deleteBtn, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
                 CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                 return true;
@@ -142,7 +170,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return false;
             }
         };
-        buttons.add(delete);
+        buttons.add(_deleteBtn);
 
         // add a button for editing this item, if it's an original
         if (original) {
@@ -236,13 +264,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is giftable, add a UI for that
-        if (!catalogOriginal && !used) {
+        if (!catalogOriginal) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
             String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
             ClickListener onClick = Application.createLinkListener(Page.MAIL, Args.compose(args));
-            _details.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick));
+            _giftBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick);
+            _details.add(_giftBtn);
         }
 
         buttons = new RowPanel();
@@ -269,9 +298,22 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(buttons);
         }
+
+        adjustButtonsBasedOnUsage();
+    }
+
+    protected void adjustButtonsBasedOnUsage ()
+    {
+        boolean unused = (_item.used == Item.UNUSED);
+        _deleteBtn.setEnabled(unused);
+        if (_giftBtn != null) {
+            _giftBtn.setEnabled(unused);
+        }
     }
 
     protected InventoryModels _models;
     protected Label _listTip;
+    protected PushButton _deleteBtn;
     protected PushButton _listBtn;
+    protected PushButton _giftBtn;
 }
