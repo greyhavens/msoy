@@ -66,7 +66,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createField()">createField</a>(text:String, initProps:Object = null, clazz:Class = null):TextField</div>
+<a class="signatureLink" href="#createField()">createField</a>(text:String, initProps:Object = null, formatProps:Object = null, clazz:Class = null):TextField</div>
 <div class="summaryTableDescription">[static]
      Create a TextField.</div>
 </td><td class="summaryTableOwnerCol">TextFieldUtil</td>
@@ -181,7 +181,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function createField(text:String, initProps:Object = null, clazz:Class = null):TextField</code><p>
+<code>public static function createField(text:String, initProps:Object = null, formatProps:Object = null, clazz:Class = null):TextField</code><p>
      Create a TextField.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -189,14 +189,20 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">text</span>:String</code> &mdash; contains properties with which to initialize the TextField.
      Additionally it may contain the following properties:
         outlineColor: uint
-          initProps may be destructively modified.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">initProps</span>:Object</code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">initProps</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; contains properties with which to initialize the defaultTextFormat.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">formatProps</span>:Object</code> (default = <code>null</code>)<code></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>

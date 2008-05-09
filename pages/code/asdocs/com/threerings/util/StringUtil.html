@@ -223,7 +223,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#toString()">toString</a>(obj:*):String</div>
+<a class="signatureLink" href="#toString()">toString</a>(obj:*, refs:Dictionary = null):String</div>
 <div class="summaryTableDescription">[static]
      Nicely format the specified object into a String.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
@@ -887,12 +887,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function toString(obj:*):String</code><p>
+<code>public static function toString(obj:*, refs:Dictionary = null):String</code><p>
      Nicely format the specified object into a String.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">obj</span>:*</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">refs</span>:Dictionary</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 <p></p>

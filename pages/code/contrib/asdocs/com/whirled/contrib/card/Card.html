@@ -1,0 +1,872 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="Card,com.whirled.contrib.card.Card,MAX_ORDINAL,MAX_RANK,MAX_SUIT,NUM_RANK_ORDERS,RANKS,RANK_ACE,RANK_EIGHT,RANK_FIVE,RANK_FOUR,RANK_JACK,RANK_KING,RANK_NINE,RANK_ORDER_ACES_HIGH,RANK_ORDER_NORMAL,RANK_QUEEN,RANK_SEVEN,RANK_SIX,RANK_TEN,RANK_THREE,RANK_TWO,SPRITE_HEIGHT,SPRITE_WIDTH,SUITS,SUIT_CLUBS,SUIT_DIAMONDS,SUIT_HEARTS,SUIT_SPADES,_ordinal,faceDown,ordinal,rank,string,suit,compareRanks,createCardFromOrdinal,createFaceDownCard,equals,isBetterRank,rankString,suitString,toString,validate" name="keywords">
+<title>com.whirled.contrib.card.Card</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'Card - Whirled "contrib" Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/card/Card.html&amp;com/whirled/contrib/card/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Card</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Card"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.card</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class Card</td>
+</tr>
+</table>
+<p></p>
+ Represents a card for use with game logic, rendering and UI. Has suit, rank and all constants for 
+ a normal deck. Also provides translation to and from "ordinal" cards for use in serialization.
+ TODO: jokers
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#faceDown">faceDown</a> : Boolean<div class="summaryTableDescription">[read-only] Access whether the card is face down or not.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ordinal">ordinal</a> : int<div class="summaryTableDescription">[read-only] Access the ordinal.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#rank">rank</a> : int<div class="summaryTableDescription">[read-only] Access the rank.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#string">string</a> : String<div class="summaryTableDescription">[read-only] Get a unique string representation of this card for debugging or naming conventions.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#suit">suit</a> : int<div class="summaryTableDescription">[read-only] Access the suit.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ordinal">_ordinal</a> : int<div class="summaryTableDescription"> The rank (3 high bits) and suit (5 low bits).</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#Card()">Card</a>(suit:int, rank:int)</div>
+<div class="summaryTableDescription">
+     Create a new card.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareRanks()">compareRanks</a>(rank1:int, rank2:int, ordering:int):int</div>
+<div class="summaryTableDescription">[static] Compare two ranks in the given ordering.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createCardFromOrdinal()">createCardFromOrdinal</a>(ordinal:int):<a href="../card/Card.html">Card</a>
+</div>
+<div class="summaryTableDescription">[static] Create a new Card object from an ordinal.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createFaceDownCard()">createFaceDownCard</a>():<a href="../card/Card.html">Card</a>
+</div>
+<div class="summaryTableDescription">[static] Create a new face down card.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#equals()">equals</a>(rhs:<a href="Card.html">Card</a>):Boolean</div>
+<div class="summaryTableDescription"> Compare for eqaulity to another card.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isBetterRank()">isBetterRank</a>(rhs:<a href="Card.html">Card</a>, ordering:int):Boolean</div>
+<div class="summaryTableDescription"> Check if this card has a better rank than the other.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#rankString()">rankString</a>(rank:int):String</div>
+<div class="summaryTableDescription">[static] Return a short string for a RANK_constant for use in debugging or naming 
+      conventions.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#suitString()">suitString</a>(suit:int):String</div>
+<div class="summaryTableDescription">[static] Return a short string for a SUIT_constant for use in debugging or naming 
+      conventions.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#toString()">toString</a>():String</div>
+<div class="summaryTableDescription"> </div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#validate()">validate</a>(type:String, value:int, num:int):void</div>
+<div class="summaryTableDescription">[static] Throw an exception if the value is less than zero or larger than max.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_ORDINAL">MAX_ORDINAL</a> : int = 255<div class="summaryTableDescription">[static] Number or ordinals.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_RANK">MAX_RANK</a> : int = 31<div class="summaryTableDescription">[static] Maximum rank value.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_SUIT">MAX_SUIT</a> : int = 7<div class="summaryTableDescription">[static] Number of suits.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NUM_RANK_ORDERS">NUM_RANK_ORDERS</a> : int = 2<div class="summaryTableDescription">[static] Number of ranks.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_ACE">RANK_ACE</a> : int = 0<div class="summaryTableDescription">[static] Constant for the rank of ace.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_EIGHT">RANK_EIGHT</a> : int = 7<div class="summaryTableDescription">[static] Constant for the rank of eight.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_FIVE">RANK_FIVE</a> : int = 4<div class="summaryTableDescription">[static] Constant for the rank of five.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_FOUR">RANK_FOUR</a> : int = 3<div class="summaryTableDescription">[static] Constant for the rank of four.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_JACK">RANK_JACK</a> : int = 10<div class="summaryTableDescription">[static] Constant for the rank of jack.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_KING">RANK_KING</a> : int = 12<div class="summaryTableDescription">[static] Constant for the rank of king.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_NINE">RANK_NINE</a> : int = 8<div class="summaryTableDescription">[static] Constant for the rank of nine.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_ORDER_ACES_HIGH">RANK_ORDER_ACES_HIGH</a> : int = 1<div class="summaryTableDescription">[static] Constant for aces high rank ordering.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_ORDER_NORMAL">RANK_ORDER_NORMAL</a> : int = 0<div class="summaryTableDescription">[static] Constant for straight rank ordering.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_QUEEN">RANK_QUEEN</a> : int = 11<div class="summaryTableDescription">[static] Constant for the rank of queen.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANKS">RANKS</a> : Array<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_SEVEN">RANK_SEVEN</a> : int = 6<div class="summaryTableDescription">[static] Constant for the rank of seven.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_SIX">RANK_SIX</a> : int = 5<div class="summaryTableDescription">[static] Constant for the rank of six.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_TEN">RANK_TEN</a> : int = 9<div class="summaryTableDescription">[static] Constant for the rank of ten.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_THREE">RANK_THREE</a> : int = 2<div class="summaryTableDescription">[static] Constant for the rank of three.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#RANK_TWO">RANK_TWO</a> : int = 1<div class="summaryTableDescription">[static] Constant for the rank of deuce.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SPRITE_HEIGHT">SPRITE_HEIGHT</a> : int = 100<div class="summaryTableDescription">[static] Placeholder value for the height of a card sprite.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SPRITE_WIDTH">SPRITE_WIDTH</a> : int = 70<div class="summaryTableDescription">[static] Placeholder value for the width of a card sprite.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SUIT_CLUBS">SUIT_CLUBS</a> : int = 2<div class="summaryTableDescription">[static] Constant for the suit of clubs.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SUIT_DIAMONDS">SUIT_DIAMONDS</a> : int = 3<div class="summaryTableDescription">[static] Constant for the suit of diamonds.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SUIT_HEARTS">SUIT_HEARTS</a> : int = 0<div class="summaryTableDescription">[static] Constant for the suit of hearts.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SUITS">SUITS</a> : Array<div class="summaryTableDescription">[static] Array of standard suits.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SUIT_SPADES">SUIT_SPADES</a> : int = 1<div class="summaryTableDescription">[static] Constant for the suit of spades.</div>
+</td><td class="summaryTableOwnerCol">Card</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="faceDown"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">faceDown</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>faceDown:Boolean</code>&nbsp;&nbsp;[read-only]<p> Access whether the card is face down or not. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get faceDown():Boolean</code>
+<br>
+</div>
+<a name="_ordinal"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ordinal</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _ordinal:int</code><p> The rank (3 high bits) and suit (5 low bits). </p></div>
+<a name="ordinal"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ordinal</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>ordinal:int</code>&nbsp;&nbsp;[read-only]<p> Access the ordinal. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get ordinal():int</code>
+<br>
+</div>
+<a name="rank"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">rank</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>rank:int</code>&nbsp;&nbsp;[read-only]<p> Access the rank. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get rank():int</code>
+<br>
+</div>
+<a name="string"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">string</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>string:String</code>&nbsp;&nbsp;[read-only]<p> Get a unique string representation of this card for debugging or naming conventions. 
+      E.g. "two of hearts" is "2H". </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get string():String</code>
+<br>
+</div>
+<a name="suit"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">suit</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>suit:int</code>&nbsp;&nbsp;[read-only]<p> Access the suit. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get suit():int</code>
+<br>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="Card()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">Card</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function Card(suit:int, rank:int)</code><p>
+     Create a new card.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">suit</span>:int</code> &mdash; the suit of the card (one of the SUIT_constants)
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rank</span>:int</code> &mdash; the rank of the card (one of the RANK_constants)
+     </td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; if the suit or rank is invalid.
+     </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="compareRanks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareRanks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareRanks(rank1:int, rank2:int, ordering:int):int</code><p> Compare two ranks in the given ordering.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rank1</span>:int</code> &mdash; the first rank to compare, one of the RANK_constants
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rank2</span>:int</code> &mdash; the second rank to compare, one of the RANK_constants
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ordering</span>:int</code> &mdash; how to compare, one of the RANK_ORDER_constants
+      </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code> &mdash; a negative number if rank1 < rank2, positive if rank1 > rank2 and zero 
+      if rank1 == rank2 </td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; if any constant is not in the predefined set
+      </td>
+</tr>
+</table>
+</div>
+<a name="createCardFromOrdinal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createCardFromOrdinal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function createCardFromOrdinal(ordinal:int):<a href="../card/Card.html">Card</a></code><p> Create a new Card object from an ordinal.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ordinal</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../card/Card.html">Card</a></code></td>
+</tr>
+</table>
+<br>
+<span class="label">Throws</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code></code> &mdash; if the ordinal is not valid. </td>
+</tr>
+</table>
+</div>
+<a name="createFaceDownCard()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createFaceDownCard</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function createFaceDownCard():<a href="../card/Card.html">Card</a></code><p> Create a new face down card. A face down card usually means that the local player "has" 
+      the card but cannot yet see its value, i.e. the value is not known. </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../card/Card.html">Card</a></code></td>
+</tr>
+</table>
+</div>
+<a name="equals()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">equals</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function equals(rhs:<a href="Card.html">Card</a>):Boolean</code><p> Compare for eqaulity to another card.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rhs</span>:<a href="Card.html">Card</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the this is equal to the other card </td>
+</tr>
+</table>
+</div>
+<a name="isBetterRank()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isBetterRank</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isBetterRank(rhs:<a href="Card.html">Card</a>, ordering:int):Boolean</code><p> Check if this card has a better rank than the other.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rhs</span>:<a href="Card.html">Card</a></code> &mdash; how to compare, one of the RANK_ORDER_constants 
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ordering</span>:int</code> &mdash; card to compare against </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="rankString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">rankString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function rankString(rank:int):String</code><p> Return a short string for a RANK_constant for use in debugging or naming 
+      conventions. For example, RANK_ACE is "A". If the rank is not one defined 
+      by this class, the string is calculated from the numeric value. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rank</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="suitString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">suitString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function suitString(suit:int):String</code><p> Return a short string for a SUIT_constant for use in debugging or naming 
+      conventions. For example, SUIT_HEARTS is "H". If the suit is not one defined
+      in this class, the string is calcualted from the numeric value. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">suit</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="toString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">toString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function toString():String</code><p> </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="validate()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">validate</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function validate(type:String, value:int, num:int):void</code><p> Throw an exception if the value is less than zero or larger than max.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">type</span>:String</code> &mdash; the ordinal name of the value set </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">num</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="MAX_ORDINAL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MAX_ORDINAL</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const MAX_ORDINAL:int = 255</code><p> Number or ordinals. NOTE: also used as a bit mask </p></div>
+<a name="MAX_RANK"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MAX_RANK</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const MAX_RANK:int = 31</code><p> Maximum rank value. NOTE: also used as a  bit mask. </p></div>
+<a name="MAX_SUIT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MAX_SUIT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const MAX_SUIT:int = 7</code><p> Number of suits. NOTE: also used as a bit mask. </p></div>
+<a name="NUM_RANK_ORDERS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">NUM_RANK_ORDERS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const NUM_RANK_ORDERS:int = 2</code><p> Number of ranks. </p></div>
+<a name="RANK_ACE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_ACE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_ACE:int = 0</code><p> Constant for the rank of ace. </p></div>
+<a name="RANK_EIGHT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_EIGHT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_EIGHT:int = 7</code><p> Constant for the rank of eight. </p></div>
+<a name="RANK_FIVE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_FIVE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_FIVE:int = 4</code><p> Constant for the rank of five. </p></div>
+<a name="RANK_FOUR"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_FOUR</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_FOUR:int = 3</code><p> Constant for the rank of four. </p></div>
+<a name="RANK_JACK"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_JACK</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_JACK:int = 10</code><p> Constant for the rank of jack. </p></div>
+<a name="RANK_KING"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_KING</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_KING:int = 12</code><p> Constant for the rank of king. </p></div>
+<a name="RANK_NINE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_NINE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_NINE:int = 8</code><p> Constant for the rank of nine. </p></div>
+<a name="RANK_ORDER_ACES_HIGH"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_ORDER_ACES_HIGH</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_ORDER_ACES_HIGH:int = 1</code><p> Constant for aces high rank ordering. </p></div>
+<a name="RANK_ORDER_NORMAL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_ORDER_NORMAL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_ORDER_NORMAL:int = 0</code><p> Constant for straight rank ordering. </p></div>
+<a name="RANK_QUEEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_QUEEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_QUEEN:int = 11</code><p> Constant for the rank of queen. </p></div>
+<a name="RANKS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANKS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANKS:Array</code>
+</div>
+<a name="RANK_SEVEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_SEVEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_SEVEN:int = 6</code><p> Constant for the rank of seven. </p></div>
+<a name="RANK_SIX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_SIX</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_SIX:int = 5</code><p> Constant for the rank of six. </p></div>
+<a name="RANK_TEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_TEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_TEN:int = 9</code><p> Constant for the rank of ten. </p></div>
+<a name="RANK_THREE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_THREE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_THREE:int = 2</code><p> Constant for the rank of three. </p></div>
+<a name="RANK_TWO"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RANK_TWO</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const RANK_TWO:int = 1</code><p> Constant for the rank of deuce. </p></div>
+<a name="SPRITE_HEIGHT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SPRITE_HEIGHT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SPRITE_HEIGHT:int = 100</code><p> Placeholder value for the height of a card sprite. </p></div>
+<a name="SPRITE_WIDTH"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SPRITE_WIDTH</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SPRITE_WIDTH:int = 70</code><p> Placeholder value for the width of a card sprite. </p></div>
+<a name="SUIT_CLUBS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SUIT_CLUBS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SUIT_CLUBS:int = 2</code><p> Constant for the suit of clubs. </p></div>
+<a name="SUIT_DIAMONDS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SUIT_DIAMONDS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SUIT_DIAMONDS:int = 3</code><p> Constant for the suit of diamonds. </p></div>
+<a name="SUIT_HEARTS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SUIT_HEARTS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SUIT_HEARTS:int = 0</code><p> Constant for the suit of hearts. </p></div>
+<a name="SUITS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SUITS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SUITS:Array</code><p> Array of standard suits. </p></div>
+<a name="SUIT_SPADES"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SUIT_SPADES</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SUIT_SPADES:int = 1</code><p> Constant for the suit of spades. </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->

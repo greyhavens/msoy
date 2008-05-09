@@ -1,0 +1,560 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="ClickAnimateFurniture,com.whirled.contrib.display.ClickAnimateFurniture,control,randomizeAnimations,timer,disableReturnToBaseAnimation,enableReturnToBaseAnimation,handleClick,handleTimer,handleUnload,makeSimpleAnimation,memoryChanged,messageReceived,setAnimations,start,updateDisplay,verifyAnimation,verifyAnimations" name="keywords">
+<title>com.whirled.contrib.display.ClickAnimateFurniture</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'ClickAnimateFurniture - Whirled "contrib" Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/display/ClickAnimateFurniture.html&amp;com/whirled/contrib/display/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ClickAnimateFurniture</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class ClickAnimateFurniture"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.display</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ClickAnimateFurniture</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">ClickAnimateFurniture <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../images/inherit-arrow.gif"> flash.display.Sprite</td>
+</tr>
+</table>
+<p></p> This class creates a furniture item which can respond to clicks
+    and be animated.
+    The preferred way to use it is to extend it.
+    Ideally you should write a new class which extends this one
+    and its constructor should call super() with an array of images,
+    set the animations, set any desired flags, and then call start.
+
+    <p>Generally speaking, unless you know what you are doing, you should
+    stick to the public methods and members and avoid the protected ones.
+    There is a tutorial in the wiki on how to use this class which includes
+    examples.</p> <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#randomizeAnimations">randomizeAnimations</a> : Boolean<div class="summaryTableDescription"> This is a flag which indicates whether or not the change
+ in animations should be randomized or serial.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#control">control</a> : FurniControl<div class="summaryTableDescription"> This is the furniture control.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#timer">timer</a> : Timer<div class="summaryTableDescription"> This is the timer.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#ClickAnimateFurniture()">ClickAnimateFurniture</a>(images:Array)</div>
+<div class="summaryTableDescription"> The constructor.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#disableReturnToBaseAnimation()">disableReturnToBaseAnimation</a>():void</div>
+<div class="summaryTableDescription"> This function restores the default behavior, which is that
+ the furniture changes animation states every time it is 
+ clicked.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#enableReturnToBaseAnimation()">enableReturnToBaseAnimation</a>():void</div>
+<div class="summaryTableDescription"> This function is used to cause the furniture to always
+ return to its basic animation state.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#makeSimpleAnimation()">makeSimpleAnimation</a>(x:int):Array</div>
+<div class="summaryTableDescription">[static] This creates a very simple default animation.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setAnimations()">setAnimations</a>(anims:Array):void</div>
+<div class="summaryTableDescription"> This function is used to set or reset the animations which
+ will be used.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#start()">start</a>():void</div>
+<div class="summaryTableDescription"> This function is used to start the furniture.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#verifyAnimation()">verifyAnimation</a>(anim:Array):Boolean</div>
+<div class="summaryTableDescription">[static] This function checks an individual animation array to
+ ensure its correctness.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#verifyAnimations()">verifyAnimations</a>(anims:Array):Boolean</div>
+<div class="summaryTableDescription">[static] This routine verifies that the thing being passed as an animation
+ really is an animation.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleClick()">handleClick</a>(event:Event):void</div>
+<div class="summaryTableDescription"> This is the callback for mouse clicks.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleTimer()">handleTimer</a>(event:TimerEvent):void</div>
+<div class="summaryTableDescription"> This is the callback for the timer.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleUnload()">handleUnload</a>(event:Event):void</div>
+<div class="summaryTableDescription"> This is the callback for when the furniture is unloaded.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#memoryChanged()">memoryChanged</a>(event:ControlEvent):void</div>
+<div class="summaryTableDescription"> This function is the callback for updates to the memory.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#messageReceived()">messageReceived</a>(event:ControlEvent):void</div>
+<div class="summaryTableDescription"> This function is the callback for messages.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateDisplay()">updateDisplay</a>():void</div>
+<div class="summaryTableDescription"> This gets called whenever things change.</div>
+</td><td class="summaryTableOwnerCol">ClickAnimateFurniture</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="control"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">control</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var control:FurniControl</code><p> This is the furniture control. </p></div>
+<a name="randomizeAnimations"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">randomizeAnimations</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var randomizeAnimations:Boolean</code><p> This is a flag which indicates whether or not the change
+ in animations should be randomized or serial.  By default
+ it is false, indicating that the animations will be cycled
+ through in order.  If you set it to true, they will instead
+ be cycled through in random order.
+
+ </p><p>The default value is <code>&lt;code&gt;false&lt;/code&gt;</code>.</p>
+</div>
+<a name="timer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">timer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var timer:Timer</code><p> This is the timer.  If you want to temporarily stop or pause
+ the animations, the easiest way is to stop the timer and then
+ start it when you want things to resume. </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="ClickAnimateFurniture()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ClickAnimateFurniture</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function ClickAnimateFurniture(images:Array)</code><p> The constructor. 
+ </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">images</span>:Array</code> &mdash; An Array of DisplayObjects.  Should be non-null,
+ non-empty, and all contains objects should be subclasses of
+ DisplayObject </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="disableReturnToBaseAnimation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">disableReturnToBaseAnimation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function disableReturnToBaseAnimation():void</code><p> This function restores the default behavior, which is that
+ the furniture changes animation states every time it is 
+ clicked.  When the furniture is clicked, it changes animations
+ and then runs the new animation over and over until the
+ next time it gets cicked.
+ </p><p>By default, returning to the base animation is disabled.
+ This function does not need to be called unless 
+ enableReturnToBaseAnimation has been called.</p> </div>
+<a name="enableReturnToBaseAnimation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">enableReturnToBaseAnimation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function enableReturnToBaseAnimation():void</code><p> This function is used to cause the furniture to always
+ return to its basic animation state. 
+ If this has been called, then the furniture item
+ will carry out the first animation until it is clicked on.
+ When clicked on, it will play another animation through
+ once and then will return to the first animation.
+ If randomization is enabled, the animation it plays
+ will be random.  Otherwise, it will play the animations
+ in order, one for each click. </p></div>
+<a name="handleClick()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleClick</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleClick(event:Event):void</code><p> This is the callback for mouse clicks.  It handles
+ changing the animations, notifying everyone else and
+ where applicable, saving the change. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="handleTimer()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleTimer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleTimer(event:TimerEvent):void</code><p> This is the callback for the timer.  It advances the frame,
+ looping if necessary.  If returnToBaseAnimation is true, it
+ also detects when a given animation has finished and goes
+ back to the base animation.  It does not synchronize the
+ return to the base animation with other instances because if
+ some instances are running slower than others, we would still
+ like them to be able to see the complete animation. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:TimerEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="handleUnload()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleUnload</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleUnload(event:Event):void</code><p> This is the callback for when the furniture is unloaded.
+ It handles clean-up. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="makeSimpleAnimation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">makeSimpleAnimation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function makeSimpleAnimation(x:int):Array</code><p> This creates a very simple default animation.
+ This default animation is used in the event that no animation
+ has been supplied or that the supplied animation was incorrectly
+ formatter.  In the default animation, the first x pictures which
+ have been supplied are shown in order each for one half of a second.
+
+ </p><p>It is not generally recommended that users call this.
+ It is primarily here so that the furniture will do something
+ in the case that no animation (or no properly formatted 
+ animation) is ever set.</p>
+
+        <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:int</code> &mdash; The number of frames to use.
+
+ </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="memoryChanged()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">memoryChanged</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function memoryChanged(event:ControlEvent):void</code><p> This function is the callback for updates to the memory.  It
+ enables it to be the case that when one user clicks on the
+ furniture, it changes which animation is being shown
+ for everyone. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ControlEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="messageReceived()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">messageReceived</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function messageReceived(event:ControlEvent):void</code><p> This function is the callback for messages.  It enables it to
+ be the case that when one user clicks on the furniture, the
+ same animation plays for everyone. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ControlEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="setAnimations()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setAnimations</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setAnimations(anims:Array):void</code><p> This function is used to set or reset the animations which
+ will be used.  It should be called before start.
+
+ </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">anims</span>:Array</code> &mdash; The format for this input is somewhat complex, so
+ bear with me.  It takes an array as input.  Each member of this
+ array should be an animation.  An animation is also
+ an array.  Each member of the animation array should
+ be a frame.  A frame is also an array.  A frame is an
+ Array of size 2.  The first element is the frame number.
+ This should be the index that the frame has in the image
+ array passed to the constructor.  The second element
+ is the time in milliseconds for which the frame should
+ be displayed.  So essentially, anims is an Array of Arrays
+ of Arrays of integers.  If something other than this
+ is given as input, errors will appear in the log and
+ the default animation will be used instead. </td>
+</tr>
+</table>
+</div>
+<a name="start()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">start</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function start():void</code><p> This function is used to start the furniture.  Prior to
+ this function being called, nothing will be displayed and
+ nothing will happen.  It should normally be called in the
+ constructor of the superclass.
+
+ </p><p>Before this function is called, setAnimation should be called
+ and any behavior flags (randomizeAnimations, returnToBaseAnimation) 
+ should be set.</p> 
+
+ <p>When called, this function does several things,
+ including begining the first animation and registering
+ the listeners for several events such as mouse clicks,
+ communication with other instances, and timer events.</p> </div>
+<a name="updateDisplay()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateDisplay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateDisplay():void</code><p> This gets called whenever things change.
+        It changes which frame is being displayed and starts the
+ timer for the new frame, if appropriate. </p></div>
+<a name="verifyAnimation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">verifyAnimation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function verifyAnimation(anim:Array):Boolean</code><p> This function checks an individual animation array to
+ ensure its correctness.  It is just a helper function for
+ verifyAnimations to make the code cleaner. Generally, it is not
+ expected that this routing will be used outside of this class,
+ but it may be helpful for debugging if you are unsure which
+ animation is not set up properly. 
+
+ </p><p>If the input is not properly formatted, specific information
+ about the error can be found in the flash log file. </p>
+
+ <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">anim</span>:Array</code> &mdash; A single animation Array.  That is an Array of
+ frames.  Each frame is an array of two integers.
+
+ </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; Returns true is the animation is properly formatted.
+ False otherwise. </td>
+</tr>
+</table>
+</div>
+<a name="verifyAnimations()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">verifyAnimations</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function verifyAnimations(anims:Array):Boolean</code><p> This routine verifies that the thing being passed as an animation
+ really is an animation.  If it does not conform to the description
+ of an animation then this will be detected.  This is a sanity
+ check measure meant to protect against users who do not understand
+ what they are doing.  This would be unnecessary in a language with
+ stronger typing.  This function will not usually be called outside
+ of this class, but it may be helpful for debugging in some cases.
+
+ </p><p>If the input is not properly formatted, specific information
+ about the error can be found in the flash log file. </p>
+
+ <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">anims</span>:Array</code> &mdash; An array of animations.  Each animation is itself
+ an array of frames.  Each frame is an arry of two integers.
+
+ </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->

@@ -1,0 +1,810 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="Hand,com.whirled.contrib.card.Hand,DEALT,DEALT_FACE_DOWN,DECK,PASS_FULFILL,PASS_NOTIFY,PASS_REQUEST,_cards,_gameCtrl,_hasPlayed,_passCount,_passTarget,_prefix,_sorter,cards,hasPlayed,isPassing,length,passCount,passTarget,allowPlay,allowSelection,dealFaceDownTo,dealTo,disallowSelection,handleMessage,passCards,playCard,playCards,prepare,prepareAndDeal,removeCard,removeCards,requestPass,varName" name="keywords">
+<title>com.whirled.contrib.card.Hand</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'Hand - Whirled "contrib" Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/card/Hand.html&amp;com/whirled/contrib/card/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Hand</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Hand"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.card</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class Hand</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">Hand <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
+</table>
+<p></p> Represents the local player's hand in a card game. Provides facilities for dealing, playing
+  and passing cards. Currently oriented mostly towards trick taking games.
+  TODO: support more non-trick-taking game features like discarding, drawing and dealing a 
+  fixed number of cards <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#cards">cards</a> : <a href="../card/CardArray.html">CardArray</a>
+<div class="summaryTableDescription">[read-only] Access the underlying array of cards.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#hasPlayed">hasPlayed</a> : Boolean<div class="summaryTableDescription">[read-only] Access whether or not some cards have been selected since the last call to beginTurn.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isPassing">isPassing</a> : Boolean<div class="summaryTableDescription">[read-only] Access whether the local player is currently passing.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#length">length</a> : int<div class="summaryTableDescription">[read-only] Access the number of cards in the hand.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#passCount">passCount</a> : int<div class="summaryTableDescription">[read-only] Access the numr of cards requested to be passed by the local player.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#passTarget">passTarget</a> : int<div class="summaryTableDescription">[read-only] Access the target player for the local player's pass in progress.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_cards">_cards</a> : <a href="../card/CardArray.html">CardArray</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_gameCtrl">_gameCtrl</a> : GameControl<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_hasPlayed">_hasPlayed</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_passCount">_passCount</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_passTarget">_passTarget</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_prefix">_prefix</a> : String<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_sorter">_sorter</a> : <a href="../card/Sorter.html">Sorter</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#Hand()">Hand</a>(gameCtrl:GameControl, sorter:<a href="Sorter.html">Sorter</a>, prefix:String = null)</div>
+<div class="summaryTableDescription"> Create a new hand.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#allowPlay()">allowPlay</a>(enabled:<a href="CardArray.html">CardArray</a>, count:int = 1):void</div>
+<div class="summaryTableDescription"> Allow the local player to play some cards from a given allowed set.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#allowSelection()">allowSelection</a>(enabled:<a href="CardArray.html">CardArray</a>, count:int = 1):void</div>
+<div class="summaryTableDescription"> Allow the selection of cards, but not actually playing them.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#dealFaceDownTo()">dealFaceDownTo</a>(id:int, numCards:int):void</div>
+<div class="summaryTableDescription"> Add some face down cards to a given player.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#dealTo()">dealTo</a>(playerId:int, numCards:int):void</div>
+<div class="summaryTableDescription"> Deal from the server's deck to one player.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#disallowSelection()">disallowSelection</a>():void</div>
+<div class="summaryTableDescription"> Disallow card selection, typically called when it is no longer the player's turn and there 
+      is no reasonable selection he or she could make.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#passCards()">passCards</a>(cards:<a href="CardArray.html">CardArray</a>):void</div>
+<div class="summaryTableDescription"> Pass the given cards to fulfill a pass request.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#playCard()">playCard</a>(card:<a href="Card.html">Card</a>):void</div>
+<div class="summaryTableDescription"> Play a single card.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#playCards()">playCards</a>(cards:<a href="CardArray.html">CardArray</a>):void</div>
+<div class="summaryTableDescription"> Select some cards to play.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#prepare()">prepare</a>(deck:<a href="CardArray.html">CardArray</a>):void</div>
+<div class="summaryTableDescription"> Reset the deck on the server to the given deck.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#prepareAndDeal()">prepareAndDeal</a>(deck:<a href="CardArray.html">CardArray</a>, numCards:int):void</div>
+<div class="summaryTableDescription"> Deal the given deck to all players, giving each player the same number of cards.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeCard()">removeCard</a>(card:<a href="Card.html">Card</a>):void</div>
+<div class="summaryTableDescription"> Remove a single card from the hand.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeCards()">removeCards</a>(cards:<a href="CardArray.html">CardArray</a>):void</div>
+<div class="summaryTableDescription"> Remove cards from the hand.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#requestPass()">requestPass</a>(fromPlayer:int, toPlayer:int, numCards:int):void</div>
+<div class="summaryTableDescription"> Request that one player pass some cards to another player.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleMessage()">handleMessage</a>(event:MessageReceivedEvent):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#varName()">varName</a>(name:String):String</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DEALT">DEALT</a> : String = "hand.dealt"<div class="summaryTableDescription">[static] Event message for getting cards.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DEALT_FACE_DOWN">DEALT_FACE_DOWN</a> : String = "hand.dealt.face.down"<div class="summaryTableDescription">[static] Event message for getting face down cards.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DECK">DECK</a> : String = "hand.deck"<div class="summaryTableDescription">[static] Name of bag for the deck.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PASS_FULFILL">PASS_FULFILL</a> : String = "hand.pass.fulfill"<div class="summaryTableDescription">[static] Event message for receiving passed cards.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PASS_NOTIFY">PASS_NOTIFY</a> : String = "hand.pass.notify"<div class="summaryTableDescription">[static] Event message for notifying other players of the pass.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PASS_REQUEST">PASS_REQUEST</a> : String = "hand.pass.request"<div class="summaryTableDescription">[static] Event message for receiving the pass request.</div>
+</td><td class="summaryTableOwnerCol">Hand</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_cards"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_cards</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _cards:<a href="../card/CardArray.html">CardArray</a></code>
+</div>
+<a name="cards"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cards</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>cards:<a href="../card/CardArray.html">CardArray</a></code>&nbsp;&nbsp;[read-only]<p> Access the underlying array of cards. The caller MUST NOT modify the array directly. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get cards():<a href="../card/CardArray.html">CardArray</a></code>
+<br>
+</div>
+<a name="_gameCtrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_gameCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _gameCtrl:GameControl</code>
+</div>
+<a name="_hasPlayed"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_hasPlayed</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _hasPlayed:Boolean</code>
+</div>
+<a name="hasPlayed"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hasPlayed</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>hasPlayed:Boolean</code>&nbsp;&nbsp;[read-only]<p> Access whether or not some cards have been selected since the last call to beginTurn. This 
+      is necessary for the auto-play feature where cards are randomly selected by the controller 
+      if the player takes too long to make a move. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get hasPlayed():Boolean</code>
+<br>
+</div>
+<a name="isPassing"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isPassing</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>isPassing:Boolean</code>&nbsp;&nbsp;[read-only]<p> Access whether the local player is currently passing. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get isPassing():Boolean</code>
+<br>
+</div>
+<a name="length"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">length</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>length:int</code>&nbsp;&nbsp;[read-only]<p> Access the number of cards in the hand. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get length():int</code>
+<br>
+</div>
+<a name="_passCount"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_passCount</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _passCount:int</code>
+</div>
+<a name="passCount"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">passCount</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>passCount:int</code>&nbsp;&nbsp;[read-only]<p> Access the numr of cards requested to be passed by the local player. 0 if no pass has been 
+      requested. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get passCount():int</code>
+<br>
+</div>
+<a name="_passTarget"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_passTarget</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _passTarget:int</code>
+</div>
+<a name="passTarget"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">passTarget</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>passTarget:int</code>&nbsp;&nbsp;[read-only]<p> Access the target player for the local player's pass in progress. 0 if no pass has been 
+      requested. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get passTarget():int</code>
+<br>
+</div>
+<a name="_prefix"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_prefix</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _prefix:String</code>
+</div>
+<a name="_sorter"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_sorter</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _sorter:<a href="../card/Sorter.html">Sorter</a></code>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="Hand()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">Hand</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function Hand(gameCtrl:GameControl, sorter:<a href="Sorter.html">Sorter</a>, prefix:String = null)</code><p> Create a new hand.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">gameCtrl</span>:GameControl</code> &mdash; the game control to use for table information and for networking
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sorter</span>:<a href="Sorter.html">Sorter</a></code> &mdash; the prefix to use for our server variables in case the rules require 
+      multiple local hands 
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">prefix</span>:String</code> (default = <code>null</code>)<code></code> &mdash; applies an ordering to cards when they are dealt and prior </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="allowPlay()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">allowPlay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function allowPlay(enabled:<a href="CardArray.html">CardArray</a>, count:int = 1):void</code><p> Allow the local player to play some cards from a given allowed set. This is not 
+      a network event and immediately sends HandEvent.BEGAN_TURN. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">enabled</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">count</span>:int</code> (default = <code>1</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="allowSelection()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">allowSelection</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function allowSelection(enabled:<a href="CardArray.html">CardArray</a>, count:int = 1):void</code><p> Allow the selection of cards, but not actually playing them. This is not 
+      a network event and immediately sends HandEvent.ALLOW_SELECT. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">enabled</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">count</span>:int</code> (default = <code>1</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="dealFaceDownTo()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dealFaceDownTo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function dealFaceDownTo(id:int, numCards:int):void</code><p> Add some face down cards to a given player. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">numCards</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="dealTo()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dealTo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function dealTo(playerId:int, numCards:int):void</code><p> Deal from the server's deck to one player. 
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; the player to deal to
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">numCards</span>:int</code> &mdash; number of cards to deal </td>
+</tr>
+</table>
+</div>
+<a name="disallowSelection()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">disallowSelection</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function disallowSelection():void</code><p> Disallow card selection, typically called when it is no longer the player's turn and there 
+      is no reasonable selection he or she could make. This is not a network event and 
+      immediately sends HandEvent.DISALLOWED_SELECTION. </p></div>
+<a name="handleMessage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleMessage(event:MessageReceivedEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:MessageReceivedEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="passCards()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">passCards</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function passCards(cards:<a href="CardArray.html">CardArray</a>):void</code><p> Pass the given cards to fulfill a pass request. The cards are sent to the pass target using 
+      a HandEvent.PASSED event. Other players are also notified via a HandEvent.PASSED event with 
+      no cards. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cards</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+</table>
+</div>
+<a name="playCard()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playCard</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function playCard(card:<a href="Card.html">Card</a>):void</code><p> Play a single card. Convenience function to call playCards with a CardArray containing 
+      only one card. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">card</span>:<a href="Card.html">Card</a></code></td>
+</tr>
+</table>
+</div>
+<a name="playCards()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playCards</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function playCards(cards:<a href="CardArray.html">CardArray</a>):void</code><p> Select some cards to play. This is not a network event. It immediately sends a 
+      HandEvent.CARDS_PLAYED event. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cards</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+</table>
+</div>
+<a name="prepare()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">prepare</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function prepare(deck:<a href="CardArray.html">CardArray</a>):void</code><p> Reset the deck on the server to the given deck. Note that this method should only be 
+      called by one of the players in the game, presumably the one for which 
+      GameSubControl.amInControl returns true. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">deck</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+</table>
+</div>
+<a name="prepareAndDeal()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">prepareAndDeal</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function prepareAndDeal(deck:<a href="CardArray.html">CardArray</a>, numCards:int):void</code><p> Deal the given deck to all players, giving each player the same number of cards. Leftover
+      cards will be held on the server. Note that this method should only be called by one of 
+      the players in the game, presumably the one for which GameSubControl.amInControl returns 
+      true. When the cards arrive to the player, each local hand will dispatch a HandEvent.DEALT
+      message.
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">deck</span>:<a href="CardArray.html">CardArray</a></code> &mdash; the full deck of cards to store on the server
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">numCards</span>:int</code> &mdash; optional number of cards to deal to each player. If 0, cards are dealt 
+      evenly
+      TODO: options for what to do with the leftover cards? </td>
+</tr>
+</table>
+</div>
+<a name="removeCard()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeCard</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeCard(card:<a href="Card.html">Card</a>):void</code><p> Remove a single card from the hand. Normally the controller will call this in conjunction 
+      with another call to place the card elsewhere on the table, return it to the deck, etc. 
+      Does not send any events. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">card</span>:<a href="Card.html">Card</a></code></td>
+</tr>
+</table>
+</div>
+<a name="removeCards()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeCards</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeCards(cards:<a href="CardArray.html">CardArray</a>):void</code><p> Remove cards from the hand. Normally the controller will call this in conjunction with
+      another call to place the cards elsewhere on the table, return them to the deck, etc. 
+      Does not send any events. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cards</span>:<a href="CardArray.html">CardArray</a></code></td>
+</tr>
+</table>
+</div>
+<a name="requestPass()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">requestPass</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function requestPass(fromPlayer:int, toPlayer:int, numCards:int):void</code><p> Request that one player pass some cards to another player. This will dispatch a 
+      HandEvent.PASS_REQUESTED event on the client who perform the pass and set the
+      passTarget property to indicate the target player.  
+      </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">fromPlayer</span>:int</code> &mdash; the id of the player who is to perform the pass
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">toPlayer</span>:int</code> &mdash; the id of the player to receive the passed cards
+      </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">numCards</span>:int</code> &mdash; the number of cards to pass </td>
+</tr>
+</table>
+</div>
+<a name="varName()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">varName</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function varName(name:String):String</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="DEALT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DEALT</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const DEALT:String = "hand.dealt"</code><p> Event message for getting cards. </p></div>
+<a name="DEALT_FACE_DOWN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DEALT_FACE_DOWN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const DEALT_FACE_DOWN:String = "hand.dealt.face.down"</code><p> Event message for getting face down cards. </p></div>
+<a name="DECK"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DECK</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const DECK:String = "hand.deck"</code><p> Name of bag for the deck. </p></div>
+<a name="PASS_FULFILL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PASS_FULFILL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const PASS_FULFILL:String = "hand.pass.fulfill"</code><p> Event message for receiving passed cards. </p></div>
+<a name="PASS_NOTIFY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PASS_NOTIFY</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const PASS_NOTIFY:String = "hand.pass.notify"</code><p> Event message for notifying other players of the pass. </p></div>
+<a name="PASS_REQUEST"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PASS_REQUEST</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const PASS_REQUEST:String = "hand.pass.request"</code><p> Event message for receiving the pass request. </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->

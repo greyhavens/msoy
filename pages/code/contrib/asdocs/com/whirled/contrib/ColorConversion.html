@@ -1,0 +1,667 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="ColorConversion,com.whirled.contrib.ColorConversion,CMYtoHSB,CMYtoLCHab,CMYtoRGB,HSBtoCMY,HSBtoRGB,HSBtoRGBMultAlpha,RGBtoCMY,RGBtoHSB,calcColorDiff,changeColorCMY,changeColorHSB,changeColorRGB,compareColorsCMY,compareColorsRGB" name="keywords">
+<title>com.whirled.contrib.ColorConversion</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'ColorConversion - Whirled "contrib" Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/contrib/ColorConversion.html&amp;com/whirled/contrib/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ColorConversion</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class ColorConversion"); titleBar_setSubNav(false,false,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ColorConversion</td>
+</tr>
+</table>
+<p></p>
+ Various tools for converting between different color models and applying 
+ colors to Movie Clips. 
+ <p>The methods for changing the colors of Movie Clips change the entire Movie
+ clip to that color, it is not a tint. This is useful for Movie Clips that have 
+ re-colorable childs to easily change their color. Examples include balloons, game tokens 
+ and furniture items. </p>
+  Author: jdnx429
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#changeColorCMY()">changeColorCMY</a>(mc:MovieClip, CMY:Array):void</div>
+<div class="summaryTableDescription">[static]
+     Changes the color of a Movie Clip using the CMY color model
+     </div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#changeColorHSB()">changeColorHSB</a>(mc:MovieClip, HSB:Array):void</div>
+<div class="summaryTableDescription">[static]
+     Changes the color of a Movie Clip using the HSB color model
+     </div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#changeColorRGB()">changeColorRGB</a>(mc:MovieClip, RGB:Array):void</div>
+<div class="summaryTableDescription">[static]
+     Changes the color of a Movie Clip using the RGB color model
+     </div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#CMYtoHSB()">CMYtoHSB</a>(cyan:Number, magenta:Number, yellow:Number):Array</div>
+<div class="summaryTableDescription">[static] 
+     Converts a color from the CMY color model to HSB.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#CMYtoRGB()">CMYtoRGB</a>(cyan:Number, magenta:Number, yellow:Number):Array</div>
+<div class="summaryTableDescription">[static]
+     Converts a color from the CMY color model to RGB.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareColorsCMY()">compareColorsCMY</a>(cmy1:Array, cmy2:Array):Number</div>
+<div class="summaryTableDescription">[static]
+     Returns the color difference between two colors as defined by 
+     <a href="http://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIEDE2000</a>.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareColorsRGB()">compareColorsRGB</a>(rgb1:Array, rgb2:Array):Number</div>
+<div class="summaryTableDescription">[static]
+     Returns the color difference between two colors as defined by 
+     <a href="http://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIEDE2000</a>.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#HSBtoCMY()">HSBtoCMY</a>(hue:Number, sat:Number, bri:Number):Array</div>
+<div class="summaryTableDescription">[static]
+     Converts a color from the HSB color model to CMY.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#HSBtoRGB()">HSBtoRGB</a>(hue:Number, sat:Number, bri:Number):Array</div>
+<div class="summaryTableDescription">[static]
+     Converts a color from the HSB color model to RGB.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#RGBtoCMY()">RGBtoCMY</a>(r:Number, g:Number, b:Number):Array</div>
+<div class="summaryTableDescription">[static]
+     Converts a color from the RGB color model to CMY.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#RGBtoHSB()">RGBtoHSB</a>(r:Number, g:Number, b:Number):Array</div>
+<div class="summaryTableDescription">[static]
+     Converts a color from the RGB color model to HSB.</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#calcColorDiff()">calcColorDiff</a>(currColor:Array, goalColor:Array):Number</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#CMYtoLCHab()">CMYtoLCHab</a>(cmyArray:Array):Array</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#HSBtoRGBMultAlpha()">HSBtoRGBMultAlpha</a>(hue:Number, sat:Number, bri:Number):Array</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ColorConversion</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="calcColorDiff()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">calcColorDiff</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function calcColorDiff(currColor:Array, goalColor:Array):Number</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">currColor</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">goalColor</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="changeColorCMY()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">changeColorCMY</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function changeColorCMY(mc:MovieClip, CMY:Array):void</code><p>
+     Changes the color of a Movie Clip using the CMY color model
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mc</span>:MovieClip</code> &mdash; the Movie Clip that is to be colored. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">CMY</span>:Array</code> &mdash; an Array in the format of [cyan, magenta, yellow]. 
+            The range for each should be 0.0-1.0
+     </td>
+</tr>
+</table>
+</div>
+<a name="changeColorHSB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">changeColorHSB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function changeColorHSB(mc:MovieClip, HSB:Array):void</code><p>
+     Changes the color of a Movie Clip using the HSB color model
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mc</span>:MovieClip</code> &mdash; the Movie Clip that is to be colored.. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">HSB</span>:Array</code> &mdash; an Array in the format of [hue, saturation, brightness]. 
+     The range for hue is 0-360. The range for saturation and brightness is 0.0-1.0
+     </td>
+</tr>
+</table>
+</div>
+<a name="changeColorRGB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">changeColorRGB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function changeColorRGB(mc:MovieClip, RGB:Array):void</code><p>
+     Changes the color of a Movie Clip using the RGB color model
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mc</span>:MovieClip</code> &mdash; the Movie Clip that is to be colored.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">RGB</span>:Array</code> &mdash; an Array in the format of [red, green, blue]. The range for each should be 
+            0-255.
+     </td>
+</tr>
+</table>
+</div>
+<a name="CMYtoHSB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CMYtoHSB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function CMYtoHSB(cyan:Number, magenta:Number, yellow:Number):Array</code><p> 
+     Converts a color from the CMY color model to HSB. The values for cyan, magenta,
+     and yellow should be supplied in the range of 0.0 to 1.0. 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cyan</span>:Number</code> &mdash; the cyan value. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">magenta</span>:Number</code> &mdash; the magenta value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">yellow</span>:Number</code> &mdash; the yellow value
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [hue, saturation, brightness]. The range for hue is 
+     0-360.  The range for saturation and brightness is 0.0-1.0
+     </td>
+</tr>
+</table>
+</div>
+<a name="CMYtoLCHab()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CMYtoLCHab</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function CMYtoLCHab(cmyArray:Array):Array</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cmyArray</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="CMYtoRGB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CMYtoRGB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function CMYtoRGB(cyan:Number, magenta:Number, yellow:Number):Array</code><p>
+     Converts a color from the CMY color model to RGB. The values for the arguments should be
+     in the range of 0.0-1.0. 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cyan</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">magenta</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">yellow</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [red, green, blue]. The range for all is 0-255.  
+     </td>
+</tr>
+</table>
+</div>
+<a name="compareColorsCMY()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareColorsCMY</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareColorsCMY(cmy1:Array, cmy2:Array):Number</code><p>
+     Returns the color difference between two colors as defined by 
+     <a href="http://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIEDE2000</a>.
+     The maximum color difference, that between black and white is 100. 
+     </p><p>The range of the arguments should be 0.0 to 1.0</p>
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cmy1</span>:Array</code> &mdash; the first color to be compared in the format of [cyan, magenta, yellow]
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">cmy2</span>:Array</code> &mdash; the second color to be compared in the format of [cyan, magenta, yellow]
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code> &mdash; the difference between two colors, in the range of 0-100. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="compareColorsRGB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareColorsRGB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareColorsRGB(rgb1:Array, rgb2:Array):Number</code><p>
+     Returns the color difference between two colors as defined by 
+     <a href="http://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIEDE2000</a>.
+     The maximum color difference, that between black and white is 100.
+     </p><p>The range of the arguments should be 0 to 255</p>
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rgb1</span>:Array</code> &mdash; the first color to be compared in the format of [red, green, blue]
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rgb2</span>:Array</code> &mdash; the second color to be compared in the format of [red, green, blue]
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code> &mdash; the difference between two colors, in the range of 0-100. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="HSBtoCMY()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">HSBtoCMY</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function HSBtoCMY(hue:Number, sat:Number, bri:Number):Array</code><p>
+     Converts a color from the HSB color model to CMY. The value for hue should be
+     in the range of 0-360. Sat and bri should be in the range of 0.0 to 1.0 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">hue</span>:Number</code> &mdash; the hue of the color. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sat</span>:Number</code> &mdash; the saturation value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">bri</span>:Number</code> &mdash; the brightness value.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [cyan, magenta, yellow]. The range for all is 0.0 to 1.0  
+     </td>
+</tr>
+</table>
+</div>
+<a name="HSBtoRGB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">HSBtoRGB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function HSBtoRGB(hue:Number, sat:Number, bri:Number):Array</code><p>
+     Converts a color from the HSB color model to RGB. The value for hue should be
+     in the range of 0-360. Sat and bri should be in the range of 0.0 to 1.0 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">hue</span>:Number</code> &mdash; the hue of the color. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sat</span>:Number</code> &mdash; the saturation value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">bri</span>:Number</code> &mdash; the brightness value.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [red, green, blue]. The range for all is 0-255.  
+     </td>
+</tr>
+</table>
+</div>
+<a name="HSBtoRGBMultAlpha()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">HSBtoRGBMultAlpha</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function HSBtoRGBMultAlpha(hue:Number, sat:Number, bri:Number):Array</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">hue</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sat</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">bri</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="RGBtoCMY()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RGBtoCMY</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function RGBtoCMY(r:Number, g:Number, b:Number):Array</code><p>
+     Converts a color from the RGB color model to CMY. The values for the arguments should be
+     in the range of 0-255. 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">r</span>:Number</code> &mdash; the red value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">g</span>:Number</code> &mdash; the green value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">b</span>:Number</code> &mdash; the blue value.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [cyan, magenta, yellow]. The range for all is 0-1.  
+     </td>
+</tr>
+</table>
+</div>
+<a name="RGBtoHSB()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RGBtoHSB</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function RGBtoHSB(r:Number, g:Number, b:Number):Array</code><p>
+     Converts a color from the RGB color model to HSB. The values for the arguments
+     should be supplied in the range of 0 to 255.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">r</span>:Number</code> &mdash; the red value. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">g</span>:Number</code> &mdash; the green value.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">b</span>:Number</code> &mdash; the blue value
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code> &mdash; an Array in the format [hue, saturation, brightness]. The range for hue is 0-360.  
+     The range for saturation and brightness is 0.0-1.0
+     </td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->

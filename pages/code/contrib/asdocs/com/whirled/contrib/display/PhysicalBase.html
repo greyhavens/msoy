@@ -1,0 +1,631 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="PhysicalBase,com.whirled.contrib.display.PhysicalBase,accelX,accelY,drag,dragLimit,physicalTimer,speedX,speedY,addAccVector,addSpeedVector,applyDrag,destroy,getAngle,getSpeed,halt,setAccComp,setAccVector,setDrag,setLocation,setSpeedComp,setSpeedVector,startMoving" name="keywords">
+<title>com.whirled.contrib.display.PhysicalBase</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'PhysicalBase - Whirled "contrib" Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/display/PhysicalBase.html&amp;com/whirled/contrib/display/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;PhysicalBase</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class PhysicalBase"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.display</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class PhysicalBase</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">PhysicalBase <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../images/inherit-arrow.gif"> flash.display.MovieClip</td>
+</tr>
+</table>
+<p></p>
+ This class allows Movie Clips to move in accordance with simple physics including acceleration 
+ and drag. There are no collision dynamics in this class. However, this is useful for animating
+ projectiles or particles. 
+  <p><b>Important!</b> The convention for coordinates in Flash is that an increase in the
+ <b>y</b> direction indicates movement in a downward direction. To apply an acceleration that 
+ forces objects downwards use a positive acceleration, not a negative acceleration.</p>
+ 
+ <p>This class is meant to be extended.</p>
+  Author: jdnx429
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#accelX">accelX</a> : Number = 0<div class="summaryTableDescription"> The x component of the object's acceleration in pixels/second/second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#accelY">accelY</a> : Number = 0<div class="summaryTableDescription">
+     The y component of the object's acceleration in pixels/second/second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#drag">drag</a> : Number = 0.0<div class="summaryTableDescription">
+     The drag constant of the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dragLimit">dragLimit</a> : Number = 1000<div class="summaryTableDescription">
+     The minimum speed at which drag occurs in pixels/second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#physicalTimer">physicalTimer</a> : Timer<div class="summaryTableDescription">
+     The timer that controls object updating.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#speedX">speedX</a> : Number = 0<div class="summaryTableDescription"> The x component of the object's speed in pixels/second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#speedY">speedY</a> : Number = 0<div class="summaryTableDescription">
+    The y component of the object's speed in pixels/second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#PhysicalBase()">PhysicalBase</a>(xpos:Number, ypos:Number)</div>
+<div class="summaryTableDescription">
+     Creates a PhysicalBase object at the location specfied.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addAccVector()">addAccVector</a>(acc:Number, angle:Number):void</div>
+<div class="summaryTableDescription">
+     Check this, watch speed and accel.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addSpeedVector()">addSpeedVector</a>(speed:Number, angle:Number):void</div>
+<div class="summaryTableDescription">
+     Adds the current speed vector with the supplied vector.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#destroy()">destroy</a>():void</div>
+<div class="summaryTableDescription">
+    Destroys the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getAngle()">getAngle</a>():Number</div>
+<div class="summaryTableDescription">
+     Returns the current direction of the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getSpeed()">getSpeed</a>():Number</div>
+<div class="summaryTableDescription">
+     Returns the current speed of the object in pixels per second.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#halt()">halt</a>():void</div>
+<div class="summaryTableDescription">
+     Sets all speed and acceleration to 0, stopping the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setAccComp()">setAccComp</a>(xacc:Number, yacc:Number):void</div>
+<div class="summaryTableDescription">
+     Sets the acceleration of the object using x and y components.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setAccVector()">setAccVector</a>(acc:Number, angle:Number):void</div>
+<div class="summaryTableDescription"> 
+     Sets the acceleration of the object using a vector.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setDrag()">setDrag</a>(dragnum:Number, dragLimitnum:Number):void</div>
+<div class="summaryTableDescription"> 
+     Sets the drag and the drag limit of the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setLocation()">setLocation</a>(xpos:Number, ypos:Number):void</div>
+<div class="summaryTableDescription">
+     Sets the location of the object.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setSpeedComp()">setSpeedComp</a>(xnum:Number, ynum:Number):void</div>
+<div class="summaryTableDescription">
+     Sets the speed of the object using the x and y components.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setSpeedVector()">setSpeedVector</a>(speed:Number, angle:Number):void</div>
+<div class="summaryTableDescription">
+     Sets the speed of the object using the speed of the object and an angle.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#startMoving()">startMoving</a>():void</div>
+<div class="summaryTableDescription">
+     Initializes the Timer that controls the object and starts moving the object in accordance 
+     with its properties.</div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#applyDrag()">applyDrag</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PhysicalBase</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="accelX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">accelX</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var accelX:Number = 0</code><p> The x component of the object's acceleration in pixels/second/second.  </p></div>
+<a name="accelY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">accelY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var accelY:Number = 0</code><p>
+     The y component of the object's acceleration in pixels/second/second. A positive number 
+     indicates a downward direction. 
+     </p></div>
+<a name="drag"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">drag</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var drag:Number = 0.0</code><p>
+     The drag constant of the object. The range is typically 0.0 to 5.0.  The ultimate 
+     decceleration force is a combination of the drag constant and the speed of the object. 
+     </p></div>
+<a name="dragLimit"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dragLimit</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var dragLimit:Number = 1000</code><p>
+     The minimum speed at which drag occurs in pixels/second. While the object is below this 
+     speed no drag is applied. At speeds above the dragLimit, drag progressively increases
+     with speed. 
+     </p></div>
+<a name="physicalTimer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">physicalTimer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var physicalTimer:Timer</code><p>
+     The timer that controls object updating. This is set to 33.333 milliseconds which 
+     translates to 30 frames per second. Changing the delay of the timer won't change the speed 
+     of the objects, only how often the objects are rendered. 
+     </p></div>
+<a name="speedX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">speedX</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var speedX:Number = 0</code><p> The x component of the object's speed in pixels/second. </p></div>
+<a name="speedY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">speedY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var speedY:Number = 0</code><p>
+    The y component of the object's speed in pixels/second. A positive number indicates
+    a downward direction. 
+    </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="PhysicalBase()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PhysicalBase</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function PhysicalBase(xpos:Number, ypos:Number)</code><p>
+     Creates a PhysicalBase object at the location specfied. 
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xpos</span>:Number</code> &mdash; - the x-coordinate of the object.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ypos</span>:Number</code> &mdash; - the y-coordinate of the object. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="addAccVector()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addAccVector</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addAccVector(acc:Number, angle:Number):void</code><p>
+     Check this, watch speed and accel.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">acc</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">angle</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="addSpeedVector()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addSpeedVector</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addSpeedVector(speed:Number, angle:Number):void</code><p>
+     Adds the current speed vector with the supplied vector. 
+     
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">speed</span>:Number</code> &mdash; the speed of the speed vector to be added to the object. 
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">angle</span>:Number</code> &mdash; the angle of the speed vector to be added to the object. This is set in 
+                  degrees. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="applyDrag()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">applyDrag</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function applyDrag():void</code>
+</div>
+<a name="destroy()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">destroy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function destroy():void</code><p>
+    Destroys the object. Removes the EventListener to the Timer that controls the object and
+    removes it from the Stage or parent Movie Clip
+    </p></div>
+<a name="getAngle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getAngle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getAngle():Number</code><p>
+     Returns the current direction of the object. 
+     
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code> &mdash; the angle in degrees that the object is moving in. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="getSpeed()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getSpeed</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getSpeed():Number</code><p>
+     Returns the current speed of the object in pixels per second.
+     
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code> &mdash; the speed of the object. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="halt()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">halt</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function halt():void</code><p>
+     Sets all speed and acceleration to 0, stopping the object. 
+     </p></div>
+<a name="setAccComp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setAccComp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setAccComp(xacc:Number, yacc:Number):void</code><p>
+     Sets the acceleration of the object using x and y components.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xacc</span>:Number</code> &mdash; the x component of the acceleration.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">yacc</span>:Number</code> &mdash; the y component of the acceleration.
+     </td>
+</tr>
+</table>
+</div>
+<a name="setAccVector()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setAccVector</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setAccVector(acc:Number, angle:Number):void</code><p> 
+     Sets the acceleration of the object using a vector.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">acc</span>:Number</code> &mdash; the acceleration of the object.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">angle</span>:Number</code> &mdash; the angle of the applied acceleration in degrees. Y-coordinates are positive 
+                  in the downward direction. An angle of 90 degrees is therefore straight down.
+     </td>
+</tr>
+</table>
+</div>
+<a name="setDrag()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setDrag</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setDrag(dragnum:Number, dragLimitnum:Number):void</code><p> 
+     Sets the drag and the drag limit of the object.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dragnum</span>:Number</code> &mdash; the drag of the object.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dragLimitnum</span>:Number</code> &mdash; the dragLimit of the object.
+     </td>
+</tr>
+</table>
+</div>
+<a name="setLocation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setLocation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setLocation(xpos:Number, ypos:Number):void</code><p>
+     Sets the location of the object.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xpos</span>:Number</code> &mdash; the x-coordinate of the object.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ypos</span>:Number</code> &mdash; the y-coordinate of the object.
+     </td>
+</tr>
+</table>
+</div>
+<a name="setSpeedComp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setSpeedComp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setSpeedComp(xnum:Number, ynum:Number):void</code><p>
+     Sets the speed of the object using the x and y components.
+     
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xnum</span>:Number</code> &mdash; the x component of the speed.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ynum</span>:Number</code> &mdash; the y component of the speed.
+     </td>
+</tr>
+</table>
+</div>
+<a name="setSpeedVector()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setSpeedVector</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setSpeedVector(speed:Number, angle:Number):void</code><p>
+     Sets the speed of the object using the speed of the object and an angle.
+     
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">speed</span>:Number</code> &mdash; the speed of the object
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">angle</span>:Number</code> &mdash; the angle of the object - this is set in degrees. Remember that y is positive 
+                  the downward direction. An angle of 90 degrees therefore is straight down. 
+     </td>
+</tr>
+</table>
+</div>
+<a name="startMoving()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">startMoving</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function startMoving():void</code><p>
+     Initializes the Timer that controls the object and starts moving the object in accordance 
+     with its properties.
+     </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->
