@@ -87,6 +87,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                         CatalogQuery query = new CatalogQuery();
                         query.itemType = _detail.item.getType();
                         query.creatorId = _detail.creator.getMemberId();
+                        query.sortBy = CatalogQuery.SORT_BY_RATING;
                         Application.go(Page.SHOP, ShopUtil.composeArgs(query, 0));
                     }
                 });
