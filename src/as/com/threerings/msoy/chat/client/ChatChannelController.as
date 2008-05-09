@@ -60,7 +60,7 @@ public class ChatChannelController
 
         if (_channel.type != ChatChannel.MEMBER_CHANNEL &&
             _channel.type != ChatChannel.JABBER_CHANNEL) {
-            _occList = new PlayerList(new MsoyNameLabelCreator(ctx));
+            _occList = new ChannelPlayerList(new MsoyNameLabelCreator(ctx));
 
             _departing = new ExpiringSet(3.0, handleDeparted);
 
