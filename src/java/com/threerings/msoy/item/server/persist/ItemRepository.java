@@ -279,7 +279,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         if (itemIds.length == 0) {
-            return Collections.emptyList();
+            return new ArrayList<T>();
         }
         Comparable[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
@@ -331,7 +331,7 @@ public abstract class ItemRepository<
         List<T> items = loadClonedItems(
             new Where(getCloneColumn(CloneRecord.LOCATION), location));
         List<T> citems = findAll(
-            getItemClass(),new Where(getItemColumn(ItemRecord.LOCATION), location));
+            getItemClass(), new Where(getItemColumn(ItemRecord.LOCATION), location));
         items.addAll(citems);
         return items;
     }
@@ -882,7 +882,7 @@ public abstract class ItemRepository<
 
         // our work here is done if we didn't find any
         if (clones.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<T>();
         }
 
         // create a set of the corresponding original ids
