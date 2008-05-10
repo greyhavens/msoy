@@ -12,6 +12,7 @@ public class PetBackend extends ActorBackend
         super.populateControlProperties(o);
 
         o["sendChatMessage_v1"] = sendChatMessage_v1;
+        o["getName_v1"] = getName_v1;
     }
 
     /**
@@ -22,6 +23,12 @@ public class PetBackend extends ActorBackend
         (_sprite as PetSprite).sendChatMessage(msg);
     }
 
-
+    /**
+     * Called by user code to get the name of this pet.
+     */
+    protected function getName_v1 () :String
+    {
+        return (_sprite as PetSprite).getOccupantInfo().username.toString();
+    }
 }
 }
