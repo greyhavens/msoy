@@ -44,6 +44,7 @@ import com.threerings.presents.client.ClientObserver;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
@@ -385,7 +386,7 @@ public class MsoyController extends Controller
      */
     protected function failedToDisplayPage (url :String) :void
     {
-        _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
+        _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("e.no_navigate", url));
 
         // TODO
         // experimental: display a popup with the URL (this could be moved to handleLink()

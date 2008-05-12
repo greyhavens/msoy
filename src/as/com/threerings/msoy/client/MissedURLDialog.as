@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.system.System;
 
 import mx.controls.Label;
+import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
 
@@ -17,6 +18,11 @@ public class MissedURLDialog extends FloatingPanel
     {
         super(ctx, Msgs.GENERAL.get("t.missedUrl"));
         showCloseButton = true;
+
+        var text :Text = new Text();
+        text.text = Msgs.GENERAL.get("m.missedUrl");
+        text.width = ctx.getTopPanel().width - 100;
+        addChild(text);
 
         var label :Label = new Label();
         label.text = url;
