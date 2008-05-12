@@ -22,7 +22,10 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.msoy.client.BlankPlaceView;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.NoPlaceView;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -246,6 +249,11 @@ public class LobbyController extends Controller implements Subscriber
     {
         if (_lobj != null) {
             _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
+        }
+
+        // if we're showing the blank view, switch instead to the noview
+        if (_mctx.getTopPanel().getPlaceView() is BlankPlaceView) {
+            _mctx.getTopPanel().setPlaceView(new NoPlaceView(_mctx));
         }
     }
 
