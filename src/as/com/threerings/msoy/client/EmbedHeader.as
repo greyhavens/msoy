@@ -14,6 +14,8 @@ import mx.containers.Canvas;
 
 import mx.controls.Label;
 
+import mx.core.ScrollPolicy;
+
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.presents.client.ClientAdapter;
@@ -29,6 +31,8 @@ public class EmbedHeader extends Canvas
     {
         // this is the height of the header logo image.
         height = 50;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+        verticalScrollPolicy = ScrollPolicy.OFF;
 
         _ctx = ctx;
         _ctx.getClient().addClientObserver(new ClientAdapter(null, didLogon));
