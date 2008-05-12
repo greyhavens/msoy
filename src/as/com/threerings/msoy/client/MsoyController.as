@@ -149,12 +149,7 @@ public class MsoyController extends Controller
     public function showExternalURL (url :String) :void
     {
         if (!NetUtil.navigateToURL(url, false)) {
-            _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
-
-            // TODO
-            // experimental: display a popup with the URL (this could be moved to handleLink()
-            // if this method is altered to return a success Boolean
-            new MissedURLDialog(_mctx, url);
+            failedToDisplayPage(url);
         }
     }
 
@@ -383,6 +378,19 @@ public class MsoyController extends Controller
             return false;
         }
         return true;
+    }
+
+    /**
+     * Called when we're unable to display some url.
+     */
+    protected function failedToDisplayPage (url :String) :void
+    {
+        _mctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
+
+        // TODO
+        // experimental: display a popup with the URL (this could be moved to handleLink()
+        // if this method is altered to return a success Boolean
+        new MissedURLDialog(_mctx, url);
     }
 
     override protected function setControlledPanel (panel :IEventDispatcher) :void

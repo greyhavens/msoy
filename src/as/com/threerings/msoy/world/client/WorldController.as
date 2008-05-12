@@ -554,7 +554,7 @@ public class WorldController extends MsoyController
     public function handleGoGame (gameId :int, placeOid :int) :void
     {
         // route our entry to the game through GWT so that we can handle non-Flash games
-        if (!displayPage("world", "game_g_" + gameId + "_" + placeOid)) {
+        if (!inGWTApp() || !displayPage("world", "game_g_" + gameId + "_" + placeOid)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
             _wctx.getGameDirector().enterGame(placeOid);
@@ -571,10 +571,10 @@ public class WorldController extends MsoyController
      */
     public function handleJoinGameLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
-        // if we're not running in the GWT app, we need to display a page externally
-        if (!inGWTApp() && displayPage("world", "game_l_" + gameId)) {
-            return;
-        }
+//        // if we're not running in the GWT app, we need to display a page externally
+//        if (!inGWTApp() && displayPage("world", "game_l_" + gameId)) {
+//            return;
+//        }
 
 //         // if we're not in a scene, go to our home scene while we're displaying the lobby (but not
 //         // if we're in the standalone client because it's just pointless slowdown)
@@ -1028,6 +1028,7 @@ public class WorldController extends MsoyController
             } catch (e :Error) {
                 log.warning("Failed to display URL [url=" + fullURL + "]: " + e);
             }
+            failedToDisplayPage(fullURL);
             return false;
         }
     }
