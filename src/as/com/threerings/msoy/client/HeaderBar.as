@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
 
@@ -17,8 +19,10 @@ import mx.controls.Label;
 import flexlib.containers.ButtonScrollingCanvas;
 
 import com.threerings.flash.TextFieldUtil;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
@@ -106,6 +110,18 @@ public class HeaderBar extends HBox
         _commentLink.includeInLayout = _commentVisible;
     }
 
+    /**
+     * Shows or clears the "full version" link.  Passing null for the onClick function will clear
+     * the link.
+     */
+    public function setFullVersionLink (onClick :Function, arg :Object = null) :void
+    {
+        _fullVersionLink.setCallback(onClick, arg);
+        _fullVersionVisible = (onClick != null);
+        _fullVersion.visible = _fullVersionVisible;
+        _fullVersion.includeInLayout = _fullVersionVisible;
+    }
+
     public function setEmbedVisible (visible :Boolean) :void
     {
         _embedVisible = visible;
@@ -127,6 +143,8 @@ public class HeaderBar extends HBox
                     comp.includeInLayout = comp.visible = _commentVisible;
                 } else if (comp == _instructionsLink) {
                     comp.includeInLayout = comp.visible = _instructionsVisible;
+                } else if (comp == _fullVersion) {
+                    comp.includeInLayout = comp.visible = _fullVersionVisible;
                 } else {
                     comp.includeInLayout = comp.visible = true;
                 }
@@ -228,6 +246,21 @@ public class HeaderBar extends HBox
         setEmbedVisible(false);
         _extras.push(_embedLink);
 
+        _fullVersion = new HBox();
+        _fullVersion.styleName = "headerBox";
+        _fullVersion.percentHeight = 100;
+        controlBox.addChild(_fullVersion);
+        _fullVersionLink = new CommandLinkButton(Msgs.GENERAL.get("b.full_version"));
+        _fullVersionLink.styleName = "headerLink";
+        setFullVersionLink(null);
+        _fullVersion.addChild(_fullVersionLink);
+        var arrowImage :DisplayObject = new ARROW_CORNER() as DisplayObject;
+        var arrowWrapper :FlexWrapper = new FlexWrapper(arrowImage);
+        arrowWrapper.height = arrowImage.height + (HEIGHT - arrowImage.height) / 2;
+        arrowWrapper.width = arrowImage.width;
+        _fullVersion.addChild(arrowWrapper);
+        _extras.push(_fullVersion);
+
         var closeBox :VBox = new VBox();
         closeBox.styleName = "headerCloseBox";
         controlBox.addChild(closeBox);
@@ -238,6 +271,9 @@ public class HeaderBar extends HBox
     }
 
     private static const log :Log = Log.getLog(HeaderBar);
+
+    [Embed(source="../../../../../../rsrc/media/arrow_corner.png")]
+    protected static const ARROW_CORNER :Class;
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
@@ -255,6 +291,10 @@ public class HeaderBar extends HBox
 
     protected var _embedVisible :Boolean;
     protected var _embedLink :CommandLinkButton;
+
+    protected var _fullVersionVisible :Boolean;
+    protected var _fullVersionLink :CommandLinkButton;
+    protected var _fullVersion :HBox;
 
     protected var _tabs :ChatTabBar;
 

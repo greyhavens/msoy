@@ -399,6 +399,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_FULL_VERSION command, used in embedded clients.
+     */
+    public function handleFullVersionRoom (sceneId :int) :void
+    {
+        displayPage("world", "s" + sceneId);
+    }
+
+    /**
      * Handles the VIEW_GAME command.
      */
     public function handleViewGame (gameId :int) :void
@@ -1084,7 +1092,11 @@ public class WorldController extends MsoyController
                 } else {
                     headerBar.setOwnerLink("");
                 }
-                headerBar.setCommentLink(handleViewRoom, model.sceneId);
+                if (_wctx.getMsoyClient().isEmbedded()) {
+                    headerBar.setFullVersionLink(handleFullVersionRoom, model.sceneId);
+                } else {
+                    headerBar.setCommentLink(handleViewRoom, model.sceneId);
+                }
                 headerBar.setInstructionsLink(null);
             }
 
