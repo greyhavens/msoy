@@ -251,7 +251,7 @@ public class TopPanel extends Canvas
         if (_chat != null) {
             bounds.width -= _chatBounds.width + CHAT_PADDING;
         }
-        bounds.height = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
+        bounds.height = stage.stageHeight - HeaderBar.HEIGHT;
         if (padVertical(_placeBox.getPlaceView())) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
             bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
@@ -274,6 +274,36 @@ public class TopPanel extends Canvas
     public function getHeaderBar () :HeaderBar
     {
         return _headerBar;
+    }
+
+    /**
+     * Set the panel at the top of the display.
+     *
+     * This is an unfortunate name collision.  However, it is hte name that makes sense...
+     */
+    public function setTopPanel (top :UIComponent) :void
+    {
+        clearTopPanel();
+        _topPanel = top;
+        _topPanel.includeInLayout = false;
+        addChild(_topPanel);
+        layoutPanels();
+    }
+
+    public function clearTopPanel (top :UIComponent = null) :void
+    {
+        if ((_topPanel != null) && (top == null || top == _topPanel)) {
+            if (_topPanel.parent == this) {
+                removeChild(_topPanel);
+            }
+            _topPanel = null;
+            layoutPanels();
+        }
+    }
+
+    public function getTopPanel () :UIComponent
+    {
+        return _topPanel;
     }
 
     /**
@@ -308,48 +338,9 @@ public class TopPanel extends Canvas
         return _rightPanel;
     }
 
-    /**
-     * Set the panel that should be shown along the bottom. The panel should have an explicit
-     * height.
-     */
-    public function setBottomPanel (bottom :UIComponent) :void
-    {
-        clearBottomPanel(null);
-
-        _bottomPanel = new HBox();
-        _bottomPanel.setStyle("horizontalGap", 0);
-        _bottomPanel.setStyle("bottom", ControlBar.HEIGHT);
-        _bottomPanel.setStyle("left", 0);
-        _bottomPanel.setStyle("right", 0);
-
-        _bottomComp = bottom;
-        _bottomComp.percentWidth = 100;
-        _bottomPanel.addChild(bottom);
-        _bottomPanel.includeInLayout = false;
-        _bottomPanel.height = bottom.height; // eek?
-
-        addChild(_bottomPanel); // add to end
-        layoutPanels();
-    }
-
-    public function clearBottomPanel (bottom :UIComponent) :void
-    {
-        if ((_bottomComp != null) && (bottom == null || bottom == _bottomComp)) {
-            removeChild(_bottomPanel);
-            _bottomPanel = null;
-            _bottomComp = null;
-            layoutPanels();
-        }
-    }
-
     public function getRightPanelWidth () :int
     {
         return (_rightPanel == null ? 0 : _rightPanel.width);
-    }
-
-    public function getBottomPanelHeight () :int
-    {
-        return (_bottomPanel == null ? 0 : _bottomPanel.height);
     }
 
     public function isMinimized () :Boolean
@@ -442,6 +433,11 @@ public class TopPanel extends Canvas
         _ctx.getMsoyClient().restoreClient();
     }
 
+    protected function getTopPanelHeight () :int
+    {
+        return _topPanel != null ? Math.round(_topPanel.height) : 0;
+    }
+
     protected function layoutPanels () :void
     {
         if (_ctx.getMsoyClient().isFeaturedPlaceView()) {
@@ -452,11 +448,18 @@ public class TopPanel extends Canvas
 
         _controlBar.setStyle("left", 0);
         _headerBar.setStyle("left", 0);
+        _headerBar.setStyle("top", getTopPanelHeight());
+
+        if (_topPanel != null) {
+            _topPanel.setStyle("top", 0);
+            _topPanel.setStyle("right", 0);
+            _topPanel.setStyle("left", 0);
+        }
 
         if (_rightPanel != null) {
-            _rightPanel.setStyle("top", HeaderBar.HEIGHT);
+            _rightPanel.setStyle("top", getTopPanelHeight() + HeaderBar.HEIGHT);
             _rightPanel.setStyle("right", 0);
-            _rightPanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
+            _rightPanel.setStyle("bottom", ControlBar.HEIGHT);
 
             // if we have no place view currently, stretch it all the way to the left; otherwise
             // let it be as wide as it wants to be
@@ -490,14 +493,14 @@ public class TopPanel extends Canvas
         }
 
         var w :int = stage.stageWidth - getRightPanelWidth();
-        var h :int = stage.stageHeight - getBottomPanelHeight() - HeaderBar.HEIGHT;
-        var top :int = HeaderBar.HEIGHT;
+        var h :int = stage.stageHeight - HeaderBar.HEIGHT - getTopPanelHeight();
+        var top :int = HeaderBar.HEIGHT + getTopPanelHeight();
         if (padVertical(_placeBox.getPlaceView())) {
             top += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;
         }
 
-        var bottom :int = getBottomPanelHeight();
+        var bottom :int = 0;
         // for place views, we want to insert decorative margins above and below the view
         if (padVertical(_placeBox.getPlaceView())) {
             bottom += DECORATIVE_MARGIN_HEIGHT;
@@ -540,14 +543,11 @@ public class TopPanel extends Canvas
     /** The box that will hold the placeview. */
     protected var _placeBox :PlaceBox;
 
+    /** The current top panel component. */
+    protected var _topPanel :UIComponent;
+
     /** The current right panel component. */
     protected var _rightPanel :UIComponent;
-
-    /** The thing what holds the bottom panel. */
-    protected var _bottomPanel :HBox;
-
-    /** The current bottom panel component. */
-    protected var _bottomComp :UIComponent;
 
     /** Header bar at the top of the window. */
     protected var _headerBar :HeaderBar;

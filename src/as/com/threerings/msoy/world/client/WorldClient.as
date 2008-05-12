@@ -69,6 +69,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
+import com.threerings.msoy.client.EmbedHeader;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -136,6 +137,8 @@ public class WorldClient extends MsoyClient
                 "/embed/" + (sceneId == 0 ? "" : ("s"+sceneId));
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
+
+            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
 
         } else {
             logon();

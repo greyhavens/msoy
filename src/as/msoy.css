@@ -1160,3 +1160,10 @@ BasePanel {
   horizontalGap: 0;
   verticalGap: 0;
 }
+
+.embedHeaderLabel {
+  fontFamily: Trebuchet;
+  fontWeight: bold;
+  fontSize: 14;
+  color: white;
+}
