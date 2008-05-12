@@ -892,7 +892,7 @@ public class WorldController extends MsoyController
         }
 
         // nothing on the stack, so either close the client or go home
-        if (closeInsteadOfHome) {
+        if (closeInsteadOfHome && inGWTApp()) {
             _wctx.getWorldClient().closeClient();
         } else {
             handleGoScene(_wctx.getMemberObject().getHomeSceneId());
