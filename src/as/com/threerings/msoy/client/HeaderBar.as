@@ -75,7 +75,7 @@ public class HeaderBar extends HBox
     /**
      * Shows or clears the owner link. Passing "" for the owner will clear the link.
      */
-    public function setOwnerLink (owner :String, onClick :Function = null, arg :Object = null) :void 
+    public function setOwnerLink (owner :String, onClick :Function = null, arg :Object = null) :void
     {
         while (_owner.numChildren > 0) {
             _owner.removeChildAt(0);
@@ -84,7 +84,6 @@ public class HeaderBar extends HBox
             var nameLink :CommandLinkButton = new CommandLinkButton(
                 Msgs.GENERAL.get("m.room_owner", owner), onClick, arg);
             nameLink.styleName = "headerLink";
-            nameLink.enabled = !_ctx.getMsoyClient().isEmbedded();
             _owner.addChild(nameLink);
         }
     }
