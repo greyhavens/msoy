@@ -68,7 +68,7 @@ public class EmbedHeader extends Canvas
         _joinNow = new FlexWrapper(joinNowObject);
         _joinNow.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
             _ctx.getMsoyController().showExternalURL(
-                DeploymentConfig.serverURL + "#account-create", true);
+                DeploymentConfig.serverURL + "/#account-create", true);
         });
         _joinNow.setStyle("right", 100);
         addChild(_joinNow);
