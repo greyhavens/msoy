@@ -128,7 +128,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#getInstanceId()">getInstanceId</a>():int</div>
 <div class="summaryTableDescription">
-     Get the instance id of this instance.</div>
+     Get the id of the viewer that is viewing this instance.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -190,9 +190,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getViewerName()">getViewerName</a>(instanceId:int = 0):String</div>
+<a class="signatureLink" href="#getViewerName()">getViewerName</a>(id:int = 0):String</div>
 <div class="summaryTableDescription">
-     Get the non-unique display name of the user viewing a particular instanceId.</div>
+     Get the non-unique display name of the user viewing a particular instance.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -508,12 +508,18 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getInstanceId():int</code><p>
-     Get the instance id of this instance.
-     </p><p></p>
+     Get the id of the viewer that is viewing this instance.
+     An instance is the copy of the entity running in a particular user's browser.
+     If you are in a room with 2 other people, each piece of furniture has three instances:
+     one on each person's browser.
+          </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>int</code> &mdash; the memberId of the player viewing this instance. Only ids greater than 0
+     represent whirled members. Ids less than 0 represent guests, and 0 means that the
+     instance is being viewed by something other than a player.
+     </td>
 </tr>
 </table>
 </div>
@@ -692,12 +698,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getViewerName(instanceId:int = 0):String</code><p>
-     Get the non-unique display name of the user viewing a particular instanceId.
+<code>public function getViewerName(id:int = 0):String</code><p>
+     Get the non-unique display name of the user viewing a particular instance. Note
+     that this cannot be used to look up member names of people who are not in the room.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">instanceId</span>:int</code> (default = <code>0</code>)<code></code> &mdash; an instanceId or 0 to get this instance's viewer's display name.
+<td width="20px"></td><td><code><span class="label">id</span>:int</code> (default = <code>0</code>)<code></code> &mdash; a permanent memberId or transient guestId, or 0 to just get this instance's
+     viewer name without first calling getInstanceId() to get the id.
           </td>
 </tr>
 </table>
