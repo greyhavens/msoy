@@ -156,7 +156,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                         public void execute() {
                                 // TODO: Search on tag in inventory items
                         }
-                    }
+                    });
                 } else {
                     menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
                         public void execute() {
