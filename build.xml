@@ -1084,6 +1084,7 @@
           </permission>
           <permission mode="555" recursive="true">
             <path>bin/</path>
+            <path>etc/rc.d/</path>
             <path>tools/bin/</path>
             <path>data/swiftly/flex_sdk_bin/bin</path>
           </permission>
