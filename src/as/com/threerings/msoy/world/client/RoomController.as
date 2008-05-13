@@ -646,7 +646,7 @@ public class RoomController extends SceneController
         // check to make sure we're within the bounds of the place container
         var container :PlaceBox = _wdctx.getTopPanel().getPlaceContainer();
         if (stageX < container.x || stageX > container.x + container.width ||
-            stageY < container.y || stageY > container.y + container.width) {
+            stageY < container.y || stageY > container.y + container.height) {
             return undefined;
         }
 
@@ -1258,7 +1258,6 @@ public class RoomController extends SceneController
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
                 _editor.mouseOverSprite(hitter);
             }
-
         }
         
         _walkTarget.visible = showWalkTarget;
