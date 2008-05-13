@@ -225,7 +225,7 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         if (_comicOverlay != null) {
-            _comicOverlay.displayChat(view is AbstractRoomView);
+            _comicOverlay.displayChat(view is ChatPlaceView);
         }
     }
 

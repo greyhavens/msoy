@@ -743,7 +743,7 @@ public class WorldController extends MsoyController
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
-            _wctx.getTopPanel().setPlaceView(new NoPlaceView(_wctx));
+            _wctx.getTopPanel().setPlaceView(new NoPlaceView());
 
         } else if (null != params["gameLobby"]) {
             handleJoinGameLobby(

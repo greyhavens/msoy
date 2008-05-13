@@ -33,6 +33,7 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -48,7 +49,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
 
 public class AbstractRoomView extends Sprite
-    implements MsoyPlaceView
+    implements MsoyPlaceView, ChatPlaceView
 {
     public function AbstractRoomView (ctx :WorldContext)
     {

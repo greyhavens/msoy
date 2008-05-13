@@ -3,47 +3,27 @@
 
 package com.threerings.msoy.client {
 
-import mx.containers.HBox;
-
-import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flex.ChatDisplayBox;
-
 /**
- * A place view that isn't really. It merely contains a chatbox.
+ * A place view that isn't really. It merely allows the display of chat.
  */
-public class NoPlaceView extends HBox
-    implements PlaceView
+public class NoPlaceView extends LayeredContainer
+    implements ChatPlaceView
 {
-    public function NoPlaceView (ctx :MsoyContext)
+    public function NoPlaceView ()
     {
-        _ctx = ctx;
+        styleName = "noPlaceView";
     }
 
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-
-        var chat :ChatDisplayBox = new ChatDisplayBox(_ctx);
-        chat.percentWidth = 100;
-        chat.percentHeight = 100;
-        addChild(chat);
-    }
-
-    // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
-        // nada
+        // Nada
     }
 
-    // from PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
-        // nada
+        // Nada
     }
-
-    /** The giver of life, the saver of worlds. */
-    protected var _ctx :MsoyContext;
 }
 }

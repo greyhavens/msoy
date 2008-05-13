@@ -253,7 +253,7 @@ public class LobbyController extends Controller implements Subscriber
 
         // if we're showing the blank view, switch instead to the noview
         if (_mctx.getTopPanel().getPlaceView() is BlankPlaceView) {
-            _mctx.getTopPanel().setPlaceView(new NoPlaceView(_mctx));
+            _mctx.getTopPanel().setPlaceView(new NoPlaceView());
         }
     }
 
