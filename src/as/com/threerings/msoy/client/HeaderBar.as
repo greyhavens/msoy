@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.utils.Dictionary;
+
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
@@ -112,14 +114,15 @@ public class HeaderBar extends HBox
 
     /**
      * Shows or clears the "full version" link.  Passing null for the onClick function will clear
-     * the link.
+     * the link.  If a link is specified, the close box is cleared out, as this link is used in 
+     * embedded clients, and the close box does nothing there.
      */
     public function setFullVersionLink (onClick :Function, arg :Object = null) :void
     {
         _fullVersionLink.setCallback(onClick, arg);
         _fullVersionVisible = (onClick != null);
-        _fullVersion.visible = _fullVersionVisible;
-        _fullVersion.includeInLayout = _fullVersionVisible;
+        _fullVersion.includeInLayout = _fullVersion.visible = _fullVersionVisible;
+        _closeBox.includeInLayout = _closeBox.visible = !_fullVersionVisible;
     }
 
     public function setEmbedVisible (visible :Boolean) :void
@@ -136,18 +139,15 @@ public class HeaderBar extends HBox
             }
             stretchSpacer(false);
         } else {
+            var visibles :Dictionary = new Dictionary();
+            visibles[_embedLink] = _embedVisible;
+            visibles[_commentLink] = _commentVisible;
+            visibles[_instructionsLink] = _instructionsVisible;
+            visibles[_fullVersion] = _fullVersionVisible;
+            visibles[_closeBox] = !_fullVersionVisible;
             for each (comp in _extras) {
-                if (comp == _embedLink) {
-                    comp.includeInLayout = comp.visible = _embedVisible;
-                } else if (comp == _commentLink) {
-                    comp.includeInLayout = comp.visible = _commentVisible;
-                } else if (comp == _instructionsLink) {
-                    comp.includeInLayout = comp.visible = _instructionsVisible;
-                } else if (comp == _fullVersion) {
-                    comp.includeInLayout = comp.visible = _fullVersionVisible;
-                } else {
-                    comp.includeInLayout = comp.visible = true;
-                }
+                comp.includeInLayout = comp.visible = 
+                    visibles[comp] === undefined || visibles[comp];
             }
             stretchSpacer(true);
         }
@@ -252,22 +252,22 @@ public class HeaderBar extends HBox
         controlBox.addChild(_fullVersion);
         _fullVersionLink = new CommandLinkButton(Msgs.GENERAL.get("b.full_version"));
         _fullVersionLink.styleName = "headerLink";
-        setFullVersionLink(null);
         _fullVersion.addChild(_fullVersionLink);
         var arrowImage :DisplayObject = new ARROW_CORNER() as DisplayObject;
         var arrowWrapper :FlexWrapper = new FlexWrapper(arrowImage);
         arrowWrapper.height = arrowImage.height + (HEIGHT - arrowImage.height) / 2;
-        arrowWrapper.width = arrowImage.width;
+        arrowWrapper.width = arrowImage.width + 3;
         _fullVersion.addChild(arrowWrapper);
         _extras.push(_fullVersion);
 
-        var closeBox :VBox = new VBox();
-        closeBox.styleName = "headerCloseBox";
-        controlBox.addChild(closeBox);
+        _closeBox = new VBox();
+        _closeBox.styleName = "headerCloseBox";
+        controlBox.addChild(_closeBox);
         var closeBtn :CommandButton = new CommandButton();
         closeBtn.setCommand(MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
-        closeBox.addChild(closeBtn);
+        _closeBox.addChild(closeBtn);
+        setFullVersionLink(null);
     }
 
     private static const log :Log = Log.getLog(HeaderBar);
@@ -295,6 +295,8 @@ public class HeaderBar extends HBox
     protected var _fullVersionVisible :Boolean;
     protected var _fullVersionLink :CommandLinkButton;
     protected var _fullVersion :HBox;
+
+    protected var _closeBox :VBox;
 
     protected var _tabs :ChatTabBar;
 
