@@ -11,6 +11,8 @@ public class ChannelPlayerList extends PlayerList
     public function ChannelPlayerList (labelCreator :NameLabelCreator = null)
     {
         super(labelCreator);   
+
+        mouseEnabled = false;
     }
 
     override protected function getRenderingClass () :Class
