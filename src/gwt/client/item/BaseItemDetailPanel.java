@@ -150,7 +150,21 @@ public abstract class BaseItemDetailPanel extends SmartTable
                     }
                 });
             }
-            public void addMenuItems (String tag, PopupMenu menu) { }
+            public void addMenuItems (final String tag, PopupMenu menu) {
+                if (isStuffItem()) {
+                    menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
+                        public void execute() {
+                                // TODO: Search on tag in inventory items
+                        }
+                    }
+                } else {
+                    menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
+                        public void execute() {
+                            Application.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
+                        }
+                    });
+                }
+            }
         }, true));
 
         configureCallbacks(this);
@@ -161,7 +175,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         MediaDesc preview = item.getPreviewMedia();
         if (item instanceof Avatar) {
             return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
-                allowAvatarScaleEditing());
+                isStuffItem());
 
         } else if (preview.isWhirledVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());
@@ -193,9 +207,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
     }
 
     /**
-     * Overrideable by subclasses to enable avatar scale editing.
+     * Is the item being viewed in our 'stuff'?
      */
-    protected boolean allowAvatarScaleEditing ()
+    protected boolean isStuffItem ()
     {
         return false;
     }

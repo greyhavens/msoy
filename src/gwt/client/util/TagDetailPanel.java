@@ -223,9 +223,9 @@ public class TagDetailPanel extends VerticalPanel
                 };
                 new PopupMenu(tagLabel) {
                     protected void addMenuItems () {
-                        addMenuItem(CShell.cmsgs.tagRemove(),
-                                    new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag), remove));
                         _service.addMenuItems(tag, this);
+                        addMenuItem(CShell.cmsgs.tagRemove(),
+                            new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag), remove));
                     }
                 };
             }
