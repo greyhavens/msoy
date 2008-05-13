@@ -1022,7 +1022,9 @@ public class WorldController extends MsoyController
         } else {
             var fullURL :String = DeploymentConfig.serverURL;
             var scene :Scene = _wctx.getSceneDirector().getScene();
-            if (scene == null) {
+            // if we have no current scene, or we're asking to display our current scene (because
+            // we're in embed mode and are trying to get out) don't do the scene wrap business
+            if (scene == null || (page == "world" && args == ("s"+scene.getId()))) {
                 fullURL += "/#" + page + "-" + args;
             } else {
                 fullURL += "/#world-s" + scene.getId() + "_" + page + "-" + args;
