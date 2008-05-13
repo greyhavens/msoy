@@ -222,9 +222,12 @@ public class ChatTabBar extends HBox
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
         var index :int = -1;
+        // If this is a SystemMessage, NotifyMessage or broadcast with PLACE_CHAT_TYPE localtype, 
+        // it's aimed for the first tab, regardless of that tab's actual localtype
         if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE &&
-            (msg is SystemMessage || msg is NotifyMessage)) {
-            index == 0;
+            (msg is SystemMessage || msg is NotifyMessage || 
+            (msg is UserMessage && (msg as UserMessage).mode == ChatCodes.BROADCAST_MODE))) {
+            index = 0;
         } else {
             index = getLocalTypeIndex(msg.localtype);
         }
@@ -258,7 +261,7 @@ public class ChatTabBar extends HBox
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             log.info("Dropping unknown user message [msg=" + msg + ", localtype=" + 
-                      msg.localtype + "].");
+                      msg.localtype + ", mode=" + umsg.mode + "]");
         }
 
         return false;

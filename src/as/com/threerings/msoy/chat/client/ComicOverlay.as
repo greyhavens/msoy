@@ -100,17 +100,17 @@ public class ComicOverlay extends ChatOverlay
     override public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
         var displayed :Boolean = false;
+        var type :int = getType(msg, false);
 
         // display all notify messages, and system messages if they don't have a custom localtype.
-        if (msg is NotifyMessage || (msg is SystemMessage &&
-            (msg.localtype == ChatCodes.PLACE_CHAT_TYPE || 
-             msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
-            displayed = displayBubble(msg, getType(msg, false));
+        if (type == BROADCAST || msg is NotifyMessage || 
+            (msg is SystemMessage && (msg.localtype == ChatCodes.PLACE_CHAT_TYPE || 
+                                      msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
+            displayed = displayBubble(msg, type);
         } else if (_ctx is WorldContext) {
             var scene :MsoyScene = 
                 (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
             if (scene != null && ChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
-                var type :int = getType(msg, false);
                 if (type != IGNORECHAT) {
                     displayed = displayBubble(msg, type);
                 }

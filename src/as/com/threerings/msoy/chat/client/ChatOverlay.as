@@ -679,8 +679,8 @@ public class ChatOverlay
 
         // If we're on the room tab, display all NotifyMessages, and any System message that does
         // not have a custom localtype
-        if (msg is NotifyMessage || (msg is SystemMessage && 
-            msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
+        if (type == BROADCAST || msg is NotifyMessage || 
+            (msg is SystemMessage && msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
             // in WorldContext we pull out the scene and check the id against the current localtype
             if (_ctx is WorldContext) {
                 var currentScene :MsoyScene = 
