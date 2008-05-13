@@ -1189,8 +1189,8 @@ public class RoomController extends SceneController
      */
     protected function checkMouse (event :Event) :void
     {
-        // no mouse fiddling while we're minimized
-        if (_wdctx.getTopPanel().isMinimized() || _wdctx.getWorldClient().isFeaturedPlaceView()) {
+        // no mouse fiddling while we're featured
+        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
             setHoverSprite(null);
             return;
         }
@@ -1260,7 +1260,7 @@ public class RoomController extends SceneController
             }
 
         }
-
+        
         _walkTarget.visible = showWalkTarget;
         _flyTarget.visible = showFlyTarget;
 
