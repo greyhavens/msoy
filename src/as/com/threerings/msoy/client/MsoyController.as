@@ -146,11 +146,23 @@ public class MsoyController extends Controller
     /**
      * Convenience method for opening an external window and showing the specified url. This is
      * done when we want to show the user something without unloading the msoy world.
+     *
+     * @return true on success
      */
-    public function showExternalURL (url :String) :void
+    public function showExternalURL (url :String, top :Boolean = false) :Boolean
     {
-        if (!NetUtil.navigateToURL(url, false)) {
-            failedToDisplayPage(url);
+        if (NetUtil.navigateToURL(url, top ? "_top" : null)) {
+            return true;
+
+        } else {
+            _mctx.displayFeedback(
+                MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("e.no_navigate", url));
+
+            // TODO
+            // experimental: display a popup with the URL (this could be moved to handleLink()
+            // if this method is altered to return a success Boolean
+            new MissedURLDialog(_mctx, url);
+            return false;
         }
     }
 
@@ -378,19 +390,6 @@ public class MsoyController extends Controller
             return false;
         }
         return true;
-    }
-
-    /**
-     * Called when we're unable to display some url.
-     */
-    protected function failedToDisplayPage (url :String) :void
-    {
-        _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("e.no_navigate", url));
-
-        // TODO
-        // experimental: display a popup with the URL (this could be moved to handleLink()
-        // if this method is altered to return a success Boolean
-        new MissedURLDialog(_mctx, url);
     }
 
     override protected function setControlledPanel (panel :IEventDispatcher) :void

@@ -9,8 +9,6 @@ import flash.net.URLRequest;
 import flash.system.Capabilities;
 import flash.utils.Timer;
 
-import flash.net.navigateToURL; // function import
-
 import mx.controls.Button;
 import mx.core.Application;
 
@@ -43,6 +41,7 @@ import com.threerings.msoy.client.ChatPrefsDialog;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.HeaderBar;
+import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -804,7 +803,7 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function showExternalURL (url :String) :void
+    override public function showExternalURL (url :String, top :Boolean = false) :Boolean
     {
         // if our page refers to a Whirled page...
         var gwtPrefix :String = DeploymentConfig.serverURL + "/#";
@@ -814,16 +813,15 @@ public class WorldController extends MsoyController
         } else if (url.indexOf("#") == 0) {
             gwtUrl = url.substring(1);
         } else {
-            super.showExternalURL(url);
-            return;
+            return super.showExternalURL(url, top);
         }
 
         // ...extract the page and arguments and tell GWT to display them properly
         var didx :int = gwtUrl.indexOf("-");
         if (didx == -1) {
-            super.showExternalURL(url);
+            return super.showExternalURL(url, top);
         } else {
-            displayPage(gwtUrl.substring(0, didx), gwtUrl.substring(didx+1));
+            return displayPage(gwtUrl.substring(0, didx), gwtUrl.substring(didx+1));
         }
     }
 
@@ -1030,14 +1028,7 @@ public class WorldController extends MsoyController
                 fullURL += "/#world-s" + scene.getId() + "_" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
-            try {
-                navigateToURL(new URLRequest(fullURL), "_top");
-                return true;
-            } catch (e :Error) {
-                log.warning("Failed to display URL [url=" + fullURL + "]: " + e);
-            }
-            failedToDisplayPage(fullURL);
-            return false;
+            return showExternalURL(fullURL, true);
         }
     }
 

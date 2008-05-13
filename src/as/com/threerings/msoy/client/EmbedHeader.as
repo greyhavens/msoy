@@ -7,9 +7,6 @@ import flash.display.DisplayObject;
 
 import flash.events.MouseEvent;
 
-import flash.net.navigateToURL; // function import
-import flash.net.URLRequest;
-
 import mx.containers.Canvas;
 
 import mx.controls.Label;
@@ -39,7 +36,7 @@ public class EmbedHeader extends Canvas
 
         var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject);
         logo.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            navigateToURL(new URLRequest(DeploymentConfig.serverURL), "_top");
+            _ctx.getMsoyController().showExternalURL(DeploymentConfig.serverURL, true);
         });
         logo.setStyle("left", 0);
         logo.buttonMode = true;
@@ -69,7 +66,8 @@ public class EmbedHeader extends Canvas
         joinNowObject.y = joinNowObject.height / 2 - 3;
         _joinNow = new FlexWrapper(joinNowObject);
         _joinNow.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            navigateToURL(new URLRequest(DeploymentConfig.serverURL + "#account-create"), "_top");
+            _ctx.getMsoyController().showExternalURL(
+                DeploymentConfig.serverURL + "#account-create", true);
         });
         _joinNow.setStyle("right", 100);
         addChild(_joinNow);
