@@ -139,6 +139,9 @@ public class WorldController extends MsoyController
     /** Command to complain about a member. */
     public static const COMPLAIN_MEMBER :String = "ComplainMember";
 
+    /** Command to display the given room in Whirled (used in the embedded client). */
+    public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -400,7 +403,7 @@ public class WorldController extends MsoyController
     /**
      * Handles the VIEW_FULL_VERSION command, used in embedded clients.
      */
-    public function handleFullVersionRoom (sceneId :int) :void
+    public function handleViewFullVersion (sceneId :int) :void
     {
         displayPage("world", "s" + sceneId);
     }
@@ -1086,7 +1089,7 @@ public class WorldController extends MsoyController
                     headerBar.setOwnerLink("");
                 }
                 if (_wctx.getMsoyClient().isEmbedded()) {
-                    headerBar.setFullVersionLink(handleFullVersionRoom, model.sceneId);
+                    headerBar.setFullVersionLink(handleViewFullVersion, model.sceneId);
                 } else {
                     headerBar.setCommentLink(handleViewRoom, model.sceneId);
                 }

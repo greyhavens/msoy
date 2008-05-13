@@ -36,7 +36,8 @@ public class EmbedHeader extends Canvas
 
         var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject);
         logo.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            _ctx.getMsoyController().showExternalURL(DeploymentConfig.serverURL, true);
+            var sceneId :int = _ctx.getSceneDirector().getScene().getId();
+            _ctx.getWorldController().handleViewFullVersion(sceneId);
         });
         logo.setStyle("left", 0);
         logo.buttonMode = true;
