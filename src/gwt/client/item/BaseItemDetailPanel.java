@@ -24,6 +24,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+
 import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.shell.Application;
@@ -150,20 +151,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
                     }
                 });
             }
-            public void addMenuItems (final String tag, PopupMenu menu) {
-                if (isStuffItem()) {
-                    menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
-                        public void execute() {
-                                // TODO: Search on tag in inventory items
-                        }
-                    });
-                } else {
-                    menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
-                        public void execute() {
-                            Application.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
-                        }
-                    });
-                }
+            public void addMenuItems (String tag, PopupMenu menu) {
+                addTagMenuItems(tag, menu);
             }
         }, true));
 
@@ -175,7 +164,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         MediaDesc preview = item.getPreviewMedia();
         if (item instanceof Avatar) {
             return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
-                isStuffItem());
+                allowAvatarScaleEditing());
 
         } else if (preview.isWhirledVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());
@@ -207,9 +196,17 @@ public abstract class BaseItemDetailPanel extends SmartTable
     }
 
     /**
-     * Is the item being viewed in our 'stuff'?
+     * Add any menu items to the tag widget.
      */
-    protected boolean isStuffItem ()
+    protected void addTagMenuItems (String tag, PopupMenu menu)
+    {
+        // nothing here
+    }
+
+    /**
+     * Overrideable by subclasses to enable avatar scale editing.
+     */
+    protected boolean allowAvatarScaleEditing ()
     {
         return false;
     }

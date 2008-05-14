@@ -3,6 +3,7 @@
 
 package client.shop;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -26,6 +27,7 @@ import client.item.ItemActivator;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
+import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.stuff.DoListItemPopup;
@@ -33,6 +35,8 @@ import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.MsoyUI;
+import client.util.PopupMenu;
+import client.util.ShopUtil;
 
 /**
  * Displays a detail view of an item from the catalog.
@@ -185,6 +189,16 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         } else {
             return CShop.msgs.boughtOtherUsage();
         }
+    }
+
+    // @Override
+    protected void addTagMenuItems (final String tag, PopupMenu menu)
+    {
+        menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
+            public void execute() {
+                Application.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
+            }
+        });
     }
 
     protected CatalogModels _models;

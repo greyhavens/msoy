@@ -104,7 +104,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     // @Override // BaseItemDetailPanel
-    protected boolean isStuffItem ()
+    protected boolean allowAvatarScaleEditing ()
     {
         return (_item.ownerId == CShell.getMemberId());
     }
