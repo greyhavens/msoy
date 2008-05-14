@@ -7,7 +7,7 @@ import flash.display.Loader;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.whirled.game.client.GameBackend;
+import com.whirled.game.client.FlashGameBackend;
 
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
@@ -86,7 +86,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
-    override protected function createBackend () :GameBackend
+    override protected function createBackend () :FlashGameBackend
     {
         return new MsoyGameBackend(_gctx, _gameObj, _ctrl as MsoyGameController);
     }
