@@ -38,7 +38,7 @@ public class GameStubServlet extends HttpServlet
         sendResponse(rsp,
             "<r>" +
                 "<url>http://" + req.getServerName() + ":" + req.getServerPort() + "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
-                "<flashVars guest='true' gameLobby='" + gameId + "'/>" +
+                "<whirledParams>guest=t&amp;gameLobby=" + gameId + "</whirledParams>" +
             "</r>");
     }
 
