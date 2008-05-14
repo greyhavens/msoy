@@ -221,6 +221,7 @@ public class MsoyHttpServer extends Server
         "forumsvc",
         "issuesvc",
         "undersvc",
+        "gamestubsvc",
     };
 
     protected static final HttpServlet[] SERVLETS = {
@@ -244,5 +245,6 @@ public class MsoyHttpServer extends Server
         new ForumServlet(),
         new IssueServlet(),
         new MsoyUnderwireServlet(),
+        new GameStubServlet(),
     };
 }
