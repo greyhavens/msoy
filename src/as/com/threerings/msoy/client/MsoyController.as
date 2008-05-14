@@ -114,8 +114,8 @@ public class MsoyController extends Controller
         _mctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
 
+        setControlledPanel(topPanel);
         var stage :Stage = mctx.getStage();
-        setControlledPanel(stage);
         stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
 
         _idleTimer = new Timer(ChatCodes.DEFAULT_IDLE_TIME, 1);
