@@ -22,23 +22,33 @@ public class MsoyParameters
         return _params;
     }
 
-    public static function setSource (source :String) :void
+    /**
+     * Initialize.
+     */
+    public static function init (disp :DisplayObject, thenRun :Function) :void
     {
-        // force new parameters
-        _params = new URLVariables(source);
-    }
-
-    public static function init (disp :DisplayObject) :void
-    {
-        ParameterUtil.getParameters(disp, gotParameters);
-    }
-
-    protected static function gotParameters (params :Object) :void
-    {
-        // do not overwrite any params we already have
-        if (_params == null) {
-            _params = params;
+        var d :DisplayObject = disp;
+        while (d != null) {
+            try {
+                var s :String = Object(d).getWhirledParams();
+                trace("Got params!: " + s);
+                _params = new URLVariables(s);
+                thenRun();
+                return;
+            } catch (err :Error) {
+                // fall through
+            }
+            try {
+                d = d.parent;
+            } catch (err :Error) {
+                d = null;
+            }
         }
+
+        ParameterUtil.getParameters(disp, function (params :Object) :void {
+            _params = params;
+            thenRun();
+        });
     }
 
     /** The parameters. */
