@@ -8,6 +8,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.whirled.game.client.WhirledGameController;
+import com.whirled.game.client.FlashGameBackend;
 
 import com.threerings.msoy.client.OccupantReporter;
 
@@ -35,6 +36,12 @@ public class MsoyGameController extends WhirledGameController
     override public function backToWhirled (showLobby :Boolean = false) :void
     {
         (_pctx as GameContext).backToWhirled(showLobby);
+    }
+
+    // from WhirledGameController
+    override protected function createBackend () :FlashGameBackend
+    {
+        return new MsoyGameBackend(_ctx as GameContext, _gameObj, this);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
