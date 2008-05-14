@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
@@ -18,6 +17,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -29,7 +29,7 @@ import client.util.RowPanel;
 /**
  * Displays account information, allows twiddling.
  */
-public class EditAccountPanel extends FlexTable
+public class EditAccountPanel extends SmartTable
 {
     public EditAccountPanel ()
     {
@@ -51,12 +51,9 @@ public class EditAccountPanel extends FlexTable
 
         // configure or display permaname interface
         if (CMe.creds.permaName == null) {
-            getFlexCellFormatter().setStyleName(row, 0, "Header");
-            getFlexCellFormatter().setColSpan(row, 0, 3);
-            setText(row++, 0, CMe.msgs.editPickPermaNameHeader());
+            setText(row++, 0, CMe.msgs.editPickPermaNameHeader(), 3, "Header");
 
-            getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            setText(row, 0, CMe.msgs.editPermaName());
+            setText(row, 0, CMe.msgs.editPermaName(), 1, "rightLabel");
             setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
             _uppname = new Button(CMe.cmsgs.set(), new ClickListener() {
@@ -67,24 +64,17 @@ public class EditAccountPanel extends FlexTable
             _uppname.setEnabled(false);
             setWidget(_permaRow = row++, 2, _uppname);
 
-            getFlexCellFormatter().setStyleName(row, 0, "Tip");
-            getFlexCellFormatter().setColSpan(row, 0, 3);
-            setHTML(row++, 0, CMe.msgs.editPermaNameTip());
+            setHTML(row++, 0, CMe.msgs.editPermaNameTip(), 3, "Tip");
 
         } else {
-            getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            setText(row, 0, CMe.msgs.editPermaName());
-            getFlexCellFormatter().setStyleName(row, 1, "PermaName");
-            setText(row++, 1, CMe.creds.permaName);
+            setText(row, 0, CMe.msgs.editPermaName(), 1, "rightLabel");
+            setText(row++, 1, CMe.creds.permaName, 1, "PermaName");
         }
 
         // configure email address interface
-        getFlexCellFormatter().setStyleName(row, 0, "Header");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CMe.msgs.editEmailHeader());
+        setText(row++, 0, CMe.msgs.editEmailHeader(), 3, "Header");
 
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editEmail());
+        setText(row, 0, CMe.msgs.editEmail(), 1, "rightLabel");
         setWidget(row, 1, _email = new TextBox());
         _email.setText(CMe.creds.accountName);
         _email.addKeyboardListener(_valemail);
@@ -97,26 +87,20 @@ public class EditAccountPanel extends FlexTable
         setWidget(row++, 2, _upemail);
 
         // configure email preferences interface
-        getFlexCellFormatter().setStyleName(row, 0, "Header");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CMe.msgs.editEPrefsHeader());
+        setText(row++, 0, CMe.msgs.editEPrefsHeader(), 3, "Header");
 
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editWhirledMailEmail());
+        setText(row, 0, CMe.msgs.editWhirledMailEmail(), 1, "rightLabel");
         RowPanel bits = new RowPanel();
         bits.add(_whirledEmail = new CheckBox());
         bits.add(MsoyUI.createLabel(CMe.msgs.editWhirledMailEmailTip(), "tipLabel"));
-        getFlexCellFormatter().setColSpan(row, 1, 2);
-        setWidget(row++, 1, bits);
+        setWidget(row++, 1, bits, 2, null);
         _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
 
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editAnnounceEmail());
+        setText(row, 0, CMe.msgs.editAnnounceEmail(), 1, "rightLabel");
         bits = new RowPanel();
         bits.add(_announceEmail = new CheckBox());
         bits.add(MsoyUI.createLabel(CMe.msgs.editAnnounceEmailTip(), "tipLabel"));
-        getFlexCellFormatter().setColSpan(row, 1, 2);
-        setWidget(row++, 1, bits);
+        setWidget(row++, 1, bits, 2, null);
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
         _upeprefs = new Button(CMe.cmsgs.update(), new ClickListener() {
@@ -127,12 +111,9 @@ public class EditAccountPanel extends FlexTable
         setWidget(row++, 2, _upeprefs);
 
         // configure real name interface
-        getFlexCellFormatter().setStyleName(row, 0, "Header");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CMe.msgs.editRealNameHeader());
+        setText(row++, 0, CMe.msgs.editRealNameHeader(), 3, "Header");
         
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editRealName());
+        setText(row, 0, CMe.msgs.editRealName(), 1, "rightLabel");
         setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(_valrname);
@@ -144,17 +125,12 @@ public class EditAccountPanel extends FlexTable
         _uprname.setEnabled(false);
         setWidget(row++, 2, _uprname);
 
-        getFlexCellFormatter().setStyleName(row, 0, "Tip");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setHTML(row++, 0, CMe.msgs.editRealNameTip());
+        setHTML(row++, 0, CMe.msgs.editRealNameTip(), 3, "Tip");
 
         // configure password interface
-        getFlexCellFormatter().setStyleName(row, 0, "Header");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setText(row++, 0, CMe.msgs.editPasswordHeader());
+        setText(row++, 0, CMe.msgs.editPasswordHeader(), 3, "Header");
 
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editPassword());
+        setText(row, 0, CMe.msgs.editPassword(), 1, "rightLabel");
         setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
@@ -163,8 +139,7 @@ public class EditAccountPanel extends FlexTable
         }));
         _password.addKeyboardListener(_valpass);
 
-        getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CMe.msgs.editConfirm());
+        setText(row, 0, CMe.msgs.editConfirm(), 1, "rightLabel");
         setWidget(row, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(_valpass);
         _uppass = new Button(CMe.cmsgs.update(), new ClickListener() {
@@ -175,9 +150,7 @@ public class EditAccountPanel extends FlexTable
         setWidget(row++, 2, _uppass);
         _uppass.setEnabled(false);
 
-        getFlexCellFormatter().setStyleName(row, 0, "Status");
-        getFlexCellFormatter().setColSpan(row, 0, 3);
-        setWidget(row++, 0, _status = new Label(CMe.msgs.editTip()));
+        setWidget(row++, 0, _status = new Label(CMe.msgs.editTip()), 3, "Status");
     }
 
     protected void updateRealName ()
