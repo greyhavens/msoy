@@ -416,7 +416,7 @@ public class WorldController extends MsoyController
     {
         // when a player clicks a game in the whirled, we try to display that game's detail page,
         // but if we can't do that, then fall back to displaying the game lobby
-        if (!displayPage("games", "d_" + gameId)) {
+        if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
             handleJoinGameLobby(gameId);
         }
     }
