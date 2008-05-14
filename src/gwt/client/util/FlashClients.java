@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,7 +48,7 @@ public class FlashClients
             Widget embed = WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                    "100%", ""+Frame.CLIENT_HEIGHT, flashVars));
+                    "100%", getClientHeight(), flashVars));
             embed.setHeight("100%");
         }
     }
@@ -62,7 +63,7 @@ public class FlashClients
             WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                    "100%", ""+Frame.CLIENT_HEIGHT, flashVars));
+                    "100%", getClientHeight(), flashVars));
         }
     }
 
@@ -161,6 +162,18 @@ public class FlashClients
         return WidgetUtil.createFlashContainer(
             "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
             320, 240, "video=" + URL.encodeComponent(videoPath));
+    }
+
+    /**
+     * Toggles the height 100% state of the client.
+     */
+    public static void toggleClientHeight ()
+    {
+        if (_clientFullHeight = !_clientFullHeight) {
+            setClientHeightNative("100%");
+        } else {
+            setClientHeightNative(Frame.CLIENT_HEIGHT+"px");
+        }
     }
 
     /**
@@ -357,10 +370,28 @@ public class FlashClients
     }
 
     /**
+     * Returns the height to use for the world/game client.
+     */
+    protected static String getClientHeight ()
+    {
+        return _clientFullHeight ? "100%" : (""+Frame.CLIENT_HEIGHT);
+    }
+
+    /**
      * Does the actual <code>clientExists()</code> call.
      */
     protected static native boolean clientExistsNative () /*-{
         return $doc.getElementById("asclient") != null;
+    }-*/;
+
+    /**
+     * TEMP: Changes the height of the client already embedded in the page.
+     */
+    protected static native void setClientHeightNative (String height) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client != null) {
+            client.style.height = height;
+        }
     }-*/;
 
     /**
@@ -474,6 +505,9 @@ public class FlashClients
     protected static native boolean isMacNative () /*-{
         return $wnd.swfobject.ua.mac;
     }-*/;
+
+    /** TEMP: Whether or not the client is in full-height mode. */
+    protected static boolean _clientFullHeight = false;
 
     // TODO: put this in Application?
     protected static final int BLACKBAR_HEIGHT = 20;
