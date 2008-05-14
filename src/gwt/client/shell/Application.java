@@ -453,9 +453,7 @@ public class Application
             return true;
        };
        $wnd.setWindowTitle = function (title) {
-            var xlater = @client.shell.CShell::cmsgs;
-            var msg = xlater.@client.shell.ShellMessages::windowTitle(Ljava/lang/String;)(title);
-            @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
+            @client.shell.Frame::setTitle(Ljava/lang/String;)(title);
        };
        $wnd.displayPage = function (page, args) {
            @client.shell.Application::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
