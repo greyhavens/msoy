@@ -6,6 +6,7 @@
   <property name="app.source-dir"   value="src/"/>
   <property name="root.path"        value="../.."/>
   <property name="flex.path"        value="${root.path}/lib/flex_sdk"/>
+  <property name="msoypages.path"   value="../../pages"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
@@ -20,6 +21,10 @@
       <arg value="-output"/>
       <arg value="${app.name}.swf"/>
     </java>
+  </target>
+
+  <target name="test" depends="compile">
+    <copy file="${app.name}.swf" tofile="${msoypages.path}/${app.name}.swf"/>
   </target>
 
   <!-- cleans out the compiled code -->

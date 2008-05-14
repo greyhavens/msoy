@@ -10,7 +10,7 @@ import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
-import flash.system.SecurityDomain;
+import flash.system.Security;
 
 public class GameStub extends Sprite
 {
@@ -25,6 +25,12 @@ public class GameStub extends Sprite
         _clientDetailsLoader.load(new URLRequest(URL));
     }
 
+    public function getWhirledParams () :String
+    {
+        // called by
+        return _whirledParams;
+    }
+
     protected function onClientDetailsLoaded (...ignored) :void
     {
         // Client details are returned as XML.
@@ -33,18 +39,17 @@ public class GameStub extends Sprite
         var clientUrl :String = String(details.url[0]);
         trace("GameStub: loading '" + clientUrl + "'");
 
-        _flashVars = details.flashVars[0];
+        _whirledParams = details.whirledParams[0];
+
+        // allow all loaded content to cross-script this SWF
+        // @TODO - is there any reason to make this more restrictive?
+        Security.allowDomain("*");
 
         // now let's try loading the client
         _clientLoader = new Loader();
         _clientLoader.contentLoaderInfo.addEventListener(Event.INIT, onClientLoaded);
         _clientLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onClientLoadError);
-        _clientLoader.load(
-            new URLRequest(clientUrl),
-            new LoaderContext(
-                true,
-                new ApplicationDomain(ApplicationDomain.currentDomain),
-                null));//SecurityDomain.currentDomain));
+        _clientLoader.load(new URLRequest(clientUrl), new LoaderContext(true, new ApplicationDomain(null)));
     }
 
     protected function onClientDetailsError (e :ErrorEvent) :void
@@ -65,7 +70,7 @@ public class GameStub extends Sprite
 
     protected var _clientDetailsLoader :URLLoader;
     protected var _clientLoader :Loader;
-    protected var _flashVars :XML;
+    protected var _whirledParams :String;
 
     protected static const GAME_ID :uint = 10;
     protected static const CLIENT_VERSION :uint = 0;
