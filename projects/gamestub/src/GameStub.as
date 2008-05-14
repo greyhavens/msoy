@@ -2,6 +2,8 @@ package {
 
 import flash.display.Loader;
 import flash.display.Sprite;
+import flash.display.StageAlign;
+import flash.display.StageScaleMode;
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -16,6 +18,11 @@ public class GameStub extends Sprite
 {
     public function GameStub ()
     {
+        if (stage != null) {
+            stage.scaleMode = StageScaleMode.NO_SCALE;
+            stage.align = StageAlign.TOP_LEFT;
+        }
+
         // ask Whirled where to find the SWF client that we'll load to play our game
         _clientDetailsLoader = new URLLoader();
         _clientDetailsLoader.addEventListener(Event.COMPLETE, onClientDetailsLoaded);
@@ -27,7 +34,7 @@ public class GameStub extends Sprite
 
     public function getWhirledParams () :String
     {
-        // called by
+        // called by world-client
         return _whirledParams;
     }
 
