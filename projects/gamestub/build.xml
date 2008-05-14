@@ -1,0 +1,32 @@
+<!-- build configuration -->
+<project name="gamestub" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="GameStub"/>
+  <property name="app.source-dir"   value="src/"/>
+  <property name="root.path"        value="../.."/>
+  <property name="flex.path"        value="${root.path}/lib/flex_sdk"/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-use-network=true"/>
+      <arg value="-compiler.source-path=${root.path}/dist/"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.source-dir}/${app.name}.as"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+</project>
