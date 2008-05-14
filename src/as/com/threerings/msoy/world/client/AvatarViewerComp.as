@@ -29,9 +29,10 @@ import com.threerings.flash.FPSDisplay;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
-import com.threerings.util.ParameterUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
+
+import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
@@ -128,7 +129,7 @@ public class AvatarViewerComp extends VBox
         if (_params != null) {
             gotParams(_params);
         } else {
-            ParameterUtil.getParameters(this, gotParams);
+            gotParams(MsoyParameters.get());
         }
     }
 

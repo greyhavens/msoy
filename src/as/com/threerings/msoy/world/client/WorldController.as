@@ -45,6 +45,7 @@ import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -949,7 +950,7 @@ public class WorldController extends MsoyController
 
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;
-            goToPlace(_topPanel.loaderInfo.parameters);
+            goToPlace(MsoyParameters.get());
         } else if (_postLogonScene != 0) {
             // we gotta go somewhere
             _wctx.getSceneDirector().moveTo(_postLogonScene);

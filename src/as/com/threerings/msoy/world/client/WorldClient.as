@@ -11,6 +11,7 @@ import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
+import flash.net.URLVariables;
 
 import flash.utils.Dictionary;
 
@@ -76,6 +77,7 @@ import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.world.data.MsoySceneMarshaller;
@@ -119,7 +121,7 @@ public class WorldClient extends MsoyClient
 
         // if we are embedded, we won't have a server host in our parameters, so we need to obtain
         // that via an HTTP request, otherwise just logon directly
-        var params :Object = _stage.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         if (getHostname() == null) {
             var loader :URLLoader = new URLLoader();
             loader.addEventListener(Event.COMPLETE, function () :void {
@@ -250,16 +252,7 @@ public class WorldClient extends MsoyClient
     protected function externalClientGo (where :String) :void
     {
         log.info("Changing scenes per external request [where=" + where + "].");
-        var params :Object = new Object();
-        for each (var param :String in where.split("&")) {
-            var eidx: int = param.indexOf("=");
-            if (eidx == -1) {
-                log.warning("Malformed clientGo() parameter [param=" + param + "].");
-            } else {
-                params[param.substring(0, eidx)] = param.substring(eidx+1);
-            }
-        }
-        _wctx.getWorldController().goToPlace(params);
+        _wctx.getWorldController().goToPlace(new URLVariables(where));
     }
 
     /**
@@ -414,7 +407,7 @@ public class WorldClient extends MsoyClient
     // from MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
-        var params :Object = _stage.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         var creds :MsoyCredentials;
         if ((params["pass"] != null) && (params["user"] != null)) {
             creds = new MsoyCredentials(new Name(String(params["user"])),

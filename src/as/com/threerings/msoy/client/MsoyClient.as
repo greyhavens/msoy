@@ -97,7 +97,7 @@ public /*abstract*/ class MsoyClient extends Client
         setVersion(DeploymentConfig.version);
         _creds = createStartupCreds(null);
 
-        var params :Object = stage.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         _featuredPlaceView = params["featuredPlace"] != null;
         if (_featuredPlaceView) {
             // mute all sound in featured place view.
@@ -129,7 +129,7 @@ public /*abstract*/ class MsoyClient extends Client
         addClientObserver(new ClientAdapter(clientWillLogon));
 
         // configure our server and port info
-        setServer(getServerHost(stage), getServerPorts(stage));
+        setServer(getServerHost(), getServerPorts());
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
@@ -361,19 +361,18 @@ public /*abstract*/ class MsoyClient extends Client
      * Returns the hostname of the game server to which we should connect, or null if that is not
      * configured in our parameters.
      */
-    protected static function getServerHost (stage :Stage) :String
+    protected static function getServerHost () :String
     {
-        var params :Object = stage.loaderInfo.parameters;
-        return (params["host"] != null) ? String(params["host"]) : null;
+        return MsoyParameters.get()["host"] as String;
     }
 
     /**
      * Returns the ports on which we should connect to the game server, first checking the movie
      * parameters, then falling back to the default in DeploymentConfig.
      */
-    protected static function getServerPorts (stage :Stage) :Array
+    protected static function getServerPorts () :Array
     {
-        var params :Object = stage.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         return (params["port"] != null) ?
             [ int(parseInt(params["port"])) ] : DeploymentConfig.serverPorts;
     }

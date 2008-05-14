@@ -14,6 +14,7 @@ import com.threerings.parlor.data.ParlorMarshaller;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -70,7 +71,7 @@ public class GameClient extends MsoyClient
     // from MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
-        var params :Object = _stage.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         var creds :MsoyGameCredentials = new MsoyGameCredentials();
         creds.sessionToken = (token == null) ? params["token"] : token;
         return creds;

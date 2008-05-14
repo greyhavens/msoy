@@ -4,7 +4,7 @@
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     width="100%" height="100%"
     preloader="com.threerings.msoy.client.Preloader"
-    applicationComplete="new UberClient(this);">
+    applicationComplete="doInit();">
 <mx:Style source="msoy.css"/>
 <mx:Metadata>
     [ResourceBundle("global")]
@@ -23,6 +23,7 @@
 
         import mx.core.UIComponent;
 
+        import com.threerings.msoy.client.MsoyParameters;
         import com.threerings.msoy.client.UberClient;
 
         /**
@@ -38,6 +39,18 @@
             return false;
         }
 
+        /**
+         * Exposed to callers. Set the parameters to be used by this
+         * application, in the form of a String in "key1=value1&key2=value2&..." format.
+         */
+        public function setParameters (source :String) :void
+        {
+            MsoyParameters.setSource(source);
+        }
+
+        /**
+         * Called by UberClient.
+         */
         public function setViewer (disp :DisplayObject) :void
         {
             _viewer = disp;
@@ -47,6 +60,12 @@
                 disp = wrapper;
             }
             addChild(disp);
+        }
+
+        protected function doInit () :void
+        {
+            MsoyParameters.init(this);
+            new UberClient(this);
         }
 
         protected var _viewer :Object;

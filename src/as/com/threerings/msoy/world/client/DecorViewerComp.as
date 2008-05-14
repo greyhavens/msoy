@@ -25,18 +25,23 @@ import mx.core.BitmapAsset;
 import mx.core.Container;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
+
 import mx.events.SliderEvent;
 
-import com.threerings.flash.MathUtil;
-import com.threerings.flex.CommandCheckBox;
-import com.threerings.flex.GridUtil;
-import com.threerings.msoy.item.data.all.Decor;
+import mx.utils.ObjectUtil;
+
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
-import com.threerings.util.ParameterUtil;
-import com.threerings.msoy.client.Msgs;
 
-import mx.utils.ObjectUtil;
+import com.threerings.flash.MathUtil;
+
+import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.GridUtil;
+
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyParameters;
+
+import com.threerings.msoy.item.data.all.Decor;
  
 public class DecorViewerComp extends Canvas
 {
@@ -229,7 +234,7 @@ public class DecorViewerComp extends Canvas
         } 
 
         // and try to get any other params we may have
-        ParameterUtil.getParameters(DisplayObject(Application.application), gotParams);
+        gotParams(MsoyParameters.get());
     }
 
     // @Override from Canvas

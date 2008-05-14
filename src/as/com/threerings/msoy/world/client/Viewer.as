@@ -6,10 +6,11 @@ package com.threerings.msoy.world.client {
 import flash.display.Bitmap;
 import flash.display.Sprite;
 
-import com.threerings.util.ParameterUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
+
+import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -31,7 +32,7 @@ public class Viewer extends Sprite
         graphics.endFill();
 
         if (params == null) {
-            ParameterUtil.getParameters(this, gotParams);
+            gotParams(MsoyParameters.get());
         } else {
             gotParams(params);
         }

@@ -7,8 +7,6 @@ import flash.display.DisplayObject;
 
 import mx.core.Application;
 
-import com.threerings.util.ParameterUtil;
-
 import com.threerings.msoy.utils.UberClientLoader;
 
 import com.threerings.msoy.world.client.AvatarViewerComp;
@@ -42,21 +40,17 @@ public class UberClient
             }
         }
 
-        // if we never found our mode here, try to determine it from our parameters
-        ParameterUtil.getParameters(app, function (params :Object) :void {
-            var mode :int = UberClientLoader.CLIENT;
-
-            if ("mode" in params) {
-                // if a mode is specified, that overrides all
-                mode = parseInt(params["mode"]);
-            } else if ("avatar" in params) {
-                mode = UberClientLoader.AVATAR_VIEWER;
-            } else if ("media" in params) {
-                mode = UberClientLoader.GENERIC_VIEWER;
-            }
-
-            setMode(app, mode, params);
-        });
+        var params :Object = MsoyParameters.get();
+        var mode :int = UberClientLoader.CLIENT;
+        if ("mode" in params) {
+            // if a mode is specified, that overrides all
+            mode = parseInt(params["mode"]);
+        } else if ("avatar" in params) {
+            mode = UberClientLoader.AVATAR_VIEWER;
+        } else if ("media" in params) {
+            mode = UberClientLoader.GENERIC_VIEWER;
+        }
+        setMode(app, mode, params);
     }
 
     protected function setMode (app :Application, mode :int, params :Object = null) :void

@@ -24,7 +24,7 @@ public class LoggingTargets
             // oh well!
         }
 
-        if ((null != ctx.getStage().loaderInfo.parameters["test"]) || Prefs.getLogToChat()) {
+        if ((null != MsoyParameters.get()["test"]) || Prefs.getLogToChat()) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
                 Log.addTarget(_chatTarget);

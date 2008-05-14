@@ -100,7 +100,7 @@ public /*abstract*/ class MsoyContext
      */
     public function getPartner () :String
     {
-        return getStage().loaderInfo.parameters["partner"];
+        return MsoyParameters.get()["partner"];
     }
 
     /**

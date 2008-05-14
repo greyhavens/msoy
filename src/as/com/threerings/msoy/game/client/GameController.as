@@ -11,6 +11,7 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -41,7 +42,7 @@ public class GameController extends MsoyController
     {
         super.clientDidLogon(event);
 
-        var params :Object = _topPanel.loaderInfo.parameters;
+        var params :Object = MsoyParameters.get();
         if (null != params["gameLocation"]) {
             var gameOid :int = int(params["gameLocation"]);
             log.info("Entering game [oid=" + gameOid + "].");
