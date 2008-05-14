@@ -93,6 +93,6 @@ public class index extends MsgsEntryPoint
     protected void displayWhat ()
     {
         Frame.closeClient(false); // no client on the main guest landing page
-        setContent(null, new WhatIsTheWhirled(), false);
+        setContent(CMe.msgs.whatIsTheWhirledTitle(), new WhatIsTheWhirled(), false);
     }
 }
