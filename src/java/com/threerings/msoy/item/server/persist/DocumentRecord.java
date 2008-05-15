@@ -60,6 +60,10 @@ public class DocumentRecord extends ItemRecord
     public static final ColumnExp RATING_C =
         new ColumnExp(DocumentRecord.class, RATING);
 
+    /** The qualified column identifier for the {@link #ratingCount} field. */
+    public static final ColumnExp RATING_COUNT_C =
+        new ColumnExp(DocumentRecord.class, RATING_COUNT);
+
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
         new ColumnExp(DocumentRecord.class, USED);

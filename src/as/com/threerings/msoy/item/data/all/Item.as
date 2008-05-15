@@ -105,6 +105,9 @@ public /*abstract*/ class Item
     /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
 
+    /** The number of user ratings that went into the average rating. */
+    public var ratingCount :int;
+
     /** A code indicating where this item is being used. */
     public var used :int;
 
@@ -364,6 +367,7 @@ public /*abstract*/ class Item
         out.writeInt(ownerId);
         out.writeInt(catalogId);
         out.writeFloat(rating);
+        out.writeInt(ratingCount);
         out.writeByte(used);
         out.writeInt(location);
         out.writeDouble(lastTouched);
@@ -385,6 +389,7 @@ public /*abstract*/ class Item
         ownerId = ins.readInt();
         catalogId = ins.readInt();
         rating = ins.readFloat();
+        ratingCount = ins.readInt();
         used = ins.readByte();
         location = ins.readInt();
         lastTouched = ins.readDouble();

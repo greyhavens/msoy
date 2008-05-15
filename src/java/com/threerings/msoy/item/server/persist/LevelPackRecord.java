@@ -62,6 +62,10 @@ public class LevelPackRecord extends SubItemRecord
     public static final ColumnExp RATING_C =
         new ColumnExp(LevelPackRecord.class, RATING);
 
+    /** The qualified column identifier for the {@link #ratingCount} field. */
+    public static final ColumnExp RATING_COUNT_C =
+        new ColumnExp(LevelPackRecord.class, RATING_COUNT);
+
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
         new ColumnExp(LevelPackRecord.class, USED);

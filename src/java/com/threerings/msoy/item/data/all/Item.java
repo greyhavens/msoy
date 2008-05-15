@@ -142,6 +142,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
 
+    /** The number of user ratings that went into the average rating. */
+    public int ratingCount;
+
     /** A code indicating where this item is being used. */
     public byte used;
 

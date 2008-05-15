@@ -60,6 +60,10 @@ public class AudioRecord extends ItemRecord
     public static final ColumnExp RATING_C =
         new ColumnExp(AudioRecord.class, RATING);
 
+    /** The qualified column identifier for the {@link #ratingCount} field. */
+    public static final ColumnExp RATING_COUNT_C =
+        new ColumnExp(AudioRecord.class, RATING_COUNT);
+
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
         new ColumnExp(AudioRecord.class, USED);

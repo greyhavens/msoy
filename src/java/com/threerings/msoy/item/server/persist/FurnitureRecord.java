@@ -67,6 +67,10 @@ public class FurnitureRecord extends ItemRecord
     public static final ColumnExp RATING_C =
         new ColumnExp(FurnitureRecord.class, RATING);
 
+    /** The qualified column identifier for the {@link #ratingCount} field. */
+    public static final ColumnExp RATING_COUNT_C =
+        new ColumnExp(FurnitureRecord.class, RATING_COUNT);
+
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
         new ColumnExp(FurnitureRecord.class, USED);

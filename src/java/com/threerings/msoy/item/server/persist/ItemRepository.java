@@ -33,6 +33,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -109,6 +110,39 @@ public abstract class ItemRepository<
                 return ItemRepository.this.createTagHistoryRecord();
             }
         };
+
+        // TEMP added 2008.05.15
+        _ctx.registerMigration(getItemClass(), new EntityMigration(17000) {
+            public boolean runBeforeDefault () {
+                return false; // let the damn thing create the column first
+            }
+
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                int migrated = 0;
+                try {
+                    // This doesn't seem like a good idea but I'm not sure how else to do it.
+                    List<T> list = findAll(getItemClass());
+                    log.info("Migrating " + list.size() + " " + getItemClass() + "...");
+                    for (T record : list) {
+                        RatingAverageRecord average = load(RatingAverageRecord.class,
+                             new FromOverride(getRatingClass()),
+                             new Where(getRatingColumn(RatingRecord.ITEM_ID), record.itemId));
+                        if (average.count > 0) {
+                            migrated++;
+                            updatePartial(getItemClass(), record.itemId,
+                                ItemRecord.RATING_COUNT, average.count);
+                        }
+                    }
+                } catch (PersistenceException pe) {
+                    log.warning("Couldn't migrate: " + pe);
+                    throw new SQLException();
+                }
+
+                log.info("Migrated " + migrated + " records.");
+                return migrated;
+            }
+        });
+        // END: temp
     }
 
     /**
@@ -816,7 +850,7 @@ public abstract class ItemRepository<
         float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
-                      ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
+                      ItemRecord.RATING_COUNT, average.count);
         return newRating;
     }
 

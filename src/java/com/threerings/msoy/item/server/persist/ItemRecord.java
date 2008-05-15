@@ -59,6 +59,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The column identifier for the {@link #rating} field. */
     public static final String RATING = "rating";
 
+    /** The column identifier for the {@link #ratingCount} field. */
+    public static final String RATING_COUNT = "ratingCount";
+
     /** The column identifier for the {@link #used} field. */
     public static final String USED = "used";
 
@@ -99,7 +102,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 16;
+    public static final int BASE_SCHEMA_VERSION = 17;
     public static final int BASE_MULTIPLIER = 1000;
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -142,6 +145,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The current rating of this item, from 1 to 5. */
     public float rating;
+
+    /** The number of user ratings that went into the average rating. */
+    public int ratingCount;
 
     /** How this item is being used (see {@link Item#USED_AS_FURNITURE}). */
     public byte used;
