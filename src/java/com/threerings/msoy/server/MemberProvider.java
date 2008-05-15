@@ -48,6 +48,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#getGroupHomeSceneId} request.
+     */
+    public void getGroupHomeSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#getGroupName} request.
      */
     public void getGroupName (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
@@ -91,7 +97,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#setHomeSceneId} request.
      */
-    public void setHomeSceneId (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+    public void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

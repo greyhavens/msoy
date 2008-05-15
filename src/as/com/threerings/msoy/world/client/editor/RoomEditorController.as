@@ -411,20 +411,27 @@ public class RoomEditorController
         _panel.updateDisplay(_edit.target);
     }
 
-    public function makeMyHome () :void
+    public function makeHome () :void
     {
         _panel.setHomeButtonEnabled(false);
+
+        var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        svc.setHomeSceneId(_ctx.getClient(), scene.getId(), new ConfirmAdapter(
-            // failed function
-            function (cause :String) :void {
-                _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
-            },
-            // processed function
-            function () :void {
-                _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.home_room_changed");
-            }
-        ));
+        svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId, 
+            new ConfirmAdapter(
+                // failed function
+                function (cause :String) :void {
+                    _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
+                },
+                // processed function
+                function () :void {
+                    if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.group_home_room_changed");
+                    } else {
+                        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.home_room_changed");
+                    }
+                }
+            ));
     }
 
     /**

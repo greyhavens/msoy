@@ -6,18 +6,30 @@ package com.threerings.msoy.world.client.editor {
 import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
+
 import mx.containers.HBox;
+
 import mx.controls.HSlider;
 import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.controls.ToggleButtonBar;
+
 import mx.events.FlexEvent;
 import mx.events.ItemClickEvent;
 import mx.events.SliderEvent;
 
 import com.threerings.flex.CommandButton;
+
+import com.threerings.util.Log;
+
+import com.threerings.presents.client.ResultWrapper;
+
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MemberService;
+
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -76,17 +88,42 @@ public class RoomPanel extends BasePanel
         box.percentWidth = 100;
         addChild(box);
 
-        // make this room my home button
+        // make this room my/this whirled's home button
         _homeButton = new CommandButton();
-        _homeButton.setCallback(_controller.makeMyHome);
         _homeButton.styleName = "roomEditButtonMakeMyHome";
-        _homeButton.toolTip = Msgs.EDITING.get("i.make_home_button");
+        _homeButton.setCallback(_controller.makeHome);
         var sceneModel :MsoySceneModel = _controller.scene.getSceneModel() as MsoySceneModel;
         var memberObject :MemberObject = _controller.ctx.getMemberObject();
-        _homeButton.enabled = 
-            sceneModel.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER && 
-            sceneModel.ownerId == memberObject.getMemberId() &&
-            _controller.scene.getId() != memberObject.homeSceneId;
+        if (sceneModel.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+            _homeButton.toolTip = Msgs.EDITING.get("b.make_home");
+            _homeButton.enabled = 
+                sceneModel.ownerId == memberObject.getMemberId() &&
+                sceneModel.sceneId != memberObject.homeSceneId;
+
+        } else if (sceneModel.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            _homeButton.toolTip = Msgs.EDITING.get("b.make_group_home");
+            _homeButton.enabled = false;
+
+            if (memberObject.isGroupManager(sceneModel.ownerId)) {
+                var svc :MemberService = 
+                    _controller.ctx.getClient().requireService(MemberService) as MemberService;
+                svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
+                    new ResultWrapper(
+                        // failed function
+                        function (cause :String) :void {
+                            _controller.ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
+                        },
+                        // processed function
+                        function (result :Object) :void {
+                            _homeButton.enabled = sceneModel.sceneId != (result as int);
+                        }
+                    ));
+            }
+
+        } else {
+            log.warning("unrecognized room ownership type [" + sceneModel.ownerType + "]");
+            _homeButton.enabled = false;
+        }
         box.addChild(_homeButton);
 
         var spacer :Spacer = new Spacer();
@@ -163,6 +200,8 @@ public class RoomPanel extends BasePanel
         }
         _buttonbar.selectedIndex = model.accessControl;
     }
+
+    private static const log :Log = Log.getLog(RoomPanel);
 
     protected var _name :TextInput;
     protected var _buttonbar :ToggleButtonBar;

@@ -19,7 +19,6 @@ import mx.core.Application;
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 

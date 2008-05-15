@@ -467,6 +467,29 @@ public class GroupRepository extends DepotRepository
                        new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
     }
 
+    /**
+     * Sets the home scene id for the given group.
+     */
+    public void setHomeSceneId (int groupId, int sceneId)
+        throws PersistenceException
+    {
+        updatePartial(GroupRecord.class, groupId, GroupRecord.HOME_SCENE_ID, sceneId);
+    }
+
+    /**
+     * Returns the home scene id for the given group.
+     */
+    public int getHomeSceneId (int groupId)
+        throws PersistenceException
+    {
+        GroupRecord rec = load(GroupRecord.class, groupId);
+        if (rec == null) {
+            throw new PersistenceException("Group not found in getHomeSceneId! [" + groupId + "]");
+        }
+
+        return rec.homeSceneId;
+    }
+
     protected void updateMemberCount (int groupId)
         throws PersistenceException
     {

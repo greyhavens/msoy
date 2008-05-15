@@ -34,6 +34,9 @@ public interface MemberService extends InvocationService
     function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
+    function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
+    // from Java interface MemberService
     function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
@@ -55,7 +58,7 @@ public interface MemberService extends InvocationService
     function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;

@@ -441,8 +441,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setHomeSceneId (ClientObject caller, final int sceneId,
-                                InvocationService.ConfirmListener listener)
+    public void setHomeSceneId (ClientObject caller, final int ownerType, final int ownerId, 
+                                final int sceneId, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
@@ -453,17 +453,47 @@ public class MemberManager
             public void invokePersistent () throws Exception {
                 int memberId = member.getMemberId();
                 SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
-                if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER &&
-                    scene.ownerId == memberId) {
-                    _memberRepo.setHomeSceneId(memberId, sceneId);
+                if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    if (scene.ownerId == memberId) {
+                        _memberRepo.setHomeSceneId(memberId, sceneId);
+                    } else {
+                        throw new InvocationException("e.not_room_owner");
+                    }
+                } else if (scene.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                    if (member.isGroupManager(scene.ownerId)) {
+                        _groupRepo.setHomeSceneId(scene.ownerId, sceneId);
+                    } else {
+                        throw new InvocationException("e.not_room_manager");
+                    }
                 } else {
-                    throw new InvocationException("e.not_room_owner");
+                    log.log(Level.WARNING, "Unknown scene model owner type [sceneId=" + 
+                        scene.sceneId + ", ownerType=" + scene.ownerType + "]");
+                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
             }
             public void handleSuccess () {
-                member.setHomeSceneId(sceneId);
+                if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    member.setHomeSceneId(sceneId);
+                }
                 reportRequestProcessed();
             }
+        });
+    }
+
+    // from interface MemberProvider
+    public void getGroupHomeSceneId (ClientObject caller, final int groupId,
+                                     InvocationService.ResultListener listener) 
+        throws InvocationException
+    {
+        String uname = "getHomeSceneId(" + groupId + ")";
+        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
+                _homeSceneId = MsoyServer.groupRepo.getHomeSceneId(groupId);
+            }
+            public void handleSuccess () {
+                reportRequestProcessed(_homeSceneId);
+            }
+            protected int _homeSceneId;
         });
     }
 

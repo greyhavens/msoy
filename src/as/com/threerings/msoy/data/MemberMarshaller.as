@@ -102,8 +102,21 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #getGroupHomeSceneId} requests. */
+    public static const GET_GROUP_HOME_SCENE_ID :int = 7;
+
+    // from interface MemberService
+    public function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    {
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_GROUP_HOME_SCENE_ID, [
+            Integer.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static const GET_GROUP_NAME :int = 7;
+    public static const GET_GROUP_NAME :int = 8;
 
     // from interface MemberService
     public function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -116,7 +129,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static const GET_HOME_ID :int = 8;
+    public static const GET_HOME_ID :int = 9;
 
     // from interface MemberService
     public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
@@ -129,7 +142,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static const INVITE_TO_BE_FRIEND :int = 9;
+    public static const INVITE_TO_BE_FRIEND :int = 10;
 
     // from interface MemberService
     public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -142,7 +155,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static const INVITE_TO_FOLLOW :int = 10;
+    public static const INVITE_TO_FOLLOW :int = 11;
 
     // from interface MemberService
     public function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -155,7 +168,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static const SET_AVATAR :int = 11;
+    public static const SET_AVATAR :int = 12;
 
     // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
@@ -168,7 +181,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static const SET_AWAY :int = 12;
+    public static const SET_AWAY :int = 13;
 
     // from interface MemberService
     public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
@@ -179,7 +192,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static const SET_DISPLAY_NAME :int = 13;
+    public static const SET_DISPLAY_NAME :int = 14;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -192,20 +205,20 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static const SET_HOME_SCENE_ID :int = 14;
+    public static const SET_HOME_SCENE_ID :int = 15;
 
     // from interface MemberService
-    public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_HOME_SCENE_ID, [
-            Integer.valueOf(arg2), listener3
+            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), listener5
         ]);
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static const UPDATE_AVAILABILITY :int = 15;
+    public static const UPDATE_AVAILABILITY :int = 16;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void

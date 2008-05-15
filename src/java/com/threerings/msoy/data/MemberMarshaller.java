@@ -92,8 +92,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #getGroupHomeSceneId} requests. */
+    public static final int GET_GROUP_HOME_SCENE_ID = 7;
+
+    // from interface MemberService
+    public void getGroupHomeSceneId (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_GROUP_HOME_SCENE_ID, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 7;
+    public static final int GET_GROUP_NAME = 8;
 
     // from interface MemberService
     public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -106,7 +119,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 8;
+    public static final int GET_HOME_ID = 9;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -119,7 +132,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static final int INVITE_TO_BE_FRIEND = 9;
+    public static final int INVITE_TO_BE_FRIEND = 10;
 
     // from interface MemberService
     public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -132,7 +145,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static final int INVITE_TO_FOLLOW = 10;
+    public static final int INVITE_TO_FOLLOW = 11;
 
     // from interface MemberService
     public void inviteToFollow (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -145,7 +158,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 11;
+    public static final int SET_AVATAR = 12;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.ConfirmListener arg4)
@@ -158,7 +171,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static final int SET_AWAY = 12;
+    public static final int SET_AWAY = 13;
 
     // from interface MemberService
     public void setAway (Client arg1, boolean arg2, String arg3)
@@ -169,7 +182,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 13;
+    public static final int SET_DISPLAY_NAME = 14;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -182,20 +195,20 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 14;
+    public static final int SET_HOME_SCENE_ID = 15;
 
     // from interface MemberService
-    public void setHomeSceneId (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void setHomeSceneId (Client arg1, int arg2, int arg3, int arg4, InvocationService.ConfirmListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_HOME_SCENE_ID, new Object[] {
-            Integer.valueOf(arg2), listener3
+            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), listener5
         });
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 15;
+    public static final int UPDATE_AVAILABILITY = 16;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)

@@ -78,6 +78,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.GET_GROUP_HOME_SCENE_ID:
+            ((MemberProvider)provider).getGroupHomeSceneId(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.GET_GROUP_NAME:
             ((MemberProvider)provider).getGroupName(
                 source,
@@ -130,7 +137,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.SET_HOME_SCENE_ID:
             ((MemberProvider)provider).setHomeSceneId(
                 source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

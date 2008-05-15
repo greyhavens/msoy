@@ -22,7 +22,6 @@ import com.adobe.crypto.MD5;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 

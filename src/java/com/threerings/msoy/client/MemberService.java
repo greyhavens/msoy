@@ -82,9 +82,16 @@ public interface MemberService extends InvocationService
     public void acknowledgeNotifications (Client client, int[] ids, InvocationListener listener);
 
     /**
-     * Set the given scene as the member's home scene
+     * Set the given scene as the owner's home scene
      */
-    public void setHomeSceneId (Client client, int sceneId, ConfirmListener listener);
+    public void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId, 
+        ConfirmListener listener);
+
+
+    /**
+     * Get the given group's home scene id.
+     */
+    public void getGroupHomeSceneId (Client client, int groupId, ResultListener listener);
 
     /**
      * Acknowledges that the user has read their warning message.
