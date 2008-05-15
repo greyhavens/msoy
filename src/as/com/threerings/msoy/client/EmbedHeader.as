@@ -67,8 +67,7 @@ public class EmbedHeader extends Canvas
         joinNowObject.y = joinNowObject.height / 2 - 3;
         _joinNow = new FlexWrapper(joinNowObject);
         _joinNow.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            _ctx.getMsoyController().showExternalURL(
-                DeploymentConfig.serverURL + "/#account-create", true);
+            _ctx.getWorldController().handleCreateAccount();
         });
         _joinNow.setStyle("right", 100);
         addChild(_joinNow);
