@@ -560,7 +560,7 @@ public class ItemServlet extends MsoyServiceServlet
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             item.mature = value;
-            repo.updateOriginalItem(item);
+            repo.updateOriginalItem(item, false);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING,
@@ -584,7 +584,7 @@ public class ItemServlet extends MsoyServiceServlet
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             item.flagged = (byte) ((item.flagged & ~mask) | value);
-            repo.updateOriginalItem(item);
+            repo.updateOriginalItem(item, false);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to set flags [item=" + iident + ", mask=" + mask +

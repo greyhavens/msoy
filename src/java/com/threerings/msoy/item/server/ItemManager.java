@@ -859,7 +859,7 @@ public class ItemManager
                     throw new PersistenceException("Can't find item [item=" + ident + "]");
                 }
                 item.flagged = (byte) ((item.flagged & ~mask) | value);
-                repo.updateOriginalItem(item);
+                repo.updateOriginalItem(item, false);
                 return null;
             }
         });
@@ -883,7 +883,7 @@ public class ItemManager
                     throw new PersistenceException("Can't find item [item=" + ident + "]");
                 }
                 item.mature = value;
-                repo.updateOriginalItem(item);
+                repo.updateOriginalItem(item, false);
                 return null;
             }
         });

@@ -600,7 +600,19 @@ public abstract class ItemRepository<
     public void updateOriginalItem (T item)
         throws PersistenceException
     {
-        item.lastTouched = new Timestamp(System.currentTimeMillis());
+        updateOriginalItem(item, true);
+    }
+
+    /**
+     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched) field
+     * will be optionally updated. In general, updateLastTouched should be true.
+     */
+    public void updateOriginalItem (T item, boolean updateLastTouched)
+        throws PersistenceException
+    {
+        if (updateLastTouched) {
+            item.lastTouched = new Timestamp(System.currentTimeMillis());
+        }
         update(item);
     }
 
