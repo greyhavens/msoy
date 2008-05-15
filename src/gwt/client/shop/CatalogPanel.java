@@ -133,26 +133,25 @@ public class CatalogPanel extends SmartTable
             protected void displayResults (int start, int count, List list) {
                 super.displayResults(start, count, list);
 
-                boolean isLastPage = start + list.size() >= _model.getItemCount(),
-                        isFiltered = _query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT ||
-                            _query.creatorId != 0 || _query.search != null || _query.tag != null;
-
+                // If we're displaying the last page of a filtered set, include a little
+                // widget indicating that and providing an easy link to clear the filters.
+                boolean isLastPage = start + list.size() >= _model.getItemCount();
+                boolean isFiltered = _query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT ||
+                    _query.creatorId != 0 || _query.search != null || _query.tag != null;
                 if (isLastPage && isFiltered) {
                     // The query that will be used to do a search cleared of filters
                     CatalogQuery clear = new CatalogQuery(_query);
-
+                    clear.creatorId = 0;
+                    clear.search = null;
+                    clear.tag = null;
                     if (_query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) {
                         clear.sortBy = CatalogQuery.SORT_BY_RATING;
                     }
 
-                    clear.creatorId = 0;
-                    clear.search = null;
-                    clear.tag = null;
-
                     Widget footer = Application.createLink(CShop.msgs.catalogShowAdditional(),
                         Page.SHOP, ShopUtil.composeArgs(clear, 0));
-
                     _listings.setWidget(3, 0, footer);
+
                 } else {
                     _listings.removeRow(3);
                 }
