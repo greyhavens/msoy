@@ -126,26 +126,22 @@ class Headshot extends Sprite
 
     override public function getChildAt (index :int) :DisplayObject
     {
-        nope();
         return null;
     }
 
     override public function getChildByName (name :String) :DisplayObject
     {
-        nope();
         return null;
     }
 
     override public function getChildIndex (child :DisplayObject) :int
     {
-        nope();
-        return 0;
+        return -1;
     }
 
     override public function getObjectsUnderPoint (point :Point) :Array
     {
-        nope();
-        return null;
+        return [];
     }
 
     override public function removeChild (child :DisplayObject) :DisplayObject
