@@ -119,7 +119,6 @@ public abstract class ItemRepository<
             }
 
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                log.info("Migrating " + getItemClass() + "...");
                 int migrated = 0;
                 try {
                     OrderBy order = OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED));
