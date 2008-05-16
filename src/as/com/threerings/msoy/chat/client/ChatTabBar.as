@@ -221,6 +221,11 @@ public class ChatTabBar extends HBox
     // from ChatDisplay - always returns false, as this ChatDisplay does no actual message display
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
+        if (_tabs.length == 0) {
+            // if we receive any messages before we have any tabs, there's nothing to do here.
+            return false;
+        }
+
         var index :int = -1;
         // If this is a SystemMessage, NotifyMessage or broadcast with PLACE_CHAT_TYPE localtype, 
         // it's aimed for the first tab, regardless of that tab's actual localtype
