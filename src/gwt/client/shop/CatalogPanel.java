@@ -228,19 +228,19 @@ public class CatalogPanel extends SmartTable
         15 /* name */ + 20 /* creator */ + 20 /* rating/price */;
 
     protected static final String[] SORT_LABELS = new String[] {
+        CShop.msgs.sortByNewAndHot(),
         CShop.msgs.sortByRating(),
         CShop.msgs.sortByListDate(),
         CShop.msgs.sortByPriceAsc(),
         CShop.msgs.sortByPriceDesc(),
         CShop.msgs.sortByPurchases(),
-        CShop.msgs.sortByNewAndHot(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
+        CatalogQuery.SORT_BY_NEW_AND_HOT,
         CatalogQuery.SORT_BY_RATING,
         CatalogQuery.SORT_BY_LIST_DATE,
         CatalogQuery.SORT_BY_PRICE_ASC,
         CatalogQuery.SORT_BY_PRICE_DESC,
         CatalogQuery.SORT_BY_PURCHASES,
-        CatalogQuery.SORT_BY_NEW_AND_HOT,
     };
 }
