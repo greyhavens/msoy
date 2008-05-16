@@ -13,23 +13,25 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class Stars extends FlowPanel
 {
-    public interface StarClickListener
+    public interface StarMouseListener
     {
         public void starClicked (byte newRating);
+        public void starMouseOn (byte rating);
+        public void starMouseOff ();
     }
 
-    public Stars (float rating, boolean isAverage, boolean halfSize, StarClickListener onClick)
+    public Stars (float rating, boolean isAverage, boolean halfSize, StarMouseListener handler)
     {
         setStyleName("stars");
 
         _starType = (isAverage ? "average" : "user");
         _halfSize = halfSize;
-        _onClick = onClick;
+        _handler = handler;
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
         for (int ii = 0; ii < 10; ii ++) {
             Image halfStar = new Image();
-            if (_onClick != null) {
+            if (_handler != null) {
                 halfStar.addMouseListener(new RatingMouseListener(ii/2+1));
             }
             add(halfStar);
@@ -77,12 +79,14 @@ public class Stars extends FlowPanel
         public void onMouseLeave (Widget sender)
         {
             updateStarImage(_rating);
+            _handler.starMouseOff();
         }
 
         // from interface MouseListener
         public void onMouseMove (Widget sender, int x, int y)
         {
             updateStarImage(_ratingInterval);
+            _handler.starMouseOn((byte) _ratingInterval);
         }
 
         // from interface MouseListener
@@ -94,7 +98,7 @@ public class Stars extends FlowPanel
         // from interface MouseListener
         public void onMouseUp (Widget sender, int x, int y)
         {
-            _onClick.starClicked((byte) _ratingInterval);
+            _handler.starClicked((byte) _ratingInterval);
         }
 
         protected int _ratingInterval;
@@ -109,6 +113,6 @@ public class Stars extends FlowPanel
     /** The type of star images we use: "average" or "user". */
     protected String _starType;
 
-    /** Called when a star is clicked, may be null. */
-    protected StarClickListener _onClick;
+    /** Called when a star is clicked or moused over, may be null. */
+    protected StarMouseListener _handler;
 }
