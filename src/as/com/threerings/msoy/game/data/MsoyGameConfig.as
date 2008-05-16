@@ -9,7 +9,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.crowd.client.PlaceController;
 
 import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.FlashWhirledGameConfig;
+import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.MsoyGameController;
@@ -17,7 +17,7 @@ import com.threerings.msoy.game.client.MsoyGameController;
 /**
  * A game config for a simple multiplayer metasoy flash game.
  */
-public class MsoyGameConfig extends FlashWhirledGameConfig
+public class MsoyGameConfig extends WhirledGameConfig
 {
     /** The creator provided name of this game. */
     public var name :String;
@@ -51,7 +51,7 @@ public class MsoyGameConfig extends FlashWhirledGameConfig
         out.writeField(name);
     }
 
-    // from WhirledGameConfig
+    // from BaseGameConfig
     override protected function createDefaultController () :PlaceController
     {
         return new MsoyGameController();

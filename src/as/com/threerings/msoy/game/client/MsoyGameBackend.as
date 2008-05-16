@@ -15,7 +15,7 @@ import flash.utils.Dictionary;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.whirled.game.client.FlashGameBackend;
+import com.whirled.game.client.WhirledGameBackend;
 
 import com.whirled.game.data.WhirledGameObject;
 
@@ -26,7 +26,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
  */
-public class MsoyGameBackend extends FlashGameBackend
+public class MsoyGameBackend extends WhirledGameBackend
 {
     public function MsoyGameBackend (
         ctx :GameContext, gameObj :WhirledGameObject, ctrl :MsoyGameController)
@@ -34,7 +34,7 @@ public class MsoyGameBackend extends FlashGameBackend
         super(ctx, gameObj, ctrl);
     }
 
-    // from FlashGameBackend
+    // from WhirledGameBackend
     override protected function getHeadShot_v2 (occupant :int) :DisplayObject
     {
         validateConnected();
@@ -54,7 +54,7 @@ public class MsoyGameBackend extends FlashGameBackend
         return super.getHeadShot_v2(occupant); // return something that works anyway
     }
 
-    // from FlashGameBackend
+    // from WhirledGameBackend
     override protected function getSize_v1 () :Point
     {
         var p :Point = super.getSize_v1();

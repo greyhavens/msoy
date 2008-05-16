@@ -7,12 +7,12 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.whirled.game.client.FlashWhirledGameController;
+import com.whirled.game.client.WhirledGameController;
 import com.whirled.game.client.BaseGameBackend;
 
 import com.threerings.msoy.client.OccupantReporter;
 
-public class MsoyGameController extends FlashWhirledGameController
+public class MsoyGameController extends WhirledGameController
 {
     // from PlaceController
     override public function willEnterPlace (plobj :PlaceObject) :void
@@ -32,13 +32,13 @@ public class MsoyGameController extends FlashWhirledGameController
         _occReporter.didLeavePlace(plobj);
     }
 
-    // from WhirledGameController
+    // from BaseGameController
     override public function backToWhirled (showLobby :Boolean = false) :void
     {
         (_pctx as GameContext).backToWhirled(showLobby);
     }
 
-    // from WhirledGameController
+    // from BaseGameController
     override protected function createBackend () :BaseGameBackend
     {
         return new MsoyGameBackend(_ctx as GameContext, _gameObj, this);
