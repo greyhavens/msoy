@@ -114,9 +114,6 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
-        Float minRating = (query.sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT)
-            ? Float.valueOf(4) : null;
-
         try {
             TagNameRecord tagRecord = (query.tag != null) ?
                 repo.getTagRepository().getTag(query.tag) : null;
@@ -125,7 +122,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // fetch catalog records and loop over them
             for (CatalogRecord record : repo.loadCatalog(query.sortBy, showMature(mrec),
                                                          query.search, tagId, query.creatorId,
-                                                         minRating, offset, rows)) {
+                                                         null, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListingCard());
             }
@@ -136,7 +133,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // if they want the total number of matches, compute that as well
             if (includeCount) {
                 result.listingCount = repo.countListings(
-                    showMature(mrec), query.search, tagId, query.creatorId, minRating);
+                    showMature(mrec), query.search, tagId, query.creatorId, null);
             }
 
         } catch (PersistenceException pe) {

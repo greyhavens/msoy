@@ -52,6 +52,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
@@ -496,7 +497,6 @@ public abstract class ItemRepository<
         List<OrderBy.Order> obOrders = Lists.newArrayList();
         switch(sortBy) {
         case CatalogQuery.SORT_BY_LIST_DATE:
-        case CatalogQuery.SORT_BY_NEW_AND_HOT:
             addOrderByListDate(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
             break;
@@ -515,6 +515,9 @@ public abstract class ItemRepository<
         case CatalogQuery.SORT_BY_PURCHASES:
             addOrderByPurchases(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
+            break;
+        case CatalogQuery.SORT_BY_NEW_AND_HOT:
+            addOrderByNewAndHot(obExprs, obOrders);
             break;
         default:
             throw new IllegalArgumentException(
@@ -1062,6 +1065,20 @@ public abstract class ItemRepository<
         orders.add(OrderBy.Order.DESC);
     }
 
+    protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    {
+        long now = System.currentTimeMillis();
+//        exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
+//            new Arithmetic.Mul(
+//                new Arithmetic.Sub(new ValueExp(now), getCatalogColumn(CatalogRecord.LISTED_DATE)),
+//                1d / DAY_IN_MS)
+//            ));
+        exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
+              new Arithmetic.Mul(getCatalogColumn(CatalogRecord.LISTED_DATE), (1f / 1000000))));
+
+        orders.add(OrderBy.Order.DESC);
+    }
+
     protected ColumnExp getItemColumn (String cname)
     {
         return new ColumnExp(getItemClass(), cname);
@@ -1146,4 +1163,6 @@ public abstract class ItemRepository<
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
+
+//    protected static final long DAY_IN_MS = 1000L * 60 * 60 * 24;
 }
