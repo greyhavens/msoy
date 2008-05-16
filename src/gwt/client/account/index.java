@@ -34,9 +34,15 @@ public class index extends Page
 
         String action = args.get(0, "");
         if (action.equals("create")) {
-            _onLogonPage = ACCOUNT;
-            _onLogonArgs = "welcome";
-            setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
+            _onLogonPage = ME;
+            _onLogonArgs = "";
+            setContent(CAccount.msgs.createTitle(), 
+                new CreateAccountPanel(new CreateAccountPanel.RegisterListener() {
+                    public void didRegister () {
+                        _onLogonPage = ACCOUNT;
+                        _onLogonArgs = "welcome";
+                    }
+                }));
 
         } else if (action.equals("optout")) {
             _onLogonPage = ME;

@@ -52,8 +52,15 @@ import client.util.ThumbBox;
  */
 public class CreateAccountPanel extends VerticalPanel
 {
-    public CreateAccountPanel ()
+    public interface RegisterListener 
     {
+        /** Called when the player is logging on due to a successful registration. */
+        public void didRegister ();
+    }
+
+    public CreateAccountPanel (RegisterListener regListener)
+    {
+        _regListener = regListener;
         setStyleName("createAccount");
         setSpacing(10);
 
@@ -255,9 +262,12 @@ public class CreateAccountPanel extends VerticalPanel
         String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
         String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
         CAccount.usersvc.register(
-            DeploymentConfig.version, email, CAccount.md5hex(password), name, _dateOfBirth.getDate(),
-            _photo.getPhoto(), info, 1, inviteId, guestId, challenge, response, new AsyncCallback() {
+            DeploymentConfig.version, email, CAccount.md5hex(password), name, 
+            _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge, 
+            response, new AsyncCallback() {
             public void onSuccess (Object result) {
+                // notify our registration listener
+                _regListener.didRegister();
                 // clear our current token otherwise didLogon() will try to load it
                 Application.setCurrentToken(null);
                 // pass our credentials into the application (which will trigger a redirect)
@@ -412,4 +422,5 @@ public class CreateAccountPanel extends VerticalPanel
     protected PhotoUploader _photo;
     protected CheckBox _tosBox;
     protected Label _status;
+    protected RegisterListener _regListener;
 }
