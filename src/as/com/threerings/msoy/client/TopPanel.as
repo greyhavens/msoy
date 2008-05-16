@@ -131,22 +131,26 @@ public class TopPanel extends Canvas
                 throw new Error("Failed to split on space");
             }
             bits = (bits[1] as String).split(",");
-            if (bits.length < 3) {
-                throw new Error("Failed to split on comma");
+            while (bits.length < MIN_FLASH_VERSION.length) {
+                bits.push(0);
             }
 
-            // check the major and minor version numbers
-            if (int(bits[0]) >= MIN_FLASH_VERSION && int(bits[2]) >= MIN_FLASH_REVISION) {
-                return true;
-            }
+            // now check each portion of the version number
+            for (var ii :int = 0; ii < bits.length; ii++) {
+                var required :int = int(MIN_FLASH_VERSION[ii]);
+                var actual :int = int(bits[ii]);
+                if (actual > required) {
+                    break; // we're good to go
 
-            // display an error and fail
-            var panel :DisconnectedPanel = new DisconnectedPanel(_ctx);
-            panel.setMessage(MessageBundle.tcompose(
-                                 "m.min_flash_version", bits[0], bits[2],
-                                 MIN_FLASH_VERSION, MIN_FLASH_REVISION), true);
-            setPlaceView(panel);
-            return false;
+                } else if (actual < required) {
+                    var panel :DisconnectedPanel = new DisconnectedPanel(_ctx);
+                    panel.setMessage(MessageBundle.tcompose(
+                        "m.min_flash_version", bits.join(","), MIN_FLASH_VERSION.join(",")), true);
+                    setPlaceView(panel);
+                    return false;
+                }
+                // else, the versions are the same for this field, proceed to the next...
+            }
 
         } catch (error :Error) {
             trace("Choked checking version [version=" + Capabilities.version +
@@ -544,7 +548,7 @@ public class TopPanel extends Canvas
     protected var _chat :Container;
     protected var _chatBounds :Rectangle;
 
-    protected static const MIN_FLASH_VERSION :int = 9;
-    protected static const MIN_FLASH_REVISION :int = 115;
+    /** The minimum flash player version required by whirled. */
+    protected static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
 }
 }
