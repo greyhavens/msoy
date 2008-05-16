@@ -1067,7 +1067,7 @@ public abstract class ItemRepository<
 
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-        long now = System.currentTimeMillis();
+//        long now = System.currentTimeMillis();
 //        exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
 //            new Arithmetic.Mul(
 //                new Arithmetic.Sub(new ValueExp(now), getCatalogColumn(CatalogRecord.LISTED_DATE)),
