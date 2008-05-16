@@ -323,6 +323,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.ownerId = ownerId;
         item.catalogId = catalogId;
         item.rating = rating;
+        item.ratingCount = ratingCount;
         item.used = used;
         item.location = location;
         item.lastTouched = lastTouched.getTime();
@@ -349,6 +350,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         // ownerId = not user editable
         // catalogId = not user editable
         // rating = not user editable
+        // ratingCount = not user editable
         // creatorId = not user editable
         // flagged = not user editable
         // attrs = not user editable
