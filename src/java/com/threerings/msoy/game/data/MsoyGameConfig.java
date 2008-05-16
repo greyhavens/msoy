@@ -6,15 +6,14 @@ package com.threerings.msoy.game.data;
 import com.threerings.util.ActionScript;
 
 import com.whirled.game.data.GameDefinition;
-
-import com.threerings.toybox.data.ToyBoxGameConfig;
+import com.whirled.game.data.FlashWhirledGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
 
 /**
  * A game config for a metasoy game.
  */
-public class MsoyGameConfig extends ToyBoxGameConfig
+public class MsoyGameConfig extends FlashWhirledGameConfig
 {
     /** The creator provided name of this game. */
     public String name;

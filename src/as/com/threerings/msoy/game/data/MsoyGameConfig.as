@@ -9,8 +9,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.crowd.client.PlaceController;
 
 import com.whirled.game.data.GameDefinition;
-
-import com.threerings.toybox.data.ToyBoxGameConfig;
+import com.whirled.game.data.FlashWhirledGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.MsoyGameController;
@@ -18,7 +17,7 @@ import com.threerings.msoy.game.client.MsoyGameController;
 /**
  * A game config for a simple multiplayer metasoy flash game.
  */
-public class MsoyGameConfig extends ToyBoxGameConfig
+public class MsoyGameConfig extends FlashWhirledGameConfig
 {
     /** The creator provided name of this game. */
     public var name :String;
