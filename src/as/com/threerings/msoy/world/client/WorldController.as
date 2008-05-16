@@ -68,8 +68,8 @@ import com.threerings.msoy.data.all.GatewayEntry;
  */
 public class WorldController extends MsoyController
 {
-    /** Command to display the recent scenes list. */
-    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
+//    /** Command to display the recent scenes list. */
+//    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
@@ -284,73 +284,77 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        CommandMenu.createMenu(menuData.reverse()).popUpAtMouse();
+        var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse());
+        menu.setDispatcher(_topPanel);
+        menu.popUpAtMouse();
     }
 
-    /**
-     * Handles the POP_ROOMS_MENU command.
-     */
-    public function handlePopRoomsMenu (trigger :Button) :void
-    {
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        var currentSceneId :int = (scene == null) ? -1 : scene.getId();
-        if (!(_wctx.getLocationDirector().getPlaceObject() is SceneObject)) {
-            currentSceneId = -1;
-        }
-
-        var memberObj :MemberObject = _wctx.getMemberObject();
-
-        var friends :Array = memberObj.getSortedEstablishedFriends();
-        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
-            return { label: fe.name.toString(), command: GO_MEMBER_HOME, arg: fe.getMemberId()
-            };
-        });
-
-        var recent :Array = memberObj.recentScenes.toArray();
-        recent.sort(function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
-            return int(sb1.lastVisit - sb2.lastVisit);
-        });
-
-        var owned :Array = memberObj.ownedScenes.toArray();
-        // TODO: sort owned?
-
-        var bookmarkMapper :Function = function (
-            sb :SceneBookmarkEntry, index :int, array :Array) :Object {
-                return {
-                    label: sb.toString(),
-                    enabled: (sb.sceneId != currentSceneId),
-                    command: GO_SCENE,
-                    arg: sb.sceneId
-                };
-            };
-
-        recent = recent.map(bookmarkMapper);
-        owned = owned.map(bookmarkMapper);
-
-        var menuData :Array = [];
-
-        // add the friends if present
-        if (friends.length > 0) {
-            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
-        }
-        // add owned scenes, if any
-        if (owned.length > 0) {
-            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"), children: owned});
-        }
-        // always add recent scenes
-        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"), children: recent });
-
-        if (!memberObj.isGuest()) {
-            menuData.push(
-                { type: "separator" },
-                { label: Msgs.GENERAL.get("l.go_home"),
-                  enabled: (memberObj.getHomeSceneId() != currentSceneId),
-                  command :GO_SCENE, arg: memberObj.getHomeSceneId()
-                });
-        }
-
-        CommandMenu.createMenu(menuData).popUp(trigger, true);
-    }
+//    /**
+//     * Handles the POP_ROOMS_MENU command.
+//     */
+//    public function handlePopRoomsMenu (trigger :Button) :void
+//    {
+//        var scene :Scene = _wctx.getSceneDirector().getScene();
+//        var currentSceneId :int = (scene == null) ? -1 : scene.getId();
+//        if (!(_wctx.getLocationDirector().getPlaceObject() is SceneObject)) {
+//            currentSceneId = -1;
+//        }
+//
+//        var memberObj :MemberObject = _wctx.getMemberObject();
+//
+//        var friends :Array = memberObj.getSortedEstablishedFriends();
+//        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
+//            return { label: fe.name.toString(), command: GO_MEMBER_HOME, arg: fe.getMemberId()
+//            };
+//        });
+//
+//        var recent :Array = memberObj.recentScenes.toArray();
+//        recent.sort(function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
+//            return int(sb1.lastVisit - sb2.lastVisit);
+//        });
+//
+//        var owned :Array = memberObj.ownedScenes.toArray();
+//        // TODO: sort owned?
+//
+//        var bookmarkMapper :Function = function (
+//            sb :SceneBookmarkEntry, index :int, array :Array) :Object {
+//                return {
+//                    label: sb.toString(),
+//                    enabled: (sb.sceneId != currentSceneId),
+//                    command: GO_SCENE,
+//                    arg: sb.sceneId
+//                };
+//            };
+//
+//        recent = recent.map(bookmarkMapper);
+//        owned = owned.map(bookmarkMapper);
+//
+//        var menuData :Array = [];
+//
+//        // add the friends if present
+//        if (friends.length > 0) {
+//            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
+//        }
+//        // add owned scenes, if any
+//        if (owned.length > 0) {
+//            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"), children: owned});
+//        }
+//        // always add recent scenes
+//        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"), children: recent });
+//
+//        if (!memberObj.isGuest()) {
+//            menuData.push(
+//                { type: "separator" },
+//                { label: Msgs.GENERAL.get("l.go_home"),
+//                  enabled: (memberObj.getHomeSceneId() != currentSceneId),
+//                  command :GO_SCENE, arg: memberObj.getHomeSceneId()
+//                });
+//        }
+//
+//        var menu :CommandMenu = CommandMenu.createMenu(menuData);
+//        menu.setDispatcher(_topPanel);
+//        menu.popUp(trigger, true);
+//    }
 
     /**
      * Handles the VIEW_ITEM command.
