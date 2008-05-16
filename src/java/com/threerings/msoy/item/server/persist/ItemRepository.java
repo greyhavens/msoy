@@ -119,19 +119,28 @@ public abstract class ItemRepository<
             }
 
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                log.info("Migrating " + getItemClass() + "...");
                 int migrated = 0;
                 try {
-                    // This doesn't seem like a good idea but I'm not sure how else to do it.
-                    List<T> list = findAll(getItemClass());
-                    log.info("Migrating " + list.size() + " " + getItemClass() + "...");
-                    for (T record : list) {
-                        RatingAverageRecord average = load(RatingAverageRecord.class,
-                             new FromOverride(getRatingClass()),
-                             new Where(getRatingColumn(RatingRecord.ITEM_ID), record.itemId));
-                        if (average.count > 0) {
-                            migrated++;
-                            updatePartial(getItemClass(), record.itemId,
-                                ItemRecord.RATING_COUNT, average.count);
+                    OrderBy order = OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED));
+                    final int limit = 1000;
+                    int count = 0;
+                    while (true) {
+                        List<T> list = findAll(getItemClass(), order, new Limit(count, limit));
+                        for (T record : list) {
+                            RatingAverageRecord average = load(RatingAverageRecord.class,
+                                 new FromOverride(getRatingClass()),
+                                 new Where(getRatingColumn(RatingRecord.ITEM_ID), record.itemId));
+                            if (average.count > 0) {
+                                migrated++;
+                                updatePartial(getItemClass(), record.itemId,
+                                    ItemRecord.RATING_COUNT, average.count);
+                            }
+                        }
+                        if (list.size() < limit) {
+                            break;
+                        } else {
+                            count += limit;
                         }
                     }
                 } catch (PersistenceException pe) {
@@ -1074,7 +1083,7 @@ public abstract class ItemRepository<
 //                1d / DAY_IN_MS)
 //            ));
         exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
-              new Arithmetic.Mul(getCatalogColumn(CatalogRecord.LISTED_DATE), (1f / 1000000))));
+              new Arithmetic.Div(getCatalogColumn(CatalogRecord.LISTED_DATE), 1000000)));
 
         orders.add(OrderBy.Order.DESC);
     }
