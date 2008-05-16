@@ -83,6 +83,10 @@ public class Frame
 
         // clear out the loading HTML because we're about to show the Whirled
         DOM.setInnerHTML(RootPanel.get(HEADER).getElement(), "");
+
+        // default to scrolling off.  In the rare case where a page wants scrolling, it gets enabled
+        // explicitly.
+        Window.enableScrolling(false);
     }
 
     /**
@@ -325,7 +329,7 @@ public class Frame
             Window.enableScrolling(false);
         }
 
-        // add our title bard if we've got one
+        // add our title bar if we've got one
         if (_bar != null) {
             RootPanel.get(CONTENT).add(_bar);
         }
@@ -545,8 +549,8 @@ public class Frame
                       _images.sme());
             addButton(col++, Page.PEOPLE, CShell.cmsgs.menuFriends(), _images.friends(),
                       _images.ofriends(), _images.sfriends());
-            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(), _images.ogames(),
-                      _images.sgames());
+            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(), 
+                      _images.ogames(), _images.sgames());
             addButton(col++, Page.WHIRLEDS, CShell.cmsgs.menuWorlds(), _images.worlds(),
                       _images.oworlds(), _images.sworlds());
             addButton(col++, Page.SHOP, CShell.cmsgs.menuShop(), _images.shop(), _images.oshop(),
