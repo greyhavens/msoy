@@ -35,7 +35,13 @@ public class TrophySource extends SubItem
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return getThumbnailMedia();
+        return thumbMedia;
+    }
+
+    // @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return thumbMedia;
     }
 
     // @Override // from Item

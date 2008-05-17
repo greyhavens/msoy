@@ -28,15 +28,15 @@ public class TrophySource extends SubItem
     }
 
     // from Item
-    override public function getPreviewMedia () :MediaDesc
-    {
-        return getThumbnailMedia();
-    }
-
-    // from Item
     override public function getType () :int
     {
         return TROPHY_SOURCE;
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return thumbMedia;
     }
 
     // from interface Streamable
