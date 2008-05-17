@@ -310,14 +310,6 @@ public /*abstract*/ class Item
         throw new Error("abstract");
     }
 
-    /**
-     * Returns the path to a thumbnail image for this item.
-     */
-    public function getThumbnailPath () :String
-    {
-        return getThumbnailMedia().getMediaPath();
-    }
-
     // from DSet_Entry
     public function getKey () :Object
     {

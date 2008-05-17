@@ -379,14 +379,6 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     }
 
     /**
-     * Returns the path to a thumbnail image for this item.
-     */
-    public String getThumbnailPath ()
-    {
-        return getThumbnailMedia().getMediaPath();
-    }
-
-    /**
      * Return the "primary" media for this item. Don't do any funny business,
      * return null if the primary media is null and overridden by something
      * else.
