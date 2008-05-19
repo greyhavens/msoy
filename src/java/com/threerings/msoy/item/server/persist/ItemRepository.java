@@ -49,6 +49,7 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.expression.EpochSeconds;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -1075,15 +1076,12 @@ public abstract class ItemRepository<
 
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-//        long now = System.currentTimeMillis();
-//        exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
-//            new Arithmetic.Mul(
-//                new Arithmetic.Sub(new ValueExp(now), getCatalogColumn(CatalogRecord.LISTED_DATE)),
-//                1d / DAY_IN_MS)
-//            ));
+        long nowSeconds = System.currentTimeMillis() / 1000;
         exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
-              new Arithmetic.Div(getCatalogColumn(CatalogRecord.LISTED_DATE), 1000000)));
-
+            new Arithmetic.Div(
+                new Arithmetic.Sub(new ValueExp(nowSeconds),
+                    new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
+                TWO_DAYS_IN_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1172,5 +1170,6 @@ public abstract class ItemRepository<
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
 
-//    protected static final long DAY_IN_MS = 1000L * 60 * 60 * 24;
+    /** The number of seconds in two (average) days. */
+    protected static final long TWO_DAYS_IN_SECONDS = 2 * 60L * 60 * 24;
 }
