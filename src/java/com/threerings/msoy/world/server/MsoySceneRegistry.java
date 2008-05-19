@@ -5,6 +5,8 @@ package com.threerings.msoy.world.server;
 
 import java.util.logging.Level;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ResultListener;
@@ -14,13 +16,16 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
+import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -29,6 +34,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomCodes;
 
 import static com.threerings.msoy.Log.log;
@@ -73,40 +79,58 @@ public class MsoySceneRegistry extends SceneRegistry
     }
 
     // from interface MsoySceneProvider
-    public void moveTo (ClientObject caller, final int sceneId, int version, int portalId,
-                        MsoyLocation destLoc, final SceneService.SceneMoveListener listener)
+    public void moveTo (ClientObject caller, final int sceneId, int version, final int portalId,
+                        final MsoyLocation destLoc, final SceneService.SceneMoveListener listener)
         throws InvocationException
     {
-        final MemberObject memobj = (MemberObject)caller;
+        MsoyBodyObject mover = (MsoyBodyObject)caller;
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
         // later, they will have walked to the exit and then received an error message, alas
-        RoomManager srcmgr = (RoomManager)getSceneManager(memobj.getSceneId());
+        RoomManager srcmgr = (RoomManager)getSceneManager(mover.getSceneId());
         if (srcmgr != null) {
             // give the source scene manager a chance to do access control
             Portal dest = ((MsoyScene)srcmgr.getScene()).getPortal(portalId);
             if (dest != null) {
-                String errmsg = srcmgr.mayTraversePortal(memobj, dest);
+                String errmsg = srcmgr.mayTraversePortal(mover, dest);
                 if (errmsg != null) {
                     throw new InvocationException(errmsg);
                 }
-                srcmgr.willTraversePortal(memobj, dest);
+                srcmgr.willTraversePortal(mover, dest);
             }
         }
 
-        // if this member has followers, tell them all to make the same scene move
-        for (MemberName follower :
-                 memobj.followers.toArray(new MemberName[memobj.followers.size()])) {
-            MemberObject folobj = MsoyServer.lookupMember(follower.getMemberId());
-            // if they've logged off or are no longer following us, remove them from our set
-            if (folobj == null || folobj.following == null ||
-                !folobj.following.equals(memobj.memberName)) {
-                log.info("Clearing departed follower " + follower + ".");
-                memobj.removeFromFollowers(follower.getMemberId());
-                continue;
+        // if this is a member with followers, tell them all to make the same scene move
+        final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
+        if (memobj != null) {
+            for (MemberName follower : Lists.newArrayList(memobj.followers)) {
+                MemberObject folobj = MsoyServer.lookupMember(follower.getMemberId());
+                // if they've logged off or are no longer following us, remove them from our set
+                if (folobj == null || folobj.following == null ||
+                    !folobj.following.equals(memobj.memberName)) {
+                    log.info("Clearing departed follower " + follower + ".");
+                    memobj.removeFromFollowers(follower.getMemberId());
+                    continue;
+                }
+                folobj.postMessage(RoomCodes.FOLLOWEE_MOVED, sceneId);
             }
-            folobj.postMessage(RoomCodes.FOLLOWEE_MOVED, sceneId);
         }
+
+        // this fellow will handle the nitty gritty of our scene switch
+        final MsoySceneMoveHandler handler =
+            new MsoySceneMoveHandler(mover, version, destLoc, listener) {
+            protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
+                super.effectSceneMove(scmgr);
+                // if we're a member and we have a pet following us, we need to move the pet
+                if (memobj != null) {
+                    PetObject petobj = MsoyServer.petMan.getPetObject(memobj.walkingId);
+                    if (petobj != null) {
+                        moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
+                               new SceneMoveAdapter());
+                    }
+                }
+            }
+        };
 
         // now check to see if the destination scene is already hosted on a server
         Tuple<String, HostedRoom> nodeInfo = MsoyServer.peerMan.getSceneHost(sceneId);
@@ -114,29 +138,23 @@ public class MsoySceneRegistry extends SceneRegistry
         // if it's hosted on this server, then send the client directly to the scene
         if (nodeInfo != null && MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
             log.info("Going directly to resolved local scene " + sceneId + ".");
-            resolveScene(sceneId, new MsoySceneMoveHandler(memobj, version, destLoc, listener));
+            resolveScene(sceneId, handler);
             return;
+        }
+
+        // if the mover is not a member, we don't allow server switches, so just fail
+        if (memobj == null) {
+            log.warning("Non-member requested move that requires server switch? " +
+                        "[who=" + mover.who() + ", info=" + nodeInfo + "].");
+            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
         }
 
         // if it's hosted on another server; send the client to that server
         if (nodeInfo != null) {
             // first check access control on the remote scene
-            HostedRoom room = nodeInfo.right;
-            boolean hasRights = memobj.canEnterScene(room.ownerId, room.ownerType, 
-                                                     room.accessControl);
-            if (!hasRights && memobj.tokens.isSupport()) {
-                log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
-                    "[sceneId=" + sceneId + ", ownerId=" + room.ownerId + ", ownerType" + 
-                    room.ownerType + ", accessControl=" + room.accessControl + "].");
-                hasRights = true;
-            }
-
-            if (hasRights) {
+            HostedRoom hr = nodeInfo.right;
+            if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl)) {
                 log.info("Going to remote node " + sceneId + "@" + nodeInfo.left + ".");
-                
-                // flush all metrics, because the memobj will get serialized *before* the room exit is processed
-                memobj.metrics.save(memobj);
-                
                 sendClientToNode(nodeInfo.left, memobj, listener);
             } else {
                 listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
@@ -146,10 +164,8 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // otherwise the scene is not resolved here nor there; so we claim the scene by acquiring a
         // distributed lock and then resolve it locally
-        final MsoySceneMoveHandler handler =
-            new MsoySceneMoveHandler(memobj, version, destLoc, listener);
-        MsoyServer.peerMan.acquireLock(
-            MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
+        MsoyServer.peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId),
+                                       new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + sceneId + ".");
@@ -188,7 +204,8 @@ public class MsoySceneRegistry extends SceneRegistry
         // tell the client about the node's hostname and port
         listener.moveRequiresServerSwitch(hostname, new int[] { port });
 
-        // forward this client's member object to the node to which they will shortly connect
+        // forward this client's member object to the node to which they will shortly connect (if
+        // we have a pet following us, we need to forward it to the other server as well)
         MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
     }
 

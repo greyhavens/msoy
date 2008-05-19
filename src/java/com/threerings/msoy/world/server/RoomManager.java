@@ -88,6 +88,31 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
     /**
+     * Flush any modified memories contained within the specified Iterable.
+     */
+    public static void flushMemories (Iterable<EntityMemoryEntry> entries)
+    {
+        final List<MemoryRecord> memrecs = Lists.newArrayList();
+        for (EntityMemoryEntry entry : entries) {
+            if (entry.modified) {
+                memrecs.add(new MemoryRecord(entry));
+            }
+        }
+        if (memrecs.size() > 0) {
+            MsoyServer.invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    try {
+                        MsoyServer.memoryRepo.storeMemories(memrecs);
+                    } catch (PersistenceException pe) {
+                        log.log(Level.WARNING, "Failed to update memories " + memrecs + ".", pe);
+                    }
+                    return false;
+                }
+            });
+        }
+    }
+
+    /**
      * Forcibly change the location of the specified body.
      * @return null on success, or an error string.
      */
@@ -207,6 +232,7 @@ public class RoomManager extends SpotSceneManager
             loc.orient = (short) ((360 + 90 + (int) Math.round(Math.toDegrees(radians))) % 360);
         }
 
+        // note: we don't call super, we call updateLocation() ourselves
         updateLocation(body, loc);
     }
 
@@ -361,13 +387,14 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
-     * Validates the member against the scene's access control flag.
-     * If not successful, throws the invocation exception, with failure reason in the message.
+     * Validates that the specified body can enter our scene.
+     *
+     * @throws InvocationException if the body is disallowed entry.
      */
     public void validateEntranceAction (BodyObject body)
         throws InvocationException
     {
-        if (!((MsoyScene) _scene).canEnter((MemberObject)body)) {
+        if (!((MsoyScene) _scene).canEnter((MsoyBodyObject)body)) {
             throw new InvocationException(RoomCodes.E_ENTRANCE_DENIED);
         }
     }
@@ -555,7 +582,7 @@ public class RoomManager extends SpotSceneManager
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
     }
-    
+
     public void occupantLeftAVRGame (MemberObject member)
     {
         reassignControllers(member.getOid(), true);
@@ -585,7 +612,7 @@ public class RoomManager extends SpotSceneManager
             return false;
         }
         // otherwise, it's for some entity other than a user's avatar...
-    
+
         Controllable reference = new ControllableEntity(item);
         EntityControl ctrl = _roomObj.controllers.get(reference);
         if (ctrl == null) {
@@ -615,7 +642,7 @@ public class RoomManager extends SpotSceneManager
 
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(), 
+        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
@@ -632,22 +659,22 @@ public class RoomManager extends SpotSceneManager
         // load up any pets that are "let out" in this room scene
         MsoyServer.petMan.loadRoomPets(_roomObj, _scene.getId());
     }
-    
+
     @Override // from PlaceManager
     protected void bodyEntered (final int bodyOid)
     {
         super.bodyEntered(bodyOid);
-        
+
         DObject body = MsoyServer.omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             ensureAVRGameControl(member);
             MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
-            member.metrics.room.init(
-                model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER, model.ownerId);
+            boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
+            member.metrics.room.init(isMemberScene, model.ownerId);
         }
     }
-    
+
     @Override // from PlaceManager
     protected void bodyUpdated (OccupantInfo info)
     {
@@ -662,13 +689,13 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected void bodyLeft (int bodyOid)
     {
-        // start metrics 
+        // start metrics
         DObject body = MsoyServer.omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             member.metrics.room.save(member);
         }
-        
+
         super.bodyLeft(bodyOid);
 
         // reassign this occupant's controlled entities
@@ -700,8 +727,8 @@ public class RoomManager extends SpotSceneManager
             Controllable reference = new ControllableAVRGame(member.game.gameId);
             EntityControl ctrl = _roomObj.controllers.get(reference);
             if (ctrl == null) {
-                log.info("Assigning control [avrGameId=" + member.game.gameId + ", to=" +
-                    member.who() + "].");
+                log.info("Assigning control [avrGameId=" + member.game.gameId +
+                         ", to=" + member.who() + "].");
                 _roomObj.addToControllers(new EntityControl(reference, member.getOid()));
             }
         }
@@ -763,7 +790,7 @@ public class RoomManager extends SpotSceneManager
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);
             if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
-                MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name, 
+                MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name,
                                                msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                                                up.accessControl);
             }
@@ -972,32 +999,6 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
-    /**
-     * Flush any modified memories contained within the specified Iterable.
-     */
-    public static void flushMemories (Iterable<EntityMemoryEntry> entries)
-    {
-        final List<MemoryRecord> memrecs = Lists.newArrayList();
-        for (EntityMemoryEntry entry : entries) {
-            if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
-            }
-        }
-        if (memrecs.size() > 0) {
-            MsoyServer.invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        MsoyServer.memoryRepo.storeMemories(memrecs);
-                    } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to update memories [" +
-                                "memrecs=" + memrecs + "].", pe);
-                    }
-                    return false;
-                }
-            });
-        }
-    }
-
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener
@@ -1073,7 +1074,7 @@ public class RoomManager extends SpotSceneManager
             return diff;
         }
     } // End: static class Controller
-    
+
     /** The room object. */
     protected RoomObject _roomObj;
 

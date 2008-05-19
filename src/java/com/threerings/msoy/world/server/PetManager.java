@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.server;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
@@ -24,6 +25,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -38,6 +40,7 @@ import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetInfo;
+import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
@@ -57,6 +60,40 @@ public class PetManager
     {
         // register our pet invocation services
         invmgr.registerDispatcher(new PetDispatcher(this), MsoyCodes.WORLD_GROUP);
+
+        // register a member forward participant that handles wallked pets
+        MsoyServer.peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
+            public void packMember (MemberObject memobj, Map<String,Object> data) {
+                PetObject petobj = getPetObject(memobj.walkingId);
+                if (petobj != null) {
+                    // extract our memories from the room we're in
+                    MsoyServer.screg.leaveOccupiedScene(petobj);
+                    data.put("PO.pet", petobj.pet);
+                    data.put("PO.memories", petobj.memories);
+                    // the pet will shutdown later when the walking member is destroyed
+                }
+            }
+
+            public void unpackMember (MemberObject memobj, Map<String,Object> data) {
+                // create a handler for any forwarded pet we might have
+                Pet pet = (Pet)data.get("PO.pet");
+                @SuppressWarnings("unchecked") List<EntityMemoryEntry> memories =
+                    (List<EntityMemoryEntry>)data.get("PO.memories");
+                if (pet != null) {
+                    createHandler(null, pet, memories);
+                }
+                // TODO: reap forwarded pets whose owners never end up showing up
+            }
+        });
+    }
+
+    /**
+     * Returns the distributed object for the specified pet or null if the pet is not resolved.
+     */
+    public PetObject getPetObject (int petId)
+    {
+        PetHandler handler = _handlers.get(petId);
+        return (handler == null) ? null : handler.getPetObject();
     }
 
     /**
@@ -89,7 +126,7 @@ public class PetManager
             }
 
             public void handleSuccess () {
-                resolveRoomPets(sceneId, roomObj, _pets, _memories);
+                resolveRoomPets(sceneId, _pets, _memories);
             }
             public void handleFailure (Exception e) {
                 log.log(Level.WARNING, "Failed to load pets [scene=" + sceneId + "].", e);
@@ -103,7 +140,7 @@ public class PetManager
     /**
      * Called when a room shuts down, unloads any pets that are "let out" in that room.
      */
-    public void shutdownRoomPets (final RoomObject roomObj)
+    public void shutdownRoomPets (RoomObject roomObj)
     {
         for (OccupantInfo info : roomObj.occupantInfo) {
             if (info instanceof PetInfo) {
@@ -125,19 +162,15 @@ public class PetManager
     {
         final MemberObject user = (MemberObject)caller;
 
-        // make sure the requester is in a room that they own
-        PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
-        if (!(plmgr instanceof RoomManager)) {
-            log.info("Owner no longer in a room? [who=" + user.who() + ", in=" + plmgr + "].");
-            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+        // if the owner is already walking a pet, they can't call another
+        if (user.walkingId != 0) {
+            throw new InvocationException(PetCodes.E_ALREADY_WALKING);
         }
-        ((RoomManager)plmgr).checkCanAddPet(user);
 
-        // now check to see if the pet is already loaded
+        // check to see if the pet is already loaded
         PetHandler handler = _handlers.get(petId);
         if (handler != null) {
-            // moveToOwner may throw an InvocationException if this isn't the owner..
-            handler.moveToOwner(user, null);
+            handler.moveToOwner(user);
             listener.requestProcessed();
             return;
         }
@@ -162,7 +195,7 @@ public class PetManager
             }
 
             public void handleSuccess () {
-                resolvePet(user, _pet, _memory);
+                createHandler(user, _pet, _memory);
                 listener.requestProcessed();
             }
             public void handleFailure (Exception e) {
@@ -246,7 +279,7 @@ public class PetManager
      * Called after {@link #loadRoomPets} has loaded our persistent pet data to finish the job of
      * pet resolution.
      */
-    protected void resolveRoomPets (int sceneId, RoomObject roomObj, List<Pet> pets,
+    protected void resolveRoomPets (int sceneId, List<Pet> pets,
                                     IntMap<List<EntityMemoryEntry>> memories)
     {
         for (Pet pet : pets) {
@@ -257,32 +290,35 @@ public class PetManager
             }
 
             // create a handler for this pet and start them in this room
-            PetHandler handler = new PetHandler(this, pet);
-            handler.enterRoom(sceneId, roomObj, memories.get(pet.itemId), false);
+            new PetHandler(this, pet, memories.get(pet.itemId)).enterRoom(sceneId);
         }
     }
 
     /**
      * Finishes the resolution of a pet initiated by {@link #callPet}.
      */
-    protected void resolvePet (MemberObject owner, Pet pet, List<EntityMemoryEntry> memory)
+    protected void createHandler (MemberObject owner, Pet pet, List<EntityMemoryEntry> memories)
     {
         // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
         // we'll just get this far and abandon ship; it's not going to happen that often
         if (_handlers.containsKey(pet.itemId)) {
-            log.info("resolvePet() ignoring repeat resolution request. [pet=" + pet.itemId + "].");
+            log.info("createHandler() ignoring repeat resolution. [pet=" + pet.itemId + "].");
             return;
         }
 
-        // create a handler for this pet (which will register itself with us); then direct it
-        // immediately to the room occupied by its owner
-        PetHandler handler = new PetHandler(this, pet);
+        // create a handler for this pet (which will register itself with us)
+        PetHandler handler = new PetHandler(this, pet, memories);
+
+        // direct it to the room occupied by its owner
         try {
-            handler.moveToOwner(owner, memory);
+            // if we're a pet forwarded from another server, we won't have an owner here
+            if (owner != null) {
+                handler.moveToOwner(owner);
+            }
         } catch (InvocationException ie) {
-            log.warning("Newly resolved pet rejects its owner? [error=" + ie + "].");
-            // wow, this can only mean that the owner is not our owner.. this shouldn't happen
-            // but let's try doing the right thing.
+            log.warning("Resolved pet rejects owner? [pet=" + handler + ", error=" + ie + "].");
+            // wow, this can only mean that the owner is not our owner... this shouldn't happen but
+            // let's try doing the right thing.
             handler.shutdown(false);
         }
     }

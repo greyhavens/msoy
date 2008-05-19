@@ -13,6 +13,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.data.all.Decor;
 
 import static com.threerings.msoy.Log.log;
@@ -62,19 +63,10 @@ public class MsoyScene extends SceneImpl
     /**
      * Can the specified member enter the scene?
      */
-    public boolean canEnter (MemberObject member)
+    public boolean canEnter (MsoyBodyObject body)
     {
-        boolean hasRights = member.canEnterScene(_model.ownerId, _model.ownerType, 
-                                                 _model.accessControl);
-
-        if (!hasRights && member.tokens.isSupport()) {
-            log.info("Allowing support+ to enter scene which they otherwise couldn't enter " +
-                     "[sceneId=" + getId() + ", sceneName=\"" + getName() +
-                     "\", accessControl=" + _model.accessControl + "].");
-            return true;
-        }
-
-        return hasRights;
+        return body.canEnterScene(_model.sceneId, _model.ownerId,
+                                  _model.ownerType, _model.accessControl);
     }
 
     /** 

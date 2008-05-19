@@ -4,13 +4,11 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.stats.data.StatSet;
 
 /**
  * Dispatches requests to the {@link MsoyPeerProvider}.
@@ -42,7 +40,7 @@ public class MsoyPeerDispatcher extends InvocationDispatcher
         case MsoyPeerMarshaller.FORWARD_MEMBER_OBJECT:
             ((MsoyPeerProvider)provider).forwardMemberObject(
                 source,
-                (MemberObject)args[0], (String)args[1], (StatSet)args[2], (PlayerMetrics)args[3]
+                (MemberObject)args[0], (String[])args[1], (Object[])args[2]
             );
             return;
 

@@ -28,6 +28,15 @@ public class MsoyBodyObject extends BodyObject
         return ScenePlace.getSceneId(this);
     }
 
+    /**
+     * Determines whether this body is allowed to enter the specified scene. By default all bodies
+     * are allowed in all scenes. Only members are further restricted.
+     */
+    public boolean canEnterScene (int sceneId, int ownerId, byte ownerType, byte accessControl)
+    {
+        return true;
+    }
+
     @Override // from BodyObject
     protected String getStatusTranslation ()
     {

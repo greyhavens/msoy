@@ -18,24 +18,13 @@ public class PetInfo extends ActorInfo
         return _ownerId;
     }
 
-    /**
-     * Returns true if this pet is following its owner around the world, false if it is in the room
-     * because it has been permanently "let out" in the room.
-     */
-    public function isFollowing () :Boolean
-    {
-        return _isFollowing;
-    }
-
     // from ActorInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
         _ownerId = ins.readInt();
-        _isFollowing = ins.readBoolean();
     }
 
     protected var _ownerId :int;
-    protected var _isFollowing :Boolean;
 }
 }

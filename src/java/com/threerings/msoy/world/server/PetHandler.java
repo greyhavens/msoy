@@ -4,31 +4,30 @@
 package com.threerings.msoy.world.server;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.util.Name;
 
-import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
-import com.threerings.whirled.data.SceneModel;
-import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetObject;
-import com.threerings.msoy.world.data.RoomObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -37,13 +36,22 @@ import static com.threerings.msoy.Log.log;
  */
 public class PetHandler
 {
-    public PetHandler (PetManager petmgr, Pet pet)
+    public PetHandler (PetManager petmgr, Pet pet, List<EntityMemoryEntry> memories)
     {
         _petobj = MsoyServer.omgr.registerObject(new PetObject());
+        _petobj.memories = memories;
         _petobj.setUsername(new Name(pet.name));
         _petobj.pet = pet;
         _petmgr = petmgr;
         _petmgr.mapHandler(pet.itemId, this);
+    }
+
+    /**
+     * Returns this pet's distributed object.
+     */
+    public PetObject getPetObject ()
+    {
+        return _petobj;
     }
 
     /**
@@ -55,154 +63,56 @@ public class PetHandler
         _petmgr.clearHandler(_petobj.pet.itemId);
 
         // if we're not shutting down because our room shutdown...
-        if (!roomDidShutdown && _roomObj != null) {
-            // we need to leave the room (and extract our memory from it)
-            List<EntityMemoryEntry> memories = leaveRoom();
-            RoomManager.flushMemories(memories);
+        if (!roomDidShutdown) {
+            // leave our current location (which will extract our memories)
+            MsoyServer.screg.leaveOccupiedScene(_petobj);
+            // and save them
+            RoomManager.flushMemories(_petobj.memories);
         }
+
+        // TODO: if we're following a member, clear that out?
 
         // finally, destroy our pet object
         MsoyServer.omgr.destroyObject(_petobj.getOid());
     }
 
     /**
-     * Enters the pet into the supplied room. The supplied memory should come from having loaded
-     * the pet for the first time or from extracting it from the room the pet just left.
+     * Moves the pet into the specified room.
      */
-    public void enterRoom (
-        final int sceneId, RoomObject roomObj, List<EntityMemoryEntry> memories,
-        final boolean updateUsage)
+    public void enterRoom (final int sceneId)
     {
-        log.info("Entering room [pet=" + _petobj.pet.getIdent() +
-                 ", room=" + roomObj.getOid() + "].");
-
-        // add our memories to the room
-        _roomObj = roomObj;
-        try {
-            _roomObj.startTransaction();
-            if (memories != null) {
-                for (EntityMemoryEntry entry : memories) {
-                    _roomObj.addToMemories(entry);
-                }
-            }
-        } finally {
-            _roomObj.commitTransaction();
-        }
+        log.info("Entering room [pet=" + this + ", sceneId=" + sceneId + "].");
 
         // then enter the scene like a proper scene entity
-        MsoyServer.screg.moveTo(_petobj, sceneId, -1, new SceneMoveAdapter() {
+        MsoyServer.screg.moveTo(_petobj, sceneId, Integer.MAX_VALUE, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
-                log.warning("Pet failed to enter scene [pet=" + _petobj.pet + ", scene=" + sceneId +
+                log.warning("Pet failed to enter scene [pet=" + this + ", scene=" + sceneId +
                             ", reason=" + reason + "].");
-                // TODO: shutdown? freakout? call the Elite Beat Agents?
-            }
-
-            public void moveSucceeded (int placeId, PlaceConfig config) {
-                updateUsage();
-            }
-
-            public void moveSucceededWithUpdates (
-                int placeId, PlaceConfig config, SceneUpdate[] updates) {
-                updateUsage();
-            }
-
-            public void moveSucceededWithScene (int placeId, PlaceConfig config, SceneModel model) {
-                updateUsage();
-            }
-
-            protected void updateUsage () {
-                if (updateUsage) {
-                    PetHandler.this.updateUsage(Item.USED_AS_PET, sceneId);
-                }
+                shutdown(false);
             }
         });
     }
 
     /**
-     * Removes the pet from its current room, extracting and returning its active memory.
+     * Places this pet in the owner's room and puts them in follow mode.
      */
-    public List<EntityMemoryEntry> leaveRoom ()
-    {
-        if (_roomObj == null) {
-            return null; // NOOP!
-        }
-
-        log.info("Leaving room [pet=" + _petobj.pet.getIdent() +
-                 ", room=" + _roomObj.getOid() + "].");
-
-        // collect up our memory entries from our previous room
-        ItemIdent petid = _petobj.pet.getIdent();
-        List<EntityMemoryEntry> memories = Lists.newArrayList();
-        for (EntityMemoryEntry entry : _roomObj.memories) {
-            if (entry.item.equals(petid)) {
-                memories.add(entry);
-            }
-        }
-
-        // now remove those from the room
-        try {
-            _roomObj.startTransaction();
-            for (EntityMemoryEntry entry : memories) {
-                _roomObj.removeFromMemories(entry.getRemoveKey());
-            }
-        } finally {
-            _roomObj.commitTransaction();
-        }
-
-        // clear out, clear out and clear out
-        _roomObj = null;
-        MsoyServer.screg.leaveOccupiedScene(_petobj);
-        return memories;
-    }
-
-    /**
-     * Places this pet in follow mode and moves them to the owner's room.
-     *
-     * @param memory if the pet was just resolved, this should contain its memory. Otherwise the
-     * pet will assume it is in a room already and will extract its memory from its current room
-     * before moving.
-     */
-    public void moveToOwner (MemberObject owner, List<EntityMemoryEntry> memory)
+    public void moveToOwner (MemberObject owner)
         throws InvocationException
     {
         validateOwnership(owner);
-
-        // locate the room to which we are headed
-        DObject dobj = MsoyServer.omgr.getObject(owner.getPlaceOid());
-        if (!(dobj instanceof RoomObject)) {
-            log.warning("moveToOwner() found owner in non-RoomObject [pet=" + _petobj.pet +
-                        ", owner=" + owner.who() +
-                        ", location=" + StringUtil.shortClassName(dobj) + "].");
-            if (_roomObj == null) { // stay in the room we're in or unload if we're not in a room
-                shutdown(false);
-            }
-            return;
-        }
-
-        // leave any room we currently occupy
-        if (_roomObj != null) {
-            if (memory != null) {
-                log.warning("moveToOwner() provided with memory but we're already in a room " +
-                            "[pet=" + _petobj.pet + ", owner=" + owner.who() + "].");
-                // fall through and ignore the memory supplied by the caller
-            }
-            memory = leaveRoom();
-        }
-
         // set ourselves to follow mode
-        _petobj.setFollowId(owner.getMemberId());
-
+        startFollowing(owner);
         // head to our destination
-        enterRoom(owner.getSceneId(), (RoomObject)dobj, memory, true);
+        enterRoom(owner.getSceneId());
     }
 
     /**
      * Handles an order from the specified user on this pet.
      */
-    public void orderPet (MemberObject orderer, int order)
+    public void orderPet (MemberObject owner, int order)
         throws InvocationException
     {
-        validateOwnership(orderer);
+        validateOwnership(owner);
 
         switch (order) {
         case Pet.ORDER_SLEEP:
@@ -210,9 +120,42 @@ public class PetHandler
             shutdown(false);
             break;
 
+        case Pet.ORDER_FOLLOW:
+            startFollowing(owner);
+            break;
+
+        case Pet.ORDER_GO_HOME:
+            stopFollowing(owner);
+            updateUsage(Item.USED_AS_PET, owner.homeSceneId);
+            // TODO: if home room is resolved (on any server), instruct it to resolve pet
+            shutdown(false);
+            break;
+
+        case Pet.ORDER_STAY:
+            // make sure the requester is in a room that they own
+            PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(owner.getPlaceOid());
+            if (!(plmgr instanceof RoomManager)) {
+                log.info("Owner no longer in a room? [who=" + owner.who() + ", in=" + plmgr + "].");
+                throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+            }
+            ((RoomManager)plmgr).checkCanAddPet(owner);
+            // stop following our owner
+            stopFollowing(owner);
+            // note that we want to autoload in this room
+            updateUsage(Item.USED_AS_PET, ((RoomManager)plmgr).getScene().getId());
+            break;
+
         default:
-            throw new InvocationException(PetCodes.E_INTERNAL_ERROR); // TODO
+            log.warning("Received unknown pet order [from=" + owner.who() +
+                        ", order=" + order + "].");
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return "[id=" + _petobj.pet.itemId + ", name=" + _petobj.pet.name + "]";
     }
 
     /**
@@ -224,10 +167,55 @@ public class PetHandler
         // TODO: if pet is updated or changes hands, we need to update the resolved PetObject
         if (_petobj.pet.ownerId != owner.getMemberId()) {
             // TODO: allow support personnel?
-            log.warning("Pet handling by non-owner [who=" + owner.who() +
-                        ", petId=" + _petobj.pet.itemId +
+            log.warning("Pet handling by non-owner [who=" + owner.who() + ", pet=" + this +
                         ", ownerId=" + _petobj.pet.ownerId + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Sets up the necessary bits to follow our owner. If this is not possible, we'll throw an
+     * invocation exception and shut ourselves down.
+     */
+    protected void startFollowing (MemberObject owner)
+        throws InvocationException
+    {
+        if (_follist != null) {
+            log.warning("Asked to follow but we're already following! [pet=" + this +
+                        ", target=" + owner.who() + "].");
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+        }
+
+        if (owner.walkingId != 0) {
+            shutdown(false);
+            throw new InvocationException(PetCodes.E_ALREADY_WALKING);
+        }
+
+        owner.setWalkingId(_petobj.pet.itemId);
+        owner.addListener(_follist = new ObjectDeathListener() {
+            public void objectDestroyed (ObjectDestroyedEvent event) {
+                // our followee logged off, shut ourselves down
+                shutdown(false);
+            }
+        });
+    }
+
+    /**
+     * Clears out our following bits.
+     */
+    protected void stopFollowing (MemberObject owner)
+    {
+        // make sure this member is walking us
+        if (owner.walkingId != _petobj.pet.itemId) {
+            log.warning("Requested to stop following member who's not walking us [pet=" + this +
+                        ", stopper=" + owner.who() + ", walking=" + owner.walkingId + "].");
+            return;
+        }
+        owner.setWalkingId(0);
+
+        if (_follist != null) {
+            owner.removeListener(_follist);
+            _follist = null;
         }
     }
 
@@ -237,21 +225,15 @@ public class PetHandler
     protected void updateUsage (final byte usageType, final int location)
     {
         final int itemId = _petobj.pet.itemId;
-        MsoyServer.invoker.postUnit(new Invoker.Unit("updatePetUsage(" + itemId + ")") {
-            public boolean invoke () {
-                try {
-                    MsoyServer.itemMan.getPetRepository().markItemUsage(
-                        new int[] { itemId }, usageType, location);
-                } catch (Exception e) {
-                    log.warning("Unable to update pet usage [petId=" + itemId +
-                        ", cause=" + e + "].");
-                }
-                return false;
+        MsoyServer.invoker.postUnit(new WriteOnlyUnit("updatePetUsage(" + itemId + ")") {
+            public void invokePersist () throws Exception {
+                MsoyServer.itemMan.getPetRepository().markItemUsage(
+                    new int[] { itemId }, usageType, location);
             }
         });
     }
 
     protected PetManager _petmgr;
     protected PetObject _petobj;
-    protected RoomObject _roomObj;
+    protected ObjectDeathListener _follist;
 }

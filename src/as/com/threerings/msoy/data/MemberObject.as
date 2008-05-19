@@ -99,6 +99,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>viewOnly</code> field. */
     public static const VIEW_ONLY :String = "viewOnly";
+
+    /** The field name of the <code>walkingId</code> field. */
+    public static const WALKING_ID :String = "walkingId";
     // AUTO-GENERATED: FIELDS END
 
     /** An <code>availability</code> status. */
@@ -179,6 +182,9 @@ public class MemberObject extends MsoyBodyObject
     /** A flag that's true if this member object is only viewing the current scene and should not
      * be rendered in it. */
     public var viewOnly :Boolean;
+
+    /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
+    public var walkingId :int;
 
     /**
      * Return this member's unique id.
@@ -324,6 +330,7 @@ public class MemberObject extends MsoyBodyObject
         lists = (ins.readObject() as DSet);
         notifications = (ins.readObject() as DSet);
         viewOnly = ins.readBoolean();
+        walkingId = ins.readInt();
     }
 }
 }

@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -34,6 +35,8 @@ import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.BodyProvider;
 import com.threerings.crowd.server.PlaceManager;
 
+import com.threerings.stats.data.StatSet;
+
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -41,6 +44,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.NotifyMessage;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -48,6 +52,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -97,6 +102,27 @@ public class MemberManager
             }
         };
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
+
+        // register a member forward participant that handles our transient bits
+        MsoyServer.peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
+            public void packMember (MemberObject memobj, Map<String,Object> data) {
+                // flush the transient bits in our metrics as we will snapshot and send this data
+                // before we depart our current room (which is when the are normally saved)
+                memobj.metrics.save(memobj);
+
+                // store our transient bits in the additional data map
+                data.put("MO.actorState", memobj.actorState);
+                data.put("MO.stats", memobj.stats);
+                data.put("MO.metrics", memobj.metrics);
+            }
+
+            public void unpackMember (MemberObject memobj, Map<String,Object> data) {
+                // grab and reinstate our bits
+                memobj.actorState = (String)data.get("MO.actorState");
+                memobj.stats = (StatSet)data.get("MO.stats");
+                memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
+            }
+        });
     }
 
     /**

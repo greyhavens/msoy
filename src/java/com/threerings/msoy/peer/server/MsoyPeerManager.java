@@ -4,12 +4,14 @@
 package com.threerings.msoy.peer.server;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.threerings.util.Name;
@@ -27,7 +29,6 @@ import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 
-import com.threerings.stats.data.StatSet;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -37,7 +38,6 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
@@ -70,6 +70,22 @@ public class MsoyPeerManager extends CrowdPeerManager
         public void remoteMemberLoggedOff (MemberName member);
     }
 
+    /** Used to participate in the member object forwarding process. */
+    public static interface MemberForwarder
+    {
+        /**
+         * Packs up additional data to be forwarded along with the member object. Anything added to
+         * the supplied map will be sent to the other server. Note: all values in the map must be
+         * streamable types.
+         */
+        public void packMember (MemberObject memobj, Map<String,Object> data);
+
+        /**
+         * Unpacks additional data delivered with a forwarded member object.
+         */
+        public void unpackMember (MemberObject memobj, Map<String,Object> data);
+    }
+
     /** Returns a lock used to claim resolution of the specified scene. */
     public static NodeObject.Lock getSceneLock (int sceneId)
     {
@@ -92,6 +108,17 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getChannelLock (ChatChannel channel)
     {
         return new NodeObject.Lock("ChannelHost", HostedChannel.getKey(channel));
+    }
+
+    /**
+     * Registers a participant in the member forwarding process. This should be done during server
+     * initialization, before we are likely to have to forward member objects. Note: there is no
+     * way to remove a registration, the assumption is that all participants are registered at
+     * server startup time and exist for the lifetime of the server.
+     */
+    public void registerMemberForwarder (MemberForwarder part)
+    {
+        _mforwarders.add(part);
     }
 
     /**
@@ -340,7 +367,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             return;
         }
 
-        // locate the per in question
+        // locate the peer in question
         PeerNode node = _peers.get(nodeName);
         if (node == null || node.nodeobj == null) {
             log.warning("Unable to forward member object to unready peer [peer=" + nodeName +
@@ -348,9 +375,19 @@ public class MsoyPeerManager extends CrowdPeerManager
             return;
         }
 
+        // allow the member forward participants to participate
+        Map<String,Object> data = Maps.newHashMap();
+        for (MemberForwarder part : _mforwarders) {
+            part.packMember(memobj, data);
+        }
+
+        // flatten the additional participant data into an array
+        String[] keys = data.keySet().toArray(new String[data.size()]);
+        Object[] values = data.values().toArray(new Object[data.size()]);
+
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
-            node.getClient(), memobj, memobj.actorState, memobj.stats, memobj.metrics);
+            node.getClient(), memobj, keys, values);
 
         // let our client handler know that the session is not over but rather is being forwarded
         // to another server
@@ -361,15 +398,21 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     // from interface MsoyPeerProvider
-    public void forwardMemberObject (
-        ClientObject caller, MemberObject memobj, String actorState, StatSet stats, PlayerMetrics metrics)
+    public void forwardMemberObject (ClientObject caller, MemberObject memobj,
+                                     String[] keys, Object[] values)
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
-        // fill their transient fields back in
-        memobj.actorState = actorState;
-        memobj.stats = stats;
-        memobj.metrics = metrics;
+
+        // let our forward participants in on the action
+        Map<String,Object> data = Maps.newHashMap();
+        for (int ii = 0; ii < keys.length; ii++) {
+            data.put(keys[ii], values[ii]);
+        }
+        for (MemberForwarder part : _mforwarders) {
+            part.unpackMember(memobj, data);
+        }
+
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj));
@@ -520,6 +563,9 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
+
+    /** A list of participants in the member forwarding process. */
+    protected List<MemberForwarder> _mforwarders = Lists.newArrayList();
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;

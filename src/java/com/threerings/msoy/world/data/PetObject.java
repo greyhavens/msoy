@@ -3,10 +3,16 @@
 
 package com.threerings.msoy.world.data;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**
@@ -17,21 +23,67 @@ public class PetObject extends MsoyBodyObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>pet</code> field. */
     public static final String PET = "pet";
-
-    /** The field name of the <code>followId</code> field. */
-    public static final String FOLLOW_ID = "followId";
     // AUTO-GENERATED: FIELDS END
 
     /** The digital item from whence this pet came. */
     public Pet pet;
 
-    /** The member id of our owner if we are following them, 0 otherwise. */
-    public int followId;
+    /** Memories extracted from our most recently departed room. */
+    public transient List<EntityMemoryEntry> memories;
 
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new PetInfo(this, followId != 0);
+        return new PetInfo(this);
+    }
+
+    @Override // from BodyObject
+    public void willEnterPlace (Place place, PlaceObject plobj)
+    {
+        super.willEnterPlace(place, plobj);
+
+        if (plobj instanceof RoomObject && memories != null) {
+            RoomObject roomObj = (RoomObject)plobj;
+
+            // add our memories to the room
+            try {
+                roomObj.startTransaction();
+                for (EntityMemoryEntry entry : memories) {
+                    roomObj.addToMemories(entry);
+                }
+            } finally {
+                roomObj.commitTransaction();
+            }
+        }
+    }
+
+    @Override // from BodyObject
+    public void didLeavePlace (PlaceObject plobj)
+    {
+        super.didLeavePlace(plobj);
+
+        if (plobj instanceof RoomObject) {
+            RoomObject roomObj = (RoomObject)plobj;
+
+            // collect up our memory entries from our previous room
+            ItemIdent petId = pet.getIdent();
+            memories = Lists.newArrayList();
+            for (EntityMemoryEntry entry : roomObj.memories) {
+                if (entry.item.equals(petId)) {
+                    memories.add(entry);
+                }
+            }
+
+            // now remove those from the room
+            try {
+                roomObj.startTransaction();
+                for (EntityMemoryEntry entry : memories) {
+                    roomObj.removeFromMemories(entry.getRemoveKey());
+                }
+            } finally {
+                roomObj.commitTransaction();
+            }
+        }
     }
 
     // AUTO-GENERATED: METHODS START
@@ -49,22 +101,6 @@ public class PetObject extends MsoyBodyObject
         requestAttributeChange(
             PET, value, ovalue);
         this.pet = value;
-    }
-
-    /**
-     * Requests that the <code>followId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setFollowId (int value)
-    {
-        int ovalue = this.followId;
-        requestAttributeChange(
-            FOLLOW_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.followId = value;
     }
     // AUTO-GENERATED: METHODS END
 }

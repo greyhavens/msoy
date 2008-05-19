@@ -142,11 +142,10 @@ public class ChatChannelManager
             SceneManager scmgr = MsoyServer.screg.getSceneManager(sceneId);
             if (scmgr != null) {
                 // in most cases, the channel and the scene will be hosted on the same server, so
-                // we can just pull the scene out of the scene manager and ask it about
-                // permissions
+                // we can just pull the scene out of the scene manager and ask it about permissions
                 if (!((MsoyScene) scmgr.getScene()).canEnter(member)) {
-                    log.warning("Unable to join channel due to access restrictions [member=" +
-                        member + ", channel=" + channel + "]");
+                    log.warning("Unable to join channel due to access restrictions " +
+                                "[member=" + member + ", channel=" + channel + "]");
                     listener.requestFailed(ChatCodes.E_ACCESS_DENIED);
                     return;
                 }
@@ -158,17 +157,11 @@ public class ChatChannelManager
                         MsoySceneModel model =
                             (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
                         if (model != null) {
-                            _hasRights = member.canEnterScene(model.ownerId, model.ownerType,
-                                                              model.accessControl);
+                            _hasRights = member.canEnterScene(
+                                model.sceneId, model.ownerId, model.ownerType, model.accessControl);
                         }
                     }
                     public void handleSuccess () {
-                        if (!_hasRights && member.tokens.isSupport()) {
-                            log.warning("Allowing support+ to enter a room channel they " +
-                                "otherwise couldn't enter [sceneId=" + sceneId + "]");
-                            _hasRights = true;
-                        }
-
                         if (_hasRights) {
                             resolveAndJoinChannel(member, channel, listener);
                         } else {

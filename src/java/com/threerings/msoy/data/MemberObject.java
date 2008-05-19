@@ -32,6 +32,8 @@ import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Represents a connected msoy user.
  */
@@ -107,6 +109,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>viewOnly</code> field. */
     public static final String VIEW_ONLY = "viewOnly";
+
+    /** The field name of the <code>walkingId</code> field. */
+    public static final String WALKING_ID = "walkingId";
     // AUTO-GENERATED: FIELDS END
 
     /** The ideal size of the avatar cache. */
@@ -190,6 +195,9 @@ public class MemberObject extends MsoyBodyObject
     /** A flag that's true if this member object is only viewing the current scene and should not
      * be rendered in it. */
     public boolean viewOnly;
+
+    /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
+    public int walkingId;
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
@@ -366,35 +374,6 @@ public class MemberObject extends MsoyBodyObject
         setMemberName(new VizMemberName(displayName, getMemberId(), image));
     }
 
-    /**
-     * Can this member enter the specified scene?
-     */
-    public boolean canEnterScene (int ownerId, byte ownerType, byte accessControl)
-    {
-        if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-            switch (accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                return true;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                return isGroupManager(ownerId);
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                return isGroupMember(ownerId);
-            }
-
-        } else {
-            switch (accessControl) {
-            case MsoySceneModel.ACCESS_EVERYONE:
-                return true;
-            case MsoySceneModel.ACCESS_OWNER_ONLY:
-                return (getMemberId() == ownerId);
-            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                return (getMemberId() == ownerId) || isFriend(ownerId);
-            }
-        }
-
-        return false;
-    }
-
     // from interface MsoyUserObject
     public MemberName getMemberName ()
     {
@@ -405,6 +384,36 @@ public class MemberObject extends MsoyBodyObject
     public int getMemberId ()
     {
         return memberName.getMemberId();
+    }
+
+    @Override // from MsoyBodyObject
+    public boolean canEnterScene (int sceneId, int ownerId, byte ownerType, byte accessControl)
+    {
+        boolean hasRights = false;
+
+        if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE: hasRights = true; break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY: hasRights = isGroupManager(ownerId); break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS: hasRights = isGroupMember(ownerId); break;
+            }
+
+        } else {
+            switch (accessControl) {
+            case MsoySceneModel.ACCESS_EVERYONE: hasRights = true; break;
+            case MsoySceneModel.ACCESS_OWNER_ONLY: hasRights = (getMemberId() == ownerId); break;
+            case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
+                hasRights = (getMemberId() == ownerId) || isFriend(ownerId);
+                break;
+            }
+        }
+
+        if (!hasRights && tokens.isSupport()) {
+            log.info("Granting support+ access to inaccessible scene [who=" + who() +
+                     ", sceneId=" + sceneId + ", type=" + ownerType + "].");
+        }
+
+        return hasRights;
     }
 
     @Override // from BodyObject
@@ -1112,6 +1121,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             VIEW_ONLY, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.viewOnly = value;
+    }
+
+    /**
+     * Requests that the <code>walkingId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setWalkingId (int value)
+    {
+        int ovalue = this.walkingId;
+        requestAttributeChange(
+            WALKING_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.walkingId = value;
     }
     // AUTO-GENERATED: METHODS END
 

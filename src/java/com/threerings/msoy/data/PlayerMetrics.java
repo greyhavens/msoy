@@ -88,9 +88,7 @@ public class PlayerMetrics
 
             // get time in seconds (rounded down)
             int seconds = (int) ((System.currentTimeMillis() - _currentSceneEntryTime) / 1000);
-
             if (_currentSceneIsMember) {
-
                 if (_currentSceneOwnerId == player.getMemberId()) {
                     // my room
                     this.timeInMyRoom += seconds;
@@ -105,7 +103,6 @@ public class PlayerMetrics
                 }
 
             } else {
-
                 this.timeInWhirleds += seconds;
             }
 

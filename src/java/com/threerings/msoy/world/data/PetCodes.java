@@ -10,5 +10,6 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public interface PetCodes extends InvocationCodes
 {
-    // TODO
+    /** An error code for the pet services. */
+    public static final String E_ALREADY_WALKING = "e.already_walking";
 }
