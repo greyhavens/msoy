@@ -6,6 +6,7 @@ package com.threerings.msoy.world.data;
 import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneMarshaller;
 
@@ -29,6 +30,6 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         listener6.listener = arg6;
         sendRequest(arg1, MOVE_TO, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), arg5, listener6
-        });
+        }, Transport.DEFAULT);
     }
 }

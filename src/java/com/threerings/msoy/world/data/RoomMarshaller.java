@@ -8,6 +8,7 @@ import com.threerings.msoy.world.client.RoomService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 
@@ -29,7 +30,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, CHANGE_LOCATION, new Object[] {
             arg2, arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #despawnMob} requests. */
@@ -42,7 +43,7 @@ public class RoomMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, DESPAWN_MOB, new Object[] {
             Integer.valueOf(arg2), arg3, listener4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #editRoom} requests. */
@@ -55,7 +56,7 @@ public class RoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, EDIT_ROOM, new Object[] {
             listener2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #purchaseRoom} requests. */
@@ -68,7 +69,7 @@ public class RoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, PURCHASE_ROOM, new Object[] {
             listener2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #requestControl} requests. */
@@ -79,7 +80,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, REQUEST_CONTROL, new Object[] {
             arg2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
@@ -90,7 +91,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SEND_SPRITE_MESSAGE, new Object[] {
             arg2, arg3, arg4, Boolean.valueOf(arg5)
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
@@ -101,7 +102,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SEND_SPRITE_SIGNAL, new Object[] {
             arg2, arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
@@ -112,7 +113,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SET_ACTOR_STATE, new Object[] {
             arg2, Integer.valueOf(arg3), arg4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setRoomProperty} requests. */
@@ -123,7 +124,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SET_ROOM_PROPERTY, new Object[] {
             arg2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #spawnMob} requests. */
@@ -136,7 +137,7 @@ public class RoomMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, SPAWN_MOB, new Object[] {
             Integer.valueOf(arg2), arg3, arg4, listener5
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
@@ -147,7 +148,7 @@ public class RoomMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, UPDATE_MEMORY, new Object[] {
             arg2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
@@ -160,6 +161,6 @@ public class RoomMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_ROOM, new Object[] {
             arg2, listener3
-        });
+        }, Transport.DEFAULT);
     }
 }
