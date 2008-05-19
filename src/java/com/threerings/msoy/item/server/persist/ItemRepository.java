@@ -1081,7 +1081,7 @@ public abstract class ItemRepository<
             new Arithmetic.Div(
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
-                TWO_DAYS_IN_SECONDS)));
+                SEVEN_DAYS_IN_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1170,6 +1170,6 @@ public abstract class ItemRepository<
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
 
-    /** The number of seconds in two (average) days. */
-    protected static final long TWO_DAYS_IN_SECONDS = 2 * 60L * 60 * 24;
+    /** The number of seconds in seven (average) days. */
+    protected static final long SEVEN_DAYS_IN_SECONDS = 7 * 60L * 60 * 24;
 }
