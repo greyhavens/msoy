@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +14,7 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -314,6 +317,7 @@ public class GameRepository extends ItemRepository<
     {
         super.getManagedRecords(classes);
         classes.add(GameDetailRecord.class);
+        classes.add(GamePlayRecord.class);
     }
 
     /**
@@ -323,6 +327,18 @@ public class GameRepository extends ItemRepository<
                                    int flowAwarded, int payoutFactor, int lastPayoutRecalc)
         throws PersistenceException
     {
+        long now = System.currentTimeMillis();
+
+        // record a gameplay record for this play session
+        GamePlayRecord gprec = new GamePlayRecord();
+        gprec.gameId = gameId;
+        gprec.recorded = new Timestamp(now);
+        gprec.playerGames = playerGames;
+        gprec.playerMins = playerMins;
+        gprec.flowAwarded = flowAwarded;
+        insert(gprec);
+
+        // now update the game detail record
         String gcname, mcname;
         SQLExpression gcol, mcol;
         if (playerGames > 1) {
@@ -356,10 +372,25 @@ public class GameRepository extends ItemRepository<
             new Logic.And(new Conditionals.Equals(GameDetailRecord.GAME_ID_C, gameId),
                           new Conditionals.LessThan(mcol, overflow)));
         updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
+
+        // if we're updating the game's payout factor, then also prune its gameplay records
+        if (payoutFactor > 0) {
+            final Timestamp cutoff = new Timestamp(now - THIRTY_DAYS);
+            deleteAll(GamePlayRecord.class,
+                      new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)),
+                      new CacheInvalidator.TraverseWithFilter<GamePlayRecord>(GamePlayRecord.class) {
+                          public boolean testForEviction (Serializable key, GamePlayRecord record) {
+                              return (record != null) && record.recorded.before(cutoff);
+                          }
+                      });
+        }
     }
 
     /** We will not adjust a game's payout higher than 2x to bring it in line with our desired
      * payout rates to avoid potential abuse. Games that consistently award very low amounts can
      * fix their scoring algorithms. */
     protected static final float MAX_PAYOUT_ADJUST = 2f;
+
+    /** Thirty (average) days in milliseconds. */
+    protected static final long THIRTY_DAYS = 30*24*60*60*1000L;
 }
