@@ -1119,3 +1119,12 @@ img, embed, applet, object {
 .searchBox .closeButton {
   margin-top: 3px;
 }
+
+.ratingText {
+    font-weight: bold;
+}
+
+.ratingCount {
+    font-size: 12px;
+    font-style: italic;
+}

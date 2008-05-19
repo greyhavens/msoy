@@ -38,7 +38,9 @@ public class ItemRating extends FlexTable
         _memberRating = memberRating;
         _playerStars = new Stars(_memberRating, false, false, this);
 
-        _ratingCount = new Label(CShell.cmsgs.numberOfRatings(Integer.toString(_item.ratingCount)));
+        _ratingCount = new Label();
+        updateRatingCount();
+
         _ratingTip = new Label();
         _ratingDesc = new Label();
 
@@ -49,21 +51,19 @@ public class ItemRating extends FlexTable
         HTML nbsp = new HTML("&#160;");
         if (_horiz) {
             HorizontalPanel panel = new HorizontalPanel();
-            panel.add(ratingAverage);
+            panel.add(_averageStars);
             panel.add(nbsp);
             panel.add(_ratingCount);
 
-            setWidget(0, 0, panel);
-            setWidget(1, 0, _averageStars);
+            setWidget(0, 0, ratingAverage);
+            setWidget(1, 0, panel);
 
-            setWidget(0, 1, WidgetUtil.makeShim(15, 5));
+            setWidget(0, 1, WidgetUtil.makeShim(35, 5));
 
-            panel = new HorizontalPanel();
-            panel.add(_ratingTip);
-            panel.add(_ratingDesc);
-
-            setWidget(0, 2, panel);
+            setWidget(0, 2, _ratingTip);
+            setWidget(0, 3, _ratingDesc);
             setWidget(1, 2, _playerStars);
+            getFlexCellFormatter().setColSpan(1, 2, 2);
 
         } else {
             setWidget(0, 0, ratingAverage);
@@ -76,6 +76,12 @@ public class ItemRating extends FlexTable
             setWidget(3, 1, nbsp);
             getFlexCellFormatter().setColSpan(3, 0, 2);
         }
+
+        ratingAverage.setStyleName(STYLE_RATING);
+        _ratingTip.setStyleName(STYLE_RATING);
+        _ratingDesc.setStyleName(STYLE_RATING);
+
+        _ratingCount.setStyleName(STYLE_COUNT);
     }
 
     // from interface Stars.StarMouseListener
@@ -92,7 +98,8 @@ public class ItemRating extends FlexTable
                 if (isFirstRating) {
                     _item.ratingCount += 1;
                 }
-                _ratingCount.setText(CShell.cmsgs.numberOfRatings(Integer.toString(_item.ratingCount)));
+
+                updateRatingCount();
             }
         });
     }
@@ -114,6 +121,17 @@ public class ItemRating extends FlexTable
                 CShell.cmsgs.playerRating() : CShell.cmsgs.playerUnrated());
     }
 
+    protected void updateRatingCount ()
+    {
+        String s = String.valueOf(_item.ratingCount);
+
+        if (_item.ratingCount == 1) {
+            _ratingCount.setText(CShell.cmsgs.numberOfRatingsOne(s));
+        } else {
+            _ratingCount.setText(CShell.cmsgs.numberOfRatings(s));
+        }
+    }
+
     /** True if both Stars are to be layed out on the same row. */
     protected boolean _horiz;
 
@@ -129,4 +147,7 @@ public class ItemRating extends FlexTable
         CShell.cmsgs.descRating4(),
         CShell.cmsgs.descRating5()
     };
+
+    protected static final String STYLE_RATING = "ratingText",
+                                  STYLE_COUNT = "ratingCount";
 }
