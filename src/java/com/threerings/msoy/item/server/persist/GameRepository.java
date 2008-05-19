@@ -180,8 +180,8 @@ public class GameRepository extends ItemRepository<
                 targetRatio = Math.min(Math.max(0, targetRatio), MAX_PAYOUT_ADJUST);
                 int targetFactor = Math.round(targetRatio * 256);
 
-                // set our factor to the average of these two values; move slowly toward our target
-                newFactor = (detail.payoutFactor + targetFactor)/2;
+                // move slowly toward our target factor
+                newFactor = (5*detail.payoutFactor + targetFactor)/6;
 
                 log.info("Updating payout factor [game=" + detail.gameId +
                          ", accumMins=" + accumMins + ", accumFlow=" + accumFlow +
