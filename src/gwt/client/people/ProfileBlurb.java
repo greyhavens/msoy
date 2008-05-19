@@ -27,7 +27,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.CatalogQuery;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -83,11 +82,8 @@ public class ProfileBlurb extends Blurb
         }
         addButton(photo, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
                   Page.WORLD, "m" + _name.getMemberId());
-        CatalogQuery query = new CatalogQuery();
-        query.itemType = Item.AVATAR;
-        query.sortBy = CatalogQuery.SORT_BY_RATING;
         addButton(photo, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
-                  Page.SHOP, ShopUtil.composeArgs(query, null, null, _name.getMemberId()));
+                  Page.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
