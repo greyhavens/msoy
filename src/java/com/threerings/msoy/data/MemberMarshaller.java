@@ -7,6 +7,7 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link MemberService} interface
@@ -28,7 +29,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, ACKNOWLEDGE_NOTIFICATIONS, new Object[] {
             arg2, listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #acknowledgeWarning} requests. */
@@ -39,7 +40,7 @@ public class MemberMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, ACKNOWLEDGE_WARNING, new Object[] {
             
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #complainMember} requests. */
@@ -50,7 +51,7 @@ public class MemberMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, COMPLAIN_MEMBER, new Object[] {
             Integer.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #followMember} requests. */
@@ -63,7 +64,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, FOLLOW_MEMBER, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
@@ -76,7 +77,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_CURRENT_MEMBER_LOCATION, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
@@ -89,7 +90,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_DISPLAY_NAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #getGroupHomeSceneId} requests. */
@@ -102,7 +103,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_GROUP_HOME_SCENE_ID, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
@@ -115,7 +116,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_GROUP_NAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
@@ -128,7 +129,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, GET_HOME_ID, new Object[] {
             Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
@@ -141,7 +142,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, INVITE_TO_BE_FRIEND, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
@@ -154,7 +155,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, INVITE_TO_FOLLOW, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
@@ -167,7 +168,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, SET_AVATAR, new Object[] {
             Integer.valueOf(arg2), Float.valueOf(arg3), listener4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
@@ -178,7 +179,7 @@ public class MemberMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SET_AWAY, new Object[] {
             Boolean.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
@@ -191,7 +192,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, SET_DISPLAY_NAME, new Object[] {
             arg2, listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
@@ -204,7 +205,7 @@ public class MemberMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, SET_HOME_SCENE_ID, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), listener5
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
@@ -215,6 +216,6 @@ public class MemberMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, UPDATE_AVAILABILITY, new Object[] {
             Integer.valueOf(arg2)
-        });
+        }, Transport.DEFAULT);
     }
 }
