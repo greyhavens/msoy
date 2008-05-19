@@ -166,14 +166,15 @@ public class GameDetailRecord extends PersistentRecord
      * Called to update an in-memory record after we update our record in the database. This is
      * needed so that multiple games don't stomp on one another if they end at the same time.
      */
-    public void noteGamePlayed (int playerGames, int playerMins, int flowAwarded, int newFactor)
+    public void noteGamePlayed (boolean multiPlayer, int playerGames, int playerMins,
+                                int flowAwarded, int newFactor)
     {
-        if (playerGames > 1) {
-            singlePlayerGames += playerGames;
-            singlePlayerMinutes += playerMins;
-        } else {
+        if (multiPlayer) {
             multiPlayerGames += playerGames;
             multiPlayerMinutes += playerMins;
+        } else {
+            singlePlayerGames += playerGames;
+            singlePlayerMinutes += playerMins;
         }
         if (newFactor == 0) {
             flowSinceLastRecalc += flowAwarded;

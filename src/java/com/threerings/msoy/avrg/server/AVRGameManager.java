@@ -114,7 +114,7 @@ public class AVRGameManager
         }
     }
 
-    /** 
+    /**
      * The game has changed while we're hosting it; update the media, the client will reload.
      */
     public void updateGame (Game game)
@@ -128,7 +128,7 @@ public class AVRGameManager
     public void shutdown ()
     {
         stopTickers();
-        
+
         // identify any modified memory records for flushing to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
@@ -136,15 +136,15 @@ public class AVRGameManager
                 recs.add(new GameStateRecord(_gameId, entry));
             }
         }
-        
-        final int totalMinutes = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
 
+        final int totalMinutes = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("shutdown") {
             public void invokePersist () throws Exception {
                 for (GameStateRecord rec : recs) {
                     _repo.storeState(rec);
                 }
-                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 0, totalMinutes);
+                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
+                    _gameId, true, 0, totalMinutes);
             }
             public void handleSuccess () {
             }
@@ -182,7 +182,7 @@ public class AVRGameManager
             }
 
             _totalTrackedSeconds += player.getPlayTime(now());
-            
+
             flushPlayerGameState(player.playerObject);
 
             MsoyGameServer.worldClient.updatePlayer(player.playerObject.getMemberId(), null);
@@ -271,7 +271,7 @@ public class AVRGameManager
     {
         final PlayerObject player = (PlayerObject) caller;
         final QuestState oldState = player.questState.get(questId);
-        
+
         // very little is done for guests
         if (MemberName.isGuest(player.getMemberId())) {
             if (oldState != null) {
@@ -286,13 +286,13 @@ public class AVRGameManager
         final int playedMinutes;
         final int recalcMinutes;
         final int oldPayoutFactor;
-        
+
         // the tutorial gets to pay out fixed amounts of flow; all other games are dynamic
         if (_gameId == Game.TUTORIAL_GAME_ID) {
             oldPayoutFactor = 1;
             recalcMinutes = 0;
             playedMinutes = 0;
-            
+
         } else {
             if (payoutLevel < 0 || payoutLevel > 1) {
                 throw new IllegalArgumentException(
@@ -306,7 +306,7 @@ public class AVRGameManager
                 oldPayoutFactor = detail.payoutFactor;
             }
 
-            playedMinutes = Math.round(getTotalTrackedSeconds() / 60f) + detail.singlePlayerMinutes; 
+            playedMinutes = Math.round(getTotalTrackedSeconds() / 60f) + detail.singlePlayerMinutes;
             // TODO: Change the "100" into a runtime configuration value
             if (((detail.singlePlayerGames + 1) % 20) == 0) {
                 recalcMinutes = playedMinutes - detail.lastPayoutRecalc;
@@ -319,22 +319,22 @@ public class AVRGameManager
                 recalcMinutes = 0;
             }
         }
-        
+
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("completeQuest") {
             public void invokePersist () throws PersistenceException {
                 GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
                 _payoutFactor = oldPayoutFactor;
-                
+
                 // if we decided it's time to recalculate the payout factor, do it now
                 if (recalcMinutes > 0) {
                     QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
                     if (record.payoutFactorTotal > 0) {
                         _payoutFactor = Math.round((
                                 flowPerHour*recalcMinutes)/60f/record.payoutFactorTotal);
-                        
+
                         gameRepo.updatePayoutFactor(_gameId, _payoutFactor, playedMinutes);
                         _repo.deleteQuestLogRecords(_gameId);
-                        
+
                         log.info("Recalculation complete [factor=(" + flowPerHour + "*" +
                             recalcMinutes + ")/60f/" + record.payoutFactorTotal + " => " +
                             _payoutFactor + "]");
@@ -345,18 +345,18 @@ public class AVRGameManager
                 _repo.noteQuestCompleted(_gameId, player.getMemberId(), questId, payoutLevel);
 
                 // bump the "games played" count by one
-                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, 1, 0);
+                MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(_gameId, true, 1, 0);
 
                 // now award the flow
-                _payout = Math.round(_payoutFactor * payoutLevel); 
+                _payout = Math.round(_payoutFactor * payoutLevel);
                 if (_payout > 0) {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
                         new UserActionDetails(player.getMemberId(), UserAction.COMPLETED_QUEST,
-                                -1, Game.GAME, _gameId, questId), 
+                                -1, Game.GAME, _gameId, questId),
                         _payout);
                 }
             }
-            
+
             public void handleSuccess () {
                 if (oldState != null) {
                     player.removeFromQuestState(questId);
@@ -373,7 +373,7 @@ public class AVRGameManager
                 if (detail != null) {
                     // note this completion in our runtime data structure
                     detail.singlePlayerGames ++;
-                
+
                     // if we updated the payout factor in the db, do it in dobj land too
                     if (recalcMinutes > 0) {
                         detail.payoutFactor = _payoutFactor;
@@ -386,7 +386,7 @@ public class AVRGameManager
                 log.log(Level.WARNING, "Unable to complete quest [questId=" + questId + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
-            
+
             protected int _payout;
             protected int _payoutFactor;
         });
@@ -404,7 +404,7 @@ public class AVRGameManager
             throw new IllegalArgumentException(
                 "Member not subscribed to cancelled quest [questId=" + questId + "]");
         }
-        
+
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("cancelQuest") {
             public void invokePersist () throws PersistenceException {
                 if (!MemberName.isGuest(player.getMemberId())) {
@@ -595,7 +595,7 @@ public class AVRGameManager
     {
         // find any modified memory records
         final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
-        
+
         // unless we're a guest
         if (!MemberName.isGuest(player.getMemberId())) {
             for (GameState entry : player.gameState) {
@@ -650,7 +650,7 @@ public class AVRGameManager
         for (OccupantInfo occInfo : _gameObj.players) {
             if ((occInfo.username instanceof MemberName) &&
                     playerId == ((MemberName) occInfo.username).getMemberId()) {
-                Player player = _players.get(occInfo.getBodyOid()); 
+                Player player = _players.get(occInfo.getBodyOid());
                 return player != null ? player.playerObject : null;
             }
         }
@@ -689,7 +689,7 @@ public class AVRGameManager
             this.playerObject = playerObject;
             this.beganStamp = now();
         }
-        
+
         public int getPlayTime (int now) {
             int secondsOfPlay = secondsPlayed;
             if (beganStamp != 0) {
@@ -705,7 +705,7 @@ public class AVRGameManager
             }
         }
     }
-    
+
     /**
      * A timer that fires message events to an AVRG. This is a precise copy of the same class
      * in WhirledGameManager. Perhaps one day we can avoid this duplication.
@@ -764,13 +764,13 @@ public class AVRGameManager
     protected HashMap<String, Ticker> _tickers;
 
     protected GameContent _content;
-    
+
     protected AVRGameObject _gameObj;
-    
+
     protected AVRGameRepository _repo;
-    
+
     protected IntMap<Player> _players = new HashIntMap<Player>();
-    
+
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;
 

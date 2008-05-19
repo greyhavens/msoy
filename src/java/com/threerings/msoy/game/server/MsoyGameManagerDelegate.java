@@ -397,8 +397,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
+        final boolean isMP = isMultiPlayer();
         int perPlayerDuration = totalMinutes/_totalTrackedGames;
-        int avgDuration = Math.round(60*getAverageGameDuration(isMultiPlayer(), perPlayerDuration));
+        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
         int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
             log.info("Capping player minutes at 120% of average [game=" + where() +
@@ -415,11 +416,13 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
             public void invokePersist () throws Exception {
                 _newFactor = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
-                    _content.detail, playerGames, playerMins, flowAwarded, recalcMins, hourlyRate);
+                    _content.detail, isMP, playerGames, playerMins, flowAwarded,
+                    recalcMins, hourlyRate);
             }
             public void handleSuccess () {
                 // lastly update the in memory detail record
-                _content.detail.noteGamePlayed(playerGames, playerMins, flowAwarded, _newFactor);
+                _content.detail.noteGamePlayed(
+                    isMP, playerGames, playerMins, flowAwarded, _newFactor);
             }
             protected String getFailureMessage() {
                 return "Failed to note end of game [in=" + where() + "]";

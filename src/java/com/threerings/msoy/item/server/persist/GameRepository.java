@@ -161,8 +161,8 @@ public class GameRepository extends ItemRepository<
      * Grinds through a game's recent flow award data and updates its payout factor to adjust for
      * biases in its payout patterns.
      */
-    public int noteGamePlayed (GameDetailRecord detail, int playerGames, int playerMins,
-                               int flowAwarded, int recalcMins, int hourlyRate)
+    public int noteGamePlayed (GameDetailRecord detail, boolean multiPlayer, int playerGames,
+                               int playerMins, int flowAwarded, int recalcMins, int hourlyRate)
         throws PersistenceException
     {
         int currentMins = detail.multiPlayerMinutes + detail.singlePlayerMinutes + playerMins;
@@ -193,7 +193,8 @@ public class GameRepository extends ItemRepository<
             }
         }
 
-        noteGamePlayed(detail.gameId, playerGames, playerMins, flowAwarded, newFactor, currentMins);
+        noteGamePlayed(detail.gameId, multiPlayer, playerGames, playerMins, flowAwarded,
+                       newFactor, currentMins);
 
         return newFactor;
     }
@@ -202,11 +203,11 @@ public class GameRepository extends ItemRepository<
      * Updates the specified {@link GameDetailRecord}, recording an increase in games played, total
      * player minutes and flow awarded.
      */
-    public void noteGamePlayed (int gameId, int playerGames, int playerMins)
+    public void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames, int playerMins)
         throws PersistenceException
     {
         gameId = Math.abs(gameId); // TODO: don't record metrics for the original?
-        noteGamePlayed(gameId, playerGames, playerMins, 0, 0, 0);
+        noteGamePlayed(gameId, multiPlayer, playerGames, playerMins, 0, 0, 0);
     }
 
     /**
@@ -323,7 +324,7 @@ public class GameRepository extends ItemRepository<
     /**
      * Helper function for the other {@link #noteGamePlayed} methods.
      */
-    protected void noteGamePlayed (int gameId, int playerGames, int playerMins,
+    protected void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames, int playerMins,
                                    int flowAwarded, int payoutFactor, int lastPayoutRecalc)
         throws PersistenceException
     {
@@ -341,7 +342,7 @@ public class GameRepository extends ItemRepository<
         // now update the game detail record
         String gcname, mcname;
         SQLExpression gcol, mcol;
-        if (playerGames > 1) {
+        if (multiPlayer) {
             gcname = GameDetailRecord.MULTI_PLAYER_GAMES;
             gcol = GameDetailRecord.MULTI_PLAYER_GAMES_C;
             mcname = GameDetailRecord.MULTI_PLAYER_MINUTES;
