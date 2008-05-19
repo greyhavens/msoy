@@ -411,6 +411,7 @@ public class MemberObject extends MsoyBodyObject
         if (!hasRights && tokens.isSupport()) {
             log.info("Granting support+ access to inaccessible scene [who=" + who() +
                      ", sceneId=" + sceneId + ", type=" + ownerType + "].");
+            hasRights = true;
         }
 
         return hasRights;
