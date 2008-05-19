@@ -9,6 +9,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link GameServerService} interface
@@ -30,7 +31,7 @@ public class GameServerMarshaller extends InvocationMarshaller
         listener6.listener = arg6;
         sendRequest(arg1, AWARD_PRIZE, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, arg5, listener6
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #clearGameHost} requests. */
@@ -41,7 +42,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, CLEAR_GAME_HOST, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3)
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #leaveAVRGame} requests. */
@@ -52,7 +53,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, LEAVE_AVRGAME, new Object[] {
             Integer.valueOf(arg2)
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #reportFlowAward} requests. */
@@ -63,7 +64,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, REPORT_FLOW_AWARD, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3)
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #reportTrophyAward} requests. */
@@ -74,7 +75,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, REPORT_TROPHY_AWARD, new Object[] {
             Integer.valueOf(arg2), arg3, arg4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #sayHello} requests. */
@@ -85,7 +86,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, SAY_HELLO, new Object[] {
             Integer.valueOf(arg2)
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #updatePlayer} requests. */
@@ -96,6 +97,6 @@ public class GameServerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, UPDATE_PLAYER, new Object[] {
             Integer.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 }

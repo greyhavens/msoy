@@ -7,6 +7,7 @@ import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link MsoyGameService} interface
@@ -34,7 +35,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
             _invId = null;
             omgr.postEvent(new InvocationResponseEvent(
                                callerOid, requestId, GAME_LOCATED,
-                               new Object[] { arg1, Integer.valueOf(arg2) }));
+                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
         }
 
         @Override // from InvocationMarshaller
@@ -61,7 +62,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, INVITE_FRIENDS, new Object[] {
             Integer.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #locateGame} requests. */
@@ -74,6 +75,6 @@ public class MsoyGameMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, LOCATE_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 }

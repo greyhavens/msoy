@@ -7,6 +7,7 @@ import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link LobbyService} interface
@@ -28,7 +29,7 @@ public class LobbyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, IDENTIFY_LOBBY, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #joinPlayerGame} requests. */
@@ -41,7 +42,7 @@ public class LobbyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, JOIN_PLAYER_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #playNow} requests. */
@@ -54,6 +55,6 @@ public class LobbyMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, PLAY_NOW, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
-        });
+        }, Transport.DEFAULT);
     }
 }
