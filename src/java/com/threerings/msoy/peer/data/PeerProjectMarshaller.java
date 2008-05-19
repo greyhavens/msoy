@@ -8,6 +8,7 @@ import com.threerings.msoy.peer.client.PeerProjectService;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link PeerProjectService} interface
@@ -27,7 +28,7 @@ public class PeerProjectMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, COLLABORATOR_ADDED, new Object[] {
             Integer.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #collaboratorRemoved} requests. */
@@ -38,7 +39,7 @@ public class PeerProjectMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, COLLABORATOR_REMOVED, new Object[] {
             Integer.valueOf(arg2), arg3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #projectUpdated} requests. */
@@ -49,6 +50,6 @@ public class PeerProjectMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, PROJECT_UPDATED, new Object[] {
             arg2
-        });
+        }, Transport.DEFAULT);
     }
 }

@@ -7,6 +7,7 @@ import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link ProjectRoomService} interface
@@ -28,7 +29,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, ADD_DOCUMENT, new Object[] {
             arg2, arg3, arg4, listener5
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #buildAndExportProject} requests. */
@@ -41,7 +42,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, BUILD_AND_EXPORT_PROJECT, new Object[] {
             listener2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #buildProject} requests. */
@@ -54,7 +55,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, BUILD_PROJECT, new Object[] {
             listener2
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #deletePathElement} requests. */
@@ -67,7 +68,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, DELETE_PATH_ELEMENT, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #loadDocument} requests. */
@@ -80,7 +81,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, LOAD_DOCUMENT, new Object[] {
             arg2, listener3
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #renamePathElement} requests. */
@@ -93,7 +94,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, RENAME_PATH_ELEMENT, new Object[] {
             Integer.valueOf(arg2), arg3, listener4
-        });
+        }, Transport.DEFAULT);
     }
 
     /** The method id used to dispatch {@link #updateTextDocument} requests. */
@@ -106,6 +107,6 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, UPDATE_TEXT_DOCUMENT, new Object[] {
             Integer.valueOf(arg2), arg3, listener4
-        });
+        }, Transport.DEFAULT);
     }
 }

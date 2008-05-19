@@ -7,6 +7,7 @@ import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link SwiftlyService} interface
@@ -28,6 +29,6 @@ public class SwiftlyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, ENTER_PROJECT, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
+        }, Transport.DEFAULT);
     }
 }
