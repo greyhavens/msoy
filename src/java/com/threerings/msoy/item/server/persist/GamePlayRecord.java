@@ -7,14 +7,18 @@ import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /**
  * Notes information on a played game.
  */
-@Entity
+@Entity(indices={
+    @Index(name="gameIdIndex", fields={ GamePlayRecord.GAME_ID } ),
+    @Index(name="recordedIndex", fields={ GamePlayRecord.RECORDED } )
+})
 public class GamePlayRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -56,13 +60,13 @@ public class GamePlayRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The game that was played. */
-    @Id public int gameId;
+    public int gameId;
 
     /** The time at which the gameplay was recorded. */
-    @Id public Timestamp recorded;
+    public Timestamp recorded;
 
     /** The number of player games accumulated by this gameplay (the number of players). */
     public int playerGames;
@@ -73,17 +77,4 @@ public class GamePlayRecord extends PersistentRecord
     /** The total flow awarded for this gameplay (to all players). */
     public int flowAwarded;
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #GamePlayRecord}
-     * with the supplied key values.
-     */
-    public static Key<GamePlayRecord> getKey (int gameId, Timestamp recorded)
-    {
-        return new Key<GamePlayRecord>(
-                GamePlayRecord.class,
-                new String[] { GAME_ID, RECORDED },
-                new Comparable[] { gameId, recorded });
-    }
-    // AUTO-GENERATED: METHODS END
 }
