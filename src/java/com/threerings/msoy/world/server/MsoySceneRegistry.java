@@ -204,8 +204,7 @@ public class MsoySceneRegistry extends SceneRegistry
         // tell the client about the node's hostname and port
         listener.moveRequiresServerSwitch(hostname, new int[] { port });
 
-        // forward this client's member object to the node to which they will shortly connect (if
-        // we have a pet following us, we need to forward it to the other server as well)
+        // forward this client's member object to the node to which they will shortly connect
         MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
     }
 
