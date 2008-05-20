@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import mx.core.mx_internal;
+
 import com.whirled.ui.NameLabelCreator;
 import com.whirled.ui.PlayerList;
 
@@ -12,6 +14,8 @@ public class ChannelPlayerList extends PlayerList
     {
         super(labelCreator);   
 
+        _list.mouseEnabled = false;
+        _list.mx_internal::getListContentHolder().mouseEnabled = false;
         mouseEnabled = false;
     }
 
@@ -42,6 +46,7 @@ class ChannelPlayerRenderer extends HBox
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         setStyle("backgroundAlpha", 0);
+        mouseEnabled = false;
     }
 
     override public function set data (value :Object) :void

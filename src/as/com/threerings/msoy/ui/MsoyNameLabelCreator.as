@@ -91,6 +91,7 @@ class LabelBox extends HBox
 
         setStyle("borderThickness", 0);
         setStyle("borderStyle", "none");
+        mouseEnabled = false;
     }
 
     public function setStatus (status :String) :void
