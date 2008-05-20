@@ -44,6 +44,9 @@ public class Game extends Item
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
+    /** Identifies our server code media. */
+    public static final String SERVER_CODE_MEDIA = "scode";
+
     /** Defines the number of different game types. See GameConfig. */
     public static final int GAME_TYPES = 3;
 
@@ -71,6 +74,20 @@ public class Game extends Item
 
     /** The game screenshot media. */
     public MediaDesc shotMedia;
+
+    /** 
+     *  The server code media. Games may provide server code (in the form of a compiled action 
+     *  script library) to be run in a bureau whenever the game launches.
+     *  @see com.threerings.bureau.BureauRegistry
+     *  @see com.threerings.msoy.game.server.MsoyGameServer
+     */
+    public MediaDesc serverMedia;
+
+    /** 
+     *  The server code class to instantiate when running a game. To function properly, the class 
+     *  name must exist within the library given by {@link #serverCodeMedia}.
+     */
+    public String serverClass;
 
     /**
      * Returns true if the specified game is a developer's in-progress original game rather than

@@ -450,13 +450,17 @@ public class MsoyGameRegistry
             // make a note of our port
             this.port = port;
 
-            // fire up the game server process
-            Process proc = Runtime.getRuntime().exec(new String[] {
+            String exec[] = {
                 ServerConfig.serverRoot + "/bin/rungame",
                 String.valueOf(port),
                 // have the game server connect to us on our first port
                 String.valueOf(ServerConfig.serverPorts[0]),
-            });
+            };
+
+            // fire up the game server process
+            Process proc = Runtime.getRuntime().exec(exec);
+
+            log.info("Launched process " + StringUtil.toString(exec));
 
             // copy stdout and stderr to our logs
             ProcessLogger.copyOutput(log, "rungame", proc);

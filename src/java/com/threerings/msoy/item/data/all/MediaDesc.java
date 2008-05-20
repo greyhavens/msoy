@@ -64,6 +64,9 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
     /** The MIME type for ZIP files. */
     public static final byte APPLICATION_ZIP = 42;
 
+    /** The MIME type for Action Script ABC files. */
+    public static final byte COMPILED_ACTION_SCRIPT_LIBRARY = 43;
+
     /** Identifies that a "quarter thumbnail" sized image is desired. */
     public static final int QUARTER_THUMBNAIL_SIZE = 0;
 
@@ -290,6 +293,8 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
             return APPLICATION_JAVA_ARCHIVE;
         } else if (filename.endsWith(".zip")) {
             return APPLICATION_ZIP;
+        } else if (filename.endsWith(".abc")) {
+            return COMPILED_ACTION_SCRIPT_LIBRARY;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -316,6 +321,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
         case APPLICATION_ZIP: return ".zip";
+        case COMPILED_ACTION_SCRIPT_LIBRARY: return ".abc";
         default: return ".dat";
         }
     }

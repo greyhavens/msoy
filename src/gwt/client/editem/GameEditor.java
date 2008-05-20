@@ -42,6 +42,7 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         setUploaderMedia(Item.MAIN_MEDIA, _game.gameMedia);
         setUploaderMedia(Item.AUX_MEDIA, _game.shotMedia);
+        setUploaderMedia(Game.SERVER_CODE_MEDIA, _game.serverMedia);
 
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {
@@ -55,6 +56,9 @@ public class GameEditor extends ItemEditor
                 break;
             }
         }
+
+        // configure our server code class name
+        _serverClass.setText(_game.serverClass);
 
         // read our configuration information out of the game's XML config data
         Document xml;
@@ -201,6 +205,35 @@ public class GameEditor extends ItemEditor
         addRow(CShell.emsgs.gameController(), _controller = new TextBox());
         _controller.setVisibleLength(40);
 
+        // add a tab for uploading the game server code
+        addSpacer();
+        addTip(CShell.emsgs.gameServerHeadingTip());
+        MediaUpdater serverMediaUpdater = new MediaUpdater() {
+            public String updateMedia (
+                String name, 
+                MediaDesc desc, 
+                int width, 
+                int height) {
+                // TODO: validate media type
+                _game.serverMedia = desc;
+                return null;
+            }
+        };
+        MediaUploader serverMediaUploader = createUploader(
+            Game.SERVER_CODE_MEDIA, 
+            TYPE_CODE, 
+            MediaUploader.NORMAL, 
+            serverMediaUpdater);
+        addRow(
+            CShell.emsgs.gameServerMediaLabel(),
+            serverMediaUploader, 
+            CShell.emsgs.gameServerMediaTip());
+        addRow(
+            CShell.emsgs.gameServerClass(), 
+            _serverClass = new TextBox(),
+            CShell.emsgs.gameServerClassTip());
+        _serverClass.setVisibleLength(40);
+
         // these are only available to OOO presently
         _manager = new TextBox();
         _lwjgl = new CheckBox();
@@ -219,6 +252,9 @@ public class GameEditor extends ItemEditor
 
         // configure our genre
         _game.genre = Game.GENRES[_genre.getSelectedIndex()];
+
+        // configure our server code class name
+        _game.serverClass = _serverClass.getText();
 
         // convert our configuration information back to an XML document
         Document xml = XMLParser.createDocument();
@@ -289,16 +325,6 @@ public class GameEditor extends ItemEditor
         _game.config = xml.toString();
     }
 
-    // mr. utility
-    protected static short asShort (String s)
-    {
-        try {
-            return (short) Integer.parseInt(s);
-        } catch (Exception e) {
-            return (short) 0;
-        }
-    }
-
     protected static void setOnlyChild (Node parent, Node child)
     {
         while (parent.hasChildNodes()) {
@@ -313,7 +339,10 @@ public class GameEditor extends ItemEditor
     protected TextBox _minPlayers, _maxPlayers;
     protected ListBox _matchType;
     protected CheckBox _watchable;
-    protected TextBox _ident, _controller, _manager;
+    protected TextBox _ident;
+    protected TextBox _controller;
+    protected TextBox _manager;
+    protected TextBox _serverClass;
     protected CheckBox _lwjgl;
     protected CheckBox _avrg;
     protected TextArea _extras;

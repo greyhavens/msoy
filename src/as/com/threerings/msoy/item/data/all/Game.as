@@ -35,6 +35,14 @@ public class Game extends Item
     /** The game screenshot media. */
     public var shotMedia :MediaDesc;
 
+    /** The server code media. Games may provide server code (in the form of a compiled action 
+     *  script library) to be run in a bureau whenever the game launches. */
+    public var serverMedia :MediaDesc;
+
+    /** The server code class to instantiate when running a game. To function properly, the class 
+     *  name must exist within the library given by {@link #serverCodeMedia}. */
+    public var serverClass :String;
+
     override public function getType () :int
     {
         return GAME;
@@ -58,6 +66,8 @@ public class Game extends Item
         gameMedia = (ins.readObject() as MediaDesc);
         gameId = ins.readInt();
         shotMedia = (ins.readObject() as MediaDesc);
+        serverMedia = (ins.readObject() as MediaDesc);
+        serverClass = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -69,6 +79,8 @@ public class Game extends Item
         out.writeObject(gameMedia);
         out.writeInt(gameId);
         out.writeObject(shotMedia);
+        out.writeObject(serverMedia);
+        out.writeField(serverClass);
     }
 }
 }
