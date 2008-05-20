@@ -80,7 +80,7 @@ public class PetManager
                 @SuppressWarnings("unchecked") List<EntityMemoryEntry> memories =
                     (List<EntityMemoryEntry>)data.get("PO.memories");
                 if (pet != null) {
-                    createHandler(null, pet, memories);
+                    createHandler(memobj, pet, memories, false);
                 }
                 // TODO: reap forwarded pets whose owners never end up showing up
             }
@@ -195,7 +195,7 @@ public class PetManager
             }
 
             public void handleSuccess () {
-                createHandler(user, _pet, _memory);
+                createHandler(user, _pet, _memory, true);
                 listener.requestProcessed();
             }
             public void handleFailure (Exception e) {
@@ -297,7 +297,8 @@ public class PetManager
     /**
      * Finishes the resolution of a pet initiated by {@link #callPet}.
      */
-    protected void createHandler (MemberObject owner, Pet pet, List<EntityMemoryEntry> memories)
+    protected void createHandler (MemberObject owner, Pet pet, List<EntityMemoryEntry> memories,
+                                  boolean moveToOwner)
     {
         // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
         // we'll just get this far and abandon ship; it's not going to happen that often
@@ -309,11 +310,13 @@ public class PetManager
         // create a handler for this pet (which will register itself with us)
         PetHandler handler = new PetHandler(this, pet, memories);
 
-        // direct it to the room occupied by its owner
         try {
-            // if we're a pet forwarded from another server, we won't have an owner here
-            if (owner != null) {
+            if (moveToOwner) {
+                // we're being resolved for the first time, move to our owner
                 handler.moveToOwner(owner);
+            } else {
+                // we're being forwarded from another server, just wire up our listeners
+                handler.reinitFollowing(owner);
             }
         } catch (InvocationException ie) {
             log.warning("Resolved pet rejects owner? [pet=" + handler + ", error=" + ie + "].");

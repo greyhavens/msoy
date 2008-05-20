@@ -55,6 +55,27 @@ public class PetHandler
     }
 
     /**
+     * Called when we are transferred to a new server, rewires up our following listener.
+     */
+    public void reinitFollowing (MemberObject owner)
+    {
+        if (_follow != null) {
+            log.warning("Requested to reinit following but we're already following!? " +
+                        "[pet=" + this + ", target=" + owner.who() + "].");
+            return;
+        }
+
+        _follow = owner;
+        _follow.setWalkingId(_petobj.pet.itemId);
+        _follow.addListener(_follist = new ObjectDeathListener() {
+            public void objectDestroyed (ObjectDestroyedEvent event) {
+                // our followee logged off, shut ourselves down
+                shutdown(false);
+            }
+        });
+    }
+
+    /**
      * Shuts down this pet, removing it from the world and cleaning up its handler.
      */
     public void shutdown (boolean roomDidShutdown)
@@ -70,7 +91,8 @@ public class PetHandler
             RoomManager.flushMemories(_petobj.memories);
         }
 
-        // TODO: if we're following a member, clear that out?
+        // if we're following a member, clear that out
+        stopFollowing();
 
         // finally, destroy our pet object
         MsoyServer.omgr.destroyObject(_petobj.getOid());
@@ -116,6 +138,7 @@ public class PetHandler
 
         switch (order) {
         case Pet.ORDER_SLEEP:
+            stopFollowing();
             updateUsage(Item.UNUSED, 0);
             shutdown(false);
             break;
@@ -125,10 +148,16 @@ public class PetHandler
             break;
 
         case Pet.ORDER_GO_HOME:
-            stopFollowing(owner);
+            stopFollowing();
             updateUsage(Item.USED_AS_PET, owner.homeSceneId);
-            // TODO: if home room is resolved (on any server), instruct it to resolve pet
-            shutdown(false);
+            if (_petobj.getSceneId() == owner.homeSceneId) {
+                // we're already home, yay!
+            } else if (MsoyServer.screg.getSceneManager(owner.homeSceneId) != null) {
+                enterRoom(owner.homeSceneId);
+            } else {
+                // TODO: if home room is resolved (on any server), instruct it to resolve pet
+                shutdown(false);
+            }
             break;
 
         case Pet.ORDER_STAY:
@@ -139,8 +168,8 @@ public class PetHandler
                 throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
             }
             ((RoomManager)plmgr).checkCanAddPet(owner);
-            // stop following our owner
-            stopFollowing(owner);
+            // potentially stop following our owner
+            stopFollowing();
             // note that we want to autoload in this room
             updateUsage(Item.USED_AS_PET, ((RoomManager)plmgr).getScene().getId());
             break;
@@ -180,9 +209,9 @@ public class PetHandler
     protected void startFollowing (MemberObject owner)
         throws InvocationException
     {
-        if (_follist != null) {
+        if (_follow != null) {
             log.warning("Asked to follow but we're already following! [pet=" + this +
-                        ", target=" + owner.who() + "].");
+                        ", target=" + owner.who() + ", following=" + _follow.who() + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
 
@@ -191,32 +220,28 @@ public class PetHandler
             throw new InvocationException(PetCodes.E_ALREADY_WALKING);
         }
 
-        owner.setWalkingId(_petobj.pet.itemId);
-        owner.addListener(_follist = new ObjectDeathListener() {
-            public void objectDestroyed (ObjectDestroyedEvent event) {
-                // our followee logged off, shut ourselves down
-                shutdown(false);
-            }
-        });
+        reinitFollowing(owner);
     }
 
     /**
      * Clears out our following bits.
      */
-    protected void stopFollowing (MemberObject owner)
+    protected void stopFollowing ()
     {
-        // make sure this member is walking us
-        if (owner.walkingId != _petobj.pet.itemId) {
-            log.warning("Requested to stop following member who's not walking us [pet=" + this +
-                        ", stopper=" + owner.who() + ", walking=" + owner.walkingId + "].");
+        if (_follow == null) {
             return;
         }
-        owner.setWalkingId(0);
-
+        if (_follow.walkingId != _petobj.pet.itemId) {
+            log.warning("Our owner is somehow not walking us? [pet=" + this +
+                        ", owner=" + _follow.who() + ", walking=" + _follow.walkingId + "].");
+        } else {
+            _follow.setWalkingId(0);
+        }
         if (_follist != null) {
-            owner.removeListener(_follist);
+            _follow.removeListener(_follist);
             _follist = null;
         }
+        _follow = null;
     }
 
     /**
@@ -235,5 +260,7 @@ public class PetHandler
 
     protected PetManager _petmgr;
     protected PetObject _petobj;
+
+    protected MemberObject _follow;
     protected ObjectDeathListener _follist;
 }
