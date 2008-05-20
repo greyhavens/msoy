@@ -320,21 +320,23 @@ public class RoomLayoutStandard implements RoomLayout
             return;
         }
 
+        var re :RoomElement = sprite as RoomElement;
         var newdex :int = dex;
-        var ourZ :Number = getZOfChildAt(dex);
-        var z :Number;
+        var cmp :int;
+        // see if it should be moved behind
         while (newdex > 0) {
-            z = getZOfChildAt(newdex - 1);
-            if (z >= ourZ) {
+            cmp = compareRoomElement(newdex - 1, re);
+            if (cmp >= 0) {
                 break;
             }
             newdex--;
         }
 
         if (newdex == dex) {
+            // see if it should be moved forward
             while (newdex < _parentView.numChildren - 1) {
-                z = getZOfChildAt(newdex + 1);
-                if (z <= ourZ) {
+                cmp = compareRoomElement(newdex + 1, re);
+                if (cmp <= 0) {
                     break;
                 }
                 newdex++;
@@ -347,20 +349,41 @@ public class RoomLayoutStandard implements RoomLayout
     }
 
     /**
-     * Convenience method to get the logical z coordinate of the child at the specified index.
-     * Returns the z ordering, or NaN if the object is not part of the scene layout.
+     * Return -1 if the element at the specified index should be in front of 
+     * the comparison element, 1 if behind, or 0 to keep the same relative position.
      */
-    protected function getZOfChildAt (index :int) :Number
+    protected function compareRoomElement (index :int, cmpElement :RoomElement) :int
     {
         var re :RoomElement = _parentView.getChildAt(index) as RoomElement;
-
-        if (re != null) {
-            // we multiply the layer constant by 1000 to spread out the z values that
-            // normally lie in the 0 -> 1 range.
-            return re.getLocation().z + (1000 * re.getRoomLayer());
-        } else {
-            return NaN;
+        if (re == null) {
+            Log.dumpStack();
+            return 0;
         }
+
+        var layer :int = re.getRoomLayer();
+        var cmpLayer :int = cmpElement.getRoomLayer();
+        if (layer > cmpLayer) {
+            return 1;
+        } else if (layer < cmpLayer) {
+            return -1;
+        }
+
+        // else, if on same layer, compare by Z
+        var z :Number = re.getLocation().z;
+        var cmpZ :Number = cmpElement.getLocation().z;
+        if (z > cmpZ) {
+            return 1;
+        } else if (z < cmpZ) {
+            return -1;
+        }
+
+        // else, if at same Z, compare by importance
+        var imp :Boolean = re.isImportant();
+        var cmpImportant :Boolean = cmpElement.isImportant();
+        if (imp == cmpImportant) {
+            return 0;
+        }
+        return imp ? -1 : 1;
     }
 
     /** Room metrics storage. */

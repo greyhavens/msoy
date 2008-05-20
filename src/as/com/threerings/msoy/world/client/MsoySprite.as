@@ -180,6 +180,12 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     // from RoomElement
+    public function isImportant () :Boolean
+    {
+        return false;
+    }
+
+    // from RoomElement
     public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
         this.x = x;

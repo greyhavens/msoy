@@ -37,6 +37,12 @@ public interface RoomElement
     function getLocation () :MsoyLocation;
 
     /**
+     * Is this element important enough that it should appear in front of other RoomElements
+     * that have the exact same layer and z position?
+     */
+    function isImportant () :Boolean;
+
+    /**
      * Set the screen location of the object, based on its location in the scene.
      */
     function setScreenLocation (x :Number, y :Number, scale :Number) :void;

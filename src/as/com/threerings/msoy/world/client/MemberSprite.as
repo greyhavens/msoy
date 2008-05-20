@@ -60,6 +60,13 @@ public class MemberSprite extends ActorSprite
         callUserCode("avatarSpoke_v1");
     }
 
+    // from RoomElement
+    override public function isImportant () :Boolean
+    {
+        // our own sprite is more important than the others
+        return _ctx.getMyName().equals(_occInfo.username);
+    }
+
     // from OccupantSprite
     override public function setOccupantInfo (newInfo :OccupantInfo) :void
     {

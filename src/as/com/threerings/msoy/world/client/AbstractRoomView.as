@@ -612,6 +612,12 @@ internal class BackdropOverlay extends Shape
     }        
 
     // documentation inherited from interface RoomElement
+    public function isImportant () :Boolean
+    {
+        return false;
+    }
+
+    // documentation inherited from interface RoomElement
     public function setLocation (newLoc :Object) :void
     {
         // no op - this object is not placed inside the room

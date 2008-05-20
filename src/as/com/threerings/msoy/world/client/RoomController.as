@@ -1828,6 +1828,12 @@ class WalkTarget extends Sprite
     }
 
     // from RoomElement
+    public function isImportant () :Boolean
+    {
+        return false;
+    }
+
+    // from RoomElement
     public function getLayoutType () :int
     {
         return RoomCodes.LAYOUT_NORMAL;
