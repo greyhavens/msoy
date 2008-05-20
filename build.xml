@@ -826,7 +826,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="facebook,jprepare,qcompile" 
+  <target name="compile" depends="jprepare,facebook,qcompile" 
     description="Builds java class files."/>
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
