@@ -80,13 +80,16 @@ public class RoomHistoryPanel extends TitleWindow
 
         if (_backstack.length > 6) {
             callLater(function () :void { 
-                // do something fancy to put the active room as close to the middle as the display
-                // as we can.
-                var clamped :int = MathUtil.clamp(_backstack.length - 1 - _backstackIdx, 
-                                                  3, _backstack.length - 4) - 3;
+                // Clamp the current room's index so that the scroll range takes into account
+                // the number of lines that are shown at once.
+                var maxIndex :int = _backstack.length - 1;
+                var clamped :int = 
+                    MathUtil.clamp(maxIndex - _backstackIdx, HALF_DISPLAY_LINES, 
+                                   maxIndex - HALF_DISPLAY_LINES) - HALF_DISPLAY_LINES;
+                // scroll the current room into as close to the middle of the display as possible.
                 container.verticalScrollPosition = 
                     container.verticalScrollBar.maxScrollPosition * 
-                    (clamped / (_backstack.length - 7));
+                    (clamped / (maxIndex - HALF_DISPLAY_LINES * 2));
             });
         }
     }
@@ -135,6 +138,8 @@ public class RoomHistoryPanel extends TitleWindow
     protected static const WIDTH :int = 170;
     protected static const CONTAINER_HEIGHT :int = 107;
     protected static const PADDING :int = 6;
+    /** Half the number of rooms that are shown at once, given the static height of this panel. */
+    protected static const HALF_DISPLAY_LINES :int = 3;
 
     protected var _ctx :WorldContext;
     protected var _backstack :Array;
