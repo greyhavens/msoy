@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
@@ -266,7 +267,7 @@ public class GameRepository extends ItemRepository<
     public void updateInstructions (int gameId, String instructions)
         throws PersistenceException
     {
-        if (instructions == null) {
+        if (StringUtil.isBlank(instructions)) {
             delete(InstructionsRecord.class, gameId);
         } else {
             InstructionsRecord irec = new InstructionsRecord();
