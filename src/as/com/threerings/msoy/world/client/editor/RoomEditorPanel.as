@@ -231,7 +231,7 @@ public class RoomEditorPanel extends FloatingPanel
     /** Displays the furniture inventory. */
     protected function displayFurnitureInventory () :void
     {
-        CommandEvent.dispatch(this.parent, WorldController.VIEW_MY_FURNITURE);
+        CommandEvent.dispatch(_ctx.getTopPanel(), WorldController.VIEW_MY_FURNITURE);
         selectInNameList(null);
     }
     
