@@ -107,6 +107,7 @@ public class GameServlet extends MsoyServiceServlet
             if (creatorId != 0) {
                 detail.creator = _memberRepo.loadMemberName(creatorId);
             }
+            detail.instructions = _gameRepo.loadInstructions(gdr.gameId);
 
             if (gdr.listedItemId != 0) {
                 ItemRecord item = _gameRepo.loadItem(gdr.listedItemId);
@@ -185,7 +186,7 @@ public class GameServlet extends MsoyServiceServlet
             instructions = HTMLSanitizer.sanitize(instructions);
 
             // now that we've confirmed that they're allowed, update the instructions
-            _gameRepo.updateGameInstructions(gameId, instructions);
+            _gameRepo.updateInstructions(gameId, instructions);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +

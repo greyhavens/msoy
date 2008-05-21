@@ -17,10 +17,8 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.web.data.GameDetail;
 
 /**
- * Contains details on a single game "title" which may span multiple versions and therefore
- * multiple item ids. Some day additional information like screenshots and instructions may also be
- * contained in the detail record, but for now it serves simply to track a unique game identifier
- * that is shared by all versions of the same game.
+ * Contains details on a single game "title" including the development and published game item ids
+ * and other metrics.
  */
 @Entity
 @TableGenerator(name="gameId", pkColumnValue="GAME_ID")
@@ -47,13 +45,6 @@ public class GameDetailRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #sourceItemId} field. */
     public static final ColumnExp SOURCE_ITEM_ID_C =
         new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
-
-    /** The column identifier for the {@link #instructions} field. */
-    public static final String INSTRUCTIONS = "instructions";
-
-    /** The qualified column identifier for the {@link #instructions} field. */
-    public static final ColumnExp INSTRUCTIONS_C =
-        new ColumnExp(GameDetailRecord.class, INSTRUCTIONS);
 
     /** The column identifier for the {@link #singlePlayerGames} field. */
     public static final String SINGLE_PLAYER_GAMES = "singlePlayerGames";
@@ -107,7 +98,7 @@ public class GameDetailRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
@@ -121,10 +112,6 @@ public class GameDetailRecord extends PersistentRecord
 
     /** The mutable item which is edited by the developer(s) working on this game. */
     public int sourceItemId;
-
-    /** The creator supplied instructions for this game. */
-    @Column(length=GameDetail.MAX_INSTRUCTIONS_LENGTH, nullable=true)
-    public String instructions;
 
     /** Contains the total number of "player games" accumulated for this game in single player.
      * Each time a game is played to completion, this field is incremented by the number of players
@@ -192,7 +179,6 @@ public class GameDetailRecord extends PersistentRecord
     {
         GameDetail detail = new GameDetail();
         detail.gameId = gameId;
-        detail.instructions = instructions;
         detail.singlePlayerGames = singlePlayerGames;
         detail.singlePlayerMinutes = singlePlayerMinutes;
         detail.multiPlayerGames = multiPlayerGames;

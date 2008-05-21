@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +18,8 @@ import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -62,11 +68,45 @@ public class GameRepository extends ItemRepository<
     {
         super(ctx);
 
-        // TEMP 02-22-2008
-        _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
-                                   7, "abuseFactor", "payoutFactor"));
-        _ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Rename(
-                                   7, "lastAbuseRecalc", "lastPayoutRecalc"));
+        // TEMP 05-21-2008
+        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(9) {
+            public boolean runBeforeDefault () {
+                return true;
+            }
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery(
+                        "select " + liaison.columnSQL(GameDetailRecord.GAME_ID) + ", " +
+                                    liaison.columnSQL("instructions") +
+                        " from " + liaison.tableSQL("GameDetailRecord"));
+                    while (rs.next()) {
+                        _instructions.put(rs.getInt(1), rs.getString(2));
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return _instructions.size();
+            }
+        });
+        ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Drop(9, "instructions"));
+        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(9) {
+            public boolean runBeforeDefault () {
+                return false;
+            }
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                log.info("Creating " + _instructions.size() + " InstructionRecord rows.");
+                for (Map.Entry<Integer,String> entry : _instructions.entrySet()) {
+                    try {
+                        updateInstructions(entry.getKey(), entry.getValue());
+                    } catch (PersistenceException pe) {
+                        log.warning("Failed to migrate instructions [id=" + entry.getKey() +
+                                    ", data=" + entry.getValue() + "]: " + pe);
+                    }
+                }
+                return _instructions.size();
+            }
+        });
         // END TEMP
     }
 
@@ -211,12 +251,29 @@ public class GameRepository extends ItemRepository<
     }
 
     /**
-     * Updates the instructions for the specified game.
+     * Returns the instructions for the specified game or null if it has none.
      */
-    public void updateGameInstructions (int gameId, String instructions)
+    public String loadInstructions (int gameId)
         throws PersistenceException
     {
-        updatePartial(GameDetailRecord.class, gameId, GameDetailRecord.INSTRUCTIONS, instructions);
+        InstructionsRecord irec = load(InstructionsRecord.class, gameId);
+        return (irec == null) ? null : irec.instructions;
+    }
+
+    /**
+     * Updates the instructions for the specified game.
+     */
+    public void updateInstructions (int gameId, String instructions)
+        throws PersistenceException
+    {
+        if (instructions == null) {
+            delete(InstructionsRecord.class, gameId);
+        } else {
+            InstructionsRecord irec = new InstructionsRecord();
+            irec.gameId = gameId;
+            irec.instructions = instructions;
+            store(irec);
+        }
     }
 
     @Override // from ItemRepository
@@ -319,6 +376,7 @@ public class GameRepository extends ItemRepository<
         super.getManagedRecords(classes);
         classes.add(GameDetailRecord.class);
         classes.add(GamePlayRecord.class);
+        classes.add(InstructionsRecord.class);
     }
 
     /**
@@ -387,6 +445,9 @@ public class GameRepository extends ItemRepository<
                       });
         }
     }
+
+    /** TEMP: Used to migrate game instructions. */
+    protected Map<Integer,String> _instructions = Maps.newHashMap();
 
     /** We will not adjust a game's payout higher than 2x to bring it in line with our desired
      * payout rates to avoid potential abuse. Games that consistently award very low amounts can
