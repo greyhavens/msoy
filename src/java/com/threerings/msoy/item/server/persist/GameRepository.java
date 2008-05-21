@@ -334,6 +334,7 @@ public class GameRepository extends ItemRepository<
         GamePlayRecord gprec = new GamePlayRecord();
         gprec.gameId = gameId;
         gprec.recorded = new Timestamp(now);
+        gprec.multiPlayer = multiPlayer;
         gprec.playerGames = playerGames;
         gprec.playerMins = playerMins;
         gprec.flowAwarded = flowAwarded;

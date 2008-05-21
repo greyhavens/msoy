@@ -36,6 +36,13 @@ public class GamePlayRecord extends PersistentRecord
     public static final ColumnExp RECORDED_C =
         new ColumnExp(GamePlayRecord.class, RECORDED);
 
+    /** The column identifier for the {@link #multiPlayer} field. */
+    public static final String MULTI_PLAYER = "multiPlayer";
+
+    /** The qualified column identifier for the {@link #multiPlayer} field. */
+    public static final ColumnExp MULTI_PLAYER_C =
+        new ColumnExp(GamePlayRecord.class, MULTI_PLAYER);
+
     /** The column identifier for the {@link #playerGames} field. */
     public static final String PLAYER_GAMES = "playerGames";
 
@@ -60,13 +67,16 @@ public class GamePlayRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The game that was played. */
     public int gameId;
 
     /** The time at which the gameplay was recorded. */
     public Timestamp recorded;
+
+    /** Whether or not this gameplay session was single or multiplayer. */
+    public boolean multiPlayer;
 
     /** The number of player games accumulated by this gameplay (the number of players). */
     public int playerGames;
