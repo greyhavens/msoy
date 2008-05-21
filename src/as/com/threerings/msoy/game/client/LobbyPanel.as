@@ -3,13 +3,14 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
+
 import mx.effects.Resize;
 import mx.effects.easing.Cubic;
 import mx.events.EffectEvent;
 import mx.managers.PopUpManager;
 
 import mx.containers.HBox;
-import mx.containers.TitleWindow;
 import mx.containers.VBox;
 import mx.core.UIComponent;
 import mx.controls.Label;
@@ -29,6 +30,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -47,7 +49,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 /**
  * A panel that displays pending table games.
  */
-public class LobbyPanel extends TitleWindow
+public class LobbyPanel extends FloatingPanel
     implements TableObserver, SeatednessObserver
 {
     /** The maximum width of the lobby panel. */
@@ -80,6 +82,7 @@ public class LobbyPanel extends TitleWindow
      */
     public function LobbyPanel (gctx :GameContext, ctrl :LobbyController)
     {
+        super(gctx.getMsoyContext());
         _gctx = gctx;
         _ctrl = ctrl;
 
@@ -101,26 +104,13 @@ public class LobbyPanel extends TitleWindow
         });
     }
 
-    /**
-     * Displays this panel as a popup.
-     */
-    public function open () :void
+    // overridden so we can redefine center's default to false, since we force layout..
+    override public function open (
+        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
     {
-        if (parent == null) {
-            x = 50;
-            y = 50;
-            PopUpManager.addPopUp(this, _gctx.getMsoyContext().getTopPanel(), false);
-        }
-    }
-
-    /**
-     * Removes this panel from the display.
-     */
-    public function close () :void
-    {
-        if (parent != null) {
-            PopUpManager.removePopUp(this);
-        }
+        x = 50;
+        y = 50;
+        super.open(modal, parent, center);
     }
 
     /**
