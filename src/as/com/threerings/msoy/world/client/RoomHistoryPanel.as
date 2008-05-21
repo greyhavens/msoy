@@ -73,7 +73,7 @@ public class RoomHistoryPanel extends TitleWindow
         container.height = CONTAINER_HEIGHT;
         addChild(container);
 
-        for (var ii :int = 0; ii < _backstack.length; ii++) {
+        for (var ii :int = _backstack.length - 1; ii >= 0; ii--) {
             var data :Object = _backstack[ii];
             container.addChild(createRoomBox(ii, data.name as String, ii == _backstackIdx));
         }
@@ -82,7 +82,8 @@ public class RoomHistoryPanel extends TitleWindow
             callLater(function () :void { 
                 // do something fancy to put the active room as close to the middle as the display
                 // as we can.
-                var clamped :int = MathUtil.clamp(_backstackIdx, 3, _backstack.length - 4) - 3;
+                var clamped :int = MathUtil.clamp(_backstack.length - 1 - _backstackIdx, 
+                                                  3, _backstack.length - 4) - 3;
                 container.verticalScrollPosition = 
                     container.verticalScrollBar.maxScrollPosition * 
                     (clamped / (_backstack.length - 7));
