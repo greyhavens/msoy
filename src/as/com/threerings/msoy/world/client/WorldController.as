@@ -1159,6 +1159,9 @@ public class WorldController extends MsoyController
                 handlePopRoomHistoryList();
             }
 
+            // if the room history list has less than 2 entries, disable it
+            _wctx.getTopPanel().getHeaderBar().setHistoryButtonEnabled(_backstack.length > 1);
+
             // display location name, modify buttons
             controlBar.enableZoomControl(true);
             (controlBar as WorldControlBar).sceneEditPossible = canEditScene();

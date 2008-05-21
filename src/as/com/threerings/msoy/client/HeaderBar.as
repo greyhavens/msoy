@@ -130,6 +130,11 @@ public class HeaderBar extends HBox
         _embedLink.includeInLayout = _embedLink.visible = visible;
     }
 
+    public function setHistoryButtonEnabled (enabled :Boolean) :void
+    {
+        _backBtn.enabled = enabled;
+    }
+
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -205,6 +210,8 @@ public class HeaderBar extends HBox
         _backBtn.toolTip = Msgs.GENERAL.get("i.recent_rooms");
         _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST);
         _backBtn.styleName = "headerBarButtonBack";
+        // default to disabled... it'll get enabled when ready.
+        _backBtn.enabled = false;
         addChild(_backBtn);
         _extras.push(_backBtn);
 
