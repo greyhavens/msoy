@@ -212,6 +212,7 @@ public class GameRecord extends ItemRecord
     public byte serverMimeType;
 
     /** The name of the class to use (resides in the server code media). */
+    @Column(nullable=true)
     public String serverClass;
 
     /**
