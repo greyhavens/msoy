@@ -888,20 +888,16 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
-        // if we're not in a scene, just go to the previous scene on the stack
+        // if we're not in a scene, just go to the latest scene on the stack
         if (_wctx.getSceneDirector().getScene() == null) {
             if (_backstack.length > 0) {
-                handleGoScene(int(_backstack.pop()));
+                handleVisitBackstackIndex(_backstack.length - 1); 
                 return;
             }
 
-        // otherwise the first item on the back stack is the current location
-        } else if (_backstack.length > 1) {
-            // Pop the current location...
-            _backstack.pop();
-            // ...and pop the previous location and move to it. When we arrive in the previous
-            // location, it will be pushed back onto the location stack.
-            handleGoScene(int(_backstack.pop()));
+        // otherwise, visit the previous scene if valid
+        } else if (_backstack.length > _backstackIdx + 1) {
+            handleVisitBackstackIndex(_backstackIdx - 1);
             return;
         }
 
@@ -911,6 +907,36 @@ public class WorldController extends MsoyController
         } else {
             handleGoScene(_wctx.getMemberObject().getHomeSceneId());
         }
+    }
+
+    /**
+     * Handles the POP_ROOM_HISTORY_LIST command.
+     */
+    public function handlePopRoomHistoryList () :void
+    {
+        // if the list is open, close it
+        if (_roomHistoryPanel != null) {
+            _roomHistoryPanel.close();
+            _roomHistoryPanel = null;
+
+        // if it's closed, open a new one
+        } else {
+            (_roomHistoryPanel = new RoomHistoryPanel(_wctx, _backstack, _backstackIdx)).open();
+        }
+    }
+
+    /**
+     * Handles the VISIT_BACKSTACK_INDEX command.
+     */
+    public function handleVisitBackstackIndex (idx :int) :void
+    {
+        if (idx < 0 || idx > _backstack.length - 1) {
+            log.warning("asked to visit backstack index that is out of bounds! [idx=" + 
+                idx + ", backstack.length=" + _backstack.length + "]");
+            return;
+        }
+
+        handleGoScene(int(_backstack[_backstackIdx = idx].id));
     }
 
     // from MsoyController
@@ -1101,15 +1127,40 @@ public class WorldController extends MsoyController
                 headerBar.setInstructionsLink(null);
             }
 
-            // update the stack; also, if this is not the first scene, enable the back button
-            var backEnabled :Boolean = false;
-            if (_backstack != null) {
-                _backstack.push(scene.getId());
-                backEnabled = (_backstack.length > 1);
+            var backstackEntry :Object = {name: scene.getName(), id: scene.getId()};
+            // check if the previous entry is the same room as we're going to
+            if (_backstackIdx > 0 && _backstack[_backstackIdx - 1].id == scene.getId()) {
+                _backstackIdx--;
+                _backstack[_backstackIdx] = backstackEntry;
+
+            // if we're not sitting at the end of the list, some special processing is called for.
+            } else if (_backstackIdx != _backstack.length - 1) {
+                if (_backstack[_backstackIdx + 1].id == scene.getId()) {
+                    // we're just moving forward in the stack... 
+                    _backstackIdx++;
+                    _backstack[_backstackIdx] = backstackEntry;
+
+                } else if (_backstack[_backstackIdx].id != scene.getId()) {
+                    // we're going down a new path.. truncate the list
+                    _backstack.length = _backstackIdx + 1;
+                    _backstack.push(backstackEntry);
+                    _backstackIdx++;
+                }
+
+            // if we're going to the room that we think we're in, backstackage was already done
+            // (see handleVisitBackstackIndex())
+            } else if (_backstackIdx < 0 || _backstack[_backstackIdx].id != scene.getId()) {
+                _backstack.push(backstackEntry);
+                _backstackIdx++;
+            }
+
+            // if the room history list is currently showing, close it down.
+            if (_roomHistoryPanel != null) {
+                handlePopRoomHistoryList();
             }
 
             // display location name, modify buttons
-            controlBar.setLocation(scene.getName(), true, backEnabled);
+            controlBar.enableZoomControl(true);
             (controlBar as WorldControlBar).sceneEditPossible = canEditScene();
             return;
         }
@@ -1122,15 +1173,13 @@ public class WorldController extends MsoyController
 
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
+        controlBar.enableZoomControl(false);
         if (cfg != null) {
-            controlBar.setLocation(cfg.name, false, true);
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
             headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
             headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
-        } else {
-            controlBar.setLocation(null, false, false);
         }
     }
 
@@ -1166,6 +1215,12 @@ public class WorldController extends MsoyController
 
     /** Back-stack of previously visited scenes. */
     protected var _backstack :Array = [];
+
+    /** Current index into the backstack. */
+    protected var _backstackIdx :int = -1;
+
+    /** The pop up room history list. */
+    protected var _roomHistoryPanel :RoomHistoryPanel;
 
     private static const log :Log = Log.getLog(WorldController);
 }

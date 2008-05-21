@@ -48,6 +48,49 @@ TitleWindow {
   closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
 }
 
+.roomHistoryPanel {
+  borderAlpha: 1;
+  borderColor: #2C79C5;
+  headerHeight: 21;
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/roomhistory/title_bg.png",
+    scaleGridTop="8", scaleGridBottom="12", scaleGridLeft="8", scaleGridRight="17");
+  backgroundImage: Embed(source="../../rsrc/media/skins/roomhistory/window_bg.png",
+    scaleGridTop="10", scaleGridBottom="20", scaleGridLeft="10", scaleGridRight="20");
+  backgroundColor: black;
+  backgroundAlpha: 0.75;
+  paddingTop: 0;
+  paddingBottom: 2;
+  paddingLeft: 2;
+  paddingRight: 2;
+}
+
+.roomHistoryPanelContainer {
+  horizontalGap: 0;
+  verticalGap: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+  backgroundAlpha: 0;
+}
+
+.roomHistoryPanelRoomBox {
+  backgroundAlpha: 0;
+  borderStyle: "solid";
+  borderThickness: 1;
+  borderSides: "bottom";
+  borderColor: #303030;
+  paddingLeft: 5;
+  paddingRight: 5;
+}
+
+.roomHistoryPanelLink {
+  color: #c1c1c1;
+  textRollOverColor: #c1c1c1;
+  fontFamily: "Arial";
+  textAlign: "left";
+}
+
 .topPanel {
   backgroundColor: #000000;
 }
@@ -460,13 +503,6 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_disabled.png");
 }
 
-.controlBarButtonBack {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
-}
-
 .controlBarSpacer { 
   backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
   backgroundSize: "100%";
@@ -858,6 +894,13 @@ BasePanel {
 .headerBar {
   backgroundImage: Embed(source="../../rsrc/media/skins/headerbar_bg.png");
   backgroundSize: "100%";
+}
+
+.headerBarButtonBack {
+  upSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow.png");
+  overSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_disabled.png");
 }
 
 .closeButton {

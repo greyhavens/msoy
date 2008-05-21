@@ -113,21 +113,6 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Lets the control bar update based on whether or not we're in a room or game or nowhere.
-     *
-     * @param name specifies the location name to be displayed on the control bar.
-     * @param inRoom true if we're in a room, false if we're in a game or nowhere at all.
-     * @param canGoBack specifies whether the back button should be enabled.
-     */
-    public function setLocation (name :String, inRoom :Boolean, canGoBack :Boolean) :void
-    {
-        if (_backBtn != null) {
-            _backBtn.enabled = canGoBack;
-        }
-        enableZoomControl(inRoom);
-    }
-
-    /**
      * Add a custom component to the control bar.
      * Note that there is no remove: just do component.parent.removeChild(component);
      */
@@ -213,12 +198,6 @@ public class ControlBar extends HBox
         _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
         _zoomBtn.setCommand(MsoyController.POP_ZOOM, _zoomBtn);
         _zoomBtn.styleName = "controlBarButtonZoom";
-
-        _backBtn = new CommandButton();
-        _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
-        _backBtn.setCommand(MsoyController.MOVE_BACK);
-        _backBtn.styleName = "controlBarButtonBack";
-        _backBtn.enabled = false;
     }
 
     /**
@@ -259,8 +238,6 @@ public class ControlBar extends HBox
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
         addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
-
-        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
 
         // and remember how things are set for now
         _isMember = isMember;
@@ -347,9 +324,6 @@ public class ControlBar extends HBox
 
     /** Handles room zooming. */
     protected var _zoomBtn :CommandButton;
-
-    /** The back-movement button. */
-    protected var _backBtn :CommandButton;
 
     /** Bookend image at the other end of name label. */
     protected var _bookend :SkinnableImage;

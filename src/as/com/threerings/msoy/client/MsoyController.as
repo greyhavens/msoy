@@ -89,6 +89,12 @@ public class MsoyController extends Controller
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
+    /** Command to display the room history list. */
+    public static const POP_ROOM_HISTORY_LIST :String = "PopRoomHistoryList";
+
+    /** Command to visit the given index in the room history list. */
+    public static const VISIT_BACKSTACK_INDEX :String = "VisitBackstackIndex";
+
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
 

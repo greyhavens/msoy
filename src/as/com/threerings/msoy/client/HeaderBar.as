@@ -67,7 +67,7 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
-        if (_tabsContainer.parent != this) {
+        if (!inRoom()) {
             _tabs.locationName = Msgs.CHAT.get("l.game_channel");
         }
     }
@@ -166,6 +166,7 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
         stretchSpacer(false);
+        _backBtn.includeInLayout = _backBtn.visible = false;
         return _tabsContainer;
     }
 
@@ -178,13 +179,14 @@ public class HeaderBar extends HBox
         if (_loc.parent == this) {
             _loc.visible = _loc.includeInLayout = false;
         }
+        _backBtn.includeInLayout = _backBtn.visible = true;
         addChildAt(_tabsContainer, 1);
     }
 
     public function stretchSpacer (stretch :Boolean) :void
     {
         var mini :Boolean = _ctx.getTopPanel().isMinimized();
-        var ownTabs :Boolean = _tabsContainer.parent == this;
+        var ownTabs :Boolean = inRoom();
         var stretchTabs :Boolean = !(stretch && ownTabs && !mini);
         var stretchSpacer :Boolean = (stretch || !ownTabs) && !mini;
         if (stretchTabs == isNaN(_tabsContainer.percentWidth)) {
@@ -198,6 +200,13 @@ public class HeaderBar extends HBox
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        _backBtn = new CommandButton();
+        _backBtn.toolTip = Msgs.GENERAL.get("i.recent_rooms");
+        _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST);
+        _backBtn.styleName = "headerBarButtonBack";
+        addChild(_backBtn);
+        _extras.push(_backBtn);
 
         _loc = new Label();
         _loc.styleName = "locationName";
@@ -269,6 +278,11 @@ public class HeaderBar extends HBox
         setFullVersionLink(null);
     }
 
+    protected function inRoom () :Boolean
+    {
+        return _tabsContainer.parent == this;
+    }
+
     private static const log :Log = Log.getLog(HeaderBar);
 
     [Embed(source="../../../../../../rsrc/media/arrow_corner.png")]
@@ -303,6 +317,9 @@ public class HeaderBar extends HBox
     protected var _extras :Array = [];
 
     protected var _tabsContainer :TabsContainer;
+
+    /** The back-movement button. */
+    protected var _backBtn :CommandButton;
 }
 }
 
