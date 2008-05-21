@@ -42,7 +42,7 @@ public class InstructionsRecord extends PersistentRecord
     @Id public int gameId;
 
     /** The creator supplied instructions for this game. */
-    @Column(length=GameDetail.MAX_INSTRUCTIONS_LENGTH, nullable=true)
+    @Column(length=GameDetail.MAX_INSTRUCTIONS_LENGTH)
     public String instructions;
 
     // AUTO-GENERATED: METHODS START
