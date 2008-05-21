@@ -119,9 +119,9 @@ public class RemixControls extends HBox
         butBox.percentWidth = 100;
         vbox.addChild(butBox);
 
-        var cancel :CommandButton = new CommandButton("Cancel", cancel);
-        cancel.styleName = "longThinOrangeButton";
-        butBox.addChild(cancel);
+        _cancelBtn = new CommandButton("Cancel", cancel);
+        _cancelBtn.styleName = "longThinOrangeButton";
+        butBox.addChild(_cancelBtn);
 
         butBox.addChild(_saveBtn = new CommandButton("Save Remixes", commit));
         _saveBtn.styleName = "longThinOrangeButton";
@@ -268,6 +268,7 @@ public class RemixControls extends HBox
     protected function cancel () :void
     {
         if (ExternalInterface.available) {
+            _cancelBtn.enabled = false;
             ExternalInterface.call("cancelRemix");
         }
     }
@@ -277,6 +278,7 @@ public class RemixControls extends HBox
      */
     protected function commit () :void
     {
+        _saveBtn.enabled = false;
         var uploader :MediaUploader = new MediaUploader(_params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
         uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
@@ -310,12 +312,14 @@ public class RemixControls extends HBox
     {
         // TODO
         trace("Oh noes! : " + event.text);
+        _saveBtn.enabled = true;
     }
 
     protected var _previewer :SWFLoader;
 
     protected var _controls :VBox;
 
+    protected var _cancelBtn :CommandButton;
     protected var _saveBtn :CommandButton;
 
     protected var _ctx :RemixContext;
