@@ -223,12 +223,6 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser(ident);
 
-        // we only provide trophies for listed games
-        if (gameId < 0) {
-            log.warning("Requested trophy info for non-listed game [id=" + gameId + "].");
-            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-        }
-
         try {
             GameRecord grec = _gameRepo.loadGameRecord(gameId);
             if (grec == null) {
@@ -580,8 +574,7 @@ public class GameServlet extends MsoyServiceServlet
     {
         TrophySourceRepository tsrepo = MsoyServer.itemMan.getTrophySourceRepository();
 
-        // the negative catalog id is the id for listed items in a game's suite
-        int gameSuiteId = -grec.catalogId;
+        int gameSuiteId = grec.toItem().getSuiteId();
 
         // load up the (listed) trophy source records for this game
         Map<String,Trophy> trophies = Maps.newHashMap();

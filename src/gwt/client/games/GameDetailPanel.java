@@ -73,6 +73,8 @@ public class GameDetailPanel extends SmartTable
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
+        // Note: the gameId may be the negative original gameId, but GameDetail's id is never 
+        // negative to match
         _gameId = gameId;
         Frame.setTitle(detail.getGame().name);
 
@@ -114,8 +116,8 @@ public class GameDetailPanel extends SmartTable
                    new CommentsPanel(detail.listedItem.getType(), detail.listedItem.catalogId));
         }
 
-        // add trophies tab
-        addTab(TROPHIES_TAB, CGames.msgs.tabTrophies(), new GameTrophyPanel(detail.gameId));
+        // add trophies tab, passing in the potentially negative gameId
+        addTab(TROPHIES_TAB, CGames.msgs.tabTrophies(), new GameTrophyPanel(gameId));
 
         // add top rankings tabs
         if (!CGames.isGuest()) {
