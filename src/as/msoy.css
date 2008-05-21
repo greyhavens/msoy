@@ -241,26 +241,14 @@ ButtonBar {
 }
 
 VScrollBar {
-  cornerRadius: 4;
-  borderColor: #cccccc;
-  highlightAlphas: 0.18, 0;
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
-  themeColor: #ffcc66;
-  trackColors: #d8bd8f, #e3cfab;
-    downArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_disabledSkin");
-    downArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_downSkin");
-    downArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_overSkin");
-    downArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowDown_upSkin");
-    thumbDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_downSkin");
-    thumbIcon: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollBar_thumbIcon");
-    thumbOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_overSkin");
-    thumbUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollThumb_upSkin");
-    trackSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollTrack_Skin");
-    upArrowDisabledSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_disabledSkin");
-    upArrowDownSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_downSkin");
-    upArrowOverSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_overSkin");
-    upArrowUpSkin: Embed(source="../../rsrc/media/skins/silver.swf", symbol="ScrollArrowUp_upSkin");
+   cornerRadius: 8;
+   highlightAlphas: 0, 0.4;
+   fillAlphas: 0.6, 0.4, 0, 0;
+   fillColors: #aec8d1, #5a8ba6, #ffffff, #cccccc;
+   trackColors: #7997b4, #c1d5de;
+   themeColor: #499cc4;
+   borderColor: #8a9daa;
+   iconColor: #1b4f66;
 }
 
 HScrollBar {
