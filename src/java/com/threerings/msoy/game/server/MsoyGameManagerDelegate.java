@@ -571,7 +571,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                     (totalLoserFlow / winners); // we keep the roundoff
             }
             break;
-        }
+        } // end: case WINNERS_TAKE_ALL
 
         case WhirledGameObject.CASCADING_PAYOUT: {
             // TODO: review and possibly remove
@@ -611,7 +611,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 }
             }
             break;
-        }
+        } // end: case CASCADE_PAYOUT
 
         default:
         case WhirledGameObject.TO_EACH_THEIR_OWN:
@@ -621,7 +621,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             }
             break;
 
-        case 3: { // TODO: Constant PROPORTIONAL
+        case WhirledGameObject.PROPORTIONAL: {
             int totalFlow = 0;
             int totalScore = 0;
             for (Player player : players.values()) {
@@ -632,7 +632,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 player.flowAward = (int) Math.floor(((float) totalFlow) * player.score / totalScore);
             }
             break;
-        } // end: case 3
+        } // end: case PROPORTIONAL
         }
 
         log.info("Awarding flow [game=" + where() + ", type=" + payoutType +
