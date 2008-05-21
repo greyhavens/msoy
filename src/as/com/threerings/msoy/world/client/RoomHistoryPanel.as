@@ -80,6 +80,8 @@ public class RoomHistoryPanel extends TitleWindow
 
         if (_backstack.length > 6) {
             callLater(function () :void { 
+                // do something fancy to put the active room as close to the middle as the display
+                // as we can.
                 var clamped :int = MathUtil.clamp(_backstackIdx, 3, _backstack.length - 4) - 3;
                 container.verticalScrollPosition = 
                     container.verticalScrollBar.maxScrollPosition * 
