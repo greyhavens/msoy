@@ -66,10 +66,10 @@ public class EntityPopup extends FloatingPanel
         return _entitySprite;
     }
 
-    override public function open (modal :Boolean = false, parent :DisplayObject = null,
-        avoid :DisplayObject = null) :void
+    override public function open (
+        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = true) :void
     {
-        super.open(modal, parent, avoid);
+        super.open(modal, parent, center);
 
         // Only add the user panel after all the flex components have created their content panes.
         // Otherwise, when the content pane is created a REMOVED_FROM_STAGE will be dispatched

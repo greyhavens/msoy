@@ -61,9 +61,9 @@ public class RoomEditorPanel extends FloatingPanel
 
     // @Override from FloatingPanel
     override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, avoid :DisplayObject = null) :void
+        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
     {
-        super.open(modal, parent, avoid);
+        super.open(modal, parent, center);
 
         this.x = stage.stageWidth - width - GAP;
         this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT + GAP;

@@ -62,18 +62,16 @@ public class FloatingPanel extends TitleWindow
      * @param modal if true, all other UI elements are inactive until this panel is closed.
      * @param parent if non-null, an alternate parent for this panel.  otherwise
      *               _ctx.getRootPanel() will be used.
-     * @param avoid if non-null, an object on screen that will not be covered, if possible.
+     * @param boolean center if true, center.
      */
-    public function open (modal :Boolean = false, parent :DisplayObject = null,
-                          avoid :DisplayObject = null) :void
+    public function open (
+        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = true) :void
     {
         // fall back to the top panel if no explicit parent was provided
         _parent = (parent == null) ? _ctx.getTopPanel() : parent;
 
-        // TODO: avoiding
-
         PopUpManager.addPopUp(this, _parent, modal);
-        if (avoid == null) {
+        if (center) {
             PopUpManager.centerPopUp(this);
         }
     }
