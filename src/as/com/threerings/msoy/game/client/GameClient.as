@@ -10,8 +10,6 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.net.Credentials;
 
-import com.threerings.parlor.data.ParlorMarshaller;
-
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
@@ -41,17 +39,12 @@ public class GameClient extends MsoyClient
         }
 
         addServiceGroup(MsoyCodes.GAME_GROUP);
-    }
 
-    // from MsoyClient
-    override public function fuckingCompiler () :void
-    {
-        super.fuckingCompiler();
+        // ensure that the compiler includes these necessary symbols
         var c :Class;
         c = Game;
         c = ItemPack;
         c = LevelPack;
-        c = ParlorMarshaller;
     }
 
     // from MsoyClient
