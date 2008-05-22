@@ -284,6 +284,9 @@ public class CatalogServlet extends MsoyServiceServlet
                     log.warning("Failed to locate suite master item [item=" + item + "].");
                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
                 }
+                if (suiteMaster.catalogId == 0) {
+                    throw new ServiceException(ItemCodes.SUPER_ITEM_NOT_LISTED);
+                }
                 ((SubItemRecord)listItem).suiteId = -suiteMaster.catalogId;
             }
 
