@@ -1202,7 +1202,7 @@ public class ChatOverlay
             figureHistoryOffset();
         }
 
-        var oldVal :int = Math.max(_filteredMessages.length - 1, _histOffset);
+        var oldVal :int = Math.max(_historyBar.scrollPosition, _histOffset);
         var newMaxVal :int = Math.max(_filteredMessages.length - 1, 0);
         var newVal :int = (oldVal >= newMaxVal - 1) ? newMaxVal : oldVal;
 
@@ -1249,9 +1249,9 @@ public class ChatOverlay
             ypos -= 1; // spacing
         }
 
-        // basically, this means there isn't yet enough history to fill the first 'page' of hte
+        // basically, this means there isn't yet enough history to fill the first 'page' of the
         // history scrollback, so we set hte offset to the max value but do not set histOffsetFinal
-        // to be true os that this will be recalculated
+        // to be true so that this will be recalculated
         _histOffset = hsize - 1;
     }
 
