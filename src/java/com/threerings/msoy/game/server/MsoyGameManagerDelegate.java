@@ -392,12 +392,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // update our statistics for this game (plays, duration, etc.)
         final boolean isMP = isMultiPlayer();
-        int totalMinutes = Math.max(Math.round(_totalTrackedSeconds / 60f), 1);
-        int perPlayerDuration = totalMinutes/_totalTrackedGames;
-        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
+        int totalMinutes = Math.round(_totalTrackedSeconds / 60f);
 
         // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
+        int perPlayerDuration = _totalTrackedSeconds/_totalTrackedGames;
+        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
         int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
             log.info("Capping player minutes at 120% of average [game=" + where() +
@@ -422,7 +422,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
 
         // record this gameplay for future game metrics tracking and blah blah
-        final int gameId = _content.detail.gameId, playerMins = totalMinutes;
+        final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
         MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
             public void invokePersist () throws Exception {
                 GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
