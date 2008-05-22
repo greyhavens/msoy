@@ -22,7 +22,9 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.game.client.GameLiaison;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 /**
  * Handles the AVRG-specific aspects of the game server connection.
@@ -34,6 +36,11 @@ public class AVRGameLiaison extends GameLiaison
     public function AVRGameLiaison (ctx :WorldContext, gameId :int)
     {
         super(ctx, gameId);
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class;
+        c = AVRGameMarshaller;
+        c = AVRMarshaller;
     }
     
     override public function clientWillLogon (event :ClientEvent) :void

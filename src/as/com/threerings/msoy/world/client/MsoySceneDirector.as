@@ -23,6 +23,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneMarshaller;
 import com.threerings.msoy.world.data.RoomCodes;
 
 /**
@@ -36,6 +37,9 @@ public class MsoySceneDirector extends SceneDirector
         ctx :WorldContext, locDir :LocationDirector, repo :SceneRepository)
     {
         super(ctx, locDir, repo, new MsoySceneFactory());
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class = MsoySceneMarshaller;
     }
 
     /**

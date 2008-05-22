@@ -42,8 +42,10 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
-import com.threerings.msoy.notify.data.NotifyMessage;
+import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.notify.data.NotifyMessage;
+import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 public class NotificationDirector extends BasicDirector
     implements AttributeChangeListener, SetListener
@@ -53,6 +55,11 @@ public class NotificationDirector extends BasicDirector
         super(ctx);
         _wctx = ctx;
         _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME, memberExpired);
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class;
+        c = LevelUpNotification;
+        c = ReleaseNotesNotification;
     }
 
     /**

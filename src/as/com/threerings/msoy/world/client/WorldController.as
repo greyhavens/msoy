@@ -25,11 +25,12 @@ import com.threerings.presents.net.Credentials;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
-import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ChatChannelController;
+import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -150,6 +151,10 @@ public class WorldController extends MsoyController
 
         _tipTimer = new Timer(15000, 1);
         _tipTimer.addEventListener(TimerEvent.TIMER, displayChatTip);
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class;
+        c = ItemMarshaller;
     }
 
     /**

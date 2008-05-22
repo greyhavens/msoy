@@ -24,7 +24,6 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
@@ -35,16 +34,12 @@ import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.Credentials;
 import com.threerings.presents.net.BootstrapData;
 
-import com.threerings.presents.data.TimeBaseMarshaller;
-import com.threerings.crowd.data.BodyMarshaller;
-import com.threerings.crowd.data.LocationMarshaller;
-import com.threerings.crowd.chat.data.ChatMarshaller;
+import com.threerings.crowd.client.CrowdClient;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.data.ChatChannel;
 
 import com.threerings.msoy.data.LurkerName;
-import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.all.ChannelName;
@@ -70,7 +65,7 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 /**
  * A client shared by both our world and game incarnations.
  */
-public /*abstract*/ class MsoyClient extends Client
+public /*abstract*/ class MsoyClient extends CrowdClient
 {
     public static const log :Log = Log.getLog(MsoyClient);
 
@@ -135,20 +130,11 @@ public /*abstract*/ class MsoyClient extends Client
         menu.hideBuiltInItems();
         Application.application.contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
-    }
 
-    public function fuckingCompiler () :void
-    {
-        var i :int = TimeBaseMarshaller.GET_TIME_OID;
-        i = LocationMarshaller.LEAVE_PLACE;
-        i = BodyMarshaller.SET_IDLE;
-        i = ChatMarshaller.AWAY;
-
+        // ensure that the compiler includes these necessary symbols
         var c :Class;
         c = MsoyBootstrapData;
         c = MsoyAuthResponseData;
-        c = MemberMarshaller;
-        c = SceneBookmarkEntry;
         c = LurkerName;
     }
 

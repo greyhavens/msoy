@@ -33,12 +33,6 @@ import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.net.Credentials;
 
 import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.data.SceneMarshaller;
-import com.threerings.whirled.spot.data.SpotMarshaller;
-import com.threerings.whirled.spot.data.SpotSceneObject;
-
-import com.threerings.parlor.data.ParlorMarshaller;
-import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -48,21 +42,6 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Document;
-import com.threerings.msoy.item.data.all.Furniture;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemList;
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.data.all.Prop;
-
-import com.threerings.msoy.avrg.data.AVRGameMarshaller;
-import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 
@@ -78,10 +57,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.Prefs;
-
-import com.threerings.msoy.world.data.MsoySceneMarshaller;
-import com.threerings.msoy.world.data.PetMarshaller;
-import com.threerings.msoy.world.data.RoomConfig;
 
 /**
  * An event dispatched for tutorial-specific purposes.
@@ -150,36 +125,6 @@ public class WorldClient extends MsoyClient
             log.info("Doing pre-logon go to join game lobby.");
             _wctx.getWorldController().preLogonGo(params);
         }
-    }
-
-    // from MsoyClient
-    override public function fuckingCompiler () :void
-    {
-        super.fuckingCompiler();
-        var c :Class;
-        c = AVRMarshaller;
-        c = AVRGameMarshaller;
-        c = Document;
-        c = Furniture;
-        c = Game;
-        c = ItemList;
-        c = ItemMarshaller;
-        c = ItemPack;
-        c = LevelPack;
-        c = Prop;
-        c = LevelUpNotification;
-        c = MemberObject;
-        c = MemberLocation;
-        c = MsoySceneMarshaller;
-        c = ParlorMarshaller;
-        c = PetMarshaller;
-        c = Photo;
-        c = ReleaseNotesNotification;
-        c = RoomConfig;
-        c = SceneMarshaller;
-        c = SpotMarshaller;
-        c = SpotSceneObject;
-        c = ToyBoxMarshaller;
     }
 
     // from Client

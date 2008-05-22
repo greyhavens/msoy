@@ -12,6 +12,7 @@ import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -26,6 +27,9 @@ public class MemberDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class = MemberMarshaller;
     }
 
     /**

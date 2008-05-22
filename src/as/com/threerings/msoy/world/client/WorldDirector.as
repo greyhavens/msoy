@@ -20,6 +20,8 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.PetMarshaller;
+import com.threerings.msoy.world.data.RoomConfig;
 
 /**
  * Handles moving around in the virtual world.
@@ -32,6 +34,11 @@ public class WorldDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+
+        // ensure that the compiler includes these necessary symbols
+        var c :Class;
+        c = PetMarshaller;
+        c = RoomConfig;
     }
 
     /**
