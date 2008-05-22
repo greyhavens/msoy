@@ -62,7 +62,7 @@ public class ServerConfigObject extends ConfigObject
     public int hourlyGameFlowRate = 3000;
 
     /** The number of player minutes between reassessments of a game's payout factor. */
-    public int payoutFactorReassessment = 250;
+    public int payoutFactorReassessment = 240;
 
     /** The number of seconds between reassessments of a member's humanity factor. */
     public int humanityReassessment = 24 * 3600;
