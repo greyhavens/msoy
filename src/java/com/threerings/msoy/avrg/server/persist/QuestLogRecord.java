@@ -37,6 +37,13 @@ public class QuestLogRecord extends PersistentRecord
     public static final ColumnExp QUEST_ID_C =
         new ColumnExp(QuestLogRecord.class, QUEST_ID);
 
+    /** The column identifier for the {@link #playerMins} field. */
+    public static final String PLAYER_MINS = "playerMins";
+
+    /** The qualified column identifier for the {@link #playerMins} field. */
+    public static final ColumnExp PLAYER_MINS_C =
+        new ColumnExp(QuestLogRecord.class, PLAYER_MINS);
+
     /** The column identifier for the {@link #payoutFactor} field. */
     public static final String PAYOUT_FACTOR = "payoutFactor";
 
@@ -45,16 +52,19 @@ public class QuestLogRecord extends PersistentRecord
         new ColumnExp(QuestLogRecord.class, PAYOUT_FACTOR);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the game for which we're logging flow. */
     public int gameId;
 
     /** The id of the member who just completed the quest. */
     public int memberId;
-    
+
     /** The id of the quest that was just completed. */
     public String questId;
+
+    /** The number of minutes elapsed prior to this payout. */
+    public int playerMins;
 
     /** The payout factor that was associated with the quest completion. */
     public float payoutFactor;
@@ -63,13 +73,15 @@ public class QuestLogRecord extends PersistentRecord
     public QuestLogRecord ()
     {
     }
-    
+
     /** Create a new QuestLogRecord configured with the supplied values. */
-    public QuestLogRecord (int gameId, int memberId, String questId, float payoutFactor)
+    public QuestLogRecord (int gameId, int memberId, String questId,
+                           int playerMins, float payoutFactor)
     {
         this.gameId = gameId;
         this.memberId = memberId;
         this.questId = questId;
+        this.playerMins = playerMins;
         this.payoutFactor = payoutFactor;
     }
 }

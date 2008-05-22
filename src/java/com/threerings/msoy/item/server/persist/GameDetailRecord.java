@@ -46,33 +46,26 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp SOURCE_ITEM_ID_C =
         new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
 
-    /** The column identifier for the {@link #singlePlayerGames} field. */
-    public static final String SINGLE_PLAYER_GAMES = "singlePlayerGames";
+    /** The column identifier for the {@link #avgSingleDuration} field. */
+    public static final String AVG_SINGLE_DURATION = "avgSingleDuration";
 
-    /** The qualified column identifier for the {@link #singlePlayerGames} field. */
-    public static final ColumnExp SINGLE_PLAYER_GAMES_C =
-        new ColumnExp(GameDetailRecord.class, SINGLE_PLAYER_GAMES);
+    /** The qualified column identifier for the {@link #avgSingleDuration} field. */
+    public static final ColumnExp AVG_SINGLE_DURATION_C =
+        new ColumnExp(GameDetailRecord.class, AVG_SINGLE_DURATION);
 
-    /** The column identifier for the {@link #singlePlayerMinutes} field. */
-    public static final String SINGLE_PLAYER_MINUTES = "singlePlayerMinutes";
+    /** The column identifier for the {@link #avgMultiDuration} field. */
+    public static final String AVG_MULTI_DURATION = "avgMultiDuration";
 
-    /** The qualified column identifier for the {@link #singlePlayerMinutes} field. */
-    public static final ColumnExp SINGLE_PLAYER_MINUTES_C =
-        new ColumnExp(GameDetailRecord.class, SINGLE_PLAYER_MINUTES);
+    /** The qualified column identifier for the {@link #avgMultiDuration} field. */
+    public static final ColumnExp AVG_MULTI_DURATION_C =
+        new ColumnExp(GameDetailRecord.class, AVG_MULTI_DURATION);
 
-    /** The column identifier for the {@link #multiPlayerGames} field. */
-    public static final String MULTI_PLAYER_GAMES = "multiPlayerGames";
+    /** The column identifier for the {@link #gamesPlayed} field. */
+    public static final String GAMES_PLAYED = "gamesPlayed";
 
-    /** The qualified column identifier for the {@link #multiPlayerGames} field. */
-    public static final ColumnExp MULTI_PLAYER_GAMES_C =
-        new ColumnExp(GameDetailRecord.class, MULTI_PLAYER_GAMES);
-
-    /** The column identifier for the {@link #multiPlayerMinutes} field. */
-    public static final String MULTI_PLAYER_MINUTES = "multiPlayerMinutes";
-
-    /** The qualified column identifier for the {@link #multiPlayerMinutes} field. */
-    public static final ColumnExp MULTI_PLAYER_MINUTES_C =
-        new ColumnExp(GameDetailRecord.class, MULTI_PLAYER_MINUTES);
+    /** The qualified column identifier for the {@link #gamesPlayed} field. */
+    public static final ColumnExp GAMES_PLAYED_C =
+        new ColumnExp(GameDetailRecord.class, GAMES_PLAYED);
 
     /** The column identifier for the {@link #payoutFactor} field. */
     public static final String PAYOUT_FACTOR = "payoutFactor";
@@ -81,27 +74,23 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp PAYOUT_FACTOR_C =
         new ColumnExp(GameDetailRecord.class, PAYOUT_FACTOR);
 
-    /** The column identifier for the {@link #lastPayoutRecalc} field. */
-    public static final String LAST_PAYOUT_RECALC = "lastPayoutRecalc";
+    /** The column identifier for the {@link #flowToNextRecalc} field. */
+    public static final String FLOW_TO_NEXT_RECALC = "flowToNextRecalc";
 
-    /** The qualified column identifier for the {@link #lastPayoutRecalc} field. */
-    public static final ColumnExp LAST_PAYOUT_RECALC_C =
-        new ColumnExp(GameDetailRecord.class, LAST_PAYOUT_RECALC);
-
-    /** The column identifier for the {@link #flowSinceLastRecalc} field. */
-    public static final String FLOW_SINCE_LAST_RECALC = "flowSinceLastRecalc";
-
-    /** The qualified column identifier for the {@link #flowSinceLastRecalc} field. */
-    public static final ColumnExp FLOW_SINCE_LAST_RECALC_C =
-        new ColumnExp(GameDetailRecord.class, FLOW_SINCE_LAST_RECALC);
+    /** The qualified column identifier for the {@link #flowToNextRecalc} field. */
+    public static final ColumnExp FLOW_TO_NEXT_RECALC_C =
+        new ColumnExp(GameDetailRecord.class, FLOW_TO_NEXT_RECALC);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 9;
+    public static final int SCHEMA_VERSION = 10;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
+
+    /** The quantity of flow to be awarded before our first recalc. */
+    public static final int INITIAL_RECALC_FLOW = 6000;
 
     /** The unique identifier for this game. */
     @Id @GeneratedValue(strategy=GenerationType.TABLE, generator="gameId")
@@ -113,63 +102,28 @@ public class GameDetailRecord extends PersistentRecord
     /** The mutable item which is edited by the developer(s) working on this game. */
     public int sourceItemId;
 
-    /** Contains the total number of "player games" accumulated for this game in single player.
-     * Each time a game is played to completion, this field is incremented by the number of players
-     * in the game. See {@link #singlePlayerMinutes} for a note on extremely popular games. */
-    public int singlePlayerGames;
+    /** The total number of player games accumulated for this game. */
+    public int gamesPlayed;
 
-    /** The total number of minutes spent playing this game in single player. Note: if a game
-     * becomes close to overflowing this field (>2 billion player minutes), this field and {@link
-     * #singlePlayerGames} will no longer be updated. */
-    public int singlePlayerMinutes;
+    /** Our average single player duration (in seconds). */
+    public int avgSingleDuration;
 
-    /** Contains the total number of "player games" accumulated for this game in multiplayer. */
-    public int multiPlayerGames;
-
-    /** The total number of multiplayer minutes spent playing this game. */
-    public int multiPlayerMinutes;
+    /** Our average multi player duration (in seconds). */
+    public int avgMultiDuration;
 
     /** The current payout factor for this game: for standalone games, this is a tuning factor
      * between 0 and 255, for AVRGs it is the amount of flow a player gets for a 100% quest. */
-    @Column(defaultValue=(""+DEFAULT_PAYOUT_FACTOR))
     public int payoutFactor;
 
-    /** The value of {@link #singlePlayerMinutes} + {@link #multiPlayerMinutes} when we last
-     * recalculated the payout factor. */
-    public int lastPayoutRecalc;
-
-    /** The amount of flow awarded since our last payout recalculation. */
-    public int flowSinceLastRecalc;
+    /** The amount of flow remaining for this game to award before our next payout recalc. */
+    public int flowToNextRecalc;
 
     /**
      * Returns the current payout factor for this game, in [0, 1).
      */
     public float getPayoutFactor ()
     {
-        return payoutFactor / 256f;
-    }
-
-    /**
-     * Called to update an in-memory record after we update our record in the database. This is
-     * needed so that multiple games don't stomp on one another if they end at the same time.
-     */
-    public void noteGamePlayed (boolean multiPlayer, int playerGames, int playerMins,
-                                int flowAwarded, int newFactor)
-    {
-        if (multiPlayer) {
-            multiPlayerGames += playerGames;
-            multiPlayerMinutes += playerMins;
-        } else {
-            singlePlayerGames += playerGames;
-            singlePlayerMinutes += playerMins;
-        }
-        if (newFactor == 0) {
-            flowSinceLastRecalc += flowAwarded;
-        } else {
-            payoutFactor = newFactor;
-            flowSinceLastRecalc = 0;
-            lastPayoutRecalc = singlePlayerMinutes + multiPlayerMinutes;
-        }
+        return this.payoutFactor / 256f;
     }
 
     /**
@@ -178,12 +132,18 @@ public class GameDetailRecord extends PersistentRecord
     public GameDetail toGameDetail ()
     {
         GameDetail detail = new GameDetail();
-        detail.gameId = gameId;
-        detail.singlePlayerGames = singlePlayerGames;
-        detail.singlePlayerMinutes = singlePlayerMinutes;
-        detail.multiPlayerGames = multiPlayerGames;
-        detail.multiPlayerMinutes = multiPlayerMinutes;
+        detail.gameId = this.gameId;
+        detail.averageDuration = getAverageDuration();
+        detail.gamesPlayed = this.gamesPlayed;
         return detail;
+    }
+
+    /**
+     * Returns the reported average duration of this game in seconds (greater of single and multi).
+     */
+    public int getAverageDuration ()
+    {
+        return Math.max(1, Math.max(avgSingleDuration, avgMultiDuration));
     }
 
     @Override // from Object

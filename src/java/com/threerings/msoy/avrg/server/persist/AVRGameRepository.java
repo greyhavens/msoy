@@ -117,14 +117,21 @@ public class AVRGameRepository extends DepotRepository
         delete(PlayerGameStateRecord.class, PlayerGameStateRecord.getKey(gameId, memberId, key));
     }
 
-    public void noteQuestCompleted (int gameId, int memberId, String questId, float payoutFactor)
+    public void noteQuestCompleted (int gameId, int memberId, String questId,
+                                    int playerMins, float payoutFactor)
         throws PersistenceException
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
         setQuestState(gameId, memberId, questId, QuestState.STEP_COMPLETED, null, 0);
-        insert(new QuestLogRecord(gameId, memberId, questId, payoutFactor));
+        insert(new QuestLogRecord(gameId, memberId, questId, playerMins, payoutFactor));
     }
-    
+
+    public void noteUnawardedTime (int gameId, int playerMins)
+        throws PersistenceException
+    {
+        insert(new QuestLogRecord(gameId, 0, "", playerMins, 0));
+    }
+
     public QuestLogSummaryRecord summarizeQuestLogRecords (int gameId)
         throws PersistenceException
     {
@@ -135,13 +142,15 @@ public class AVRGameRepository extends DepotRepository
             new FromOverride(QuestLogRecord.class),
             new FieldDefinition(QuestLogSummaryRecord.GAME_ID,
                                 QuestLogRecord.GAME_ID_C),
+            new FieldDefinition(QuestLogSummaryRecord.PLAYER_MINS_TOTAL,
+                                new FunctionExp("sum", QuestLogRecord.PLAYER_MINS_C)),
             new FieldDefinition(QuestLogSummaryRecord.PAYOUT_FACTOR_TOTAL,
                                 new FunctionExp("sum", QuestLogRecord.PAYOUT_FACTOR_C)),
             new FieldDefinition(QuestLogSummaryRecord.PAYOUT_COUNT,
                                 new LiteralExp("count(*)")),
             new GroupBy(QuestLogRecord.GAME_ID_C));
     }
-    
+
     public void deleteQuestLogRecords (int gameId)
         throws PersistenceException
     {

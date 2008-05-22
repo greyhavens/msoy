@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -78,7 +79,7 @@ public class GameRepository extends ItemRepository<
                 Statement stmt = conn.createStatement();
                 try {
                     ResultSet rs = stmt.executeQuery(
-                        "select " + liaison.columnSQL(GameDetailRecord.GAME_ID) + ", " +
+                        "select " + liaison.columnSQL("gameId") + ", " +
                                     liaison.columnSQL("instructions") +
                         " from " + liaison.tableSQL("GameDetailRecord"));
                     while (rs.next()) {
@@ -106,6 +107,63 @@ public class GameRepository extends ItemRepository<
                     }
                 }
                 return _instructions.size();
+            }
+        });
+        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(10) {
+            public boolean runBeforeDefault () {
+                return false;
+            }
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                int migrated = 0;
+
+                // migrate the data from our old columns to our new
+                PreparedStatement pstmt = conn.prepareStatement(
+                    "update " + liaison.tableSQL("GameDetailRecord") +
+                    " set " + liaison.columnSQL("gamesPlayed") + "= ?, " +
+                              liaison.columnSQL("avgSingleDuration") + " = ?, " +
+                              liaison.columnSQL("avgMultiDuration") + "= ?," +
+                              liaison.columnSQL("flowToNextRecalc") + "= ?" +
+                    " where " + liaison.columnSQL("gameId") + "= ?");
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery(
+                        "select " + liaison.columnSQL("gameId") + ", " +
+                                    liaison.columnSQL("singlePlayerGames") + ", " +
+                                    liaison.columnSQL("singlePlayerMinutes") + ", " +
+                                    liaison.columnSQL("multiPlayerGames") + ", " +
+                                    liaison.columnSQL("multiPlayerMinutes") +
+                        " from " + liaison.tableSQL("GameDetailRecord"));
+                    while (rs.next()) {
+                        int gameId = rs.getInt(1);
+                        int singleGames = rs.getInt(2);
+                        int singleMins = rs.getInt(3);
+                        int multiGames = rs.getInt(4);
+                        int multiMins = rs.getInt(5);
+                        pstmt.setInt(1, singleGames+multiGames);
+                        pstmt.setInt(2, (singleGames == 0) ? 0 : (singleMins*60)/singleGames);
+                        pstmt.setInt(3, (multiGames == 0) ? 0 : (multiMins*60)/multiGames);
+                        pstmt.setInt(4, GameDetailRecord.INITIAL_RECALC_FLOW);
+                        pstmt.setInt(5, gameId);
+                        migrated += pstmt.executeUpdate();
+                    }
+
+                    // also delete any old gameplay records as they are not tagged properly as
+                    // multi- or single-player
+                    stmt.executeUpdate("delete from " + liaison.tableSQL("GamePlayRecord"));
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+
+                // lastly drop the columns
+                liaison.dropColumn(conn, "GameDetailRecord", "singlePlayerGames");
+                liaison.dropColumn(conn, "GameDetailRecord", "singlePlayerMinutes");
+                liaison.dropColumn(conn, "GameDetailRecord", "multiPlayerGames");
+                liaison.dropColumn(conn, "GameDetailRecord", "multiPlayerMinutes");
+                liaison.dropColumn(conn, "GameDetailRecord", "lastPayoutRecalc");
+                liaison.dropColumn(conn, "GameDetailRecord", "flowSinceLastRecalc");
+
+                return migrated;
             }
         });
         // END TEMP
@@ -185,70 +243,113 @@ public class GameRepository extends ItemRepository<
     }
 
     /**
-     * Sets the specified game's payout factor to the specified value. This is used for AVRGs which
-     * manage their own payout factor instead of using {@link
-     * #updatePayoutFactor(GameDetailRecord,int)}.
+     * Updates the specified {@link GameDetailRecord}, recording an increase in games played and a
+     * decrease in flow to next recalc.
      */
-    public boolean updatePayoutFactor (int gameId, int factor, int minutes)
+    public void noteGamePlayed (int gameId, int playerGames, int flowAwarded)
         throws PersistenceException
     {
-        gameId = Math.abs(gameId); // how to handle playing the original?
-        return 0 < updatePartial(GameDetailRecord.class, gameId,
-                                 GameDetailRecord.PAYOUT_FACTOR, factor,
-                                 GameDetailRecord.LAST_PAYOUT_RECALC, minutes);
+        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
+        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
+        updateLiteral(GameDetailRecord.class, Math.abs(gameId),
+                      Maps.immutableMap(GameDetailRecord.GAMES_PLAYED, add,
+                                        GameDetailRecord.FLOW_TO_NEXT_RECALC, sub));
     }
 
     /**
-     * Grinds through a game's recent flow award data and updates its payout factor to adjust for
-     * biases in its payout patterns.
+     * Sets the specified game's payout factor to the specified value. This is used for AVRGs which
+     * manage their own payout factor.
      */
-    public int noteGamePlayed (GameDetailRecord detail, boolean multiPlayer, int playerGames,
-                               int playerMins, int flowAwarded, int recalcMins, int hourlyRate)
+    public void updatePayoutFactor (int gameId, int newFactor, int flowToNextRecalc)
         throws PersistenceException
     {
-        int currentMins = detail.multiPlayerMinutes + detail.singlePlayerMinutes + playerMins;
-        int accumMins = currentMins - detail.lastPayoutRecalc;
-        int newFactor = 0;
+        updatePartial(GameDetailRecord.class, Math.abs(gameId),
+                      GameDetailRecord.PAYOUT_FACTOR, newFactor,
+                      GameDetailRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc);
+    }
 
-        // if we're ready for a payout factor recalculation, do that as well
-        if (recalcMins > 0 && accumMins > recalcMins) {
-            // compute our average flow per hour award for the period in question
-            int accumFlow = detail.flowSinceLastRecalc + flowAwarded;
-            float awardedPerHour = accumFlow / (accumMins / 60f);
+    /**
+     * Records a {@link GamePlayRecord} for this game and updates its {@link GameDetailRecord} to
+     * reflect this gameplay.
+     */
+    public void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames,
+                                int playerMins, int flowAwarded)
+        throws PersistenceException
+    {
+        // record a gameplay record for this play session
+        GamePlayRecord gprec = new GamePlayRecord();
+        gprec.gameId = gameId;
+        gprec.recorded = new Timestamp(System.currentTimeMillis());
+        gprec.multiPlayer = multiPlayer;
+        gprec.playerGames = playerGames;
+        gprec.playerMins = playerMins;
+        gprec.flowAwarded = flowAwarded;
+        insert(gprec);
 
-            // sanity checks
-            if (accumMins > 0 && accumFlow > 0) {
-                // our factor is the target hourly rate over our actual rate (because we'll multiply
-                // future awards by this factor to scale them to the target hourly rate)
-                float targetRatio = hourlyRate / awardedPerHour;
-                targetRatio = Math.min(Math.max(0, targetRatio), MAX_PAYOUT_ADJUST);
-                int targetFactor = Math.round(targetRatio * 256);
+        // update our games played and flow to next recalc in the detail record
+        noteGamePlayed(gameId, playerGames, flowAwarded);
+    }
 
-                // move slowly toward our target factor
-                newFactor = (5*detail.payoutFactor + targetFactor)/6;
-
-                log.info("Updating payout factor [game=" + detail.gameId +
-                         ", accumMins=" + accumMins + ", accumFlow=" + accumFlow +
-                         ", aph=" + awardedPerHour + ", targetRatio=" + targetRatio +
-                         ", newFactor=" + newFactor + "].");
+    /**
+     * Grinds through this game's recent gameplay data and computes an updated payout factor and
+     * new average game durations. Updates the {@link GameDetailRecord} with those values.
+     *
+     * @return a triplet of new values for (payoutFactor, avgSingleDuration, avgMultiDuration).
+     */
+    public int[] computeAndUpdatePayoutFactor (int gameId, int flowToNextRecalc, int hourlyRate)
+        throws PersistenceException
+    {
+        // load up all of our extant gameplay records and sum up some bits
+        int singlePlayerMins = 0, singlePlayerGames = 0;
+        int multiPlayerMins = 0, multiPlayerGames = 0;
+        int totalPlayerMins = 0, totalFlowAwarded = 0;
+        Where where = new Where(GamePlayRecord.GAME_ID_C, gameId);
+        for (GamePlayRecord gprec : findAll(GamePlayRecord.class, where)) {
+            if (gprec.multiPlayer) {
+                multiPlayerGames += gprec.playerGames;
+                multiPlayerMins += gprec.playerMins;
+            } else {
+                singlePlayerGames += gprec.playerGames;
+                singlePlayerMins += gprec.playerMins;
             }
+            totalPlayerMins += gprec.playerMins;
+            totalFlowAwarded += gprec.flowAwarded;
         }
 
-        noteGamePlayed(detail.gameId, multiPlayer, playerGames, playerMins, flowAwarded,
-                       newFactor, currentMins);
+        // now compute our new payout factor and average durations
+        int avgSingleDuration = (singlePlayerGames == 0) ? 0 :
+            60 * singlePlayerMins / singlePlayerGames;
+        int avgMultiDuration = (multiPlayerGames == 0) ? 0 :
+            60 * multiPlayerMins / multiPlayerGames;
 
-        return newFactor;
-    }
+        // our factor is the target hourly payout rate over our actual payout rate (we'll multiply
+        // future awards by this factor to scale them to the target hourly rate)
+        float awardedPerHour = totalFlowAwarded / (totalPlayerMins/60f);
+        float payoutRatio = Math.min(hourlyRate / awardedPerHour, MAX_PAYOUT_ADJUST);
+        int payoutFactor = Math.round(payoutRatio * 256);
 
-    /**
-     * Updates the specified {@link GameDetailRecord}, recording an increase in games played, total
-     * player minutes and flow awarded.
-     */
-    public void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames, int playerMins)
-        throws PersistenceException
-    {
-        gameId = Math.abs(gameId); // TODO: don't record metrics for the original?
-        noteGamePlayed(gameId, multiPlayer, playerGames, playerMins, 0, 0, 0);
+        log.info("Updating payout factor [game=" + gameId +
+                 ", accumMins=" + totalPlayerMins + ", accumFlow=" + totalFlowAwarded +
+                 ", aph=" + awardedPerHour + ", payoutRatio=" + payoutRatio + "].");
+
+        // update the detail record
+        updatePartial(GameDetailRecord.class, gameId,
+                      GameDetailRecord.PAYOUT_FACTOR, payoutFactor,
+                      GameDetailRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc,
+                      GameDetailRecord.AVG_SINGLE_DURATION_C, avgSingleDuration,
+                      GameDetailRecord.AVG_MULTI_DURATION_C, avgMultiDuration);
+
+        // lastly, prune old gameplay records
+        final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
+        deleteAll(GamePlayRecord.class,
+                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)),
+                  new CacheInvalidator.TraverseWithFilter<GamePlayRecord>(GamePlayRecord.class) {
+                      public boolean testForEviction (Serializable key, GamePlayRecord record) {
+                          return (record != null) && record.recorded.before(cutoff);
+                      }
+                  });
+
+        return new int[] { payoutFactor, avgSingleDuration, avgMultiDuration };
     }
 
     /**
@@ -293,6 +394,7 @@ public class GameRepository extends ItemRepository<
             GameDetailRecord gdr = new GameDetailRecord();
             gdr.sourceItemId = item.itemId;
             gdr.payoutFactor = GameDetailRecord.DEFAULT_PAYOUT_FACTOR;
+            gdr.flowToNextRecalc = GameDetailRecord.INITIAL_RECALC_FLOW;
             insert(gdr);
             // source games use -gameId to differentiate themselves from all non-source games
             updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, -gdr.gameId);
@@ -378,73 +480,6 @@ public class GameRepository extends ItemRepository<
         classes.add(GameDetailRecord.class);
         classes.add(GamePlayRecord.class);
         classes.add(InstructionsRecord.class);
-    }
-
-    /**
-     * Helper function for the other {@link #noteGamePlayed} methods.
-     */
-    protected void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames, int playerMins,
-                                   int flowAwarded, int payoutFactor, int lastPayoutRecalc)
-        throws PersistenceException
-    {
-        long now = System.currentTimeMillis();
-
-        // record a gameplay record for this play session
-        GamePlayRecord gprec = new GamePlayRecord();
-        gprec.gameId = gameId;
-        gprec.recorded = new Timestamp(now);
-        gprec.multiPlayer = multiPlayer;
-        gprec.playerGames = playerGames;
-        gprec.playerMins = playerMins;
-        gprec.flowAwarded = flowAwarded;
-        insert(gprec);
-
-        // now update the game detail record
-        String gcname, mcname;
-        SQLExpression gcol, mcol;
-        if (multiPlayer) {
-            gcname = GameDetailRecord.MULTI_PLAYER_GAMES;
-            gcol = GameDetailRecord.MULTI_PLAYER_GAMES_C;
-            mcname = GameDetailRecord.MULTI_PLAYER_MINUTES;
-            mcol = GameDetailRecord.MULTI_PLAYER_MINUTES_C;
-        } else {
-            gcname = GameDetailRecord.SINGLE_PLAYER_GAMES;
-            gcol = GameDetailRecord.SINGLE_PLAYER_GAMES_C;
-            mcname = GameDetailRecord.SINGLE_PLAYER_MINUTES;
-            mcol = GameDetailRecord.SINGLE_PLAYER_MINUTES_C;
-        }
-
-        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
-        fieldMap.put(gcname, new Arithmetic.Add(gcol, playerGames));
-        fieldMap.put(mcname, new Arithmetic.Add(mcol, playerMins));
-
-        if (payoutFactor > 0) {
-            fieldMap.put(GameDetailRecord.PAYOUT_FACTOR, new ValueExp(payoutFactor));
-            fieldMap.put(GameDetailRecord.LAST_PAYOUT_RECALC, new ValueExp(lastPayoutRecalc));
-            fieldMap.put(GameDetailRecord.FLOW_SINCE_LAST_RECALC, new ValueExp(0));
-        } else if (flowAwarded > 0) {
-            fieldMap.put(GameDetailRecord.FLOW_SINCE_LAST_RECALC,
-                         new Arithmetic.Add(GameDetailRecord.FLOW_SINCE_LAST_RECALC_C, flowAwarded));
-        }
-
-        // if this addition would cause us to overflow the player minutes field, don't do it
-        int overflow = Integer.MAX_VALUE - playerMins;
-        Where where = new Where(
-            new Logic.And(new Conditionals.Equals(GameDetailRecord.GAME_ID_C, gameId),
-                          new Conditionals.LessThan(mcol, overflow)));
-        updateLiteral(GameDetailRecord.class, where, GameDetailRecord.getKey(gameId), fieldMap);
-
-        // if we're updating the game's payout factor, then also prune its gameplay records
-        if (payoutFactor > 0) {
-            final Timestamp cutoff = new Timestamp(now - THIRTY_DAYS);
-            deleteAll(GamePlayRecord.class,
-                      new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)),
-                      new CacheInvalidator.TraverseWithFilter<GamePlayRecord>(GamePlayRecord.class) {
-                          public boolean testForEviction (Serializable key, GamePlayRecord record) {
-                              return (record != null) && record.recorded.before(cutoff);
-                          }
-                      });
-        }
     }
 
     /** TEMP: Used to migrate game instructions. */

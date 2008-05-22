@@ -37,17 +37,11 @@ public class GameDetail
     /** The creator supplied instructions for this game. */
     public String instructions;
 
-    /** The number of single-player games played. */
-    public int singlePlayerGames;
+    /** The total number of player games this game has accumulated. */
+    public int gamesPlayed;
 
-    /** The total number of player minutes spent playing this game in single-player. */
-    public int singlePlayerMinutes;
-
-    /** The number of "player games" played in multiplayer games. */
-    public int multiPlayerGames;
-
-    /** The total number of player minutes spent playing this game in multiplayer. */
-    public int multiPlayerMinutes;
+    /** The reported average duration of this game in seconds. */
+    public int averageDuration;
 
     /** The minimum number of players for this game. */
     public int minPlayers;
@@ -72,15 +66,5 @@ public class GameDetail
     public boolean isPartyGame ()
     {
         return maxPlayers == Integer.MAX_VALUE;
-    }
-
-    /**
-     * Returns the larger of the average single and multiplayer duration of this game.
-     */
-    public int getAverageDuration ()
-    {
-        float mavg = (multiPlayerMinutes / (float)multiPlayerGames);
-        float savg = (singlePlayerMinutes / (float)singlePlayerGames);
-        return Math.max(1, Math.max(Math.round(savg), Math.round(mavg)));
     }
 }

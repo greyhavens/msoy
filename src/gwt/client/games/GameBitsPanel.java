@@ -26,7 +26,7 @@ public class GameBitsPanel extends SmartTable
         setText(row++, 0, CGames.msgs.bitsPlayers(), 1, "Label");
 
         setText(row, 0, CGames.msgs.bitsAvgDuration(), 1, "Label");
-        setText(row++, 1, avgMinsLabel(avgTime));
+        setText(row++, 1, avgMinsLabel(Math.round(avgTime/60f)));
 
         if (gamesPlayed > 0) {
             setText(row, 0, CGames.msgs.bitsGamesPlayed(), 1, "Label");

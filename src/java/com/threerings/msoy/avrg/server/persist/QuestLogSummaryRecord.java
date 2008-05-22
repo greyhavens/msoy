@@ -27,6 +27,13 @@ public class QuestLogSummaryRecord extends PersistentRecord
     public static final ColumnExp PAYOUT_COUNT_C =
         new ColumnExp(QuestLogSummaryRecord.class, PAYOUT_COUNT);
 
+    /** The column identifier for the {@link #playerMinsTotal} field. */
+    public static final String PLAYER_MINS_TOTAL = "playerMinsTotal";
+
+    /** The qualified column identifier for the {@link #playerMinsTotal} field. */
+    public static final ColumnExp PLAYER_MINS_TOTAL_C =
+        new ColumnExp(QuestLogSummaryRecord.class, PLAYER_MINS_TOTAL);
+
     /** The column identifier for the {@link #payoutFactorTotal} field. */
     public static final String PAYOUT_FACTOR_TOTAL = "payoutFactorTotal";
 
@@ -40,7 +47,10 @@ public class QuestLogSummaryRecord extends PersistentRecord
 
     /** The number of payouts in this summary. */
     public int payoutCount;
-    
-    /** The sum of payout factors this AVRG has granted for this summary. */
+
+    /** The sum of player minutes this AVRG has accumulated. */
+    public int playerMinsTotal;
+
+    /** The sum of payout factors this AVRG has granted. */
     public float payoutFactorTotal;
 }

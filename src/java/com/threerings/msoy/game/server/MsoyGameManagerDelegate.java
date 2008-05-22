@@ -51,6 +51,7 @@ import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
@@ -384,22 +385,19 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // put the kibosh on further flow tracking
         _flowPerMinute = -1;
 
-        // update our statistics for this game (plays, duration, etc.)
-        int totalSeconds = _totalTrackedSeconds;
-        int totalMinutes = Math.round(totalSeconds / 60f);
-        if (totalMinutes == 0) {
-            if (totalSeconds == 0) {
-                // if we were played for zero minutes, don't bother updating anything
-                return;
-            }
-            totalMinutes = 1; // round very short games up to 1 minute.
+        // if we were played for zero seconds, don't bother updating anything
+        if (_totalTrackedSeconds == 0) {
+            return;
         }
+
+        // update our statistics for this game (plays, duration, etc.)
+        final boolean isMP = isMultiPlayer();
+        int totalMinutes = Math.max(Math.round(_totalTrackedSeconds / 60f), 1);
+        int perPlayerDuration = totalMinutes/_totalTrackedGames;
+        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
 
         // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
-        final boolean isMP = isMultiPlayer();
-        int perPlayerDuration = totalMinutes/_totalTrackedGames;
-        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
         int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
             log.info("Capping player minutes at 120% of average [game=" + where() +
@@ -408,26 +406,44 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             totalMinutes = capDuration * _totalTrackedGames;
         }
 
-        // record this game's play time and flow awarded to the repository
-        final int playerGames = _totalTrackedGames, playerMins = totalMinutes;
-        final int flowAwarded = _totalAwardedFlow;
+        // update our in-memory record to reflect this gameplay
+        _content.detail.flowToNextRecalc -= _totalAwardedFlow;
+        _content.detail.gamesPlayed += _totalTrackedGames;
+
+        // determine whether or not it's time to recalculate this game's payout factor
         final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
-        final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail") {
+        final int newFlowToNextRecalc;
+        if (_content.detail.flowToNextRecalc <= 0) {
+            newFlowToNextRecalc = RuntimeConfig.server.payoutFactorReassessment * hourlyRate +
+                _content.detail.flowToNextRecalc;
+            _content.detail.flowToNextRecalc = newFlowToNextRecalc;
+        } else {
+            newFlowToNextRecalc = 0;
+        }
+
+        // record this gameplay for future game metrics tracking and blah blah
+        final int gameId = _content.detail.gameId, playerMins = totalMinutes;
+        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
             public void invokePersist () throws Exception {
-                _newFactor = MsoyGameServer.gameReg.getGameRepository().noteGamePlayed(
-                    _content.detail, isMP, playerGames, playerMins, flowAwarded,
-                    recalcMins, hourlyRate);
+                GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
+                // note that this game was played
+                gameRepo.noteGamePlayed(
+                    gameId, isMP, _totalTrackedGames, playerMins, _totalAwardedFlow);
+                // if it's time to recalc our payout factor, do that
+                if (newFlowToNextRecalc > 0) {
+                    _newData = gameRepo.computeAndUpdatePayoutFactor(
+                        gameId, newFlowToNextRecalc, hourlyRate);
+                }
             }
             public void handleSuccess () {
-                // lastly update the in memory detail record
-                _content.detail.noteGamePlayed(
-                    isMP, playerGames, playerMins, flowAwarded, _newFactor);
+                // update the in-memory detail record if we changed things
+                if (_newData != null) {
+                    _content.detail.payoutFactor = _newData[0];
+                    _content.detail.avgSingleDuration = _newData[1];
+                    _content.detail.avgMultiDuration = _newData[2];
+                }
             }
-            protected String getFailureMessage() {
-                return "Failed to note end of game [in=" + where() + "]";
-            }
-            protected int _newFactor;
+            protected int[] _newData;
         });
     }
 
@@ -694,24 +710,15 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
      */
     protected float getAverageGameDuration (boolean multiplayer, int playerSeconds)
     {
-        // if we've got enough data to trust the average, simply return it
-        float minutes;
-        int samples;
-        if (multiplayer) {
-            minutes =_content.detail.multiPlayerMinutes;
-            samples = _content.detail.multiPlayerGames;
+        int avgSeconds = multiplayer ?
+            _content.detail.avgMultiDuration : _content.detail.avgSingleDuration;
+        // if we have average duration data for this game, use it
+        if (avgSeconds > 0) {
+            return avgSeconds / 60f;
         } else {
-            minutes =_content.detail.singlePlayerMinutes;
-            samples = _content.detail.singlePlayerGames;
+            // otherwise use this player's time, but cap it
+            return Math.min(playerSeconds, MAX_FRESH_GAME_DURATION) / 60f;
         }
-        if (samples > FRESH_GAME_CUTOFF) {
-            return minutes / samples;
-        }
-
-        // otherwise incorporate this player's time into the average and cap it
-        minutes += (playerSeconds / 60f);
-        samples++;
-        return Math.min(minutes / samples, MAX_FRESH_GAME_DURATION);
     }
 
     protected boolean isMultiPlayer ()
@@ -956,11 +963,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** Tracks accumulated playtime for all players in the game. */
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
-    /** Once a game has accumulated this many player games, its average time is trusted. */
-    protected static final int FRESH_GAME_CUTOFF = 10;
-
     /** Games for which we have no history earn no flow beyond this many minutes. */
-    protected static final int MAX_FRESH_GAME_DURATION = 10;
+    protected static final int MAX_FRESH_GAME_DURATION = 8*60;
 
     /** We require at least this many data points before we'll consider a percentile distribution
      * to be sufficiently valid that we use it to compute performance. */

@@ -536,7 +536,7 @@ public class GameServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
-        info.avgDuration = detail.toGameDetail().getAverageDuration();
+        info.avgDuration = detail.getAverageDuration();
         int[] players = getMinMaxPlayers((Game)game.toItem());
         info.minPlayers = players[0];
         info.maxPlayers = players[1];
