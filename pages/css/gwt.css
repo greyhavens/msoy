@@ -1121,6 +1121,7 @@ img, embed, applet, object {
 }
 
 .ratingText {
+    font-size: 14px;
     font-weight: bold;
 }
 
