@@ -57,9 +57,6 @@ public class GameEditor extends ItemEditor
             }
         }
 
-        // configure our server code class name
-        _serverClass.setText(_game.serverClass);
-
         // read our configuration information out of the game's XML config data
         Document xml;
         try {
@@ -109,7 +106,8 @@ public class GameEditor extends ItemEditor
             _extras.setText(childrenText);
         }
 
-        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager };
+        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager,
+            "serverclass", _serverClass };
         for (int ii = 0; ii < bits.length; ii += 2) {
             NodeList elems = xml.getElementsByTagName((String)bits[ii]);
             if (elems.getLength() > 0) {
@@ -253,9 +251,6 @@ public class GameEditor extends ItemEditor
         // configure our genre
         _game.genre = Game.GENRES[_genre.getSelectedIndex()];
 
-        // configure our server code class name
-        _game.serverClass = _serverClass.getText();
-
         // convert our configuration information back to an XML document
         Document xml = XMLParser.createDocument();
         xml.appendChild(xml.createElement("game"));
@@ -278,7 +273,8 @@ public class GameEditor extends ItemEditor
             match.appendChild(xml.createElement("unwatchable"));
         }
 
-        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager };
+        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager,
+            "serverclass", _serverClass};
         for (int ii = 0; ii < bits.length; ii += 2) {
             String text = ((TextBox)bits[ii+1]).getText();
             if (text.length() > 0) {

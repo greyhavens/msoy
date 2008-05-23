@@ -167,6 +167,10 @@ public class GameRepository extends ItemRepository<
             }
         });
         // END TEMP
+
+        // TEMP 05-23-2008
+        ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(17014, "serverClass"));
+        // END TEMP
     }
 
     /**

@@ -46,6 +46,13 @@ public class GameDetailRecord extends PersistentRecord
     public static final ColumnExp SOURCE_ITEM_ID_C =
         new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
 
+    /** The column identifier for the {@link #gamesPlayed} field. */
+    public static final String GAMES_PLAYED = "gamesPlayed";
+
+    /** The qualified column identifier for the {@link #gamesPlayed} field. */
+    public static final ColumnExp GAMES_PLAYED_C =
+        new ColumnExp(GameDetailRecord.class, GAMES_PLAYED);
+
     /** The column identifier for the {@link #avgSingleDuration} field. */
     public static final String AVG_SINGLE_DURATION = "avgSingleDuration";
 
@@ -59,13 +66,6 @@ public class GameDetailRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #avgMultiDuration} field. */
     public static final ColumnExp AVG_MULTI_DURATION_C =
         new ColumnExp(GameDetailRecord.class, AVG_MULTI_DURATION);
-
-    /** The column identifier for the {@link #gamesPlayed} field. */
-    public static final String GAMES_PLAYED = "gamesPlayed";
-
-    /** The qualified column identifier for the {@link #gamesPlayed} field. */
-    public static final ColumnExp GAMES_PLAYED_C =
-        new ColumnExp(GameDetailRecord.class, GAMES_PLAYED);
 
     /** The column identifier for the {@link #payoutFactor} field. */
     public static final String PAYOUT_FACTOR = "payoutFactor";

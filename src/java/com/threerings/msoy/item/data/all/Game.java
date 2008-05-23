@@ -83,12 +83,6 @@ public class Game extends Item
      */
     public MediaDesc serverMedia;
 
-    /** 
-     *  The server code class to instantiate when running a game. To function properly, the class 
-     *  name must exist within the library given by {@link #serverCodeMedia}.
-     */
-    public String serverClass;
-
     /**
      * Returns true if the specified game is a developer's in-progress original game rather than
      * one listed in the catalog.

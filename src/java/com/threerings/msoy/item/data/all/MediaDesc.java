@@ -253,6 +253,8 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
             return APPLICATION_JAVA_ARCHIVE;
         } else if (mimeType.equals("application/zip")) {
             return APPLICATION_ZIP;
+        } else if (mimeType.equals("application/x-actionscript-bytecode")) {
+            return COMPILED_ACTION_SCRIPT_LIBRARY;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -347,6 +349,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
+        case COMPILED_ACTION_SCRIPT_LIBRARY: return "application/x-actionscript-bytecode";
         default: return "application/octet-stream";
         }
     }

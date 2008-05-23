@@ -90,13 +90,6 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp SERVER_MIME_TYPE_C =
         new ColumnExp(GameRecord.class, SERVER_MIME_TYPE);
 
-    /** The column identifier for the {@link #serverClass} field. */
-    public static final String SERVER_CLASS = "serverClass";
-
-    /** The qualified column identifier for the {@link #serverClass} field. */
-    public static final ColumnExp SERVER_CLASS_C =
-        new ColumnExp(GameRecord.class, SERVER_CLASS);
-
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(GameRecord.class, ITEM_ID);
@@ -178,7 +171,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 13;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 14;
 
     /** This game's genre. */
     public byte genre;
@@ -210,10 +203,6 @@ public class GameRecord extends ItemRecord
 
     /** The MIME type of the {@link #serverMediaHash} media. */
     public byte serverMimeType;
-
-    /** The name of the class to use (resides in the server code media). */
-    @Column(nullable=true)
-    public String serverClass;
 
     /**
      * Creates a {@link GameInfo} record for this game.
@@ -273,7 +262,6 @@ public class GameRecord extends ItemRecord
         Game game = (Game)item;
         genre = game.genre;
         config = game.config;
-        serverClass = game.serverClass;
         if (game.gameMedia != null) {
             gameMediaHash = game.gameMedia.hash;
             gameMimeType = game.gameMedia.mimeType;
@@ -320,7 +308,6 @@ public class GameRecord extends ItemRecord
             new MediaDesc(shotMediaHash, shotMimeType);
         object.serverMedia = (serverMediaHash == null) ? null :
             new MediaDesc(serverMediaHash, serverMimeType);
-        object.serverClass = serverClass;
         return object;
     }
 
