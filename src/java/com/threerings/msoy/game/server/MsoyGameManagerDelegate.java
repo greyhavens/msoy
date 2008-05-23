@@ -790,8 +790,31 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         if (record == null) {
             return 0;
         }
-        float minutes = getAverageGameDuration(multiplayer, record.getPlayTime(now));
-        return Math.round(record.humanity * _flowPerMinute * minutes);
+        int playerSecs = record.getPlayTime(now);
+        float avgMins = getAverageGameDuration(multiplayer, playerSecs);
+        float playerMins = playerSecs/60f;
+
+        // a player within 80% of the average time will receive a payout based on the average time
+        // to accomodate games where faster performance is desirable; however, below 80% we scale
+        // down to prevent players who manage to get a game to payout in a degenerately low time
+        // from grinding its payout factor into the ground by exploiting their discovery
+        float awardMins;
+        if (playerMins >= 0.8f*avgMins) {
+            awardMins = avgMins;
+        } else if (playerMins >= 0.2f*avgMins) {
+            awardMins = playerMins + 0.2f*avgMins;
+        } else /* playerMins < 0.2f*avgMins */ {
+            awardMins = 2*playerMins;
+        }
+
+        // log things for a while so we can see how often and to what extent this happens
+        if (awardMins != avgMins) {
+            log.info("Scaling player's awardable flow due to short game [game=" + where() +
+                     ", memberId=" + record.memberId + ", avgMins=" + avgMins +
+                     ", playerMins=" + playerMins + ", awardMins=" + awardMins + "].");
+        }
+
+        return Math.round(record.humanity * _flowPerMinute * awardMins);
     }
 
     protected void payoutPlayer (int oid)
