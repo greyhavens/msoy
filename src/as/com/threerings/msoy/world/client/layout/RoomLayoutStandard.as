@@ -358,7 +358,7 @@ public class RoomLayoutStandard implements RoomLayout
         if (re == null) {
             Log.getLog(this).warning("Non room element in room " +
                 "[index=" + index + ", numChildren=" + _parentView.numChildren +
-                ", displayObject=" + _parentView.getChildAt(index) + "].");
+                ", displayObject=" + _parentView.getChildAt(index).name + "].");
             Log.dumpStack();
             return 0;
         }
