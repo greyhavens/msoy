@@ -12,6 +12,7 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.ArcadeData;
+import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameMetrics;
@@ -119,5 +120,11 @@ public interface GameService extends RemoteService
      * Loads up information on the specified game genre.
      */
     public GameGenreData loadGameGenre (WebIdent ident, byte genre)
+        throws ServiceException;
+    
+    /**
+     * Loads up information for the landing page top games.
+     */
+    public FeaturedGameInfo[] loadTopGamesData (WebIdent ident)
         throws ServiceException;
 }

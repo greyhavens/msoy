@@ -10,6 +10,8 @@ import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.net.MailUtil;
 import org.apache.velocity.VelocityContext;
@@ -27,6 +29,7 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.MemberService;
@@ -292,6 +295,26 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
+    // from MemberService
+    public List<MemberCard> getLeaderList ()
+        throws ServiceException
+    {
+        try {
+            // locate the members that match the supplied search
+            IntSet mids = new ArrayIntSet();
+            mids.addAll(MsoyServer.memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
+
+            // resolve cards for these members
+            List<MemberCard> results = ServletUtil.resolveMemberCards(mids, false, null);
+            Collections.sort(results, ServletUtil.SORT_BY_LEVEL);
+            return results;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure fetching leader list", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
     /**
      * Helper function for {@link #sendInvites}.
      */
@@ -376,4 +399,10 @@ public class MemberServlet extends MsoyServiceServlet
             this.name = name;
         }
     }
+
+    /** Repository of Whirled players */
+    protected ProfileRepository _profileRepo = MsoyServer.profileRepo;
+    
+    /** Maximum number of members to return for the leader board */
+    protected static final int MAX_LEADER_MATCHES = 100;
 }

@@ -99,6 +99,9 @@ public class MemberCard
     /** This member's current status. */
     public Status status;
 
+    /** This member's level. */
+    public int level;
+
     /** Whether or not this member is the requester's friend. */
     public boolean isFriend;
 }

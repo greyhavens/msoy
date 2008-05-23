@@ -293,6 +293,12 @@
   height: 65px;
 }
 
+.featuredGame .gameName .Name {
+  width: 285px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .gameEntry {
   border-bottom: 1px solid #DADADA;
   border-left: 1px solid #DADADA;

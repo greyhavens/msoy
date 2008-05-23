@@ -90,4 +90,13 @@ public interface MemberService extends RemoteService
      */
     public void optOut (String inviteId)
         throws ServiceException;
+
+    /**
+     * Fetch the highest ranked Whirled memebers for display on a leader board. 
+     * Returns a list of {@link MemberCard} records.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
+     */
+    public List getLeaderList ()
+        throws ServiceException;
 }

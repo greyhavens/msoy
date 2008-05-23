@@ -103,6 +103,10 @@ public class MemberCardRecord extends PersistentRecord
     @Computed(shadowOf=ProfileRecord.class)
     public String headline;
 
+    /** The currently reported level of this user. */
+    @Computed(shadowOf=MemberRecord.class)
+    public int level;
+
     /**
      * Creates a runtime record from this persistent record.
      */
@@ -124,6 +128,7 @@ public class MemberCardRecord extends PersistentRecord
         MemberCard.NotOnline status = new MemberCard.NotOnline();
         status.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
         card.status = status;
+        card.level = level;
         return card;
     }
 

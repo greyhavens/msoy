@@ -318,6 +318,22 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns the members with the highest levels
+     */
+    public List<Integer> getLeadingMembers (int limit)
+        throws PersistenceException
+    {
+        List<Integer> ids = Lists.newArrayList();
+        List<MemberRecord> mrecs = findAll(
+            MemberRecord.class, OrderBy.descending(MemberRecord.LEVEL_C), new Limit(0, limit));
+        for (MemberRecord mrec : mrecs) {
+            ids.add(mrec.memberId);
+        }
+        
+        return ids;
+    }
+
+    /**
      * Loads up the member associated with the supplied session token. Returns null if the session
      * has expired or is not valid.
      */

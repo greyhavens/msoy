@@ -7,10 +7,13 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.web.client.GameService;
+import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.client.WorldServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 
+import client.games.CGames;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Application;
 import client.shell.Args;
@@ -86,6 +89,10 @@ public class index extends MsgsEntryPoint
         CMe.worldsvc = (WorldServiceAsync)GWT.create(WorldService.class);
         ((ServiceDefTarget)CMe.worldsvc).setServiceEntryPoint("/worldsvc");
 
+        // wire up our remote services
+        CGames.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
+        ((ServiceDefTarget)CGames.gamesvc).setServiceEntryPoint("/gamesvc");
+
         // load up our translation dictionaries
         CMe.msgs = (MeMessages)GWT.create(MeMessages.class);
     }
@@ -93,6 +100,6 @@ public class index extends MsgsEntryPoint
     protected void displayWhat ()
     {
         Frame.closeClient(false); // no client on the main guest landing page
-        setContent(CMe.msgs.whatTitle(), new WhatIsTheWhirled(), false);
+        setContent(CMe.msgs.whatTitle(), new LandingPanel(), false);
     }
 }

@@ -5,13 +5,11 @@ package client.whirleds;
 
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,8 +30,6 @@ import client.shell.Page;
 import client.util.ItemBox;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
-import client.util.RowPanel;
-import client.util.ThumbBox;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -48,7 +44,7 @@ public class GalaxyPanel extends VerticalPanel
         // add our favorites and featured whirled
         SmartTable features = new SmartTable("Features", 0, 0);
         features.setText(0, 0, CWhirleds.msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
-        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel());
+        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel(false));
         features.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         features.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
         add(features);

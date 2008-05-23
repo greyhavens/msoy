@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.Invitation;
 
 /**
  * The asynchronous (client-side) version of {@link MemberService}.
@@ -65,4 +64,9 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#optOut}.
      */
     public void optOut (String inviteId, AsyncCallback callback);
+    
+    /**
+     * The asynchronous version of {@link MemberService#getLeaderList}.
+     */
+    public void getLeaderList (AsyncCallback callback);
 }

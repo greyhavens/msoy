@@ -495,6 +495,44 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface GameService
+    public FeaturedGameInfo[] loadTopGamesData (WebIdent ident)
+        throws ServiceException
+    {
+        try {
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+
+            // determine the "featured" games
+            List<FeaturedGameInfo> featured = Lists.newArrayList();
+            ArrayIntSet have = new ArrayIntSet();
+            for (PlaceCard card : pps.getTopGames()) {
+                GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
+                GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
+                if (game != null) {
+                    featured.add(toFeaturedGameInfo(game, detail, card.population));
+                    have.add(game.gameId);
+                }
+            }
+            if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
+                for (GameRecord game :
+                         _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+                    if (!have.contains(game.gameId)) {
+                        GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
+                        featured.add(toFeaturedGameInfo(game, detail, 0));
+                    }
+                    if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                        break;
+                    }
+                }
+            }
+            return featured.toArray(new FeaturedGameInfo[featured.size()]);
+            
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "loadTopGamesData failed [for=" + ident + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
     protected int[] getMinMaxPlayers (Game game)
     {
         MsoyMatchConfig match = null;

@@ -80,6 +80,26 @@ public class ServletUtil
             return MemberName.compareNames(c1.name, c2.name);
         }
     };
+    
+    /**
+     * A compartor for sorting lists of MemberCard, highest level to lowest, with
+     * last online then name as a tiebreaker.
+     */
+    public static Comparator<MemberCard> SORT_BY_LEVEL = new Comparator<MemberCard>() {
+        public int compare (MemberCard c1, MemberCard c2) {
+            if (c1.level > c2.level) {
+                return -1;
+            }
+            else if (c2.level > c1.level) {
+                return 1;
+            }
+            int rv = MemberCard.compare(c1.status, c2.status);
+            if (rv != 0) {
+                return rv;
+            }
+            return MemberName.compareNames(c1.name, c2.name);
+        }
+    };
 
     /**
      * Looks up a member id based on their session token. May return null if this member does not

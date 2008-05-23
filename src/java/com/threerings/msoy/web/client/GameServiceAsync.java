@@ -65,4 +65,9 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
     public void loadGameGenre (WebIdent ident, byte genre, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadTopGamesData}.
+     */
+    public void loadTopGamesData (WebIdent ident, AsyncCallback callback);
 }
