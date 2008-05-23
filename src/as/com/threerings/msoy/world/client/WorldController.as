@@ -289,9 +289,7 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse());
-        menu.setDispatcher(_topPanel);
-        menu.popUpAtMouse();
+        CommandMenu.createMenu(menuData.reverse(), _topPanel).popUpAtMouse;
     }
 
 //    /**
@@ -356,9 +354,7 @@ public class WorldController extends MsoyController
 //                });
 //        }
 //
-//        var menu :CommandMenu = CommandMenu.createMenu(menuData);
-//        menu.setDispatcher(_topPanel);
-//        menu.popUp(trigger, true);
+//        CommandMenu.createMenu(menuData, _topPanel).popUp(trigger, true);
 //    }
 
     /**

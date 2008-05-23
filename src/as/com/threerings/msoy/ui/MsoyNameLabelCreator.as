@@ -45,9 +45,7 @@ public class MsoyNameLabelCreator
     {
         var menuItems :Array = [];
         _mctx.getMsoyController().addMemberMenuItems(name, menuItems);
-        var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-        menu.setDispatcher(_mctx.getTopPanel());
-        menu.popUpAtMouse();
+        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
     private static const log :Log = Log.getLog(MsoyNameLabelCreator);
