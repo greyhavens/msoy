@@ -123,7 +123,7 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Enable or disable editing. Called by the EditRoomController.
+     * Enable or disable editing.
      */
     public function setEditing (editing :Boolean) :void
     {

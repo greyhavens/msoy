@@ -509,6 +509,9 @@ public class RoomView extends AbstractRoomView
         super.didLeavePlace(plobj);
 
         FurniSprite.setLoadingWatcher(null);
+
+        // in case we were auto-scrolling, remove the event listener..
+        removeEventListener(Event.ENTER_FRAME, tick);
     }
 
     // from AbstractRoomView
@@ -900,8 +903,8 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when a sprite message arrives on the room object.
      */
-    protected function dispatchSpriteMessage (item :ItemIdent, name :String,
-                                              arg :ByteArray, isAction :Boolean) :void
+    protected function dispatchSpriteMessage (
+        item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
     {
         var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
         if (sprite != null) {
@@ -1060,9 +1063,6 @@ public class RoomView extends AbstractRoomView
     {
         _entities.remove(sprite.getItemIdent()); // could be a no-op
     }
-
-    /** Event specific constants for notifying GWT */
-    protected static const PET_EVENT :String = "pet";
 
     /** Our controller. */
     protected var _ctrl :RoomController;

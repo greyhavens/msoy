@@ -162,16 +162,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Returns true if we are in edit mode, false if not.
-     */
-    public function isEditMode () :Boolean
-    {
-        // currently holding shift down puts us in edit mode, soon this will be based on whether or
-        // not the hammer has been clicked
-        return _shiftDown || isRoomEditing();
-    }
-
-    /**
      * Requests that this client be given control of the specified item.
      */
     public function requestControl (ident :ItemIdent) :void
@@ -575,9 +565,8 @@ public class RoomController extends SceneController
 
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
-            var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+            var menu :CommandMenu = CommandMenu.createMenu(menuItems, _roomView);
             menu.variableRowHeight = true;
-            menu.setDispatcher(_roomView);
             menu.popUpAtMouse();
 
 //            var menu :RadialMenu = new RadialMenu(100);
@@ -617,9 +606,7 @@ public class RoomController extends SceneController
           command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] }
         );
 
-        var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-        menu.setDispatcher(_roomView);
-        menu.popUpAtMouse();
+        CommandMenu.createMenu(menuItems, _roomView).popUpAtMouse()
     }
 
     /**
