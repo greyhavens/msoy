@@ -575,6 +575,10 @@ public class OccupantSprite extends MsoySprite
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
             Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
+        // NOTE: At one point we thought we'd bound names to be on-screen, but names mean so
+        // little in Whirled, and we've decided we don't care. Avatars with hidden names are cool,
+        // and you can still click on the avatar to do whatever you need to do.
+        // Also, the room's occupant list can be used to act on other avatars.
         _label.y = (baseY - _label.height) / _extras.scaleY;
     }
 
