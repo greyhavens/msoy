@@ -368,7 +368,7 @@ public class RoomController extends SceneController
      */
     public function isRoomEditing () :Boolean
     {
-        return _editor.isEditing();
+        return (_editor != null) && _editor.isEditing();
     }
 
     /**
@@ -851,6 +851,7 @@ public class RoomController extends SceneController
     public function cancelRoomEditing () :void
     {
         _editor.endEditing();
+        _editor = null;
     }
 
     /**
@@ -974,7 +975,6 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _wdctx = (ctx as WorldContext);
-        _editor = new RoomEditorController(_wdctx, _roomView);
 
         if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
             _suppressNormalHovering = true;
@@ -1164,6 +1164,9 @@ public class RoomController extends SceneController
             _musicIsBackground = true;
         }
 
+        if (_editor == null) { // should be..
+            _editor = new RoomEditorController(_wdctx, _roomView);
+        }
         _editor.startEditing(wrapupFn);
         _editor.updateUndoStatus(_updates.length != 0);
     }
@@ -1653,7 +1656,9 @@ public class RoomController extends SceneController
 
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
-        _editor.processUpdate(update);
+        if (_editor != null) {
+            _editor.processUpdate(update);
+        }
     }
 
     /**
