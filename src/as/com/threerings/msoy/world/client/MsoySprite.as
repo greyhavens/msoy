@@ -389,7 +389,8 @@ public class MsoySprite extends DataPackMediaContainer
      * @return a String, null, or true. A String or null is returned if the tooltip should
      * be changed, true is returned if nothing has changed since the last hover.
      */
-    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :Object
+    public function setHovered (
+        hovered :Boolean, stageX :Number = NaN, stageY :Number = NaN) :Object
     {
         if (hovered == (_glow == null)) {
             setGlow(hovered);

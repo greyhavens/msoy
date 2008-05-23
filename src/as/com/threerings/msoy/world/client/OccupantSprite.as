@@ -455,7 +455,8 @@ public class OccupantSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :Object
+    override public function setHovered (
+        hovered :Boolean, stageX :Number = NaN, stageY :Number = NaN) :Object
     {
         // see if we're hovering over a new decoration..
         var decorTip :Object;
@@ -624,7 +625,7 @@ public class OccupantSprite extends MsoySprite
      * Return the decoration's constraints for the decoration under the
      * specified stage coordinates.
      */
-    protected function getDecorationAt (stageX :int, stageY :int) :Object
+    protected function getDecorationAt (stageX :Number, stageY :Number) :Object
     {
         if (_decorations != null) {
             for (var ii :int = 0; ii < _decorations.length; ii++) {

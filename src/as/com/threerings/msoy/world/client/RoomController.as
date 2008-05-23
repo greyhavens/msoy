@@ -162,6 +162,15 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Set the specified name hovered or unhovered.
+     */
+    public function setHoverName (name :MemberName, hovered :Boolean) :void
+    {
+        setHoverSprite(hovered ? _roomView.getOccupantByName(name) : null);
+        _suppressNormalHovering = hovered;
+    }
+
+    /**
      * Requests that this client be given control of the specified item.
      */
     public function requestControl (ident :ItemIdent) :void
@@ -968,6 +977,7 @@ public class RoomController extends SceneController
         _editor = new RoomEditorController(_wdctx, _roomView);
 
         if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+            _suppressNormalHovering = true;
             // show the pointer cursor
             _roomView.buttonMode = true;
             _roomView.mouseChildren = false;
@@ -1173,19 +1183,13 @@ public class RoomController extends SceneController
      */
     protected function checkMouse (event :Event) :void
     {
-        // no mouse fiddling while we're featured
-        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
-            setHoverSprite(null);
+        // skip if supressed, and freak not out if we're temporarily removed from the stage
+        if (_suppressNormalHovering || _roomView.stage == null || !_roomView.isShowing()) {
             return;
         }
 
 //        // in case a mouse event was captured by an entity, prevent it from adding a popup later
 //        _entityAllowedToPop = null;
-
-        // freak not out if we're temporarily removed from the stage
-        if (_roomView.stage == null || !_roomView.isShowing()) {
-            return;
-        }
 
         var sx :Number = _roomView.stage.mouseX;
         var sy :Number = _roomView.stage.mouseY;
@@ -1254,7 +1258,7 @@ public class RoomController extends SceneController
      * Set the sprite that the mouse is hovering over.
      */
     protected function setHoverSprite (
-        sprite :MsoySprite, stageX :Number = 0, stageY :Number = 0) :void
+        sprite :MsoySprite, stageX :Number = NaN, stageY :Number = NaN) :void
     {
         // if the same sprite is glowing, we don't have to change as much..
         if (_hoverSprite == sprite) {
@@ -1341,6 +1345,9 @@ public class RoomController extends SceneController
         if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
             _wdctx.getWorldController().handleGoScene(_scene.getId());
             return;
+
+        } else if (_suppressNormalHovering) {
+            return;
         }
 
 //        // at this point, the mouse click is bubbling back out, and the entity is no
@@ -1349,8 +1356,8 @@ public class RoomController extends SceneController
 
         // if shift is being held down, we're looking for locations only, so skip looking for
         // hitSprites.
-        var hit :* = (_shiftDownSpot == null) ?
-            getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
+        var hit :* = (_shiftDownSpot == null)
+            ? getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
         if (hit === undefined) {
             return;
         }
@@ -1733,6 +1740,9 @@ public class RoomController extends SceneController
 
     /** Our general-purpose room listener. */
     protected var _roomListener :ChangeListener;
+
+    /** If true, normal sprite hovering is disabled. */
+    protected var _suppressNormalHovering :Boolean;
 
     /** The currently hovered sprite, or null. */
     protected var _hoverSprite :MsoySprite;

@@ -3,12 +3,8 @@
 
 package com.threerings.msoy.ui {
 
-import flash.events.MouseEvent;
-
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-
-import com.threerings.flex.CommandMenu;
 
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
@@ -28,31 +24,19 @@ public class MsoyNameLabelCreator
     public function createLabel (name :Name) :NameLabel
     {
         if (!(name is VizMemberName)) {
-            log.warning("MsoyNameLabelCreator only supports creating labels for VizMemberNames [" + 
-                name + "]");
+            Log.getLog(this).warning("MsoyNameLabelCreator only supports creating labels " +
+                "for VizMemberNames [" + name + "]");
             return null;
         }
         
-        var vizName :VizMemberName = name as VizMemberName;
-        var labelBox :LabelBox = new LabelBox(vizName);
-        labelBox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            handlePlayerClicked(vizName);
-        });
-        return labelBox;
+        return new LabelBox(_mctx, name as VizMemberName);
     }
-    
-    protected function handlePlayerClicked (name :VizMemberName) :void
-    {
-        var menuItems :Array = [];
-        _mctx.getMsoyController().addMemberMenuItems(name, menuItems);
-        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
-    }
-
-    private static const log :Log = Log.getLog(MsoyNameLabelCreator);
 
     protected var _mctx :MsoyContext;
 }
 }
+
+import flash.events.MouseEvent;
 
 import flash.text.TextFieldAutoSize;
 
@@ -65,23 +49,27 @@ import com.threerings.util.Log;
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.PlayerList;
 
+import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.ui.MediaWrapper;
-
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.VizMemberName;
+
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.NameField;
+import com.threerings.msoy.world.client.RoomView;
 
 class LabelBox extends HBox
     implements NameLabel
 {
-    public function LabelBox (name :VizMemberName)
+    public function LabelBox (mctx :MsoyContext, name :VizMemberName)
     {
+        _mctx = mctx;
         _name = name;
 
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -90,6 +78,11 @@ class LabelBox extends HBox
         setStyle("borderThickness", 0);
         setStyle("borderStyle", "none");
         mouseEnabled = false;
+
+        // but the mouse is still enable on some children..
+        addEventListener(MouseEvent.CLICK, handleClick);
+        addEventListener(MouseEvent.ROLL_OVER, handleRoll);
+        addEventListener(MouseEvent.ROLL_OUT, handleRoll);
     }
 
     public function setStatus (status :String) :void
@@ -132,7 +125,24 @@ class LabelBox extends HBox
         _label.text = "" + _name;
         addChild(new FlexWrapper(_label));
     }
+    
+    protected function handleClick (event :MouseEvent) :void
+    {
+        var menuItems :Array = [];
+        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems);
+        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
+    }
 
+    protected function handleRoll (event :MouseEvent) :void
+    {
+        var view :Object = _mctx.getTopPanel().getPlaceView();
+        if (view is RoomView) {
+            (view as RoomView).getRoomController().setHoverName(
+                _name, (event.type == MouseEvent.ROLL_OVER));
+        }
+    }
+
+    protected var _mctx :MsoyContext;
     protected var _name :VizMemberName;
     protected var _label :NameField;
 }
