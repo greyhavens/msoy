@@ -253,8 +253,9 @@ public class CatalogServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
 
-            // make sure we own this item
+            // make sure we own AND created this item
             requireIsUser(mrec, originalItem.ownerId, "listItem", originalItem);
+            requireIsUser(mrec, originalItem.creatorId, "listItem", originalItem);
 
             // make sure this item is not already listed
             if (originalItem.catalogId != 0) {
