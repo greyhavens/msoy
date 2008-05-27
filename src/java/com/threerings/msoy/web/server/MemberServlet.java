@@ -62,7 +62,7 @@ public class MemberServlet extends MsoyServiceServlet
             return null;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getMemberCard failed [id=" + memberId + "].", pe);
+            log.warning("getMemberCard failed [id=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -75,7 +75,7 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getFriendStatus failed [for=" + memberId + "].", pe);
+            log.warning("getFriendStatus failed [for=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -96,7 +96,7 @@ public class MemberServlet extends MsoyServiceServlet
             FriendManager.friendshipEstablished(memrec.getName(), friendName);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "addFriend failed [for=" + memrec.memberId +
+            log.warning("addFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -112,7 +112,7 @@ public class MemberServlet extends MsoyServiceServlet
             FriendManager.friendshipCleared(memrec.memberId, friendId);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "removeFriend failed [for=" + memrec.memberId +
+            log.warning("removeFriend failed [for=" + memrec.memberId +
                     ", friendId=" + friendId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -150,7 +150,7 @@ public class MemberServlet extends MsoyServiceServlet
             return items;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "loadInventory failed [for=" + memrec.memberId + "].", pe);
+            log.warning("loadInventory failed [for=" + memrec.memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -174,7 +174,7 @@ public class MemberServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
+            log.warning("getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -204,7 +204,7 @@ public class MemberServlet extends MsoyServiceServlet
 //             }
 
 //         } catch (PersistenceException pe) {
-//             log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
+//             log.warning("getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
 //             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
 //         }
 
@@ -253,7 +253,7 @@ public class MemberServlet extends MsoyServiceServlet
             return invRec.toInvitation(inviter);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
+            log.warning("getInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -276,7 +276,7 @@ public class MemberServlet extends MsoyServiceServlet
             MsoyServer.memberRepo.deleteInvite(inviteId);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "removeInvitation failed [inviteId=" + inviteId + "]", pe);
+            log.warning("removeInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -290,7 +290,7 @@ public class MemberServlet extends MsoyServiceServlet
                 MsoyServer.memberRepo.optOutInvite(inviteId);
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "optOut failed [inviteId=" + inviteId + "]", pe);
+            log.warning("optOut failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -310,7 +310,7 @@ public class MemberServlet extends MsoyServiceServlet
             return results;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure fetching leader list", pe);
+            log.warning("Failure fetching leader list", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -383,7 +383,7 @@ public class MemberServlet extends MsoyServiceServlet
             return invite;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "sendInvite failed [inviter=" + inviter.who() +
+            log.warning("sendInvite failed [inviter=" + inviter.who() +
                     ", email=" + email + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

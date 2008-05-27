@@ -181,7 +181,7 @@ public class MsoySceneRegistry extends SceneRegistry
                 }
             }
             public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Failed to acquire scene resolution lock " +
+                log.warning("Failed to acquire scene resolution lock " +
                         "[for=" + memobj.who() + ", id=" + sceneId + "].", cause);
                 listener.requestFailed(RoomCodes.INTERNAL_ERROR);
             }

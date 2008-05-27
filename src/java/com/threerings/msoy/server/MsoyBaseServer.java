@@ -142,7 +142,7 @@ public abstract class MsoyBaseServer extends WhirledServer
                 try {
                     finishInit();
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Server initialization failed.", e);
+                    log.warning("Server initialization failed.", e);
                     System.exit(-1);
                 }
             }
@@ -160,8 +160,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             try {
                 pmgr.shutdown();
             } catch (Exception e) {
-                log.log(Level.WARNING, "Place manager failed shutting down " +
-                        "[where=" + pmgr.where() + "].", e);
+                log.warning("Place manager failed shutting down [where=" + pmgr.where() + "].", e);
             }
         }
     }

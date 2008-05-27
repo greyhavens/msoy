@@ -185,7 +185,7 @@ public class WorldServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load WhatIsWhirled data.", pe);
+            log.warning("Failed to load WhatIsWhirled data.", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -214,7 +214,7 @@ public class WorldServlet extends MsoyServiceServlet
                 log.warning("Game missing match configuration [game=" + game + "].");
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + game.gameId +
+            log.warning("Failed to parse XML game definition [id=" + game.gameId +
                     ", config=" + game.config + "]", e);
         }
         if (match != null) {
@@ -243,7 +243,7 @@ public class WorldServlet extends MsoyServiceServlet
                     groups.add(new GroupName(gRec.name, gRec.groupId));
                 }
             } catch (PersistenceException e) {
-                log.log(Level.WARNING, "Failed to load friends or groups", e);
+                log.warning("Failed to load friends or groups", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
             // we add ourselves to our friends list so that we see where we are as well
@@ -296,7 +296,7 @@ public class WorldServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getMyWhirled failed [for=" + mrec.memberId + "]", pe);
+            log.warning("getMyWhirled failed [for=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -335,7 +335,7 @@ public class WorldServlet extends MsoyServiceServlet
             return rooms;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load rooms failed [memberId=" + mrec.memberId + "]", pe);
+            log.warning("Load rooms failed [memberId=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -355,7 +355,7 @@ public class WorldServlet extends MsoyServiceServlet
             return loadFeed(mrec, groupIds, cutoffDays);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load feed failed [memberId=" + mrec.memberId + "]", pe);
+            log.warning("Load feed failed [memberId=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -391,7 +391,7 @@ public class WorldServlet extends MsoyServiceServlet
             return info;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load room info failed [sceneId=" + sceneId + "]", pe);
+            log.warning("Load room info failed [sceneId=" + sceneId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }

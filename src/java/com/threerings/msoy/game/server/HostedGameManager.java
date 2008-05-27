@@ -51,7 +51,7 @@ public class HostedGameManager
             loader = new URLClassLoader(new URL[] { new URL(path) }, getClass().getClassLoader());
             _loaders.put(manager, loader);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create URL for class loader [path=" + path + "].", e);
+            log.warning("Failed to create URL for class loader [path=" + path + "].", e);
         }
         return loader;
     }

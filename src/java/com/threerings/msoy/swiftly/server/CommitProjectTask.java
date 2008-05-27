@@ -79,7 +79,7 @@ public class CommitProjectTask
         }
 
         if (_error != null) {
-            log.log(Level.WARNING, "Project storage commit failed.", _error);
+            log.warning("Project storage commit failed.", _error);
             _listener.requestFailed("e.commit_failed_unexpected");
             return;
         }

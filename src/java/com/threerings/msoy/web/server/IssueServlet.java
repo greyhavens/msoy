@@ -85,7 +85,7 @@ public class IssueServlet extends MsoyServiceServlet
             }
             return issue;
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load issue [for=" + who(mrec) +
+            log.warning("Failed to load issue [for=" + who(mrec) +
                     ", issueId=" + issueId + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
@@ -123,7 +123,7 @@ public class IssueServlet extends MsoyServiceServlet
             return messages;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load issue messages [for=" + who(mrec) +
+            log.warning("Failed to load issue messages [for=" + who(mrec) +
                     ", issueId=" + issueId + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
@@ -149,7 +149,7 @@ public class IssueServlet extends MsoyServiceServlet
             return rissue;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to create issue [for=" + who(mrec) +
+            log.warning("Failed to create issue [for=" + who(mrec) +
                     ", messageId=" + messageId + ", description=" + issue.description + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
@@ -179,7 +179,7 @@ public class IssueServlet extends MsoyServiceServlet
             MsoyServer.issueRepo.updateIssue(issue);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update issue [for=" + who(mrec) +
+            log.warning("Failed to update issue [for=" + who(mrec) +
                     "issueId=" + issue.issueId + ", description=" + issue.description + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
@@ -201,7 +201,7 @@ public class IssueServlet extends MsoyServiceServlet
 
             MsoyServer.forumRepo.updateMessageIssue(messageId, issueId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to assign message [for=" + who(mrec) +
+            log.warning("Failed to assign message [for=" + who(mrec) +
                     "issueId=" + issueId + ", messageId=" + messageId + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
@@ -227,7 +227,7 @@ public class IssueServlet extends MsoyServiceServlet
                 owners.add(new MemberName(member.permaName, member.memberId));
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load owners [for=" + who(mrec) + "].", pe);
+            log.warning("Failed to load owners [for=" + who(mrec) + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
         return owners;
@@ -280,7 +280,7 @@ public class IssueServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load issues [for=" + who(mrec) + ", type=" + type +
+            log.warning("Failed to load issues [for=" + who(mrec) + ", type=" + type +
                     ", state=" + state + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }

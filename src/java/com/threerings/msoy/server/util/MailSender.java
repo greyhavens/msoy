@@ -109,7 +109,7 @@ public class MailSender
         try {
             ve = VelocityUtil.createEngine();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create the velocity engine.", e);
+            log.warning("Failed to create the velocity engine.", e);
             return ServiceCodes.E_INTERNAL_ERROR;
         }
 
@@ -183,7 +183,7 @@ public class MailSender
             return null;
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to send email.", e);
+            log.warning("Failed to send email.", e);
             return e.getMessage();
         }
     }

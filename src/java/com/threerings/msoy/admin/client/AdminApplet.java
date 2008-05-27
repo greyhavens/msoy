@@ -61,7 +61,7 @@ public class AdminApplet extends JApplet
             _stop = dclass.getMethod("stop");
             _init.invoke(_delegate, this, server, port);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to load wrapper class.", e);
+            log.warning("Failed to load wrapper class.", e);
         }
     }
 
@@ -72,7 +72,7 @@ public class AdminApplet extends JApplet
         try {
             _start.invoke(_delegate, getParameter("authtoken"));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke start().", e);
+            log.warning("Failed to invoke start().", e);
         }
     }
 
@@ -83,7 +83,7 @@ public class AdminApplet extends JApplet
         try {
             _stop.invoke(_delegate);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke stop().", e);
+            log.warning("Failed to invoke stop().", e);
         }
     }
 

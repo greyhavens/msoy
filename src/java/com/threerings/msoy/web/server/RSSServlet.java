@@ -81,7 +81,7 @@ public class RSSServlet extends HttpServlet
             rsp.getOutputStream().print(rss);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to generate rss feed [groupId=" + groupId + "].", pe);
+            log.warning("Failed to generate rss feed [groupId=" + groupId + "].", pe);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }

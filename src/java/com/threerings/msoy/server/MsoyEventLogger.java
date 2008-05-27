@@ -58,7 +58,7 @@ public class MsoyEventLogger
                 _remote = EventLoggerFactory.createLogger(config);
 
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to connect to remote logging server.", e);
+                log.warning("Failed to connect to remote logging server.", e);
             }
         } 
     }

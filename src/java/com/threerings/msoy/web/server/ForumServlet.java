@@ -88,7 +88,7 @@ public class ForumServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load unread threads [for=" + who(mrec) +
+            log.warning("Failed to load unread threads [for=" + who(mrec) +
                     ", max=" + maximum + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -134,7 +134,7 @@ public class ForumServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load threads [for=" + who(mrec) +
+            log.warning("Failed to load threads [for=" + who(mrec) +
                     ", gid=" + groupId + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -157,7 +157,7 @@ public class ForumServlet extends MsoyServiceServlet
             return resolveThreads(mrec, _forumRepo.findThreads(groupId, search, limit), gmap);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to search threads [for=" + who(mrec) +
+            log.warning("Failed to search threads [for=" + who(mrec) +
                     ", gid=" + groupId + ", search=" + search + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -228,7 +228,7 @@ public class ForumServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load messages [for=" + who(mrec) +
+            log.warning("Failed to load messages [for=" + who(mrec) +
                     ", tid=" + threadId + ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -256,7 +256,7 @@ public class ForumServlet extends MsoyServiceServlet
             return resolveMessages(_forumRepo.findMessages(threadId, search, limit));
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to find messages [for=" + who(mrec) +
+            log.warning("Failed to find messages [for=" + who(mrec) +
                     ", tid=" + threadId + ", search=" + search + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -323,7 +323,7 @@ public class ForumServlet extends MsoyServiceServlet
             return thread;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to create thread [for=" + who(mrec) +
+            log.warning("Failed to create thread [for=" + who(mrec) +
                     ", gid=" + groupId + ", subject=" + subject + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -352,7 +352,7 @@ public class ForumServlet extends MsoyServiceServlet
             _forumRepo.updateThreadFlags(ftr.threadId, flags);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update thread flags [for=" + who(mrec) +
+            log.warning("Failed to update thread flags [for=" + who(mrec) +
                     ", tid=" + threadId + ", flags=" + flags + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -367,7 +367,7 @@ public class ForumServlet extends MsoyServiceServlet
             _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to mark thread ignored [for=" + mrec.who() +
+            log.warning("Failed to mark thread ignored [for=" + mrec.who() +
                     ", threadId=" + threadId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -408,7 +408,7 @@ public class ForumServlet extends MsoyServiceServlet
             return fmr.toForumMessage(cards);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to post message [for=" + who(mrec) +
+            log.warning("Failed to post message [for=" + who(mrec) +
                     ", tid=" + threadId + ", irTo=" + inReplyTo + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -437,7 +437,7 @@ public class ForumServlet extends MsoyServiceServlet
             _forumRepo.updateMessage(messageId, message);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to edit message [for=" + who(mrec) +
+            log.warning("Failed to edit message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -470,7 +470,7 @@ public class ForumServlet extends MsoyServiceServlet
             _forumRepo.deleteMessage(messageId);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to delete message [for=" + who(mrec) +
+            log.warning("Failed to delete message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }
@@ -492,7 +492,7 @@ public class ForumServlet extends MsoyServiceServlet
                     mrec.getName(), fmr.posterId, fmr.message, complaint,
                     ServerConfig.getServerURL() + "/#whirleds-t_" + fmr.threadId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to complain message [for=" + who(mrec) +
+            log.warning("Failed to complain message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);
             throw new ServiceException(ForumCodes.E_INTERNAL_ERROR);
         }

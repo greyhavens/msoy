@@ -23,7 +23,7 @@ public class LWJGLGameApplet extends GameApplet
         try {
             LWJGLInstaller.tempInstall();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to install LWJGL binaries.", e);
+            log.warning("Failed to install LWJGL binaries.", e);
         }
     }
 }

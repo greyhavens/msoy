@@ -83,7 +83,7 @@ public class CommentServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load comments [entity=" + etype + ":" + eid +
+            log.warning("Failed to load comments [entity=" + etype + ":" + eid +
                     ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -126,7 +126,7 @@ public class CommentServlet extends MsoyServiceServlet
             return comment;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to post comment [entity=" + etype + ":" + eid +
+            log.warning("Failed to post comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() +
                     ", text=" + StringUtil.truncate(text, 40, "...") + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -152,7 +152,7 @@ public class CommentServlet extends MsoyServiceServlet
             return true;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to delete comment [entity=" + etype + ":" + eid +
+            log.warning("Failed to delete comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -181,7 +181,7 @@ public class CommentServlet extends MsoyServiceServlet
                     mrec.getName(), record.memberId, record.text, subject, link);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to complain comment [entity=" + etype + ":" + eid +
+            log.warning("Failed to complain comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

@@ -172,7 +172,7 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientFailedToLogon (Client client, Exception cause)
     {
-        log.log(Level.WARNING, "Couldn't log on!", cause);
+        log.warning("Couldn't log on!", cause);
         appletError("m.logon_failed");
     }
 
@@ -180,7 +180,7 @@ public class SwiftlyApplet extends JApplet
     public void clientConnectionFailed (Client client, Exception cause)
     {
         // TODO: freak out!
-        log.log(Level.WARNING, "Connection failed!", cause);
+        log.warning("Connection failed!", cause);
     }
 
     // from interface ClientObserver

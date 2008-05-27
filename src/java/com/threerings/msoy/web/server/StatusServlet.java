@@ -55,7 +55,7 @@ public class StatusServlet extends HttpServlet
             waiter.waitForResult();
 
         } catch (ServiceException se) {
-            log.log(Level.WARNING, "Failed to gather stats.", se);
+            log.warning("Failed to gather stats.", se);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }

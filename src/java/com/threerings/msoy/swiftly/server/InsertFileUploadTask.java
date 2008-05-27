@@ -88,8 +88,7 @@ public class InsertFileUploadTask
     public void resultReceived ()
     {
         if (_error != null) {
-            log.log(Level.WARNING, "insertUploadFile failed [element=" + _element + "].",
-                _error);
+            log.warning("insertUploadFile failed [element=" + _element + "].", _error);
             _listener.requestFailed(_error);
             return;
         }

@@ -210,7 +210,7 @@ public class MsoySceneModel extends SceneModel
                 MsoyPortal p = new MsoyPortal(furni);
                 _portalInfo.put(p.portalId, p);
             } catch (Exception e) {
-                log.log(Level.WARNING, "Invalid portal furni [fd=" + furni + "].", e);
+                log.warning("Invalid portal furni [fd=" + furni + "].", e);
             }
         }
     }

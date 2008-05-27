@@ -72,8 +72,7 @@ public class MsoyGameClient extends CrowdClient
 //                     MsoyServer.statRepo.writeModified(name.getMemberId(), statArr);
 
 //                 } catch (Exception e) {
-//                     log.log(Level.WARNING,
-//                             "Failed to note ended session [member=" + name + "].", e);
+//                     log.warning("Failed to note ended session [member=" + name + "].", e);
 //                 }
 //                 return false;
 //             }

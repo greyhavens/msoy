@@ -92,7 +92,7 @@ public class MailServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load conversations failed [for=" + memrec.who() +
+            log.warning("Load conversations failed [for=" + memrec.who() +
                     ", offset=" + offset + ", count=" + count + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -152,7 +152,7 @@ public class MailServlet extends MsoyServiceServlet
             return convo;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load conversation failed [for=" + memrec.who() +
+            log.warning("Load conversation failed [for=" + memrec.who() +
                     ", convoId=" + convoId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -177,7 +177,7 @@ public class MailServlet extends MsoyServiceServlet
             _mailMan.startConversation(memrec, recip, subject, body, attachment);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Start conversation failed [for=" + memrec.who() +
+            log.warning("Start conversation failed [for=" + memrec.who() +
                     ", recipId=" + recipId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -202,7 +202,7 @@ public class MailServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Continue conversation failed [for=" + memrec.who() +
+            log.warning("Continue conversation failed [for=" + memrec.who() +
                     ", convoId=" + convoId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -218,7 +218,7 @@ public class MailServlet extends MsoyServiceServlet
             return _mailRepo.deleteConversation(convoId, memrec.memberId);
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to delete convo [for=" + memrec.who() +
+            log.warning("Failed to delete convo [for=" + memrec.who() +
                     ", convoId=" + convoId + "].", e);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -235,7 +235,7 @@ public class MailServlet extends MsoyServiceServlet
             _mailRepo.updatePayloadState(convoId, sent, state);
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed update payload [mid=" + memrec.memberId +
+            log.warning("Failed update payload [mid=" + memrec.memberId +
                     ", cid=" + convoId + ", sent=" + sent + ", pay=" + payload + "].", e);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

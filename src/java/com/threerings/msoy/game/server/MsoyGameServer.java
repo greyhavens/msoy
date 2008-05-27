@@ -114,7 +114,7 @@ public class MsoyGameServer extends MsoyBaseServer
             server.run();
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to initialize server", e);
+            log.warning("Unable to initialize server", e);
             System.exit(255);
         }
     }

@@ -57,7 +57,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
                 ServletUtil.mapMemberId(ident.token, mrec.memberId);
                 return mrec;
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to load session [tok=" + ident.token + "].", pe);
+                log.warning("Failed to load session [tok=" + ident.token + "].", pe);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }
@@ -67,7 +67,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             try {
                 return MsoyServer.memberRepo.loadMember(memberId);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to load member [id=" + memberId + "].", pe);
+                log.warning("Failed to load member [id=" + memberId + "].", pe);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }

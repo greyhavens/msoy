@@ -134,7 +134,7 @@ public class GameServlet extends MsoyServiceServlet
             return detail;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load game detail [id=" + gameId + "].", pe);
+            log.warning("Failed to load game detail [id=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
     }
@@ -169,7 +169,7 @@ public class GameServlet extends MsoyServiceServlet
             return metrics;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load game metrics [id=" + gameId + "].", pe);
+            log.warning("Failed to load game metrics [id=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
     }
@@ -189,7 +189,7 @@ public class GameServlet extends MsoyServiceServlet
             _gameRepo.updateInstructions(gameId, instructions);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +
+            log.warning("Failed to update instructions [for=" + mrec.who() +
                     ", gameId=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
@@ -211,7 +211,7 @@ public class GameServlet extends MsoyServiceServlet
             MsoyServer.peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update instructions [for=" + mrec.who() +
+            log.warning("Failed to update instructions [for=" + mrec.who() +
                     ", gameId=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
@@ -231,7 +231,7 @@ public class GameServlet extends MsoyServiceServlet
             return loadTrophyInfo(grec, (mrec == null) ? 0 : mrec.memberId, null, null);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure loading game trophies [id=" + gameId + "].", pe);
+            log.warning("Failure loading game trophies [id=" + gameId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -269,7 +269,7 @@ public class GameServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure comparing game trophies [id=" + gameId +
+            log.warning("Failure comparing game trophies [id=" + gameId +
                     ", mids=" + StringUtil.toString(memberIds) + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -326,7 +326,7 @@ public class GameServlet extends MsoyServiceServlet
             return tcase;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure loading trophies [tgtid=" + memberId + "].", pe);
+            log.warning("Failure loading trophies [tgtid=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -380,7 +380,7 @@ public class GameServlet extends MsoyServiceServlet
                                           toRatingResult(multi, players) };
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure loading rankings [for=" + ident + ", gameId=" + gameId +
+            log.warning("Failure loading rankings [for=" + ident + ", gameId=" + gameId +
                     ", friends=" + onlyMyFriends + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -454,7 +454,7 @@ public class GameServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "loadArcadeData failed [for=" + ident + "].");
+            log.warning("loadArcadeData failed [for=" + ident + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -490,7 +490,7 @@ public class GameServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "loadGameGenre failed [for=" + ident + ", genre=" + genre + "].");
+            log.warning("loadGameGenre failed [for=" + ident + ", genre=" + genre + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -528,7 +528,7 @@ public class GameServlet extends MsoyServiceServlet
             return featured.toArray(new FeaturedGameInfo[featured.size()]);
             
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "loadTopGamesData failed [for=" + ident + "].");
+            log.warning("loadTopGamesData failed [for=" + ident + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -544,7 +544,7 @@ public class GameServlet extends MsoyServiceServlet
                 log.warning("Game missing match configuration [game=" + game + "].");
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + game.gameId +
+            log.warning("Failed to parse XML game definition [id=" + game.gameId +
                     ", config=" + game.config + "]", e);
         }
         if (match != null) {
@@ -598,7 +598,7 @@ public class GameServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load game source record to verify ownership " +
+            log.warning("Failed to load game source record to verify ownership " +
                     "[gameId=" + gameId + ", mrec=" + mrec.who() + "].");
         }
     }

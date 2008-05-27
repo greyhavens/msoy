@@ -246,7 +246,7 @@ public class MsoyServer extends MsoyBaseServer
             server.init();
             server.run();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to initialize server", e);
+            log.warning("Unable to initialize server", e);
             System.exit(255);
         }
     }
@@ -304,7 +304,7 @@ public class MsoyServer extends MsoyBaseServer
         try {
             httpServer.stop();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to stop http server.", e);
+            log.warning("Failed to stop http server.", e);
         }
 
         // and our policy server if one is running

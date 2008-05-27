@@ -63,7 +63,7 @@ public class MyStatsServlet extends HttpServlet
             StreamUtil.close(rsp.getOutputStream());
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to gather user stats.", e);
+            log.warning("Failed to gather user stats.", e);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }

@@ -86,7 +86,7 @@ public class ItemServlet extends MsoyServiceServlet
             try {
                 prec = prepo.loadItem(parent.itemId);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to load parent in createItem [who=" + memrec.who() +
+                log.warning("Failed to load parent in createItem [who=" + memrec.who() +
                         ", item=" + item.getIdent() + ", parent=" + parent + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
@@ -111,7 +111,7 @@ public class ItemServlet extends MsoyServiceServlet
         try {
             repo.insertOriginalItem(record, false);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to create item " + item + ".", pe);
+            log.warning("Failed to create item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -166,7 +166,7 @@ public class ItemServlet extends MsoyServiceServlet
             });
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update item " + item + ".", pe);
+            log.warning("Failed to update item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -232,7 +232,7 @@ public class ItemServlet extends MsoyServiceServlet
             return (irec == null) ? null : irec.toItem();
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load item [id=" + item + "].", pe);
+            log.warning("Failed to load item [id=" + item + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -279,7 +279,7 @@ public class ItemServlet extends MsoyServiceServlet
             return detail;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load item detail [id=" + iident + "].", pe);
+            log.warning("Failed to load item detail [id=" + iident + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -311,7 +311,7 @@ public class ItemServlet extends MsoyServiceServlet
             });
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to scale avatar [for=" + memrec.memberId +
+            log.warning("Failed to scale avatar [for=" + memrec.memberId +
                     ", aid=" + avatarId + ", scale=" + newScale + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -359,7 +359,7 @@ public class ItemServlet extends MsoyServiceServlet
 //            return item.toItem();
 //
 //        } catch (PersistenceException pe) {
-//            log.log(Level.WARNING, "Failed to remix item [item=" + iident +
+//            log.warning("Failed to remix item [item=" + iident +
 //                    ", for=" + memrec.memberId + "]", pe);
 //            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
 //        }
@@ -396,7 +396,7 @@ public class ItemServlet extends MsoyServiceServlet
             });
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to delete item [item=" + iident +
+            log.warning("Failed to delete item [item=" + iident +
                     ", for=" + memrec.memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -434,7 +434,7 @@ public class ItemServlet extends MsoyServiceServlet
             return repo.rateItem(originalId, memrec.memberId, rating);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to rate item [item=" + iident +
+            log.warning("Failed to rate item [item=" + iident +
                     ", rating=" + rating + ", for=" + memrec.memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -537,8 +537,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to wrap item [item=" + iident +
-                    ", wrap=" + wrap + "]", pe);
+            log.warning("Failed to wrap item [item=" + iident + ", wrap=" + wrap + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -564,8 +563,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(item, false);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING,
-                "Failed to set flags [item=" + iident + ", value=" + value + "]", pe);
+            log.warning("Failed to set flags [item=" + iident + ", value=" + value + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -588,7 +586,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(item, false);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to set flags [item=" + iident + ", mask=" + mask +
+            log.warning("Failed to set flags [item=" + iident + ", mask=" + mask +
                     ", value=" + value + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -627,7 +625,7 @@ public class ItemServlet extends MsoyServiceServlet
             return items;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting flagged items failed.", pe);
+            log.warning("Getting flagged items failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -684,7 +682,7 @@ public class ItemServlet extends MsoyServiceServlet
             return Integer.valueOf(deletionCount);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Admin item delete failed [item=" + iident + "].", pe);
+            log.warning("Admin item delete failed [item=" + iident + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -773,7 +771,7 @@ public class ItemServlet extends MsoyServiceServlet
             return orig;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to edit clone " + itemIdent + ".", pe);
+            log.warning("Failed to edit clone " + itemIdent + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

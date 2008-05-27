@@ -63,7 +63,7 @@ public class MsoyGameAuthenticator extends Authenticator
             try {
                 creds = (MsoyGameCredentials) req.getCredentials();
             } catch (ClassCastException cce) {
-                log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
+                log.warning("Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 

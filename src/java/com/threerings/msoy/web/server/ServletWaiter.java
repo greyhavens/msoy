@@ -53,7 +53,7 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
             throw new ServiceException(ie.getMessage());
 
         } catch (Exception e) {
-            log.log(Level.WARNING, _ident + " failed.", e);
+            log.warning(_ident + " failed.", e);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

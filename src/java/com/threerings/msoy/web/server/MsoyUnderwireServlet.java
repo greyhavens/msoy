@@ -159,7 +159,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
             return caller;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load caller [tok=" + authtok + "].", pe);
+            log.warning("Failed to load caller [tok=" + authtok + "].", pe);
             throw new UnderwireException("m.internal_error");
         }
     }

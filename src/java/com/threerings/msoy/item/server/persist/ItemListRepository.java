@@ -34,7 +34,7 @@ public class ItemListRepository extends DepotRepository
             loadInfos(0);
             loadList(0);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Unable to configure list tables", pe);
+            log.warning("Unable to configure list tables", pe);
         }
     }
 

@@ -114,7 +114,7 @@ public class ConvMessageRecord extends PersistentRecord
                     JSONMarshaller.getMarshaller(objectClass);
                 cmsg.payload = marsh.newInstance(payloadState);
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to unserialize message payload [tpye=" + payloadType +
+                log.warning("Failed to unserialize message payload [tpye=" + payloadType +
                         ", state=" + StringUtil.hexlate(payloadState) + "].", e);
             }
         }

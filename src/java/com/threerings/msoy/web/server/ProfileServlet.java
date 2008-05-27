@@ -116,7 +116,7 @@ public class ProfileServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
+            log.warning("Failure resolving blurbs [who=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -169,7 +169,7 @@ public class ProfileServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update member's profile " +
+            log.warning("Failed to update member's profile " +
                     "[who=" + memrec.who() +
                     ", profile=" + StringUtil.fieldsToString(profile) + "].", pe);
         }
@@ -187,7 +187,7 @@ public class ProfileServlet extends MsoyServiceServlet
             _profileRepo.storeInterests(memrec.memberId, tinterests);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update member's interests [who=" + memrec.who() +
+            log.warning("Failed to update member's interests [who=" + memrec.who() +
                     ", interests=" + StringUtil.toString(interests) + "].", pe);
         }
     }
@@ -228,7 +228,7 @@ public class ProfileServlet extends MsoyServiceServlet
             return results;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
+            log.warning("Failure finding profiles [search=" + search + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -263,7 +263,7 @@ public class ProfileServlet extends MsoyServiceServlet
             return result;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failure loading friends [memId=" + memberId + "].", pe);
+            log.warning("Failure loading friends [memId=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -307,20 +307,20 @@ public class ProfileServlet extends MsoyServiceServlet
         } catch (AddressBookAuthenticationException e) {
             throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
         } catch (UnexpectedFormatException e) {
-            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
             throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
         } catch (AddressBookException e) {
             throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
         } catch (UserInputRequiredException e) {
             throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
         } catch (IOException e) {
-            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
             throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
         } catch (HttpException e) {
-            log.log(Level.WARNING, "getWebMailAddresses failed [email=" + email + "].", e);
+            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
             throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getWebMailAddresses failed [who=" + memrec.who() +
+            log.warning("getWebMailAddresses failed [who=" + memrec.who() +
                     ", email=" + email + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -334,7 +334,7 @@ public class ProfileServlet extends MsoyServiceServlet
             return loadFeed(profileMemberId, cutoffDays);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load feed failed [memberId=" + profileMemberId + "]", pe);
+            log.warning("Load feed failed [memberId=" + profileMemberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

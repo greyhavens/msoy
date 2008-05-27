@@ -46,7 +46,7 @@ public class GameWrapper
             _client = new GameClient();
             _client.init(applet, _framemgr);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create the game client.", e);
+            log.warning("Failed to create the game client.", e);
             return;
         }
 

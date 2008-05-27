@@ -215,7 +215,7 @@ public class ServletUtil
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to populate member cards.", pe);
+            log.warning("Failed to populate member cards.", pe);
         }
 
         if (friendIds != null) {
@@ -242,7 +242,7 @@ public class ServletUtil
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
+            log.warning("Failed to load game record [gameId=" + gameId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
         Game game = (Game)grec.toItem();
@@ -265,7 +265,7 @@ public class ServletUtil
             }
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId + "]", e);
+            log.warning("Failed to parse XML game definition [id=" + gameId + "]", e);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
 

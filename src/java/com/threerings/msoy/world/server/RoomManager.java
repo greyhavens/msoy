@@ -104,7 +104,7 @@ public class RoomManager extends SpotSceneManager
                     try {
                         MsoyServer.memoryRepo.storeMemories(memrecs);
                     } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to update memories " + memrecs + ".", pe);
+                        log.warning("Failed to update memories " + memrecs + ".", pe);
                     }
                     return false;
                 }
@@ -986,7 +986,7 @@ public class RoomManager extends SpotSceneManager
                     _mems = MsoyServer.memoryRepo.loadMemories(idents);
                     return !_mems.isEmpty();
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                    log.warning("Failed to load memories [where=" + where() +
                             ", ids=" + idents + "].", pe);
                     return false;
                 }

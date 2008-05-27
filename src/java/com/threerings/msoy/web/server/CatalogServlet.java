@@ -93,7 +93,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load shop data [for=" + ident + "].", pe);
+            log.warning("Failed to load shop data [for=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -137,7 +137,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load catalog [for=" + ident + ", query=" + query +
+            log.warning("Failed to load catalog [for=" + ident + ", query=" + query +
                     ", offset=" + offset + ", rows=" + rows + "].", pe);
         }
         result.listings = list;
@@ -230,8 +230,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return nitem;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Purchase failed [type=" + itemType +
-                    ", catId=" + catalogId + "].", pe);
+            log.warning("Purchase failed [type=" + itemType + ", catId=" + catalogId + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -331,7 +330,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return record.catalogId;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "List item failed [item=" + item + "].", pe);
+            log.warning("List item failed [item=" + item + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -373,8 +372,8 @@ public class CatalogServlet extends MsoyServiceServlet
             return clrec;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load listing failed [type=" + itemType +
-                    ", catId=" + catalogId + "].", pe);
+            log.warning("Load listing failed [type=" + itemType +
+                ", catId=" + catalogId + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -445,7 +444,7 @@ public class CatalogServlet extends MsoyServiceServlet
             });
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "List item failed [item=" + item + "].", pe);
+            log.warning("List item failed [item=" + item + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -493,7 +492,7 @@ public class CatalogServlet extends MsoyServiceServlet
             logUserAction(info);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Update pricing failed [type=" + itemType +
+            log.warning("Update pricing failed [type=" + itemType +
                     ", catId=" + catalogId + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
@@ -520,8 +519,8 @@ public class CatalogServlet extends MsoyServiceServlet
             repo.removeListing(listing);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Remove listing failed [type=" + itemType +
-                    ", catId=" + catalogId + "].", pe);
+            log.warning("Remove listing failed [type=" + itemType +
+                ", catId=" + catalogId + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -579,7 +578,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return new int[] { flowRefund, goldRefund };
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Purchase failed [item=" + iident + "].", pe);
+            log.warning("Purchase failed [item=" + iident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -595,7 +594,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 result.put(record.tag, record.count);
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Load popular tags failed [type=" + type + "].", pe);
+            log.warning("Load popular tags failed [type=" + type + "].", pe);
         }
         return result;
     }
@@ -668,7 +667,7 @@ public class CatalogServlet extends MsoyServiceServlet
             Item item = (Item)Item.getClassForType(itemType).newInstance();
             return (!(item instanceof SubItem) || ((SubItem)item).isSalable());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to check salability [type=" + itemType + "].", e);
+            log.warning("Failed to check salability [type=" + itemType + "].", e);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }

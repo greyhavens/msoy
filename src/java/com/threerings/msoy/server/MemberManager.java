@@ -370,7 +370,7 @@ public class MemberManager
                 }
             }
             public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Unable to setAvatar [for=" + user.getMemberId() +
+                log.warning("Unable to setAvatar [for=" + user.getMemberId() +
                         ", avatar=" + ident + "].", cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
@@ -458,7 +458,7 @@ public class MemberManager
                 try {
                     _memberRepo.clearMemberWarning(user.getMemberId());
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to clean member warning [for=" +
+                    log.warning("Failed to clean member warning [for=" +
                         user.getMemberId() + "].", pe);
                 }
                 return false;
@@ -492,7 +492,7 @@ public class MemberManager
                         throw new InvocationException("e.not_room_manager");
                     }
                 } else {
-                    log.log(Level.WARNING, "Unknown scene model owner type [sceneId=" + 
+                    log.warning("Unknown scene model owner type [sceneId=" + 
                         scene.sceneId + ", ownerType=" + scene.ownerType + "]");
                     throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
@@ -544,7 +544,7 @@ public class MemberManager
                 MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to grant flow [memberId=" + info.memberId +
+                log.warning("Unable to grant flow [memberId=" + info.memberId +
                         ", action=" + info.action + ", amount=" + amount + "]", pe);
             }
             protected MemberFlowRecord _flowRec;
@@ -567,7 +567,7 @@ public class MemberManager
                 MemberNodeActions.flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to spend flow [amount=" + amount +
+                log.warning("Unable to spend flow [amount=" + amount +
                         ", info=" + info + "]", pe);
             }
             protected MemberFlowRecord _flowRec;
@@ -746,7 +746,7 @@ public class MemberManager
             public void handleFailure (Exception pe) {
                 log.warning("Unable to set avatar [user=" + user.which() +
                             ", avatar='" + avatar + "', " + "error=" + pe + "].");
-                log.log(Level.WARNING, "", pe);
+                log.warning(pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });

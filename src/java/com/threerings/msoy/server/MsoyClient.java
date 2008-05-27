@@ -137,8 +137,7 @@ public class MsoyClient extends WhirledClient
                     MsoyServer.memberRepo.noteSessionEnded(
                         name.getMemberId(), activeMins, RuntimeConfig.server.humanityReassessment);
                 } catch (Exception e) {
-                    log.log(Level.WARNING,
-                            "Failed to note ended session [member=" + name + "].", e);
+                    log.warning("Failed to note ended session [member=" + name + "].", e);
                 }
                 return false;
             }

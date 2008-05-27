@@ -79,7 +79,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting remixable projects failed.", pe);
+            log.warning("Getting remixable projects failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -99,7 +99,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting user's projects failed.", pe);
+            log.warning("Getting user's projects failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -139,7 +139,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 "", 0, svnRoot);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Creating new project storage record failed.", pe);
+            log.warning("Creating new project storage record failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -156,7 +156,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException(SwiftlyCodes.E_PROJECT_NAME_EXISTS);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Creating new project failed.", pe);
+            log.warning("Creating new project failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -171,12 +171,11 @@ public class SwiftlyServlet extends MsoyServiceServlet
             ProjectSVNStorage.initializeStorage(project, storeRec, templatePath);
 
         } catch (ProjectStorageException pse) {
-            log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
+            log.warning("Initializing swiftly project storage failed.", pse);
             try {
                 MsoyServer.swiftlyRepo.deleteProject(pRec);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING,
-                        "Deleting the partially-initialized swiftly project failed.", pe);
+                log.warning("Deleting the partially-initialized swiftly project failed.", pe);
             }
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -212,7 +211,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Updating project failed.", pe);
+            log.warning("Updating project failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -227,7 +226,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             MsoyServer.swiftlyRepo.markProjectDeleted(projectId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Marking project deleted failed [id= " + projectId + "].", pe);
+            log.warning("Marking project deleted failed [id= " + projectId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -251,7 +250,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             return pRec.toSwiftlyProject();
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Loading project failed.", pe);
+            log.warning("Loading project failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -270,7 +269,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             return mRec.getName();
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Loading project owner failed.", pe);
+            log.warning("Loading project owner failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -290,7 +289,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 members.add(mRec.getName());
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting project's collaborators failed.", pe);
+            log.warning("Getting project's collaborators failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -306,7 +305,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             return MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting member's friends failed.", pe);
+            log.warning("Getting member's friends failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -328,7 +327,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             MsoyServer.swiftlyRepo.leaveCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Removing project's collaborators failed.", pe);
+            log.warning("Removing project's collaborators failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -353,7 +352,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
+            log.warning("Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -464,7 +463,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             return MsoyServer.swiftlyRepo.isCollaborator(projectId, memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Checking project membership failed.", pe);
+            log.warning("Checking project membership failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -482,7 +481,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             return MsoyServer.swiftlyRepo.isOwner(projectId, memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Checking project ownership failed.", pe);
+            log.warning("Checking project ownership failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

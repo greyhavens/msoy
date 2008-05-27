@@ -480,7 +480,7 @@ public class ChiyogamiManager extends GameManager
 //    {
 //        MsoyServer.itemMan.getRandomCatalogItem(Item.AUDIO, tags, new ResultListener<Item>() {
 //            public void requestFailed (Exception cause) {
-//                log.log(Level.WARNING, "Failed to pick new music", cause);
+//                log.warning("Failed to pick new music", cause);
 //            }
 //
 //            public void requestCompleted (Item music) {
@@ -527,7 +527,7 @@ public class ChiyogamiManager extends GameManager
 //    {
 //        MsoyServer.itemMan.getRandomCatalogItem(Item.AVATAR, tags, new ResultListener<Item>() {
 //            public void requestFailed (Exception cause) {
-//                log.log(Level.WARNING, "Failed to pick new boss", cause);
+//                log.warning("Failed to pick new boss", cause);
 //            }
 //
 //            public void requestCompleted (Item boss) {

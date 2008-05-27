@@ -96,7 +96,7 @@ public class WebUserServlet extends MsoyServiceServlet
         Calendar thirteenYearsAgo = Calendar.getInstance();
         thirteenYearsAgo.add(Calendar.YEAR, -13);
         if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
-            log.log(Level.WARNING, "User submitted invalid birtdate [date=" + birthday + "].");
+            log.warning("User submitted invalid birtdate [date=" + birthday + "].");
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
 
@@ -111,7 +111,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 }
                 ignoreRestrict = true;
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Checking invite availability failed " +
+                log.warning("Checking invite availability failed " +
                         "[inviteId=" + inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -142,7 +142,7 @@ public class WebUserServlet extends MsoyServiceServlet
         try {
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to create initial profile [prec=" + prec + "]", pe);
+            log.warning("Failed to create initial profile [prec=" + prec + "]", pe);
             // keep on keepin' on
         }
 
@@ -157,7 +157,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 MsoyServer.memberRepo.linkInvite(inviteId, mrec);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Linking invites failed [inviteId=" + inviteId +
+                log.warning("Linking invites failed [inviteId=" + inviteId +
                         ", memberId=" + mrec.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -166,7 +166,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 inviter = MsoyServer.memberRepo.loadMember(invite.inviterId);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to lookup inviter [inviteId=" + inviteId +
+                log.warning("Failed to lookup inviter [inviteId=" + inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -180,7 +180,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 try {
                     MsoyServer.mailMan.startConversation(mrec, inviter, subject, body, null);
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Failed to sent invite accepted mail", e);
+                    log.warning("Failed to sent invite accepted mail", e);
                 }
 
                 // update the two friends' runtime objects if they are online
@@ -197,7 +197,7 @@ public class WebUserServlet extends MsoyServiceServlet
                         new UserActionDetails(inviter.memberId, UserAction.INVITED_FRIEND_JOINED));
 
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to wire up friendship for created account " +
+                    log.warning("Failed to wire up friendship for created account " +
                             "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", pe);
                 }
 
@@ -243,7 +243,7 @@ public class WebUserServlet extends MsoyServiceServlet
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to refresh session [tok=" + authtok + "].", pe);
+            log.warning("Failed to refresh session [tok=" + authtok + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
@@ -286,7 +286,7 @@ public class WebUserServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to lookup account [email=" + email + "].", pe);
+            log.warning("Failed to lookup account [email=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
@@ -306,7 +306,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to set email [who=" + mrec.memberId +
+            log.warning("Failed to set email [who=" + mrec.memberId +
                     ", email=" + newEmail + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -330,7 +330,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 MsoyServer.memberRepo.storeFlags(mrec);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to update flags [who=" + mrec.memberId +
+                log.warning("Failed to update flags [who=" + mrec.memberId +
                         ", flags=" + mrec.flags + "].", pe);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
@@ -367,7 +367,7 @@ public class WebUserServlet extends MsoyServiceServlet
             return true;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to reset password [who=" + memberId +
+            log.warning("Failed to reset password [who=" + memberId +
                     ", code=" + code + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -395,7 +395,7 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to set permaname [who=" + mrec.memberId +
+            log.warning("Failed to set permaname [who=" + mrec.memberId +
                     ", pname=" + permaName + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -421,7 +421,7 @@ public class WebUserServlet extends MsoyServiceServlet
             return ainfo;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId +
+            log.warning("Failed to fetch account info [who=" + mrec.memberId +
                 "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -438,8 +438,7 @@ public class WebUserServlet extends MsoyServiceServlet
             prec.realName = info.realName;
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to update user account info [who=" + mrec.memberId +
-                "].", pe);
+            log.warning("Failed to update user account info [who=" + mrec.memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -500,10 +499,10 @@ public class WebUserServlet extends MsoyServiceServlet
             throw new CaptchaException(MsoyAuthCodes.FAILED_CAPTCHA);
 
         } catch (MalformedURLException mue) {
-            log.log(Level.WARNING, "Failed to verify captcha information.", mue);
+            log.warning("Failed to verify captcha information.", mue);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         } catch (IOException ioe) {
-            log.log(Level.WARNING, "Failed to verify captcha information.", ioe);
+            log.warning("Failed to verify captcha information.", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         } finally {
             StreamUtil.close(in);
@@ -522,7 +521,7 @@ public class WebUserServlet extends MsoyServiceServlet
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to start session [for=" + mrec.accountName + "].", pe);
+            log.warning("Failed to start session [for=" + mrec.accountName + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
@@ -541,7 +540,7 @@ public class WebUserServlet extends MsoyServiceServlet
         try {
             data.newMailCount = MsoyServer.mailRepo.loadUnreadConvoCount(mrec.memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
+            log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }
 
         return data;

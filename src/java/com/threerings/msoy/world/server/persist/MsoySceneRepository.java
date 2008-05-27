@@ -251,7 +251,7 @@ public class MsoySceneRepository extends DepotRepository
             try {
                 applyUpdate(update);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to apply scene update " + update +
+                log.warning("Failed to apply scene update " + update +
                         " from " + StringUtil.toString(updates) + ".", pe);
             }
         }
@@ -259,7 +259,7 @@ public class MsoySceneRepository extends DepotRepository
             try {
                 updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to update scene to final version [id=" + sceneId +
+                log.warning("Failed to update scene to final version [id=" + sceneId +
                         ", fvers=" + finalVersion + "].", pe);
             }
         }

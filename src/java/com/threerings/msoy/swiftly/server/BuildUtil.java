@@ -69,8 +69,7 @@ public class BuildUtil
                 }
             } catch (IOException ioe) {
                 // only log to the server if this fails, client doesn't care.
-                log.log(Level.WARNING,
-                    "Failed to delete temporary build results directory.", ioe);
+                log.warning("Failed to delete temporary build results directory.", ioe);
             }
         }
     }

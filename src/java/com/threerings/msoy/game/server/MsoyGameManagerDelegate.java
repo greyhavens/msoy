@@ -866,7 +866,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                     MsoyGameServer.gameReg.gamePayout(
                         action, _content.game, record.awarded, record.secondsPlayed); 
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to grant flow [amount=" + 
+                    log.warning("Failed to grant flow [amount=" + 
                             record.awarded + ", action=" + action + "].", pe);
                 }
                 return false;

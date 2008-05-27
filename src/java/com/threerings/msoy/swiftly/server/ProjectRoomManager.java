@@ -106,8 +106,7 @@ public class ProjectRoomManager extends PlaceManager
             @Override
             public void handleResult () {
                 if (_error != null) {
-                    log.log(Level.WARNING,
-                        "Loading project tree failed. [project=" + project + "].", _error);
+                    log.warning("Loading project tree failed. [project=" + project + "].", _error);
                     listener.requestFailed(_error);
                     shutdown();
                     return;
@@ -179,8 +178,7 @@ public class ProjectRoomManager extends PlaceManager
             @Override
             public void handleResult () {
                 if (_error != null) {
-                    log.log(Level.WARNING, "Delete pathElement failed [element=" + element + "].",
-                            _error);
+                    log.warning("Delete pathElement failed [element=" + element + "].", _error);
                     listener.requestFailed("e.delete_element_failed");
                     return;
                 }
@@ -230,7 +228,7 @@ public class ProjectRoomManager extends PlaceManager
             @Override
             public void handleResult () {
                 if (_error != null) {
-                    log.log(Level.WARNING, "Rename pathElement failed [element=" + element + "].",
+                    log.warning("Rename pathElement failed [element=" + element + "].",
                             _error);
                     listener.requestFailed("e.rename_element_failed");
                     return;
@@ -349,8 +347,7 @@ public class ProjectRoomManager extends PlaceManager
                     getRoomObj().addSwiftlyDocument(_doc);
                     listener.requestProcessed();
                 } else {
-                    log.log(Level.WARNING, "Load document failed [pathElement=" +
-                        element + "].", _error);
+                    log.warning("Load document failed [pathElement=" + element + "].", _error);
                     listener.requestFailed("e.load_document_failed");
                 }
             }
@@ -482,7 +479,7 @@ public class ProjectRoomManager extends PlaceManager
         try {
             FileUtils.deleteDirectory(_buildDir);
         } catch (IOException e) {
-            log.log(Level.WARNING, "Unable to delete build directory [dir=" + _buildDir + "].", e);
+            log.warning("Unable to delete build directory [dir=" + _buildDir + "].", e);
         } finally {
             super.finalize();
         }

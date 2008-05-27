@@ -34,7 +34,7 @@ public class HTMLSanitizer
             return cr.getCleanHTML();
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "HTML sanitizer choked.", e);
+            log.warning("HTML sanitizer choked.", e);
             return "";
         }
     }
@@ -45,7 +45,7 @@ public class HTMLSanitizer
         try {
             _policy = Policy.getInstance(policyLoc.toString());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to parse HTML sanitizer policy file " +
+            log.warning("Failed to parse HTML sanitizer policy file " +
                     "[loc=" + policyLoc + "].", e);
         }
     }

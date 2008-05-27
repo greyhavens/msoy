@@ -129,7 +129,7 @@ public class PetManager
                 resolveRoomPets(sceneId, _pets, _memories);
             }
             public void handleFailure (Exception e) {
-                log.log(Level.WARNING, "Failed to load pets [scene=" + sceneId + "].", e);
+                log.warning("Failed to load pets [scene=" + sceneId + "].", e);
             }
 
             protected List<Pet> _pets = Lists.newArrayList();
@@ -199,7 +199,7 @@ public class PetManager
                 listener.requestProcessed();
             }
             public void handleFailure (Exception e) {
-                log.log(Level.WARNING, "Failed to load pet [pet=" + petId + "].", e);
+                log.warning("Failed to load pet [pet=" + petId + "].", e);
                 listener.requestFailed(PetCodes.E_INTERNAL_ERROR);
             }
 

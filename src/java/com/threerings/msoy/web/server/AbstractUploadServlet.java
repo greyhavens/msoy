@@ -186,7 +186,7 @@ public abstract class AbstractUploadServlet extends HttpServlet
             out.println("</html>");
 
         } catch (IOException ioe) {
-            log.log(Level.WARNING, "Failed to setup OutputStream when displaying error.", ioe);
+            log.warning("Failed to setup OutputStream when displaying error.", ioe);
 
         } finally {
             StreamUtil.close(out);

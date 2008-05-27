@@ -100,7 +100,7 @@ public class LocalEventLogger extends LoopingThread
                     log.warning("Suppressed " + _throttled + " intervening error messages.");
                     _throttled = 0;
                 }
-                log.log(Level.WARNING, "Failed to record event " + event + ".", e);
+                log.warning("Failed to record event " + event + ".", e);
             }
         }
     }
@@ -123,7 +123,7 @@ public class LocalEventLogger extends LoopingThread
             try {
                 _logChannel.close();
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failure closing log stream.", e);
+                log.warning("Failure closing log stream.", e);
             }
             _logChannel = null;
         }
@@ -140,7 +140,7 @@ public class LocalEventLogger extends LoopingThread
             if (freakout) {
                 throw new RuntimeException(errmsg, e);
             } else {
-                log.log(Level.WARNING, errmsg, e);
+                log.warning(errmsg, e);
             }
         }
     }

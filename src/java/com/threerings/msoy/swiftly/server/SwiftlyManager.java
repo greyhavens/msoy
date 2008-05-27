@@ -397,7 +397,7 @@ public class SwiftlyManager
 
                 public void handleResult () {
                     if (_error != null) {
-                        log.log(Level.WARNING, "Failed initializing room manager. ", _error);
+                        log.warning("Failed initializing room manager. ", _error);
                         waiter.requestFailed(_error);
                         // remove the manager from the list since it is not fully resolved and we
                         // know this was the first user trying to resolve it.
@@ -416,13 +416,12 @@ public class SwiftlyManager
             });
 
         } catch (InstantiationException e) {
-            log.log(Level.WARNING,
-                "Failed to instantiate project room [config=" + config + "].", e);
+            log.warning("Failed to instantiate project room [config=" + config + "].", e);
             waiter.requestFailed(e);
             return;
 
         } catch (InvocationException e) {
-            log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
+            log.warning("Failed to create project room [config=" + config + "].", e);
             waiter.requestFailed(e);
             return;
         }

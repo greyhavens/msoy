@@ -102,7 +102,7 @@ public class MsoyGameRegistry
                     try {
                         _handlers[ii] = new GameServerHandler(port);
                     } catch (Exception e) {
-                        log.log(Level.WARNING, "Failed to start up game server " +
+                        log.warning("Failed to start up game server " +
                                 "[port=" + port + "].", e);
                     }
                 }
@@ -402,7 +402,7 @@ public class MsoyGameRegistry
             }
 
             public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Failed to acquire game resolution lock " +
+                log.warning("Failed to acquire game resolution lock " +
                         "[id=" + game.gameId + "].", cause);
                 listener.requestFailed(GameCodes.INTERNAL_ERROR);
             }

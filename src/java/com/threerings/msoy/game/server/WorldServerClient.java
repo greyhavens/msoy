@@ -137,7 +137,7 @@ public class WorldServerClient
 
     protected ClientAdapter _clientObs = new ClientAdapter() {
         public void clientFailedToLogon (Client client, Exception cause) {
-            log.log(Level.WARNING, "Failed to connect to world server.", cause);
+            log.warning("Failed to connect to world server.", cause);
         }
 
         public void clientDidLogon (Client client) {

@@ -52,7 +52,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
+            log.warning("grantInvitations failed [num=" + numberInvitations +
                     ", activeSince=" + activeSince + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -69,7 +69,7 @@ public class AdminServlet extends MsoyServiceServlet
             sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
+            log.warning("grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -113,7 +113,7 @@ public class AdminServlet extends MsoyServiceServlet
             return info;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getMemberInfo failed [id=" + memberId + "]", pe);
+            log.warning("getMemberInfo failed [id=" + memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -140,7 +140,7 @@ public class AdminServlet extends MsoyServiceServlet
             res.invitees = players;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
+            log.warning("getPlayerList failed [inviterId=" + inviterId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -214,8 +214,8 @@ public class AdminServlet extends MsoyServiceServlet
             return results;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "spamPlayers failed [subject=" + subject +
-                    ", startId=" + startId + "]", pe);
+            log.warning("spamPlayers failed [subject=" + subject +
+                ", startId=" + startId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -239,8 +239,8 @@ public class AdminServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "setIsSupport failed [id=" + memberId +
-                    ", isSupport=" + isSupport + "]", pe);
+            log.warning("setIsSupport failed [id=" + memberId +
+                ", isSupport=" + isSupport + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

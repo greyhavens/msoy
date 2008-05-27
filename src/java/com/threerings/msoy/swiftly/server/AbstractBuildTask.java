@@ -64,7 +64,7 @@ public abstract class AbstractBuildTask
      * failure.
      */
     public void publishFailure (Exception error, final String reason) {
-        log.log(Level.WARNING, "Project build failed.", error);
+        log.warning("Project build failed.", error);
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run() {
                 _listener.requestFailed(reason);

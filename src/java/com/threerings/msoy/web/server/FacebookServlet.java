@@ -150,7 +150,7 @@ public class FacebookServlet extends HttpServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to authenticate [id=" + fbUserId + "].", pe);
+            log.warning("Failed to authenticate [id=" + fbUserId + "].", pe);
             return null;
         }
 
@@ -213,7 +213,7 @@ public class FacebookServlet extends HttpServlet
             return null;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to create account [id=" + fbUserId + "].", pe);
+            log.warning("Failed to create account [id=" + fbUserId + "].", pe);
             return null;
         }
 
@@ -223,8 +223,7 @@ public class FacebookServlet extends HttpServlet
             prec.memberId = mrec.memberId;
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to store profile [id=" + fbUserId +
-                    ", prec=" + prec + "].", pe);
+            log.warning("Failed to store profile [id=" + fbUserId + ", prec=" + prec + "].", pe);
         }
 
         // connect them up to their Facebook friends who also have a Whirled account
@@ -238,7 +237,7 @@ public class FacebookServlet extends HttpServlet
                 }
                 MsoyServer.memberRepo.noteFriendship(mrec.memberId, friendId);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Failed to link Facebook user to friend " +
+                log.warning("Failed to link Facebook user to friend " +
                         "[mid=" + mrec.memberId + ", fid=" + friendId +
                         ", mfbid=" + fbUserId + ", ffbid=" + friendFbId + "].", pe);
             }
@@ -293,7 +292,7 @@ public class FacebookServlet extends HttpServlet
             }
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create profile.", e);
+            log.warning("Failed to create profile.", e);
             FacebookRestClient.printDom(info, "");
         }
 

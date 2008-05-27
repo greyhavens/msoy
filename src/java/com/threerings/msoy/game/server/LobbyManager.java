@@ -268,7 +268,7 @@ public class LobbyManager
             if (_shutdownInterval == null) {
                 _shutdownInterval = new Interval(_omgr) {
                     public void expired () {
-                        log.fine("Unloading idle game lobby [gameId=" + getGameId() + "]");
+                        log.debug("Unloading idle game lobby [gameId=" + getGameId() + "]");
                         shutdown();
                     }
                 };

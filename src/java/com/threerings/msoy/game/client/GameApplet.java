@@ -77,7 +77,7 @@ public class GameApplet extends JApplet
             _stop = dclass.getMethod("stop");
             _init.invoke(_delegate, this, server, port);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to load wrapper class.", e);
+            log.warning("Failed to load wrapper class.", e);
         }
     }
 
@@ -90,7 +90,7 @@ public class GameApplet extends JApplet
         try {
             _start.invoke(_delegate, authtok, gameId, gameOid);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke start() [atok=" + authtok + ", gid=" + gameId +
+            log.warning("Failed to invoke start() [atok=" + authtok + ", gid=" + gameId +
                     ", goid=" + gameOid + "].", e);
         }
     }
@@ -102,7 +102,7 @@ public class GameApplet extends JApplet
         try {
             _stop.invoke(_delegate);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to invoke stop().", e);
+            log.warning("Failed to invoke stop().", e);
         }
     }
 

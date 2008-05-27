@@ -123,7 +123,7 @@ public class MsoyUnderwireManager
                     // add the event to the repository
                     _underrepo.insertEvent(event);
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to add complaint event [event=" + event + "].");
+                    log.warning("Failed to add complaint event [event=" + event + "].");
                     _failed = true;
                 }
                 return true;

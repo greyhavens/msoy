@@ -206,7 +206,7 @@ public class GameGameRegistry
 
                 public void handleFailure (Exception e) {
                     // if anything goes wrong, we can just fall back on what was already there
-                    log.log(Level.WARNING, "Failed to resolve game [id=" + gameId + "].", e);
+                    log.warning("Failed to resolve game [id=" + gameId + "].", e);
                 }
 
                 protected GameContent _content;
@@ -250,7 +250,7 @@ public class GameGameRegistry
                 }
 
                 public void handleFailure (Exception pe) {
-                    log.log(Level.WARNING, "Failed to resolve AVRGame [id=" + gameId + "].", pe);
+                    log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
                 }
 
                 protected Game _game;
@@ -377,7 +377,7 @@ public class GameGameRegistry
             }
 
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Failed to resolve AVRGame [id=" + gameId + "].", pe);
+                log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
                 reportFailure(pe.getMessage());
             }
 
@@ -483,7 +483,7 @@ public class GameGameRegistry
             }
 
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Failed to resolve game [id=" + gameId + "].", pe);
+                log.warning("Failed to resolve game [id=" + gameId + "].", pe);
                 reportFailure(InvocationCodes.E_INTERNAL_ERROR);
             }
 
@@ -680,7 +680,7 @@ public class GameGameRegistry
                 listener.requestProcessed(mgr.getGameObject().getOid());
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to resolve player state [gameId=" +
+                log.warning("Unable to resolve player state [gameId=" +
                     mgr.getGameId() + ", player=" + playerId + "]", pe);
             }
             protected List<QuestStateRecord> _questRecs;
@@ -700,7 +700,7 @@ public class GameGameRegistry
                 try {
                     _ratingRepo.updatePercentile(gameId, tiler);
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to update score distribution " +
+                    log.warning("Failed to update score distribution " +
                             "[game=" + gameId + ", tiler=" + tiler + "].", pe);
                 }
                 return false;

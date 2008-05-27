@@ -57,7 +57,7 @@ public class RuntimeConfig
                 field.set(null, object);
 
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to set " + key + ".", e);
+                log.warning("Failed to set " + key + ".", e);
             }
         }
     }

@@ -225,7 +225,7 @@ public class MsoyAuthenticator extends Authenticator
             return createMember(account, displayName, invite);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error creating new account [for=" + email + "].", pe);
+            log.warning("Error creating new account [for=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -243,7 +243,7 @@ public class MsoyAuthenticator extends Authenticator
             email = email.toLowerCase();
             getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error updating account [for=" + email +
+            log.warning("Error updating account [for=" + email +
                     ", nan=" + newAccountName + ", npn=" + newPermaName +
                     ", npass=" + newPassword + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -317,7 +317,7 @@ public class MsoyAuthenticator extends Authenticator
             return mrec;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error authenticating user [who=" + email + "].", pe);
+            log.warning("Error authenticating user [who=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -351,7 +351,7 @@ public class MsoyAuthenticator extends Authenticator
             try {
                 creds = (MsoyCredentials) req.getCredentials();
             } catch (ClassCastException cce) {
-                log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
+                log.warning("Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
             if (creds == null) {
