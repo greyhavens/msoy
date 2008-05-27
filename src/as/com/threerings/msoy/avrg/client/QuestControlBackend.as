@@ -108,6 +108,12 @@ public class QuestControlBackend
             return false;
         }
 
+        // sanity check payout
+        if (payout < 0 || payout > 1) {
+            _wctx.displayFeedback(null, "completeQuest() payout must be between 0 and 1.");
+            return false;
+        }
+
         var actualComplete :Function = function() :void {
             _gameObj.avrgService.completeQuest(
                 _gctx.getClient(), questId, payout, loggingConfirmListener(
