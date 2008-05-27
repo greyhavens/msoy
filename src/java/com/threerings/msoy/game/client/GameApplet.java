@@ -17,7 +17,6 @@ import javax.swing.JApplet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.samskivert.util.ListUtil;
 import com.samskivert.util.LoggingLogProvider;

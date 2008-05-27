@@ -5,7 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 

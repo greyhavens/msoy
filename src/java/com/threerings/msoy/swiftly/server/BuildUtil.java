@@ -6,7 +6,6 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 

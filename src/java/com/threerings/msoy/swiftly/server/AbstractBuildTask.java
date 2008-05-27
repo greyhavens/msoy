@@ -1,11 +1,11 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.server;
 
 import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.data.all.MemberName;

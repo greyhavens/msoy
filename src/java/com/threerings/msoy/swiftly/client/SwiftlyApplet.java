@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;

@@ -9,7 +9,6 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

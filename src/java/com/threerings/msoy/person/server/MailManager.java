@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.person.server;
 
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.presents.annotation.BlockingThread;

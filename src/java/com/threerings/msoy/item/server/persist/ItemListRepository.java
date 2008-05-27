@@ -6,8 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import java.util.List;
 import java.util.Set;
 
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;

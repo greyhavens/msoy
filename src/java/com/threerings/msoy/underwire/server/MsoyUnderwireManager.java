@@ -6,7 +6,6 @@ package com.threerings.msoy.underwire.server;
 import java.lang.StringBuilder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;

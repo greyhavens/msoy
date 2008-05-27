@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.data;
 
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;

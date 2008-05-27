@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.logging.Level;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.samskivert.io.PersistenceException;

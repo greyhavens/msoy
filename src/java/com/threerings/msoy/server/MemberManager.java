@@ -6,8 +6,6 @@ package com.threerings.msoy.server;
 import java.util.Arrays;
 import java.util.Map;
 
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;

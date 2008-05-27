@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.logging.Level;
-
 import com.samskivert.servlet.util.ServiceWaiter;
 
 import com.threerings.presents.server.InvocationException;

@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;

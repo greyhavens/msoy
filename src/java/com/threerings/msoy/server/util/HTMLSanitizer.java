@@ -4,7 +4,6 @@
 package com.threerings.msoy.server.util;
 
 import java.net.URL;
-import java.util.logging.Level;
 
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;

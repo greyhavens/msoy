@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client;
 
-import java.util.logging.Level;
-
 import org.lwjgl.util.applet.LWJGLInstaller;
 
 import static com.threerings.msoy.Log.log;

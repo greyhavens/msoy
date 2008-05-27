@@ -6,7 +6,6 @@ package com.threerings.msoy.web.server;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
 

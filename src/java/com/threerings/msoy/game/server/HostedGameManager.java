@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 import com.google.common.collect.Maps;
 

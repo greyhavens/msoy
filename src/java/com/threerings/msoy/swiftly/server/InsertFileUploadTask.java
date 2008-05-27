@@ -1,10 +1,7 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.server;
-
-import static com.threerings.msoy.Log.log;
-
-import java.util.logging.Level;
 
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
@@ -12,6 +9,8 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.web.server.UploadFile;
+
+import static com.threerings.msoy.Log.log;
 
 /** Handles inserting the upload file data into svn and the room object. */
 public class InsertFileUploadTask

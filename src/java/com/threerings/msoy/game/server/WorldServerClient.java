@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.logging.Level;
-
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;

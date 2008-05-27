@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.logging.Level;
-
 import com.samskivert.util.Invoker;
 
 import com.threerings.crowd.data.OccupantInfo;

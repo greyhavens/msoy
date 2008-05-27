@@ -5,7 +5,6 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.logging.Level;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;

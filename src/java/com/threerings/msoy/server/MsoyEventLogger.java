@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.util.logging.Level;
 
 import com.samskivert.util.StringUtil;
 

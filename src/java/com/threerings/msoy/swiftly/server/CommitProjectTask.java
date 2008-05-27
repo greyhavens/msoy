@@ -1,16 +1,16 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import com.samskivert.util.SerialExecutor;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.InvocationService.ResultListener;
+
+import static com.threerings.msoy.Log.log;
 
 /** Handles a request to commit our project. */
 public class CommitProjectTask

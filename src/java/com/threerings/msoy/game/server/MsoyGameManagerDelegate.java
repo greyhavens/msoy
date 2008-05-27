@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.google.common.collect.Comparators;
 import com.google.common.collect.Lists;

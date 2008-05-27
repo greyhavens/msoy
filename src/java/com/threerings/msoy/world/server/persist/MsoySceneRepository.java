@@ -6,7 +6,6 @@ package com.threerings.msoy.world.server.persist;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;

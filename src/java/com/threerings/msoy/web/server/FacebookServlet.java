@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Enumeration;
-import java.util.logging.Level;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

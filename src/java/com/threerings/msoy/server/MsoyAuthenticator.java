@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.util.Date;
-import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;

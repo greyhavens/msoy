@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import java.io.File;
 import java.security.Security;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;

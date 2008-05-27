@@ -21,8 +21,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import java.util.logging.Level;
-
 import com.google.common.base.Preconditions;
 
 import com.samskivert.io.PersistenceException;

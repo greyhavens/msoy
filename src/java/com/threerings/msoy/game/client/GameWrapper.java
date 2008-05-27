@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client;
 
-import java.util.logging.Level;
-
 import java.awt.Component;
 import java.awt.Window;
 import javax.swing.JApplet;

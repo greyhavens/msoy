@@ -14,7 +14,6 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.LoopingThread;

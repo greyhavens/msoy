@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.json.JSONArray;
 import org.json.JSONException;

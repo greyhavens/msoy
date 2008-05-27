@@ -6,7 +6,6 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
