@@ -44,7 +44,7 @@ public class GalaxyPanel extends VerticalPanel
         // add our favorites and featured whirled
         SmartTable features = new SmartTable("Features", 0, 0);
         features.setText(0, 0, CWhirleds.msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
-        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel(false));
+        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel(false, false));
         features.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         features.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
         add(features);

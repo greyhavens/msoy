@@ -341,7 +341,7 @@
 
 .landingPanel .TopGamesPanel .featuredGame .Descrip {
     width: 230px;
-    height: 100px;
+    height: 120px;
 }
 
 .landingPanel .TopGamesPanel .featuredGame .Name {
@@ -382,65 +382,40 @@
 }
 
 /* ------------------------------------
-   LANDING PAGE - WHIRLED LEADERS
+   LANDING PAGE - TOP AVATARS
 -------------------------------------*/
 
-.landingPanel .LeadersPanel {
-  background: url(/images/landing/whirled_leaders_bg.png) no-repeat top center;
+.landingPanel .AvatarPanel {
+  background: url(/images/landing/top_avatars_bg.png) no-repeat top center;
   width: 213px;
   height: 334px;
+  padding-top: 40px;
 }
 
-.landingPanel .LeadersTable .Photo {
-  width: 40px;
-  height: 41px;
+.landingPanel .AvatarPanel .AvatarBox {
+  font-size: 12px;
+  margin: 0px 10px;
+  width: 150px;
+  margin-bottom: 13px;
 }
 
-.landingPanel .LeadersTable .Name div {
-  font-family: Arial, Helvetica, sans-serif;
+.landingPanel .AvatarPanel .AvatarBox .Name {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
   font-size: 14px;
-  color: #1391DD;
-  display: block;
-  width: 110px;
+  padding-left: 5px;
+  padding-top: 10px;
+  width: 100px;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.landingPanel .AvatarPanel .AvatarBox .Creator {
   padding-left: 5px;
-}
-
-.landingPanel .LeadersTable .Name a {
-  color: #1391DD;
-}
-
-.landingPanel .LeadersTable .Level {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  color: #95c4e2;
-  width: 40px;
-}
-
-.landingPanel .LeadersTable .LevelTop {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  color: #FFFFFF;
-  width: 40px;
-  background: url(/images/landing/blue_star.png) no-repeat center center;
-}
-
-.landingPanel .LeadersTable .Divider {
-  background-color: #B2D1E5;
-  height: 1px;
-}
-
-.landingPanel .LeadersPanel .LevelUp {
-  width: 190px;
-  text-align: right;
-  padding-top: 5px;
-}
-
-.landingPanel .LeadersPanel .LevelUp a {
-  color: #95c4e2;
-  font-size: 10px;
-  text-decoration: none;
+  color: #4C7799;
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* ------------------------------------

@@ -3,6 +3,7 @@ package client.me;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -17,6 +18,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GalaxyData;
+import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.web.data.ListingCard;
+import com.threerings.msoy.web.data.WhatIsWhirledData;
 
 import client.games.CGames;
 import client.images.landing.LandingImages;
@@ -99,24 +103,13 @@ public class LandingPanel extends AbsolutePanel
         final TopGamesPanel topGamesPanel = new TopGamesPanel();
         games.add(topGamesPanel);
         add(games, 68, 312);
-        CGames.gamesvc.loadTopGamesData(CGames.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                topGamesPanel.setGames((FeaturedGameInfo[])result);
-            }
-        });
         
-        // whirled leaders
-        add(new LeadersPanel(), 67, 618);
+        // featured avatar
+        add(_avatarPanel = new AvatarPanel(), 67, 618);
 
         // featured whirled panel is beaten into place using css
-        _featuredWhirled = new FeaturedWhirledPanel(true);
+        _featuredWhirled = new FeaturedWhirledPanel(true, true);
         add(_featuredWhirled, 290, 618);
-        CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                GalaxyData data = (GalaxyData)result;
-                _featuredWhirled.setWhirleds(data.featuredWhirleds);
-            }
-        });
 
         // copyright, about, terms & conditions, help
         FlowPanel copyright = new FlowPanel();
@@ -132,6 +125,16 @@ public class LandingPanel extends AbsolutePanel
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
         add(copyright, 0, 970);
+        
+        // collect the data for this page
+        CMe.worldsvc.getWhatIsWhirled(new MsoyCallback() {
+            public void onSuccess (Object result) {
+                WhatIsWhirledData data = (WhatIsWhirledData)result;
+                topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
+                _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
+                _avatarPanel.setAvatars((ListingCard[])data.topAvatars);
+            }
+        });
     }
 
     protected Widget makeLink (String url, String title)
@@ -142,6 +145,7 @@ public class LandingPanel extends AbsolutePanel
     }
 
     protected FeaturedWhirledPanel _featuredWhirled;
+    protected AvatarPanel _avatarPanel;
     
     /** Our screenshot images. */
     protected static LandingImages _images = (LandingImages)GWT.create(LandingImages.class);

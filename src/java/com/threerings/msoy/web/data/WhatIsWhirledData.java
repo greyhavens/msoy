@@ -10,13 +10,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class WhatIsWhirledData
     implements IsSerializable
-{
-    /** The total number of players in Whirled. */
-    public int players;
-
-    /** The total number of places in Whirled. */
-    public int places;
-
-    /** The total number of games in Whirled. */
-    public int games;
+{    
+    /** Currently featured whirleds */
+    public GroupCard[] featuredWhirleds;
+    
+    /** Top featured game information */
+    public FeaturedGameInfo[] topGames;
+    
+    /** Top featured avatar information */
+    public ListingCard[] topAvatars;
 }

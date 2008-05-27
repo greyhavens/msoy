@@ -3,18 +3,23 @@
 
 package client.whirleds;
 
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GroupCard;
 
+import client.me.CMe;
 import client.shell.Application;
 import client.shell.WorldClient;
 import client.util.MediaUtil;
@@ -25,9 +30,15 @@ import client.util.MsoyUI;
  */
 public class FeaturedWhirledPanel extends FlowPanel
 {
-    public FeaturedWhirledPanel (boolean showThumbnails)
+    /**
+     * Create a new Featured Whirled Panel
+     * @param showThumbnails Display a list of featured whirled thumbnails
+     * @param showPlaceholder Display an image instead of loading the live room
+     */
+    public FeaturedWhirledPanel (boolean showThumbnails, boolean showPlaceholder)
     {
         setStyleName("FeaturedWhirled");
+        _showPlaceholder = showPlaceholder;
         add(MsoyUI.createLabel(CWhirleds.msgs.featuredTitle(), "Title"));
         add(_flashPanel = new SimplePanel());
         _flashPanel.addStyleName("Flash");
@@ -84,7 +95,28 @@ public class FeaturedWhirledPanel extends FlowPanel
     protected void showWhirled (int index)
     {
         final GroupCard group = _whirleds[_selidx = index];
-        WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+
+        if (!_showPlaceholder) {
+            WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+        }
+
+        // display screenshot with click to play button
+        else {
+            if (_flashPanel.getWidget() != null) {
+                _flashPanel.remove(_flashPanel.getWidget());
+            }
+            ClickListener onClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    _flashPanel.remove(_flashPanel.getWidget());
+                    // after the placeholder is removed, do not readd it
+                    _showPlaceholder = false;
+                    WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+                }
+            };
+            final Image clickToPlayImage = MsoyUI.createActionImage(
+                    "/images/landing/whirled_click_here.jpg", "", onClick);
+            _flashPanel.add(clickToPlayImage);
+        }
 
         Widget link = Application.groupViewLink(group.name.toString(), group.name.getGroupId());
         _info.setWidget(0, 1, link, 1, "Name");
@@ -123,6 +155,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         }
     }
     
+    protected boolean _showPlaceholder;
     protected FlowPanel _iconsPanel; 
     
     protected GroupCard[] _whirleds;

@@ -162,10 +162,10 @@ public class TopGamesPanel extends AbsolutePanel
         }));
         left.add(WidgetUtil.makeShim(10, 10));
 
-        // all games button
-        Widget allGamesButton = new Button(
-            CMe.msgs.landingAllGames(), Application.createLinkListener(Page.GAMES, "g"));
-        left.add(allGamesButton);
+        // more games button
+        Widget moreGamesButton = new Button(
+            CMe.msgs.landingMoreGames(), Application.createLinkListener(Page.GAMES, ""));
+        left.add(moreGamesButton);
 
         gameInfoTable.setWidget(0, 0, left);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);

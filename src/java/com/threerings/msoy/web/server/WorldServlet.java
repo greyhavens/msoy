@@ -20,15 +20,18 @@ import com.google.common.collect.Sets;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ExpiringReference;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -40,10 +43,19 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.GameDetailRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
+import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -58,14 +70,22 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
 
 import com.threerings.msoy.web.client.WorldService;
+import com.threerings.msoy.web.data.ArcadeData;
+import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.FeaturedGameInfo;
+import com.threerings.msoy.web.data.GalaxyData;
+import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
 
@@ -85,9 +105,81 @@ public class WorldServlet extends MsoyServiceServlet
             WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
             if (data == null) {
                 data = new WhatIsWhirledData();
-                data.players = MsoyServer.memberRepo.getPopulationCount();
-                data.places = MsoyServer.sceneRepo.getSceneCount();
-                data.games = MsoyServer.itemMan.getGameRepository().getGameCount();
+                
+                // determine our featured whirled based on who's online now
+                PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+                List<GroupCard> popWhirleds = Lists.newArrayList();
+                for (PlaceCard card : pps.getTopWhirleds()) {
+                    GroupRecord group = MsoyServer.groupRepo.loadGroup(card.placeId);
+                    if (group != null) {
+                        GroupCard gcard = group.toGroupCard();
+                        gcard.population = card.population;
+                        popWhirleds.add(gcard);
+                        if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
+                            break;
+                        }
+                    }
+                }
+                // if we don't have enough people online, supplement with other groups
+                if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
+                    int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
+                    for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
+                        popWhirleds.add(group.toGroupCard());
+                    }
+                }
+                data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
+
+                // determine the "featured" games
+                // TODO duplicate of GameServlet.getTopGames()
+                GameRepository gameRepo = MsoyServer.itemMan.getGameRepository();
+                List<FeaturedGameInfo> featured = Lists.newArrayList();
+                ArrayIntSet have = new ArrayIntSet();
+                for (PlaceCard card : pps.getTopGames()) {
+                    GameDetailRecord detail = gameRepo.loadGameDetail(card.placeId);
+                    GameRecord game = gameRepo.loadGameRecord(card.placeId, detail);
+                    if (game != null) {
+                        featured.add(toFeaturedGameInfo(game, detail, card.population));
+                        have.add(game.gameId);
+                    }
+                }
+                if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
+                    for (GameRecord game :
+                        gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+                        if (!have.contains(game.gameId)) {
+                            GameDetailRecord detail = gameRepo.loadGameDetail(game.gameId);
+                            featured.add(toFeaturedGameInfo(game, detail, 0));
+                        }
+                        if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                            break;
+                        }
+                    }
+                }
+                data.topGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
+
+                // select the top rated avatars
+                ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.AVATAR);
+                List<ListingCard> cards = Lists.newArrayList();
+                for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false,
+                        null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
+                    cards.add(crec.toListingCard());
+                }
+                // TODO move to central location shared by CatalogServlet.resolveCardNames()
+                // determine which member names we need to look up
+                IntSet members = new ArrayIntSet();
+                for (ListingCard card : cards) {
+                    members.add(card.creator.getMemberId());
+                }
+                // now look up the names and build a map of memberId -> MemberName
+                IntMap<MemberName> map = new HashIntMap<MemberName>();
+                for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
+                    map.put(record.getMemberId(), record);
+                }
+                // finally fill in the listings using the map
+                for (ListingCard card : cards) {
+                    card.creator = map.get(card.creator.getMemberId());
+                }
+                data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
+
                 _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
             }
             return data;
@@ -96,6 +188,42 @@ public class WorldServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load WhatIsWhirled data.", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    protected FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
+        throws PersistenceException
+    {
+        FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
+        info.avgDuration = detail.getAverageDuration();
+        int[] players = getMinMaxPlayers((Game)game.toItem());
+        info.minPlayers = players[0];
+        info.maxPlayers = players[1];
+        info.playersOnline = pop;
+        info.creator = MsoyServer.memberRepo.loadMemberName(game.creatorId);
+        return info;
+    }
+
+    protected int[] getMinMaxPlayers (Game game)
+    {
+        MsoyMatchConfig match = null;
+        try {
+            if (game != null && !StringUtil.isBlank(game.config)) {
+                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
+            }
+            if (match == null) {
+                log.warning("Game missing match configuration [game=" + game + "].");
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + game.gameId +
+                    ", config=" + game.config + "]", e);
+        }
+        if (match != null) {
+            return new int[] {
+                match.minSeats,
+                (match.getMatchType() == GameConfig.PARTY) ? Integer.MAX_VALUE : match.maxSeats
+            };
+        }
+        return new int[] { 1, 2 }; // arbitrary defaults
     }
 
     // from WorldService
