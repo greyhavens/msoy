@@ -501,7 +501,7 @@ public class RoomManager extends SpotSceneManager
                 _roomObj.updateRoomProperties(entry);
             }
 
-        } else {
+        } else if (entry.value != null) {
             _roomObj.addToRoomProperties(entry);
         }
     }
