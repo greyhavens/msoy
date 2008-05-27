@@ -143,8 +143,7 @@ public class ProfileBlurb extends Blurb
                       _lfmt.format(new Date(_profile.lastLogon)));
         }
         if (!isBlank(_profile.homePageURL)) {
-            Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL);
-            homepage.setFrameTarget("_blank");
+            Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL, "_blank", true);
             addDetail(dbits, CPeople.msgs.homepage(), homepage);
         }
         details.add(dbits);

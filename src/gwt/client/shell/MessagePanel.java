@@ -75,6 +75,7 @@ public class MessagePanel extends FlexTable
         scroller.addStyleName("Scroller");
         if (textIsHTML()) {
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
+            text = text.replaceAll("href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
             scroller.add(new HTML(text));
         } else {
             scroller.add(new Label(text));
