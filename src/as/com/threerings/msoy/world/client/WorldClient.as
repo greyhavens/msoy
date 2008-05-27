@@ -220,7 +220,7 @@ public class WorldClient extends MsoyClient
      */
     protected function externalInRoom () :Boolean
     {
-        return _wctx.getTopPanel().getPlaceView() is RoomView;
+        return _wctx.getTopPanel().getPlaceView() is RoomObjectView;
     }
 
     /**
@@ -247,7 +247,7 @@ public class WorldClient extends MsoyClient
      */
     protected function externalUpdateAvatarScale (avatarId :int, newScale :Number) :void
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
         if (view != null) {
             view.updateAvatarScale(avatarId, newScale);
         }
@@ -259,9 +259,9 @@ public class WorldClient extends MsoyClient
      */ 
     protected function externalUseItem (itemType :int, itemId :int) :void
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
         if (view != null) {
-            view.getRoomController().useItem(itemType, itemId);
+            view.getRoomObjectController().useItem(itemType, itemId);
         }
     }
 
@@ -270,9 +270,9 @@ public class WorldClient extends MsoyClient
      */
     protected function externalClearItem (itemType :int, itemId :int) :void
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
         if (view != null) {
-            view.getRoomController().clearItem(itemType, itemId);
+            view.getRoomObjectController().clearItem(itemType, itemId);
         }
     }
 

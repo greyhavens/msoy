@@ -27,8 +27,7 @@ import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.world.client.RoomController;
-import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.RoomObjectController;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
@@ -114,8 +113,8 @@ public class DoorTargetEditController
         // if we got update info...
         if (doorData != null) {
             // ...create a furni update based on the door data, and send it to the server.
-            var ctrl :RoomController =
-                _ctx.getLocationDirector().getPlaceController() as RoomController;
+            var ctrl :RoomObjectController =
+                _ctx.getLocationDirector().getPlaceController() as RoomObjectController;
 
             var newdata :FurniData = doorData.clone() as FurniData;
             // note: the destinationName may have colons in it, so we split with care in  FurniData

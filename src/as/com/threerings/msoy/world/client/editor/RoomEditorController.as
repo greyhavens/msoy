@@ -34,8 +34,8 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.client.RoomController;
-import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.RoomObjectController;
+import com.threerings.msoy.world.client.RoomObjectView;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
@@ -56,7 +56,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  */
 public class RoomEditorController
 {
-    public function RoomEditorController (ctx :WorldContext, view :RoomView)
+    public function RoomEditorController (ctx :WorldContext, view :RoomObjectView)
     {
         _ctx = ctx;
         _view = view;
@@ -65,7 +65,7 @@ public class RoomEditorController
         _hover = new FurniHighlight(this);
     }
 
-    public function get roomView () :RoomView
+    public function get roomView () :RoomObjectView
     {
         return _view;
     }
@@ -194,7 +194,8 @@ public class RoomEditorController
             updateScene(scene, newscene);
         } else {
             // it's a genuine furni update - apply it
-            _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+            _view.getRoomObjectController().applyUpdate(
+                new FurniUpdateAction(_ctx, toRemove, toAdd));
         }
         updateUndoStatus(true);
     }
@@ -204,7 +205,8 @@ public class RoomEditorController
      */
     public function updateScene (oldScene :MsoyScene, newScene :MsoyScene) :void
     {
-        _view.getRoomController().applyUpdate(new SceneUpdateAction(_ctx, oldScene, newScene));
+        _view.getRoomObjectController().applyUpdate(
+            new SceneUpdateAction(_ctx, oldScene, newScene));
         updateUndoStatus(true);
     }
 
@@ -245,7 +247,7 @@ public class RoomEditorController
     public function actionUndo () :void
     {
         // undo the last action, and set undo button's enabled state appropriately
-        updateUndoStatus(_view.getRoomController().undoLastUpdate());
+        updateUndoStatus(_view.getRoomObjectController().undoLastUpdate());
     }
 
     /** Performs a Delete action on the currently selected target. */
@@ -336,7 +338,7 @@ public class RoomEditorController
 
         // now open up the door creation wizard. note: we're not wrapping this
         // in a furni update, because the room controller code will do that for us.
-        _view.getRoomController().handleEditDoor(data);
+        _view.getRoomObjectController().handleEditDoor(data);
     }
 
     /** Starts editing the URL. */
@@ -617,7 +619,7 @@ public class RoomEditorController
     }
 
     protected var _ctx :WorldContext;
-    protected var _view :RoomView;
+    protected var _view :RoomObjectView;
     protected var _edit :FurniEditor;
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;

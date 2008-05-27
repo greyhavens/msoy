@@ -645,7 +645,7 @@ public class WorldController extends MsoyController
     public function handleRoomEdit () :void
     {
         if (canEditScene()) {
-            (_topPanel.getPlaceView() as RoomView).getRoomController().handleRoomEdit();
+            (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
         }
     }
 
@@ -655,8 +655,8 @@ public class WorldController extends MsoyController
     public function handleSnapshot () :void
     {
         if (canEditScene()) {
-            var room :RoomView = _topPanel.getPlaceView() as RoomView;
-            room.getRoomController().takeSnapshot();
+            var room :RoomObjectView = _topPanel.getPlaceView() as RoomObjectView;
+            room.getRoomObjectController().takeSnapshot();
         }
     }
 

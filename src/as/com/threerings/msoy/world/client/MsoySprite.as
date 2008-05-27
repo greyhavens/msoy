@@ -68,7 +68,7 @@ public class MsoySprite extends DataPackMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
-     * parent is not an AbstractRoomView. */
+     * parent is not a RoomView. */
     public static const LOCATION_UPDATED :String = "locationUpdated";
 
     /** Hover colors. */
@@ -545,8 +545,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     protected function locationUpdated () :void
     {
-        if (parent is AbstractRoomView) {
-            (parent as AbstractRoomView).locationUpdated(this);
+        if (parent is RoomView) {
+            (parent as RoomView).locationUpdated(this);
 
         } else {
             dispatchEvent(new ValueEvent(LOCATION_UPDATED, null));
@@ -731,17 +731,10 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getMemories () :Object
     {
-        var mems :Object = {};
         if (_ident != null && parent is RoomView) {
-            var roomObj :RoomObject = (parent as RoomView).getRoomObject();
-            for each (var entry :EntityMemoryEntry in roomObj.memories.toArray()) {
-                // filter out memories with null as the value, those will not be persisted
-                if (entry.value != null && entry.item.equals(_ident)) {
-                    mems[entry.key] = ObjectMarshaller.decode(entry.value);
-                }
-            }
+            return (parent as RoomView).getMemories(_ident);
         }
-        return mems;
+        return {};
     }
 
     /**
@@ -751,12 +744,7 @@ public class MsoySprite extends DataPackMediaContainer
     internal function lookupMemory (key :String) :Object
     {
         if (_ident != null && parent is RoomView) {
-            var mkey :EntityMemoryEntry = new EntityMemoryEntry(_ident, key, null),
-                roomObj :RoomObject = (parent as RoomView).getRoomObject(),
-                entry :EntityMemoryEntry = roomObj.memories.get(mkey) as EntityMemoryEntry;
-            if (entry != null) {
-                return ObjectMarshaller.decode(entry.value);
-            }
+            return (parent as RoomView).lookupMemory(_ident, key);
         }
         return null;
     }
@@ -768,9 +756,8 @@ public class MsoySprite extends DataPackMediaContainer
     {
         if (_ident != null && parent is RoomView) {
             return (parent as RoomView).getRoomController().updateMemory(_ident, key, value);
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -778,17 +765,11 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getRoomProperties () :Object
     {
-        var props :Object = {};
+        // TODO: do you need an _ident (be an entity) to read properties?
         if (_ident != null && parent is RoomView) {
-            var roomObj :RoomObject = (parent as RoomView).getRoomObject();
-            for each (var entry :RoomPropertyEntry in roomObj.roomProperties.toArray()) {
-                // filter out memories with null as the value, those will not be persisted
-                if (entry.value != null) {
-                    props[entry.key] = ObjectMarshaller.decode(entry.value);
-                }
-            }
+            return (parent as RoomView).getRoomProperties();
         }
-        return props;
+        return {};
     }
 
     /**
@@ -796,12 +777,9 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getRoomProperty (key :String) :Object
     {
+        // TODO: do you need an _ident (be an entity) to read properties?
         if (_ident != null && parent is RoomView) {
-            var roomObj :RoomObject = (parent as RoomView).getRoomObject(),
-                entry :RoomPropertyEntry = roomObj.roomProperties.get(key) as RoomPropertyEntry;
-            if (entry != null) {
-                return ObjectMarshaller.decode(entry.value);
-            }
+            return (parent as RoomView).getRoomProperty(key);
         }
         return null;
     }

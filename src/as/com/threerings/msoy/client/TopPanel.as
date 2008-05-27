@@ -37,8 +37,6 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
-import com.threerings.msoy.world.client.AbstractRoomView;
-
 public class TopPanel extends Canvas
     implements LocationObserver
 {

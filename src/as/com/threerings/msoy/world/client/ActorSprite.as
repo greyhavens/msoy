@@ -152,10 +152,10 @@ public class ActorSprite extends OccupantSprite
     // a helper function to call functions in the AVRG backend
     protected function callAVRGCode (name :String, ... args) :*
     {
-        if (_ident != null && parent is RoomView && _occInfo is MemberInfo) {
+        if (_ident != null && parent is RoomObjectView && _occInfo is MemberInfo) {
             args.unshift(MemberInfo(_occInfo).getMemberId());
             args.unshift(name);
-            return RoomView(parent).callAVRGCode.apply(parent, args);
+            return RoomObjectView(parent).callAVRGCode.apply(parent, args);
         }
         return undefined;
     }

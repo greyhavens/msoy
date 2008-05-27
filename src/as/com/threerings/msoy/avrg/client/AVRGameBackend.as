@@ -3,42 +3,56 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.display.DisplayObject;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
+import com.threerings.util.Iterator;
+import com.threerings.util.Log;
+import com.threerings.util.MethodQueue;
+import com.threerings.util.Name;
+
+import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
+
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.SetAdapter;
+
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.client.OccupantAdapter;
 import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
+
+import com.threerings.whirled.data.Scene;
+import com.threerings.whirled.spot.data.SpotSceneObject;
+
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.PlayerObject;
+
 import com.threerings.msoy.world.client.MemberSprite;
 import com.threerings.msoy.world.client.MobSprite;
 import com.threerings.msoy.world.client.OccupantSprite;
 import com.threerings.msoy.world.client.RoomMetrics;
+import com.threerings.msoy.world.client.RoomObjectView;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.layout.RoomLayout;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
-import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_InvocationListener;
-import com.threerings.presents.dobj.*;
-import com.threerings.util.Iterator;
-import com.threerings.util.Log;
-import com.threerings.util.MethodQueue;
-import com.threerings.util.Name;
-import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.spot.data.SpotSceneObject;
 
-import flash.display.DisplayObject;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGameBackend extends ControlBackend
 {
@@ -170,8 +184,8 @@ public class AVRGameBackend extends ControlBackend
 
     protected function hasControl_v1 () :Boolean
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        return view && view.getRoomController().hasAVRGameControl();
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        return view && view.getRoomObjectController().hasAVRGameControl();
     }
 
     protected function getStageSize_v1 (full :Boolean) :Rectangle
@@ -285,12 +299,8 @@ public class AVRGameBackend extends ControlBackend
     protected function spawnMob_v1 (mobId :String, mobName :String) :Boolean
     {
         if (mobId && mobName && isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-            if (view != null) {
-                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
-                if (sprite != null) {
-                    return false;
-                }
+            var sprite :MobSprite = getMobSprite(mobId);
+            if (sprite == null) {
                 _roomObj.roomService.spawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId, mobName,
                     loggingInvocationListener("spawnMob"));
@@ -303,12 +313,8 @@ public class AVRGameBackend extends ControlBackend
     protected function despawnMob_v1 (mobId :String) :Boolean
     {
         if (mobId && isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-            if (view != null) {
-                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
-                if (sprite == null) {
-                    return false;
-                }
+            var sprite :MobSprite = getMobSprite(mobId);
+            if (sprite != null) {
                 _roomObj.roomService.despawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId,
                     loggingInvocationListener("despawnMob"));
@@ -322,17 +328,14 @@ public class AVRGameBackend extends ControlBackend
         mobId :String, decoration :DisplayObject, add :Boolean) :Boolean
     {
         if (isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-            if (view != null) {
-                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
-                if (sprite != null) {
-                    if (add) {
-                        sprite.addDecoration(decoration);
-                    } else {
-                        sprite.removeDecoration(decoration);
-                    }
-                    return true;
+            var sprite :MobSprite = getMobSprite(mobId);
+            if (sprite != null) {
+                if (add) {
+                    sprite.addDecoration(decoration);
+                } else {
+                    sprite.removeDecoration(decoration);
                 }
+                return true;
             }
         }
         return false;
@@ -342,12 +345,9 @@ public class AVRGameBackend extends ControlBackend
         mobId :String, x :Number, y :Number, height :Number = NaN) :void
     {
         if (isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-            if (view != null) {
-                var sprite :MobSprite = view.getMob(_ctrl.getGameId(), mobId);
-                if (sprite != null) {
-                    sprite.setHotSpot(x, y, height);
-                }
+            var sprite :MobSprite = getMobSprite(mobId);
+            if (sprite != null) {
+                sprite.setHotSpot(x, y, height);
             }
         }
     }
@@ -465,23 +465,31 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
+    protected function getMobSprite (mobId :String) :MobSprite
+    {
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        return (view == null) ? null : view.getMob(_ctrl.getGameId(), mobId);
+    }
+
     protected function getAvatarSprite (playerId :int) :MemberSprite
     {
         if (!isPlaying()) {
             log.debug("getAvatarSprite(" + playerId + ") while !isPlaying()");
             return null;
         }
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
         if (view == null) {
             log.debug("getAvatarSprite(" + playerId + ") without RoomView");
             return null;
         }
-        var name :MemberName = new MemberName("", playerId);
-        var sprite :OccupantSprite = view.getOccupantByName(name);
-        if (sprite != null && _gameObj.getOccupantInfo(name) != null) {
-            return sprite as MemberSprite;
+        var occInfo :OccupantInfo = _gameObj.getOccupantInfo(new MemberName("", playerId));
+        if (occInfo != null) {
+            var sprite :OccupantSprite = view.getOccupant(occInfo.bodyOid);
+            if (sprite != null) {
+                return sprite as MemberSprite;
+            }
         }
-        log.debug("getAvatarSprite(" + playerId + ") return null [sprite=" + sprite + "]");
+        log.debug("getAvatarSprite(" + playerId + ") return null");
         return null;
     }
 

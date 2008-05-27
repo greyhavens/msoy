@@ -235,9 +235,9 @@ public class FurniSprite extends MsoySprite
             // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
 
             /*
-            if (parent is AbstractRoomView) {
+            if (parent is RoomView) {
                 Perspectivizer(newMedia).updatePerspInfo(
-                    AbstractRoomView(parent).layout.getPerspInfo(this, _w, _h, loc),
+                    RoomView(parent).layout.getPerspInfo(this, _w, _h, loc),
                     getMediaScaleX(), getMediaScaleY());
             }
             */
@@ -278,7 +278,7 @@ public class FurniSprite extends MsoySprite
     
     protected function updatePerspective () :void
     {
-        if (!(_media is Perspectivizer) || !(parent is AbstractRoomView)) {
+        if (!(_media is Perspectivizer) || !(parent is RoomView)) {
             return;
         }
 
@@ -286,7 +286,7 @@ public class FurniSprite extends MsoySprite
         
         /*
         var info :PerspInfo =
-            AbstractRoomView(parent).layout.getPerspInfo(this, _w, _h, loc);
+            RoomView(parent).layout.getPerspInfo(this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
             info, getMediaScaleX(), getMediaScaleY());
         */

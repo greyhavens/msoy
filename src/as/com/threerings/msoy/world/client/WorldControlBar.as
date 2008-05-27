@@ -113,9 +113,10 @@ public class WorldControlBar extends ControlBar
         _hotZoneBtn.enabled = false;
         _hotZoneBtn.focusEnabled = false;
         var hotHandler :Function = function (event :MouseEvent) :void {
-            var roomView :RoomView = _ctx.getTopPanel().getPlaceView() as RoomView;
+            var roomView :RoomObjectView = _ctx.getTopPanel().getPlaceView() as RoomObjectView;
             if (roomView != null) {
-                roomView.getRoomController().hoverAllFurni(event.type == MouseEvent.ROLL_OVER);
+                roomView.getRoomObjectController().hoverAllFurni(
+                    event.type == MouseEvent.ROLL_OVER);
             }
         };
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);

@@ -17,10 +17,10 @@ import com.threerings.util.Log;
 
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.RoomElement;
 import com.threerings.msoy.world.client.RoomMetrics;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -36,7 +36,7 @@ public class RoomLayoutStandard implements RoomLayout
     public static const MIN_CHAT_HEIGHT :Number = 50;
 
     /** Constructor. */
-    public function RoomLayoutStandard (view :AbstractRoomView)
+    public function RoomLayoutStandard (view :RoomView)
     {
         _parentView = view;
         _metrics = new RoomMetrics();
@@ -392,8 +392,8 @@ public class RoomLayoutStandard implements RoomLayout
     /** Room metrics storage. */
     protected var _metrics :RoomMetrics;
 
-    /** AbstractRoomView object that contains this instance. */
-    protected var _parentView :AbstractRoomView;
+    /** RoomView object that contains this instance. */
+    protected var _parentView :RoomView;
 
     /** Point (0, 0) expressed as a constant. */
     protected static const NO_OFFSET :Point = new Point(0, 0);

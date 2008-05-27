@@ -8,9 +8,9 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
-import com.threerings.msoy.world.client.AbstractRoomView;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.RoomElement;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -19,10 +19,10 @@ import com.threerings.msoy.world.data.MsoyScene;
  * This class factors out room layout math that converts between 3D room coordinate space
  * and screen coordinates.
  */
-public class RoomLayoutFlatworld extends RoomLayoutStandard {
-
+public class RoomLayoutFlatworld extends RoomLayoutStandard
+{
     /** Constructor. */
-    public function RoomLayoutFlatworld (view :AbstractRoomView)
+    public function RoomLayoutFlatworld (view :RoomView)
     {
         super(view);
     }

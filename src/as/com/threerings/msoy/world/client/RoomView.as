@@ -4,6 +4,9 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
+import flash.display.Shape;
+import flash.display.Sprite;
 
 import flash.events.Event;
 
@@ -11,93 +14,63 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.utils.ByteArray;
+import flash.utils.getTimer; // function import
 
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
-import com.threerings.util.Name;
+import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.UserMessage;
-
-import com.threerings.crowd.chat.client.ChatDisplay;
-
-import com.threerings.flash.MenuUtil;
-
-import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.flash.DisplayUtil;
 
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
-import com.threerings.whirled.spot.data.SpotSceneObject;
-import com.threerings.whirled.spot.data.SceneLocation;
 
-import com.threerings.msoy.avrg.client.AVRGameBackend;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Decor;
-
-import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.ContextMenuProvider;
-import com.threerings.msoy.client.PlaceLoadingDisplay;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.client.ChatPlaceView;
+import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.chat.client.ChatInfoProvider;
-import com.threerings.msoy.chat.client.ComicOverlay;
-
-import com.threerings.msoy.chat.data.ChatChannel;
-
-import com.threerings.msoy.world.client.editor.DoorTargetEditController;
-
-import com.threerings.msoy.world.data.ActorInfo;
-import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.ControllableAVRGame;
-import com.threerings.msoy.world.data.ControllableEntity;
-import com.threerings.msoy.world.data.EffectData;
-import com.threerings.msoy.world.data.EntityControl;
+import com.threerings.msoy.world.client.layout.RoomLayout;
+import com.threerings.msoy.world.client.layout.RoomLayoutFactory;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.FurniUpdate_Remove;
-import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.RoomCodes;
+import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
-import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 /**
- * Displays a room or scene in the virtual world.
+ * The base room view. Should not contain any RoomObject or other network-specific crap.
  */
-public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, MessageListener,
-               ChatDisplay, ChatInfoProvider
+public class RoomView extends Sprite
+    implements MsoyPlaceView, ChatPlaceView
 {
+    /** Logging facilities. */
+    protected static const log :Log = Log.getLog(RoomView);
+
     /**
-     * Create a roomview.
+     * Constructor.
      */
     public function RoomView (ctx :WorldContext, ctrl :RoomController)
     {
-        super(ctx);
+        _ctx = ctx;
         _ctrl = ctrl;
-
-        // listen for preferences changes, update zoom
-        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
+        _layout = RoomLayoutFactory.createLayout(null, this);
     }
 
     /**
@@ -109,19 +82,117 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Update the 'my' user's specified avatar's scale, non-permanently.  This is called via the
-     * avatar viewer, so that scale changes they make are instantly viewable in the world.
+     * Returns the layout object responsible for room layout.
      */
-    public function updateAvatarScale (avatarId :int, newScale :Number) :void
+    public function get layout () :RoomLayout
+    {
+        return _layout;
+    }
+
+    // from MsoyPlaceView
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        _actualWidth = unscaledWidth;
+        _actualHeight = unscaledHeight;
+        relayout();
+    }
+
+    // from MsoyPlaceView
+    public function setIsShowing (showing :Boolean) :void
+    {
+        _showing = showing;
+    }
+
+    // from MsoyPlaceView
+    public function padVertical () :Boolean
+    {
+        return true;
+    }
+
+    /**
+     * Are we actually showing?
+     */
+    public function isShowing () :Boolean
+    {
+        return _showing;
+    }
+
+    /**
+     * Called by MsoySprite instances when they've had their location updated.
+     */
+    public function locationUpdated (sprite :MsoySprite) :void
+    {
+        _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
+
+        if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+            sprite.x += getScrollOffset();
+        }
+
+        // if we moved the _centerSprite, possibly update the scroll position
+        if (sprite == _centerSprite &&
+                ((sprite != _bg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
+            scrollView();
+        }
+    }
+
+    /**
+     * A convenience function to get our personal avatar.
+     */
+    public function getMyAvatar () :MemberSprite
+    {
+        // TODO
+        return null;
+    }
+
+    /**
+     * Get the actions currently published by our own avatar.
+     */
+    public function getMyActions () :Array
+    {
+        var avatar :MemberSprite = getMyAvatar();
+        return (avatar != null) ? avatar.getAvatarActions() : [];
+    }
+
+    /**
+     * Get the states currently published by our own avatar.
+     */
+    public function getMyStates () :Array
+    {
+        var avatar :MemberSprite = getMyAvatar();
+        return (avatar != null) ? avatar.getAvatarStates() : [];
+    }
+
+    /**
+     * Return the current location of the avatar that represents our body.
+     */
+    public function getMyCurrentLocation () :MsoyLocation
     {
         var avatar :MemberSprite = getMyAvatar();
         if (avatar != null) {
-            var occInfo :MemberInfo = (avatar.getOccupantInfo() as MemberInfo);
-            if (occInfo.getItemIdent().equals(new ItemIdent(Item.AVATAR, avatarId))) {
-                occInfo.setScale(newScale);
-                avatar.setOccupantInfo(occInfo);
-            }
+            return avatar.getLocation();
+        } else {
+            return new MsoyLocation(-1, -1, -1);
         }
+    }
+
+    public function getMemories (ident :ItemIdent) :Object
+    {
+        return {};
+    }
+
+    public function lookupMemory (ident :ItemIdent, key :String) :Object
+    {
+        return null;
+    }
+
+    public function getRoomProperties () :Object
+    {
+        return {};
+    }
+
+    public function getRoomProperty (key :String) :Object
+    {
+        return null;
     }
 
     /**
@@ -146,6 +217,85 @@ public class RoomView extends AbstractRoomView
             // and remove the sprite
             removeSprite(sprite);
         }
+    }
+
+    /**
+     * Scroll the view by the specified number of pixels.
+     *
+     * @return true if the view is scrollable.
+     */
+    public function scrollViewBy (xpixels :int) :Boolean
+    {
+        var rect :Rectangle = scrollRect;
+        if (rect == null) {
+            return false;
+        }
+
+        var bounds :Rectangle = getScrollBounds();
+        rect.x = Math.min(_scene.getWidth() - bounds.width, Math.max(0, rect.x + xpixels));
+        scrollRect = rect;
+
+        // remove any autoscrolling (if tick is not a registered listener this will noop)
+        removeEventListener(Event.ENTER_FRAME, tick);
+        _jumpScroll = false;
+
+        return true;
+    }
+
+    /**
+     * Get the current scroll value.
+     */
+    public function getScrollOffset () :Number
+    {
+        var r :Rectangle = scrollRect;
+        return (r == null) ? 0 : r.x;
+    }
+
+    /**
+     * Get the full boundaries of our scrolling area in scaled (decor pixel) dimensions.
+     * The Rectangle returned may be destructively modified.
+     */
+    public function getScrollBounds () :Rectangle
+    {
+        var r :Rectangle = new Rectangle(0, 0, _actualWidth / scaleX, _actualHeight / scaleY);
+        if (_scene != null) {
+            r.width = Math.min(_scene.getWidth(), r.width);
+            r.height = Math.min(_scene.getHeight(), r.height);
+        }
+        return r;
+    }
+
+    /**
+     * Get the full boundaries of our scrolling area in unscaled (stage pixel) dimensions.
+     * The Rectangle returned may be destructively modified.
+     */
+    public function getScrollSize () :Rectangle
+    {
+        // figure the upper left in decor pixels, taking into account scroll offset
+        var topLeft :Point = new Point(getScrollOffset(), 0);
+
+        // and the lower right, possibly cut off by the width of the underlying scene
+        var farX :int = getScrollOffset() + _actualWidth / scaleX;
+        var farY :int = _actualHeight / scaleY;
+        if (_scene != null) {
+            farX = Math.min(_scene.getWidth(), farX);
+            farY = Math.min(_scene.getHeight(), farY);
+        }
+        var bottomRight :Point = new Point(farX, farY);
+
+        // finally convert from decor to placebox coordinates
+        var placeBox :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
+        topLeft = placeBox.globalToLocal(localToGlobal(topLeft));
+        bottomRight = placeBox.globalToLocal(localToGlobal(bottomRight));
+
+        // a last sanity check
+        if (bottomRight == null || topLeft == null) {
+            return null;
+        }
+
+        // and then return the result
+        return new Rectangle(
+            topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
     }
 
     /**
@@ -177,428 +327,119 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Called by our controller when a scene update is received.
+     * Add the specified sprite to this display and have the room track it.
      */
-    public function processUpdate (update :SceneUpdate) :void
+    public function addOtherSprite (sprite :MsoySprite) :void
     {
-        if (update is FurniUpdate_Remove) {
-            removeFurni((update as FurniUpdate_Remove).data);
+        _otherSprites.push(sprite);
+        addSprite(sprite);
+        relayoutSprite(sprite);
+    }
 
-        } else if (update is SceneAttrsUpdate) {
-            rereadScene(); // re-read our scene
-            updateBackground();
-            updateBackgroundAudio();
+    /**
+     * Remove the specified sprite.
+     */
+    public function removeOtherSprite (sprite :MsoySprite) :void
+    {
+        ArrayUtil.removeAll(_otherSprites, sprite);
+        removeSprite(sprite);
+    }
+
+    /**
+     * Sets the background sprite. If the data value is null, simply removes the old one.
+     */
+    public function setBackground (decor :Decor) :void
+    {
+        if (_bg != null) {
+            removeSprite(_bg);
+            _bg = null;
         }
-
-        // this will take care of anything added
-        updateAllFurni();
-        updateAllEffects();
-    }
-
-    /**
-     * Get the actions currently published by our own avatar.
-     */
-    public function getMyActions () :Array
-    {
-        var avatar :MemberSprite = getMyAvatar();
-        return (avatar != null) ? avatar.getAvatarActions() : [];
-    }
-
-    /**
-     * Get the states currently published by our own avatar.
-     */
-    public function getMyStates () :Array
-    {
-        var avatar :MemberSprite = getMyAvatar();
-        return (avatar != null) ? avatar.getAvatarStates() : [];
-    }
-
-    /**
-     * A convenience function to get our personal avatar.
-     */
-    public function getMyAvatar () :MemberSprite
-    {
-        return (getOccupant(_ctx.getClient().getClientOid()) as MemberSprite);
-    }
-
-    /**
-     * A convenience function to get the specified occupant sprite, even if it's on the way out the
-     * door.
-     */
-    public function getOccupant (bodyOid :int) :OccupantSprite
-    {
-        var sprite :OccupantSprite = (_occupants.get(bodyOid) as OccupantSprite);
-        if (sprite == null) {
-            sprite = (_pendingRemovals.get(bodyOid) as OccupantSprite);
+        if (decor != null) {
+            _bg = _ctx.getMediaDirector().getDecor(decor);
+            addSprite(_bg);
+            _bg.setEditing(_editing);
         }
-        return sprite;
     }
 
     /**
-     * A convenience function to get the specified occupant sprite, even if it's on the way out the
-     * door.
+     * Retrieves the background sprite, if any.
      */
-    public function getOccupantByName (name :Name) :OccupantSprite
+    public function getBackground () :DecorSprite
     {
-        if (_roomObj == null) {
-            return null;
+        return _bg;
+    }
+
+    // documentation inherited from interface PlaceView
+    public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        // TODO
+    }
+
+    // documentation inherited from interface PlaceView
+    public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        // TODO?
+        removeAll(_furni);
+        setBackground(null);
+        _scene = null;
+    }
+
+    /**
+     * Set the scene to be displayed.
+     */
+    public function setScene (scene :MsoyScene) :void
+    {
+        _scene = scene;
+        updateLayout(scene.getDecor());
+        _backdrop.update(scene.getDecor());
+        relayout();
+    }
+
+    /**
+     * Updates the layout object, creating a new one if necessary.
+     */
+    protected function updateLayout (decor :Decor) :void
+    {
+        if (! (RoomLayoutFactory.isDecorSupported(_layout, decor))) {
+            _layout = RoomLayoutFactory.createLayout(decor, this);
         }
-
-        var occInfo :OccupantInfo = _roomObj.getOccupantInfo(name);
-        return (occInfo == null) ? null : getOccupant(occInfo.bodyOid);
-    }
-
-    /**
-     * A convenience function to get an array of all sprites for all pets in the room.
-     */
-    public function getPets () :Array /* of PetSprite */
-    {
-        return _occupants.values().filter(function (o :*, i :int, a :Array) :Boolean {
-            return (o is PetSprite);
-        });
+        
+        _layout.update(decor);
     }
     
     /**
-     * Return the current location of the avatar that represents our body.
+     * Updates the background sprite, in case background data had changed.
      */
-    public function getMyCurrentLocation () :MsoyLocation
+    public function updateBackground () :void
     {
-        var avatar :MemberSprite = getMyAvatar();
-        if (avatar != null) {
-            return avatar.getLocation();
-        } else {
-            return new MsoyLocation(-1, -1, -1);
+        var decor :Decor = _scene.getDecor();
+        if (_bg != null && decor != null) {
+            spriteWillUpdate(_bg);
+            _bg.updateFromDecor(decor);
+            spriteDidUpdate(_bg);
         }
     }
 
-    // from ContextMenuProvider
-    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
+    /**
+     * Updates background and furniture sprites from their data objects.
+     */
+    public function updateAllFurni () :void
     {
-        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
-        if (hit === undefined) {
-            return;
-        }
-        var sprite :MsoySprite = (hit as MsoySprite);
-        if (sprite == null) {
-            if (_bg == null) {
-                return;
-            } else {
-                sprite = _bg;
-            }
-        }
-
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident != null) {
-            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                                   Msgs.GENERAL.get("b.view_item", kind),
-                                   MsoyController.VIEW_ITEM, ident));
-            }
-
-            if (sprite.isBlockable()) {
-                var isBlocked :Boolean = sprite.isBlocked();
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked, ctx));
-            }
-
-            if ((sprite is FurniSprite) && _ctrl.canEditRoom() &&
-                    (null != (sprite as FurniSprite).getCustomConfigPanel())) {
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
-            }
-        }
-    }
-
-    // from interface SetListener
-    public function entryAdded (event :EntryAddedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            addBody(event.getEntry() as OccupantInfo);
-
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
-            portalTraversed(sceneLoc.loc, true);
-
-        } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
-
-        } else if (RoomObject.ROOM_PROPERTIES == name) {
-            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
-
-        } else if (RoomObject.CONTROLLERS == name) {
-            var ctrl :EntityControl = (event.getEntry() as EntityControl);
-            if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
-                if (ctrl.controlled is ControllableEntity) {
-                    dispatchEntityGotControl(
-                        (ctrl.controlled as ControllableEntity).getItemIdent());
-
-                } else {
-                    dispatchAVRGameGotControl(
-                        (ctrl.controlled as ControllableAVRGame).getGameId());
+        if (shouldLoadAll()) {
+            for each (var furni :FurniData in _scene.getFurni()) {
+                if (!furni.media.isAudio()) {
+                    updateFurni(furni);
                 }
             }
-
-        } else if (RoomObject.EFFECTS == name) {
-            addEffect(event.getEntry() as EffectData);
         }
     }
-
-    // from interface SetListener
-    public function entryUpdated (event :EntryUpdatedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as OccupantInfo, event.getOldEntry() as OccupantInfo);
-
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            moveBody((event.getEntry() as SceneLocation).bodyOid);
-
-        } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
-
-        } else if (RoomObject.ROOM_PROPERTIES == name) {
-            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
-
-        } else if (RoomObject.EFFECTS == name) {
-            updateEffect(event.getEntry() as EffectData);
-        }
-    }
-
-    // from interface SetListener
-    public function entryRemoved (event :EntryRemovedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            removeBody((event.getOldEntry() as OccupantInfo).getBodyOid());
-
-        } else if (RoomObject.EFFECTS == name) {
-            removeEffect(event.getKey() as int);
-        }
-    }
-
-    // fro interface MessageListener
-    public function messageReceived (event :MessageEvent) :void
-    {
-        var args :Array = event.getArgs();
-        switch (event.getName()) {
-        case RoomCodes.SPRITE_MESSAGE:
-            dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String),
-                                  (args[2] as ByteArray), (args[3] as Boolean));
-            break;
-        case RoomCodes.SPRITE_SIGNAL:
-            dispatchSpriteSignal((args[0] as String), (args[1] as ByteArray));
-            break;
-        }
-    }
-
-    // from ChatInfoProvider
-    public function getBubblePosition (speaker :Name) :Point
-    {
-        var sprite :OccupantSprite = getOccupantByName(speaker);
-        return (sprite == null) ? null : sprite.getBubblePosition();
-    }
-
-    // from ChatDisplay
-    public function clear () :void
-    {
-        // nada
-    }
-
-    // from ChatDisplay
-    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
-    {
-        if (msg is UserMessage && ChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
-            var umsg :UserMessage = (msg as UserMessage);
-            if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
-                _ctx.getGameDirector().tutorialEvent("playerSpoke");
-            }
-            var avatar :MemberSprite =
-                (getOccupantByName(umsg.getSpeakerDisplayName()) as MemberSprite);
-            if (avatar != null) {
-                avatar.performAvatarSpoke();
-            }
-
-            // send it to pets as well
-            var petSprites :Array = getPets();
-            for each (var pet :PetSprite in petSprites) {
-                pet.processChatMessage(umsg);
-            }
-        }
-
-        return false; // we never display the messages ourselves
-    }
-
-    // from AbstractRoomView
-    override public function setEditing (editing :Boolean) :void
-    {
-        super.setEditing(editing);
-
-        // if we haven't yet started loading sprites other than the background, start now
-        if (!_loadAllMedia) {
-            _loadAllMedia = true;
-            updateAllFurni();
-            updateAllEffects();
-        }
-    }
-
-    // from AbstractRoomView
-    override public function willEnterPlace (plobj :PlaceObject) :void
-    {
-        // set load-all to false, as we're going to just load the decor item first.
-        _loadAllMedia = false;
-        FurniSprite.setLoadingWatcher(
-            new PlaceLoadingDisplay(_ctx.getTopPanel().getPlaceContainer()));
-
-        super.willEnterPlace(plobj);
-
-        // listen for client minimization events
-        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
-
-        _roomObj.addListener(this);
-
-        addAllOccupants();
-
-        // we add ourselves as a chat display so that we can trigger speak actions on avatars
-        _ctx.getChatDirector().addChatDisplay(this);
-
-        // let the chat overlay know about us so we can be queried for chatter locations
-        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
-        if (comicOverlay != null) {
-            comicOverlay.willEnterPlace(this);
-        }
-
-        // and animate ourselves entering the room (everyone already in the (room will also have
-        // seen it)
-        portalTraversed(getMyCurrentLocation(), true);
-
-        // load the background image first
-        setBackground(_scene.getDecor());
-        // load the decor data we have, even if it's just default values.
-        _bg.setLoadedCallback(backgroundFinishedLoading);
-
-        // start playing background audio
-        _ctrl.setBackgroundMusic(_scene.getAudioData());
-    }
-
-    // from AbstractRoomView
-    override public function didLeavePlace (plobj :PlaceObject) :void
-    {
-        _roomObj.removeListener(this);
-
-        // stop listening for avatar speak action triggers
-        _ctx.getChatDirector().removeChatDisplay(this);
-
-        // tell the comic overlay to forget about us
-        var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
-        if (comicOverlay != null) {
-            comicOverlay.didLeavePlace(this);
-        }
-
-        // stop listening for client minimization events
-        _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
-
-        removeAll(_effects);
-        removeAllOccupants();
-
-        super.didLeavePlace(plobj);
-
-        FurniSprite.setLoadingWatcher(null);
-
-        // in case we were auto-scrolling, remove the event listener..
-        removeEventListener(Event.ENTER_FRAME, tick);
-    }
-
-    // from AbstractRoomView
-    override public function locationUpdated (sprite :MsoySprite) :void
-    {
-        super.locationUpdated(sprite);
-
-        // if we moved the _centerSprite, possibly update the scroll position
-        if (sprite == _centerSprite &&
-            ((sprite != _bg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
-            scrollView();
-        }
-    }
-
-    // from AbstractRoomView
-    override public function scrollViewBy (xpixels :int) :Boolean
-    {
-        var canScroll :Boolean = super.scrollViewBy(xpixels);
-        if (canScroll) {
-            // remove any autoscrolling (if tick is not a registered listener this will noop)
-            removeEventListener(Event.ENTER_FRAME, tick);
-            _jumpScroll = false;
-        }
-        return canScroll;
-    }
-
-    // from AbstractRoomView
+    
     override public function set scrollRect (r :Rectangle) :void
     {
         super.scrollRect = r;
-        var overlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
-        if (overlay != null) {
-            overlay.setScrollRect(r);
-        }
-    }
 
-    /** Return an array of the MOB sprites associated with the identified game. */
-    public function getMobs (gameId :int) :Array
-    {
-        var result :Array = new Array();
-        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
-            if (occInfo is MobInfo && MobInfo(occInfo).getGameId() == gameId) {
-                var sprite :MobSprite = (_occupants.get(occInfo.getBodyOid()) as MobSprite);
-                if (sprite) {
-                    result.push(sprite);
-                }
-            }
-        }
-        return result;
-    }
-
-    /** Return a uniquely identified MOB associated with the given game, or null. */
-    public function getMob (gameId :int, mobId :String) :MobSprite
-    {
-        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
-            if (occInfo is MobInfo && MobInfo(occInfo).getGameId() == gameId &&
-                MobInfo(occInfo).getIdent() == mobId) {
-                var sprite :MobSprite = (_occupants.get(occInfo.getBodyOid()) as MobSprite);
-                if (sprite) {
-                    return sprite;
-                }
-            }
-        }
-        return null;
-    }
-
-    /** Signals that an AVRG has started (gameId != 0) or ended (gameId == 0). */
-    public function avrGameAvailable (gameId :int) :void
-    {
-        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
-            if (occInfo is MobInfo) {
-                if (gameId == 0) {
-                    removeBody(occInfo.getBodyOid());
-
-                } else if (MobInfo(occInfo).getGameId() == gameId) {
-                    addBody(occInfo);
-                }
-            }
-        }
-    }
-
-    /** Executes a usercode method through the AVRG backend. */
-    public function callAVRGCode (... args) :*
-    {
-        var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
-        if (backend != null) {
-            return backend.callUserCode.apply(backend, args);
+        if (_bg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+            locationUpdated(_bg);
         }
     }
 
@@ -616,100 +457,72 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Called when control of an AVRG is assigned to us.
-     */
-    protected function dispatchAVRGameGotControl (gameId :int) :void
-    {
-        if (gameId != _ctx.getGameDirector().getGameId()) {
-            log.warning("Got control over an AVRG we're not playing [gameId=" + gameId + "]");
-            return;
-        }
-        log.debug("AVRG got control [gameId=" + gameId + "]");
-        callAVRGCode("gotControl_v1");
-    }
-
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
-    {
-        switch (event.name) {
-        case Prefs.ZOOM:
-            relayout();
-            break;
-        }
-    }
-
-    /**
      * Once the background image is finished, we want to load all the rest of the sprites.
      */
     protected function backgroundFinishedLoading () :void
     {
         _loadAllMedia = true;
         updateAllFurni();
-        updateAllEffects();
         addAllOccupants();
-        
-        // inform the "floating" door editor
-        DoorTargetEditController.updateLocation();
     }
 
     /**
-     * Called when the client is minimized or unminimized.
+     * Layout everything.
      */
-    protected function miniWillChange (event :ValueEvent) :void
+    protected function relayout () :void
     {
-        relayout();
-    }
-
-    /**
-     * Re-layout any effects.
-     */
-    protected function updateAllEffects () :void
-    {
-        if (shouldLoadAll()) {
-            for each (var effect :EffectData in _roomObj.effects.toArray()) {
-                updateEffect(effect);
-            }
-        }
-    }
-
-    override protected function relayout () :void
-    {
-        super.relayout();
-
-        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
-            var sceneWidth :int = Math.round(_scene.getWidth() * scaleX) as int;
-            if (sceneWidth < _actualWidth) {
-                // center a scene that is narrower than our view area.
-                x = (_actualWidth - sceneWidth) / 2;
-            } else {
-                // center a scene that is wider than our view area.
-                var rect :Rectangle = scrollRect;
-                if (rect != null) {
-                    var newX :Number = (_scene.getWidth() - _actualWidth / scaleX) / 2;
-                    newX = Math.min(_scene.getWidth() - rect.width, Math.max(0, newX));
-                    rect.x = newX;
-                    scrollRect = rect;
-                }
-            }
+        var scale :Number = computeScale();
+        scaleY = scale;
+        scaleX = scale;
+        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+            y = (_actualHeight - _layout.metrics.sceneHeight * scale) / 2;
         }
 
+        configureScrollRect();
+
+        relayoutSprites(_furni.values());
+        relayoutSprites(_otherSprites);
         relayoutSprites(_occupants.values());
         relayoutSprites(_pendingRemovals.values());
-        relayoutSprites(_effects.values());
-    }
-
-    override protected function shouldLoadAll () :Boolean
-    {
-        return _loadAllMedia;
     }
 
     /**
-     * Restart playing the background audio.
+     * Called from relayout(), relayout the specified sprites.
      */
-    protected function updateBackgroundAudio () :void
+    protected function relayoutSprites (sprites :Array) :void
     {
-        var audiodata :AudioData = _scene.getAudioData();
-        if (audiodata != null) {
-            _ctrl.setBackgroundMusic(audiodata);
+        for each (var sprite :MsoySprite in sprites) {
+            relayoutSprite(sprite);
+        }
+    }
+
+    /**
+     * Do anything necessary to (re)layout a sprite.
+     */
+    protected function relayoutSprite (sprite :MsoySprite) :void
+    {
+        locationUpdated(sprite);
+        sprite.roomScaleUpdated();
+    }
+
+    /**
+     * Returns the scale at which to render our room view.
+     */
+    protected function computeScale () :Number
+    {
+        var maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
+        if (isNaN(_fullSizeActualWidth) || !_ctx.getTopPanel().isMinimized()) {
+            _fullSizeActualWidth = _actualWidth;
+        }
+        var minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
+        if (maxScale > minScale && !_ctx.getMsoyClient().isFeaturedPlaceView()) {
+            _ctx.getTopPanel().getControlBar().enableZoomControl(true);
+            return minScale + (maxScale - minScale) * Prefs.getZoom();
+        } else {
+            if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+                _ctx.getTopPanel().getControlBar().enableZoomControl(false);
+            }
+            return maxScale;
         }
     }
 
@@ -719,7 +532,7 @@ public class RoomView extends AbstractRoomView
             return;
         }
         var rect :Rectangle = scrollRect;
-        if (rect == null) {
+        if (rect == null) { 
             return; // return if there's nothing to scroll
         }
 
@@ -764,140 +577,6 @@ public class RoomView extends AbstractRoomView
         // and finally, we want ensure it can happen on the next frame if
         // our avatar doesn't move
         _suppressAutoScroll = false;
-    }
-
-    protected function addBody (occInfo :OccupantInfo) :void
-    {
-        if (!shouldLoadAll()) {
-            return;
-        }
-
-        // TODO: handle viewonly occupants
-
-        var bodyOid :int = occInfo.getBodyOid();
-        var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
-        var loc :MsoyLocation = (sloc.loc as MsoyLocation);
-
-        // see if the occupant was already created, pending removal
-        var occupant :OccupantSprite = (_pendingRemovals.remove(bodyOid) as OccupantSprite);
-
-        if (occupant == null) {
-            occupant = _ctx.getMediaDirector().getSprite(occInfo);
-            if (occupant == null) {
-                return; // we have no visualization for this kind of occupant, no problem
-            }
-
-            var overlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
-            if (overlay != null) {
-                occupant.setChatOverlay(overlay as ComicOverlay);
-            }
-            _occupants.put(bodyOid, occupant);
-            addSprite(occupant);
-            occupant.setEntering(loc);
-            occupant.roomScaleUpdated();
-
-            // if we ever add ourselves, we follow it
-            if (bodyOid == _ctx.getClient().getClientOid()) {
-                setFastCentering(true);
-                setCenterSprite(occupant);
-            }
-
-        } else {
-            // update the sprite
-            spriteWillUpdate(occupant);
-            occupant.setOccupantInfo(occInfo);
-            spriteDidUpdate(occupant);
-
-            // place the sprite back into the set of active sprites
-            _occupants.put(bodyOid, occupant);
-            overlay = _ctx.getTopPanel().getPlaceChatOverlay();
-            if (overlay != null) {
-                occupant.setChatOverlay(overlay);
-            }
-            occupant.moveTo(loc, _scene);
-        }
-
-        // if this occupant is a pet, notify GWT that we've got a new pet in the room.
-        if (occupant is PetSprite) {
-            var ident :ItemIdent = occupant.getItemIdent();
-            (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
-                Item.PET, ident.itemId, Item.USED_AS_PET, _scene.getId());
-        }
-    }
-
-    protected function removeBody (bodyOid :int) :void
-    {
-        var sprite :OccupantSprite = (_occupants.remove(bodyOid) as OccupantSprite);
-        if (sprite == null) {
-            return;
-        }
-
-        if (sprite.isMoving()) {
-            _pendingRemovals.put(bodyOid, sprite);
-        } else {
-            removeSprite(sprite);
-        }
-
-        // if this occupant is a pet, notify GWT that we've removed a pet from the room.
-        if (sprite is PetSprite) {
-            (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
-                Item.PET, sprite.getItemIdent().itemId, Item.UNUSED, 0);
-        }
-    }
-
-    protected function moveBody (bodyOid :int) :void
-    {
-        var sprite :OccupantSprite = (_occupants.get(bodyOid) as OccupantSprite);
-        if (sprite == null) {
-            // It's possible to get an occupant update while we're still loading the room
-            // and haven't yet set up the occupant's sprite. Ignore.
-            return;
-        }
-        var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
-        sprite.moveTo(sloc.loc as MsoyLocation, _scene);
-    }
-
-    protected function updateBody (newInfo :OccupantInfo, oldInfo :OccupantInfo) :void
-    {
-        var sprite :OccupantSprite = (_occupants.get(newInfo.getBodyOid()) as OccupantSprite);
-        if (sprite == null) {
-            // It's possible to get an occupant update while we're still loading the room
-            // and haven't yet set up the occupant's sprite. Ignore.
-            return;
-        }
-        spriteWillUpdate(sprite);
-        sprite.setOccupantInfo(newInfo);
-        spriteDidUpdate(sprite);
-    }
-
-    protected function addEffect (effect :EffectData) :FurniSprite
-    {
-        var sprite :EffectSprite = new EffectSprite(_ctx, _ctrl.adjustEffectData(effect));
-        addSprite(sprite);
-        sprite.setLocation(effect.loc);
-        sprite.roomScaleUpdated();
-        _effects.put(effect.id, sprite);
-        return sprite;
-    }
-
-    protected function updateEffect (effect :EffectData) :void
-    {
-        var sprite :FurniSprite = (_effects.get(effect.id) as FurniSprite);
-        if (sprite != null) {
-            spriteWillUpdate(sprite);
-            sprite.update(_ctrl.adjustEffectData(effect));
-            spriteDidUpdate(sprite);
-        } else {
-            addEffect(effect);
-        }
-    }
-
-    protected function removeEffect (effectId :int) :void
-    {
-        var sprite :EffectSprite = (_effects.remove(effectId) as EffectSprite);
-        if (sprite != null) {
-            removeSprite(sprite);
-        }
     }
 
     /**
@@ -950,15 +629,18 @@ public class RoomView extends AbstractRoomView
      */
     protected function dispatchRoomPropertyChanged (entry :RoomPropertyEntry) :void
     {
-        var value :Object = ObjectMarshaller.decode(entry.value);
-        _entities.forEach(function (key :Object, sprite :Object) :void {
+        dispatchRoomPropertyChanged2(entry.key, ObjectMarshaller.decode(entry.value));
+    }
+
+    protected function dispatchRoomPropertyChanged2 (key :String, value :Object) :void
+    {
+        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
-                MsoySprite(sprite).roomPropertyChanged(entry.key, value);
+                MsoySprite(sprite).roomPropertyChanged(key, value);
             } else {
-                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
+                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
             }
         });
-        callAVRGCode("roomPropertyChanged_v1", entry.key, value);
     }
 
     /**
@@ -979,24 +661,71 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    protected function addAllOccupants () :void
+    /**
+     * Should we load everything that we know how to?  This is used by a subclass to restrict
+     * loading to certain things when the room is first entered.
+     */
+    protected function shouldLoadAll () :Boolean
     {
-        if (!shouldLoadAll()) {
-            return;
-        }
+        return _loadAllMedia;
+    }
 
-        // add all currently present occupants
-        for each (var occInfo :OccupantInfo in _roomObj.occupantInfo.toArray()) {
-            if (!_occupants.containsKey(occInfo.getBodyOid())) {
-                addBody(occInfo);
+    /**
+     * Configure the rectangle used to select a portion of the view that's showing.
+     */
+    protected function configureScrollRect () :void
+    {
+        if (_scene != null && _actualWidth >= _scene.getWidth()) {
+            scrollRect = null;
+        } else {
+            scrollRect = getScrollBounds();
+        }
+    }
+
+    /**
+     * Sets all sprites in the supplied map to active or non-active.
+     */
+    protected function setActive (map :HashMap, active :Boolean) :void
+    {
+        for each (var sprite :MsoySprite in map.values()) {
+            if (sprite != _bg) {
+                sprite.setActive(active);
             }
         }
     }
 
-    protected function removeAllOccupants () :void
+    /**
+     * Shutdown all the sprites in the specified map.
+     */
+    protected function removeAll (map :HashMap) :void
     {
-        removeAll(_occupants);
-        removeAll(_pendingRemovals);
+        for each (var sprite :MsoySprite in map.values()) {
+            removeSprite(sprite);
+        }
+        map.clear();
+    }
+
+    protected function addFurni (furni :FurniData) :FurniSprite
+    {
+        var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
+        addSprite(sprite);
+        sprite.setLocation(furni.loc);
+        sprite.roomScaleUpdated();
+        sprite.setEditing(_editing);
+        _furni.put(furni.id, sprite);
+        return sprite;
+    }
+
+    protected function updateFurni (furni :FurniData) :void
+    {
+        var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
+        if (sprite != null) {
+            spriteWillUpdate(sprite);
+            sprite.update(furni);
+            spriteDidUpdate(sprite);
+        } else {
+            addFurni(furni);
+        }
     }
 
     protected function removeFurni (furni :FurniData) :void
@@ -1007,41 +736,58 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    override protected function addSprite (sprite :MsoySprite) :void
+    protected function addAllOccupants () :void
     {
-        super.addSprite(sprite);
+        // TODO
+    }
 
+    protected function removeAllOccupants () :void
+    {
+        removeAll(_occupants);
+        removeAll(_pendingRemovals);
+    }
+
+    /**
+     * Add the specified sprite to the view.
+     */
+    protected function addSprite (sprite :MsoySprite) :void
+    {
+        var index :int = (sprite is DecorSprite) ? 0 : 1;
+        addChildAt(sprite, index);
         addToEntityMap(sprite);
     }
 
-    override protected function removeSprite (sprite :MsoySprite) :void
-    {
-        super.removeSprite(sprite);
 
+    /**
+     * Remove the specified sprite from the view.
+     */
+    protected function removeSprite (sprite :MsoySprite) :void
+    {
         removeFromEntityMap(sprite);
+        removeChild(sprite);
+        _ctx.getMediaDirector().returnSprite(sprite);
 
         // clear any popup associated with it
         _ctrl.clearEntityPopup(sprite);
 
-        if (sprite is MobSprite) {
-            MobSprite(sprite).removed();
-        }
         if (sprite == _centerSprite) {
             _centerSprite = null;
         }
     }
 
-    override protected function spriteWillUpdate (sprite :MsoySprite) :void
+    /**
+     * Should be called prior to a sprite updating.
+     */
+    protected function spriteWillUpdate (sprite :MsoySprite) :void
     {
-        super.spriteWillUpdate(sprite);
-
         removeFromEntityMap(sprite);
     }
 
-    override protected function spriteDidUpdate (sprite :MsoySprite) :void
+    /**
+     * Should be called after updating a sprite.
+     */
+    protected function spriteDidUpdate (sprite :MsoySprite) :void
     {
-        super.spriteDidUpdate(sprite);
-
         addToEntityMap(sprite);
     }
 
@@ -1079,9 +825,6 @@ public class RoomView extends AbstractRoomView
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :HashMap = new HashMap();
 
-    /** Maps effect id -> EffectData for effects. */
-    protected var _effects :HashMap = new HashMap();
-
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;
 
@@ -1093,6 +836,42 @@ public class RoomView extends AbstractRoomView
 
     /** True if autoscroll should be supressed for the current frame. */
     protected var _suppressAutoScroll :Boolean = false;
+
+    /** The msoy context. */
+    protected var _ctx :WorldContext;
+
+    /** Are we actually showing? */
+    protected var _showing :Boolean = true;
+
+    /** The model of the current scene. */
+    protected var _scene :MsoyScene;
+
+    /** The actual screen width of this component. */
+    protected var _actualWidth :Number;
+
+    /** The actual width we had last time we weren't minimized */
+    protected var _fullSizeActualWidth :Number;
+
+    /** The actual screen height of this component. */
+    protected var _actualHeight :Number;
+
+    /** Object responsible for our spatial layout. */
+    protected var _layout :RoomLayout;
+
+    /** Helper object that draws a room backdrop with four walls. */
+    protected var _backdrop :RoomBackdrop = new RoomBackdrop();
+
+    /** Our background sprite, if any. */
+    protected var _bg :DecorSprite;
+
+    /** A map of id -> Furni. */
+    protected var _furni :HashMap = new HashMap();
+
+    /** A list of other sprites (used during editing). */
+    protected var _otherSprites :Array = new Array();
+
+    /** Are we editing the scene? */
+    protected var _editing :Boolean = false;
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;

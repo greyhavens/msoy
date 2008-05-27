@@ -4,7 +4,7 @@
 package com.threerings.msoy.world.client.layout {
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.util.ClassUtil;
 
 /**
@@ -25,7 +25,7 @@ public class RoomLayoutFactory {
     /**
      * Creates a new, uninitialized room layout instance for the specified decor.
      */
-    public static function createLayout (decor :Decor, view :AbstractRoomView) :RoomLayout
+    public static function createLayout (decor :Decor, view :RoomView) :RoomLayout
     {
         var layoutClass :Class = layoutClassForDecor(decor);
         return new layoutClass(view);

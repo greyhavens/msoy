@@ -20,7 +20,7 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.world.client.MobSprite;
-import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.RoomObjectView;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -85,10 +85,7 @@ public class AVRGameController extends Controller
             tutorialEvent("gamePlayed");
         }
 
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            view.avrGameAvailable(_gameId);
-        }
+        gameAvailable(_gameId);
     }
 
     public function tutorialEvent (eventName :String) :void
@@ -125,12 +122,17 @@ public class AVRGameController extends Controller
         _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
         _subscriber.unsubscribe(_wctx.getDObjectManager());
 
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            view.avrGameAvailable(0);
-        }
+        gameAvailable(0);
 
         _panel.shutdown();
+    }
+
+    protected function gameAvailable (gameId :int) :void
+    {
+        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        if (view != null) {
+            view.avrGameAvailable(gameId);
+        }
     }
 
     protected var _wctx :WorldContext;

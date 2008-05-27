@@ -110,30 +110,13 @@ public class StateControlBackend
     protected function getRoomProperties_v1 () :Object
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view == null) {
-            return null;
-        }
-        var props :Object = { };
-        var roomObj :RoomObject = view.getRoomObject();
-        for each (var entry :RoomPropertyEntry in roomObj.roomProperties.toArray()) {
-            if (entry.value != null) {
-                props[entry.key] = ObjectMarshaller.decode(entry.value);
-            }
-        }
-        return props;
+        return (view == null) ? {} : view.getRoomProperties();
     }
 
     protected function getRoomProperty_v1 (key :String) :Object
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (key != null && view != null) {
-            var roomObj :RoomObject = view.getRoomObject();
-            var entry :RoomPropertyEntry = roomObj.roomProperties.get(key) as RoomPropertyEntry;
-            if (entry != null) {
-                return ObjectMarshaller.decode(entry.value);
-            }
-        }
-        return null;
+        return (view == null) ? null : view.getRoomProperty(key);
     }
 
     protected function setRoomProperty_v1 (key :String, value :Object) :Boolean

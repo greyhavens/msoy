@@ -127,7 +127,7 @@ public class Perspectivizer extends Bitmap
         // sample pixels out of _sourcePixels into the bitmap data
         // TODO: this is wrong, because I'm progressing from
         // the 0 to the N scale smoothly. What we should do is
-        // just have a ref to the AbstractRoomView (or some layer-outter)
+        // just have a ref to the RoomView (or some layer-outter)
         // and check the source X pixel column for each projected X pixel col.
         // TODO
         for (var xx :int = 0; xx < _destPixels.width; xx++) {
@@ -191,7 +191,7 @@ public class Perspectivizer extends Bitmap
     protected var _mediaScaleX :Number;
     protected var _mediaScaleY :Number;
 
-//    protected var _room :AbstractRoomView;
+//    protected var _room :RoomView;
 
     protected const WIDTH :int = 300;
     protected const HEIGHT :int = 300;

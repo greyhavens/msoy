@@ -62,7 +62,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.NameField;
-import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.RoomObjectView;
 
 class LabelBox extends HBox
     implements NameLabel
@@ -136,8 +136,8 @@ class LabelBox extends HBox
     protected function handleRoll (event :MouseEvent) :void
     {
         var view :Object = _mctx.getTopPanel().getPlaceView();
-        if (view is RoomView) {
-            (view as RoomView).getRoomController().setHoverName(
+        if (view is RoomObjectView) {
+            (view as RoomObjectView).getRoomObjectController().setHoverName(
                 _name, (event.type == MouseEvent.ROLL_OVER));
         }
     }
