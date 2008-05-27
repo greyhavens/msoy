@@ -185,8 +185,8 @@ public class AVRGameManager
     {
         final PlayerObject player = (PlayerObject) caller;
         if (questId == null) {
-            log.warning("Received startQuest() request with null questId [gameId=" + _gameId +
-                        ", player=" + player.who() + "]");
+            log.warning("Received startQuest() request with null questId [game=" + where() +
+                        ", who=" + player.who() + "]");
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
@@ -220,8 +220,9 @@ public class AVRGameManager
 
         QuestState oldState = player.questState.get(questId);
         if (oldState == null) {
-            throw new IllegalArgumentException(
-                "Member not subscribed to updated quest [questId=" + questId + "]");
+            log.warning("Requested to update quest to which member was not subscribed " +
+                        "[game=" + where() + ", quest=" + questId + ", who=" + player.who() + "].");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         final int sceneId = ScenePlace.getSceneId(player);
@@ -259,8 +260,9 @@ public class AVRGameManager
 
         // sanity check
         if (payoutLevel < 0 || payoutLevel > 1) {
-            throw new IllegalArgumentException(
-                "Payout level must lie in [0, 1] [payoutLevel=" + payoutLevel + "]");
+            log.warning("Invalid payout in completeQuest() [game=" + where() + ", quest=" + questId +
+                        ", payout=" + payoutLevel + ", caller=" + player.who() + "].");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
@@ -376,8 +378,9 @@ public class AVRGameManager
 
         QuestState oldState = player.questState.get(questId);
         if (oldState == null) {
-            throw new IllegalArgumentException(
-                "Member not subscribed to cancelled quest [questId=" + questId + "]");
+            log.warning("Member not subscribed to cancelled quest [game=" + where() +
+                        ", quest=" + questId + ", who=" + player.who() + "].");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         MsoyGameServer.invoker.postUnit(new PersistingUnit("cancelQuest", listener) {
@@ -399,9 +402,9 @@ public class AVRGameManager
         throws InvocationException
     {
         if (key == null) {
-            log.warning("Can't set property of key null [who=" + caller.who() + "]");
-            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            return;
+            log.warning("Can't set null-keyed property [game=" + where() +
+                        ", who=" + caller.who() + "]");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         GameState entry = new GameState(key, value, persistent);
@@ -432,9 +435,9 @@ public class AVRGameManager
     {
         PlayerObject player = (PlayerObject) caller;
         if (key == null) {
-            log.warning("Can't set player property of key null [who=" + player.who() + "]");
-            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            return;
+            log.warning("Can't set null-keyed player property [game=" + where() +
+                        ", who=" + player.who() + "]");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         GameState entry = new GameState(key, value, persistent);
@@ -643,6 +646,14 @@ public class AVRGameManager
     protected static int now ()
     {
         return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * Reports the id/name of this game for use in log messages.
+     */
+    protected String where ()
+    {
+        return String.valueOf(_gameId);
     }
 
     protected class Player
