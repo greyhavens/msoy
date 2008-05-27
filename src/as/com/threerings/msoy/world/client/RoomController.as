@@ -165,9 +165,9 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Does this user have edit permission in this room?
+     * Does this user have management permission in this room?
      */
-    public function canEditRoom () :Boolean
+    public function canManageRoom () :Boolean
     {
         return false;
     }

@@ -596,7 +596,7 @@ public class RoomObjectController extends RoomController
         var menuItems :Array = [];
         menuItems.push(
         { label: Msgs.GENERAL.get("b.order_pet_stay"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ], enabled: canEditRoom() },
+          command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ], enabled: canManageRoom() },
         { label: Msgs.GENERAL.get("b.order_pet_follow"),
           command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ], enabled: !isWalking },
         { label: Msgs.GENERAL.get("b.order_pet_go_home"),
@@ -618,9 +618,9 @@ public class RoomObjectController extends RoomController
             new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
     }
 
-    override public function canEditRoom () : Boolean
+    override public function canManageRoom () : Boolean
     {
-        return (_scene != null && _scene.canEdit(_wdctx.getMemberObject()));
+        return (_scene != null && _scene.canManage(_wdctx.getMemberObject()));
     }
 
     /**
@@ -670,7 +670,7 @@ public class RoomObjectController extends RoomController
             return;
         }
 
-        if (!canEditRoom()) {
+        if (!canManageRoom()) {
             _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
             return;
         }

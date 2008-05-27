@@ -157,7 +157,7 @@ public class EntityBackend extends ControlBackend
 
     protected function canEditRoom_v1 () :Boolean
     {
-        return (_sprite == null) ? false : _sprite.canEditRoom();
+        return (_sprite != null) && _sprite.canManageRoom();
     }
 
     protected function showPopup_v1 (

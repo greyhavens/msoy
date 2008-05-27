@@ -644,7 +644,7 @@ public class WorldController extends MsoyController
      */
     public function handleRoomEdit () :void
     {
-        if (canEditScene()) {
+        if (canManageScene()) {
             (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
         }
     }
@@ -654,7 +654,7 @@ public class WorldController extends MsoyController
      */
     public function handleSnapshot () :void
     {
-        if (canEditScene()) {
+        if (canManageScene()) {
             var room :RoomObjectView = _topPanel.getPlaceView() as RoomObjectView;
             room.getRoomObjectController().takeSnapshot();
         }
@@ -1069,11 +1069,11 @@ public class WorldController extends MsoyController
         }
     }
 
-    /** Can this scene be edited? */
-    protected function canEditScene () :Boolean
+    /** Can this scene be managed by the local client? */
+    protected function canManageScene () :Boolean
     {
         var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
-        return (scene != null && scene.canEdit(_wctx.getMemberObject()));
+        return (scene != null && scene.canManage(_wctx.getMemberObject()));
     }
 
     // from MsoyController
@@ -1165,7 +1165,7 @@ public class WorldController extends MsoyController
 
             // display location name, modify buttons
             controlBar.enableZoomControl(true);
-            (controlBar as WorldControlBar).sceneEditPossible = canEditScene();
+            (controlBar as WorldControlBar).sceneEditPossible = canManageScene();
             return;
         }
 

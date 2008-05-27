@@ -31,9 +31,18 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Can the specified member edit this scene?
+     * Does the specified member have management rights in this room?
+     * Don't log anything when support staff is given access.
      */
-    public boolean canEdit (MemberObject member)
+    public boolean canManage (MemberObject member)
+    {
+        return canManage(member, null);
+    }
+
+    /**
+     * Does the specified member have management rights in this room?
+     */
+    public boolean canManage (MemberObject member, String where)
     {
         boolean hasRights;
         switch (_model.ownerType) {
@@ -51,9 +60,11 @@ public class MsoyScene extends SceneImpl
         }
 
         if (!hasRights && member.tokens.isSupport()) {
-            log.info("Allowing support+ to edit scene in which they otherwise wouldn't have " +
-                     "rights [sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
-                     "support=" + member.who() + "].");
+            if (where != null) {
+                log.info("Allowing support+ to manage scene in which they otherwise wouldn't " +
+                    "have rights [where=" + where + ", sceneId=" + getId() +
+                    ", sceneName=\"" + getName() + "\", " + "support=" + member.who() + "].");
+            }
             return true;
         }
 

@@ -800,12 +800,12 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
-     * Returns true if this client has edit privileges in the current room. Called by our backend
-     * in response to a request from usercode.
+     * Returns true if this client has management privileges in the current room.
+     * Called by our backend in response to a request from usercode.
      */
-    internal function canEditRoom () :Boolean
+    internal function canManageRoom () :Boolean
     {
-        return (parent as RoomView).getRoomController().canEditRoom();
+        return (parent as RoomView).getRoomController().canManageRoom();
     }
 
     /**

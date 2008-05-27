@@ -206,13 +206,21 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Can the specified user manage this room.
+     */
+    public boolean canManage (MemberObject user)
+    {
+        return ((MsoyScene) _scene).canManage(user);
+    }
+
+    /**
      * Checks whether or not the calling user can bring pets into this room. Returns normally if
      * so, throws an {@link InvocationException} if not.
      */
     public void checkCanAddPet (MemberObject caller)
         throws InvocationException
     {
-        if (!((MsoyScene)_scene).canEdit(caller)) {
+        if (!canManage(caller)) {
             throw new InvocationException(RoomCodes.E_CANNOT_ADD_PET);
         }
     }
@@ -323,7 +331,7 @@ public class RoomManager extends SpotSceneManager
     public void editRoom (ClientObject caller, RoomService.ResultListener listener)
         throws InvocationException
     {
-        if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
+        if (!canManage((MemberObject) caller)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
@@ -337,7 +345,7 @@ public class RoomManager extends SpotSceneManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (!((MsoyScene) _scene).canEdit(user)) {
+        if (!canManage(user)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
         doRoomUpdate(update, user);
@@ -352,7 +360,7 @@ public class RoomManager extends SpotSceneManager
         // make sure they have editing privileges in this scene as they will be adding to this
         // scene group
         MsoyScene scene = (MsoyScene) _scene;
-        if (!scene.canEdit(user)) {
+        if (!scene.canManage(user)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
         MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();

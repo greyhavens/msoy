@@ -337,7 +337,7 @@ public class RoomObjectView extends RoomView
                     sprite.toggleBlocked, ctx));
             }
 
-            if ((sprite is FurniSprite) && _octrl.canEditRoom() &&
+            if ((sprite is FurniSprite) && _octrl.canManageRoom() &&
                     (null != (sprite as FurniSprite).getCustomConfigPanel())) {
                 menuItems.push(MenuUtil.createControllerMenuItem(
                     Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
