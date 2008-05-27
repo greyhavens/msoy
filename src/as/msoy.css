@@ -241,14 +241,14 @@ ButtonBar {
 }
 
 VScrollBar, HScrollBar {
-   cornerRadius: 8;
-   highlightAlphas: 0, 0.4;
-   fillAlphas: 0.6, 0.4, 0, 0;
-   fillColors: #aec8d1, #5a8ba6, #ffffff, #cccccc;
-   trackColors: #7997b4, #c1d5de;
-   themeColor: #499cc4;
-   borderColor: #8a9daa;
-   iconColor: #1b4f66;
+  highlightAlphas: 0.38, 0;
+  fillAlphas: 1, 0.82, 0.79, 0.82;
+  fillColors: #000000, #000000, #000000, #000000;
+  trackColors: #000000, #000000;
+  themeColor: #000000;
+  borderColor: #000000;
+  iconColor: #cccccc;
+  thumbOffset: 0;
 }
 
 Menu {
