@@ -532,9 +532,11 @@ public class RoomObjectController extends RoomController
                                      command: MsoyController.VIEW_ITEM, arg: ident });
                 }
 
-                menuItems.push({ type: "separator"},
-                               { label: Msgs.GENERAL.get("l.item_menu", kind),
-                                 children: flagItems });
+                if (flagItems.length > 0) {
+                    menuItems.push({ type: "separator"},
+                                   { label: Msgs.GENERAL.get("l.item_menu", kind),
+                                     children: flagItems });
+                }
             }
         }
 
