@@ -43,10 +43,6 @@ JAVA_ARGS="-server \
 # make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon
 
-# Record the VM and arguments we're using (to the respawn log)
-echo "Java VM: $JAVA_VM"
-echo "Java args: $JAVA_ARGS"
-
 # Create the logfile
 touch $LOGFILE
 
