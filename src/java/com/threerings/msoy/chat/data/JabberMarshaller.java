@@ -30,7 +30,7 @@ public class JabberMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, REGISTER_IM, new Object[] {
             arg2, arg3, arg4, listener5
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #sendMessage} requests. */
@@ -43,7 +43,7 @@ public class JabberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, SEND_MESSAGE, new Object[] {
             arg2, arg3, listener4
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #unregisterIM} requests. */
@@ -56,6 +56,6 @@ public class JabberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UNREGISTER_IM, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 }

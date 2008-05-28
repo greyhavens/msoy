@@ -62,7 +62,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, INVITE_FRIENDS, new Object[] {
             Integer.valueOf(arg2), arg3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #locateGame} requests. */
@@ -75,6 +75,6 @@ public class MsoyGameMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, LOCATE_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        }, Transport.DEFAULT);
+        });
     }
 }

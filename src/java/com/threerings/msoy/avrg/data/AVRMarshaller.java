@@ -29,7 +29,7 @@ public class AVRMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, ACTIVATE_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #deactivateGame} requests. */
@@ -42,6 +42,6 @@ public class AVRMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, DEACTIVATE_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
-        }, Transport.DEFAULT);
+        });
     }
 }

@@ -29,6 +29,6 @@ public class SwiftlyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, ENTER_PROJECT, new Object[] {
             Integer.valueOf(arg2), listener3
-        }, Transport.DEFAULT);
+        });
     }
 }

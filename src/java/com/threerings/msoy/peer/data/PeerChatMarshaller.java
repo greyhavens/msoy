@@ -32,7 +32,7 @@ public class PeerChatMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, ADD_USER, new Object[] {
             arg2, arg3, listener4
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #forwardSpeak} requests. */
@@ -45,7 +45,7 @@ public class PeerChatMarshaller extends InvocationMarshaller
         listener6.listener = arg6;
         sendRequest(arg1, FORWARD_SPEAK, new Object[] {
             arg2, arg3, arg4, Byte.valueOf(arg5), listener6
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #removeUser} requests. */
@@ -58,7 +58,7 @@ public class PeerChatMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, REMOVE_USER, new Object[] {
             arg2, arg3, listener4
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #updateChannel} requests. */
@@ -71,7 +71,7 @@ public class PeerChatMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_CHANNEL, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #updateUser} requests. */
@@ -84,6 +84,6 @@ public class PeerChatMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, UPDATE_USER, new Object[] {
             arg2, arg3, listener4
-        }, Transport.DEFAULT);
+        });
     }
 }

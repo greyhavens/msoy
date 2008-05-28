@@ -29,7 +29,7 @@ public class PetMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, CALL_PET, new Object[] {
             Integer.valueOf(arg2), listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #orderPet} requests. */
@@ -42,7 +42,7 @@ public class PetMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, ORDER_PET, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #sendChat} requests. */
@@ -55,6 +55,6 @@ public class PetMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, SEND_CHAT, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
-        }, Transport.DEFAULT);
+        });
     }
 }

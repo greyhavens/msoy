@@ -30,7 +30,7 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_CATALOG_ID, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #getItemNames} requests. */
@@ -43,7 +43,7 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_ITEM_NAMES, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #peepItem} requests. */
@@ -56,7 +56,7 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, PEEP_ITEM, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #reclaimItem} requests. */
@@ -69,6 +69,6 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, RECLAIM_ITEM, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 }

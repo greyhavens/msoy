@@ -27,6 +27,6 @@ public class MsoyPeerMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, FORWARD_MEMBER_OBJECT, new Object[] {
             arg2, arg3, arg4
-        }, Transport.DEFAULT);
+        });
     }
 }

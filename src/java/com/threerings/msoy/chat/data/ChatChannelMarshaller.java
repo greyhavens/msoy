@@ -30,7 +30,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, CREATE_CHANNEL, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #inviteToChannel} requests. */
@@ -43,7 +43,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, INVITE_TO_CHANNEL, new Object[] {
             arg2, arg3, listener4
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #joinChannel} requests. */
@@ -56,7 +56,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, JOIN_CHANNEL, new Object[] {
             arg2, listener3
-        }, Transport.DEFAULT);
+        });
     }
 
     /** The method id used to dispatch {@link #leaveChannel} requests. */
@@ -67,6 +67,6 @@ public class ChatChannelMarshaller extends InvocationMarshaller
     {
         sendRequest(arg1, LEAVE_CHANNEL, new Object[] {
             arg2
-        }, Transport.DEFAULT);
+        });
     }
 }

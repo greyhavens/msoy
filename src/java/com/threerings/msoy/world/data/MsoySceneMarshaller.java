@@ -30,6 +30,6 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         listener6.listener = arg6;
         sendRequest(arg1, MOVE_TO, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), arg5, listener6
-        }, Transport.DEFAULT);
+        });
     }
 }
