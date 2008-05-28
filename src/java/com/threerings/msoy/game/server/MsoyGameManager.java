@@ -12,10 +12,14 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.GameCookieManager;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
+import com.threerings.msoy.server.MsoyBaseServer;
 
 /**
  * Manages a MetaSOY game.
@@ -96,6 +100,12 @@ public class MsoyGameManager extends WhirledGameManager
         // media, we have to be much more lenient about noshow timing (or revamp a whole bunch of
         // other shit which maybe we'll do later)
         return 1000L * ((getPlayerSlots() == 1) ? 180 : 90);
+    }
+
+    @Override // from WhirledGameManager
+    protected BureauRegistry getBureauRegistry ()
+    {
+        return MsoyBaseServer.breg;
     }
 
     /** A delegate that takes care of flow, ratings, trophy, prizes.. */

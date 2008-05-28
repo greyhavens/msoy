@@ -15,6 +15,8 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.threerings.util.MessageManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -71,6 +73,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
+
+    /** The container for our bureaus (server-side processes for user code). */
+    public static BureauRegistry breg;
 
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
@@ -132,6 +137,10 @@ public abstract class MsoyBaseServer extends WhirledServer
         // create and set up our configuration registry and admin service
         confReg = createConfigRegistry();
         AdminProvider.init(invmgr, confReg);
+
+        // create the bureau registry (subclasses will enable specific bureau types)
+        breg = new BureauRegistry(
+            "localhost:" + getListenPorts()[0], invmgr, omgr, invoker);
 
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
