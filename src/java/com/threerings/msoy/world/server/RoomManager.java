@@ -261,8 +261,7 @@ public class RoomManager extends SpotSceneManager
         // and boot them right now.
         SpeakUtil.sendInfo(bootee, MsoyCodes.GENERAL_MSGS,
             MessageUtil.tcompose("m.booted", _scene.getName()));
-        MsoyServer.screg.moveBody(bootee, bootee.getHomeSceneId());
-        // TODO: shit, what if you're a guest and get booted from BNW?
+        MsoyServer.screg.moveBody(bootee, bootSceneId);
         return null; // indicates success
     }
 
