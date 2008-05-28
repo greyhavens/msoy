@@ -5,17 +5,14 @@ package com.threerings.msoy.web.server;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
@@ -23,15 +20,9 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
-
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.MailPayload;
-import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;

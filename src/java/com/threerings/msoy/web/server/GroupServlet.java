@@ -18,11 +18,8 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MemberNodeActions;

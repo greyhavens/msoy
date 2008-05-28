@@ -5,8 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.util.List;
 
-import java.sql.Timestamp;
-
 import com.google.common.collect.Lists;
 
 import com.samskivert.util.ArrayIntSet;
@@ -64,7 +62,6 @@ public class IssueServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser(ident);
         return loadIssues(mrec, type, state, mrec.memberId, offset, count, needTotalCount);
     }
-
 
     // from interface IssueService
     public Issue loadIssue (WebIdent ident, int issueId)

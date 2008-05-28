@@ -7,10 +7,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.samskivert.io.PersistenceException;
 
-import com.threerings.presents.peer.server.PeerManager;
-
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -21,7 +18,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;

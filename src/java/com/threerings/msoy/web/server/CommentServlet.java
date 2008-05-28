@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -14,7 +13,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 

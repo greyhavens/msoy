@@ -17,14 +17,12 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.common.collect.Maps;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;

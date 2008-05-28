@@ -18,13 +18,9 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -32,7 +28,6 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -45,22 +40,9 @@ import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
 
-import com.threerings.msoy.game.client.MsoyGameService;
-import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.xml.MsoyGameParser;
-
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 

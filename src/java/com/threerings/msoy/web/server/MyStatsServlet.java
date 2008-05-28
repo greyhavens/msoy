@@ -6,7 +6,6 @@ package com.threerings.msoy.web.server;
 import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;

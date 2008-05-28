@@ -15,7 +15,6 @@ import octazen.addressbook.AddressBookException;
 import octazen.addressbook.Contact;
 import octazen.addressbook.SimpleAddressBookImporter;
 import octazen.addressbook.UnexpectedFormatException;
-import octazen.addressbook.UnsupportedAddressBookException;
 import octazen.http.HttpException;
 import octazen.http.UserInputRequiredException;
 
@@ -36,7 +35,6 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;

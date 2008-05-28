@@ -14,21 +14,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.jdbc.DuplicateKeyException;
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.net.MailUtil;
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MemberObject;
@@ -36,7 +30,6 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MsoyServer;
@@ -46,7 +39,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.person.data.MailFolder;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.util.FeedMessageType;

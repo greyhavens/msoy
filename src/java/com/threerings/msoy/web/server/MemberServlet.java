@@ -13,7 +13,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.net.MailUtil;
-import org.apache.velocity.VelocityContext;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;

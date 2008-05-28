@@ -4,11 +4,8 @@
 package com.threerings.msoy.web.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.commons.fileupload.FileItem;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class SnapshotUploadFile extends FileItemUploadFile
 {

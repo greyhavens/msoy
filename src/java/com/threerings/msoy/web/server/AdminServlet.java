@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.MsoyAuthCodes;

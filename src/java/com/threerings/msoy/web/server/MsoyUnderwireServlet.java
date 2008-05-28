@@ -23,7 +23,6 @@ import com.threerings.underwire.web.server.UnderwireServlet;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.OOOAuthenticationDomain;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;

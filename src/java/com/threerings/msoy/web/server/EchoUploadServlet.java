@@ -16,8 +16,6 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.samskivert.io.StreamUtil;
 
-import static com.threerings.msoy.Log.log;
-
 public class EchoUploadServlet extends AbstractUploadServlet
 {
     @Override
