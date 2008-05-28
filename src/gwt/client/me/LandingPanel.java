@@ -3,7 +3,6 @@ package client.me;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -11,18 +10,17 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.FeaturedGameInfo;
-import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.WhatIsWhirledData;
 
-import client.games.CGames;
 import client.images.landing.LandingImages;
 import client.shell.Application;
 import client.shell.LogonPanel;
@@ -30,37 +28,42 @@ import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
-import client.whirleds.CWhirleds;
 import client.whirleds.FeaturedWhirledPanel;
 
 /**
- * Displays a summary of what Whirled is and calls to action.
+ * Displays a summary of what Whirled is, featuring games, avatars and whirleds.
+ * Spans the entire width of the page, with an active content area 800 pixels wide and centered.
  */
-public class LandingPanel extends AbsolutePanel
+public class LandingPanel extends SimplePanel
 {
     public LandingPanel ()
     {
-        setStyleName("landingPanel");
+        // LandingPanel contains LandingBackground contains LandingContent
+        setStyleName("LandingPanel");
+        SimplePanel headerBackground = new SimplePanel();
+        headerBackground.setStyleName("LandingBackground");
+        AbsolutePanel content = new AbsolutePanel();
+        content.setStyleName("LandingContent");
+        headerBackground.setWidget(content);
+        this.setWidget(headerBackground);
         
         // splash with animated characters (left goes over right)
-        add(new Image("/images/landing/splash_right.png"), 465, 10);
         final HTML titleAnimation = WidgetUtil.createTransparentFlashContainer(
             "preview", "/images/landing/splash_left.swf", 500, 300, null);
-        add(titleAnimation, -23, 10);
+        content.add(titleAnimation, -23, 10);
         
         // join now
         final Button joinButton = new Button("", Application.createLinkListener(Page.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
-        add(joinButton, 475, 0);
+        content.add(joinButton, 475, 0);
         
         // login box
-        // TODO LogonPanel is causing scrollbars to appear on the right in IE7 
         final FlowPanel login = new FlowPanel();
         PushButton loginButton = new PushButton(CMe.msgs.landingLogin());
         loginButton.addStyleName("LoginButton");
         login.add(new LogonPanel(true, loginButton)); 
         login.add(loginButton);
-        add(login, 590, 0);
+        content.add(login, 590, 0);
              
         // intro video with click-to-play button
         final AbsolutePanel video = new AbsolutePanel();
@@ -77,12 +80,12 @@ public class LandingPanel extends AbsolutePanel
         final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/play_screen.png", CMe.msgs.whatClickToStart(), onClick);
         video.add(clickToPlayImage, 0, 0);
-        add(video, 465, 90);
+        content.add(video, 465, 90);
         
         // tagline
         final HTML tagline = new HTML(CMe.msgs.landingTagline());
         tagline.setStyleName("LandingTagline");
-        add(tagline, 425, 275);
+        content.add(tagline, 425, 275);
 
         // background for the rest of the page
         final FlowPanel background = new FlowPanel();
@@ -96,20 +99,20 @@ public class LandingPanel extends AbsolutePanel
         final FlowPanel rightBorder = new FlowPanel();
         rightBorder.setStyleName("RightBorder");
         background.add(rightBorder);
-        add(background, 0, 310);
+        content.add(background, 0, 310);
         
         // top games
         final RoundBox games = new RoundBox(RoundBox.DARK_BLUE);
         final TopGamesPanel topGamesPanel = new TopGamesPanel();
         games.add(topGamesPanel);
-        add(games, 68, 312);
+        content.add(games, 68, 312);
         
         // featured avatar
-        add(_avatarPanel = new AvatarPanel(), 67, 618);
+        content.add(_avatarPanel = new AvatarPanel(), 67, 618);
 
         // featured whirled panel is beaten into place using css
         _featuredWhirled = new FeaturedWhirledPanel(true, true);
-        add(_featuredWhirled, 290, 618);
+        content.add(_featuredWhirled, 290, 618);
 
         // copyright, about, terms & conditions, help
         FlowPanel copyright = new FlowPanel();
@@ -124,7 +127,7 @@ public class LandingPanel extends AbsolutePanel
         copyright.add(makeLink("http://www.threerings.net/about/privacy.html", CMe.msgs.whatPrivacy()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
-        add(copyright, 0, 970);
+        content.add(copyright, 48, 970);
         
         // collect the data for this page
         CMe.worldsvc.getWhatIsWhirled(new MsoyCallback() {
