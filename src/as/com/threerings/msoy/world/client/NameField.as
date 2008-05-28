@@ -35,13 +35,8 @@ public class NameField extends TextField
         autoSize = TextFieldAutoSize.CENTER;
         filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
 
-        var format :TextFormat = new TextFormat();
-        // there be magic here. Arial isn't even available on Linux, but it works it out. The
-        // documentation for TextFormat does not indicate this. Bastards.
-        format.font = "Arial";
-        format.size = 12;
-        format.bold = true;
-        defaultTextFormat = format;
+        // It's ok that we modify this later, as it gets cloned anyway when assigned to the field.
+        defaultTextFormat = FORMAT;
     }
 
     /**
@@ -74,5 +69,8 @@ public class NameField extends TextField
 //    private static const log :Log = Log.getLog(NameField);
 
     protected var _ignoreStatus :Boolean;
+
+    protected static const FORMAT :TextFormat =
+        TextFieldUtil.createFormat({ font: "_sans", size: 12, bold: true });
 }
 }
