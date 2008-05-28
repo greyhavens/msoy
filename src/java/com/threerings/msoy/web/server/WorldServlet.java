@@ -19,7 +19,6 @@ import com.google.common.collect.Sets;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ExpiringReference;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -133,21 +132,7 @@ public class WorldServlet extends MsoyServiceServlet
                                                        0, null, 0, ShopData.TOP_ITEM_COUNT)) {
                 cards.add(crec.toListingCard());
             }
-            // TODO move to central location shared by CatalogServlet.resolveCardNames()
-            // determine which member names we need to look up
-            IntSet members = new ArrayIntSet();
-            for (ListingCard card : cards) {
-                members.add(card.creator.getMemberId());
-            }
-            // now look up the names and build a map of memberId -> MemberName
-            IntMap<MemberName> map = new HashIntMap<MemberName>();
-            for (MemberName record: _memberRepo.loadMemberNames(members)) {
-                map.put(record.getMemberId(), record);
-            }
-            // finally fill in the listings using the map
-            for (ListingCard card : cards) {
-                card.creator = map.get(card.creator.getMemberId());
-            }
+            ItemUtil.resolveCardNames(_memberRepo, cards);
             data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
 
             _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);

@@ -10,11 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
@@ -24,11 +20,11 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -87,7 +83,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (data.featuredToy != null) {
                 list.add(data.featuredToy);
             }
-            resolveCardNames(list);
+            ItemUtil.resolveCardNames(_memberRepo, list);
 
             return data;
 
@@ -127,7 +123,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // resolve the creator names for these listings
-            resolveCardNames(list);
+            ItemUtil.resolveCardNames(_memberRepo, list);
 
             // if they want the total number of matches, compute that as well
             if (includeCount) {
@@ -614,28 +610,6 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     /**
-     * Helper function for {@link ListingCard} loading methods.
-     */
-    protected void resolveCardNames (List<ListingCard> list)
-        throws PersistenceException
-    {
-        // determine which member names we need to look up
-        IntSet members = new ArrayIntSet();
-        for (ListingCard card : list) {
-            members.add(card.creator.getMemberId());
-        }
-        // now look up the names and build a map of memberId -> MemberName
-        IntMap<MemberName> map = new HashIntMap<MemberName>();
-        for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
-            map.put(record.getMemberId(), record);
-        }
-        // finally fill in the listings using the map
-        for (ListingCard card : list) {
-            card.creator = map.get(card.creator.getMemberId());
-        }
-    }
-
-    /**
      * Helper function for {@link #listItem}.
      */
     protected int getCheckListingPrice (MemberRecord mrec, boolean newListing)
@@ -689,4 +663,6 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
+
+    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
 }
