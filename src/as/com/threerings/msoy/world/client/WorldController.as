@@ -684,10 +684,8 @@ public class WorldController extends MsoyController
     public function handleBootFromPlace (memberId :int) :void
     {
         var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        svc.bootFromPlace(_wctx.getClient(), memberId, new ConfirmAdapter(
-            function (cause :String) :void {
-                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            }, null));
+        svc.bootFromPlace(_wctx.getClient(), memberId,
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**
