@@ -50,6 +50,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.BOOT_FROM_PLACE:
+            ((MemberProvider)provider).bootFromPlace(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.COMPLAIN_MEMBER:
             ((MemberProvider)provider).complainMember(
                 source,

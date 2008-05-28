@@ -19,6 +19,7 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.net.Credentials;
 
@@ -38,6 +39,7 @@ import com.threerings.msoy.avrg.client.AVRGamePanel;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ChatPrefsDialog;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
@@ -677,6 +679,18 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles booting a user.
+     */
+    public function handleBootFromPlace (memberId :int) :void
+    {
+        var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
+        svc.bootFromPlace(_wctx.getClient(), memberId, new ConfirmAdapter(
+            function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+            }, null));
+    }
+
+    /**
      * Called by the scene director when we've traveled to a new scene.
      */
     public function wentToScene (sceneId :int) :void
@@ -871,6 +885,14 @@ public class WorldController extends MsoyController
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
                              command: COMPLAIN_MEMBER, arg: [memId, member] });
+
+            // possibly add a menu item for booting this user
+            var placeCtrl :Object = _wctx.getLocationDirector().getPlaceController();
+            if ((placeCtrl is BootablePlaceController) &&
+                    BootablePlaceController(placeCtrl).canBoot()) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
+                    callback: handleBootFromPlace, arg: memId });
+            }
         }
     }
 

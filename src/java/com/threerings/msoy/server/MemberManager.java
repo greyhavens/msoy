@@ -213,6 +213,29 @@ public class MemberManager
     }
 
     // from interface MemberProvider
+    public void bootFromPlace (
+        ClientObject caller, int booteeId, InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        if (user.location == null) {
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+        }
+
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location.placeOid);
+        if (!(pmgr instanceof BootablePlaceManager)) {
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+        }
+
+        String response = ((BootablePlaceManager) pmgr).bootFromPlace(user, booteeId);
+        if (response == null) {
+            listener.requestProcessed();
+        } else {
+            listener.requestFailed(response);
+        }
+    }
+
+    // from interface MemberProvider
     public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
                            final InvocationService.ResultListener listener)
         throws InvocationException

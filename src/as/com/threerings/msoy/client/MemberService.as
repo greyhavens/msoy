@@ -22,6 +22,9 @@ public interface MemberService extends InvocationService
     function acknowledgeWarning (arg1 :Client) :void;
 
     // from Java interface MemberService
+    function bootFromPlace (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface MemberService
     function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void;
 
     // from Java interface MemberService

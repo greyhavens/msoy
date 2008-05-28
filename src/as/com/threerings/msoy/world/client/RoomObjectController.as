@@ -49,11 +49,12 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -117,6 +118,7 @@ import com.threerings.msoy.chat.client.ReportingListener;
  * Manages the various interactions that take place in a room scene.
  */
 public class RoomObjectController extends RoomController
+    implements BootablePlaceController
 {
     /** Some commands */
     public static const EDIT_DOOR :String = "EditDoor";
@@ -141,6 +143,12 @@ public class RoomObjectController extends RoomController
         _roomObjectView = new RoomObjectView(ctx as WorldContext, this);
         _roomView = _roomObjectView;
         return _roomObjectView;
+    }
+
+    // from interface BootablePlaceController
+    public function canBoot () :Boolean
+    {
+        return canManageRoom();
     }
 
     /**

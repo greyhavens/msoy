@@ -19,6 +19,11 @@ public interface MemberService extends InvocationService
     public void inviteToBeFriend (Client client, int friendId, ConfirmListener listener);
 
     /**
+     * Boot the specified user from the current place.
+     */
+    public void bootFromPlace (Client client, int booteeId, ConfirmListener listener);
+
+    /**
      * Request to know the home scene id for the specified owner.
      */
     public void getHomeId (Client client, byte ownerType, int ownerId, ResultListener listener);

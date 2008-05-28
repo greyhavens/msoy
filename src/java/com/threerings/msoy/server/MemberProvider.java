@@ -25,6 +25,12 @@ public interface MemberProvider extends InvocationProvider
     public void acknowledgeWarning (ClientObject caller);
 
     /**
+     * Handles a {@link MemberService#bootFromPlace} request.
+     */
+    public void bootFromPlace (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#complainMember} request.
      */
     public void complainMember (ClientObject caller, int arg1, String arg2);

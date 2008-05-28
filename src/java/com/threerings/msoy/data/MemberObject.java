@@ -214,6 +214,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Returns  our home scene id or 1 (Brave New Whirled) if we have none.
+     */
+    public int getHomeSceneId ()
+    {
+        return (homeSceneId == 0) ? 1 : homeSceneId;
+    }
+
+    /**
      * Get the media to use as our headshot.
      */
     public MediaDesc getHeadShotMedia ()

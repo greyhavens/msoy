@@ -13,6 +13,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.text.MessageUtil;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
@@ -24,6 +26,7 @@ import com.threerings.util.Name;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -35,6 +38,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneUpdate;
@@ -45,8 +49,10 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -84,7 +90,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class RoomManager extends SpotSceneManager
-    implements RoomProvider
+    implements RoomProvider, BootablePlaceManager
 {
     /**
      * Flush any modified memories contained within the specified Iterable.
@@ -202,6 +208,62 @@ public class RoomManager extends SpotSceneManager
         // that will update just the state and serve as the trigger event to usercode...
         winfo.setState(state);
         updateOccupantInfo(winfo);
+    }
+
+    @Override
+    public String ratifyBodyEntry (BodyObject body)
+    {
+        // if we have a bootlist, check against that
+        if (_booted != null && (body instanceof MemberObject)) {
+            MemberObject user = (MemberObject) body;
+            if (!user.tokens.isSupport() && _booted.contains(user.getMemberId())) {
+                return "e.booted";
+            }
+        }
+
+        return super.ratifyBodyEntry(body);
+    }
+
+    // from interface BootablePlaceManager
+    public String bootFromPlace (MemberObject user, int booteeId)
+    {
+        // make sure this user has access to boot
+        if (!canManage(user)) {
+            return InvocationCodes.E_ACCESS_DENIED;
+        }
+
+        // let's look up the user they want to boot
+        MemberObject bootee = MsoyServer.lookupMember(booteeId);
+        if ((bootee == null) || (bootee.location == null) ||
+                (bootee.location.placeOid != _plobj.getOid())) {
+            return "e.user_not_present";
+        }
+
+        // let's see if the user is another manager
+        if (canManage(bootee)) {
+            // send a little message to the bootee telling them about the attempt
+            SpeakUtil.sendInfo(bootee, MsoyCodes.GENERAL_MSGS,
+                MessageUtil.tcompose("m.boot_attempt_mgr", user.getVisibleName()));
+            return MessageUtil.tcompose("e.cant_boot_mgr", bootee.getVisibleName());
+        }
+        // don't let guests get screwed over
+        int bootSceneId = bootee.getHomeSceneId();
+        if (bootSceneId == _scene.getId()) {
+            return InvocationCodes.E_ACCESS_DENIED; // bah, we don't need a better msg
+        }
+
+        // success! add them to the boot list
+        if (_booted == null) {
+            _booted = new ArrayIntSet(1);
+        }
+        _booted.add(booteeId);
+
+        // and boot them right now.
+        SpeakUtil.sendInfo(bootee, MsoyCodes.GENERAL_MSGS,
+            MessageUtil.tcompose("m.booted", _scene.getName()));
+        MsoyServer.screg.moveBody(bootee, bootee.getHomeSceneId());
+        // TODO: shit, what if you're a guest and get booted from BNW?
+        return null; // indicates success
     }
 
     /**
@@ -1084,6 +1146,9 @@ public class RoomManager extends SpotSceneManager
 
     /** The room object. */
     protected RoomObject _roomObj;
+
+    /** If non-null, a list of memberId blocked from the room. */
+    protected ArrayIntSet _booted;
 
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
