@@ -593,25 +593,28 @@ public class RoomObjectController extends RoomController
             return;
         }
 
-        // no menu for non-owners for now
-        if (occInfo.getOwnerId() != _wdctx.getMemberObject().getMemberId()) {
+        var memObj :MemberObject = _wdctx.getMemberObject();
+        var isPetOwner :Boolean = (occInfo.getOwnerId() == memObj.getMemberId());
+        if (!isPetOwner && !canManageRoom()) {
             return;
         }
 
         var petId :int = occInfo.getItemIdent().itemId;
-        var isWalking :Boolean = (_wdctx.getMemberObject().walkingId != 0);
 
         var menuItems :Array = [];
-        menuItems.push(
-        { label: Msgs.GENERAL.get("b.order_pet_stay"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ], enabled: canManageRoom() },
-        { label: Msgs.GENERAL.get("b.order_pet_follow"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ], enabled: !isWalking },
-        { label: Msgs.GENERAL.get("b.order_pet_go_home"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] },
-        { label: Msgs.GENERAL.get("b.order_pet_sleep"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] }
-        );
+        if (isPetOwner) {
+            var isWalking :Boolean = (memObj.walkingId != 0);
+            menuItems.push(
+            { label: Msgs.GENERAL.get("b.order_pet_stay"),
+              command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ], enabled: canManageRoom() },
+            { label: Msgs.GENERAL.get("b.order_pet_follow"),
+              command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ], enabled: !isWalking },
+            { label: Msgs.GENERAL.get("b.order_pet_go_home"),
+              command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] });
+        }
+        // and any old room manager can put the pet to sleep
+        menuItems.push({ label: Msgs.GENERAL.get("b.order_pet_sleep"),
+            command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] });
 
         popActorMenu(pet, menuItems);
     }

@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.text.MessageUtil;
 
 import com.threerings.util.Name;
 
@@ -16,10 +17,12 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
@@ -133,10 +136,24 @@ public class PetHandler
     public void orderPet (MemberObject owner, int order)
         throws InvocationException
     {
-        validateOwnership(owner);
+        // first validate the permissions
+        if (order == Pet.ORDER_SLEEP) {
+            validateRoomOrPetOwnership(owner);
+        } else {
+            validateOwnership(owner);
+        }
 
+        // then enact the order
         switch (order) {
         case Pet.ORDER_SLEEP:
+            if (_petobj.pet.ownerId != owner.getMemberId()) {
+                // a non-owner sent the pet to sleep, let's report that
+                MemberObject realOwner = MsoyServer.lookupMember(_petobj.pet.ownerId);
+                if (realOwner != null) {
+                    SpeakUtil.sendInfo(realOwner, MsoyCodes.GENERAL_MSGS,
+                        MessageUtil.tcompose("m.pet_ordered4_room_mgr", owner.getVisibleName()));
+                }
+            }
             stopFollowing();
             updateUsage(Item.UNUSED, 0);
             shutdown(false);
@@ -199,6 +216,22 @@ public class PetHandler
                         ", ownerId=" + _petobj.pet.ownerId + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * Validate that the specified user is the room owner or the owner of the pet.
+     */
+    protected void validateRoomOrPetOwnership (MemberObject owner)
+        throws InvocationException
+    {
+        // normally I always do the cheap compare first, but I'd rather not duplicate
+        // the code from validateOwnership.
+        PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(owner.getPlaceOid());
+        if ((plmgr instanceof RoomManager) && ((RoomManager) plmgr).canManage(owner)) {
+            return; // they check out, they're room owners
+        }
+        // otherwise...
+        validateOwnership(owner);
     }
 
     /**

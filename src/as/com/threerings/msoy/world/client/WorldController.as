@@ -19,7 +19,6 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.net.Credentials;
 
