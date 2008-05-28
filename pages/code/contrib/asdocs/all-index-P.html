@@ -41,13 +41,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html#pan()">pan</a>(val) &mdash; Method in interface com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html">AudioController</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#pan()">pan</a>(val) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#pan()">pan</a>(val) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -59,13 +53,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html#panTo()">panTo</a>(targetVal, time) &mdash; Method in interface com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html">AudioController</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html#_pan">_pan</a> &mdash; Property in class com.whirled.contrib.simplegame.resource.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html">SoundResource</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#panTo()">panTo</a>(targetVal, time) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html#pan">pan</a> &mdash; Property in class com.whirled.contrib.simplegame.resource.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html">SoundResource</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#panTo()">panTo</a>(targetVal, time) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -89,7 +89,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#_parent">_parent</a> &mdash; Property in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#_parentControls">_parentControls</a> &mdash; Property in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -167,31 +167,25 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td> Access the target player for the local player's pass in progress.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html#pause()">pause</a>(val) &mdash; Method in interface com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html">AudioController</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#pause()">pause</a>(val) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#pause()">pause</a>(val) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html#pause()">pause</a>(channel:<a href="com/whirled/contrib/simplegame/audio/AudioChannel.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioChannel</a>) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html">AudioManager</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html#pauseAfter()">pauseAfter</a>(time) &mdash; Method in interface com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioController.html">AudioController</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#pauseAfter()">pauseAfter</a>(time) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#pauseAfter()">pauseAfter</a>(time) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html#_pauseCountdown">_pauseCountdown</a> &mdash; Property in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControllerBase.html">AudioControllerBase</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html#_pauseCountdown">_pauseCountdown</a> &mdash; Property in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioControls.html">AudioControls</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -259,18 +253,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 </tr>
 <tr>
 <td width="20"></td><td> Event type for when a bid is placed.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/Audio.html#play()">play</a>(sound, parentControls:<a href="com/whirled/contrib/simplegame/audio/AudioControllerContainer.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioControllerContainer</a>) &mdash; Static method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/Audio.html">Audio</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/GameSoundChannel.html#play()">play</a>() &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/GameSoundChannel.html">GameSoundChannel</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/card/class-list.html');" href="com/whirled/contrib/card/Hand.html#playCard()">playCard</a>(card:<a href="com/whirled/contrib/card/Card.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/card./class-list.html');">com.whirled.contrib.card:Card</a>) &mdash; Method in class com.whirled.contrib.card.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/card/class-list.html');" href="com/whirled/contrib/card/Hand.html">Hand</a></td>
@@ -424,13 +406,31 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioChannel.html#playPosition">playPosition</a> &mdash; Property in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioChannel.html">AudioChannel</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html#playSound()">playSound</a>(soundResource:<a href="com/whirled/contrib/simplegame/resource/SoundResource.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource./class-list.html');">com.whirled.contrib.simplegame.resource:SoundResource</a>, parentControls:<a href="com/whirled/contrib/simplegame/audio/AudioControls.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioControls</a>, loopCount) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html">AudioManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html#playSoundNamed()">playSoundNamed</a>(name, parentControls:<a href="com/whirled/contrib/simplegame/audio/AudioControls.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioControls</a>, loopCount) &mdash; Method in class com.whirled.contrib.simplegame.audio.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio/class-list.html');" href="com/whirled/contrib/simplegame/audio/AudioManager.html">AudioManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/PlaySoundTask.html">PlaySoundTask</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/package-detail.html">com.whirled.contrib.simplegame.tasks</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/PlaySoundTask.html#PlaySoundTask()">PlaySoundTask</a>(sound, waitForComplete, parentControls:<a href="com/whirled/contrib/simplegame/audio/AudioControllerContainer.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioControllerContainer</a>) &mdash; Constructor in class com.whirled.contrib.simplegame.tasks.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/PlaySoundTask.html">PlaySoundTask</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/PlaySoundTask.html#PlaySoundTask()">PlaySoundTask</a>(sound:<a href="com/whirled/contrib/simplegame/resource/SoundResource.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource./class-list.html');">com.whirled.contrib.simplegame.resource:SoundResource</a>, waitForComplete, parentControls:<a href="com/whirled/contrib/simplegame/audio/AudioControls.html" onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/audio./class-list.html');">com.whirled.contrib.simplegame.audio:AudioControls</a>) &mdash; Constructor in class com.whirled.contrib.simplegame.tasks.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/tasks/class-list.html');" href="com/whirled/contrib/simplegame/tasks/PlaySoundTask.html">PlaySoundTask</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -546,6 +546,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/Checksum.html#_prime">_prime</a> &mdash; Property in class com.whirled.contrib.simplegame.net.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/net/class-list.html');" href="com/whirled/contrib/simplegame/net/Checksum.html">Checksum</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html#_priority">_priority</a> &mdash; Property in class com.whirled.contrib.simplegame.resource.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html">SoundResource</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html#priority">priority</a> &mdash; Property in class com.whirled.contrib.simplegame.resource.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/resource/class-list.html');" href="com/whirled/contrib/simplegame/resource/SoundResource.html">SoundResource</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/Scoreboard.html#_propName">_propName</a> &mdash; Property in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/Scoreboard.html">Scoreboard</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>

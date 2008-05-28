@@ -127,7 +127,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addNamedTask()">addNamedTask</a>(name:String, task:<a href="ObjectTask.html">ObjectTask</a>):void</div>
+<a class="signatureLink" href="#addNamedTask()">addNamedTask</a>(name:String, task:<a href="ObjectTask.html">ObjectTask</a>, removeExistingTasks:Boolean = false):void</div>
 <div class="summaryTableDescription"> Adds a named task to this SimObject.</div>
 </td><td class="summaryTableOwnerCol">SimObject</td>
 </tr>
@@ -375,7 +375,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function addNamedTask(name:String, task:<a href="ObjectTask.html">ObjectTask</a>):void</code><p> Adds a named task to this SimObject. </p><span class="label">Parameters</span>
+<code>public function addNamedTask(name:String, task:<a href="ObjectTask.html">ObjectTask</a>, removeExistingTasks:Boolean = false):void</code><p> Adds a named task to this SimObject. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -385,6 +385,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">task</span>:<a href="ObjectTask.html">ObjectTask</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">removeExistingTasks</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>

@@ -44,7 +44,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <p></p>
  Provides access to 'net' game services. Do not instantiate this class yourself,
  access it via GameControl.net.
-  The 'net' subcontrol is used to communicate shared state between game clients.
+  The 'net' subcontrol is used to communicate shared state between game clients. When you set
+ a property it is immediately distributed to the other clients in the game. Reading a property
+ is immediate, you are reading the properties that have already been distributed. When a client
+ connects to an already-running game, any properties already set will be available.
  <p></p>
 <br>
 <hr>
@@ -227,7 +230,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function get(propName:String):Object</code><p>
-     Get a property value.
+     Get a property value. Calling this method results in no network traffic, it just
+     examines values that have already arrived over the network to this client.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -253,6 +257,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getPropertyNames(prefix:String = ""):Array</code><p>
      Get the names of all currently-set properties that begin with the specified prefix.
+     Calling this method results in no network traffic.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

@@ -54,17 +54,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_channel">_channel</a> : <a href="../audio/GameSoundChannel.html">GameSoundChannel</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_channel">_channel</a> : <a href="../audio/AudioChannel.html">AudioChannel</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlaySoundTask</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_parentControls">_parentControls</a> : <a href="../audio/AudioControllerContainer.html">AudioControllerContainer</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_parentControls">_parentControls</a> : <a href="../audio/AudioControls.html">AudioControls</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlaySoundTask</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_sound">_sound</a> : Sound<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_sound">_sound</a> : <a href="../resource/SoundResource.html">SoundResource</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlaySoundTask</td>
 </tr>
 <tr class="">
@@ -83,7 +84,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#PlaySoundTask()">PlaySoundTask</a>(sound:Sound, waitForComplete:Boolean, parentControls:<a href="../audio/AudioControllerContainer.html">AudioControllerContainer</a> = null)</div>
+<a class="signatureLink" href="#PlaySoundTask()">PlaySoundTask</a>(sound:<a href="../resource/SoundResource.html">SoundResource</a>, waitForComplete:Boolean, parentControls:<a href="../audio/AudioControls.html">AudioControls</a> = null)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlaySoundTask</td>
 </tr>
@@ -125,7 +126,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _channel:<a href="../audio/GameSoundChannel.html">GameSoundChannel</a></code>
+<code>protected var _channel:<a href="../audio/AudioChannel.html">AudioChannel</a></code>
 </div>
 <a name="_parentControls"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -134,7 +135,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _parentControls:<a href="../audio/AudioControllerContainer.html">AudioControllerContainer</a></code>
+<code>protected var _parentControls:<a href="../audio/AudioControls.html">AudioControls</a></code>
 </div>
 <a name="_sound"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -143,7 +144,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _sound:Sound</code>
+<code>protected var _sound:<a href="../resource/SoundResource.html">SoundResource</a></code>
 </div>
 <a name="_waitForComplete"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -163,10 +164,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function PlaySoundTask(sound:Sound, waitForComplete:Boolean, parentControls:<a href="../audio/AudioControllerContainer.html">AudioControllerContainer</a> = null)</code><span class="label">Parameters</span>
+<code>public function PlaySoundTask(sound:<a href="../resource/SoundResource.html">SoundResource</a>, waitForComplete:Boolean, parentControls:<a href="../audio/AudioControls.html">AudioControls</a> = null)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">sound</span>:Sound</code></td>
+<td width="20px"></td><td><code><span class="label">sound</span>:<a href="../resource/SoundResource.html">SoundResource</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -178,7 +179,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">parentControls</span>:<a href="../audio/AudioControllerContainer.html">AudioControllerContainer</a></code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">parentControls</span>:<a href="../audio/AudioControls.html">AudioControls</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

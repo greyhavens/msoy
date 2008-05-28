@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
+<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
 <title>com.whirled.game.GameSubControl</title>
 </head>
 <body>
@@ -410,8 +410,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TO_EACH_THEIR_OWN">TO_EACH_THEIR_OWN</a> : int = 2<div class="summaryTableDescription">[static] Each player receives a payout based only on their performance during the game and not
-     influenced by their relative ranking to one another.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PROPORTIONAL">PROPORTIONAL</a> : int = 3<div class="summaryTableDescription">[static] Proportional is used for games where there is no way to measure player's performance
+     against a global standard, but where the scores are subjective to the particular players
+     currently playing.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TO_EACH_THEIR_OWN">TO_EACH_THEIR_OWN</a> : int = 2<div class="summaryTableDescription">[static] Each player receives a payout based only on their score and not influenced by the
+     scores of any other player.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -1027,7 +1033,19 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const CASCADING_PAYOUT:int = 0</code><p> Cascading payout skews awards toward the winners by giving 50% of last place's payout to
      first place, 25% to the next inner pair of opponents (third to second in a four player game,
-     for example), and so on. </p></div>
+     for example), and so on. It is very similar overall to WINNERS_TAKE_ALL, only it rewards
+     everyone at least a little bit. </p></div>
+<a name="PROPORTIONAL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PROPORTIONAL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const PROPORTIONAL:int = 3</code><p> Proportional is used for games where there is no way to measure player's performance
+     against a global standard, but where the scores are subjective to the particular players
+     currently playing. Each player vies to get their score the highest, and the coins are split
+     up according to the relative scores. </p></div>
 <a name="TO_EACH_THEIR_OWN"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1035,8 +1053,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TO_EACH_THEIR_OWN:int = 2</code><p> Each player receives a payout based only on their performance during the game and not
-     influenced by their relative ranking to one another. </p></div>
+<code>public static const TO_EACH_THEIR_OWN:int = 2</code><p> Each player receives a payout based only on their score and not influenced by the
+     scores of any other player. </p></div>
 <a name="WINNERS_TAKE_ALL"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1045,7 +1063,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const WINNERS_TAKE_ALL:int = 1</code><p> Winner takes all splits the total coins available to award to all players in the game among
-     those identified as winners at the end of the game. </p></div>
+     those identified as winners at the end of the game. When used with endGameWithScores, it
+     is intended for games where each player's performance is independant of the others and
+     can be measured against a global standard. The winner(s) will get more coins if they beat
+     someone else who played well than if they beat someone who played poorly.
+     Using it with endGameWithWinners() is intended for games in which there is no per-player
+     score, just some player(s) defeating others. In this case, the game is stating that
+     it cannot distinguish between an excellent player and a poor player, just one won
+     over the others.
+     </p></div>
 <br>
 <br>
 <hr>
