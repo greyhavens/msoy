@@ -80,7 +80,7 @@
     <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
-    <file name="${extlibs.dir}/slf4j-jdk14.jar"/>
+    <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
     <file name="${extlibs.dir}/svnkit-cli.jar"/>
@@ -245,11 +245,10 @@
       </redirector>
     </exec>
 
-    <!-- copy logging.properties -->
-    <copy file="${basedir}/etc/logging.properties" todir="${deploy.dir}"/>
-    <copy file="${basedir}/etc/log4j.properties" todir="${deploy.dir}"/>
-
-    <!-- copy ehcache.xml to a classpath location -->
+    <!-- copy a few configuration files into place -->
+    <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
+    <copy todir="${deploy.dir}" file="${basedir}/etc/log4j-game.properties"/>
+    <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
     <!-- generate our index.html and crossdomain.xml -->

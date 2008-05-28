@@ -49,7 +49,7 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Djava.rmi.server.hostname=$HOSTNAME \
     -Dlog4j.configuration=log4j.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
-    -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger"
+    -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger"
 
 # If we're running on dev1, add some JMX configuration
 if [ "$PROCID" = "dev1" ]; then
@@ -62,42 +62,28 @@ fi
 # Make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon
 
+# Record the VM and arguments we're using (to the respawn log)
+echo "Java VM: $JAVA_VM"
+echo "Java args: $JAVA_ARGS"
+
 # Create the logfile
 touch $LOGFILE
 
 # Start up the server
-echo "Running MetaSOY server:" >>$LOGFILE
-echo " Deployment root: $MSOY_HOME" >>$LOGFILE
-echo "         Java VM: $JAVA_VM" >>$LOGFILE
-echo "       Java args: $JAVA_ARGS" >>$LOGFILE
-echo "    Server class: $CLASS" >>$LOGFILE
-
 $JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1 &
 PROCESS_PID=$!
 echo $PROCESS_PID >$PIDFILE
 wait $PROCESS_PID
 EXIT_CODE=$?
 
-# Mail out some reports
-# cat $LOGFILE | $MSOY_HOME/tools/bin/sum_invokers | \
-#     $MAIL -s "$HOSTNAME: $MSOY_HOME invoker summary" $LOG_EMAIL
-# cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter | \
-#     grep -v "Invoker unit" | grep ' ! ' | cut -c 25-80 | sort | uniq -c | \
-#     sort -nr | $MAIL -s "$HOSTNAME: $MSOY_HOME error summary" $LOG_EMAIL
-
-# Mail out warnings from the logs
-FILTLOG=`mktemp /tmp/msoyfiltered.log.XXXXXX` || exit 1
-cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
-if [ -s $FILTLOG ]; then
-    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL
+# If any stdout or stderr logs were generated, send those via email (all normal
+# logs should be redirected to a separate file)
+if [ -s $LOGFILE ]; then
+    cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray log output" $LOG_EMAIL
 fi
-rm -f $FILTLOG
-
-# Archive the server log
-NOW=`date "+%F-%H:%M"`
-mv $LOGFILE $LOGFILE.$NOW
+rm -f $LOGFILE
 
 # Prune old logs
-find $MSOY_HOME/log -name 'stdout-$PROCID.log*' -a -mtime +7 | xargs rm -f
+# find $MSOY_HOME/log -name 'stdout-$PROCID.log*' -a -mtime +7 | xargs rm -f
 
 exit $EXIT_CODE
