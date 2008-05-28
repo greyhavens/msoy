@@ -146,8 +146,6 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         super.init();
 
-        Thread.dumpStack();
-
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
             public PresentsClient createClient (AuthRequest areq) {
