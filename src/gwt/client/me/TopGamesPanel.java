@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.me;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -18,6 +21,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
+
 import client.games.CGames;
 import client.games.GameBitsPanel;
 import client.games.GameNamePanel;
@@ -38,7 +42,7 @@ public class TopGamesPanel extends AbsolutePanel
     {
         setStyleName("TopGamesPanel");
     }
-    
+
     /**
      * Called when the list of featured games has been fetched.
      */
@@ -54,7 +58,7 @@ public class TopGamesPanel extends AbsolutePanel
         else {
             _games = games;
         }
-        
+
         // game info panel
         final RoundBox gameInfoBox = new RoundBox(RoundBox.BLUE);
         _gameInfo = new SimplePanel();
@@ -68,22 +72,22 @@ public class TopGamesPanel extends AbsolutePanel
             _topGamesTable.setWidget(i, 0, createGameListItem(i));
         }
         add(_topGamesTable, 445, 25);
-        
+
         // top games header
         FlowPanel topGamesHeader = new FlowPanel();
         topGamesHeader.setStyleName("TopGamesHeader");
         add(topGamesHeader, 445, 0);
-        
+
         showGame(0);
     }
-    
+
     /**
      * Create and return a panel with the game thumbnail and name
      */
     protected Widget createGameListItem (final int index)
     {
         FeaturedGameInfo game = _games[index];
-        
+
         // Outer panel with onclick - change the game
         FocusPanel gamePanel = new FocusPanel();
         gamePanel.setStyleName("GameListItem");
@@ -96,27 +100,28 @@ public class TopGamesPanel extends AbsolutePanel
 
         // Inner flow panel with thumbnail and name
         SmartTable gamePanelInner = new SmartTable(0, 0);
-        
+
         SimplePanel thumbnail = new SimplePanel();
         Widget thumbnailImage = MediaUtil.createMediaView(
             game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
         thumbnail.setStyleName("Thumbnail");
         thumbnail.add(thumbnailImage);
         gamePanelInner.setWidget(0, 0, thumbnail);
-        gamePanelInner.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+        gamePanelInner.getFlexCellFormatter().setHorizontalAlignment(
+            0, 0, HasAlignment.ALIGN_CENTER);
         gamePanelInner.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
-        
+
         SimplePanel name = new SimplePanel();
         name.setStyleName("Name");
         name.add(new HTML(game.name));
         gamePanelInner.setWidget(0, 1, name);
         gamePanelInner.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_MIDDLE);
-        
+
         gamePanel.add(gamePanelInner);
 
         return gamePanel;
     }
-    
+
     /**
      * Select and display one of the featured games.
      */
@@ -134,14 +139,11 @@ public class TopGamesPanel extends AbsolutePanel
                 gamePanel.setStyleName("GameListItem");
             }
         }
-        
+
         SmartTable gameInfoTable = new SmartTable("featuredGame", 0, 0);
-        
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                Application.go(Page.GAMES, Args.compose("d", game.gameId));
-            }
-        };
+
+        ClickListener onClick = Application.createLinkListener(
+            Page.GAMES, Args.compose("d", game.gameId));
 
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
@@ -173,9 +175,10 @@ public class TopGamesPanel extends AbsolutePanel
         gameInfoTable.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
 
         // game text info on the right
-        VerticalPanel right = new GameNamePanel(game.name, game.genre, game.creator, game.description);
+        VerticalPanel right = new GameNamePanel(
+            game.name, game.genre, game.creator, game.description);
         right.add(WidgetUtil.makeShim(5, 10));
-        
+
         // display single only if no multi exists
         FlowPanel playPanel = new FlowPanel();
         if (game.maxPlayers == 1) {
@@ -195,18 +198,18 @@ public class TopGamesPanel extends AbsolutePanel
             playPanel.add(multiButton);
         }
         right.add(playPanel);
-        
+
         if (game.playersOnline > 0) {
             right.add(WidgetUtil.makeShim(10, 10));
             right.add(MsoyUI.createLabel(
                 CGames.msgs.featuredOnline("" + game.playersOnline), "Online"));
         }
-        
+
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         gameInfoTable.setWidget(1, 0, WidgetUtil.makeShim(5, 5));
         gameInfoTable.getFlexCellFormatter().setColSpan(1, 0, 3);
-        
+
         // replace the game details
         if (_gameInfo.getWidget() != null) {
             _gameInfo.remove(_gameInfo.getWidget());
@@ -224,13 +227,13 @@ public class TopGamesPanel extends AbsolutePanel
         play.addStyleName("PlayButton");
         return play;
     }
-    
+
     /** Game data */
     protected FeaturedGameInfo[] _games;
-    
+
     /** Game list table; every row is a game whose class changes when selected */
     protected SmartTable _topGamesTable;
-    
+
     /** Game info panel; changes when a new game is selected */
     protected SimplePanel _gameInfo;
 }

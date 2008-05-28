@@ -1,10 +1,15 @@
+//
+// $Id$
+
 package client.me;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ListingCard;
+
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -21,11 +26,11 @@ public class AvatarPanel extends FlowPanel
     {
         setStyleName("AvatarPanel");
     }
-    
+
     /**
      * Display the four most popular avatars
      */
-    protected void setAvatars(ListingCard[] cards) 
+    protected void setAvatars(ListingCard[] cards)
     {
         for (int i = 0; i < 4; i++) {
             if (i >= cards.length) {
@@ -35,7 +40,7 @@ public class AvatarPanel extends FlowPanel
             add(box);
         }
     }
-    
+
     /**
      * Widget that displays an avatar
      */

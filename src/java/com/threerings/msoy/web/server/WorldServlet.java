@@ -69,6 +69,7 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 
 import com.threerings.msoy.web.client.WorldService;
@@ -100,87 +101,65 @@ public class WorldServlet extends MsoyServiceServlet
     public WhatIsWhirledData getWhatIsWhirled ()
         throws ServiceException
     {
+        WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
+        if (data != null) {
+            return data;
+        }
+
         try {
-            WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
-            if (data == null) {
-                data = new WhatIsWhirledData();
-                
-                // determine our featured whirled based on who's online now
-                PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-                List<GroupCard> popWhirleds = Lists.newArrayList();
-                for (PlaceCard card : pps.getTopWhirleds()) {
-                    GroupRecord group = MsoyServer.groupRepo.loadGroup(card.placeId);
-                    if (group != null) {
-                        GroupCard gcard = group.toGroupCard();
-                        gcard.population = card.population;
-                        popWhirleds.add(gcard);
-                        if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
-                            break;
-                        }
-                    }
-                }
-                // if we don't have enough people online, supplement with other groups
-                if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
-                    int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
-                    for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
-                        popWhirleds.add(group.toGroupCard());
-                    }
-                }
-                data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
+            data = new WhatIsWhirledData();
 
-                // determine the "featured" games
-                // TODO duplicate of GameServlet.getTopGames()
-                GameRepository gameRepo = MsoyServer.itemMan.getGameRepository();
-                List<FeaturedGameInfo> featured = Lists.newArrayList();
-                ArrayIntSet have = new ArrayIntSet();
-                for (PlaceCard card : pps.getTopGames()) {
-                    GameDetailRecord detail = gameRepo.loadGameDetail(card.placeId);
-                    GameRecord game = gameRepo.loadGameRecord(card.placeId, detail);
-                    if (game != null) {
-                        featured.add(toFeaturedGameInfo(game, detail, card.population));
-                        have.add(game.gameId);
+            // determine our featured whirled based on who's online now
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            List<GroupCard> popWhirleds = Lists.newArrayList();
+            for (PlaceCard card : pps.getTopWhirleds()) {
+                GroupRecord group = MsoyServer.groupRepo.loadGroup(card.placeId);
+                if (group != null) {
+                    GroupCard gcard = group.toGroupCard();
+                    gcard.population = card.population;
+                    popWhirleds.add(gcard);
+                    if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
+                        break;
                     }
                 }
-                if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-                    for (GameRecord game :
-                        gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
-                        if (!have.contains(game.gameId)) {
-                            GameDetailRecord detail = gameRepo.loadGameDetail(game.gameId);
-                            featured.add(toFeaturedGameInfo(game, detail, 0));
-                        }
-                        if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                            break;
-                        }
-                    }
-                }
-                data.topGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
-
-                // select the top rated avatars
-                ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.AVATAR);
-                List<ListingCard> cards = Lists.newArrayList();
-                for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false,
-                        null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
-                    cards.add(crec.toListingCard());
-                }
-                // TODO move to central location shared by CatalogServlet.resolveCardNames()
-                // determine which member names we need to look up
-                IntSet members = new ArrayIntSet();
-                for (ListingCard card : cards) {
-                    members.add(card.creator.getMemberId());
-                }
-                // now look up the names and build a map of memberId -> MemberName
-                IntMap<MemberName> map = new HashIntMap<MemberName>();
-                for (MemberName record: MsoyServer.memberRepo.loadMemberNames(members)) {
-                    map.put(record.getMemberId(), record);
-                }
-                // finally fill in the listings using the map
-                for (ListingCard card : cards) {
-                    card.creator = map.get(card.creator.getMemberId());
-                }
-                data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
-
-                _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
             }
+            // if we don't have enough people online, supplement with other groups
+            if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
+                int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
+                for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
+                    popWhirleds.add(group.toGroupCard());
+                }
+            }
+            data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
+
+            // determine the "featured" games
+            data.topGames = GameUtil.loadTopGames(_gameRepo, _memberRepo, pps);
+
+            // select the top rated avatars
+            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.AVATAR);
+            List<ListingCard> cards = Lists.newArrayList();
+            for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,
+                                                       0, null, 0, ShopData.TOP_ITEM_COUNT)) {
+                cards.add(crec.toListingCard());
+            }
+            // TODO move to central location shared by CatalogServlet.resolveCardNames()
+            // determine which member names we need to look up
+            IntSet members = new ArrayIntSet();
+            for (ListingCard card : cards) {
+                members.add(card.creator.getMemberId());
+            }
+            // now look up the names and build a map of memberId -> MemberName
+            IntMap<MemberName> map = new HashIntMap<MemberName>();
+            for (MemberName record: _memberRepo.loadMemberNames(members)) {
+                map.put(record.getMemberId(), record);
+            }
+            // finally fill in the listings using the map
+            for (ListingCard card : cards) {
+                card.creator = map.get(card.creator.getMemberId());
+            }
+            data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
+
+            _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
             return data;
 
         } catch (PersistenceException pe) {
@@ -198,7 +177,7 @@ public class WorldServlet extends MsoyServiceServlet
         info.minPlayers = players[0];
         info.maxPlayers = players[1];
         info.playersOnline = pop;
-        info.creator = MsoyServer.memberRepo.loadMemberName(game.creatorId);
+        info.creator = _memberRepo.loadMemberName(game.creatorId);
         return info;
     }
 
@@ -237,7 +216,7 @@ public class WorldServlet extends MsoyServiceServlet
         final Set<GroupName> groups = Sets.newHashSet();
         if (mrec != null) {
             try {
-                friends = MsoyServer.memberRepo.loadFriends(mrec.memberId, -1);
+                friends = _memberRepo.loadFriends(mrec.memberId, -1);
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
                     groups.add(new GroupName(gRec.name, gRec.groupId));
                 }
@@ -280,7 +259,7 @@ public class WorldServlet extends MsoyServiceServlet
             MyWhirledData data = new MyWhirledData();
             data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
 
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+            IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
             data.friendCount = friendIds.size();
             if (data.friendCount > 0) {
                 data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
@@ -363,7 +342,7 @@ public class WorldServlet extends MsoyServiceServlet
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
-        return ServletUtil.loadLaunchConfig(ident, gameId);
+        return GameUtil.loadLaunchConfig(_gameRepo, ident, gameId);
     }
 
     // from interface WorldService
@@ -381,7 +360,7 @@ public class WorldServlet extends MsoyServiceServlet
             info.name = screc.name;
             switch (screc.ownerType) {
             case MsoySceneModel.OWNER_TYPE_MEMBER:
-                info.owner = MsoyServer.memberRepo.loadMemberName(screc.ownerId);
+                info.owner = _memberRepo.loadMemberName(screc.ownerId);
                 break;
             case MsoySceneModel.OWNER_TYPE_GROUP:
                 info.owner = MsoyServer.groupRepo.loadGroupName(screc.ownerId);
@@ -402,7 +381,7 @@ public class WorldServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
-        IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         return ServletUtil.resolveFeedMessages(
             MsoyServer.feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
     }
@@ -573,6 +552,9 @@ public class WorldServlet extends MsoyServiceServlet
 
     /** Contains a cached copy of our WhatIsWhirled data. */
     protected ExpiringReference<WhatIsWhirledData> _whatIsWhirled;
+
+    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
+    protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;

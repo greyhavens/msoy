@@ -125,8 +125,8 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // determine how many players can play this game
-            int[] players = getMinMaxPlayers(Game.isDeveloperVersion(gameId) ?
-                                             detail.sourceItem : detail.listedItem);
+            int[] players = GameUtil.getMinMaxPlayers(Game.isDeveloperVersion(gameId) ?
+                                                      detail.sourceItem : detail.listedItem);
             detail.minPlayers = players[0];
             detail.maxPlayers = players[1];
 
@@ -400,7 +400,8 @@ public class GameServlet extends MsoyServiceServlet
                 GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
                 GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
                 if (game != null) {
-                    featured.add(toFeaturedGameInfo(game, detail, card.population));
+                    featured.add(GameUtil.toFeaturedGameInfo(
+                                     _memberRepo, game, detail, card.population));
                     have.add(game.gameId);
                 }
             }
@@ -409,7 +410,7 @@ public class GameServlet extends MsoyServiceServlet
                          _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
                     if (!have.contains(game.gameId)) {
                         GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
-                        featured.add(toFeaturedGameInfo(game, detail, 0));
+                        featured.add(GameUtil.toFeaturedGameInfo(_memberRepo, game, detail, 0));
                     }
                     if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
                         break;
@@ -482,7 +483,8 @@ public class GameServlet extends MsoyServiceServlet
                 GameRecord game = games.get(ii);
                 GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
                 PlaceCard card = pps.getGame(game.gameId);
-                featured.add(toFeaturedGameInfo(game, detail, card == null ? 0 : card.population));
+                featured.add(GameUtil.toFeaturedGameInfo(
+                                 _memberRepo, game, detail, card == null ? 0 : card.population));
             }
             data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
@@ -500,59 +502,12 @@ public class GameServlet extends MsoyServiceServlet
     {
         try {
             PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            return GameUtil.loadTopGames(_gameRepo, _memberRepo, pps);
 
-            // determine the "featured" games
-            List<FeaturedGameInfo> featured = Lists.newArrayList();
-            ArrayIntSet have = new ArrayIntSet();
-            for (PlaceCard card : pps.getTopGames()) {
-                GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
-                GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
-                if (game != null) {
-                    featured.add(toFeaturedGameInfo(game, detail, card.population));
-                    have.add(game.gameId);
-                }
-            }
-            if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-                for (GameRecord game :
-                         _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
-                    if (!have.contains(game.gameId)) {
-                        GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
-                        featured.add(toFeaturedGameInfo(game, detail, 0));
-                    }
-                    if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                        break;
-                    }
-                }
-            }
-            return featured.toArray(new FeaturedGameInfo[featured.size()]);
-            
         } catch (PersistenceException pe) {
             log.warning("loadTopGamesData failed [for=" + ident + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-    }
-    
-    protected int[] getMinMaxPlayers (Game game)
-    {
-        MsoyMatchConfig match = null;
-        try {
-            if (game != null && !StringUtil.isBlank(game.config)) {
-                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
-            }
-            if (match == null) {
-                log.warning("Game missing match configuration [game=" + game + "].");
-            }
-        } catch (Exception e) {
-            log.warning("Failed to parse XML game definition [id=" + game.gameId +
-                    ", config=" + game.config + "]", e);
-        }
-        if (match != null) {
-            return new int[] {
-                match.minSeats,
-                (match.getMatchType() == GameConfig.PARTY) ? Integer.MAX_VALUE : match.maxSeats
-            };
-        }
-        return new int[] { 1, 2 }; // arbitrary defaults
     }
 
     protected PlayerRating[] toRatingResult (
@@ -567,19 +522,6 @@ public class GameServlet extends MsoyServiceServlet
             result[ii].rating = record.rating;
         }
         return result;
-    }
-
-    protected FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
-        throws PersistenceException
-    {
-        FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
-        info.avgDuration = detail.getAverageDuration();
-        int[] players = getMinMaxPlayers((Game)game.toItem());
-        info.minPlayers = players[0];
-        info.maxPlayers = players[1];
-        info.playersOnline = pop;
-        info.creator = _memberRepo.loadMemberName(game.creatorId);
-        return info;
     }
 
     protected void requireIsGameOwner (int gameId, MemberRecord mrec)

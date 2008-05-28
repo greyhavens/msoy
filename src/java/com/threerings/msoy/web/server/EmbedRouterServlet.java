@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -35,7 +39,7 @@ public class EmbedRouterServlet extends HttpServlet
         try {
             if (info.startsWith("/g")) {
                 int gameId = Integer.parseInt(info.substring(2));
-                LaunchConfig config = ServletUtil.loadLaunchConfig(null, gameId);
+                LaunchConfig config = GameUtil.loadLaunchConfig(_gameRepo, null, gameId);
                 sendResponse(rsp, config.server + ":" + config.port + ":" + config.guestId);
 
             } else if (info.startsWith("/s")) {
@@ -65,4 +69,6 @@ public class EmbedRouterServlet extends HttpServlet
             StreamUtil.close(out);
         }
     }
+
+    protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
 }

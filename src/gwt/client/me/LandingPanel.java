@@ -46,25 +46,26 @@ public class LandingPanel extends SimplePanel
         content.setStyleName("LandingContent");
         headerBackground.setWidget(content);
         this.setWidget(headerBackground);
-        
+
         // splash with animated characters (left goes over right)
         final HTML titleAnimation = WidgetUtil.createTransparentFlashContainer(
             "preview", "/images/landing/splash_left.swf", 500, 300, null);
         content.add(titleAnimation, -23, 10);
-        
+
         // join now
-        final Button joinButton = new Button("", Application.createLinkListener(Page.ACCOUNT, "create"));
+        final Button joinButton =
+            new Button("", Application.createLinkListener(Page.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
         content.add(joinButton, 475, 0);
-        
+
         // login box
         final FlowPanel login = new FlowPanel();
         PushButton loginButton = new PushButton(CMe.msgs.landingLogin());
         loginButton.addStyleName("LoginButton");
-        login.add(new LogonPanel(true, loginButton)); 
+        login.add(new LogonPanel(true, loginButton));
         login.add(loginButton);
         content.add(login, 590, 0);
-             
+
         // intro video with click-to-play button
         final AbsolutePanel video = new AbsolutePanel();
         video.setStyleName("Video");
@@ -81,7 +82,7 @@ public class LandingPanel extends SimplePanel
                 "/images/landing/play_screen.png", CMe.msgs.whatClickToStart(), onClick);
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
-        
+
         // tagline
         final HTML tagline = new HTML(CMe.msgs.landingTagline());
         tagline.setStyleName("LandingTagline");
@@ -100,13 +101,13 @@ public class LandingPanel extends SimplePanel
         rightBorder.setStyleName("RightBorder");
         background.add(rightBorder);
         content.add(background, 0, 310);
-        
+
         // top games
         final RoundBox games = new RoundBox(RoundBox.DARK_BLUE);
         final TopGamesPanel topGamesPanel = new TopGamesPanel();
         games.add(topGamesPanel);
         content.add(games, 68, 312);
-        
+
         // featured avatar
         content.add(_avatarPanel = new AvatarPanel(), 67, 618);
 
@@ -124,11 +125,12 @@ public class LandingPanel extends SimplePanel
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(makeLink("http://wiki.whirled.com/Terms_of_Service", CMe.msgs.whatTerms()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://www.threerings.net/about/privacy.html", CMe.msgs.whatPrivacy()));
+        copyright.add(makeLink("http://www.threerings.net/about/privacy.html",
+                               CMe.msgs.whatPrivacy()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
         content.add(copyright, 48, 970);
-        
+
         // collect the data for this page
         CMe.worldsvc.getWhatIsWhirled(new MsoyCallback() {
             public void onSuccess (Object result) {
@@ -149,7 +151,7 @@ public class LandingPanel extends SimplePanel
 
     protected FeaturedWhirledPanel _featuredWhirled;
     protected AvatarPanel _avatarPanel;
-    
+
     /** Our screenshot images. */
     protected static LandingImages _images = (LandingImages)GWT.create(LandingImages.class);
 }
