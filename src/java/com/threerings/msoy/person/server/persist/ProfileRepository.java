@@ -14,8 +14,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -23,8 +21,6 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.data.Interest;
-import com.threerings.msoy.server.persist.MemberNameRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Manages the persistent store of profile profile data.

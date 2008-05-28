@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -19,9 +18,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.MemberCard;
 
-import client.people.FriendsBlurb.FriendWidget;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;

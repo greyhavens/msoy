@@ -20,8 +20,6 @@ import com.threerings.msoy.fora.data.Issue;
 
 import client.shell.Application;
 import client.shell.Page;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 import java.util.List;
 

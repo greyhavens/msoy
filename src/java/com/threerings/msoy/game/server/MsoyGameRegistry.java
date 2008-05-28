@@ -13,9 +13,7 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.crowd.server.PlaceManager;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -40,9 +38,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 

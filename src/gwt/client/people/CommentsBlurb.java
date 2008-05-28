@@ -4,7 +4,6 @@
 package client.people;
 
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.fora.data.Comment;
@@ -12,7 +11,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.CommentsPanel;
-import client.util.MsoyUI;
 
 /**
  * Displays a comment wall on a member's profile.

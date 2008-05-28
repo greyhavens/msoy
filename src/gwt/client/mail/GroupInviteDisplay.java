@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.web.client.GroupService;

@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 

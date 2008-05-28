@@ -9,13 +9,11 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;

@@ -9,10 +9,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
 import client.util.MsoyUI;

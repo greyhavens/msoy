@@ -17,10 +17,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Application;
-import client.shell.Page;
 import client.shell.Args;
 import client.util.MsoyUI;
 

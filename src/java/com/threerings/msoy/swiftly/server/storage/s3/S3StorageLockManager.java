@@ -40,7 +40,6 @@ public interface S3StorageLockManager
     	public void unlock ();
     }
 
-
     /**
      * Lock the given S3 object on behalf of the specified owner. Returns a lock reference
      * that must be used to release the lock.

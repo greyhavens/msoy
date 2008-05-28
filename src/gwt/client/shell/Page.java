@@ -3,20 +3,13 @@
 
 package client.shell;
 
-import java.util.ArrayList;
-
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.MsoyUI;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.

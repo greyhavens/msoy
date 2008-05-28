@@ -5,8 +5,6 @@ package client.editem;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -14,7 +12,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.CShell;
 import client.util.FlashClients;
-
 
 /**
  * A class for creating and editing {@link Decor} digital items.

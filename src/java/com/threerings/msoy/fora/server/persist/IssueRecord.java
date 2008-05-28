@@ -4,7 +4,6 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.util.Date;
-import java.util.Map;
 
 import java.sql.Timestamp;
 
@@ -17,8 +16,6 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.data.Issue;
 

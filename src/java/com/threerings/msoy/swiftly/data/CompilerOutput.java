@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.swiftly.data;
 
-
 /** A compiler message. */
 public interface CompilerOutput
 {

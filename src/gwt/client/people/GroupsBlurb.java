@@ -14,7 +14,6 @@ import com.threerings.msoy.web.data.GroupCard;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.shell.Application;

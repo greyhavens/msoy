@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
-
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.EventThread;
@@ -12,7 +10,6 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.whirled.game.server.WhirledGameManager;

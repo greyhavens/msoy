@@ -27,7 +27,6 @@ import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
 import com.jswiff.util.ImageUtilities;
 
-
 public class UndumpSWF
 {
     public static void main (String[] args)

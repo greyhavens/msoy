@@ -26,7 +26,6 @@ abstract class S3StorageOperation {
         _repositoryPath = repositoryPath;
     }
 
-
     /**
      * @return The operation's S3StorageLockManager.
      */

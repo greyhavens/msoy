@@ -8,15 +8,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays games in a particular genre.

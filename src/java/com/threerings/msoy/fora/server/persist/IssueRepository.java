@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.fora.server.persist;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +56,6 @@ public class IssueRepository extends DepotRepository
     {
         return loadIssues(types, states, 0, offset, count);
     }
-
 
     /**
      * Load issues of specific types, states and ownerId.

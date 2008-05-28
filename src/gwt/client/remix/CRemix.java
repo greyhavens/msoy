@@ -5,9 +5,6 @@ package client.remix;
 
 import client.shell.CShell;
 
-import com.threerings.msoy.web.client.CatalogServiceAsync;
-import com.threerings.msoy.web.client.ItemServiceAsync;
-
 /**
  * Extends {@link CShell} and provides remix-specific services.
  */

@@ -17,7 +17,6 @@ import com.threerings.msoy.person.data.MailPayload;
 
 import client.msgs.StartConvoCallback;
 import client.util.BorderedDialog;
-import client.util.ClickCallback;
 import client.util.MsoyUI;
 
 /**

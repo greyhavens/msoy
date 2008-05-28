@@ -9,7 +9,6 @@ import com.threerings.msoy.item.data.all.SubItem;
 import client.item.ItemActivator;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.FlashClients;
 import client.util.ItemBox;
 import client.util.ItemUtil;
 

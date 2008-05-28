@@ -11,7 +11,6 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ShopUtil;
 
 /**

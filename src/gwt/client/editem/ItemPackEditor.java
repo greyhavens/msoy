@@ -4,16 +4,12 @@
 package client.editem;
 
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TabPanel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.CShell;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * A class for creating and editing {@link ItemPack} digital items.

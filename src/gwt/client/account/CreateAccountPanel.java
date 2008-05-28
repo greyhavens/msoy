@@ -39,10 +39,8 @@ import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Application;
 import client.shell.CShell;
-import client.shell.Page;
 import client.util.DateFields;
 import client.util.MediaUploader;
-import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
 import client.util.ThumbBox;

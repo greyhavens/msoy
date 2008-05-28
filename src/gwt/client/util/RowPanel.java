@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
 /**
  * Works around browser's bullshit inability to put fucking spacing between cells in CSS without
  * also putting it around the outer edge of the whole table. Yay!

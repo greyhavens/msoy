@@ -13,7 +13,6 @@ import com.threerings.msoy.web.data.ListingCard;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemBox;
-import client.util.ItemUtil;
 import client.util.MsoyUI;
 import client.util.Stars;
 

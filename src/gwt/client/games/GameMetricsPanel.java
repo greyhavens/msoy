@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;

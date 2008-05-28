@@ -188,7 +188,6 @@ public class SwiftlyRepository extends DepotRepository
             SwiftlySVNStorageRecord.getKey(project.storageId));
     }
 
-
     /**
      * Creates and loads a SwiftlySVNStorageRecord. If the record already exists, the existing
      * record will be returned and the database will not be modified.

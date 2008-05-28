@@ -3,9 +3,6 @@
 
 package client.editem;
 
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Furniture;

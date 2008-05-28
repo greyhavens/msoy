@@ -3,14 +3,11 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of {@link TrophySourceRecord} items.

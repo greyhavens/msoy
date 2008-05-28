@@ -5,8 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.text.MessageUtil;
 

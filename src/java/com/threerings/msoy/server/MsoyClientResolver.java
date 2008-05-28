@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import java.util.List;
 
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;

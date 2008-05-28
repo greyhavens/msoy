@@ -16,7 +16,6 @@ import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameMetrics;
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceException;

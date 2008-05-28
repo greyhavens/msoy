@@ -4,7 +4,6 @@
 package com.threerings.msoy.fora.data;
 
 import java.util.Date;
-import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

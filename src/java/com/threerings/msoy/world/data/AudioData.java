@@ -79,5 +79,4 @@ public class AudioData extends SimpleStreamableObject
         new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
     
 
-
 }

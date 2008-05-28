@@ -61,7 +61,6 @@ public class HistoricalUserRecord extends PersistentRecord
     /** The affiliate site with which this user is associated. */
     public int siteId;
 
-
     /** An empty constructor for deserialization. */
     public HistoricalUserRecord ()
     {

@@ -12,15 +12,11 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntSet;
-import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -35,15 +31,12 @@ import com.samskivert.jdbc.depot.operator.Logic;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.person.data.MailPayload;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of mail and mailboxes.

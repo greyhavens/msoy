@@ -3,18 +3,10 @@
 
 package client.whirleds;
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -26,8 +18,6 @@ import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.GroupService;
 
 import client.shell.Application;

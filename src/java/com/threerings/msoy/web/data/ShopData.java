@@ -5,8 +5,6 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.data.all.Item;
-
 /**
  * Contains top-level information for the Whirled Catalog.
  */

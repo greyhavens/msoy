@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,7 +25,6 @@ import com.threerings.msoy.fora.data.ForumThread;
 
 import client.shell.Application;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.MessagePanel;
 import client.shell.Page;
 import client.util.BorderedDialog;

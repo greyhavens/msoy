@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import com.threerings.gwt.ui.WidgetUtil;

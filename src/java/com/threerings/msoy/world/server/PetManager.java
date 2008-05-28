@@ -20,7 +20,6 @@ import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.chat.data.ChatChannel;

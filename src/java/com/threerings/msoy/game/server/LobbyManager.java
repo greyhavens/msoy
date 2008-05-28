@@ -31,7 +31,6 @@ import com.whirled.game.data.TableMatchConfig;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;

@@ -7,20 +7,17 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
@@ -28,7 +25,6 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.CShell;
-import client.shell.Frame;
 import client.shell.Page;
 import client.stuff.DoListItemPopup;
 import client.util.ClickCallback;

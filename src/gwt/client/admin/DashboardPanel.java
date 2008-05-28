@@ -19,7 +19,6 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
-import client.shell.WorldClient;
 
 /**
  * Displays the various services available to support and admin personnel.

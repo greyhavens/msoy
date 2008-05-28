@@ -9,7 +9,6 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.games.TrophyGrid;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 

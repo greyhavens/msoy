@@ -6,12 +6,9 @@ package client.msgs;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.fora.data.Issue;
 import com.threerings.msoy.web.client.IssueService;
 
-import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.HashIntMap;
 import client.util.ServiceBackedDataModel;

@@ -14,9 +14,7 @@ import com.threerings.gwt.ui.SmartTable;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
-import client.util.MsoyCallback;
 import client.util.NumberTextBox;
-import client.util.PromptPopup;
 import client.util.RowPanel;
 
 /**

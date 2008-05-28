@@ -25,8 +25,6 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Customizes the basic table manager with MSOY specific bits.
  */

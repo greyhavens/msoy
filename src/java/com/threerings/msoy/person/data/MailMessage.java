@@ -38,7 +38,6 @@ public class MailMessage
         return hashCode;
     }
 
-
     // @Override
     public boolean equals (Object obj)
     {

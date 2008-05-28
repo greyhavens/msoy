@@ -3,8 +3,6 @@
 
 package client.whirleds;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -14,12 +12,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GroupCard;
 
-import client.me.CMe;
 import client.shell.Application;
 import client.shell.WorldClient;
 import client.util.MediaUtil;

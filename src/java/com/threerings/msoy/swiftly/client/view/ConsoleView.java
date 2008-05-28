@@ -70,7 +70,6 @@ public class ConsoleView extends JFrame
         _consoleText.setText("");
     }
 
-
     // from Console
     public void appendCompilerOutput (CompilerOutput line)
     {

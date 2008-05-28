@@ -21,7 +21,6 @@ import javax.mail.internet.MimeMultipart;
 import com.google.common.collect.Sets;
 
 import com.samskivert.net.MailUtil;
-import com.samskivert.util.Invoker;
 import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.commons.io.IOUtils;
@@ -31,7 +30,6 @@ import org.apache.velocity.app.VelocityEngine;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.MsoyBaseServer;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.data.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;

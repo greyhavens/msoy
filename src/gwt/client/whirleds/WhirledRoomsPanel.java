@@ -3,8 +3,6 @@
 
 package client.whirleds;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;

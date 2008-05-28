@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**

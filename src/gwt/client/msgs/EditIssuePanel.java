@@ -10,17 +10,12 @@ import client.util.MsoyUI;
 
 import client.shell.Page;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -29,10 +24,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.fora.data.Issue;
 
-import client.shell.Application;
 import client.shell.Page;
 
 /**

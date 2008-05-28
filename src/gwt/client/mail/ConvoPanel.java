@@ -3,30 +3,23 @@
 
 package client.mail;
 
-import java.util.Date;
-import java.util.List;
-
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.ConvMessage;
-import com.threerings.msoy.person.data.MailHeaders;
 
 import client.shell.Application;
-import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;

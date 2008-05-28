@@ -6,8 +6,6 @@ package com.threerings.msoy.group.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 /**
  * Contains extra information about a group.  This should be used to hold information that is only
  * needed on the GroupView page itself, and not in other places that Groups are fetched.

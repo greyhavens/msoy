@@ -3,7 +3,6 @@
 
 package client.editem;
 
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Item;

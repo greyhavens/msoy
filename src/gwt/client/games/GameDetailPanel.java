@@ -7,13 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,7 +17,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GameDetail;
 
 import client.item.ItemRating;
@@ -32,10 +25,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
-import client.util.CreatorLabel;
-import client.util.ItemUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.StyledTabPanel;
 import client.util.ThumbBox;
 

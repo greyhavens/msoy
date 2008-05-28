@@ -7,16 +7,12 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.http.client.URL;
 
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -25,12 +21,8 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.CShell;
 
-import client.stuff.CStuff;
-
 import client.editem.EditorHost;
 
-import client.util.FlashClients;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 

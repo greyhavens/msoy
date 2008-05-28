@@ -3,7 +3,6 @@
 
 package client.editem;
 
-import com.google.gwt.user.client.ui.TabPanel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prop;

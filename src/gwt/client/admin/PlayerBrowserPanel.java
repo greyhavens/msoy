@@ -28,7 +28,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.InfoPopup;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;

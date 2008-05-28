@@ -16,8 +16,6 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.whirled.util.NoSuchSceneException;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;

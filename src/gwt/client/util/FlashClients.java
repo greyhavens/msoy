@@ -3,13 +3,9 @@
 
 package client.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,8 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.shell.Frame;
 

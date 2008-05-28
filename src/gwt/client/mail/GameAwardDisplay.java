@@ -4,7 +4,6 @@
 package client.mail;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.person.data.GameAwardPayload;

@@ -13,14 +13,12 @@ import com.threerings.crowd.data.TokenRing;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ObserverInfo;
-import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.GroupMembership;

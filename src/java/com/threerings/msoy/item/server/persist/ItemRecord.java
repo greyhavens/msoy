@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -37,8 +36,6 @@ import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;

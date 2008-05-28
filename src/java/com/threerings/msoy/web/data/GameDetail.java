@@ -6,9 +6,7 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains information displayed on a game's detail page.

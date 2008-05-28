@@ -8,16 +8,12 @@ import com.threerings.util.MessageBundle;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.NotifyMessage;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages most notifications to users.

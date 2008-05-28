@@ -75,7 +75,6 @@ public class ProjectSVNStorage
     /** SVN over HTTPS WebDAV Protocol String. */
     public static final String PROTOCOL_HTTPS = "https";
 
-
     /*
      * Static initialization of the SVNKit library
      */

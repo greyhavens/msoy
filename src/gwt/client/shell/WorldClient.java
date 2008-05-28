@@ -4,9 +4,7 @@
 package client.shell;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.ConnectConfig;
@@ -14,7 +12,6 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
-import client.util.InfoPopup;
 import client.util.MsoyCallback;
 
 /**

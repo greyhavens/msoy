@@ -7,22 +7,15 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
-import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.HeaderBox;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 
 /**

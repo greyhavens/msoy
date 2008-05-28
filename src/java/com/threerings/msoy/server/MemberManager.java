@@ -25,7 +25,6 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.OccupantInfo;

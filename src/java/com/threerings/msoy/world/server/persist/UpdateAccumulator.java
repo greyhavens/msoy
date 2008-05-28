@@ -4,13 +4,10 @@
 package com.threerings.msoy.world.server.persist;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
@@ -22,7 +19,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.FurniUpdate;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 

@@ -61,7 +61,6 @@ public class ProjectSVNStorageUnitTest extends TestCase
             ProjectStorageUnitTest.TEMPLATE_DIR.getCanonicalFile());
     }
 
-
     /** Clean up afterwards. */
     @Override
     public void tearDown ()

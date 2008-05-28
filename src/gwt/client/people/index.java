@@ -3,16 +3,9 @@
 
 package client.people;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.msoy.web.client.ProfileService;
 
-import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;

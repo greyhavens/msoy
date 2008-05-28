@@ -5,7 +5,6 @@ package client.swiftly;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.SwiftlyService;

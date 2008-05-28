@@ -91,7 +91,6 @@ public class FeedRepository extends DepotRepository
         return messages;
     }
 
-
     /**
      * Publishes a global message which will show up in all users' feeds. Note: global messages are
      * never throttled.

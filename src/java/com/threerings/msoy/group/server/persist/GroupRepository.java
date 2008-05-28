@@ -4,7 +4,6 @@
 package com.threerings.msoy.group.server.persist;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
@@ -47,7 +45,6 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.CountRecord;

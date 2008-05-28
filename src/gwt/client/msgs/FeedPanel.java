@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -20,13 +19,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
 import com.threerings.msoy.person.data.GroupFeedMessage;
@@ -472,7 +469,6 @@ public class FeedPanel extends TongueBox
                 break;
             }
         }
-
 
         protected void addGroupMessage (GroupFeedMessage message)
         {

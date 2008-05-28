@@ -4,24 +4,13 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
-import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
-import client.shell.WorldClient;
-import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's single player the game
