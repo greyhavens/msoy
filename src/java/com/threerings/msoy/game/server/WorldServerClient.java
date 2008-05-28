@@ -61,7 +61,7 @@ public class WorldServerClient
     {
         if (_gssvc == null) {
             log.warning("Dropping AVRGame departure [id=" + playerId + "].");
-        } else if (playerId > 0) { // don't update guests
+        } else {
             _gssvc.leaveAVRGame(_client, playerId);
         }
     }
@@ -70,7 +70,7 @@ public class WorldServerClient
     {
         if (_gssvc == null) {
             log.warning("Dropping update notification [id=" + playerId + ", game=" + game + "].");
-        } else if (playerId > 0) { // don't update guests
+        } else {
             _gssvc.updatePlayer(_client, playerId, game == null ? null : new GameSummary(game));
         }
     }
