@@ -262,6 +262,7 @@ public class RoomManager extends SpotSceneManager
         SpeakUtil.sendInfo(bootee, MsoyCodes.GENERAL_MSGS,
             MessageUtil.tcompose("m.booted", _scene.getName()));
         MsoyServer.screg.moveBody(bootee, bootSceneId);
+        SpeakUtil.sendFeedback(user, MsoyCodes.GENERAL_MSGS, "m.boot_success");
         return null; // indicates success
     }
 

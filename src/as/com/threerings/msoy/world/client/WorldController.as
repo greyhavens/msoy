@@ -684,7 +684,7 @@ public class WorldController extends MsoyController
     {
         var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
         svc.bootFromPlace(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.boot_success"));
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**
