@@ -351,15 +351,42 @@
   text-decoration: underline;
 }
 
+.LandingPanel .TopGamesPanel .GameInfoContainer {
+  width: 433px;
+  height: 272px;
+  border: solid #4fa0cd 1px;
+  background: #5caedd url(/images/landing/topgames_info_bg.jpg) repeat-x top center;
+}
+
 .LandingPanel .TopGamesPanel .GameInfo {
   width: 415px;
   height: 245px;
-  padding-top: 10px;
+  padding-top: 20px;
+  padding-left: 10px;
+}
+
+.LandingPanel .TopGamesPanel .featuredGame .gameBits {
+  color: #FFFFFF;
+}
+
+.LandingPanel .TopGamesPanel .featuredGame .RightPanel {
+  width: 235px;
+  height: 255px;
+  color: #0b4a6d;
+}
+.LandingPanel .TopGamesPanel .featuredGame .RightPanel a {
+  color: #0b4a6d;
+}
+
+.LandingPanel .TopGamesPanel .featuredGame .Genre {
+  font-size: 14px;
+  height: 14px;
 }
 
 .LandingPanel .TopGamesPanel .featuredGame .Descrip {
   width: 230px;
-  height: 105px;
+  height: 65px;
+  padding-top: 3px;
 }
 
 .LandingPanel .TopGamesPanel .featuredGame .Name {
@@ -383,7 +410,6 @@
   border: none;
   cursor: pointer;
   text-align: center;
-  margin-left: 30px;
 }
 
 .LandingPanel .TopGamesPanel .GameInfo .SinglePlay {
@@ -397,6 +423,18 @@
 }
 .LandingPanel .TopGamesPanel .GameInfo .FriendPlay-up-hovering {
   background: transparent url(/images/game/play_friends_over.png);
+}
+
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames {
+  background: transparent url(/images/landing/more_games.png) no-repeat;
+  width: 105px;
+  height: 31px;
+}
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering {
+  background: transparent url(/images/landing/more_games_over.png);
+}
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames-down-hovering {
+  background: transparent url(/images/landing/more_games_down.png);
 }
 
 /* ------------------------------------

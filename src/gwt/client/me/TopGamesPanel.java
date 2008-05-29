@@ -60,7 +60,8 @@ public class TopGamesPanel extends AbsolutePanel
         }
 
         // game info panel
-        final RoundBox gameInfoBox = new RoundBox(RoundBox.BLUE);
+        final SimplePanel gameInfoBox = new SimplePanel();
+        gameInfoBox.setStyleName("GameInfoContainer");
         _gameInfo = new SimplePanel();
         _gameInfo.setStyleName("GameInfo");
         gameInfoBox.add(_gameInfo);
@@ -148,6 +149,13 @@ public class TopGamesPanel extends AbsolutePanel
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         left.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, onClick));
+
+        if (game.playersOnline > 0) {
+            left.add(WidgetUtil.makeShim(10, 10));
+            left.add(MsoyUI.createLabel(
+                CGames.msgs.featuredOnline("" + game.playersOnline), "Online"));
+        }
+        
         left.add(WidgetUtil.makeShim(10, 10));
         left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0));
 
@@ -164,30 +172,27 @@ public class TopGamesPanel extends AbsolutePanel
         }));
         left.add(WidgetUtil.makeShim(10, 10));
 
-        // more games button
-        Widget moreGamesButton = new Button(
-            CMe.msgs.landingMoreGames(), Application.createLinkListener(Page.GAMES, ""));
-        left.add(moreGamesButton);
-
         gameInfoTable.setWidget(0, 0, left);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         gameInfoTable.getFlexCellFormatter().setWidth(0, 0, Game.SHOT_WIDTH + "px");
         gameInfoTable.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
 
         // game text info on the right
-        VerticalPanel right = new GameNamePanel(
+        AbsolutePanel right = new AbsolutePanel();
+        right.setStyleName("RightPanel");
+        VerticalPanel gameName = new GameNamePanel(
             game.name, game.genre, game.creator, game.description);
-        right.add(WidgetUtil.makeShim(5, 10));
+        right.add(gameName);
 
         // display single only if no multi exists
-        FlowPanel playPanel = new FlowPanel();
+        FlowPanel playButtonPanel = new FlowPanel();
         if (game.maxPlayers == 1) {
             PushButton singleButton = makePlayButton("SinglePlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
                 }
             });
-            playPanel.add(singleButton);
+            playButtonPanel.add(singleButton);
         }
         else {
             PushButton multiButton = makePlayButton("FriendPlay", new ClickListener() {
@@ -195,15 +200,14 @@ public class TopGamesPanel extends AbsolutePanel
                     Application.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
                 }
             });
-            playPanel.add(multiButton);
+            playButtonPanel.add(multiButton);
         }
-        right.add(playPanel);
+        right.add(playButtonPanel, 55, 137);
 
-        if (game.playersOnline > 0) {
-            right.add(WidgetUtil.makeShim(10, 10));
-            right.add(MsoyUI.createLabel(
-                CGames.msgs.featuredOnline("" + game.playersOnline), "Online"));
-        }
+        // more games button
+        PushButton moreGamesButton = makePlayButton(
+            "MoreGames", Application.createLinkListener(Page.GAMES, ""));
+        right.add(moreGamesButton, 130, 220);
 
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
