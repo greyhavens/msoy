@@ -136,16 +136,32 @@ public class EntityBackend extends ControlBackend
         }
     }
 
+    /**
+      Asserts that the key/value pairs aren't too big for transmission.
+      It's safe to pass this null parameters.
+     */
+    protected static function assertValid(key :String, value :Object) :void
+    {
+        if (name != null && name.length > 64) {
+            throw new ArgumentError("Key names may only be a maximum of 64 characters");
+        }
+        if (value != null && Array(encode(arg, false)).length > 1024) {
+            throw new ArgumentError("Value data may only be a maximum of 1 kB");
+        }
+    }
+
     protected function sendMessage_v1 (name :String, arg :Object, isAction :Boolean) :void
     {
         if (_sprite != null) {
-            _sprite.sendMessage(name, arg, isAction);
+            assertValid(name, arg);
+           _sprite.sendMessage(name, arg, isAction);
         }
     }
 
     protected function sendSignal_v1 (name :String, arg :Object) :void
     {
         if (_sprite != null) {
+            assertValid(name, arg);
             _sprite.sendSignal(name, arg);
         }
     }
@@ -181,6 +197,7 @@ public class EntityBackend extends ControlBackend
     // Deprecated on 2007-03-12
     protected function triggerEvent_v1 (event :String, arg :Object = null) :void
     {
+        assertValid(name, arg);
         sendMessage_v1(event, arg, true);
     }
 
