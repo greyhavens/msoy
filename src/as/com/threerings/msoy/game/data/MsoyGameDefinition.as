@@ -17,6 +17,10 @@ public class MsoyGameDefinition extends GameDefinition
     /** If true, the game requires the LWJGL libraries. */
     public var lwjgl :Boolean;
 
+    /** We need this here to be able to communicate with the whirled code that will launch the 
+     *  agent on the server. */
+    public var serverMedia :String;
+
     public function MsoyGameDefinition ()
     {
     }
@@ -35,11 +39,27 @@ public class MsoyGameDefinition extends GameDefinition
         digest = path;
     }
 
+    /**
+     * Configures the path to this game's server media.
+     */
+    public function setServerMediaPath (mediaPath :String) :void
+    {
+        serverMedia = mediaPath;
+    }
+
+    // from GameDefinition
+    public override function getServerMediaPath (gameId :int) :String
+    {
+        // TODO: what are we supposed to do with gameId?
+        return serverMedia;
+    }
+
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
         lwjgl = ins.readBoolean();
+        serverMedia = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -47,6 +67,7 @@ public class MsoyGameDefinition extends GameDefinition
     {
         super.writeObject(out);
         out.writeBoolean(lwjgl);
+        out.writeField(serverMedia);
     }
 }
 }

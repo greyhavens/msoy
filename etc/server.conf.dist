@@ -20,3 +20,7 @@ MAIL=/usr/bin/mail
 if [ ! -f $MAIL ]; then
     MAIL=/bin/mail
 fi
+
+#
+# Path for launching a thane interpreter
+THANE_INTERPRETER=/export/thane/tamarin-central/dist/thane/avmthane

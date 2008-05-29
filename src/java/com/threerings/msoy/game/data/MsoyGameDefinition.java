@@ -14,6 +14,10 @@ public class MsoyGameDefinition extends GameDefinition
     /** If true, the game requires the LWJGL libraries. */
     public boolean lwjgl;
 
+    /** We need this here to be able to communicate with the whirled code that will launch the 
+     *  agent on the server. */
+    public String serverMedia;
+
     /**
      * Configures the path to this game's media.
      */
@@ -28,4 +32,20 @@ public class MsoyGameDefinition extends GameDefinition
     {
         return digest;
     }
+
+    /**
+     * Configures the path to this game's server media.
+     */
+    public void setServerMediaPath (String mediaPath)
+    {
+        serverMedia = mediaPath;
+    }
+
+    @Override // from GameDefinition
+    public String getServerMediaPath (int gameId)
+    {
+        // TODO: what are we supposed to do with gameId?
+        return serverMedia;
+    }
+
 }

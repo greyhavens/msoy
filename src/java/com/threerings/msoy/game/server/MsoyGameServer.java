@@ -24,6 +24,8 @@ import com.threerings.presents.server.PresentsClient;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.DatabaseConfigRegistry;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -35,8 +37,11 @@ import com.threerings.parlor.server.ParlorManager;
 
 import com.whirled.game.server.DictionaryManager;
 
+import com.whirled.game.server.WhirledGameManager;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 
@@ -171,6 +176,10 @@ public class MsoyGameServer extends MsoyBaseServer
         // connect back to our parent world server
         worldClient.init(this, _listenPort, _connectPort);
 
+        // hook up thane
+        breg.setCommandGenerator(
+            WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
+
         log.info("Game server initialized.");
     }
 
@@ -233,6 +242,28 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         // no reports for game servers
     }
+    
+    protected static class ThaneCommandGenerator 
+        implements BureauRegistry.CommandGenerator
+    {
+        public String[] createCommand (
+            String serverNameAndPort, 
+            String bureauId, 
+            String token) {
+
+            String localhostPrefix = "localhost:";
+            if (!serverNameAndPort.startsWith(localhostPrefix)) {
+                log.warning("bin/runthaneclient cannot connect to " + 
+                    serverNameAndPort);
+            }
+            String port = serverNameAndPort.substring(localhostPrefix.length());
+            Integer.parseInt(port);
+            return new String[] { 
+                ServerConfig.serverRoot + "/bin/runthaneclient",
+                bureauId, token, port};
+        }
+    }
+
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;

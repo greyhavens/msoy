@@ -142,6 +142,14 @@
     <file name="lib/corelib.swc"/>
     <file name="lib/flexlib.swc"/>
     <file name="lib/tweener.swc"/>
+
+    <!-- The following are used to build abc files -->
+    <file name="${extlibs.dir}/asc.jar"/>
+    <file name="${extlibs.dir}/flexTasks.jar"/>
+
+    <!-- The following are used by the thane client -->
+    <file name="lib/thane.abc"/>
+    <file name="lib/builtin.abc"/>
   </filelist>
 
   <!-- fetches our library dependencies -->
@@ -154,6 +162,8 @@
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-abc" version="0.0-SNAPSHOT"
+                  type="abc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenyalib" version="0.0-SNAPSHOT"
@@ -164,9 +174,13 @@
       <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilyalib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings.vilya" artifactId="vilya-abc" version="0.0-SNAPSHOT"
+                  type="abc"/>
       <dependency groupId="com.threerings" artifactId="whirled-code" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="whirledlib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings" artifactId="whirled-abc" version="0.0-SNAPSHOT"
+                  type="abc"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
@@ -503,6 +517,22 @@
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare">
     <antcall target="ascompile"><param name="flex.debug-arg" value="-compiler.debug"/></antcall>
+  </target>
+
+  <!-- builds our thane game client -->
+  <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
+    <taskdef name="ascx" classname="flex.ant.AscTask" classpathref="classpath"/>
+    <ascx as3="true" strict="true" classpathref="classpath">
+      <import dir=".">
+        <include name="lib/builtin.abc"/>
+        <include name="lib/thane.abc"/>
+        <include name="dist/lib/narya-abc*.abc"/>
+        <include name="dist/lib/vilya-abc*.abc"/>
+        <include name="dist/lib/whirled-abc*.abc"/>
+      </import>
+      <filespec dir="src/thane" includes="MsoyThaneClient.as"/>
+    </ascx>
+    <move overwrite="true" file="src/thane/MsoyThaneClient.abc" todir="dist"/>
   </target>
 
   <!-- builds the mediastub that's used to wrap SWF media -->

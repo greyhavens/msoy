@@ -49,6 +49,9 @@ public class MsoyGameParser extends WhirledGameParser
     {
         MsoyGameDefinition gameDef = (MsoyGameDefinition)parseGame(new StringReader(game.config));
         gameDef.setMediaPath(game.gameMedia.getMediaPath());
+        if (game.serverMedia != null) {
+            gameDef.setServerMediaPath(game.serverMedia.getMediaPath());
+        }
         return gameDef;
     }
 
