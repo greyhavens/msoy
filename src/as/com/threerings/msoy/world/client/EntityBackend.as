@@ -11,6 +11,8 @@ import flash.media.Microphone;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.world.data.MsoyLocation;
 
+import com.threerings.util.ObjectMarshaller;
+
 public class EntityBackend extends ControlBackend
 {
     /**
@@ -142,10 +144,10 @@ public class EntityBackend extends ControlBackend
      */
     protected static function assertValid(key :String, value :Object) :void
     {
-        if (name != null && name.length > 64) {
+        if (key != null && key.length > 64) {
             throw new ArgumentError("Key names may only be a maximum of 64 characters");
         }
-        if (value != null && Array(encode(arg, false)).length > 1024) {
+        if (value != null && (ObjectMarshaller.encode(value, false) as Array).length > 1024) {
             throw new ArgumentError("Value data may only be a maximum of 1 kB");
         }
     }
@@ -197,7 +199,7 @@ public class EntityBackend extends ControlBackend
     // Deprecated on 2007-03-12
     protected function triggerEvent_v1 (event :String, arg :Object = null) :void
     {
-        assertValid(name, arg);
+        assertValid(event, arg);
         sendMessage_v1(event, arg, true);
     }
 
