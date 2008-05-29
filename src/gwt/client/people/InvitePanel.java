@@ -421,6 +421,7 @@ public class InvitePanel extends VerticalPanel
 
         public void removeItem (int row)
         {
+            _items.remove(row);
             _listTable.removeRow(row);
             for (int ii = row; ii < _listTable.getRowCount(); ii++) {
                 setRemove(ii);
