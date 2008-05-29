@@ -908,8 +908,18 @@ BasePanel {
   horizontalGap: 0px;
 }
 
-.headerLink {
+.headerLink, .headerCommentLink, .headerShareLink {
   fontSize: 10px;
+}
+
+.headerCommentLink {
+  icon: Embed(source="../../rsrc/media/skins/headerbar/comment.png");
+  textDecoration: "underline";
+}
+
+.headerShareLink {
+  icon: Embed(source="../../rsrc/media/skins/headerbar/share.png");
+  textDecoration: "underline";
 }
 
 .editButton {

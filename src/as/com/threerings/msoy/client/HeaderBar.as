@@ -227,15 +227,6 @@ public class HeaderBar extends HBox
 
         _tabsContainer.addChild(_tabs);
 
-        _owner = new HBox();
-        _owner.styleName = "headerBox";
-        _owner.percentHeight = 100;
-        addChild(_owner);
-        _extras.push(_owner);
-
-        _spacer = new Spacer(this);
-        addChild(_spacer);
-
         var controlBox :HBox = new HBox();
         controlBox.styleName = "headerBox";
         controlBox.percentHeight = 100;
@@ -248,7 +239,7 @@ public class HeaderBar extends HBox
         _extras.push(_instructionsLink);
 
         _commentLink = new CommandLinkButton(Msgs.GENERAL.get("b.comment"));
-        _commentLink.styleName = "headerLink";
+        _commentLink.styleName = "headerCommentLink";
         controlBox.addChild(_commentLink);
         setCommentLink(null);
         _extras.push(_commentLink);
@@ -256,10 +247,19 @@ public class HeaderBar extends HBox
         _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
                 new EmbedDialog(_ctx);
             });
-        _embedLink.styleName = "headerLink";
+        _embedLink.styleName = "headerShareLink";
         controlBox.addChild(_embedLink);
         setEmbedVisible(false);
         _extras.push(_embedLink);
+
+        _spacer = new Spacer(this);
+        addChild(_spacer);
+
+        _owner = new HBox();
+        _owner.styleName = "headerBox";
+        _owner.percentHeight = 100;
+        addChild(_owner);
+        _extras.push(_owner);
 
         _fullVersion = new HBox();
         _fullVersion.styleName = "headerBox";
@@ -277,7 +277,7 @@ public class HeaderBar extends HBox
 
         _closeBox = new VBox();
         _closeBox.styleName = "headerCloseBox";
-        controlBox.addChild(_closeBox);
+        addChild(_closeBox);
         var closeBtn :CommandButton = new CommandButton();
         closeBtn.setCommand(MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
