@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -137,28 +138,33 @@ public class GameUtil
     }
 
     /**
-     * Loads and returns data on the top games. Used on the landing and arcade pages.
+     * Loads and returns data on the top games. Used on the landing and arcade pages.  
+     * Games that do not payout flow, and those with a ranking less than 4 stars not included.
      */
     public static FeaturedGameInfo[] loadTopGames (GameRepository repo, MemberRepository memberRepo,
                                                    PopularPlacesSnapshot pps)
         throws PersistenceException
     {
-        // determine the "featured" games
+        // determine the games people are playing right now
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PlaceCard card : pps.getTopGames()) {
             GameDetailRecord detail = repo.loadGameDetail(card.placeId);
             GameRecord game = repo.loadGameRecord(card.placeId, detail);
-            if (game != null) {
+            if (game != null && game.rating >= 4 && detail.gamesPlayed > 0) {
                 featured.add(toFeaturedGameInfo(memberRepo, game, detail, card.population));
                 have.add(game.gameId);
             }
         }
+
+        // pad the featured games with ones nobody is playing
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
             for (GameRecord game : repo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
-                if (!have.contains(game.gameId)) {
+                if (!have.contains(game.gameId) && game.rating >= 4) {
                     GameDetailRecord detail = repo.loadGameDetail(game.gameId);
-                    featured.add(toFeaturedGameInfo(memberRepo, game, detail, 0));
+                    if (detail.gamesPlayed > 0) {
+                        featured.add(toFeaturedGameInfo(memberRepo, game, detail, 0));
+                    }
                 }
                 if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
                     break;

@@ -77,7 +77,7 @@ import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.WhatIsWhirledData;
+import com.threerings.msoy.web.data.LandingData;
 
 import static com.threerings.msoy.Log.log;
 
@@ -88,16 +88,16 @@ public class WorldServlet extends MsoyServiceServlet
     implements WorldService
 {
     // from interface WorldService
-    public WhatIsWhirledData getWhatIsWhirled ()
+    public LandingData getLandingData ()
         throws ServiceException
     {
-        WhatIsWhirledData data = ExpiringReference.get(_whatIsWhirled);
+        LandingData data = ExpiringReference.get(_landingData);
         if (data != null) {
             return data;
         }
 
         try {
-            data = new WhatIsWhirledData();
+            data = new LandingData();
 
             // determine our featured whirled based on who's online now
             PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
@@ -135,11 +135,11 @@ public class WorldServlet extends MsoyServiceServlet
             ItemUtil.resolveCardNames(_memberRepo, cards);
             data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
 
-            _whatIsWhirled = ExpiringReference.create(data, WHAT_IS_WHIRLED_EXPIRY);
+            _landingData = ExpiringReference.create(data, LANDING_DATA_EXPIRY);
             return data;
 
         } catch (PersistenceException pe) {
-            log.warning("Failed to load WhatIsWhirled data.", pe);
+            log.warning("Failed to load landing data.", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -527,7 +527,7 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     /** Contains a cached copy of our WhatIsWhirled data. */
-    protected ExpiringReference<WhatIsWhirledData> _whatIsWhirled;
+    protected ExpiringReference<LandingData> _landingData;
 
     protected MemberRepository _memberRepo = MsoyServer.memberRepo;
     protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
@@ -535,5 +535,5 @@ public class WorldServlet extends MsoyServiceServlet
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;
 
-    protected static final long WHAT_IS_WHIRLED_EXPIRY = /* 60*60* */ 1000L;
+    protected static final long LANDING_DATA_EXPIRY = /* 60*60* */ 1000L;
 }

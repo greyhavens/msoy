@@ -100,6 +100,6 @@ public class index extends MsgsEntryPoint
     protected void displayWhat ()
     {
         Frame.closeClient(false); // no client on the main guest landing page
-        setContent(CMe.msgs.whatTitle(), new LandingPanel(), false);
+        setContent(CMe.msgs.landingTitle(), new LandingPanel(), false);
     }
 }

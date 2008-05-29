@@ -13,9 +13,9 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface WorldServiceAsync
 {
     /**
-     * The asynchronous version of {@link WorldService#getWhatIsWhirled}.
+     * The asynchronous version of {@link WorldService#getLandingData}.
      */
-    public void getWhatIsWhirled (AsyncCallback callback);
+    public void getLandingData (AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WorldService#serializePopularPlaces}.

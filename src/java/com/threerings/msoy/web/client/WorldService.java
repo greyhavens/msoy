@@ -15,7 +15,7 @@ import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.WhatIsWhirledData;
+import com.threerings.msoy.web.data.LandingData;
 
 /**
  * Provides information related to the world (and the whirled).
@@ -36,9 +36,9 @@ public interface WorldService extends RemoteService
     }
 
     /**
-     * Loads the data for the WhatIsWhirled page.
+     * Loads the data for the landing page.
      */
-    public WhatIsWhirledData getWhatIsWhirled ()
+    public LandingData getLandingData ()
         throws ServiceException;
 
     /**

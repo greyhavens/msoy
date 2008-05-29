@@ -3,6 +3,7 @@ package client.me;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,7 +20,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.ListingCard;
-import com.threerings.msoy.web.data.WhatIsWhirledData;
+import com.threerings.msoy.web.data.LandingData;
 
 import client.images.landing.LandingImages;
 import client.shell.Application;
@@ -79,7 +80,7 @@ public class LandingPanel extends SimplePanel
             }
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
-                "/images/landing/play_screen.png", CMe.msgs.whatClickToStart(), onClick);
+                "/images/landing/play_screen.png", CMe.msgs.landingClickToStart(), onClick);
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 
@@ -119,22 +120,22 @@ public class LandingPanel extends SimplePanel
         FlowPanel copyright = new FlowPanel();
         copyright.setStyleName("LandingCopyright");
         int year = 1900 + new Date().getYear();
-        copyright.add(MsoyUI.createHTML(CMe.msgs.whatCopyright(""+year), "inline"));
+        copyright.add(MsoyUI.createHTML(CMe.msgs.landingCopyright(""+year), "inline"));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://www.threerings.net", CMe.msgs.whatAbout()));
+        copyright.add(makeLink("http://www.threerings.net", CMe.msgs.landingAbout()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://wiki.whirled.com/Terms_of_Service", CMe.msgs.whatTerms()));
+        copyright.add(makeLink("http://wiki.whirled.com/Terms_of_Service", CMe.msgs.landingTerms()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(makeLink("http://www.threerings.net/about/privacy.html",
-                               CMe.msgs.whatPrivacy()));
+                               CMe.msgs.landingPrivacy()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(Application.createLink(CMe.msgs.whatHelp(), Page.HELP, ""));
+        copyright.add(Application.createLink(CMe.msgs.landingHelp(), Page.HELP, ""));
         content.add(copyright, 48, 970);
 
         // collect the data for this page
-        CMe.worldsvc.getWhatIsWhirled(new MsoyCallback() {
+        CMe.worldsvc.getLandingData(new MsoyCallback() {
             public void onSuccess (Object result) {
-                WhatIsWhirledData data = (WhatIsWhirledData)result;
+                LandingData data = (LandingData)result;
                 topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
                 _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
                 _avatarPanel.setAvatars((ListingCard[])data.topAvatars);

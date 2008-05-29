@@ -4,7 +4,6 @@
 package client.me;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -30,7 +29,6 @@ import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
-import client.util.RoundBox;
 import client.util.ThumbBox;
 
 /**
@@ -57,6 +55,9 @@ public class TopGamesPanel extends AbsolutePanel
         }
         else {
             _games = games;
+        }
+        if (games.length == 0) {
+            return;
         }
 
         // game info panel

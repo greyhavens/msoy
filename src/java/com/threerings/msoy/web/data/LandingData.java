@@ -6,9 +6,9 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Contains the data for the WhatIsWhirled page.
+ * Contains the data for the new visitor landing page.
  */
-public class WhatIsWhirledData
+public class LandingData
     implements IsSerializable
 {
     /** Currently featured whirleds */

@@ -12,6 +12,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.SortableArrayList;
 
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.peer.data.NodeObject;
