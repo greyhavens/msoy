@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -228,7 +229,10 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, CPeople.msgs.homepage());
         _ehomepage = MsoyUI.createTextBox(_profile.homePageURL, Profile.MAX_HOMEPAGE_LENGTH, 30);
-        econtent.setWidget(row++, 1, _ehomepage);
+        HorizontalPanel ehomepageBox = new HorizontalPanel();
+        ehomepageBox.add(new HTML("http://"));
+        ehomepageBox.add(_ehomepage);
+        econtent.setWidget(row++, 1, ehomepageBox);
 
         econtent.setText(row, 0, CPeople.msgs.esex());
         econtent.setWidget(row++, 1, _esex = new ListBox());
@@ -287,7 +291,11 @@ public class ProfileBlurb extends Blurb
         // configure our profile instance with their bits
         _name = new MemberName(name, _name.getMemberId());
         _profile.headline = _eheadline.getText().trim();
-        _profile.homePageURL = _ehomepage.getText().trim();
+        String homePageURL = _ehomepage.getText().trim();
+        if (homePageURL != null && homePageURL.toLowerCase().startsWith("http://")) {
+            homePageURL = homePageURL.substring(7, homePageURL.length());
+        }
+        _profile.homePageURL = homePageURL;
         _profile.location = _elocation.getText().trim();
         _profile.sex = (byte)_esex.getSelectedIndex();
         int[] birthday = _ebirthday.getDate();
