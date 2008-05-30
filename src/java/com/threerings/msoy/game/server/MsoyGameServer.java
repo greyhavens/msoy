@@ -66,9 +66,6 @@ public class MsoyGameServer extends MsoyBaseServer
     /** Manages our connection back to our parent world server. */
     public static WorldServerClient worldClient = new WorldServerClient();
 
-    /** Used to load avatars when players log onto this game server. */
-    public static AvatarRepository avatarRepo;
-
     /**
      * Called when a player starts their session to associate the name with the player's
      * distributed object.
@@ -164,7 +161,6 @@ public class MsoyGameServer extends MsoyBaseServer
         // intialize various services
         parlorMan.init(invmgr, plreg);
         gameReg.init(omgr, invmgr, perCtx, ratingRepo, _eventLog);
-        avatarRepo = new AvatarRepository(perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
