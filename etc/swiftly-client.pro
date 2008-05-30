@@ -29,6 +29,7 @@
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
 -injars ../dist/lib/substance-lite.jar(!META-INF/*)
 -injars ../dist/lib/google-collect.jar(!META-INF/*)
+-injars ../dist/lib/log4j.jar(!META-INF/*,!**/log4j/net/**)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
