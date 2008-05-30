@@ -58,9 +58,7 @@ public class ActorBackend extends EntityBackend
      */
     protected function setState_v1 (state :String) :void
     {
-        if (state != null && state.length > 64) {
-            throw new ArgumentError("States may only be a maximum of 64 characters");
-        }
+        validateKeyName(state);
         (_sprite as ActorSprite).setState(state);
     }
 

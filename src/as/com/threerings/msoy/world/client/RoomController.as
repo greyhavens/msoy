@@ -130,6 +130,8 @@ public class RoomController extends SceneController
 
     public static const ORDER_PET :String = "OrderPet";
 
+    public static const MAX_ENCODED_PROPERTY_LENGTH :int = 1024;
+
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {

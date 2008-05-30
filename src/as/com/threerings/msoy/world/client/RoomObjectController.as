@@ -219,7 +219,7 @@ public class RoomObjectController extends RoomController
 
         // send the request off to the server
         log.info("Sending sprite message [ident=" + ident + ", name=" + name + "].");
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_PROPERTY_LENGTH);
         _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
     }
 
@@ -236,7 +236,7 @@ public class RoomObjectController extends RoomController
 
         // send the request off to the server
         log.info("Sending sprite signal [name=" + name + "].");
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_PROPERTY_LENGTH);
         _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
     }
 
@@ -283,9 +283,10 @@ public class RoomObjectController extends RoomController
 //        }
 
         // serialize datum
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
-
-        // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
+        // This will validate that the property set isn't greater than the MAXIMUM
+        //      alloted memory space, but further checks are done serverside.
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
+                RoomPropertyEntry.MAX_ENCODED_MEMORY_LENGTH);
 
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(
@@ -304,17 +305,22 @@ public class RoomObjectController extends RoomController
         }
 
         // serialize datum
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
-        if (key.length > RoomPropertyEntry.MAX_KEY_LENGTH ||
-            (data != null && data.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
-            return false;
-        }
+        // This will validate that the property set isn't greater than the MAXIMUM
+        //      alloted memory space, but further checks are done serverside.
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
+                RoomPropertyEntry.MAX_ENCODED_MEMORY_LENGTH);
 
+        // TODO: Total length validation should be done on the server
+        //if (key.length > RoomPropertyEntry.MAX_KEY_LENGTH ||
+        //    (data != null && data.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
+        //    return false;
+        //}
+        //
         var entry :RoomPropertyEntry = new RoomPropertyEntry(key, data);
-        if (_roomObj.roomProperties.contains(entry) &&
-            _roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
-            return false;
-        }
+        //if (_roomObj.roomProperties.contains(entry) &&
+        //    _roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
+        //    return false;
+        //}
 
         // ship the update request off to the server
         _roomObj.roomService.setRoomProperty(_wdctx.getClient(), entry);

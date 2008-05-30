@@ -15,6 +15,8 @@ import com.threerings.util.ObjectMarshaller;
 
 public class EntityBackend extends ControlBackend
 {
+    public static const MAX_KEY_LENGTH :int = 64;
+
     /**
      * More initialization: set the sprite we control.
      */
@@ -138,24 +140,17 @@ public class EntityBackend extends ControlBackend
         }
     }
 
-    /**
-      Asserts that the key/value pairs aren't too big for transmission.
-      It's safe to pass this null parameters.
-     */
-    protected static function assertValid(key :String, value :Object) :void
+    protected static function validateKeyName(name :String) :void
     {
-        if (key != null && key.length > 64) {
-            throw new ArgumentError("Key names may only be a maximum of 64 characters");
-        }
-        if (value != null && (ObjectMarshaller.encode(value, false) as Array).length > 1024) {
-            throw new ArgumentError("Value data may only be a maximum of 1 kB");
+        if (name != null && name.length > MAX_KEY_LENGTH) {
+            throw new ArgumentError("Key names may only be a maximum of " + MAX_KEY_LENGTH + " characters");
         }
     }
 
     protected function sendMessage_v1 (name :String, arg :Object, isAction :Boolean) :void
     {
         if (_sprite != null) {
-            assertValid(name, arg);
+            validateKeyName(name);
            _sprite.sendMessage(name, arg, isAction);
         }
     }
@@ -163,7 +158,7 @@ public class EntityBackend extends ControlBackend
     protected function sendSignal_v1 (name :String, arg :Object) :void
     {
         if (_sprite != null) {
-            assertValid(name, arg);
+            validateKeyName(name);
             _sprite.sendSignal(name, arg);
         }
     }
@@ -199,7 +194,7 @@ public class EntityBackend extends ControlBackend
     // Deprecated on 2007-03-12
     protected function triggerEvent_v1 (event :String, arg :Object = null) :void
     {
-        assertValid(event, arg);
+        validateKeyName(event);
         sendMessage_v1(event, arg, true);
     }
 
