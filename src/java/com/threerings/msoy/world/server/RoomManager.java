@@ -555,22 +555,22 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void setRoomProperty (ClientObject caller, final RoomPropertyEntry entry)
     {
-        if (entry.key.length() > RoomPropertyEntry.MAX_KEY_LENGTH ||
-           (entry.value != null && entry.value.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
-            log.info("Rejecting memory update, key or value are too long [entry=" + entry + "]");
-
-        } else if (_roomObj.roomProperties.contains(entry)) {
-            if (_roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
-                log.info("Rejecting memory update, store is full [entry=" + entry + "]");
-
-            } else if (entry.value == null) {
-                _roomObj.removeFromRoomProperties(entry.key);
-
-            } else {
-                _roomObj.updateRoomProperties(entry);
+        // Make sure this property won't put us over the total size limit
+        int totalSize = 0;
+        for (RoomPropertyEntry rent : _roomObj.roomProperties) {
+            if ( ! rent.key.equals(entry.key)) {
+                totalSize += rent.getSize();
             }
+        }
+        if (totalSize + entry.getSize() > MAX_ROOM_PROPERTY_SIZE) {
+            log.info("Rejecting room property update as too large [otherSize=" + totalSize +
+                     ", newEntrySize=" + entry.getSize() + "].");
+            return; // no feedback, just don't update it
+        }
 
-        } else if (entry.value != null) {
+        if (_roomObj.roomProperties.contains(entry)) {
+            _roomObj.updateRoomProperties(entry);
+        } else {
             _roomObj.addToRoomProperties(entry);
         }
     }
@@ -1164,4 +1164,7 @@ public class RoomManager extends SpotSceneManager
 
     /** The maximum size of an entity's memory, including all keys and values. */
     protected static final int MAX_MEMORY_SIZE = 4096;
+
+    /** The maximum size of a room's properties, including all keys and values. */
+    protected static final int MAX_ROOM_PROPERTY_SIZE = 4096;
 }

@@ -23,7 +23,7 @@ public class RoomPropertyEntry
 
     /**
      * Returns the size in bytes of this entry's key and value. The key size assumes one byte per
-     * character which is an approximation, but is fine for our memory size limitation purposes.
+     * character which is an approximation, but is fine for our property size limitation purposes.
      */
     public int getSize ()
     {
@@ -37,7 +37,7 @@ public class RoomPropertyEntry
         return key;
     }
 
-    // from interface Comparable<MemoryEntry>
+    // from interface Comparable<RoomPropertyEntry>
     public int compareTo (RoomPropertyEntry other)
     {
         return key.compareTo(other.key);
