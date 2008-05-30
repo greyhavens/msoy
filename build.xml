@@ -521,8 +521,8 @@
 
   <!-- builds our thane game client -->
   <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
-    <taskdef name="ascx" classname="flex.ant.AscTask" classpathref="classpath"/>
-    <ascx as3="true" strict="true" classpathref="classpath">
+    <taskdef name="asc" classname="flex.ant.AscTask" classpathref="classpath"/>
+    <asc as3="true" strict="true" classpathref="classpath" use="AS3">
       <import dir=".">
         <include name="lib/builtin.abc"/>
         <include name="lib/thane.abc"/>
@@ -531,7 +531,7 @@
         <include name="dist/lib/whirled-abc*.abc"/>
       </import>
       <filespec dir="src/thane" includes="MsoyThaneClient.as"/>
-    </ascx>
+    </asc>
     <move overwrite="true" file="src/thane/MsoyThaneClient.abc" todir="dist"/>
   </target>
 
