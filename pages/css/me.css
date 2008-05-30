@@ -385,7 +385,7 @@
 
 .LandingPanel .TopGamesPanel .featuredGame .Descrip {
   width: 230px;
-  height: 65px;
+  height: 95px;
   padding-top: 3px;
 }
 
@@ -410,6 +410,9 @@
   border: none;
   cursor: pointer;
   text-align: center;
+  position: absolute;
+  top: 178px;
+  left: 237px;
 }
 
 .LandingPanel .TopGamesPanel .GameInfo .SinglePlay {
@@ -429,6 +432,9 @@
   background: transparent url(/images/landing/more_games.png) no-repeat;
   width: 105px;
   height: 31px;
+  position: absolute;
+  top: 237px;
+  left: 325px;
 }
 .LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering {
   background: transparent url(/images/landing/more_games_over.png);

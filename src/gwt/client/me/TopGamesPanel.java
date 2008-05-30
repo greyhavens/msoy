@@ -179,7 +179,7 @@ public class TopGamesPanel extends AbsolutePanel
         gameInfoTable.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
 
         // game text info on the right
-        AbsolutePanel right = new AbsolutePanel();
+        FlowPanel right = new FlowPanel();
         right.setStyleName("RightPanel");
         VerticalPanel gameName = new GameNamePanel(
             game.name, game.genre, game.creator, game.description);
@@ -203,12 +203,12 @@ public class TopGamesPanel extends AbsolutePanel
             });
             playButtonPanel.add(multiButton);
         }
-        right.add(playButtonPanel, 55, 137);
+        right.add(playButtonPanel);
 
         // more games button
         PushButton moreGamesButton = makePlayButton(
             "MoreGames", Application.createLinkListener(Page.GAMES, ""));
-        right.add(moreGamesButton, 130, 220);
+        right.add(moreGamesButton);
 
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
