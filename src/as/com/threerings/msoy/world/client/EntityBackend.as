@@ -140,7 +140,7 @@ public class EntityBackend extends ControlBackend
         }
     }
 
-    protected static function validateKeyName(name :String) :void
+    protected static function validateKeyName (name :String) :void
     {
         if (name != null && name.length > MAX_KEY_LENGTH) {
             throw new ArgumentError("Key names may only be a maximum of " + MAX_KEY_LENGTH + " characters");
