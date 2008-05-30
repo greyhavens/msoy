@@ -1190,6 +1190,8 @@ public class ChatOverlay
     {
         _histOffsetFinal = false;
         _histOffset = 0;
+        // force scrollbar to the bottom when updateHistoryBar() is called.
+        _historyBar.scrollPosition = int.MAX_VALUE;
     }
 
     protected function updateHistoryBar () :void
