@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -494,7 +495,9 @@ public class Frame
             super("pageTitle", 0, 0);
 
             setWidget(0, 0, createImage(pageId), 3, null);
-            setText(1, 0, _deftitle = title, 1, "Title");
+            _titleLabel = new Label(title);
+            _titleLabel.setStyleName("Title");
+            setWidget(1, 0, _titleLabel);
             setWidget(1, 1, _subnavi = subnavi, 1, "SubNavi");
             getFlexCellFormatter().setVerticalAlignment(1, 1, HasAlignment.ALIGN_BOTTOM);
 
@@ -509,7 +512,9 @@ public class Frame
         }
 
         public void setTitle (String title) {
-            setText(1, 0, title == null ? _deftitle : title);
+            if (title != null) {
+                _titleLabel.setText(title);
+            }
         }
 
         public void setCloseVisible (boolean visible) {
@@ -529,7 +534,7 @@ public class Frame
             return new Image("/images/header/" + id + "_cap.png");
         }
 
-        protected String _deftitle;
+        protected Label _titleLabel;
         protected SubNaviPanel _subnavi;
         protected Widget _closeBox, _closeShim;
     }
