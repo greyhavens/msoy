@@ -24,7 +24,7 @@ public class RoomPropertyEntry
     public static const MAX_KEY_LENGTH :int = 64;
     public static const MAX_VALUE_LENGTH :int = 256;
 
-    public static const MAX_ENCODED_MEMORY_LENGTH :int = MAX_ENTRIES * MAX_VALUE_LENGTH;
+    public static const MAX_ENCODED_PROPERTY_LENGTH :int = MAX_ENTRIES * MAX_VALUE_LENGTH;
 
     /** The key for this property. */
     public var key :String;
@@ -70,7 +70,5 @@ public class RoomPropertyEntry
         out.writeField(key);
         out.writeField(value);
     }
-
-    protected var _hash :int;
 }
 }
