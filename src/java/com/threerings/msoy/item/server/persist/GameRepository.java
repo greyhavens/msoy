@@ -336,8 +336,8 @@ public class GameRepository extends ItemRepository<
         updatePartial(GameDetailRecord.class, gameId,
                       GameDetailRecord.PAYOUT_FACTOR, payoutFactor,
                       GameDetailRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc,
-                      GameDetailRecord.AVG_SINGLE_DURATION_C, avgSingleDuration,
-                      GameDetailRecord.AVG_MULTI_DURATION_C, avgMultiDuration);
+                      GameDetailRecord.AVG_SINGLE_DURATION, avgSingleDuration,
+                      GameDetailRecord.AVG_MULTI_DURATION, avgMultiDuration);
 
         // lastly, prune old gameplay records
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
