@@ -261,7 +261,7 @@
 
     <!-- copy a few configuration files into place -->
     <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
-    <copy todir="${deploy.dir}" file="${basedir}/etc/log4j-game.properties"/>
+    <copy tofile="${deploy.dir}/log4j-game.properties" file="${basedir}/${log4j_game_config}"/>
     <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
