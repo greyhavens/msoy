@@ -387,6 +387,7 @@
   width: 230px;
   height: 95px;
   padding-top: 3px;
+  line-height: 15px;
 }
 
 .LandingPanel .TopGamesPanel .featuredGame .Name {
@@ -411,7 +412,7 @@
   cursor: pointer;
   text-align: center;
   position: absolute;
-  top: 178px;
+  top: 180px;
   left: 237px;
 }
 
@@ -433,7 +434,7 @@
   width: 105px;
   height: 31px;
   position: absolute;
-  top: 237px;
+  top: 239px;
   left: 325px;
 }
 .LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering {
