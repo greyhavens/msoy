@@ -1037,11 +1037,7 @@ public class WorldController extends MsoyController
      */
     protected function checkChatChannelOpen (name :Name, menuItem :Object) :void
     {
-        if (_wctx.getMsoyChatDirector().hasOpenChannel(name)) {
-            // TODO: use an icon or something instead?
-            menuItem["type"] = "check";
-            menuItem["toggled"] = true;
-        }
+        menuItem["enabled"] = !_wctx.getMsoyChatDirector().hasOpenChannel(name);
     }
 
     /**
