@@ -115,7 +115,7 @@ public class GameChatContainer extends LayeredContainer
 
     override public function setActualSize (uw :Number, uh :Number) :void
     {
-        if (width != uh || height != uh) {
+        if (_overlay != null && (width != uh || height != uh)) {
             var chatTop :Number = _tabBar.y + _tabBar.height;
             _overlay.setTargetBounds(new Rectangle(0, chatTop, uw, uh - chatTop));
         }
