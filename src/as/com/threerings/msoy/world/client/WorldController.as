@@ -955,9 +955,9 @@ public class WorldController extends MsoyController
         }
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
-        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
-        menu.variableRowHeight = true;
-        menu.popUpAt(r.left, r.bottom);
+        _historyMenu = CommandMenu.createMenu(menuData, _topPanel);
+        _historyMenu.variableRowHeight = true;
+        _historyMenu.popUpAt(r.left, r.bottom);
     }
 
     /**
@@ -1189,6 +1189,12 @@ public class WorldController extends MsoyController
                 _backstackIdx++;
             }
 
+            if (_historyMenu != null) {
+                // make sure its no longer showing when we move rooms
+                _historyMenu.hide();
+                _historyMenu == null;
+            }
+
             // if the room history list has less than 2 entries, disable it
             _wctx.getTopPanel().getHeaderBar().setHistoryButtonEnabled(_backstack.length > 1);
 
@@ -1251,6 +1257,9 @@ public class WorldController extends MsoyController
 
     /** Current index into the backstack. */
     protected var _backstackIdx :int = -1;
+
+    /** Our room history menu. */
+    protected var _historyMenu :CommandMenu;
 
     private static const log :Log = Log.getLog(WorldController);
 }
