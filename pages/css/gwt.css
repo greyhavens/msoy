@@ -340,7 +340,7 @@ img, embed, applet, object {
   white-space: nowrap;
   opacity: 0.6; /* Firefox and Safari */
   filter: alpha(opacity=60); /* IE */
-  max-width: 550px;
+  width: 300px;
   white-space: nowrap;
   overflow: hidden;
 }
