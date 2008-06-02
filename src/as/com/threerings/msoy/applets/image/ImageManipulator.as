@@ -67,7 +67,7 @@ public class ImageManipulator extends HBox
 
     public static const CLOSE :String = Event.CLOSE;
 
-    public function ImageManipulator (maxW :int = 400, maxH :int = 400, forcedSize :Point = null)
+    public function ImageManipulator (maxW :int = 400, maxH :int = 400, sizeRestrict :SizeRestriction = null)
     {
         this.maxWidth = maxW;
         this.maxHeight = maxH;
@@ -84,14 +84,14 @@ public class ImageManipulator extends HBox
         // this is so annoying. We define and set the HGAP ourselves, otherwise we can't
         // read the inherited style here in the constructor.
         maxW -= CONTROL_BAR_WIDTH + HGAP;
-        _editor = new EditCanvas(maxW, maxH, forcedSize);
+        _editor = new EditCanvas(maxW, maxH, sizeRestrict);
         _editor.addEventListener(EditCanvas.SIZE_KNOWN, handleSizeKnown);
 
-        addChild(_controlBar = createControlBar(forcedSize != null));
+        addChild(_controlBar = createControlBar(sizeRestrict.forced != null));
         addChild(_editor);
         setImage(null);
 
-        if (forcedSize != null) {
+        if (sizeRestrict.forced != null) {
             disableMode(EditCanvas.SELECT);
         }
 

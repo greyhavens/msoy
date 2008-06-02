@@ -14,6 +14,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.applets.image.ImageManipulator;
+import com.threerings.msoy.applets.image.SizeRestriction;
 
 /**
  * Dispatched when the editor is closed.
@@ -25,11 +26,12 @@ public class ImageEditor extends VBox
 {
     public static const IMAGE_UPDATED :String = "ImageUpdated";
 
-    public function ImageEditor (ctx :RemixContext, image :Object, forcedSize :Point = null)
+    public function ImageEditor (
+        ctx :RemixContext, image :Object, sizeRestrict :SizeRestriction = null)
     {
         _ctx = ctx;
 
-        _image = new ImageManipulator(ctx.getViewWidth(), ctx.getViewHeight(), forcedSize);
+        _image = new ImageManipulator(ctx.getViewWidth(), ctx.getViewHeight(), sizeRestrict);
         addChild(_image);
 
         _image.addEventListener(ImageManipulator.CLOSE, handleClosed);

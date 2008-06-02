@@ -107,10 +107,10 @@ public class EditCanvas extends DisplayCanvas
     public static const SELECT :int = 3;
     public static const MOVE :int = 4;
 
-    public function EditCanvas (maxW :int, maxH :int, forcedSize :Point = null)
+    public function EditCanvas (maxW :int, maxH :int, sizeRestrict :SizeRestriction = null)
     {
         super(maxW, maxH);
-        _forcedSize = forcedSize;
+        _sizeRestrict = sizeRestrict;
 
         width = maxW;
         height = maxH;
@@ -276,7 +276,7 @@ public class EditCanvas extends DisplayCanvas
     {
         // see if we can skip re-encoding
         // TODO: this should probably be removed unless we're in preview-only mode?
-        if (forceFormat == null && _forcedSize == null && _bytes != null) {
+        if (forceFormat == null && _sizeRestrict == null && _bytes != null) {
             return [ _bytes ];
         }
 
@@ -291,7 +291,7 @@ public class EditCanvas extends DisplayCanvas
 
     public function getRawImage () :BitmapData
     {
-        if (_bitmapData != null && _forcedSize == null) {
+        if (_bitmapData != null && _sizeRestrict == null) {
             return _bitmapData;
         }
 
@@ -373,9 +373,9 @@ public class EditCanvas extends DisplayCanvas
             _image.y = hh / -2;
         }
 
-        if (_forcedSize != null) {
-            ww = Math.max(ww, _forcedSize.x);
-            hh = Math.max(hh, _forcedSize.y);
+        if (_sizeRestrict.forced != null) {
+            ww = Math.max(ww, _sizeRestrict.forced..x);
+            hh = Math.max(hh, _sizeRestrict.forced..y);
         }
 
         _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ScrollBar.THICKNESS - ww) / 2);
@@ -387,14 +387,14 @@ public class EditCanvas extends DisplayCanvas
 
         // set up the working area
         var r :Rectangle = new Rectangle(_hGutter, _vGutter, ww, hh);
-        if (_forcedSize != null) {
-            if (_forcedSize.x < ww) {
-                r.width = _forcedSize.x;
-                r.x += (ww - _forcedSize.x)/2;
+        if (_sizeRestrict.forced != null) {
+            if (_sizeRestrict.forced.x < ww) {
+                r.width = _sizeRestrict.forced.x;
+                r.x += (ww - _sizeRestrict.forced.x)/2;
             }
-            if (_forcedSize.y < hh) {
-                r.height = _forcedSize.y;
-                r.y += (hh - _forcedSize.y)/2;
+            if (_sizeRestrict.forced.y < hh) {
+                r.height = _sizeRestrict.forced.y;
+                r.y += (hh - _sizeRestrict.forced.y)/2;
             }
         }
         setWorkingArea(r);
@@ -790,6 +790,15 @@ public class EditCanvas extends DisplayCanvas
         var r :Rectangle = new Rectangle(Math.min(p.x, _cropPoint.x), Math.min(p.y, _cropPoint.y),
             Math.abs(p.x - _cropPoint.x), Math.abs(p.y - _cropPoint.y));
 
+        if (_sizeRestrict != null) {
+            if (!isNaN(_sizeRestrict.maxWidth)) {
+                r.width = Math.min(_sizeRestrict.maxWidth, r.width);
+            }
+            if (!isNaN(_sizeRestrict.maxHeight)) {
+                r.height = Math.min(_sizeRestrict.maxHeight, r.height);
+            }
+        }
+
         _crop.graphics.clear();
 
         if (r.width == 0 || r.height == 0) {
@@ -903,7 +912,7 @@ public class EditCanvas extends DisplayCanvas
     }
 
     /** If non-null, defines the maximum boundaries of our resulting image. */
-    protected var _forcedSize :Point;
+    protected var _sizeRestrict :SizeRestriction;
 
     /** Layers that contain things. */
     protected var _captureLayer :Sprite;
@@ -989,25 +998,22 @@ class DropperCursor extends Shape
     }
 }
 
-/* abstract */ class PaintLayerAction
+/* abstract */ interface PaintLayerAction
 {
     /**
      * Do the specified action, return an event if it should then be dispatched.
      */
-    public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
-    {
-        return null;
-    }
+    function doAction (paintLayer :Sprite, undo :Boolean = false) :Event;
 }
 
-class MoveAction extends PaintLayerAction
+class MoveAction implements PaintLayerAction
 {
     public function MoveAction (delta :Point)
     {
         _p = delta;
     }
 
-    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
     {
         var factor :int = undo ? -1 : 1;
         paintLayer.x += _p.x * factor;
@@ -1018,14 +1024,14 @@ class MoveAction extends PaintLayerAction
     protected var _p :Point;
 }
 
-class RotateAction extends PaintLayerAction
+class RotateAction implements PaintLayerAction
 {
     public function RotateAction (newRotation :Number)
     {
         _r = newRotation;
     }
 
-    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
     {
         // ignore the undo/redo and just assume it'll all be right
         var newRot :Number = _r;
@@ -1037,14 +1043,14 @@ class RotateAction extends PaintLayerAction
     protected var _r :Number;
 }
 
-class ScaleAction extends PaintLayerAction
+class ScaleAction implements PaintLayerAction
 {
     public function ScaleAction (newScale :Number)
     {
         _s = newScale;
     }
 
-    override public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
+    public function doAction (paintLayer :Sprite, undo :Boolean = false) :Event
     {
         // ignore the undo/redo and just assume it'll all be right
         var newScale :Number = _s;

@@ -41,6 +41,7 @@ import com.whirled.remix.data.EditableDataPack;
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
+import com.threerings.msoy.applets.image.SizeRestriction;
 
 import com.threerings.msoy.applets.upload.Uploader;
 
@@ -55,6 +56,8 @@ public class PopupFilePreview extends TitleWindow
         _serverURL = serverURL;
         var entry :Object = ctx.pack.getFileEntry(name);
         _type = entry.type;
+        _sizeRestriction = new SizeRestriction(Number(entry.width), Number(entry.height),
+            Number(entry.maxWidth), Number(entry.maxHeight));
 
         this.title = name;
 
@@ -160,7 +163,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseNewImage () :void
     {
-        var newImage :NewImageDialog = new NewImageDialog(getForcedSize());
+        var newImage :NewImageDialog = new NewImageDialog(_sizeRestriction);
         newImage.addEventListener(Event.COMPLETE, handleImageCreated);
     }
 
@@ -187,8 +190,8 @@ public class PopupFilePreview extends TitleWindow
         var fname :String = value[0] as String;
         var image :ByteArray = value[1] as ByteArray;
 
-        var p :Point = getForcedSize();
-        if (p == null) {
+        if (_sizeRestriction.forced != null || !isNaN(_sizeRestriction.maxWidth) ||
+                !isNaN(_sizeRestriction.maxHeight)) {
             setImage(fname, image);
 
         } else {
@@ -212,9 +215,7 @@ public class PopupFilePreview extends TitleWindow
     protected function handleSnapshotTaken (bitmapData :BitmapData) :void
     {
         const fname :String = "cameragrab.png";
-        var p :Point = getForcedSize();
-        // if we have no forced size or we meet the forced size, we're good
-        if (p == null || ((p.x == bitmapData.width) && (p.y == bitmapData.height))) {
+        if (_sizeRestriction.isValid(bitmapData.width, bitmapData.height)) {
             setImage(fname, PNGEncoder.encode(bitmapData));
         } else {
             doEdit(bitmapData, fname);
@@ -278,7 +279,7 @@ public class PopupFilePreview extends TitleWindow
 
         _newFilename = newFilename;
         var source :Object = (image != null) ? image : _bytes;
-        var editor :ImageEditor = new ImageEditor(_ctx, source, getForcedSize());
+        var editor :ImageEditor = new ImageEditor(_ctx, source, _sizeRestriction);
         editor.addEventListener(ImageEditor.IMAGE_UPDATED, handleEditorClosed);
     }
 
@@ -295,17 +296,6 @@ public class PopupFilePreview extends TitleWindow
             _filename = _ctx.createFilename(file, ba, array[1] as String);
             setImage(_filename, ba);
         }
-    }
-
-    /**
-     * Get the forced size of this entry, or null if none.
-     */
-    protected function getForcedSize () :Point
-    {
-        var entry :Object = _ctx.pack.getFileEntry(_name);
-        var ww :Number = Number(entry.width);
-        var hh :Number = Number(entry.height);
-        return (isNaN(ww) || isNaN(hh)) ? null : new Point(ww, hh);
     }
 
     protected function setPopped (vis :Boolean) :void
@@ -325,6 +315,8 @@ public class PopupFilePreview extends TitleWindow
     protected var _ctx :RemixContext;
 
     protected var _type :String;
+
+    protected var _sizeRestriction :SizeRestriction;
 
     protected var _serverURL :String;
 

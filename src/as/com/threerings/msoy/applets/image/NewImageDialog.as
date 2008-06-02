@@ -22,10 +22,15 @@ import mx.containers.Grid;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
+import mx.events.ValidationResultEvent;
+
 import mx.core.Application;
 import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
+
+import mx.validators.NumberValidator;
+import mx.validators.ValidationResult;
 
 import com.threerings.util.ValueEvent;
 
@@ -35,7 +40,7 @@ import com.threerings.flex.PopUpUtil;
 
 public class NewImageDialog extends TitleWindow
 {
-    public function NewImageDialog (forcedSize :Point = null)
+    public function NewImageDialog (sizeRestriction :SizeRestriction)
     {
         title = "Create new image";
 
@@ -52,14 +57,38 @@ public class NewImageDialog extends TitleWindow
         _width.maxWidth = 100;
         _height.maxWidth = 100;
 
-        if (forcedSize != null) {
-            _width.text = String(forcedSize.x);
-            _height.text = String(forcedSize.y);
+        if (sizeRestriction.forced != null) {
+            _width.text = String(sizeRestriction.forced.x);
+            _height.text = String(sizeRestriction.forced.y);
             _width.enabled = false;
             _height.enabled = false;
+
         } else {
-            _width.text = "200";
-            _height.text = "200";
+            var widthVal :NumberValidator = new NumberValidator();
+            widthVal.minValue = 1;
+            widthVal.maxValue = sizeRestriction.maxWidth;
+            widthVal.source = _width;
+            widthVal.property = "text";
+            widthVal.addEventListener(ValidationResultEvent.VALID, checkValid);
+            widthVal.addEventListener(ValidationResultEvent.INVALID, checkValid);
+            widthVal.triggerEvent = Event.CHANGE;
+            widthVal.trigger = _width;
+            _widthValidator = widthVal;
+
+            var heightVal :NumberValidator = new NumberValidator();
+            heightVal.minValue = 1;
+            heightVal.maxValue = sizeRestriction.maxHeight;
+            heightVal.source = _height;
+            heightVal.property = "text";
+            heightVal.addEventListener(ValidationResultEvent.VALID, checkValid);
+            heightVal.addEventListener(ValidationResultEvent.INVALID, checkValid);
+            heightVal.triggerEvent = Event.CHANGE;
+            heightVal.trigger = _height;
+            _heightValidator = heightVal;
+
+            _width.text = String(isNaN(sizeRestriction.maxWidth) ? 200 : sizeRestriction.maxWidth);
+            _height.text =
+                String(isNaN(sizeRestriction.maxHeight) ? 200 : sizeRestriction.maxHeight);
         }
 
         _fillColor = new ColorPicker();
@@ -86,11 +115,18 @@ public class NewImageDialog extends TitleWindow
 
         var bar :ButtonBar = new ButtonBar();
         bar.addChild(new CommandButton("Cancel", close));
-        bar.addChild(new CommandButton("OK", close, true));
+        bar.addChild(_okBtn = new CommandButton("OK", close, true));
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpUtil.center(this);
+    }
+
+    protected function checkValid (... ignored) :void
+    {
+        _okBtn.enabled =
+            (_widthValidator.validate(null, true).type == ValidationResultEvent.VALID) &&
+            (_heightValidator.validate(null, true).type == ValidationResultEvent.VALID);
     }
 
     protected function close (create :Boolean = false) :void
@@ -112,7 +148,12 @@ public class NewImageDialog extends TitleWindow
     protected var _width :TextInput;
     protected var _height :TextInput;
 
+    protected var _widthValidator :NumberValidator;
+    protected var _heightValidator :NumberValidator;
+
     protected var _fillColor :ColorPicker;
+
+    protected var _okBtn :CommandButton;
 
     protected var _fillGroup :RadioButtonGroup = new RadioButtonGroup();
 }
