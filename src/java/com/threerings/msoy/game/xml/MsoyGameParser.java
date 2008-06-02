@@ -51,6 +51,7 @@ public class MsoyGameParser extends WhirledGameParser
         gameDef.setMediaPath(game.gameMedia.getMediaPath());
         if (game.serverMedia != null) {
             gameDef.setServerMediaPath(game.serverMedia.getMediaPath());
+            gameDef.setBureauId(Integer.toString(game.gameId));
         }
         return gameDef;
     }

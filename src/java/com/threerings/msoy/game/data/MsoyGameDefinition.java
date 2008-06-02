@@ -18,6 +18,9 @@ public class MsoyGameDefinition extends GameDefinition
      *  agent on the server. */
     public String serverMedia;
 
+    /** Indicates the id of the bureau that this game's server code will run in, if any. */
+    public String bureauId;
+
     /**
      * Configures the path to this game's media.
      */
@@ -48,4 +51,17 @@ public class MsoyGameDefinition extends GameDefinition
         return serverMedia;
     }
 
+    /** 
+     * Configures the bureau id for this game's server code. 
+     */
+    public void setBureauId (String id)
+    {
+        bureauId = id;
+    }
+
+    @Override // from GameDefinition
+    public String getBureauId (int gameId)
+    {
+        return bureauId;
+    }
 }

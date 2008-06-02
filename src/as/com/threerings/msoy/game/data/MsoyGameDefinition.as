@@ -21,6 +21,9 @@ public class MsoyGameDefinition extends GameDefinition
      *  agent on the server. */
     public var serverMedia :String;
 
+    /** The id of the bureau that this game's server code will run in, if any. */
+    public var bureauId :String;
+
     public function MsoyGameDefinition ()
     {
     }
@@ -60,6 +63,7 @@ public class MsoyGameDefinition extends GameDefinition
         super.readObject(ins);
         lwjgl = ins.readBoolean();
         serverMedia = (ins.readField(String) as String);
+        bureauId = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -68,6 +72,7 @@ public class MsoyGameDefinition extends GameDefinition
         super.writeObject(out);
         out.writeBoolean(lwjgl);
         out.writeField(serverMedia);
+        out.writeField(bureauId);
     }
 }
 }
