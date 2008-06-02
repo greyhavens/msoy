@@ -63,12 +63,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>followers</code> field. */
     public static final String FOLLOWERS = "followers";
 
-    /** The field name of the <code>recentScenes</code> field. */
-    public static final String RECENT_SCENES = "recentScenes";
-
-    /** The field name of the <code>ownedScenes</code> field. */
-    public static final String OWNED_SCENES = "ownedScenes";
-
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
@@ -148,11 +142,11 @@ public class MemberObject extends MsoyBodyObject
     /** The names of members following this member. */
     public DSet<MemberName> followers = new DSet<MemberName>();
 
-    /** The recent scenes we've been through. */
-    public DSet<SceneBookmarkEntry> recentScenes = new DSet<SceneBookmarkEntry>();
-
-    /** The scenes we own. */
-    public DSet<SceneBookmarkEntry> ownedScenes = new DSet<SceneBookmarkEntry>();
+//    /** The recent scenes we've been through. */
+//    public DSet<SceneBookmarkEntry> recentScenes = new DSet<SceneBookmarkEntry>();
+//
+//    /** The scenes we own. */
+//    public DSet<SceneBookmarkEntry> ownedScenes = new DSet<SceneBookmarkEntry>();
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
@@ -273,39 +267,39 @@ public class MemberObject extends MsoyBodyObject
         return GroupMembership.RANK_NON_MEMBER;
     }
 
-    /**
-     * Add the specified scene to the recent scene list for this user.
-     */
-    public void addToRecentScenes (int sceneId, String name)
-    {
-        SceneBookmarkEntry newEntry = new SceneBookmarkEntry(
-            sceneId, name, System.currentTimeMillis());
-
-        SceneBookmarkEntry oldest = null;
-        for (SceneBookmarkEntry sbe : recentScenes) {
-            if (sbe.sceneId == sceneId) {
-                updateRecentScenes(newEntry);
-                return;
-            }
-            if (oldest == null || oldest.lastVisit > sbe.lastVisit) {
-                oldest = sbe;
-            }
-        }
-
-        int size = recentScenes.size();
-        if (size < MAX_RECENT_SCENES) {
-            addToRecentScenes(newEntry);
-
-        } else {
-            startTransaction();
-            try {
-                removeFromRecentScenes(oldest.getKey());
-                addToRecentScenes(newEntry);
-            } finally {
-                commitTransaction();
-            }
-        }
-    }
+//    /**
+//     * Add the specified scene to the recent scene list for this user.
+//     */
+//    public void addToRecentScenes (int sceneId, String name)
+//    {
+//        SceneBookmarkEntry newEntry = new SceneBookmarkEntry(
+//            sceneId, name, System.currentTimeMillis());
+//
+//        SceneBookmarkEntry oldest = null;
+//        for (SceneBookmarkEntry sbe : recentScenes) {
+//            if (sbe.sceneId == sceneId) {
+//                updateRecentScenes(newEntry);
+//                return;
+//            }
+//            if (oldest == null || oldest.lastVisit > sbe.lastVisit) {
+//                oldest = sbe;
+//            }
+//        }
+//
+//        int size = recentScenes.size();
+//        if (size < MAX_RECENT_SCENES) {
+//            addToRecentScenes(newEntry);
+//
+//        } else {
+//            startTransaction();
+//            try {
+//                removeFromRecentScenes(oldest.getKey());
+//                addToRecentScenes(newEntry);
+//            } finally {
+//                commitTransaction();
+//            }
+//        }
+//    }
 
     /**
      * Returns true if this member is accepting communications from the specified member, false
@@ -600,102 +594,6 @@ public class MemberObject extends MsoyBodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.MemberName> clone =
             (value == null) ? null : value.typedClone();
         this.followers = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>recentScenes</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToRecentScenes (SceneBookmarkEntry elem)
-    {
-        requestEntryAdd(RECENT_SCENES, recentScenes, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>recentScenes</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromRecentScenes (Comparable key)
-    {
-        requestEntryRemove(RECENT_SCENES, recentScenes, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>recentScenes</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateRecentScenes (SceneBookmarkEntry elem)
-    {
-        requestEntryUpdate(RECENT_SCENES, recentScenes, elem);
-    }
-
-    /**
-     * Requests that the <code>recentScenes</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setRecentScenes (DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> value)
-    {
-        requestAttributeChange(RECENT_SCENES, value, this.recentScenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> clone =
-            (value == null) ? null : value.typedClone();
-        this.recentScenes = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>ownedScenes</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToOwnedScenes (SceneBookmarkEntry elem)
-    {
-        requestEntryAdd(OWNED_SCENES, ownedScenes, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>ownedScenes</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromOwnedScenes (Comparable key)
-    {
-        requestEntryRemove(OWNED_SCENES, ownedScenes, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>ownedScenes</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateOwnedScenes (SceneBookmarkEntry elem)
-    {
-        requestEntryUpdate(OWNED_SCENES, ownedScenes, elem);
-    }
-
-    /**
-     * Requests that the <code>ownedScenes</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setOwnedScenes (DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> value)
-    {
-        requestAttributeChange(OWNED_SCENES, value, this.ownedScenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.SceneBookmarkEntry> clone =
-            (value == null) ? null : value.typedClone();
-        this.ownedScenes = clone;
     }
 
     /**
@@ -1157,6 +1055,6 @@ public class MemberObject extends MsoyBodyObject
     /** Used for tracking the number of notifications processed on the member object. */
     protected transient int _notificationCount = 0;
 
-    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
-    protected static final int MAX_RECENT_SCENES = 10;
+//    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
+//    protected static final int MAX_RECENT_SCENES = 10;
 }

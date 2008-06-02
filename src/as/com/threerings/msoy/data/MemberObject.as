@@ -58,12 +58,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>level</code> field. */
     public static const LEVEL :String = "level";
 
-    /** The field name of the <code>recentScenes</code> field. */
-    public static const RECENT_SCENES :String = "recentScenes";
-
-    /** The field name of the <code>ownedScenes</code> field. */
-    public static const OWNED_SCENES :String = "ownedScenes";
-
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
 
@@ -137,11 +131,11 @@ public class MemberObject extends MsoyBodyObject
     /** The names of members following this member. */
     public var followers :DSet;
 
-    /** The recent scenes we've been through. */
-    public var recentScenes :DSet;
-
-    /** The scenes we own. */
-    public var ownedScenes :DSet;
+//    /** The recent scenes we've been through. */
+//    public var recentScenes :DSet;
+//
+//    /** The scenes we own. */
+//    public var ownedScenes :DSet;
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
@@ -315,8 +309,8 @@ public class MemberObject extends MsoyBodyObject
         availability = ins.readInt();
         following = (ins.readObject() as MemberName);
         followers = (ins.readObject() as DSet);
-        recentScenes = (ins.readObject() as DSet);
-        ownedScenes = (ins.readObject() as DSet);
+//        recentScenes = (ins.readObject() as DSet);
+//        ownedScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);

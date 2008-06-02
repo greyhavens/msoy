@@ -45,7 +45,6 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 /**
  * Dispatched when the client is minimized or unminimized.

@@ -51,7 +51,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.RoomName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -443,7 +443,7 @@ public class RoomManager extends SpotSceneManager
                     ownerType, ownerId, roomName, portalAction, false);
             }
             public void handleSuccess () {
-                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
+//                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
                 listener.requestProcessed(_newRoomId);
             }
             public void handleFailure (Exception pe) {
@@ -806,11 +806,11 @@ public class RoomManager extends SpotSceneManager
     @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (BodyObject body, Portal from, Portal entry)
     {
-        if (body instanceof MemberObject) {
-            // automatically add the room to their recent list
-            MemberObject memberObj = (MemberObject) body;
-            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
-        }
+//        if (body instanceof MemberObject) {
+//            // automatically add the room to their recent list
+//            MemberObject memberObj = (MemberObject) body;
+//            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
+//        }
 
         // if the from portal has a destination location, use that
         if (from instanceof MsoyPortal && ((MsoyPortal)from).dest != null) {

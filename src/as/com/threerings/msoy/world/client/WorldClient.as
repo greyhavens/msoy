@@ -389,7 +389,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -443,10 +443,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             _client.dispatchEventToGWT(
                 FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
-        } else if (event.getName() == MemberObject.OWNED_SCENES) {
-            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
-            _client.dispatchEventToGWT(
-                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
+//        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+//            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
+//            _client.dispatchEventToGWT(
+//                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
         }
     }
 
@@ -458,10 +458,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         if (event.getName() == MemberObject.FRIENDS) {
             var memberId :int = int(event.getKey());
             _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
-        } else if (event.getName() == MemberObject.OWNED_SCENES) {
-            var sceneId :int = int(event.getKey());
-            _client.dispatchEventToGWT(
-                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
+//        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+//            var sceneId :int = int(event.getKey());
+//            _client.dispatchEventToGWT(
+//                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
         }
     }
 

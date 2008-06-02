@@ -28,7 +28,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -116,8 +116,8 @@ public class MsoyClientResolver extends CrowdClientResolver
 //         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
-        userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
-            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator());
+//        userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
+//            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
         userObj.friends = new DSet<FriendEntry>(
