@@ -253,14 +253,18 @@ VScrollBar, HScrollBar {
 
 Menu {
   openDuration: 0;
-  checkIcon: Embed(source="../../rsrc/media/skins/menu/selected_icon.png");
-  backgroundImage: Embed(source="../../rsrc/media/skins/menu/background.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/menu/background.png",
+    scaleGridTop="3", scaleGridBottom="26", scaleGridLeft="3", scaleGridRight="26");
   backgroundSize: "100%";
-  borderColor: #ffffff;
+  backgroundColor: black;
   rollOverColor: #7DBFF8;
   dropShadowEnabled: true;
   backgroundAlpha: 0.6;
   borderStyle: none;
+  color: #C2C2C2;
+  disabledColor: #666666;
+  separatorSkin: Embed(source="../../rsrc/media/skins/menu/separator_skin.png");
+  branchIcon: Embed(source="../../rsrc/media/skins/menu/whitearrow.png");
 }
 
 MenuBar {

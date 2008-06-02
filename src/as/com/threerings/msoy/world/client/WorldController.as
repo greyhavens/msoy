@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.geom.Rectangle;
+
 import flash.events.TimerEvent;
 import flash.external.ExternalInterface;
 import flash.net.URLRequest;
@@ -290,7 +292,10 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        CommandMenu.createMenu(menuData.reverse(), _topPanel).popUpAtMouse();
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse(), _topPanel);
+        menu.variableRowHeight = true;
+        menu.popUpAt(r.left, r.top, true);
     }
 
 //    /**

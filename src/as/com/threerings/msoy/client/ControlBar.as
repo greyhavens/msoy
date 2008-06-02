@@ -186,7 +186,7 @@ public class ControlBar extends HBox
 
         _chatBtn = new CommandButton();
         _chatBtn.toolTip = Msgs.GENERAL.get("i.channel"); // i.chatPrefs
-        _chatBtn.setCommand(MsoyController.POP_CHANNEL_MENU); // MsoyController.CHAT_PREFS
+        _chatBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _chatBtn); // MsoyController.CHAT_PREFS
         _chatBtn.styleName = "controlBarButtonChat";
 
         _volBtn = new CommandButton();

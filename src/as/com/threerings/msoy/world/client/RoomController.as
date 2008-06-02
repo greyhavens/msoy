@@ -297,7 +297,7 @@ public class RoomController extends SceneController
             }
             for each (var state :String in states) {
                 worldStates.push({ label: state, callback: doAvatarState, arg :state,
-                    type: "check", toggled: (curState == state) });
+                    enabled: (curState != state) });
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                 children: worldStates, enabled: canControl });
