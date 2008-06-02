@@ -25,26 +25,60 @@ import com.threerings.presents.dobj.DSet_Entry;
 public /*abstract*/ class Item
     implements Comparable, Hashable, Streamable, DSet_Entry
 {
-    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
-    public static const OCCUPANT :int = -1; // only used at runtime
-    public static const NOT_A_TYPE :int = 0;
-    public static const PHOTO :int = 1; //registerItemType(Photo, 1);
-    public static const DOCUMENT :int = 2; //registerItemType(Document, 2);
-    public static const FURNITURE :int = 3; //registerItemType(Furniture, 3);
-    public static const GAME :int = 4; //registerItemType(Game, 4);
-    public static const AVATAR :int = 5; //registerItemType(Avatar, 5);
-    public static const PET :int = 6; //registerItemType(Pet, 6);
-    public static const AUDIO :int = 7; //registerItemType(Audio, 7);
-    public static const VIDEO :int = 8; // registerItemType(Video, 8);
-    public static const DECOR :int = 9; //registerItemType(Decor, 9);
-    public static const TOY :int = 10; //registerItemType(Toy, 10);
-    public static const LEVEL_PACK :int = 11; //registerItemType(LevelPack, 11);
-    public static const ITEM_PACK :int = 12; //registerItemType(ItemPack, 12);
-    public static const TROPHY_SOURCE :int = 13; //registerItemType(TrophySource, 13);
-    public static const PRIZE :int = 14; //registerItemType(Prize, 14);
-    public static const PROP :int = 15; //registerItemType(Prop, 15);
-    // Note: registery of Item types is done at the bottom of this class
-    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    // New type constants must be added to ItemTypes.as, then reflected here. This is in order to 
+    // decouple simple static queries from factory functionality which requires compilation of the
+    // entire Item hierarchy.
+
+    /** The type constant for an Occupant. */
+    public static const OCCUPANT :int = ItemTypes.OCCUPANT; // only used at runtime
+
+    /** The type constant for an unassigned or invalid item. */
+    public static const NOT_A_TYPE :int = ItemTypes.NOT_A_TYPE;
+
+    /** The type constant for a {@link Photo} item. */
+    public static const PHOTO :int = ItemTypes.PHOTO;
+
+    /** The type constant for a {@link Document} item. */
+    public static const DOCUMENT :int = ItemTypes.DOCUMENT;
+
+    /** The type constant for a {@link Furniture} item. */
+    public static const FURNITURE :int = ItemTypes.FURNITURE;
+
+    /** The type constant for a {@link Game} item. */
+    public static const GAME :int = ItemTypes.GAME;
+
+    /** The type constant for a {@link Avatar} item. */
+    public static const AVATAR :int = ItemTypes.AVATAR;
+
+    /** The type constant for a {@link Pet} item. */
+    public static const PET :int = ItemTypes.PET;
+
+    /** The type constant for a {@link Audio} item. */
+    public static const AUDIO :int = ItemTypes.AUDIO;
+
+    /** The type constant for a {@link Video} item. */
+    public static const VIDEO :int = ItemTypes.VIDEO;
+
+    /** The type constant for a {@link Decor} item. */
+    public static const DECOR :int = ItemTypes.DECOR;
+
+    /** The type constant for a {@link Toy} item. */
+    public static const TOY :int = ItemTypes.TOY;
+
+    /** The type constant for a {@link LevelPack} item. */
+    public static const LEVEL_PACK :int = ItemTypes.LEVEL_PACK;
+
+    /** The type constant for a {@link ItemPack} item. */
+    public static const ITEM_PACK :int = ItemTypes.ITEM_PACK;
+
+    /** The type constant for a {@link TrophySource} item. */
+    public static const TROPHY_SOURCE :int = ItemTypes.TROPHY_SOURCE;
+
+    /** The type constant for a {@link Prize} item. */
+    public static const PRIZE :int = ItemTypes.PRIZE;
+
+    /** The type constant for a {@link Prop} item. */
+    public static const PROP :int = ItemTypes.PROP;
 
     /** A 'used' constant value to indicate that the item is unused. */
     public static const UNUSED :int = 0;
@@ -170,41 +204,7 @@ public /*abstract*/ class Item
      */
     public static function getTypeName (type :int) :String
     {
-        // We can't use a switch statement because our final variables are not actually constants
-        // (they are assigned values at class initialization time).
-        if (type == PHOTO) {
-            return "photo"; 
-        } else if (type == AVATAR) {
-            return "avatar";
-        } else if (type == GAME) {
-            return "game";
-        } else if (type == FURNITURE) {
-            return "furniture";
-        } else if (type == DOCUMENT) { 
-            return "document";
-        } else if (type == PET) { 
-            return "pet";
-        } else if (type == AUDIO) { 
-            return "audio";
-        } else if (type == VIDEO) {
-            return "video";
-        } else if (type == DECOR) {
-            return "decor";
-        } else if (type == TOY) {
-            return "toy";
-        } else if (type == LEVEL_PACK) {
-            return "level_pack";
-        } else if (type == ITEM_PACK) {
-            return "item_pack";
-        } else if (type == TROPHY_SOURCE) {
-            return "trophy_source";
-        } else if (type == PRIZE) {
-            return "prize";
-        } else if (type == PROP) {
-            return "prop";
-        } else {
-            return "unknown:" + type;
-        }
+        return ItemTypes.getTypeName(type);
     }
 
     /**
