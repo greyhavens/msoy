@@ -868,7 +868,7 @@ public class WorldController extends MsoyController
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
                     label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    type: "check", toggled: (ii == us.availability) });
+                    enabled: (ii != us.availability) });
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
