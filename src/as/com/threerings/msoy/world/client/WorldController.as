@@ -937,17 +937,27 @@ public class WorldController extends MsoyController
     /**
      * Handles the POP_ROOM_HISTORY_LIST command.
      */
-    public function handlePopRoomHistoryList () :void
+    public function handlePopRoomHistoryList (trigger :Button) :void
     {
-        // if the list is open, close it
-        if (_roomHistoryPanel != null) {
-            _roomHistoryPanel.close();
-            _roomHistoryPanel = null;
-
-        // if it's closed, open a new one
-        } else {
-            (_roomHistoryPanel = new RoomHistoryPanel(_wctx, _backstack, _backstackIdx)).open();
+        var menuData :Array = [];
+        // show up to 7 items - potentially 3 before current room and 3 after
+        var top :int = Math.min(_backstackIdx + 3, _backstack.length - 1);
+        var bottom :int = Math.max(top - 6, 0);
+        // if we're currently in a room that's near the bottom of the list, lets go ahead and show
+        // the full 7 items
+        top = Math.min(bottom + 6, _backstack.length - 1);
+        for (var ii :int = top; ii >= bottom; ii--) {
+            menuData.push({ label: _backstack[ii].name, command: VISIT_BACKSTACK_INDEX, arg: ii, 
+                enabled: ii != _backstackIdx });
+            if (ii != bottom) {
+                menuData.push({ type: "separator" });
+            }
         }
+
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
+        menu.variableRowHeight = true;
+        menu.popUpAt(r.left, r.bottom);
     }
 
     /**
@@ -1179,11 +1189,6 @@ public class WorldController extends MsoyController
                 _backstackIdx++;
             }
 
-            // if the room history list is currently showing, close it down.
-            if (_roomHistoryPanel != null) {
-                handlePopRoomHistoryList();
-            }
-
             // if the room history list has less than 2 entries, disable it
             _wctx.getTopPanel().getHeaderBar().setHistoryButtonEnabled(_backstack.length > 1);
 
@@ -1246,9 +1251,6 @@ public class WorldController extends MsoyController
 
     /** Current index into the backstack. */
     protected var _backstackIdx :int = -1;
-
-    /** The pop up room history list. */
-    protected var _roomHistoryPanel :RoomHistoryPanel;
 
     private static const log :Log = Log.getLog(WorldController);
 }

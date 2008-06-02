@@ -208,7 +208,7 @@ public class HeaderBar extends HBox
 
         _backBtn = new CommandButton();
         _backBtn.toolTip = Msgs.GENERAL.get("i.recent_rooms");
-        _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST);
+        _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST, _backBtn);
         _backBtn.styleName = "headerBarButtonBack";
         // default to disabled... it'll get enabled when ready.
         _backBtn.enabled = false;
