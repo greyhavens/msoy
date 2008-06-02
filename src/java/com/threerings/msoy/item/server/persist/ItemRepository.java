@@ -90,6 +90,14 @@ public abstract class ItemRepository<
         public int sum;
     }
 
+    /**
+     *  Update the number of days in the new & hot dropoff adjustment.
+     */
+    public static void setNewAndHotDropoffDays (int days)
+    {
+        _newAndHotDropoffSeconds = Math.max(1, days * 24 * 60 * 60); // don't let us div by 0.
+    }
+
     /** The factor by which we split item cost into gold and flow. */
     public final static int FLOW_FOR_GOLD = 600;
 
@@ -1074,7 +1082,7 @@ public abstract class ItemRepository<
             new Arithmetic.Div(
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
-                SEVEN_DAYS_IN_SECONDS)));
+                _newAndHotDropoffSeconds)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1160,9 +1168,9 @@ public abstract class ItemRepository<
     /** Reference to the event logger. */
     protected MsoyEventLogger _eventLog;
 
+    /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */
+    protected static int _newAndHotDropoffSeconds = 7 * 60 * 60 * 24;
+
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
-
-    /** The number of seconds in seven (average) days. */
-    protected static final long SEVEN_DAYS_IN_SECONDS = 7 * 60L * 60 * 24;
 }

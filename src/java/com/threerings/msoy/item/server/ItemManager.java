@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -28,6 +29,8 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -43,6 +46,9 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.admin.data.ServerConfigObject;
 
 import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.person.data.GameAwardPayload;
@@ -110,6 +116,22 @@ public class ItemManager
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
+
+        ItemRepository.setNewAndHotDropoffDays(RuntimeConfig.server.newAndHotDropoffDays);
+
+        RuntimeConfig.server.addListener(new AttributeChangeListener() {
+            public void attributeChanged (AttributeChangedEvent event) {
+                if (ServerConfigObject.NEW_AND_HOT_DROPOFF_DAYS.equals(event.getName())) {
+                    final int days = event.getIntValue();
+                    MsoyServer.invoker.postUnit(new Invoker.Unit("updateNewAndHotDropoffDays") {
+                        public boolean invoke () {
+                            ItemRepository.setNewAndHotDropoffDays(days);
+                            return false;
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
