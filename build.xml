@@ -491,6 +491,11 @@
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
+      <!-- This sets the SWF size, not the app size, and we set it to
+           this size for the avatar viewer's native size. -->
+      <arg value="-default-size"/>
+      <arg value="600"/>
+      <arg value="488"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${astype}-client.swf"/>
