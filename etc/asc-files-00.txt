@@ -1,0 +1,2 @@
+com/threerings/msoy/data/all/MemberName.as
+com/threerings/msoy/item/data/all/MediaDesc.as

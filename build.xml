@@ -530,6 +530,8 @@
         <include name="dist/lib/vilya-abc*.abc"/>
         <include name="dist/lib/whirled-abc*.abc"/>
       </import>
+      <in dir="src/as" includesfile="etc/asc-files-00.txt"/>
+      <in dir="src/as" includesfile="etc/asc-files-01.txt"/>
       <filespec dir="src/thane" includes="MsoyThaneClient.as"/>
     </asc>
     <move overwrite="true" file="src/thane/MsoyThaneClient.abc" todir="dist"/>
