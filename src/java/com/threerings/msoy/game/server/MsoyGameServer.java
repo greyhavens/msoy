@@ -24,6 +24,7 @@ import com.threerings.presents.server.PresentsClient;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.DatabaseConfigRegistry;
 
+import com.threerings.bureau.data.BureauCredentials;
 import com.threerings.bureau.server.BureauRegistry;
 
 import com.threerings.crowd.data.BodyObject;
@@ -151,9 +152,18 @@ public class MsoyGameServer extends MsoyBaseServer
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
             public PresentsClient createClient (AuthRequest areq) {
+                // Bureaus don't have or need access to all the stuff in a full msoy game client, 
+                // so just give them a vanilla PresentsClient client for now.
+                // TODO: will bureaus need a more tailored client & resolver?
+                if (areq.getCredentials() instanceof BureauCredentials) {
+                    return new PresentsClient();
+                }
                 return new MsoyGameClient();
             }
             public ClientResolver createClientResolver (Name username) {
+                if (BureauCredentials.isBureau(username)) {
+                    return new ClientResolver();
+                }
                 return new MsoyGameClientResolver();
             }
         });
