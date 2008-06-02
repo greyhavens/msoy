@@ -31,7 +31,6 @@ public class GameChatContainer extends LayeredContainer
         _chatDtr = chatDtr;
 
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
-        height = 500; // games are given 500 vertical pixels, so so are we.
         styleName = "gameChatContainer";
 
         _chatDtr = chatDtr;
@@ -114,6 +113,16 @@ public class GameChatContainer extends LayeredContainer
         }
     }
 
+    override public function setActualSize (uw :Number, uh :Number) :void
+    {
+        if (width != uh || height != uh) {
+            var chatTop :Number = _tabBar.y + _tabBar.height;
+            _overlay.setTargetBounds(new Rectangle(0, chatTop, uw, uh - chatTop));
+        }
+
+        super.setActualSize(uw, uh);
+    }
+
     protected function handleAdd (event :Event) :void
     {
         _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_RIGHT, false);
@@ -121,8 +130,7 @@ public class GameChatContainer extends LayeredContainer
         // this overlay needs to listen on both the msoy and game chat directors
         _chatDtr.addChatDisplay(_overlay);
         _ctx.getMsoyChatDirector().addChatDisplay(_overlay);
-        var chatTop :Number = _tabBar.y + _tabBar.height;
-        _overlay.setTargetBounds(new Rectangle(0, chatTop, width, height - chatTop));
+        // the bounds will get set via setActualSize();
     }
 
     private static const log :Log = Log.getLog(GameChatContainer);
