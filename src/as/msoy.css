@@ -259,6 +259,8 @@ Menu {
   borderColor: #ffffff;
   rollOverColor: #7DBFF8;
   dropShadowEnabled: true;
+  backgroundAlpha: 0.6;
+  borderStyle: none;
 }
 
 MenuBar {
