@@ -251,7 +251,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     If the game was not configured to auto-start, all clients must call this function to let the
+     If the game was not configured to auto-start, which is determined by the 2nd parameter
+     to the GameControl constructor, then all player clients must call this function to let the
      server know that they are ready, at which point the game will be started.</td>
 </tr>
 <tr>

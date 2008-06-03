@@ -43,6 +43,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </table>
 <p></p>
  Dispatched to let a game know when the player has been awarded coins.
+ This event is cancellable. If you would like to print your own coin award message and
+ suppress the default one, call preventDefault().
  <p></p>
 <br>
 <hr>

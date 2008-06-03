@@ -259,7 +259,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#playerReady()">playerReady</a>():void</div>
 <div class="summaryTableDescription">
-     If the game was not configured to auto-start, all clients must call this function to let the
+     If the game was not configured to auto-start, which is determined by the 2nd parameter
+     to the GameControl constructor, then all player clients must call this function to let the
      server know that they are ready, at which point the game will be started.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
@@ -829,7 +830,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function playerReady():void</code><p>
-     If the game was not configured to auto-start, all clients must call this function to let the
+     If the game was not configured to auto-start, which is determined by the 2nd parameter
+     to the GameControl constructor, then all player clients must call this function to let the
      server know that they are ready, at which point the game will be started. Once a game is
      over, all clients can call this function again to start a new game.
      </p></div>
