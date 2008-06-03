@@ -862,8 +862,8 @@ public class WorldController extends MsoyController
         var memId :int = member.getMemberId();
         var us :MemberObject = _wctx.getMemberObject();
 
-        if (memId == us.getMemberId()) {
-            // create a menu for controlling our availability
+        // if we're not a guest, populate availability menu.  
+        if (memId == us.getMemberId() && !MemberName.isGuest(memId)) {
             var availActions :Array = [];
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
@@ -872,7 +872,7 @@ public class WorldController extends MsoyController
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
-        } else {
+        } else if (memId != us.getMemberId()) {
             menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
                              command: OPEN_CHANNEL, arg: member });
             if (!MemberName.isGuest(memId)) {
