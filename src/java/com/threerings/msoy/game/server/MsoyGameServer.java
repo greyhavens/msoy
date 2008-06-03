@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
@@ -74,7 +75,7 @@ public class MsoyGameServer extends MsoyBaseServer
     @EventThread
     public static void playerLoggedOn (PlayerObject plobj)
     {
-        _online.put(plobj.memberName, plobj);
+        _online.put(plobj.memberName.getMemberId(), plobj);
     }
 
     /**
@@ -83,7 +84,7 @@ public class MsoyGameServer extends MsoyBaseServer
     @EventThread
     public static void playerLoggedOff (PlayerObject plobj)
     {
-        _online.remove(plobj.memberName);
+        _online.remove(plobj.memberName.getMemberId());
     }
 
     /**
@@ -128,8 +129,8 @@ public class MsoyGameServer extends MsoyBaseServer
     @EventThread
     public static PlayerObject lookupPlayer (int playerId)
     {
-        // MemberName.equals and hashCode only depend on the id
-        return lookupPlayer(new MemberName(null, playerId));
+        requireDObjThread();
+        return _online.get(playerId);
     }
 
     /**
@@ -139,8 +140,7 @@ public class MsoyGameServer extends MsoyBaseServer
     @EventThread
     public static PlayerObject lookupPlayer (MemberName name)
     {
-        requireDObjThread();
-        return _online.get(name);
+        return lookupPlayer(name.getMemberId());
     }
 
     @Override
@@ -226,7 +226,7 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         return new BodyLocator() {
             public BodyObject get (Name visibleName) {
-                return _online.get(visibleName);
+                return _online.get(((MemberName) visibleName).getMemberId());
             }
         };
     }
@@ -278,5 +278,5 @@ public class MsoyGameServer extends MsoyBaseServer
     protected int _connectPort;
 
     /** A mapping from member name to member object for all online members. */
-    protected static Map<MemberName,PlayerObject> _online = Maps.newHashMap();
+    protected static HashIntMap<PlayerObject> _online = new HashIntMap<PlayerObject>();
 }

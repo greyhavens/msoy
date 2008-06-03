@@ -16,6 +16,7 @@ import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
@@ -164,10 +165,11 @@ public class MsoyServer extends MsoyBaseServer
      * Returns the member object for the user identified by the given ID if they are online
      * currently, null otherwise. This should only be called from the dobjmgr thread.
      */
+    @EventThread
     public static MemberObject lookupMember (int memberId)
     {
-        // MemberName.equals and hashCode only depend on the id
-        return lookupMember(new MemberName(null, memberId));
+        requireDObjThread();
+        return _online.get(memberId);
     }
 
     /**
@@ -177,8 +179,7 @@ public class MsoyServer extends MsoyBaseServer
     @EventThread
     public static MemberObject lookupMember (MemberName name)
     {
-        requireDObjThread();
-        return _online.get(name);
+        return lookupMember(name.getMemberId());
     }
 
     /**
@@ -199,7 +200,7 @@ public class MsoyServer extends MsoyBaseServer
     @EventThread
     public static void memberLoggedOn (MemberObject memobj)
     {
-        _online.put(memobj.memberName, memobj);
+        _online.put(memobj.memberName.getMemberId(), memobj);
         memberMan.memberLoggedOn(memobj);
         friendMan.memberLoggedOn(memobj);
 
@@ -212,7 +213,7 @@ public class MsoyServer extends MsoyBaseServer
      */
     public static void memberLoggedOff (MemberObject memobj)
     {
-        _online.remove(memobj.memberName);
+        _online.remove(memobj.memberName.getMemberId());
         friendMan.memberLoggedOff(memobj);
 
         // update our members online count in the status object
@@ -337,7 +338,7 @@ public class MsoyServer extends MsoyBaseServer
     {
         return new BodyLocator() {
             public BodyObject get (Name visibleName) {
-                return _online.get(visibleName);
+                return _online.get(((MemberName) visibleName).getMemberId());
             }
         };
     }
@@ -488,7 +489,7 @@ public class MsoyServer extends MsoyBaseServer
     protected static TransitionRepository _transitRepo;
 
     /** A mapping from member name to member object for all online members. */
-    protected static HashMap<MemberName,MemberObject> _online = Maps.newHashMap();
+    protected static HashIntMap<MemberObject> _online = new HashIntMap<MemberObject>();
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
