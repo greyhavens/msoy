@@ -22,7 +22,7 @@ public class PriceLabel extends FlowPanel
             add(MsoyUI.createInlineImage("/images/ui/gold.png"));
             add(new InlineLabel(""+goldCost, false, false, true));
         }
-        if (flowCost > 0) {
+        if (flowCost > 0 || (goldCost == 0)) {
             add(MsoyUI.createInlineImage("/images/ui/coins.png"));
             add(new InlineLabel(""+flowCost, false, false, true));
         }
