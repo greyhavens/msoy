@@ -62,6 +62,7 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.client.ItemService;
@@ -505,18 +506,10 @@ public class RoomObjectController extends RoomController
                             (new LogonPanel(_wdctx)).open();
                         }});
                 } else {
-                    menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
-                        callback: function () :void {
-                            var sceneId :int = _scene.getId();
-                            var observer :ClientAdapter;
-                            var logon :Function = function (...ignored) :void {
-                                _wdctx.getSceneDirector().moveTo(sceneId);
-                                _wdctx.getClient().removeClientObserver(observer);
-                            }
-                            observer = new ClientAdapter(null, logon);
-                            _wdctx.getClient().addClientObserver(observer);
-                            _wdctx.getWorldController().handleLogon(null);
-                        }});
+                    var creds :MsoyCredentials = new MsoyCredentials(null, null);
+                    creds.ident = "";
+                    menuItems.push({ label: Msgs.GENERAL.get("b.logout"), 
+                        command: MsoyController.LOGON, arg: creds });
                 }
             }
 
