@@ -9,6 +9,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
+import com.threerings.util.Integer;
 import com.threerings.util.Name;
 
 /**
@@ -40,8 +41,7 @@ public class RoomName extends Name
     // from Comparable (by way of Name)
     override public function compareTo (other :Object) :int
     {
-        var that :RoomName = (other as RoomName);
-        return this._sceneId - that._sceneId;
+        return Integer.compare(_sceneId, (other as RoomName)._sceneId);
     }
 
     // from Equalable (by way of Hashable by way of Name)

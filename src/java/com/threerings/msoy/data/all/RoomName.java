@@ -50,7 +50,11 @@ public class RoomName extends Name
     // @Override // from Name
     public int compareTo (Name o) 
     {
-        return _sceneId - ((RoomName) o)._sceneId;
+        // TODO:
+        //return Comparators.compare(_sceneId, ((RoomName) o)._sceneId);
+        // but, no, thank you GWT...
+        int otherSceneId = ((RoomName) o)._sceneId;
+        return (_sceneId < otherSceneId ? -1 : (_sceneId == otherSceneId ? 0 : 1));
     }
 
     /** The scene's id. */
