@@ -16,6 +16,8 @@ import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 
+import com.threerings.crowd.client.PlaceController;
+
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameObject;
 
@@ -54,6 +56,17 @@ public class GameDirector extends BasicDirector
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
         c = MsoyGameMarshaller;
+    }
+
+    public function getGameContext () :GameContext
+    {
+        return (_liaison != null) ? _liaison.getGameContext() : null;
+    }
+
+    public function getGameController () :PlaceController
+    {
+        var gctx :GameContext = getGameContext();
+        return (gctx != null) ? gctx.getLocationDirector().getPlaceController() : null;
     }
 
     /**

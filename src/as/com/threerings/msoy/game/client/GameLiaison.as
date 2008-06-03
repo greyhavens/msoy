@@ -75,6 +75,11 @@ public class GameLiaison
         _gctx.getClient().addClientObserver(this);
     }
 
+    public function getGameContext () :GameContext
+    {
+        return _gctx;
+    }
+
     /**
      * Starts this game liaison. If the game host and port are supplied, they will be used
      * immediately, otherwise the liaison will first ask its world server to locate the game in

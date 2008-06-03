@@ -60,7 +60,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -890,6 +890,10 @@ public class WorldController extends MsoyController
 
             // possibly add a menu item for booting this user
             var placeCtrl :Object = _wctx.getLocationDirector().getPlaceController();
+            if (placeCtrl == null) {
+                // check the gamecontext's place
+                placeCtrl = _wctx.getGameDirector().getGameController();
+            }
             if ((placeCtrl is BootablePlaceController) &&
                     BootablePlaceController(placeCtrl).canBoot()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
