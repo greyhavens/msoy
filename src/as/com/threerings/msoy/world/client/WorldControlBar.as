@@ -90,7 +90,9 @@ public class WorldControlBar extends ControlBar
         // if we just moved into a room...
         if (place is RoomObject) {
             // we may want to display our "click here to chat" tip
-            maybeDisplayChatTip();
+            // TODO: this thing is broken again and doesn't go away when it should - or ever, in
+            // some cases.  It can be re-enabled when we get a chance to get it working.
+            //maybeDisplayChatTip();
             // possibly also show the avatar introduction
             maybeDisplayAvatarIntro();
         }
