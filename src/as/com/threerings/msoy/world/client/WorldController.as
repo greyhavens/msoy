@@ -1023,6 +1023,7 @@ public class WorldController extends MsoyController
         } else if (_postLogonScene != 0) {
             // we gotta go somewhere
             _wctx.getSceneDirector().moveTo(_postLogonScene);
+            _postLogonScene = 0;
         }
 
         _wctx.getGameDirector().checkMemberAVRGame();
