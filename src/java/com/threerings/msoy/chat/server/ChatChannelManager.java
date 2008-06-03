@@ -54,6 +54,7 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -137,19 +138,20 @@ public class ChatChannelManager
 
         case ChatChannel.ROOM_CHANNEL:
             final int sceneId = ((RoomName) channel.ident).getSceneId();
-            SceneManager scmgr = MsoyServer.screg.getSceneManager(sceneId);
-            if (scmgr != null) {
-                // in most cases, the channel and the scene will be hosted on the same server, so
-                // we can just pull the scene out of the scene manager and ask it about permissions
-                if (!((MsoyScene) scmgr.getScene()).canEnter(member)) {
-                    log.warning("Unable to join channel due to access restrictions " +
-                                "[member=" + member + ", channel=" + channel + "]");
-                    listener.requestFailed(ChatCodes.E_ACCESS_DENIED);
-                    return;
+            // in most cases, the channel and the scene will be hosted on the same server, so
+            // we can just pull the scene out of the scene manager and ask it about permissions
+            RoomManager roomMgr = (RoomManager) MsoyServer.screg.getSceneManager(sceneId);
+            if (roomMgr != null) {
+                String error = roomMgr.ratifyBodyEntry(member);
+                if (error != null) {
+                    throw new InvocationException(error);
                 }
+                // otherwise, they're clear!
 
             } else {
                 // scene isn't resolved here, need to load up the MsoySceneModel and ask it
+                // TODO: if the channel is on a different server than the room, the user
+                // may now be circumventing a boot. This needs to be looked into.
                 MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
                     public void invokePersistent () throws Exception {
                         MsoySceneModel model =
@@ -422,11 +424,9 @@ public class ChatChannelManager
      */
     protected void addChatter (ChannelWrapper wrapper, MemberObject user)
     {
-        ChatChannelObject ccobj = wrapper.getCCObj();
-
-        if (ccobj.chatters.containsKey(user.memberName.getKey())) {
+        if (wrapper.hasMember(user)) {
             log.warning("User already in chat channel, cannot add [user=" + user.who() +
-                        ", channel=" + ccobj.channel + "].");
+                        ", channel=" + wrapper.getChannel() + "].");
             return;
         }
 
@@ -438,11 +438,10 @@ public class ChatChannelManager
      */
     protected void removeChatter (ChannelWrapper wrapper, MemberObject user)
     {
-        ChatChannelObject ccobj = wrapper.getCCObj();
-
-        if (!wrapper.hasMember(user.memberName)) {
+        if (!wrapper.hasMember(user)) {
+            ChatChannelObject cobj = wrapper.getCCObj();
             log.warning("User not in chat channel, cannot remove [user=" + user.who() +
-                        ", channel=" + ccobj.channel + "].");
+                        ", channel=" + wrapper.getChannel() + "].");
             return;
         }
 

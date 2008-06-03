@@ -33,13 +33,13 @@ public abstract class ChannelWrapper
     }
 
     /** Accessor for the channel variable. */
-    public ChatChannel getChannel()
+    public ChatChannel getChannel ()
     {
         return _channel;
     }
 
     /** Accessor for the distributed channel object. */
-    public ChatChannelObject getCCObj()
+    public ChatChannelObject getCCObj ()
     {
         return _ccobj;
     }
@@ -75,10 +75,9 @@ public abstract class ChannelWrapper
     }
     
     /** Does this channel contain the specified chatter? */
-    public boolean hasMember (ClientObject chatter) 
+    public boolean hasMember (MemberObject chatter) 
     { 
-        MemberObject who = (MemberObject)chatter;
-        return ready() && who != null && _ccobj.chatters.containsKey(who.memberName.getKey());
+        return (chatter != null) && hasMember(chatter.memberName);
     }
 
     // from interface MessageListener

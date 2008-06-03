@@ -52,7 +52,6 @@ public class MsoySceneMoveHandler extends SceneMoveHandler
         destmgr.mapEnteringBody(_body, from);
 
         try {
-            destmgr.validateEntranceAction(_body);
             super.effectSceneMove(destmgr);
         } catch (InvocationException ie) {
             // if anything goes haywire, clear out our entering status

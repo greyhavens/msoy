@@ -55,6 +55,8 @@ import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.chat.data.ChatChannel;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -213,6 +215,11 @@ public class RoomManager extends SpotSceneManager
     @Override
     public String ratifyBodyEntry (BodyObject body)
     {
+        // check to see if the scene permits access
+        if (!((MsoyScene) _scene).canEnter((MsoyBodyObject) body)) {
+            return InvocationCodes.E_ACCESS_DENIED; // TODO: better? "This room is friend only"
+        }
+
         // if we have a bootlist, check against that
         if (_booted != null && (body instanceof MemberObject)) {
             MemberObject user = (MemberObject) body;
@@ -263,6 +270,13 @@ public class RoomManager extends SpotSceneManager
             MessageUtil.tcompose("m.booted", _scene.getName()));
         MsoyServer.screg.moveBody(bootee, bootSceneId);
         SpeakUtil.sendFeedback(user, MsoyCodes.GENERAL_MSGS, "m.boot_success");
+
+        // and from the chat channel
+// TODO: this doesn't work. It ends up removing the user from the list of chatters, but they
+// are still subscribed to the channel. Fuck if I know.
+//        MsoyServer.channelMan.leaveChannel(bootee,
+//            ChatChannel.makeRoomChannel(new RoomName(_scene.getName(), _scene.getId())));
+
         return null; // indicates success
     }
 
@@ -453,19 +467,6 @@ public class RoomManager extends SpotSceneManager
             }
             protected int _newRoomId;
         });
-    }
-
-    /**
-     * Validates that the specified body can enter our scene.
-     *
-     * @throws InvocationException if the body is disallowed entry.
-     */
-    public void validateEntranceAction (BodyObject body)
-        throws InvocationException
-    {
-        if (!((MsoyScene) _scene).canEnter((MsoyBodyObject)body)) {
-            throw new InvocationException(RoomCodes.E_ENTRANCE_DENIED);
-        }
     }
 
     /**
