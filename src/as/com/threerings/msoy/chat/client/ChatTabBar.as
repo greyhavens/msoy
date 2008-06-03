@@ -187,9 +187,10 @@ public class ChatTabBar extends HBox
         }
 
         // if we don't have a tab for this channel, assume the caller knows what its doing and say
-        // yes
+        // yes.  We also tell them to reconnect the first tab - if the player is logging in, but
+        // not changing rooms, the first tab needs to be reconnected.
         var index :int = getLocalTypeIndex(channel.toLocalType());
-        if (index == -1) {
+        if (index < 1) {
             return true;
         }
 
