@@ -13,6 +13,7 @@ import flash.utils.Timer;
 
 import mx.controls.Button;
 import mx.core.Application;
+import mx.core.UIComponent;
 
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.Log;
@@ -295,6 +296,7 @@ public class WorldController extends MsoyController
         var r :Rectangle = trigger.getBounds(trigger.stage);
         var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse(), _topPanel);
         menu.variableRowHeight = true;
+        menu.setBounds(_wctx.getTopPanel().getPlaceBounds());
         menu.popUpAt(r.left, r.top, true);
     }
 

@@ -376,6 +376,17 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
+    /**
+     * Returns a rectangle in stage coordinates that specifies the current bounds of the 
+     * place container.
+     */
+    public function getPlaceBounds () :Rectangle
+    {
+        return new Rectangle(_placeBox.getStyle("left"), _placeBox.getStyle("top"),
+                             stage.stageWidth - _placeBox.getStyle("right"),
+                             stage.stageHeight - _placeBox.getStyle("bottom"));
+    }
+
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
