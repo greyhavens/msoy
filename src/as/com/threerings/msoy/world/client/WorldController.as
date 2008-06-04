@@ -55,9 +55,13 @@ import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
+
+import com.threerings.msoy.chat.data.ChatChannel;
+
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
@@ -1124,7 +1128,9 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
             headerBar.setEmbedVisible(!_wctx.getMsoyClient().isEmbedded());
-            headerBar.getChatTabs().clearUncheckedRooms();
+            var roomChannel :ChatChannel = 
+                ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
+            headerBar.getChatTabs().clearUncheckedRooms([roomChannel.toLocalType()]);
 
             // subscribe to the new scene's channel, if we haven't already
             var roomName :RoomName = new RoomName(scene.getName(), scene.getId());

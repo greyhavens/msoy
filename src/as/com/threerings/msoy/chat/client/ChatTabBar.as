@@ -198,11 +198,12 @@ public class ChatTabBar extends HBox
         return (_tabs[index] as ChatTab).checked;
     }
 
-    public function clearUncheckedRooms () :void
+    public function clearUncheckedRooms (keep :Array) :void
     {
         for (var ii :int = 0; ii < _tabs.length; ii++) {
             var tab :ChatTab = _tabs[ii] as ChatTab;
-            if (ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL && !tab.checked) {
+            if (ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL && !tab.checked &&
+                keep.indexOf(tab.localtype) < 0) {
                 removeTabAt(ii);
             }
         }
