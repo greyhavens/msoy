@@ -32,6 +32,8 @@ import mx.core.UIComponent;
 import mx.controls.scrollClasses.ScrollBar;
 import mx.controls.VScrollBar;
 
+import com.whirled.game.data.WhirledGameCodes;
+
 import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
@@ -948,11 +950,8 @@ public class ChatOverlay
         case ATTENTION: return ATTENTION_COLOR;
         case NOTIFICATION: return NOTIFY_COLOR;
         case CHANNEL: return CHANNEL_COLOR;
-        default:
-            switch (placeOf(type)) {
-            case GAME: return GAME_COLOR;
-            default: return BLACK;
-            }
+        case GAME: return GAME_COLOR;
+        default: return BLACK;
         }
     }
 
@@ -983,6 +982,7 @@ public class ChatOverlay
         case BROADCAST:
         case CONTINUATION:
         case INFO:
+        case GAME:
         case ATTENTION:
         default:
             return drawRectangle;
@@ -1083,7 +1083,7 @@ public class ChatOverlay
         } else if (msg is SystemMessage) {
             switch ((msg as SystemMessage).attentionLevel) {
             case SystemMessage.INFO:
-                return INFO;
+                return msg.localtype == WhirledGameCodes.USERGAME_CHAT_TYPE ? GAME : INFO;
             case SystemMessage.FEEDBACK:
                 return FEEDBACK;
             case SystemMessage.ATTENTION:
