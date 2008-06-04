@@ -41,6 +41,7 @@ import com.whirled.game.data.TrophyData;
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
