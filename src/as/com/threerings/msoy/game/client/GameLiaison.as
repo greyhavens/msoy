@@ -253,18 +253,18 @@ public class GameLiaison
 
     protected function displayAward (award :Object) :void
     {
-        var feedback :String, name :String, title :String;
+        var msg :String, name :String, title :String;
         var media :MediaDesc;
         if (award is Trophy) {
             var trophy :Trophy = (award as Trophy);
-            feedback = MessageBundle.tcompose("m.trophy_earned", trophy.name);
+            msg = MessageBundle.tcompose("m.trophy_earned", trophy.name);
             name = trophy.name;
             title = "m.trophy_title";
             media = trophy.trophyMedia;
 
         } else if (award is Item) {
             var item :Item = (award as Item);
-            feedback = MessageBundle.tcompose("m.prize_earned", item.name);
+            msg = MessageBundle.tcompose("m.prize_earned", item.name);
             name = item.name;
             title = "m.prize_title";
             media = item.getThumbnailMedia();
@@ -276,7 +276,7 @@ public class GameLiaison
         }
 
         // display a chat message reporting their award
-        _gctx.getChatDirector().displayFeedback(MsoyCodes.GAME_MSGS, feedback);
+        _gctx.getChatDirector().displayInfo(MsoyCodes.GAME_MSGS, msg);
 
         // configure the award display panel with the award info
         (_awardPanel.getChildByName("statement") as TextField).text =
