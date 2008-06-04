@@ -381,7 +381,6 @@ public class MediaDesc
         case VIDEO_FLASH:
         case VIDEO_YOUTUBE_DEPRECATED:
         case APPLICATION_SHOCKWAVE_FLASH:
-//        case APPLICATION_ZIP: // because we support zipped content..
             return true;
 
         default:
