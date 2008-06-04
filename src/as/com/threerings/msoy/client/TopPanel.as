@@ -382,9 +382,11 @@ public class TopPanel extends Canvas
      */
     public function getPlaceBounds () :Rectangle
     {
-        return new Rectangle(_placeBox.getStyle("left"), _placeBox.getStyle("top"),
-                             stage.stageWidth - _placeBox.getStyle("right"),
-                             stage.stageHeight - _placeBox.getStyle("bottom"));
+        var x :Number = _placeBox.getStyle("left");
+        var y :Number = _placeBox.getStyle("top");
+        var width :Number = stage.stageWidth - _placeBox.getStyle("right") - x;
+        var height :Number = stage.stageHeight - _placeBox.getStyle("bottom") - y;
+        return new Rectangle(x, y, width, height);
     }
 
     protected function stageResized (event :Event) :void
