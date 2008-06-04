@@ -38,7 +38,7 @@ public class FurnitureEditor extends ItemEditor
         addSpacer();
         addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
+                if (!isValidPrimaryMedia(desc)) {
                     return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;

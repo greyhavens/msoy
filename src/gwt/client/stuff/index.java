@@ -107,7 +107,7 @@ public class index extends Page
                 int itemId = args.get(2, 0);
                 Item item = _models.findItem(type, itemId);
                 if (item == null) {
-                    editor.setItem(type, itemId);
+                    editor.setItem(itemId);
                 } else {
                     editor.setItem(item);
                 }

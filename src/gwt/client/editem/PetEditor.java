@@ -34,7 +34,7 @@ public class PetEditor extends ItemEditor
         addSpacer();
         addRow(CShell.emsgs.petLabel(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
+                if (!isValidPrimaryMedia(desc)) {
                     return CShell.emsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;

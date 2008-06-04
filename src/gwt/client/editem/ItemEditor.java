@@ -63,7 +63,7 @@ public abstract class ItemEditor extends FlexTable
      * Creates an item editor interface for items of the specified type.  Returns null if the type
      * is unknown.
      */
-    public static ItemEditor createItemEditor (int type, EditorHost host)
+    public static ItemEditor createItemEditor (byte type, EditorHost host)
     {
         ItemEditor editor = null;
         if (type == Item.PHOTO) {
@@ -99,7 +99,7 @@ public abstract class ItemEditor extends FlexTable
         } else {
             return null; // woe be the caller
         }
-        editor.init(host);
+        editor.init(type, host);
         return editor;
     }
 
@@ -139,17 +139,18 @@ public abstract class ItemEditor extends FlexTable
     /**
      * Configures this editor with a reference to the item service and its item panel parent.
      */
-    public void init (EditorHost parent)
+    public void init (byte type, EditorHost parent)
     {
+        _type = type;
         _parent = parent;
     }
 
     /**
      * Instructs the editor to load the specified item and edit it.
      */
-    public void setItem (byte type, int itemId)
+    public void setItem (int itemId)
     {
-        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback() {
+        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId), new MsoyCallback() {
             public void onSuccess (Object result) {
                 setItem((Item)result);
             }
@@ -257,7 +258,7 @@ public abstract class ItemEditor extends FlexTable
         addSpacer();
         addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
+                if (!isValidPrimaryMedia(desc)) {
                     return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
@@ -278,6 +279,18 @@ public abstract class ItemEditor extends FlexTable
                 return null;
             }
         }), CShell.emsgs.editorThumbTitle());
+    }
+
+    /**
+     * Is the specified MediaDesc a valid primary media for item type?
+     */
+    protected boolean isValidPrimaryMedia (MediaDesc desc)
+    {
+        // normally it has to have a flash visual, but certain types allow for remixables
+        return desc.hasFlashVisual() || (
+            desc.isRemixable() && (
+                (_type == Item.FURNITURE) || (_type == Item.AVATAR) || (_type == Item.PET) ||
+                (_type == Item.DECOR) || (_type == Item.TOY)));
     }
 
     protected void safeSetText (TextBoxBase box, String value)
@@ -634,6 +647,8 @@ public abstract class ItemEditor extends FlexTable
         };
     }-*/;
 
+    /** The type of items we're editing here. */
+    protected byte _type; 
     protected EditorHost _parent;
 
     protected Item _item;

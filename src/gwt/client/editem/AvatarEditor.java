@@ -34,10 +34,7 @@ public class AvatarEditor extends ItemEditor
         addSpacer();
         addRow(CShell.emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                // TODO: when all item types support zipped media, change
-                // hasFlashVisual to support ZIP, then we won't need
-                // the special check for REMIXABLE here.
-                if (!desc.hasFlashVisual() && !desc.isRemixable()) {
+                if (!isValidPrimaryMedia(desc)) {
                     return CShell.emsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;

@@ -40,7 +40,7 @@ public class DecorEditor extends ItemEditor
         addSpacer();
         addRow(CShell.emsgs.decorLabel(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
+                if (!isValidPrimaryMedia(desc)) {
                     return CShell.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
