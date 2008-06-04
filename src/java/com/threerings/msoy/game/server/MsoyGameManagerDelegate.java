@@ -101,8 +101,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             }
         }
         if (source == null) {
-            throw new InvocationException(
-                MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident));
+            throw new InvocationException(MessageBundle.qualify(MsoyCodes.GAME_MSGS,
+                MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident)));
         }
 
         // if the player already has this trophy, ignore the request
