@@ -223,19 +223,18 @@ public class WhirledDetailPanel extends VerticalPanel
 
         add(_tabs = new StyledTabPanel());
 
+        _tabs.add(new WhirledDiscussionsPanel(_detail), CWhirleds.msgs.detailTabDiscussions());
+        _tabs.selectTab(0);
+        
         String charter = (_extras.charter == null) ?
             CWhirleds.msgs.detailNoCharter() : _extras.charter;
         _tabs.add(new PrettyTextPanel(charter), CWhirleds.msgs.detailTabCharter());
-        _tabs.selectTab(0);
-
+        
         _tabs.add(new WhirledMembersPanel(_detail), CWhirleds.msgs.detailTabMembers());
 
         if (_detail.myRank == GroupMembership.RANK_MANAGER) {
             _tabs.add(new WhirledRoomsPanel(_detail), CWhirleds.msgs.detailTabRooms());
         }
-
-//         setBackgroundImage(
-//             _extras.background, _extras.backgroundControl == GroupExtras.BACKGROUND_TILED);
     }
 
     protected String getPolicyName (int policy)

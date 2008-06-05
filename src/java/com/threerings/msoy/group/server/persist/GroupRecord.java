@@ -268,9 +268,7 @@ public class GroupRecord extends PersistentRecord
         group.groupId = groupId;
         group.name = name;
         group.blurb = blurb;
-        if (logoMediaHash != null) {
-            group.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
-        }
+        group.logo = toLogo();
         group.homeSceneId = homeSceneId;
         group.creatorId = creatorId;
         group.creationDate = new java.util.Date(creationDate.getTime());
@@ -278,6 +276,17 @@ public class GroupRecord extends PersistentRecord
         group.forumPerms = forumPerms;
         group.memberCount = memberCount;
         return group;
+    }
+    
+    /**
+     * Creates a MediaDesc of the group logo
+     */
+    public MediaDesc toLogo()
+    {
+        if (logoMediaHash == null) {
+            return null;
+        }
+        return new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     /**

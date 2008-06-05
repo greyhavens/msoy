@@ -20,6 +20,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -35,6 +36,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
+import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupCodes;
 import com.threerings.msoy.group.data.GroupDetail;
@@ -167,6 +169,11 @@ public class GroupServlet extends MsoyServiceServlet
                     detail.myRankAssigned = gmrec.rankAssigned.getTime();
                 }
             }
+            
+            // load up recent threads for this group (ordered by thread id)
+            List<ForumThreadRecord> thrrecs = MsoyServer.forumRepo.loadRecentThreads(groupId, 3);
+            Map<Integer,GroupName> gmap = Collections.singletonMap(detail.group.groupId, detail.group.getName());
+            detail.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, false, true);
 
             return detail;
 

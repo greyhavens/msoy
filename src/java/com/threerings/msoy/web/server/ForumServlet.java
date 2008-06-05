@@ -76,7 +76,7 @@ public class ForumServlet extends MsoyServiceServlet
 
             // load up additional fiddly bits and create a result record
             ThreadResult result = new ThreadResult();
-            result.threads = resolveThreads(mrec, thrrecs, groups);
+            result.threads = ForumUtil.resolveThreads(mrec, thrrecs, groups, true, false);
 
             // we cheat on the total count here with the idea that the client basically just asks
             // for "all" of the unread threads and we give them all as long as all is not
@@ -93,8 +93,8 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
-                                     boolean needTotalCount)
+    public ThreadResult loadThreads (
+        WebIdent ident, int groupId, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -113,7 +113,7 @@ public class ForumServlet extends MsoyServiceServlet
             // load up additional fiddly bits and create a result record
             ThreadResult result = new ThreadResult();
             Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
-            result.threads = resolveThreads(mrec, thrrecs, gmap);
+            result.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, true, false);
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = (mrec != null) &&
@@ -152,7 +152,8 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
-            return resolveThreads(mrec, _forumRepo.findThreads(groupId, search, limit), gmap);
+            return ForumUtil.resolveThreads(
+                mrec, _forumRepo.findThreads(groupId, search, limit), gmap, true, false);
 
         } catch (PersistenceException pe) {
             log.warning("Failed to search threads [for=" + who(mrec) +
@@ -541,58 +542,7 @@ public class ForumServlet extends MsoyServiceServlet
         }
         return rank;
     }
-
-    /**
-     * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
-     * filling in other bits.
-     */
-    protected List<ForumThread> resolveThreads (MemberRecord mrec, List<ForumThreadRecord> thrrecs,
-                                                Map<Integer, GroupName> groups)
-        throws PersistenceException
-    {
-        // enumerate the last-posters and create member names for them
-        IntMap<MemberName> names = resolveNames(thrrecs);
-
-        // convert the threads to runtime format and return them
-        Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
-        for (ForumThreadRecord ftr : thrrecs) {
-            thrmap.put(ftr.threadId, ftr.toForumThread(names, groups));
-        }
-
-        // fill in the last read post information if the member is logged in
-        if (mrec != null && thrmap.size() > 0) {
-            for (ReadTrackingRecord rtr : _forumRepo.loadLastReadPostInfo(
-                     mrec.memberId, thrmap.keySet())) {
-                ForumThread ftr = thrmap.get(rtr.threadId);
-                if (ftr != null) { // shouldn't be null but let's not have a cow
-                    ftr.lastReadPostId = rtr.lastReadPostId;
-                    ftr.lastReadPostIndex = rtr.lastReadPostIndex;
-                }
-            }
-        }
-
-        return Lists.newArrayList(thrmap.values());
-    }
-
-    /**
-     * Resolves the names of the posters of the supplied threads.
-     */
-    protected IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
-        throws PersistenceException
-    {
-        IntSet posters = new ArrayIntSet();
-        for (ForumThreadRecord thrrec : thrrecs) {
-            posters.add(thrrec.mostRecentPosterId);
-        }
-        IntMap<MemberName> names = IntMaps.newHashIntMap();
-        if (posters.size() > 0) {
-            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(posters)) {
-                names.put(name.getMemberId(), name);
-            }
-        }
-        return names;
-    }
-
+    
     /**
      * Runs the supplied HTML message through our sanitizer and rechecks that the length of the
      * message is within our limits. The sanitizer might make the message slightly longer.

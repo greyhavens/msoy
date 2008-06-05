@@ -4,7 +4,10 @@
  * CSS styles for the Whirled interfaces.
  */
 
-/* GroupView specific formatting */
+/* ------------------------------------
+   SINGLE WHIRLED DETAIL
+-------------------------------------*/
+
 .whirledDetail {
   width: 100%;
 }
@@ -60,7 +63,82 @@
   padding: 0px 10px;
 }
 
-/* GroupList specific formattting */
+/* ------------------------------------
+   SINGLE WHIRLED DETAIL - DISCUSSIONS
+-------------------------------------*/
+
+.whirledDetail .WhirledDiscussionPanel .RSS {
+  position: absolute;
+  right: 10px;
+}
+
+.whirledDetail .WhirledDiscussionPanel .NoThreads {
+  color: #2a6891;
+  font-size: 15px;
+  margin: 10px;
+}
+
+.whirledDetail .WhirledDiscussionPanel .NoThreads {
+  color: #2a6891;
+  font-size: 15px;
+  margin: 10px;
+}
+
+.whirledDetail .Thread,
+.whirledDetail .Thread a {
+  font-size: 13px;
+  color: #2a6891;
+}
+
+.whirledDetail .Thread .Date {
+  color: #78a3c5;
+  margin: 15px 0 0 5px;
+}
+
+.whirledDetail .Thread .Subject {
+  float: left;
+  width: 500px;
+  padding: 2px 0 5px 5px;
+}
+.whirledDetail .Thread .Subject a {
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.whirledDetail .Thread .Text {
+  background: #dfedfa url(/images/whirled/thread_text_bg.png) no-repeat top left;
+  min-height: 50px;
+  clear: both;
+  margin: 5px 5px 5px 0;
+  padding: 10px 10px 10px 50px;
+}
+
+.whirledDetail .Thread .PostedByIcon {
+  float: left;
+  margin: 0 0 0 20px;
+}
+
+.whirledDetail .Thread .PostedBy {
+  float: left;
+  margin: 7px 0 0 0;
+}
+
+.whirledDetail .Thread .Replies {
+  float: right;
+  margin: 7px 5px 0 0;
+}
+
+.whirledDetail .WhirledDiscussionPanel .Divider {
+  clear: both;
+  background: transparent url(/images/whirled/thread_divider_bg.png) repeat-x bottom left;
+  height: 15px;
+}
+
+/* ------------------------------------
+   GALAXY GROUP LIST
+-------------------------------------*/
+
 .galaxy {
   width: 683px;
 }

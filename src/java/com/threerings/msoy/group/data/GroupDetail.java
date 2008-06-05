@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.group.data;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -33,4 +35,8 @@ public class GroupDetail
 
     /** When my rank was assigned (in millis since the epoch), or 0 if we're a non-member. */
     public long myRankAssigned;
+    
+    /** Recent discussion threads for this group
+     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread> */
+    public List threads;
 }
