@@ -147,9 +147,6 @@
     <file name="${extlibs.dir}/asc.jar"/>
     <file name="${extlibs.dir}/flexTasks.jar"/>
 
-    <!-- The following are used by the thane client -->
-    <file name="lib/thane.abc"/>
-    <file name="lib/builtin.abc"/>
   </filelist>
 
   <!-- fetches our library dependencies -->
@@ -190,6 +187,12 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.thane" artifactId="tamarin-builtin" version="0.0-SNAPSHOT"
+                  type="abc"/>
+      <dependency groupId="com.threerings.thane" artifactId="thane" version="0.0-SNAPSHOT"
+                  type="abc"/>
+      <dependency groupId="com.threerings.thane" artifactId="http" version="0.0-SNAPSHOT"
+                  type="abc"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="dependency.fileset"/>
@@ -529,11 +532,12 @@
     <taskdef name="asc" classname="flex.ant.AscTask" classpathref="classpath"/>
     <asc as3="true" strict="true" classpathref="classpath" use="AS3">
       <import dir=".">
-        <include name="lib/builtin.abc"/>
-        <include name="lib/thane.abc"/>
+        <include name="dist/lib/tamarin-builtin*.abc"/>
+        <include name="dist/lib/thane*.abc"/>
         <include name="dist/lib/narya-abc*.abc"/>
         <include name="dist/lib/vilya-abc*.abc"/>
         <include name="dist/lib/whirled-abc*.abc"/>
+        <include name="dist/lib/http*.abc"/>
       </import>
       <in dir="src/as" includesfile="etc/asc-files-00.txt"/>
       <in dir="src/as" includesfile="etc/asc-files-01.txt"/>
