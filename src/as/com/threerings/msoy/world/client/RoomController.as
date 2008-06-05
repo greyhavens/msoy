@@ -292,7 +292,9 @@ public class RoomController extends SceneController
         if (states.length > 0) {
             var worldStates :Array = [];
             var curState :String = avatar.getState();
-            if (curState == null) {
+            // NOTE: we usually want to translate null into the first state, however, if there's
+            // only one state registered, let them select it anyway by not translating.
+            if (states.length > 1 && curState == null) {
                 curState = states[0];
             }
             for each (var state :String in states) {
