@@ -367,15 +367,16 @@ public class EditCanvas extends DisplayCanvas
         var ww :Number = _imgWidth;
         var hh :Number = _imgHeight;
 
+        // if there's a forced size, take that into account now
+        if (_sizeRestrict != null && _sizeRestrict.forced != null) {
+            ww = _sizeRestrict.forced.x;
+            hh = _sizeRestrict.forced.y;
+        }
+
         // recenter the image within the paint layer
         if (_image != null) {
             _image.x = ww / -2;
             _image.y = hh / -2;
-        }
-
-        if (_sizeRestrict.forced != null) {
-            ww = Math.max(ww, _sizeRestrict.forced..x);
-            hh = Math.max(hh, _sizeRestrict.forced..y);
         }
 
         _hGutter = Math.max(MIN_GUTTER, (this.maxWidth - ScrollBar.THICKNESS - ww) / 2);
@@ -385,18 +386,18 @@ public class EditCanvas extends DisplayCanvas
         _holder.width = _canvasWidth;
         _holder.height = _canvasHeight;
 
-        // set up the working area
-        var r :Rectangle = new Rectangle(_hGutter, _vGutter, ww, hh);
-        if (_sizeRestrict.forced != null) {
-            if (_sizeRestrict.forced.x < ww) {
-                r.width = _sizeRestrict.forced.x;
-                r.x += (ww - _sizeRestrict.forced.x)/2;
+        // if there are max sizes, bound the selection size in, but do not recenter
+        if (_sizeRestrict != null && _sizeRestrict.forced == null) {
+            if (!isNaN(_sizeRestrict.maxWidth)) {
+                ww = Math.min(ww, _sizeRestrict.maxWidth);
             }
-            if (_sizeRestrict.forced.y < hh) {
-                r.height = _sizeRestrict.forced.y;
-                r.y += (hh - _sizeRestrict.forced.y)/2;
+            if (!isNaN(_sizeRestrict.maxHeight)) {
+                hh = Math.min(hh, _sizeRestrict.maxHeight);
             }
         }
+
+        // set up the working area
+        var r :Rectangle = new Rectangle(_hGutter, _vGutter, ww, hh);
         setWorkingArea(r);
 
         // put the paint layer at the center???
@@ -839,6 +840,9 @@ public class EditCanvas extends DisplayCanvas
 
     protected function handleMoveEnd (event :MouseEvent) :void
     {
+        if (_movePoint == null) {
+            return;
+        }
         _paintLayer.stopDrag();
         _paintLayer.stage.removeEventListener(MouseEvent.MOUSE_UP, handleMoveEnd);
         _movePoint.x = _paintLayer.x - _movePoint.x;
