@@ -42,12 +42,10 @@ public class Downloader extends TitleWindow
         _loader.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadError);
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleDownloadError);
         _loader.addEventListener(Event.COMPLETE, handleDownloadComplete);
+    }
 
-        var box :VBox = new VBox();
-        addChild(box);
-
-        configureUI(box);
-
+    public function open () :void
+    {
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpManager.centerPopUp(this);
     }
@@ -57,12 +55,25 @@ public class Downloader extends TitleWindow
         if (url == null) {
             return;
         }
+        if (parent == null) {
+            open();
+        }
 
         _progress.includeInLayout = true;
         _progress.visible = true;
 
         _url = url;
         _loader.load(new URLRequest(url));
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        var box :VBox = new VBox();
+        addChild(box);
+
+        configureUI(box);
     }
 
     protected function configureUI (box :VBox) :void

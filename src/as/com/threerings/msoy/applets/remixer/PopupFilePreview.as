@@ -45,7 +45,6 @@ import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
 
-import com.threerings.msoy.applets.util.Downloader;
 import com.threerings.msoy.applets.util.Uploader;
 
 public class PopupFilePreview extends TitleWindow
@@ -177,7 +176,7 @@ public class PopupFilePreview extends TitleWindow
         // massage the url from javascript (I admit I'm cargo-culting here)
         url = "" + url;
 
-        var downloader :Downloader = new Downloader();
+        var downloader :PhotoDownloader = new PhotoDownloader();
         downloader.addEventListener(Event.COMPLETE, handleFileChosen);
         downloader.startDownload(url);
     }
