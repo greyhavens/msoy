@@ -71,6 +71,9 @@
   position: absolute;
   right: 10px;
 }
+.whirledDetail .WhirledDiscussionPanel .RSS img {
+  border: none;
+}
 
 .whirledDetail .WhirledDiscussionPanel .NoThreads {
   color: #2a6891;
@@ -116,7 +119,7 @@
 
 .whirledDetail .Thread .PostedByIcon {
   float: left;
-  margin: 0 0 0 20px;
+  margin: 0 5px 0 20px;
 }
 
 .whirledDetail .Thread .PostedBy {
