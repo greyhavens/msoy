@@ -43,13 +43,18 @@ fi
 
 # gather all .abc files
 LIBS=()
-for PREFIX in narya vilya whirled; do
+for PREFIX in narya vilya http whirled; do
     ABC=$MSOY_HOME/dist/lib/$PREFIX-*.abc
     if [ -e $ABC ]; then
 	LIBS=("${LIBS[@]}" $ABC)
     else
-        echo "$PREFIX library file not found"
-        exit 255
+        ABC=$MSOY_HOME/dist/lib/$PREFIX.abc
+        if [ -e $ABC ]; then
+            LIBS=("${LIBS[@]}" $ABC)
+        else
+            echo "$PREFIX library file not found"
+            exit 255
+        fi
     fi
 done
 
