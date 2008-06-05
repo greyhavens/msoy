@@ -665,8 +665,7 @@ public class ChatOverlay
 
         // if _localtype is null, we're still starting up - anything that shows up at this stage
         // should go ahead and get displayed (startup notifications and the like)
-        if (msg.localtype == _localtype || _localtype == null)
-        {
+        if (msg.localtype == _localtype || _localtype == null) {
             return true;
         }
 
