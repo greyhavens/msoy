@@ -119,12 +119,10 @@ public class ItemRemixer extends FlexTable
         if (controls) {
             try {
                 controls.setPhotoUrl(url);
-                return;
             } catch (e) {
-                alert("Ackbar: " + e);
+                // nada
             }
         }
-        alert("Ackbar! no controls!");
     }-*/;
 
     protected static void bridgeSetHash (
