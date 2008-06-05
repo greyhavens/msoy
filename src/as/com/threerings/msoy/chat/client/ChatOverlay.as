@@ -665,7 +665,18 @@ public class ChatOverlay
 
         // if _localtype is null, we're still starting up - anything that shows up at this stage
         // should go ahead and get displayed (startup notifications and the like)
-        if (msg.localtype == _localtype || _localtype == null) {
+        if (msg.localtype == _localtype || _localtype == null)
+        {
+            return true;
+        }
+
+        // If we're displaying PLACE_CHAT_TYPE messages, then we need to let through
+        // USERGAME_CHAT_TYPE messages as well - that localtype is used as a formatting indicator
+        // TODO: this would be cleaner if game user chat and usercode generated info were using
+        // the same localtype - this special case would be unneccessary then, as game chat would
+        // go to a tab with that localtype specified instead of PLACE_CHAT_TYPE
+        if (_localtype == ChatCodes.PLACE_CHAT_TYPE && 
+            msg.localtype == WhirledGameCodes.USERGAME_CHAT_TYPE) {
             return true;
         }
 
