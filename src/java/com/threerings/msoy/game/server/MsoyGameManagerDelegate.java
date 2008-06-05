@@ -213,7 +213,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                                    int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        verifyIsPlayer(caller);
+        verifyIsPlayerOrAgent(caller);
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
@@ -284,7 +284,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                                     int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        verifyIsPlayer(caller);
+        verifyIsPlayerOrAgent(caller);
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
@@ -889,6 +889,22 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             }
         }
         return user;
+    }
+
+    /**
+     * Checks that the caller in question is a player if the game is not a party game
+     * or an agent for games that use server-side code.
+     */
+    protected void verifyIsPlayerOrAgent (ClientObject caller)
+        throws InvocationException
+    {
+        if (caller instanceof PlayerObject) {
+            verifyIsPlayer(caller);
+
+        } else if (!(_gmgr instanceof WhirledGameManager) ||
+            !((WhirledGameManager)_gmgr).isAgent(caller)) {
+            throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
+        }
     }
 
     /**
