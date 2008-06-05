@@ -23,6 +23,7 @@ import client.shell.CShell;
 
 import client.editem.EditorHost;
 
+import client.util.ImageChooserPopup;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -72,6 +73,21 @@ public class ItemRemixer extends FlexTable
             680, 550, flashVars);
     }
 
+    /**
+     * Show the ImageFileChooser and let the user select a photo from their inventory.
+     *
+     * TODO: the damn ImageChooserPopup needs a proper cancel button and a response when it
+     * cancels so that we can try to do the right thing in PopupFilePreview.
+     */
+    protected void pickPhoto ()
+    {
+        ImageChooserPopup.displayImageChooser(false, new MsoyCallback() {
+            public void onSuccess (Object result) {
+                setPhotoUrl(((MediaDesc) result).getMediaPath());
+            }
+        });
+    }
+
     protected void cancelRemix ()
     {
         _parent.editComplete(null);
@@ -95,6 +111,22 @@ public class ItemRemixer extends FlexTable
         });
     }
 
+    /**
+     * Set a photo as a new image source in the remixer. The PopupFilePreview needs to be up..
+     */
+    protected static native void setPhotoUrl (String url) /*-{
+        var controls = $doc.getElementById("remixControls");
+        if (controls) {
+            try {
+                controls.setPhotoUrl(url);
+                return;
+            } catch (e) {
+                alert("Ackbar: " + e);
+            }
+        }
+        alert("Ackbar! no controls!");
+    }-*/;
+
     protected static void bridgeSetHash (
         String id, String mediaHash, int mimeType, int constraint, int width, int height)
     {
@@ -110,12 +142,20 @@ public class ItemRemixer extends FlexTable
         _singleton.cancelRemix();
     }
 
+    protected static void bridgePickPhoto ()
+    {
+        _singleton.pickPhoto();
+    }
+
     protected static native void configureBridges () /*-{
         $wnd.setHash = function (id, hash, type, constraint, width, height) {
             @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
         };
         $wnd.cancelRemix = function () {
             @client.remix.ItemRemixer::bridgeCancelRemix()();
+        };
+        $wnd.pickPhoto = function () {
+            @client.remix.ItemRemixer::bridgePickPhoto()();
         };
     }-*/;
 

@@ -5,6 +5,8 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.display.BitmapData;
 
+import flash.external.ExternalInterface;
+
 import flash.events.Event;
 
 import flash.geom.Point;
@@ -43,7 +45,8 @@ import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
 
-import com.threerings.msoy.applets.upload.Uploader;
+import com.threerings.msoy.applets.util.Downloader;
+import com.threerings.msoy.applets.util.Uploader;
 
 public class PopupFilePreview extends TitleWindow
 {
@@ -58,6 +61,13 @@ public class PopupFilePreview extends TitleWindow
         _type = entry.type;
         _sizeRestriction = new SizeRestriction(Number(entry.width), Number(entry.height),
             Number(entry.maxWidth), Number(entry.maxHeight));
+
+        var externalAvail :Boolean = false;
+        try {
+            externalAvail = ExternalInterface.available;
+        } catch (e :Error) {
+            // nada
+        }
 
         this.title = name;
 
@@ -74,6 +84,10 @@ public class PopupFilePreview extends TitleWindow
         hbox.addChild(previewBox);
 
         controlBox.addChild(makeHeader("Change..."));
+        if (externalAvail && (_type == "Image" || _type == "DisplayObject" || _type == "Blob")) {
+            controlBox.addChild(makeBullet(
+                new CommandLinkButton("Use one of your photos...", handleChoosePhoto)));
+        }
         controlBox.addChild(makeBullet(
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
         controlBox.addChild(makeBullet(
@@ -155,6 +169,25 @@ public class PopupFilePreview extends TitleWindow
         }
     }
 
+    /**
+     * A callback from javascript when the photo chooser has picked a photo.
+     */
+    protected function setPhotoUrl (url :String) :void
+    {
+        // massage the url from javascript (I admit I'm cargo-culting here)
+        url = "" + url;
+
+        var downloader :Downloader = new Downloader();
+        downloader.addEventListener(Event.COMPLETE, handleFileChosen);
+        downloader.startDownload(url);
+    }
+
+    protected function handleChoosePhoto () :void
+    {
+        ExternalInterface.addCallback("setPhotoUrl", setPhotoUrl);
+        ExternalInterface.call("pickPhoto");
+    }
+
     protected function handleChooseFile () :void
     {
         var uploader :Uploader = new Uploader(_serverURL, getFilters());
@@ -190,8 +223,9 @@ public class PopupFilePreview extends TitleWindow
         var fname :String = value[0] as String;
         var image :ByteArray = value[1] as ByteArray;
 
-        if (_sizeRestriction.forced != null || !isNaN(_sizeRestriction.maxWidth) ||
-                !isNaN(_sizeRestriction.maxHeight)) {
+        if (_sizeRestriction == null ||
+                (_sizeRestriction.forced == null && isNaN(_sizeRestriction.maxWidth) &&
+                isNaN(_sizeRestriction.maxHeight))) {
             setImage(fname, image);
 
         } else {
