@@ -114,4 +114,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService.getTags}
      */
     public void getTags (WebIdent ident, int groupId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#getMyGroups}
+     */
+    public void getMyGroups (WebIdent ident, AsyncCallback callback);
 }

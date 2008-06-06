@@ -209,4 +209,14 @@ public interface GroupService extends RemoteService
      */
     public Collection getTags (WebIdent ident, int groupId)
         throws ServiceException;
+
+    /**
+     * Fetch a list of {@link MyGroupCard} records, one for each group of which the caller is a
+     * member.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.MyGroupCard>
+     */
+    public List getMyGroups (WebIdent ident)
+        throws ServiceException;
+
 }

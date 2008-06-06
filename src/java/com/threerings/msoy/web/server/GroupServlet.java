@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,8 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -667,6 +670,86 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface GroupService
+    public List<MyGroupCard> getMyGroups (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+        final int memberId = mrec.memberId;
+        
+        try {
+            List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
+            List<MyGroupCard> myGroupCards = Lists.newArrayList();
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+
+            for (GroupRecord record : groupRecords) {
+                final MyGroupCard card = new MyGroupCard();
+                
+                // collect basic info from the GroupRecord
+                card.blurb = record.blurb;
+                card.homeSceneId = record.homeSceneId;
+                if (record.toLogo() != null) {
+                    card.logo = record.toLogo();
+                }
+                card.name = record.toGroupName();
+                
+                // fetch thread information
+                // TODO this will match the My Discussions page: no ignored threads, etc.
+                card.numUnreadThreads = 3;
+
+                List<ForumThreadRecord> threads = MsoyServer.forumRepo.loadRecentThreads(record.groupId, 1);
+                if (threads.size() > 0) {
+                    Map<Integer,GroupName> gmap = Collections.singletonMap(record.groupId, card.name);
+                    card.latestThread = ForumUtil.resolveThreads(mrec, threads, gmap, false, true).get(0);
+                }
+                
+                // fetch current population from PopularPlacesSnapshot
+                PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
+                if (pcard != null) {
+                    card.population = pcard.population;
+                }
+
+                // determine our rank info
+                GroupMembershipRecord gmrec = _groupRepo.getMembership(record.groupId, mrec.memberId);
+                if (gmrec != null) {
+                    card.rank = gmrec.rank;
+                }
+                
+                myGroupCards.add(card);
+            }
+            
+            // sort groups by members online, then newest post
+            Collections.sort(myGroupCards, SORT_MYGROUPCARD);
+            
+            return myGroupCards;
+
+        } catch (PersistenceException pe) {
+            log.warning("getMyGroups failed [id=" + memberId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
+    /** Compartor for sorting MyGroupCards, by population then by last post date. */
+    protected static Comparator<MyGroupCard> SORT_MYGROUPCARD = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
+            }
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            }
+            else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            }
+            else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+    
     protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
     {
         PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();

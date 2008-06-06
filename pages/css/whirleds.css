@@ -250,3 +250,112 @@
 .galaxy .Create .Button {
   padding-right: 20px;
 }
+
+/* ------------------------------------
+   MY WHIRLEDS
+-------------------------------------*/
+
+.MyWhirleds .whirledWidget {
+  height: 80px;
+  text-align: left;
+}
+.MyWhirleds .whirledWidget,
+.MyWhirleds .whirledWidget a {
+  font-size: 13px;
+  color: #2a6891;
+}
+
+.MyWhirleds .LogoBox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+/* vertical centering not supported in ie */
+.MyWhirleds .LogoBox div {
+  display: table-cell;
+  vertical-align: middle;
+  horizontal-align: center;
+  text-align: center;
+}
+
+.MyWhirleds .Name {
+  position: absolute;
+  top: 10px;
+  left: 100px;
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.MyWhirleds .Name a {
+  font-size: 17px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.MyWhirleds .MembersOnline {
+  position: absolute;
+  top: 40px;
+  left: 100px;
+  background: url(/images/game/players_bg.png) no-repeat;
+  color: #FFFFFF;
+  width: 134px;
+  height: 21px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.MyWhirleds .UnreadThreads {
+  position: absolute;
+  top: 50px;
+  left: 400px;
+  display: none;
+}
+
+.MyWhirleds .LatestThread {
+  position: absolute;
+  top: 38px;
+  left: 250px;
+  color: #78a3c5;
+  width: 100px;
+}
+
+.MyWhirleds .LatestThreadSubject,
+.MyWhirleds .NoThreads {
+  position: absolute;
+  top: 38px;
+  left: 340px;
+  width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: none;
+}
+.MyWhirleds .LatestThreadSubject a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.MyWhirleds .PostedBy {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  color: #78a3c5;
+}
+.MyWhirleds .PostedBy a {
+  color: #78a3c5;
+}
+
+.MyWhirleds .Discussions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.MyWhirleds .ManagerStar {
+  position: absolute;
+  left: 70px;
+  top: 50px;
+  z-index: 10;
+}

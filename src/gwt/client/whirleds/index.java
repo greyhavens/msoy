@@ -50,6 +50,11 @@ public class index extends MsgsEntryPoint
                 }
                 setContent(new GroupEdit(group, _detail.getGroupExtras()));
             }
+            
+        } else if (action.equals("mywhirleds")) {
+            MyWhirleds myWhirleds = new MyWhirleds();
+            //fpanel.displayUnreadThreads(false);
+            setContent(CWhirleds.msgs.myWhirledsTitle(), myWhirleds);
 
         } else if (action.equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);

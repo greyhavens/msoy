@@ -97,8 +97,8 @@ public class WhirledDiscussionsPanel extends FlowPanel
             // posted by <a href="#people-{ID}">{NAME}</a> at {TIME}
             HTML posterName = new HTML(CWhirleds.msgs.discussionPostedBy(
                 ""+thread.firstPost.poster.name.getMemberId(),
-                thread.mostRecentPoster.toString(), 
-                TIME_FORMAT.format(thread.mostRecentPostTime)));
+                thread.firstPost.poster.name.toString(), 
+                TIME_FORMAT.format(thread.firstPost.created)));
             posterName.setStyleName("PostedBy");
             add(posterName);
             
