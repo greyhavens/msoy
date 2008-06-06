@@ -377,14 +377,28 @@ public class GameRepository extends ItemRepository<
             store(irec);
         }
     }
-
-    public void storeAgentTrace (int gameId, String trace)
+    
+    public GameTraceLogRecord loadTraceLog (int logId)
         throws PersistenceException
     {
-        insert(new GameTraceLogRecord(gameId, trace));
+        return load(GameTraceLogRecord.class, logId);
+    }
+    
+    public List<GameTraceLogEnumerationRecord> enumerateTraceLogs (int gameId)
+        throws PersistenceException
+    {
+        return findAll(
+            GameTraceLogEnumerationRecord.class,
+            new Where(GameTraceLogEnumerationRecord.GAME_ID_C, gameId),
+            new FromOverride(GameTraceLogRecord.class));
     }
 
-    
+    public void storeTraceLog (int gameId, String traceLog)
+        throws PersistenceException
+    {
+        insert(new GameTraceLogRecord(gameId, traceLog));
+    }
+
     @Override // from ItemRepository
     public void insertOriginalItem (GameRecord item, boolean catalogListing)
         throws PersistenceException

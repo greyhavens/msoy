@@ -79,6 +79,7 @@ public class MsoyGameManager extends WhirledGameManager
     @Override // from WhirledGameManager
     public void agentTrace (ClientObject caller, String trace)
     {
+        super.agentTrace(caller, trace);
         _awardDelegate.recordAgentTrace(trace);
     }
 

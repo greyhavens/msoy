@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -20,6 +21,13 @@ public class GameTraceLogRecord
     extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #logId} field. */
+    public static final String LOG_ID = "logId";
+
+    /** The qualified column identifier for the {@link #logId} field. */
+    public static final ColumnExp LOG_ID_C =
+        new ColumnExp(GameTraceLogRecord.class, LOG_ID);
+
     /** The column identifier for the {@link #gameId} field. */
     public static final String GAME_ID = "gameId";
 
@@ -71,4 +79,18 @@ public class GameTraceLogRecord
         this.recorded = new Timestamp(System.currentTimeMillis());
         this.logData = logData;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #GameTraceLogRecord}
+     * with the supplied key values.
+     */
+    public static Key<GameTraceLogRecord> getKey (int logId)
+    {
+        return new Key<GameTraceLogRecord>(
+                GameTraceLogRecord.class,
+                new String[] { LOG_ID },
+                new Comparable[] { logId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

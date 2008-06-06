@@ -394,7 +394,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             MsoyGameServer.invoker.postUnit(new RepositoryUnit("storeAgentTrace(" + gameId + ")") {
                 public void invokePersist () throws Exception {
                     GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
-                    gameRepo.storeAgentTrace(gameId, _traceBuffer.toString());
+                    gameRepo.storeTraceLog(gameId, _traceBuffer.toString());
                 }
                 public void handleSuccess () {
                     // good
