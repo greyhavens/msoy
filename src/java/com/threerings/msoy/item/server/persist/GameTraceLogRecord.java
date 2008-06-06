@@ -15,7 +15,7 @@ import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 @Entity(indices={
-    @Index(name="ixIdRecorded", fields={ GameTraceLogRecord.GAME_ID, GameTraceLogRecord.RECORDED })
+    @Index(name="ixGameId", fields={ GameTraceLogRecord.GAME_ID })
 })
 public class GameTraceLogRecord
     extends PersistentRecord
@@ -52,7 +52,7 @@ public class GameTraceLogRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The primary key of this log record. */
     @Id
