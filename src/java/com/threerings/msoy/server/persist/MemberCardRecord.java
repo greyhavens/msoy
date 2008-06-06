@@ -73,6 +73,13 @@ public class MemberCardRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #headline} field. */
     public static final ColumnExp HEADLINE_C =
         new ColumnExp(MemberCardRecord.class, HEADLINE);
+
+    /** The column identifier for the {@link #level} field. */
+    public static final String LEVEL = "level";
+
+    /** The qualified column identifier for the {@link #level} field. */
+    public static final ColumnExp LEVEL_C =
+        new ColumnExp(MemberCardRecord.class, LEVEL);
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */

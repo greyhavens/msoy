@@ -378,6 +378,13 @@ public class GameRepository extends ItemRepository<
         }
     }
 
+    public void storeAgentTrace (int gameId, String trace)
+        throws PersistenceException
+    {
+        insert(new GameTraceLogRecord(gameId, trace));
+    }
+
+    
     @Override // from ItemRepository
     public void insertOriginalItem (GameRecord item, boolean catalogListing)
         throws PersistenceException
@@ -480,6 +487,7 @@ public class GameRepository extends ItemRepository<
         classes.add(GameDetailRecord.class);
         classes.add(GamePlayRecord.class);
         classes.add(InstructionsRecord.class);
+        classes.add(GameTraceLogRecord.class);
     }
 
     /** TEMP: Used to migrate game instructions. */

@@ -75,6 +75,12 @@ public class MsoyGameManager extends WhirledGameManager
     {
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
+    
+    @Override // from WhirledGameManager
+    public void agentTrace (ClientObject caller, String trace)
+    {
+        _awardDelegate.recordAgentTrace(trace);
+    }
 
     @Override // from PlaceManager
     public String where ()

@@ -68,6 +68,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyGameManagerDelegate extends RatingManagerDelegate
 {
+    /** The string we append to an agent's trace log that's about to exceed 64K. */
+    public static String TRACE_CAP = "--- buffer full ---";
+    
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
@@ -385,6 +388,20 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // put the kibosh on further flow tracking
         _flowPerMinute = -1;
 
+        // if there were agent traces, flush them to the database
+        if (_traceBuffer.length() > 0) {
+            final int gameId = _content.detail.gameId;
+            MsoyGameServer.invoker.postUnit(new RepositoryUnit("storeAgentTrace(" + gameId + ")") {
+                public void invokePersist () throws Exception {
+                    GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
+                    gameRepo.storeAgentTrace(gameId, _traceBuffer.toString());
+                }
+                public void handleSuccess () {
+                    // good
+                }
+            });
+        }
+        
         // if we were played for zero seconds, don't bother updating anything
         if (_totalTrackedSeconds == 0) {
             return;
@@ -495,6 +512,19 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // stop accumulating "game time" for players
         stopTracking();
+    }
+
+    public void recordAgentTrace (String trace)
+    {
+        if (_tracing) {
+            // the first line we see that would exceed 64K turns off tracing
+            if (_traceBuffer.length() + trace.length() + 1 + TRACE_CAP.length() + 1 < 65535) {
+                _traceBuffer.append(trace).append("\n");
+            } else {
+                _traceBuffer.append(TRACE_CAP).append("\n");
+                _tracing = false;
+            }
+        }
     }
 
     @Override // from RatingManagerDelegate
@@ -1002,6 +1032,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** Tracks accumulated playtime for all players in the game. */
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
+    /** Accumulates up to 64K bytes of trace data from this game's Agent, if any. */
+    protected StringBuilder _traceBuffer = new StringBuilder();
+    
+    /** Determines whether we're still tracing or if we've bumped into the cap. */
+    protected boolean _tracing = true;
+    
     /** Games for which we have no history earn no flow beyond this many minutes. */
     protected static final int MAX_FRESH_GAME_DURATION = 8*60;
 
