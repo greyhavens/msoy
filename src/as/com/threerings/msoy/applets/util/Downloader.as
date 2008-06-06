@@ -42,10 +42,7 @@ public class Downloader extends TitleWindow
         _loader.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadError);
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleDownloadError);
         _loader.addEventListener(Event.COMPLETE, handleDownloadComplete);
-    }
 
-    public function open () :void
-    {
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpManager.centerPopUp(this);
     }
@@ -54,9 +51,6 @@ public class Downloader extends TitleWindow
     {
         if (url == null) {
             return;
-        }
-        if (parent == null) {
-            open();
         }
 
         _progress.includeInLayout = true;
