@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -40,6 +42,15 @@ public class GameTraceLogRecord
         new ColumnExp(GameTraceLogRecord.class, LOG_DATA);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 2;
+
+    /** The primary key of this log record. */
+    @Id
+    @GeneratedValue
+    public int logId;
+    
     /** The id of the game whose logs we're recording. */
     public int gameId;
 
