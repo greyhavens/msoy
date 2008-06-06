@@ -15,7 +15,8 @@
 -injars ../dist/lib/vilya-micasa-0.0-SNAPSHOT.jar(**/util/**,**/client/**)
 -injars ../dist/lib/vilya-parlor-0.0-SNAPSHOT.jar(**/parlor/util/**)
 -injars ../dist/lib/vilya-stats-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/persist/**)
--injars ../dist/lib/threerings-0.0-SNAPSHOT.jar(!META-INF/*,**/threerings/util/**)
+-injars ../dist/lib/threerings-0.0-SNAPSHOT.jar(
+    !META-INF/*,!**/OOOFileAppender*.class,**/threerings/util/**)
 -injars ../dist/lib/whirled-code-0.0-SNAPSHOT.jar(**/WhirledOccupantInfo.class)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class,
     **/user/client/rpc/SerializableException.class)
@@ -29,7 +30,6 @@
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
 -injars ../dist/lib/substance-lite.jar(!META-INF/*)
 -injars ../dist/lib/google-collect.jar(!META-INF/*)
--injars ../dist/lib/log4j.jar(!META-INF/*,!**/log4j/net/**)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
