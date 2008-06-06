@@ -54,9 +54,10 @@ public class UploadServlet extends AbstractUploadServlet
 
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.
-        if (uploadFile.getMimeType() != MediaDesc.INVALID_MIME_TYPE) {
+        byte mimeType = uploadFile.getMimeType();
+        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
             // now we can validate the file size
-            validateFileLength(uploadFile.getMimeType(), uploadLength);
+            validateFileLength(mimeType, uploadLength);
 
         } else {
             throw new FileUploadException("Received upload of unknown mime type [type=" +
@@ -71,7 +72,7 @@ public class UploadServlet extends AbstractUploadServlet
 
         // if this is an image...
         MediaInfo info, tinfo = null;
-        if (MediaDesc.isImage(uploadFile.getMimeType())) {
+        if (MediaDesc.isImage(mimeType)) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
             info = UploadUtil.publishImage(mediaId, uploadFile);
@@ -84,7 +85,7 @@ public class UploadServlet extends AbstractUploadServlet
 
         } else {
             // treat all other file types in the same manner, just publish them
-            info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
+            info = new MediaInfo(uploadFile.getHash(), mimeType);
             UploadUtil.publishUploadFile(uploadFile);
         }
 
