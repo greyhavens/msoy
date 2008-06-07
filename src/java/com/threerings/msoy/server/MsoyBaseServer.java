@@ -7,16 +7,16 @@ import java.io.File;
 import java.security.Security;
 import java.util.Iterator;
 
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.StaticConnectionProvider;
-import com.samskivert.jdbc.depot.CacheAdapter;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.util.MessageManager;
+
 import com.threerings.presents.server.PresentsDObjectMgr;
-
+import com.threerings.presents.server.ReportManager;
 import com.threerings.bureau.server.BureauRegistry;
-
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -41,8 +41,21 @@ import static com.threerings.msoy.Log.log;
  */
 public abstract class MsoyBaseServer extends WhirledServer
 {
-    /** Provides database access to all of our repositories. */
-    public static PersistenceContext perCtx;
+    /** Configures dependencies needed by the Msoy servers. */
+    public static class Module extends WhirledServer.Module
+    {
+        @Override protected void configure () {
+            super.configure();
+            bind(ReportManager.class).to(QuietReportManager.class);
+            try {
+                bind(PersistenceContext.class).toInstance(
+                    new PersistenceContext("msoy", ServerConfig.createConnectionProvider(),
+                                           ServerConfig.createCacheAdapter()));
+            } catch (Exception e) {
+                addError(e);
+            }
+        }
+    }
 
     /** Provides a mechanism for translating strings on the server. <em>Note:</em> avoid using this
      * if at all possible. Delay translation to the client so that we can properly react to the
@@ -101,8 +114,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         }
     }
 
-    @Override
-    public void init ()
+    @Override // from WhirledServer
+    public void init (Injector injector)
         throws Exception
     {
         // before doing anything else, let's ensure that we don't cache DNS queries forever -- this
@@ -110,29 +123,23 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // initialize event logger
-        _eventLog = new MsoyEventLogger(getIdent());
-
-        // create our JDBC bits before calling super.init() because our superclass will attempt to
-        // create our authenticator and we need that ready by then
-        _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
-        CacheAdapter cacher = ServerConfig.createCacheAdapter();
-        perCtx = new PersistenceContext("msoy", _conProv, cacher);
+        _eventLog.init(getIdent());
 
         // this one is needed by createAuthenticator() in our derived classes
-        memberRepo = new MemberRepository(perCtx, _eventLog);
+        memberRepo = new MemberRepository(_perCtx, _eventLog);
 
-        super.init();
+        super.init(injector);
 
         // set up our default object access controller
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create our various repositories
-        ratingRepo = new RatingRepository(perCtx);
-        memoryRepo = new MemoryRepository(perCtx);
-        statRepo = new StatRepository(perCtx);
-        gameCookieRepo = new GameCookieRepository(perCtx);
-        profileRepo = new ProfileRepository(perCtx);
-        feedRepo = new FeedRepository(perCtx);
+        ratingRepo = new RatingRepository(_perCtx);
+        memoryRepo = new MemoryRepository(_perCtx);
+        statRepo = new StatRepository(_perCtx);
+        gameCookieRepo = new GameCookieRepository(_perCtx);
+        profileRepo = new ProfileRepository(_perCtx);
+        feedRepo = new FeedRepository(_perCtx);
 
         // create and set up our configuration registry and admin service
         confReg = createConfigRegistry();
@@ -179,7 +186,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         super.invokerDidShutdown();
 
         // shutdown our persistence context (cache, JDBC connections)
-        perCtx.shutdown();
+        _perCtx.shutdown();
     }
 
     /**
@@ -202,12 +209,19 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected abstract ConfigRegistry createConfigRegistry ()
         throws Exception;
 
-    /** Sends event information to an external log database. */
-    protected MsoyEventLogger _eventLog;
+    /** Disables state of the server report logging. */
+    protected static class QuietReportManager extends ReportManager
+    {
+        @Override protected void logReport (String report) {
+            // TODO: nix this and publish this info via JMX
+        }
+    }
 
-    /** The connection provider used to access our JDBC databases. Don't use this; rather use
-     * {@link #perCtx}. */
-    protected ConnectionProvider _conProv;
+    /** Provides database access to all of our repositories. */
+    @Inject protected PersistenceContext _perCtx;
+
+    /** Sends event information to an external log database. */
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");

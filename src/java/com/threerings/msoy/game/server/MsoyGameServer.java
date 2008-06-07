@@ -6,6 +6,9 @@ package com.threerings.msoy.game.server;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.LoggingLogProvider;
@@ -60,7 +63,7 @@ public class MsoyGameServer extends MsoyBaseServer
     public static ParlorManager parlorMan = new ParlorManager();
 
     /** Manages lobbies and other game bits on this server. */
-    public static GameGameRegistry gameReg = new GameGameRegistry();
+    public static GameGameRegistry gameReg;
 
     /** Handles sandboxed game server code. */
     public static HostedGameManager hostedMan = new HostedGameManager();
@@ -105,15 +108,12 @@ public class MsoyGameServer extends MsoyBaseServer
             System.exit(-1);
         }
 
-        // set up the proper logging services
-        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-        OneLineLogFormatter.configureDefaultHandler();
-
-        MsoyGameServer server = new MsoyGameServer();
+        Injector injector = Guice.createInjector(new Module());
+        MsoyGameServer server = injector.getInstance(MsoyGameServer.class);
         try {
             server._listenPort = Integer.parseInt(args[0]);
             server._connectPort = Integer.parseInt(args[1]);
-            server.init();
+            server.init(injector);
             server.run();
 
         } catch (Exception e) {
@@ -144,13 +144,16 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     @Override
-    public void init ()
+    public void init (Injector injector)
         throws Exception
     {
-        super.init();
+        super.init(injector);
+
+        // TEMP: initialize our legacy static members
+        gameReg = _gameReg;
 
         // set up the right client factory
-        clmgr.setClientFactory(new ClientFactory() {
+        _clmgr.setClientFactory(new ClientFactory() {
             public PresentsClient createClient (AuthRequest areq) {
                 // Bureaus don't have or need access to all the stuff in a full msoy game client, 
                 // so just give them a vanilla PresentsClient client for now.
@@ -170,7 +173,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        gameReg.init(omgr, invmgr, perCtx, ratingRepo, _eventLog);
+        _gameReg.init(omgr, invmgr, _perCtx, ratingRepo, _eventLog);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -183,8 +186,7 @@ public class MsoyGameServer extends MsoyBaseServer
         worldClient.init(this, _listenPort, _connectPort);
 
         // hook up thane
-        breg.setCommandGenerator(
-            WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
+        breg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
 
         log.info("Game server initialized.");
     }
@@ -200,7 +202,7 @@ public class MsoyGameServer extends MsoyBaseServer
         throws Exception
     {
         // TODO: the game servers probably need to hear about changes to runtime config bits
-        return new DatabaseConfigRegistry(perCtx, invoker);
+        return new DatabaseConfigRegistry(_perCtx, invoker);
     }
 
     @Override // from WhirledServer
@@ -242,12 +244,6 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         return new int[] { _listenPort };
     }
-
-    @Override // from PresentsServer
-    protected void logReport (String report)
-    {
-        // no reports for game servers
-    }
     
     protected static class ThaneCommandGenerator 
         implements BureauRegistry.CommandGenerator
@@ -270,6 +266,8 @@ public class MsoyGameServer extends MsoyBaseServer
         }
     }
 
+    /** Manages lobbies and other game bits on this server. */
+    @Inject GameGameRegistry _gameReg;
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;

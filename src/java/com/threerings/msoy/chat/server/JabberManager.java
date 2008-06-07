@@ -6,6 +6,8 @@ package com.threerings.msoy.chat.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.inject.Inject;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -43,6 +45,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -65,23 +68,24 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class JabberManager
-    implements MsoyServer.Shutdowner, ClientManager.ClientObserver, JabberProvider,
+    implements ShutdownManager.Shutdowner, ClientManager.ClientObserver, JabberProvider,
                ConnectionListener
 {
-
     public static boolean DEBUG = false;
+
+    @Inject public JabberManager (ShutdownManager shutmgr, ClientManager clmgr,
+                                  InvocationManager invmgr)
+    {
+        shutmgr.registerShutdowner(this);
+        clmgr.addClientObserver(this);
+        invmgr.registerDispatcher(new JabberDispatcher(this), MsoyCodes.WORLD_GROUP);
+    }
 
     /**
      * Initializes this manager during server startup.
      */
-    public void init (InvocationManager invmgr)
+    public void init ()
     {
-        // register our jabber service
-        invmgr.registerDispatcher(new JabberDispatcher(this), MsoyCodes.WORLD_GROUP);
-
-        MsoyServer.registerShutdowner(this);
-        MsoyServer.clmgr.addClientObserver(this);
-
         String host = ServerConfig.config.getValue("jabber.host", "localhost");
         int port = ServerConfig.config.getValue("jabber.port", 5275);
         String gatewayList = ServerConfig.config.getValue("jabber.gateways", "");

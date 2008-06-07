@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -22,6 +24,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
 
@@ -80,9 +83,18 @@ import static com.threerings.msoy.Log.log;
  * Manages the lobbies active on this server.
  */
 public class GameGameRegistry
-    implements LobbyProvider, AVRProvider,
-               MsoyGameServer.Shutdowner, LobbyManager.ShutdownObserver
+    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver
 {
+    @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
+    {
+        // register to hear when the server is shutdown
+        shutmgr.registerShutdowner(this);
+
+        // register game-related bootstrap services
+        invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
+    }
+
     /**
      * Initializes this registry.
      */
@@ -102,13 +114,6 @@ public class GameGameRegistry
         _ipackRepo = new ItemPackRepository(perCtx);
         _tsourceRepo = new TrophySourceRepository(perCtx);
         _prizeRepo = new PrizeRepository(perCtx);
-
-        // register game-related bootstrap services
-        invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
-        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
-
-        // register to hear when the server is shutdown
-        MsoyGameServer.registerShutdowner(this);
     }
 
     /**

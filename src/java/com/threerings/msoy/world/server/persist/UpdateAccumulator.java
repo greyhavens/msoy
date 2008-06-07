@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
@@ -15,6 +16,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
+import com.threerings.presents.server.ShutdownManager;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -29,13 +31,17 @@ import static com.threerings.msoy.Log.log;
  * committed to the database.
  */
 public class UpdateAccumulator
-    implements MsoyServer.Shutdowner
+    implements ShutdownManager.Shutdowner
 {
-    public UpdateAccumulator (MsoySceneRepository repo)
+    @Inject public UpdateAccumulator (ShutdownManager shutmgr)
+    {
+        shutmgr.registerShutdowner(this);
+    }
+
+    public void init (MsoySceneRepository repo)
     {
         _repo = repo;
         _flusher.schedule(FLUSH_INTERVAL, true);
-        MsoyServer.registerShutdowner(this);
     }
 
     /**
@@ -65,7 +71,7 @@ public class UpdateAccumulator
         wrapper.accumulate((FurniUpdate)update);
     }
 
-    // from interface MsoyServer.Shutdowner
+    // from interface ShutdownManager.Shutdowner
     public void shutdown ()
     {
         // stop our flushing interval

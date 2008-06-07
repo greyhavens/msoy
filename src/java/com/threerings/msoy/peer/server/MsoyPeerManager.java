@@ -13,6 +13,7 @@ import com.samskivert.util.Tuple;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.threerings.util.Name;
 
@@ -21,6 +22,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
@@ -108,6 +110,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getChannelLock (ChatChannel channel)
     {
         return new NodeObject.Lock("ChannelHost", HostedChannel.getKey(channel));
+    }
+
+    /**
+     * Creates an uninitialized peer manager.
+     */
+    @Inject public MsoyPeerManager (ShutdownManager shutmgr)
+    {
+        super(shutmgr);
     }
 
     /**

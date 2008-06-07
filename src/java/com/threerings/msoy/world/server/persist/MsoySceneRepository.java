@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -49,31 +52,33 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides scene storage services for the msoy server.
  */
-@BlockingThread
+@BlockingThread @Singleton
 public class MsoySceneRepository extends DepotRepository
     implements SceneRepository
 {
-    public MsoySceneRepository (PersistenceContext ctx)
+    @Inject public MsoySceneRepository (PersistenceContext ctx)
         throws PersistenceException
     {
         super(ctx);
-
-        // create our stock scenes if they are not yet created
-        for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
-            checkCreateStockScene(stock);
-        }
-
-        _accumulator = new UpdateAccumulator(this);
     }
 
     /**
      * Provides any additional initialization that needs to happen after runtime configuration had
      * been loaded, and other services initialized.
      */
-    public void finishInit (DecorRepository decorRepo)
+    public void init (DecorRepository decorRepo)
+        throws PersistenceException
     {
+        // create our stock scenes if they are not yet created
+        for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
+            checkCreateStockScene(stock);
+        }
+
         // keep a pointer to the decor repository
         _decorRepo = decorRepo;
+
+        // initialize our update accumulator
+        _accumulator.init(this);
     }
 
     /**
@@ -424,7 +429,7 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /** Utility class that compresses related scene updates. */
-    protected UpdateAccumulator _accumulator;
+    @Inject protected UpdateAccumulator _accumulator;
     
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     protected DecorRepository _decorRepo;

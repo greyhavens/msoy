@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
@@ -17,6 +19,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -54,7 +57,7 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner
+    implements MsoyGameProvider, GameServerProvider, ShutdownManager.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -73,18 +76,19 @@ public class MsoyGameRegistry
         }
     };
 
-    /**
-     * Initializes this registry.
-     */
-    public void init (InvocationManager invmgr, GameRepository gameRepo)
-        throws PersistenceException
+    @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
-        _gameRepo = gameRepo;
+        shutmgr.registerShutdowner(this);
         invmgr.registerDispatcher(new MsoyGameDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new GameServerDispatcher(this), GAME_SERVER_GROUP);
+    }
 
-        // register to hear when the server is shutdown
-        MsoyServer.registerShutdowner(this);
+    /**
+     * Initializes this registry and queues up our game servers to be started.
+     */
+    public void init (GameRepository gameRepo)
+    {
+        _gameRepo = gameRepo;
 
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)

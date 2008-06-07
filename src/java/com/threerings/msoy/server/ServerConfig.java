@@ -5,12 +5,13 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
+import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
@@ -98,16 +99,16 @@ public class ServerConfig
     /** The ReCaptcha private key. */
     public static String recaptchaPrivateKey;
 
-    /** Provides access to our config properties. <em>Do not</em> modify
-     * these properties! */
+    /** Provides access to our config properties. */
     public static Config config = new Config("server");
 
     /**
-     * Returns the JDBC configuration.
+     * Returns a provider of JDBC connections.
      */
-    public static Properties getJDBCConfig ()
+    public static ConnectionProvider createConnectionProvider ()
+        throws Exception
     {
-        return config.getSubProperties("db");
+        return new StaticConnectionProvider(config.getSubProperties("db"));
     }
 
     /**

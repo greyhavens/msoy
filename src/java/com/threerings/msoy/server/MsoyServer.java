@@ -12,7 +12,10 @@ import java.util.Iterator;
 import org.apache.mina.common.IoAcceptor;
 
 import com.google.common.collect.Maps;
-import com.samskivert.jdbc.TransitionRepository;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
@@ -31,6 +34,7 @@ import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ReportManager;
 
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
@@ -96,7 +100,7 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
 
     /** Manages interactions with our peer servers. */
-    public static MsoyPeerManager peerMan = new MsoyPeerManager();
+    public static MsoyPeerManager peerMan;
 
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
@@ -109,9 +113,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
-
-    /** Our runtime jabber manager. */
-    public static JabberManager jabberMan = new JabberManager();
 
     /** Our runtime support manager. */
     public static MsoyUnderwireManager supportMan = new MsoyUnderwireManager();
@@ -147,10 +148,10 @@ public class MsoyServer extends MsoyBaseServer
     public static SpotProvider spotProv;
 
     /** Our runtime swiftly editor manager. */
-    public static SwiftlyManager swiftlyMan = new SwiftlyManager();
+    public static SwiftlyManager swiftlyMan;
 
     /** Manages our external game servers. */
-    public static MsoyGameRegistry gameReg = new MsoyGameRegistry();
+    public static MsoyGameRegistry gameReg;
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
@@ -233,17 +234,15 @@ public class MsoyServer extends MsoyBaseServer
      */
     public static void main (String[] args)
     {
-        // route legacy logs through the Java log system
-        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-
         // if we're on the dev server, up our long invoker warning to 3 seconds
         if (ServerConfig.config.getValue("auto_restart", false)) {
             Invoker.setDefaultLongThreshold(3000L);
         }
 
-        MsoyServer server = new MsoyServer();
+        Injector injector = Guice.createInjector(new Module());
+        MsoyServer server = injector.getInstance(MsoyServer.class);
         try {
-            server.init();
+            server.init(injector);
             server.run();
         } catch (Exception e) {
             log.warning("Unable to initialize server", e);
@@ -251,15 +250,22 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
-    @Override
-    public void init ()
+    @Override // from MsoyBaseServer
+    public void init (Injector injector)
         throws Exception
     {
-        super.init();
+        super.init(injector);
+
+        // TEMP: publish some managers via the legacy static references
+        peerMan = _peerMan;
+        gameReg = _gameReg;
+        swiftlyMan = _swiftlyMan;
+        sceneRepo = _sceneRepo;
 
         // we use this on dev to work with the dev ooouser database; TODO: nix
-        userCtx = new PersistenceContext(
-            UserRepository.USER_REPOSITORY_IDENT, _conProv, perCtx.getCacheAdapter());
+        userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT,
+                                         ServerConfig.createConnectionProvider(),
+                                         _perCtx.getCacheAdapter());
 
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
@@ -271,18 +277,14 @@ public class MsoyServer extends MsoyBaseServer
             }
         });
 
-        // this is not public because it should not be referenced statically, it should always be
-        // passed in to whatever manager needs to handle transitions
-        _transitRepo = new TransitionRepository(_conProv);
-
         // create our various repositories
-        groupRepo = new GroupRepository(perCtx, _eventLog);
-        mailRepo = new MailRepository(perCtx, _eventLog);
-        forumRepo = new ForumRepository(perCtx);
-        issueRepo = new IssueRepository(perCtx);
-        commentRepo = new CommentRepository(perCtx);
-        trophyRepo = new TrophyRepository(perCtx);
-        swiftlyRepo = new SwiftlyRepository(perCtx);
+        groupRepo = new GroupRepository(_perCtx, _eventLog);
+        mailRepo = new MailRepository(_perCtx, _eventLog);
+        forumRepo = new ForumRepository(_perCtx);
+        issueRepo = new IssueRepository(_perCtx);
+        commentRepo = new CommentRepository(_perCtx);
+        trophyRepo = new TrophyRepository(_perCtx);
+        swiftlyRepo = new SwiftlyRepository(_perCtx);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
@@ -323,14 +325,14 @@ public class MsoyServer extends MsoyBaseServer
     protected ConfigRegistry createConfigRegistry ()
         throws Exception
     {
-        return new PeeredDatabaseConfigRegistry(perCtx, invoker, peerMan);
+        return new PeeredDatabaseConfigRegistry(_perCtx, invoker, _peerMan);
     }
 
     @Override // from WhirledServer
     protected SceneRegistry createSceneRegistry ()
         throws Exception
     {
-        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(perCtx), _eventLog);
+        return new MsoySceneRegistry(invmgr, _sceneRepo, _eventLog);
     }
 
     @Override // from CrowdServer
@@ -355,12 +357,6 @@ public class MsoyServer extends MsoyBaseServer
         return ServerConfig.serverPorts;
     }
 
-    @Override // from PresentsServer
-    protected void logReport (String report)
-    {
-        // TODO: export this information via JMX
-    }
-
     /**
      * Called once our runtime configuration information is loaded and ready.
      */
@@ -372,8 +368,8 @@ public class MsoyServer extends MsoyBaseServer
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        peerMan.init(perCtx, invoker, ServerConfig.nodeName, ServerConfig.sharedSecret,
-                     ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
+        _peerMan.init(_perCtx, invoker, ServerConfig.nodeName, ServerConfig.sharedSecret,
+                      ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
@@ -383,12 +379,12 @@ public class MsoyServer extends MsoyBaseServer
         friendMan.init();
         mailMan.init(mailRepo, memberRepo, itemMan);
         channelMan.init(invmgr);
-        jabberMan.init(invmgr);
-        itemMan.init(perCtx, _eventLog);
-        swiftlyMan.init(invmgr);
+        _jabberMan.init();
+        itemMan.init(_perCtx, _eventLog);
+        swiftlyMan.init();
         petMan.init(invmgr);
-        gameReg.init(invmgr, itemMan.getGameRepository());
-        supportMan.init(perCtx);
+        gameReg.init(itemMan.getGameRepository());
+        supportMan.init(_perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -397,7 +393,7 @@ public class MsoyServer extends MsoyBaseServer
         });
         DictionaryManager.init("data/dictionary");
 
-        sceneRepo.finishInit(itemMan.getDecorRepository());
+        sceneRepo.init(itemMan.getDecorRepository());
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer(_logdir, _eventLog);
@@ -431,7 +427,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // resolve any remaining database schemas that have not yet been loaded
         if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
-            perCtx.initializeManagedRecords(true);
+            _perCtx.initializeManagedRecords(true);
             userCtx.initializeManagedRecords(true);
         }
 
@@ -479,14 +475,26 @@ public class MsoyServer extends MsoyBaseServer
         adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
+    /** Our runtime jabber manager. */
+    @Inject protected JabberManager _jabberMan;
+
+    /** Manages interactions with our peer servers. */
+    @Inject protected MsoyPeerManager _peerMan;
+
+    /** Manages our external game servers. */
+    @Inject protected MsoyGameRegistry _gameReg;
+
+    /** Our runtime swiftly editor manager. */
+    @Inject protected SwiftlyManager _swiftlyMan;
+
+    /** The Msoy scene repository. */
+    @Inject protected MsoySceneRepository _sceneRepo;
+
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
 
     /** A policy server used on dev deployments. */
     protected IoAcceptor _policyServer;
-
-    /** Our transition repository. */
-    protected static TransitionRepository _transitRepo;
 
     /** A mapping from member name to member object for all online members. */
     protected static HashIntMap<MemberObject> _online = new HashIntMap<MemberObject>();

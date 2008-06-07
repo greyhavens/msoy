@@ -5,7 +5,11 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 
+import com.google.inject.Inject;
+
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
@@ -25,13 +29,16 @@ import static com.threerings.msoy.Log.log;
  * separate thread.
  */
 public class MsoyEventLogger
-    implements MsoyBaseServer.Shutdowner
+    implements ShutdownManager.Shutdowner
 {
-    /** Initializes the logger; this must happen before any events can be logged. */
-    public MsoyEventLogger (String ident)
+    @Inject public MsoyEventLogger (ShutdownManager shutmgr)
     {
-        MsoyBaseServer.registerShutdowner(this);
+        shutmgr.registerShutdowner(this);
+    }
 
+    /** Initializes the logger; this must happen before any events can be logged. */
+    public void init (String ident)
+    {
         // log locally (always for now)
         File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
         log.info("Events logged locally to: " + logloc);

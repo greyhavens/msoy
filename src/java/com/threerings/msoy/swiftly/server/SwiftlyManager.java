@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
@@ -26,6 +27,7 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.PeerProjectMarshaller;
@@ -55,29 +57,30 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
  */
 @EventThread
 public class SwiftlyManager
-    implements SwiftlyProvider, PeerProjectProvider, MsoyServer.Shutdowner
+    implements SwiftlyProvider, PeerProjectProvider, ShutdownManager.Shutdowner
 {
     /** This thread pool is used to execute potentially long running project builds on separate
      * threads so that they do not interfere with normal server operation. */
     public ExecutorService buildExecutor;
 
+    @Inject public SwiftlyManager (ShutdownManager shutmgr, InvocationManager invmgr)
+    {
+        shutmgr.registerShutdowner(this);
+        invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
+        _ppservice = (PeerProjectMarshaller)
+            invmgr.registerDispatcher(new PeerProjectDispatcher(this));
+    }
+
     /**
      * Configures us with our repository.
      */
-    public void init (InvocationManager invmgr)
+    public void init ()
     {
-        // register ourselves as handling the Swiftly invocation service
-        invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
-
         // create our build thread pool
         buildExecutor = Executors.newFixedThreadPool(MAX_BUILD_THREADS);
 
         // register and initialize our peer project service
-        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerProjectService(
-            (PeerProjectMarshaller)invmgr.registerDispatcher(new PeerProjectDispatcher(this)));
-
-        // register to be informed when the server shuts down
-        MsoyServer.registerShutdowner(this);
+        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerProjectService(_ppservice);
     }
 
     /**
@@ -231,7 +234,7 @@ public class SwiftlyManager
         });
     }
 
-    // from interface MsoyServer.Shutdowner
+    // from interface ShutdownManager.Shutdowner
     public void shutdown ()
     {
         // we need to shut down any active room managers to ensure they flush their bits
@@ -439,6 +442,9 @@ public class SwiftlyManager
         }
         return true;
     }
+
+    /** We need to keep this around between construction and initialization. */
+    protected PeerProjectMarshaller _ppservice;
 
     /** Maximum number of concurrent builds. */
     protected static final int MAX_BUILD_THREADS = 5;
