@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -56,6 +57,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the process of starting up external game server processes and coordinating with them as
  * they host lobbies and games.
  */
+@Singleton
 public class MsoyGameRegistry
     implements MsoyGameProvider, GameServerProvider, ShutdownManager.Shutdowner
 {

@@ -5,6 +5,9 @@ package com.threerings.msoy.admin.server;
 
 import java.util.Date;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.util.Interval;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
@@ -13,6 +16,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.RebootManager;
 
 import com.threerings.msoy.data.MemberObject;
@@ -29,7 +33,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles administrative bits for the MetaSOY server.
  */
-@EventThread
+@EventThread @Singleton
 public class MsoyAdminManager
 {
     /** Contains server status information published to admins. */
@@ -38,21 +42,20 @@ public class MsoyAdminManager
     /**
      * Prepares the admin manager for operation.
      */
-    public void init (MsoyServer server, MsoyEventLogger eventLog)
+    public void init ()
     {
-        _server = server;
-        _eventLog = eventLog;
-        _rebmgr = new MsoyRebootManager(server);
+        // create our reboot manager
+        _rebmgr = new MsoyRebootManager(_server, _omgr);
 
         // create and configure our status object
-        statObj = MsoyServer.omgr.registerObject(new StatusObject());
+        statObj = _omgr.registerObject(new StatusObject());
         statObj.serverStartTime = System.currentTimeMillis();
 
         // start up our connection manager stat monitor
         _conmgrStatsUpdater.schedule(5000L, true);
 
         // start up the system "snapshot" logger
-        new Interval(_server.omgr) {
+        new Interval(_omgr) {
             public void expired () {
                 // iterate over the list of members, adding up a total, as well as counting up
                 // subsets of active users and guest users
@@ -98,8 +101,8 @@ public class MsoyAdminManager
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
     {
-        public MsoyRebootManager (MsoyServer server) {
-            super(server);
+        public MsoyRebootManager (MsoyServer server, RootDObjectManager omgr) {
+            super(server, omgr);
             RuntimeConfig.server.addListener(this);
             RuntimeConfig.server.setCustomRebootMsg("");
         }
@@ -125,7 +128,7 @@ public class MsoyAdminManager
             }
 
             // figure out who requested the reboot
-            DObject o = MsoyServer.omgr.getObject(event.getSourceOid());
+            DObject o = _omgr.getObject(event.getSourceOid());
             String blame;
             if (o == null) {
                 blame = "automatic";
@@ -172,9 +175,11 @@ public class MsoyAdminManager
         }
     };
 
-    protected MsoyServer _server;
-    protected MsoyEventLogger _eventLog;
     protected MsoyRebootManager _rebmgr;
+
+    @Inject protected MsoyServer _server;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

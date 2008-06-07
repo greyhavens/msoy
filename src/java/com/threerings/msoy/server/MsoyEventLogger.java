@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.io.File;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
@@ -28,6 +29,7 @@ import static com.threerings.msoy.Log.log;
  * thread-safe. All logging requests will be serialized and delivered to the logging server on a
  * separate thread.
  */
+@Singleton
 public class MsoyEventLogger
     implements ShutdownManager.Shutdowner
 {

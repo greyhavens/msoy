@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
@@ -66,7 +67,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the connection to a jabber server providing gateway access to external IM networks.
  */
-@EventThread
+@Singleton @EventThread
 public class JabberManager
     implements ShutdownManager.Shutdowner, ClientManager.ClientObserver, JabberProvider,
                ConnectionListener

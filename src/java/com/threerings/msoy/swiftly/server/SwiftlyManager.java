@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
@@ -55,7 +56,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 /**
  * Handles the collection of Swiftly project information
  */
-@EventThread
+@Singleton @EventThread
 public class SwiftlyManager
     implements SwiftlyProvider, PeerProjectProvider, ShutdownManager.Shutdowner
 {

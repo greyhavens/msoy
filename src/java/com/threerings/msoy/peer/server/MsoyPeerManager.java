@@ -14,6 +14,7 @@ import com.samskivert.util.Tuple;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.threerings.util.Name;
 
@@ -58,7 +59,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages communication with our peer servers, coordinates services that must work across peers.
  */
-@EventThread
+@Singleton @EventThread
 public class MsoyPeerManager extends CrowdPeerManager
     implements MsoyPeerProvider
 {

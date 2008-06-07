@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.PersistenceContext;
 
@@ -34,6 +35,7 @@ import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ReportManager;
 
 import com.threerings.admin.server.ConfigRegistry;
@@ -82,8 +84,18 @@ import static com.threerings.msoy.Log.log;
 /**
  * Brings together all of the services needed by the World server.
  */
+@Singleton
 public class MsoyServer extends MsoyBaseServer
 {
+    /** Configures dependencies needed by the world server. */
+    public static class Module extends MsoyBaseServer.Module
+    {
+        @Override protected void configure () {
+            super.configure();
+            // nada (yet)
+        }
+    }
+
     /** TODO: Provides database access to the user databases. This should probably be removed. */
     public static PersistenceContext userCtx;
 
@@ -261,6 +273,7 @@ public class MsoyServer extends MsoyBaseServer
         gameReg = _gameReg;
         swiftlyMan = _swiftlyMan;
         sceneRepo = _sceneRepo;
+        adminMan = _adminMan;
 
         // we use this on dev to work with the dev ooouser database; TODO: nix
         userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT,
@@ -357,12 +370,12 @@ public class MsoyServer extends MsoyBaseServer
         return ServerConfig.serverPorts;
     }
 
-    /**
-     * Called once our runtime configuration information is loaded and ready.
-     */
+    @Override // from MsoyBaseServer
     protected void finishInit ()
         throws Exception
     {
+        super.finishInit();
+
         // initialize our authenticator
         author.init(_eventLog);
 
@@ -374,7 +387,7 @@ public class MsoyServer extends MsoyBaseServer
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
-        adminMan.init(this, _eventLog);
+        _adminMan.init();
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
         mailMan.init(mailRepo, memberRepo, itemMan);
@@ -460,7 +473,7 @@ public class MsoyServer extends MsoyBaseServer
     {
         // look up the last-modified time
         long lastModified = codeModifiedTime();
-        if (lastModified <= _codeModified || adminMan.statObj.serverRebootTime != 0L) {
+        if (lastModified <= _codeModified || _adminMan.statObj.serverRebootTime != 0L) {
             return;
         }
 
@@ -472,7 +485,7 @@ public class MsoyServer extends MsoyBaseServer
                 break;
             }
         }
-        adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
+        _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
     /** Our runtime jabber manager. */
@@ -489,6 +502,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The Msoy scene repository. */
     @Inject protected MsoySceneRepository _sceneRepo;
+
+    /** Our runtime admin manager. */
+    @Inject protected MsoyAdminManager _adminMan;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

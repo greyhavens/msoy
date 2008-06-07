@@ -59,6 +59,15 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyGameServer extends MsoyBaseServer
 {
+    /** Configures dependencies needed by the world server. */
+    public static class Module extends MsoyBaseServer.Module
+    {
+        @Override protected void configure () {
+            super.configure();
+            // nada (yet)
+        }
+    }
+
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
 

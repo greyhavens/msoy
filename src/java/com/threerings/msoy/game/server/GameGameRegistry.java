@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -82,6 +83,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the lobbies active on this server.
  */
+@Singleton
 public class GameGameRegistry
     implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver
 {
