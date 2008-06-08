@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import com.google.inject.Inject;
 import com.samskivert.util.Invoker;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -32,11 +33,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyClient extends WhirledClient
 {
-    public MsoyClient (MsoyEventLogger eventLog)
-    {
-        _eventLog = eventLog;
-    }
-
     /**
      * Called by the peer manager to let us know that our session was forwarded to another server.
      * When this session ends we'll know that it's not *really* the end of the user's session,
@@ -194,7 +190,7 @@ public class MsoyClient extends WhirledClient
     protected IdleTracker _idleTracker = new IdleTracker();
 
     /** We generate events to this fellow. */
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** Only valid in {@link #sessionDidEnd}, lets us know if the session is truly over or if the
      * member just went to another server. */
