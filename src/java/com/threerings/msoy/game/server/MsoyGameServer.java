@@ -185,7 +185,6 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        _gameReg.init(omgr, invmgr, _perCtx, ratingRepo, _eventLog);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {

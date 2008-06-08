@@ -98,27 +98,6 @@ public class GameGameRegistry
     }
 
     /**
-     * Initializes this registry.
-     */
-    public void init (RootDObjectManager omgr, InvocationManager invmgr, PersistenceContext perCtx,
-                      RatingRepository ratingRepo, MsoyEventLogger eventLog)
-    {
-        _omgr = omgr;
-        _eventLog = eventLog;
-
-        // create our various game-related repositories
-        _gameRepo = new GameRepository(perCtx);
-        _avrgRepo = new AVRGameRepository(perCtx);
-        _trophyRepo = new TrophyRepository(perCtx);
-        _ratingRepo = ratingRepo;
-
-        _lpackRepo = new LevelPackRepository(perCtx);
-        _ipackRepo = new ItemPackRepository(perCtx);
-        _tsourceRepo = new TrophySourceRepository(perCtx);
-        _prizeRepo = new PrizeRepository(perCtx);
-    }
-
-    /**
      * Returns the game repository used to maintain our persistent data.
      */
     public GameRepository getGameRepository ()
@@ -741,10 +720,10 @@ public class GameGameRegistry
     }
 
     /** The distributed object manager that we work with. */
-    protected RootDObjectManager _omgr;
+    @Inject protected RootDObjectManager _omgr;
 
     /** We record metrics events to this fellow. */
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
@@ -762,12 +741,12 @@ public class GameGameRegistry
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
 
     // various and sundry repositories for loading persistent data
-    protected GameRepository _gameRepo;
-    protected AVRGameRepository _avrgRepo;
-    protected RatingRepository _ratingRepo;
-    protected TrophyRepository _trophyRepo;
-    protected LevelPackRepository _lpackRepo;
-    protected ItemPackRepository _ipackRepo;
-    protected TrophySourceRepository _tsourceRepo;
-    protected PrizeRepository _prizeRepo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected AVRGameRepository _avrgRepo;
+    @Inject protected RatingRepository _ratingRepo;
+    @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected PrizeRepository _prizeRepo;
 }
