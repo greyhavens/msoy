@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -35,10 +37,10 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages forum threads and messages.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class ForumRepository extends DepotRepository
 {
-    public ForumRepository (PersistenceContext ctx)
+    @Inject public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

@@ -22,6 +22,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
 import com.threerings.msoy.web.server.UploadFile;
@@ -31,10 +32,12 @@ import com.threerings.presents.client.InvocationService.ResultListener;
 /** Handles a request to build our project. */
 public class BuildAndExportTask extends AbstractBuildTask
 {
-   public BuildAndExportTask (ProjectRoomManager manager, MemberName member,
-                              ResultListener listener)
+    public BuildAndExportTask (ProjectRoomManager manager, SwiftlyRepository swiftlyRepo,
+                               MemberName member, ResultListener listener)
     {
         super(manager, member, listener);
+
+        _swiftlyRepo = swiftlyRepo;
 
         // snapshot the project type and name while we are on the dobject thread
         _projectName = manager.getRoomObj().project.projectName;
@@ -85,7 +88,7 @@ public class BuildAndExportTask extends AbstractBuildTask
 
         // if the build result id was not in the room cache, load the record
         if (_resultId == null) {
-            SwiftlyCollaboratorsRecord sRec = MsoyServer.swiftlyRepo.loadCollaborator(
+            SwiftlyCollaboratorsRecord sRec = _swiftlyRepo.loadCollaborator(
                 _projectId, _member.getMemberId());
             if (sRec == null) {
                 throw new PersistenceException("No collaborator record found when expected. " +
@@ -151,8 +154,7 @@ public class BuildAndExportTask extends AbstractBuildTask
 
             // update the collaborator record with the new itemId
             _resultId = _record.itemId;
-            MsoyServer.swiftlyRepo.updateBuildResultItem(
-                _projectId, _member.getMemberId(), _record.itemId);
+            _swiftlyRepo.updateBuildResultItem(_projectId, _member.getMemberId(), _record.itemId);
 
         // otherwise, update the existing item
         } else {
@@ -187,6 +189,7 @@ public class BuildAndExportTask extends AbstractBuildTask
         }
     }
 
+    protected final SwiftlyRepository _swiftlyRepo;
     protected final String _projectName;
     protected final byte _itemType;
     protected Integer _resultId;

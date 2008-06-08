@@ -530,7 +530,6 @@ public class WorldServlet extends MsoyServiceServlet
     /** Contains a cached copy of our WhatIsWhirled data. */
     protected ExpiringReference<LandingData> _landingData;
 
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected GameRepository _gameRepo;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;

@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -146,7 +148,6 @@ public class PublicInfoServlet extends HttpServlet
         private final String _paramName;
     }
 
-    protected final GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
-    protected final GroupRepository _whirledRepo = MsoyServer.groupRepo;
-
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected GroupRepository _whirledRepo;
 }

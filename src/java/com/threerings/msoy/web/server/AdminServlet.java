@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
@@ -20,6 +21,8 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.person.server.persist.MailRepository;
 
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.MemberAdminInfo;
@@ -258,10 +261,11 @@ public class AdminServlet extends MsoyServiceServlet
     {
         String subject = MsoyServer.msgMan.getBundle("server").get("m.got_invites_subject", number);
         String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
-        MsoyServer.mailRepo.startConversation(recipientId, senderId, subject, body, null);
+        _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
 
-    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
+    /** Provides access to persistent mail-related data. */
+    @Inject protected MailRepository _mailRepo;
 
     protected static final int MEMBERS_PER_LOOP = 100;
 }

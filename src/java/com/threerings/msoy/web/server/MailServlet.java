@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -231,6 +232,6 @@ public class MailServlet extends MsoyServiceServlet
         }
     }
 
-    protected MailRepository _mailRepo = MsoyServer.mailRepo;
-    protected MailManager _mailMan = MsoyServer.mailMan;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected MailManager _mailMan;
 }

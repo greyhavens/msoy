@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -22,10 +25,10 @@ import com.threerings.presents.annotation.BlockingThread;
 /**
  * Manages the trophy persistent storage.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class TrophyRepository extends DepotRepository
 {
-    public TrophyRepository (PersistenceContext perCtx)
+    @Inject public TrophyRepository (PersistenceContext perCtx)
     {
         super(perCtx);
     }

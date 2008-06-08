@@ -13,6 +13,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
@@ -796,5 +797,5 @@ public class GroupServlet extends MsoyServiceServlet
         return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
     }
 
-    protected GroupRepository _groupRepo = MsoyServer.groupRepo;
+    @Inject protected GroupRepository _groupRepo;
 }

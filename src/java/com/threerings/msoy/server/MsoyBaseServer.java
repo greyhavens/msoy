@@ -133,19 +133,17 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // TEMP: set up our legacy static references
         memberRepo = _memberRepo;
+        ratingRepo = _ratingRepo;
+        memoryRepo = _memoryRepo;
+        statRepo = _statRepo;
+        gameCookieRepo = _gameCookieRepo;
+        profileRepo = _profileRepo;
+        feedRepo = _feedRepo;
 
         super.init(injector);
 
         // set up our default object access controller
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
-
-        // create our various repositories
-        ratingRepo = new RatingRepository(_perCtx);
-        memoryRepo = new MemoryRepository(_perCtx);
-        statRepo = new StatRepository(_perCtx);
-        gameCookieRepo = new GameCookieRepository(_perCtx);
-        profileRepo = new ProfileRepository(_perCtx);
-        feedRepo = new FeedRepository(_perCtx);
 
         // create and set up our configuration registry and admin service
         confReg = createConfigRegistry();
@@ -215,6 +213,24 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Contains information on our members. */
     @Inject protected MemberRepository _memberRepo;
+
+    /** Contains the rating data for each player and game. */
+    @Inject protected RatingRepository _ratingRepo;
+
+    /** Maintains "smart" digital item memories. */
+    @Inject protected MemoryRepository _memoryRepo;
+
+    /** Manages the persistent repository of stats. */
+    @Inject protected StatRepository _statRepo;
+
+    /** Stores user's game cookies. */
+    @Inject protected GameCookieRepository _gameCookieRepo;
+
+    /** Contains information on our member profiles. */
+    @Inject protected ProfileRepository _profileRepo;
+
+    /** The Msoy feed repository. */
+    @Inject protected FeedRepository _feedRepo;
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");

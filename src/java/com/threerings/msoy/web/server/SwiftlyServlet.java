@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 
@@ -22,6 +23,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
@@ -74,7 +76,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
             for (SwiftlyProjectRecord pRec :
-                MsoyServer.swiftlyRepo.findRemixableProjects()) {
+                _swiftlyRepo.findRemixableProjects()) {
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
@@ -94,7 +96,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
             for (SwiftlyProjectRecord pRec :
-                MsoyServer.swiftlyRepo.findMembersProjects(memrec.memberId)) {
+                _swiftlyRepo.findMembersProjects(memrec.memberId)) {
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
@@ -134,7 +136,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             // XXX We need to sort out how to properly create remote repositories.
             // Until then, we create them in a hard-wired local directory.
             String svnRoot = ServerConfig.serverRoot + "/data/swiftly/projects";
-            storeRec = MsoyServer.swiftlyRepo.createSVNStorage(ProjectSVNStorage.PROTOCOL_FILE,
+            storeRec = _swiftlyRepo.createSVNStorage(ProjectSVNStorage.PROTOCOL_FILE,
                 "", 0, svnRoot);
 
         } catch (PersistenceException pe) {
@@ -144,12 +146,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // Create the project record.
         try {
-            pRec = MsoyServer.swiftlyRepo.createProject(
+            pRec = _swiftlyRepo.createProject(
                 memrec.memberId, projectName, projectType, storeRec.storageId, remixable);
             project = pRec.toSwiftlyProject();
 
             // Set the creator as the first collaborator.
-            MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId);
+            _swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId);
 
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(SwiftlyCodes.E_PROJECT_NAME_EXISTS);
@@ -172,7 +174,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         } catch (ProjectStorageException pse) {
             log.warning("Initializing swiftly project storage failed.", pse);
             try {
-                MsoyServer.swiftlyRepo.deleteProject(pRec);
+                _swiftlyRepo.deleteProject(pRec);
             } catch (PersistenceException pe) {
                 log.warning("Deleting the partially-initialized swiftly project failed.", pe);
             }
@@ -197,14 +199,14 @@ public class SwiftlyServlet extends MsoyServiceServlet
         */
 
         try {
-            SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(project.projectId);
+            SwiftlyProjectRecord pRec = _swiftlyRepo.loadProject(project.projectId);
             if (pRec == null) {
                 throw new PersistenceException("Swiftly project not found! [id=" +
                     project.projectId + "]");
             }
             Map<String, Object> updates = pRec.findUpdates(project);
             if (updates.size() > 0) {
-                MsoyServer.swiftlyRepo.updateProject(project.projectId, updates);
+                _swiftlyRepo.updateProject(project.projectId, updates);
                 // inform the room manager, if resolved, that the project has changed
                 updateRoomProject(project);
             }
@@ -223,7 +225,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         requireOwner(projectId, memrec.memberId);
 
         try {
-            MsoyServer.swiftlyRepo.markProjectDeleted(projectId);
+            _swiftlyRepo.markProjectDeleted(projectId);
         } catch (PersistenceException pe) {
             log.warning("Marking project deleted failed [id= " + projectId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -237,7 +239,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
-            SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(projectId);
+            SwiftlyProjectRecord pRec = _swiftlyRepo.loadProject(projectId);
             if (pRec == null) {
                 throw new ServiceException(SwiftlyCodes.E_NO_SUCH_PROJECT);
             }
@@ -261,7 +263,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         _mhelper.requireAuthedUser(ident);
 
         try {
-            MemberRecord mRec = MsoyServer.swiftlyRepo.loadProjectOwner(projectId);
+            MemberRecord mRec = _swiftlyRepo.loadProjectOwner(projectId);
             if (mRec == null) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
@@ -284,7 +286,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         try {
             for (MemberRecord mRec :
-                MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
+                _swiftlyRepo.getCollaborators(projectId)) {
                 members.add(mRec.getName());
             }
         } catch (PersistenceException pe) {
@@ -324,7 +326,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.swiftlyRepo.leaveCollaborators(projectId, name.getMemberId());
+            _swiftlyRepo.leaveCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
             log.warning("Removing project's collaborators failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -349,7 +351,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.swiftlyRepo.joinCollaborators(projectId, name.getMemberId());
+            _swiftlyRepo.joinCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
             log.warning("Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -460,7 +462,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            return MsoyServer.swiftlyRepo.isCollaborator(projectId, memberId);
+            return _swiftlyRepo.isCollaborator(projectId, memberId);
         } catch (PersistenceException pe) {
             log.warning("Checking project membership failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -478,10 +480,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            return MsoyServer.swiftlyRepo.isOwner(projectId, memberId);
+            return _swiftlyRepo.isOwner(projectId, memberId);
         } catch (PersistenceException pe) {
             log.warning("Checking project ownership failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
+
+    /** Repository of Swiftly data. */
+    @Inject protected SwiftlyRepository _swiftlyRepo;
 }

@@ -20,6 +20,7 @@ import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -459,9 +460,10 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
-    protected ProfileRepository _profileRepo = MsoyServer.profileRepo;
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _waCleared = System.currentTimeMillis();
+
+    @Inject protected ProfileRepository _profileRepo;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;

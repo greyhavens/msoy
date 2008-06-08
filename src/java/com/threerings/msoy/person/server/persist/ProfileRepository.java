@@ -9,6 +9,9 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -25,10 +28,10 @@ import com.threerings.msoy.person.data.Interest;
 /**
  * Manages the persistent store of profile profile data.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class ProfileRepository extends DepotRepository
 {
-    public ProfileRepository (PersistenceContext ctx)
+    @Inject public ProfileRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

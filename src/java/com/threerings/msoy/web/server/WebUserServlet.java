@@ -44,6 +44,8 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -172,7 +174,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 String body = MsoyServer.msgMan.getBundle("server").get(
                     "m.invite_accepted_body", invite.inviteeEmail, displayName);
                 try {
-                    MsoyServer.mailMan.startConversation(mrec, inviter, subject, body, null);
+                    _mailMan.startConversation(mrec, inviter, subject, body, null);
                 } catch (Exception e) {
                     log.warning("Failed to sent invite accepted mail", e);
                 }
@@ -531,7 +533,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // load up their new mail count
         try {
-            data.newMailCount = MsoyServer.mailRepo.loadUnreadConvoCount(mrec.memberId);
+            data.newMailCount = _mailRepo.loadUnreadConvoCount(mrec.memberId);
         } catch (PersistenceException pe) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }
@@ -565,6 +567,12 @@ public class WebUserServlet extends MsoyServiceServlet
 
     /** Handles distriuted object stuff. */
     @Inject protected PresentsDObjectMgr _omgr;
+
+    /** Handles mail-related services. */
+    @Inject protected MailManager _mailMan;
+
+    /** Provides access to persistent mail-related data. */
+    @Inject protected MailRepository _mailRepo;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[A-Za-z][_A-Za-z0-9]*$";

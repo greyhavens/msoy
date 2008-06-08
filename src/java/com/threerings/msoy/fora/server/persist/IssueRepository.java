@@ -9,6 +9,8 @@ import java.util.Set;
 import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.IntSet;
 
@@ -39,10 +41,10 @@ import com.threerings.msoy.fora.data.Issue;
 /**
  * Manages issues.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class IssueRepository extends DepotRepository
 {
-    public IssueRepository (PersistenceContext ctx)
+    @Inject public IssueRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

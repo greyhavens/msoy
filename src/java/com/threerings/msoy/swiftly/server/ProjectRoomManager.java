@@ -51,6 +51,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
@@ -68,10 +69,11 @@ public class ProjectRoomManager extends PlaceManager
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
     public void init (final SwiftlyProject project, final List<MemberName> collaborators,
-                      ProjectStorage storage, final ConnectConfig config,
-                      final ServletWaiter<ConnectConfig> listener)
+                      SwiftlyRepository swiftlyRepo, ProjectStorage storage,
+                      final ConnectConfig config, final ServletWaiter<ConnectConfig> listener)
     {
         _storage = storage;
+        _swiftlyRepo = swiftlyRepo;
         _resultItems = Maps.newHashMap();
 
         // References to our on-disk SDKs
@@ -316,7 +318,8 @@ public class ProjectRoomManager extends PlaceManager
         requireWritePermissions(caller);
         MemberObject memobj = (MemberObject)caller;
 
-        AbstractBuildTask buildTask = new BuildAndExportTask(this, memobj.memberName, listener);
+        AbstractBuildTask buildTask = new BuildAndExportTask(
+            this, _swiftlyRepo, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
     }
 
@@ -568,6 +571,7 @@ public class ProjectRoomManager extends PlaceManager
 
     protected ProjectRoomObject _roomObj;
     protected ProjectStorage _storage;
+    protected SwiftlyRepository _swiftlyRepo;
     protected ProjectBuilder _builder;
     protected File _buildDir;
 

@@ -6,6 +6,9 @@ package com.threerings.msoy.avrg.server.persist;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -26,10 +29,10 @@ import com.threerings.msoy.game.data.QuestState;
 /**
  * Maintains state for AVR games.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class AVRGameRepository extends DepotRepository
 {
-    public AVRGameRepository (PersistenceContext context)
+    @Inject public AVRGameRepository (PersistenceContext context)
     {
         super(context);
     }

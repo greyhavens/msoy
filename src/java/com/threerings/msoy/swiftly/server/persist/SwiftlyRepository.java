@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Singleton;
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -27,10 +30,10 @@ import com.threerings.msoy.server.persist.MemberRecord;
 /**
  * Manages the persistent information associated with a member's projects.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class SwiftlyRepository extends DepotRepository
 {
-    public SwiftlyRepository (PersistenceContext ctx)
+    @Inject public SwiftlyRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

@@ -495,9 +495,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected PeerNode createPeerNode (NodeRecord record)
+    protected PeerNode createPeerNode ()
     {
-        return new MsoyPeerNode(ServerConfig.getHttpPort(record.nodeName));
+        return new MsoyPeerNode();
     }
 
     @Override // from PeerManager

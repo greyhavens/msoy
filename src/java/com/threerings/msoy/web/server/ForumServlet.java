@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -560,5 +561,5 @@ public class ForumServlet extends MsoyServiceServlet
         return sanitized;
     }
 
-    protected ForumRepository _forumRepo = MsoyServer.forumRepo;
+    @Inject protected ForumRepository _forumRepo;
 }

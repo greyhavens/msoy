@@ -62,7 +62,6 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 
@@ -115,13 +114,10 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoyPeerManager peerMan;
 
     /** Our runtime member manager. */
-    public static MemberManager memberMan = new MemberManager();
+    public static MemberManager memberMan;
 
     /** Handles management of member's friends lists. */
     public static FriendManager friendMan = new FriendManager();
-
-    /** Handles mail related services. */
-    public static MailManager mailMan = new MailManager();
 
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
@@ -146,9 +142,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to our trophy metadata. */
     public static TrophyRepository trophyRepo;
-
-    /** Contains information on our swiftly projects. */
-    public static SwiftlyRepository swiftlyRepo;
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
@@ -285,9 +278,16 @@ public class MsoyServer extends MsoyBaseServer
         peerMan = _peerMan;
         gameReg = _gameReg;
         swiftlyMan = _swiftlyMan;
-        sceneRepo = _sceneRepo;
         adminMan = _adminMan;
         itemMan = _itemMan;
+        memberMan = _memberMan;
+        sceneRepo = _sceneRepo;
+        mailRepo = _mailRepo;
+        groupRepo = _groupRepo;
+        forumRepo = _forumRepo;
+        issueRepo = _issueRepo;
+        commentRepo = _commentRepo;
+        trophyRepo = _trophyRepo;
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
@@ -301,15 +301,6 @@ public class MsoyServer extends MsoyBaseServer
                 return new MsoyClientResolver();
             }
         });
-
-        // create our various repositories
-        groupRepo = new GroupRepository(_perCtx, _eventLog);
-        mailRepo = new MailRepository(_perCtx, _eventLog);
-        forumRepo = new ForumRepository(_perCtx);
-        issueRepo = new IssueRepository(_perCtx);
-        commentRepo = new CommentRepository(_perCtx);
-        trophyRepo = new TrophyRepository(_perCtx);
-        swiftlyRepo = new SwiftlyRepository(_perCtx);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
@@ -376,9 +367,8 @@ public class MsoyServer extends MsoyBaseServer
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         _adminMan.init();
-        memberMan.init(memberRepo, groupRepo);
+        _memberMan.init();
         friendMan.init();
-        mailMan.init(mailRepo, memberRepo, _itemMan);
         channelMan.init(invmgr);
         _jabberMan.init();
         _itemMan.init();
@@ -496,11 +486,32 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles HTTP servlet requests. */
     @Inject protected MsoyHttpServer _httpServer;
 
+    /** Our runtime member manager. */
+    @Inject protected MemberManager _memberMan;
+
     /** Handles item-related services. */
     @Inject protected ItemManager _itemMan;
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
+
+    /** Contains information on our groups. */
+    @Inject protected GroupRepository _groupRepo;
+
+    /** Contains information on our mail system. */
+    @Inject protected MailRepository _mailRepo;
+
+    /** Contains information on our forums. */
+    @Inject protected ForumRepository _forumRepo;
+
+    /** Contains information on our issues. */
+    @Inject protected IssueRepository _issueRepo;
+
+    /** Contains member comments on various things. */
+    @Inject protected CommentRepository _commentRepo;
+
+    /** Provides access to our trophy metadata. */
+    @Inject protected TrophyRepository _trophyRepo;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

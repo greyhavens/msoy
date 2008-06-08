@@ -72,12 +72,9 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    @Inject public MemberRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public MemberRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        _flowRepo = new FlowRepository(_ctx, eventLog);
-        _eventLog = eventLog;
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
@@ -1137,10 +1134,8 @@ public class MemberRepository extends DepotRepository
         classes.add(MemberWarningRecord.class);
     }
 
-    /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
-
-    protected FlowRepository _flowRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected FlowRepository _flowRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";

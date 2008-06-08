@@ -14,6 +14,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -631,10 +632,9 @@ public class GameServlet extends MsoyServiceServlet
         protected boolean _single;
     }
 
-    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
-    protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
-    protected TrophyRepository _trophyRepo = MsoyServer.trophyRepo;
-    protected RatingRepository _ratingRepo = MsoyServer.ratingRepo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected RatingRepository _ratingRepo;
 
     protected static final int MAX_RANKINGS = 10;
 }

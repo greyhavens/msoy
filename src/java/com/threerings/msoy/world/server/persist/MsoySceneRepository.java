@@ -52,7 +52,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides scene storage services for the msoy server.
  */
-@BlockingThread @Singleton
+@Singleton @BlockingThread
 public class MsoySceneRepository extends DepotRepository
     implements SceneRepository
 {

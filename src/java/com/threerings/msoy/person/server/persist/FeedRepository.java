@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntSet;
@@ -33,7 +35,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 /**
  * Maintains persistent data for feeds.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class FeedRepository extends DepotRepository
 {
     @Computed @Entity
@@ -42,7 +44,7 @@ public class FeedRepository extends DepotRepository
         public int count;
     }
 
-    public FeedRepository (PersistenceContext perCtx)
+    @Inject public FeedRepository (PersistenceContext perCtx)
     {
         super(perCtx);
     }

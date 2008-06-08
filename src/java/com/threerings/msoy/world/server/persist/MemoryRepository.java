@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -30,10 +33,10 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * Manages "smart" digital item memory.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class MemoryRepository extends DepotRepository
 {
-    public MemoryRepository (PersistenceContext ctx)
+    @Inject public MemoryRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -70,5 +71,5 @@ public class EmbedRouterServlet extends HttpServlet
         }
     }
 
-    protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
+    @Inject protected GameRepository _gameRepo;
 }

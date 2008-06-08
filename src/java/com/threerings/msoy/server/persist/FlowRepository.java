@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.CacheKey;
@@ -39,17 +41,15 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages persistent information stored on a per-member basis.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class FlowRepository extends DepotRepository
 {
     /**
      * Creates a flow repository for.
      */
-    public FlowRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public FlowRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        _eventLog = eventLog;
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
@@ -349,5 +349,5 @@ public class FlowRepository extends DepotRepository
     protected static final float DAY_MINS = 24 * 60;
 
     /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 }

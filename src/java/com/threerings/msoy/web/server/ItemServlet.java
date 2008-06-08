@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -19,6 +20,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -672,7 +674,7 @@ public class ItemServlet extends MsoyServiceServlet
                 }
                 MemberRecord owner = MsoyServer.memberRepo.loadMember(ownerId);
                 if (owner != null) {
-                    MsoyServer.mailMan.startConversation(admin, owner, subject, body, null);
+                    _mailMan.startConversation(admin, owner, subject, body, null);
                 }
             }
 
@@ -781,4 +783,7 @@ public class ItemServlet extends MsoyServiceServlet
         public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
             throws PersistenceException;
     }
+
+    /** Handles mail-related services. */
+    @Inject protected MailManager _mailMan;
 }

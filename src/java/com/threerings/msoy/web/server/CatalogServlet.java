@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.CollectionUtil;
@@ -20,7 +21,6 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.data.UserAction;
@@ -197,7 +197,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 }
 
                 // take flow from purchaser
-                MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().spendFlow(
+                MemberFlowRecord flowRec = _memberRepo.getFlowRepository().spendFlow(
                     new UserActionDetails(mrec.memberId, UserAction.BOUGHT_ITEM, itemType,
                                           catalogId), flowCost);
                 // update member's new flow
@@ -206,7 +206,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 // give 30% of it to the creator
                 if (creatorPortion > 0) {
                     // TODO: hold this in escrow
-                    flowRec = MsoyServer.memberRepo.getFlowRepository().grantFlow(
+                    flowRec = _memberRepo.getFlowRepository().grantFlow(
                         new UserActionDetails(listing.item.creatorId, UserAction.RECEIVED_PAYOUT, 
                                               mrec.memberId, itemType, catalogId), 
                         creatorPortion);
@@ -307,8 +307,7 @@ public class CatalogServlet extends MsoyServiceServlet
             UserActionDetails info = new UserActionDetails(
                 mrec.memberId, UserAction.LISTED_ITEM, repo.getItemType(), originalItemId);
             if (price > 0) {
-                MemberFlowRecord flowRec = 
-                    MsoyServer.memberRepo.getFlowRepository().spendFlow(info, price);
+                MemberFlowRecord flowRec = _memberRepo.getFlowRepository().spendFlow(info, price);
                 MemberNodeActions.flowUpdated(flowRec);
             } else {
                 logUserAction(info);
@@ -360,7 +359,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // finally convert the listing to a runtime record
             CatalogListing clrec = record.toListing();
-            clrec.detail.creator = MsoyServer.memberRepo.loadMemberName(record.item.creatorId);
+            clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
             if (mrec != null) {
                 clrec.detail.memberRating = repo.getRating(record.item.itemId, mrec.memberId);
             }
@@ -424,8 +423,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 mrec.memberId, UserAction.UPDATED_LISTING, repo.getItemType(), originalItemId);
             
             if (price > 0) {
-                MemberFlowRecord flowRec = 
-                    MsoyServer.memberRepo.getFlowRepository().spendFlow(info, price);
+                MemberFlowRecord flowRec = _memberRepo.getFlowRepository().spendFlow(info, price);
                 MemberNodeActions.flowUpdated(flowRec);
             } else {
                 logUserAction(info);
@@ -556,8 +554,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
             UserActionDetails returnInfo = new UserActionDetails(
                 mrec.memberId, UserAction.RETURNED_ITEM, iident.type, iident.itemId);
-            MemberFlowRecord flowRec = 
-                MsoyServer.memberRepo.getFlowRepository().refundFlow(returnInfo, flowRefund);
+            MemberFlowRecord flowRec =
+                _memberRepo.getFlowRepository().refundFlow(returnInfo, flowRefund);
             MemberNodeActions.flowUpdated(flowRec);
 
             // now we have to take 30% of the refund away from the creator
@@ -566,8 +564,7 @@ public class CatalogServlet extends MsoyServiceServlet
             UserActionDetails payoutInfo = 
                 new UserActionDetails(item.creatorId, UserAction.RECEIVED_PAYOUT, 
                         mrec.memberId, iident.type, iident.itemId);
-            flowRec = 
-                MsoyServer.memberRepo.getFlowRepository().spendFlow(payoutInfo, creatorPortion);
+            flowRec = _memberRepo.getFlowRepository().spendFlow(payoutInfo, creatorPortion);
             MemberNodeActions.flowUpdated(flowRec);
 
             return new int[] { flowRefund, goldRefund };
@@ -663,6 +660,4 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
-
-    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
 }

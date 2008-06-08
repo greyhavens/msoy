@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.person.server;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -41,18 +44,9 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles mail services.
  */
+@Singleton
 public class MailManager
 {
-    /**
-     * Provides the mail manager with its dependencies.
-     */
-    public void init (MailRepository mailRepo, MemberRepository memberRepo, ItemManager itemMan)
-    {
-        _mailRepo = mailRepo;
-        _memberRepo = memberRepo;
-        _itemMan = itemMan;
-    }
-
     /**
      * Sends a friend invitation email from the supplied inviter to the specified member.
      */
@@ -223,7 +217,7 @@ public class MailManager
         }
     }
 
-    protected MailRepository _mailRepo;
-    protected MemberRepository _memberRepo;
-    protected ItemManager _itemMan;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected ItemManager _itemMan;
 }

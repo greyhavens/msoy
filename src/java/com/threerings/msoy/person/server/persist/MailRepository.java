@@ -11,6 +11,9 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
@@ -41,14 +44,12 @@ import com.threerings.msoy.person.data.MailPayload;
 /**
  * Manages the persistent store of mail and mailboxes.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class MailRepository extends DepotRepository
 {
-    public MailRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public MailRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        _eventLog = eventLog;
     }
 
     /**
@@ -313,7 +314,7 @@ public class MailRepository extends DepotRepository
     }
     // END TEMP
 
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 
     static {
         // register a migration for TrophyAwardPayload -> GameAwardPayload

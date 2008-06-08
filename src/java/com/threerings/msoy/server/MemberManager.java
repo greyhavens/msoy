@@ -6,6 +6,9 @@ package com.threerings.msoy.server;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -24,6 +27,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.util.PersistingUnit;
 
@@ -41,6 +45,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -63,12 +68,14 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manage msoy members.
  */
-@EventThread
+@Singleton @EventThread
 public class MemberManager
     implements MemberProvider
 {
-    public MemberManager ()
+    @Inject public MemberManager (InvocationManager invmgr, MsoyPeerManager peerMan)
     {
+        invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
+
         // intialize our internal array of memoized flow values per level.  Start with 256
         // calculated levels
         _levelForFlow = new int[256];
@@ -76,31 +83,9 @@ public class MemberManager
             _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii];
         }
         calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
-    }
-
-    /**
-     * Prepares our member manager for operation.
-     */
-    public void init (MemberRepository memberRepo, GroupRepository groupRepo)
-    {
-        _memberRepo = memberRepo;
-        _groupRepo = groupRepo;
-
-        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
-
-        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot();
-        _ppInvalidator = new Interval(MsoyServer.omgr) {
-            public void expired() {
-                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot();
-                synchronized(MemberManager.this) {
-                    _ppSnapshot = newSnapshot;
-                }
-            }
-        };
-        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
 
         // register a member forward participant that handles our transient bits
-        MsoyServer.peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
+        peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
             public void packMember (MemberObject memobj, Map<String,Object> data) {
                 // flush the transient bits in our metrics as we will snapshot and send this data
                 // before we depart our current room (which is when the are normally saved)
@@ -119,6 +104,23 @@ public class MemberManager
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
             }
         });
+    }
+
+    /**
+     * Prepares our member manager for operation.
+     */
+    public void init ()
+    {
+        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot();
+        _ppInvalidator = new Interval(MsoyServer.omgr) {
+            public void expired() {
+                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot();
+                synchronized(MemberManager.this) {
+                    _ppSnapshot = newSnapshot;
+                }
+            }
+        };
+        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
     }
 
     /**
@@ -207,7 +209,7 @@ public class MemberManager
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         // pass the buck to the mail manager
-        MsoyServer.mailMan.sendFriendInvite(user.getMemberId(), friendId, listener);
+        _mailMan.sendFriendInvite(user.getMemberId(), friendId, listener);
     }
 
     // from interface MemberProvider
@@ -793,15 +795,18 @@ public class MemberManager
     /** The most recent summary of popular places in the whirled. */
     protected PopularPlacesSnapshot _ppSnapshot;
 
-    /** Provides access to persistent member data. */
-    protected MemberRepository _memberRepo;
-
-    /** Provides access to persistent group data. */
-    protected GroupRepository _groupRepo;
-
     /** The array of memoized flow values for each level.  The first few levels are hard coded, the
      * rest are calculated according to the equation in calculateLevelsForFlow() */
     protected int[] _levelForFlow;
+
+    /** Handles mail-related services. */
+    @Inject protected MailManager _mailMan;
+
+    /** Provides access to persistent member data. */
+    @Inject protected MemberRepository _memberRepo;
+
+    /** Provides access to persistent group data. */
+    @Inject protected GroupRepository _groupRepo;
 
     /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };

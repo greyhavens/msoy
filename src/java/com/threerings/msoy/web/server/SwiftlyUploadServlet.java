@@ -19,6 +19,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -104,7 +105,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
     {
         try {
             MemberRecord record = _mhelper.requireAuthedUser(ident);
-            if (!MsoyServer.swiftlyRepo.isCollaborator(projectId, record.memberId)) {
+            if (!_swiftlyRepo.isCollaborator(projectId, record.memberId)) {
                 throw new AccessDeniedException("Access denied. Not a collaborator: [memberId=" +
                     record.memberId + ", projectId=" + projectId + "]");
             }
@@ -120,6 +121,9 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
 
     /** Provides useful member related services. */
     @Inject protected MemberHelper _mhelper;
+
+    /** Repository of Swiftly data. */
+    @Inject protected SwiftlyRepository _swiftlyRepo;
 
     /** Restrict all Swiftly file uploads to 4 megabytes. */
     protected static final int UPLOAD_MAX_SIZE = 4 * MEGABYTE;

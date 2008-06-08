@@ -49,6 +49,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
@@ -373,7 +374,7 @@ public class SwiftlyManager
 
                         // load the storage record
                         SwiftlySVNStorageRecord storageRecord =
-                            MsoyServer.swiftlyRepo.loadStorageRecordForProject(project.projectId);
+                            _swiftlyRepo.loadStorageRecordForProject(project.projectId);
                         if (storageRecord == null) {
                             throw new PersistenceException("Project missing storage record " +
                                 " [projectId=" + project.projectId + "].");
@@ -382,8 +383,7 @@ public class SwiftlyManager
 
                         // and the list of collaborators
                         _collaborators = new ArrayList<MemberName>();
-                        for (MemberRecord mRec :
-                            MsoyServer.swiftlyRepo.getCollaborators(project.projectId)) {
+                        for (MemberRecord mRec : _swiftlyRepo.getCollaborators(project.projectId)) {
                             _collaborators.add(mRec.getName());
                         }
                         if (_collaborators.size() <= 0) {
@@ -409,7 +409,8 @@ public class SwiftlyManager
                     }
 
                     // all the necessary bits of data have been loaded, initialize the room manager
-                    mgr.init(_project, _collaborators, _storage, getConnectConfig(), waiter);
+                    mgr.init(_project, _collaborators, _swiftlyRepo, _storage,
+                             getConnectConfig(), waiter);
                 }
 
                 protected SwiftlyProject _project;
@@ -443,6 +444,9 @@ public class SwiftlyManager
         }
         return true;
     }
+
+    /** Repository of Swiftly data. */
+    @Inject protected SwiftlyRepository _swiftlyRepo;
 
     /** We need to keep this around between construction and initialization. */
     protected PeerProjectMarshaller _ppservice;

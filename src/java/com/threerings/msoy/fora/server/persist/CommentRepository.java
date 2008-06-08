@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -27,10 +30,10 @@ import com.threerings.msoy.server.persist.CountRecord;
 /**
  * Manages member comments on various and sundry things.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class CommentRepository extends DepotRepository
 {
-    public CommentRepository (PersistenceContext ctx)
+    @Inject public CommentRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

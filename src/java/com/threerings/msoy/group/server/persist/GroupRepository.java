@@ -22,6 +22,8 @@ import com.samskivert.util.Tuple;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
@@ -62,7 +64,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the persistent store of group data.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class GroupRepository extends DepotRepository
 {
     @Entity(name="GroupTagRecord")
@@ -75,7 +77,7 @@ public class GroupRepository extends DepotRepository
     {
     }
 
-    public GroupRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public GroupRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
 
