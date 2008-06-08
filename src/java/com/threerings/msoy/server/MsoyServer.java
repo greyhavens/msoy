@@ -28,6 +28,7 @@ import com.samskivert.util.LoggingLogProvider;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
@@ -98,6 +99,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
             bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
+            bind(PeerManager.class).to(MsoyPeerManager.class);
         }
     }
 
