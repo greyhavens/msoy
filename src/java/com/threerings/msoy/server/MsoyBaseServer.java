@@ -10,6 +10,8 @@ import java.util.Iterator;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.util.MessageManager;
@@ -46,15 +48,19 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         @Override protected void configure () {
             super.configure();
-            bind(ReportManager.class).to(QuietReportManager.class);
             try {
-                bind(PersistenceContext.class).toInstance(
-                    new PersistenceContext("msoy", ServerConfig.createConnectionProvider(),
-                                           ServerConfig.createCacheAdapter()));
+                _conprov = ServerConfig.createConnectionProvider();
+                _cacher = ServerConfig.createCacheAdapter();
             } catch (Exception e) {
                 addError(e);
             }
+            bind(ReportManager.class).to(QuietReportManager.class);
+            bind(PersistenceContext.class).toInstance(
+                new PersistenceContext("msoy", _conprov, _cacher));
         }
+
+        protected ConnectionProvider _conprov;
+        protected CacheAdapter _cacher;
     }
 
     /** Provides a mechanism for translating strings on the server. <em>Note:</em> avoid using this
@@ -125,8 +131,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         // initialize event logger
         _eventLog.init(getIdent());
 
-        // this one is needed by createAuthenticator() in our derived classes
-        memberRepo = new MemberRepository(_perCtx, _eventLog);
+        // TEMP: set up our legacy static references
+        memberRepo = _memberRepo;
 
         super.init(injector);
 
@@ -206,6 +212,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Sends event information to an external log database. */
     @Inject protected MsoyEventLogger _eventLog;
+
+    /** Contains information on our members. */
+    @Inject protected MemberRepository _memberRepo;
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");

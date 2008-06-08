@@ -5,13 +5,14 @@ package com.threerings.msoy.underwire.server;
 
 import java.sql.Timestamp;
 
+import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.web.server.ServletUtil;
+import com.threerings.msoy.web.server.MemberHelper;
 
 import com.threerings.underwire.server.GameActionHandler;
 
@@ -71,7 +72,7 @@ public class MsoyGameActionHandler extends GameActionHandler
         MemberNodeActions.bootMember(memberId);
 
         // then clear out their session data from the web client
-        ServletUtil.clearSessionToken(memberId);
+        _mhelper.clearSessionToken(memberId);
         MsoyServer.memberRepo.clearSession(memberId);
     }
 
@@ -83,4 +84,7 @@ public class MsoyGameActionHandler extends GameActionHandler
             return 0;
         }
     }
+
+    /** Provides useful member related services. */
+    @Inject protected MemberHelper _mhelper;
 }

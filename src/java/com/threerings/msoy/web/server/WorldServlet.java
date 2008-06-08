@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -184,7 +185,7 @@ public class WorldServlet extends MsoyServiceServlet
     public String serializePopularPlaces (WebIdent ident, final int n)
         throws ServiceException
     {
-        final MemberRecord mrec = getAuthedUser(ident);
+        final MemberRecord mrec = _mhelper.getAuthedUser(ident);
         final MemberName name = (mrec == null) ? null : mrec.getName();
 
         // if we're logged on, fetch our friends and groups of which we're members
@@ -229,7 +230,7 @@ public class WorldServlet extends MsoyServiceServlet
     public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             MyWhirledData data = new MyWhirledData();
@@ -238,7 +239,7 @@ public class WorldServlet extends MsoyServiceServlet
             IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
             data.friendCount = friendIds.size();
             if (data.friendCount > 0) {
-                data.friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
+                data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
             }
 
             IntSet groupMemberships = new ArrayIntSet();
@@ -259,7 +260,7 @@ public class WorldServlet extends MsoyServiceServlet
     public void updateWhirledNews (WebIdent ident, final String newsHtml)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         if (!mrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -275,7 +276,7 @@ public class WorldServlet extends MsoyServiceServlet
     public List loadMyRooms (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             List<WorldService.Room> rooms = Lists.newArrayList();
@@ -298,7 +299,7 @@ public class WorldServlet extends MsoyServiceServlet
     public List loadFeed (WebIdent ident, int cutoffDays)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             List<GroupMembershipRecord> groups = MsoyServer.groupRepo.getMemberships(mrec.memberId);
@@ -529,8 +530,8 @@ public class WorldServlet extends MsoyServiceServlet
     /** Contains a cached copy of our WhatIsWhirled data. */
     protected ExpiringReference<LandingData> _landingData;
 
-    protected MemberRepository _memberRepo = MsoyServer.memberRepo;
-    protected GameRepository _gameRepo = MsoyServer.itemMan.getGameRepository();
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected GameRepository _gameRepo;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;

@@ -60,7 +60,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public ShopData loadShopData (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             ShopData data = new ShopData();
@@ -98,7 +98,7 @@ public class CatalogServlet extends MsoyServiceServlet
                                       boolean includeCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
         List<ListingCard> list = Lists.newArrayList();
@@ -143,7 +143,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public Item purchaseItem (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
@@ -235,7 +235,7 @@ public class CatalogServlet extends MsoyServiceServlet
                          int salesTarget, int flowCost, int goldCost)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
@@ -334,7 +334,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public CatalogListing loadListing (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
@@ -377,7 +377,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public void updateListing (WebIdent ident, ItemIdent item, String descrip)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
@@ -449,7 +449,7 @@ public class CatalogServlet extends MsoyServiceServlet
                                int salesTarget, int flowCost, int goldCost)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
@@ -497,7 +497,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public void removeListing (WebIdent ident, byte itemType, int catalogId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
@@ -524,7 +524,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public int[] returnItem (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser(ident);
+        final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo =

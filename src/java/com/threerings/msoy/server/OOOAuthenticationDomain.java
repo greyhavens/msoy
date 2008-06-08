@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.Arrays;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
@@ -19,8 +21,9 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.web.data.ServiceException;
 
-import com.threerings.msoy.server.persist.OOOUserRecord;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.server.persist.OOODatabase;
+import com.threerings.msoy.server.persist.OOOUserRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -30,21 +33,6 @@ import static com.threerings.msoy.Log.log;
 public class OOOAuthenticationDomain
     implements MsoyAuthenticator.Domain
 {
-    // from interface MsoyAuthenticator.Domain
-    public void init ()
-        throws PersistenceException
-    {
-        _authrep = new MsoyOOOUserRepository(MsoyServer.userCtx);
-    }
-
-    /**
-     * Returns the repository needed for the internal support tools.
-     */
-    public MsoyOOOUserRepository getRepository ()
-    {
-        return _authrep;
-    }
-
     // from interface MsoyAuthenticator.Domain
     public MsoyAuthenticator.Account createAccount (String accountName, String password)
         throws ServiceException, PersistenceException
@@ -242,5 +230,5 @@ public class OOOAuthenticationDomain
         }
     }
 
-    protected MsoyOOOUserRepository _authrep;
+    @Inject protected MsoyOOOUserRepository _authrep;
 }

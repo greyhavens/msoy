@@ -16,6 +16,8 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
@@ -46,6 +48,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the persistent store of {@link Game} items.
  */
+@Singleton
 public class GameRepository extends ItemRepository<
         GameRecord,
         GameCloneRecord,
@@ -62,7 +65,7 @@ public class GameRepository extends ItemRepository<
     {
     }
 
-    public GameRepository (PersistenceContext ctx)
+    @Inject public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
 

@@ -148,7 +148,7 @@ public class GroupServlet extends MsoyServiceServlet
     public GroupDetail getGroupDetail (WebIdent ident, int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // load the group record
@@ -172,10 +172,11 @@ public class GroupServlet extends MsoyServiceServlet
                     detail.myRankAssigned = gmrec.rankAssigned.getTime();
                 }
             }
-            
+
             // load up recent threads for this group (ordered by thread id)
             List<ForumThreadRecord> thrrecs = MsoyServer.forumRepo.loadRecentThreads(groupId, 3);
-            Map<Integer,GroupName> gmap = Collections.singletonMap(detail.group.groupId, detail.group.getName());
+            Map<Integer,GroupName> gmap =
+                Collections.singletonMap(detail.group.groupId, detail.group.getName());
             detail.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, false, true);
 
             return detail;
@@ -210,7 +211,7 @@ public class GroupServlet extends MsoyServiceServlet
     public RoomsResult getGroupRooms (WebIdent ident, int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             RoomsResult result = new RoomsResult();
@@ -249,7 +250,7 @@ public class GroupServlet extends MsoyServiceServlet
     public void transferRoom (WebIdent ident, int groupId, int sceneId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // ensure the caller is a manager of this group
@@ -280,7 +281,7 @@ public class GroupServlet extends MsoyServiceServlet
     public GroupInfo getGroupInfo (WebIdent ident, int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         try {
             GroupRecord grec = _groupRepo.loadGroup(groupId);
             if (grec == null) {
@@ -356,7 +357,7 @@ public class GroupServlet extends MsoyServiceServlet
         WebIdent ident, final int memberId, final boolean canInvite)
         throws ServiceException
     {
-        MemberRecord reqrec = getAuthedUser(ident);
+        MemberRecord reqrec = _mhelper.getAuthedUser(ident);
         final int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
         try {
@@ -391,7 +392,7 @@ public class GroupServlet extends MsoyServiceServlet
     public Group createGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // make sure the name is valid; this is checked on the client as well
         if (!isValidName(group.name)) {
@@ -444,7 +445,7 @@ public class GroupServlet extends MsoyServiceServlet
     public void updateGroup (WebIdent ident, Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // make sure the name is valid; this is checked on the client as well
         if (!isValidName(group.name)) {
@@ -483,7 +484,7 @@ public class GroupServlet extends MsoyServiceServlet
     public void leaveGroup (WebIdent ident, int groupId, int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord tgtrec = _groupRepo.getMembership(groupId, memberId);
@@ -531,7 +532,7 @@ public class GroupServlet extends MsoyServiceServlet
     public void joinGroup (WebIdent ident, int groupId)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser(ident);
+        final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // make sure the group in question exists
@@ -564,11 +565,11 @@ public class GroupServlet extends MsoyServiceServlet
     public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (!mrec.isSupport() && 
+            if (!mrec.isSupport() &&
                 (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)) {
                 log.warning("in updateMemberRank, invalid permissions");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -595,7 +596,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
@@ -631,7 +632,7 @@ public class GroupServlet extends MsoyServiceServlet
     // from interface GroupService
     public Collection<TagHistory> getRecentTags (WebIdent ident) throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             MemberName memName = mrec.getName();
@@ -674,9 +675,9 @@ public class GroupServlet extends MsoyServiceServlet
     public List<MyGroupCard> getMyGroups (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         final int memberId = mrec.memberId;
-        
+
         try {
             List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
             List<MyGroupCard> myGroupCards = Lists.newArrayList();
@@ -684,7 +685,7 @@ public class GroupServlet extends MsoyServiceServlet
 
             for (GroupRecord record : groupRecords) {
                 final MyGroupCard card = new MyGroupCard();
-                
+
                 // collect basic info from the GroupRecord
                 card.blurb = record.blurb;
                 card.homeSceneId = record.homeSceneId;
@@ -692,17 +693,20 @@ public class GroupServlet extends MsoyServiceServlet
                     card.logo = record.toLogo();
                 }
                 card.name = record.toGroupName();
-                
+
                 // fetch thread information
                 // TODO this will match the My Discussions page: no ignored threads, etc.
                 card.numUnreadThreads = 3;
 
-                List<ForumThreadRecord> threads = MsoyServer.forumRepo.loadRecentThreads(record.groupId, 1);
+                List<ForumThreadRecord> threads =
+                    MsoyServer.forumRepo.loadRecentThreads(record.groupId, 1);
                 if (threads.size() > 0) {
-                    Map<Integer,GroupName> gmap = Collections.singletonMap(record.groupId, card.name);
-                    card.latestThread = ForumUtil.resolveThreads(mrec, threads, gmap, false, true).get(0);
+                    Map<Integer,GroupName> gmap =
+                        Collections.singletonMap(record.groupId, card.name);
+                    card.latestThread = ForumUtil.resolveThreads(
+                        mrec, threads, gmap, false, true).get(0);
                 }
-                
+
                 // fetch current population from PopularPlacesSnapshot
                 PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
                 if (pcard != null) {
@@ -710,17 +714,18 @@ public class GroupServlet extends MsoyServiceServlet
                 }
 
                 // determine our rank info
-                GroupMembershipRecord gmrec = _groupRepo.getMembership(record.groupId, mrec.memberId);
+                GroupMembershipRecord gmrec =
+                    _groupRepo.getMembership(record.groupId, mrec.memberId);
                 if (gmrec != null) {
                     card.rank = gmrec.rank;
                 }
-                
+
                 myGroupCards.add(card);
             }
-            
+
             // sort groups by members online, then newest post
             Collections.sort(myGroupCards, SORT_MYGROUPCARD);
-            
+
             return myGroupCards;
 
         } catch (PersistenceException pe) {
@@ -728,7 +733,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /** Compartor for sorting MyGroupCards, by population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_MYGROUPCARD = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
@@ -749,7 +754,7 @@ public class GroupServlet extends MsoyServiceServlet
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
         }
     };
-    
+
     protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
     {
         PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
@@ -782,7 +787,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
             log.warning("Group has stale members [groupId=" + groupId + ", ids=" + stale + "].");
         }
-        Collections.sort(mlist, ServletUtil.SORT_BY_LAST_ONLINE);
+        Collections.sort(mlist, MemberHelper.SORT_BY_LAST_ONLINE);
         return mlist;
     }
 

@@ -77,7 +77,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -246,7 +246,7 @@ public class AdminServlet extends MsoyServiceServlet
     protected MemberRecord requireAdmin (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         if (!memrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }

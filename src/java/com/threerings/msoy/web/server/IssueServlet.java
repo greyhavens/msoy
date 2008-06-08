@@ -50,7 +50,7 @@ public class IssueServlet extends MsoyServiceServlet
             WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         return loadIssues(mrec, type, state, 0, offset, count, needTotalCount);
     }
 
@@ -59,7 +59,7 @@ public class IssueServlet extends MsoyServiceServlet
             WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         return loadIssues(mrec, type, state, mrec.memberId, offset, count, needTotalCount);
     }
 
@@ -67,7 +67,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue loadIssue (WebIdent ident, int issueId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             IssueRecord irec = MsoyServer.issueRepo.loadIssue(issueId);
@@ -90,7 +90,7 @@ public class IssueServlet extends MsoyServiceServlet
     public List loadMessages (WebIdent ident, int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             List<ForumMessageRecord> msgrecs = MsoyServer.forumRepo.loadIssueMessages(issueId);
@@ -128,7 +128,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue createIssue (WebIdent ident, Issue issue, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -154,7 +154,7 @@ public class IssueServlet extends MsoyServiceServlet
     public void updateIssue (WebIdent ident, Issue issue)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -184,7 +184,7 @@ public class IssueServlet extends MsoyServiceServlet
     public void assignMessage (WebIdent ident, int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -206,7 +206,7 @@ public class IssueServlet extends MsoyServiceServlet
     public List loadOwners (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         List<MemberName> owners = Lists.newArrayList();
 

@@ -66,6 +66,7 @@ public class MsoyGameServer extends MsoyBaseServer
         @Override protected void configure () {
             super.configure();
             bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
+            bind(Authenticator.class).to(MsoyGameAuthenticator.class);
         }
     }
 
@@ -231,12 +232,6 @@ public class MsoyGameServer extends MsoyBaseServer
                 return _online.get(((MemberName) visibleName).getMemberId());
             }
         };
-    }
-
-    @Override // from PresentsServer
-    protected Authenticator createAuthenticator ()
-    {
-        return new MsoyGameAuthenticator(memberRepo);
     }
 
     @Override // from PresentsServer

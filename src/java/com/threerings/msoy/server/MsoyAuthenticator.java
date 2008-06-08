@@ -5,6 +5,9 @@ package com.threerings.msoy.server;
 
 import java.util.Date;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
@@ -17,6 +20,9 @@ import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -24,17 +30,16 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.ServiceException;
-
-import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -44,6 +49,7 @@ import static com.threerings.msoy.Log.log;
  * relevant information within MetaSOY, indexed initially on the domain-specific account name (an
  * email address).
  */
+@Singleton
 public class MsoyAuthenticator extends Authenticator
 {
     /** Used to coordinate with authentication domains. */
@@ -68,15 +74,6 @@ public class MsoyAuthenticator extends Authenticator
         /** A string that can be passed to the Domain to bypass password checking. Pass this actual
          * instance. */
         public static final String PASSWORD_BYPASS = new String("pwBypass");
-
-        /**
-         * Initializes this authentication domain and gives it a chance to connect to its
-         * underlying authentication data source. If the domain throws an exception during init it
-         * will not be used later, if it does not it is assumed tht it is ready to process
-         * authentications.
-         */
-        public void init ()
-            throws PersistenceException;
 
         /**
          * Creates a new account for this authentication domain.
@@ -168,19 +165,6 @@ public class MsoyAuthenticator extends Authenticator
             return false;
         }
         return ident.substring(40, 48).equals(generateIdentChecksum(ident.substring(0, 40)));
-    }
-
-    /**
-     * Called during server initialization.
-     */
-    public void init (MsoyEventLogger eventLog)
-        throws PersistenceException
-    {
-        // create our default authentication domain
-        _defaultDomain = new OOOAuthenticationDomain();
-        _defaultDomain.init();
-
-        _eventLog = eventLog;
     }
 
     /**
@@ -296,7 +280,7 @@ public class MsoyAuthenticator extends Authenticator
             Account account = domain.authenticateAccount(email, password);
 
             // load up their member information to get their member id
-            MemberRecord mrec = MsoyServer.memberRepo.loadMember(account.accountName);
+            MemberRecord mrec = _memberRepo.loadMember(account.accountName);
             if (mrec == null) {
                 // if this is their first logon, insert a skeleton member record
                 mrec = createMember(account, email, null);
@@ -362,8 +346,7 @@ public class MsoyAuthenticator extends Authenticator
                                       MsoyCredentials.getGuestMemberId(creds.sessionToken));
 
                 } else {
-                    MemberRecord member =
-                        MsoyServer.memberRepo.loadMemberForSession(creds.sessionToken);
+                    MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
                     if (member == null) {
                         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                     }
@@ -378,7 +361,7 @@ public class MsoyAuthenticator extends Authenticator
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
                 // for the duration of their session
-                int memberId = creds.featuredPlaceView ? 0 : MsoyServer.peerMan.getNextGuestId();
+                int memberId = creds.featuredPlaceView ? 0 : _peerMan.getNextGuestId();
                 authenticateGuest(conn, creds, rdata, memberId);
             }
 
@@ -440,7 +423,7 @@ public class MsoyAuthenticator extends Authenticator
         // we need to find out if this account has ever logged in so that we can decide how to
         // handle tainted idents; so we load up the member record for this account
         if (member == null) {
-            member = MsoyServer.memberRepo.loadMember(account.accountName);
+            member = _memberRepo.loadMember(account.accountName);
             // if this is their first logon, create them a member record
             if (member == null) {
                 member = createMember(account, account.accountName, null);
@@ -448,7 +431,7 @@ public class MsoyAuthenticator extends Authenticator
             } else {
                 account.firstLogon = (member.sessions == 0);
             }
-            rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
+            rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
         }
 
         // check to see whether this account has been banned or if this is a first time user
@@ -515,7 +498,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         // store their member record in the repository making them a real Whirled citizen
-        MsoyServer.memberRepo.insertMember(mrec);
+        _memberRepo.insertMember(mrec);
 
         // use the tokens filled in by the domain to assign privileges
         mrec.setFlag(MemberRecord.Flag.SUPPORT, account.tokens.isSupport());
@@ -525,10 +508,10 @@ public class MsoyAuthenticator extends Authenticator
         String name = MsoyServer.msgMan.getBundle("server").get("m.new_room_name", mrec.name);
         mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
             MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
-        MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
+        _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow
-        MemberFlowRecord mfr = MsoyServer.memberRepo.getFlowRepository().logUserAction(
+        MemberFlowRecord mfr = _memberRepo.getFlowRepository().logUserAction(
             new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
 
         // apply that directly to the member record we're returning to the caller so that it has
@@ -548,7 +531,7 @@ public class MsoyAuthenticator extends Authenticator
     protected void validateAccount (Account account, int memberId)
         throws ServiceException, PersistenceException
     {
-        MemberWarningRecord record = MsoyServer.memberRepo.loadMemberWarningRecord(memberId);
+        MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
         if (record == null) {
             return;
         }
@@ -590,11 +573,17 @@ public class MsoyAuthenticator extends Authenticator
         return "Guest" + _nextGuestNumber;
     }
 
+    /** Provides access to persistent member information. */
+    @Inject protected MemberRepository _memberRepo;
+
     /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** The default domain against which we authenticate. */
-    protected Domain _defaultDomain;
+    @Inject protected Domain _defaultDomain;
+
+    /** Provides peer-related services. */
+    @Inject protected MsoyPeerManager _peerMan;
 
     /** Used to assign display names to guests. */
     protected static int _nextGuestNumber;

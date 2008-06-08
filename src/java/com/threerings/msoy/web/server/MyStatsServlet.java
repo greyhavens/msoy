@@ -17,9 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.IntSet;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberCard;
@@ -43,8 +46,8 @@ public class MyStatsServlet extends HttpServlet
             }
 
             // make sure the user is authenticated, and pull out their record object
-            WebIdent ident = new WebIdent(ServletUtil.getMemberId(token), token);
-            MemberRecord member = MsoyServiceServlet.getAuthedUser(ident);
+            WebIdent ident = new WebIdent(_mhelper.getMemberId(token), token);
+            MemberRecord member = _mhelper.getAuthedUser(ident);
 
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -53,7 +56,7 @@ public class MyStatsServlet extends HttpServlet
 
             // now get their friend ids
             IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(member.memberId);
-            List<MemberCard> friends = ServletUtil.resolveMemberCards(friendIds, true, friendIds);
+            List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
 
             // and print out the response
             String results = makeResults(member, friends);
@@ -79,4 +82,7 @@ public class MyStatsServlet extends HttpServlet
         
         return result.toString();
     }
+
+    /** Provides useful member related services. */
+    @Inject protected MemberHelper _mhelper;
 }

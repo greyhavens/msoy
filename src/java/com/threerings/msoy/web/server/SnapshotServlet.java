@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
 
@@ -94,7 +95,7 @@ public class SnapshotServlet extends UploadServlet
 
             // make sure the user is authenticated, and pull out their record object
             WebIdent ident = new WebIdent(memberId, token);
-            member = MsoyServiceServlet.requireAuthedUser(ident);
+            member = _mhelper.requireAuthedUser(ident);
 
             // now load the scene, and check who's the owner (todo: deal with group rooms)
             List<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(memberId);
@@ -143,4 +144,6 @@ public class SnapshotServlet extends UploadServlet
         return fields;
     }
 
+    /** Provides useful member related services. */
+    @Inject protected MemberHelper _mhelper;
 }

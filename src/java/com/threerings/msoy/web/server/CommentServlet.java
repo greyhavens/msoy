@@ -90,7 +90,7 @@ public class CommentServlet extends MsoyServiceServlet
     public Comment postComment (WebIdent ident, int etype, int eid, String text)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // validate the entity type and id (sort of; we can't *really* validate the id without a
         // bunch of entity specific befuckery which I don't particularly care to do)
@@ -134,7 +134,7 @@ public class CommentServlet extends MsoyServiceServlet
     public boolean deleteComment (WebIdent ident, int etype, int eid, long posted)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             // if we're not support personel, ensure that we are the poster of this comment
             if (!mrec.isSupport()) {
@@ -159,7 +159,7 @@ public class CommentServlet extends MsoyServiceServlet
     public void complainComment (WebIdent ident, String subject, int etype, int eid, long posted)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
             if (record == null) {

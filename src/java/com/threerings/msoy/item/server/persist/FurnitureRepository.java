@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -12,6 +15,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 /**
  * Manages the persistent store of {@link Furniture} items.
  */
+@Singleton
 public class FurnitureRepository extends ItemRepository<
     FurnitureRecord,
     FurnitureCloneRecord,
@@ -28,7 +32,7 @@ public class FurnitureRepository extends ItemRepository<
     {
     }
 
-    public FurnitureRepository (PersistenceContext ctx)
+    @Inject public FurnitureRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

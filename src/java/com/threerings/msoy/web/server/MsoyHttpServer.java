@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.NCSARequestLog;
@@ -34,13 +39,13 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */
+@Singleton
 public class MsoyHttpServer extends Server
 {
     /**
-     * Creates and prepares our HTTP server for operation but does not yet start listening on the
-     * HTTP port.
+     * Prepares our HTTP server for operation but does not yet start listening on the HTTP port.
      */
-    public MsoyHttpServer (File logdir, MsoyEventLogger eventLog)
+    public void init (Injector injector, File logdir)
         throws IOException
     {
         SelectChannelConnector conn = new SelectChannelConnector();
@@ -50,11 +55,8 @@ public class MsoyHttpServer extends Server
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
-        for (int ii = 0; ii < SERVLETS.length; ii++) {
-            HttpServlet servlet = SERVLETS[ii];
-            if (servlet instanceof MsoyServiceServlet) {
-                ((MsoyServiceServlet)servlet).init(eventLog);
-            }
+        for (int ii = 0; ii < SERVLETS.size(); ii++) {
+            HttpServlet servlet = injector.getInstance(SERVLETS.get(ii));
             context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
         }
         context.addServlet(new ServletHolder(new EmbedRouterServlet()), "/embed/*");
@@ -225,27 +227,28 @@ public class MsoyHttpServer extends Server
         "gamestubsvc",
     };
 
-    protected static final HttpServlet[] SERVLETS = {
-        new WebUserServlet(),
-        new AdminServlet(),
-        new ItemServlet(),
-        new CatalogServlet(),
-        new ProfileServlet(),
-        new MemberServlet(),
-        new GroupServlet(),
-        new MailServlet(),
-        new UploadServlet(),
-        new EchoUploadServlet(),
-        new GameServlet(),
-        new SwiftlyServlet(),
-        new SwiftlyUploadServlet(),
-        new FacebookServlet(),
-        new SnapshotServlet(),
-        new CommentServlet(),
-        new WorldServlet(),
-        new ForumServlet(),
-        new IssueServlet(),
-        new MsoyUnderwireServlet(),
-        new GameStubServlet(),
-    };
+    protected static final List<Class<? extends HttpServlet>> SERVLETS = Lists.newArrayList();
+    static {
+        SERVLETS.add(WebUserServlet.class);
+        SERVLETS.add(AdminServlet.class);
+        SERVLETS.add(ItemServlet.class);
+        SERVLETS.add(CatalogServlet.class);
+        SERVLETS.add(ProfileServlet.class);
+        SERVLETS.add(MemberServlet.class);
+        SERVLETS.add(GroupServlet.class);
+        SERVLETS.add(MailServlet.class);
+        SERVLETS.add(UploadServlet.class);
+        SERVLETS.add(EchoUploadServlet.class);
+        SERVLETS.add(GameServlet.class);
+        SERVLETS.add(SwiftlyServlet.class);
+        SERVLETS.add(SwiftlyUploadServlet.class);
+        SERVLETS.add(FacebookServlet.class);
+        SERVLETS.add(SnapshotServlet.class);
+        SERVLETS.add(CommentServlet.class);
+        SERVLETS.add(WorldServlet.class);
+        SERVLETS.add(ForumServlet.class);
+        SERVLETS.add(IssueServlet.class);
+        SERVLETS.add(MsoyUnderwireServlet.class);
+        SERVLETS.add(GameStubServlet.class);
+    }
 }

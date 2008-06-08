@@ -44,7 +44,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public SwiftlyConnectConfig getConnectConfig (WebIdent ident, final int projectId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         // load the project. this also verifies the user has permissions to view the project
         final SwiftlyProject project = loadProject(ident, projectId);
@@ -69,7 +69,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public List<SwiftlyProject> getRemixableProjects (WebIdent ident)
         throws ServiceException
     {
-        requireAuthedUser(ident);
+        _mhelper.requireAuthedUser(ident);
 
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
@@ -89,7 +89,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public List<SwiftlyProject> getMembersProjects (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
@@ -110,7 +110,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                                          boolean remixable)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         SwiftlyProject project;
         SwiftlyProjectRecord pRec;
@@ -186,7 +186,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public void updateProject (WebIdent ident, SwiftlyProject project)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         requireOwner(project.projectId, memrec.memberId);
 
         // TODO Argument Validation
@@ -219,7 +219,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public void deleteProject (WebIdent ident, int projectId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
 
         try {
@@ -234,7 +234,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public SwiftlyProject loadProject (WebIdent ident, int projectId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
             SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(projectId);
@@ -258,7 +258,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public MemberName getProjectOwner (WebIdent ident, int projectId)
         throws ServiceException
     {
-        requireAuthedUser(ident);
+        _mhelper.requireAuthedUser(ident);
 
         try {
             MemberRecord mRec = MsoyServer.swiftlyRepo.loadProjectOwner(projectId);
@@ -277,7 +277,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public List<MemberName> getProjectCollaborators (WebIdent ident, int projectId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         requireCollaborator(projectId, memrec.memberId);
 
         ArrayList<MemberName> members = new ArrayList<MemberName>();
@@ -299,7 +299,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public List<FriendEntry> getFriends (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
             return MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
@@ -313,7 +313,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public void leaveCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
 
         // Don't let the owner remove themselves.
@@ -338,7 +338,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public void joinCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
 
         // if the user is already a collaborator, do nothing

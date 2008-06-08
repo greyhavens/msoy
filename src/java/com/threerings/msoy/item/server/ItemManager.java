@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -32,6 +34,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.whirled.server.SceneManager;
@@ -72,7 +75,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages digital items and their underlying repositories.
  */
-@EventThread
+@Singleton @EventThread
 public class ItemManager
     implements ItemProvider
 {
@@ -87,35 +90,33 @@ public class ItemManager
         }
     } /* End: static class MissingRepositoryException. */
 
-    /**
-     * Initializes the item manager, which will establish database connections for all of its item
-     * repositories.
-     */
-    public void init (PersistenceContext ctx, MsoyEventLogger eventLog)
-        throws PersistenceException
+    @Inject public ItemManager (InvocationManager invmgr)
     {
-        _eventLog = eventLog;
-
-        // create our various repositories
-        registerRepository(Item.AUDIO, new AudioRepository(ctx));
-        registerRepository(Item.AVATAR, _avatarRepo = new AvatarRepository(ctx));
-        registerRepository(Item.DECOR, _decorRepo = new DecorRepository(ctx));
-        registerRepository(Item.DOCUMENT, new DocumentRepository(ctx));
-        registerRepository(Item.FURNITURE, new FurnitureRepository(ctx));
-        registerRepository(Item.TOY, new ToyRepository(ctx));
-        registerRepository(Item.GAME, _gameRepo = new GameRepository(ctx));
-        registerRepository(Item.PET, _petRepo = new PetRepository(ctx));
-        registerRepository(Item.PHOTO, new PhotoRepository(ctx));
-        registerRepository(Item.VIDEO, new VideoRepository(ctx));
-        registerRepository(Item.LEVEL_PACK, new LevelPackRepository(ctx));
-        registerRepository(Item.ITEM_PACK, new ItemPackRepository(ctx));
-        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo = new TrophySourceRepository(ctx));
-        registerRepository(Item.PRIZE, new PrizeRepository(ctx));
-        registerRepository(Item.PROP, new PropRepository(ctx));
-        _listRepo = new ItemListRepository(ctx);
-
         // register our invocation service
-        MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
+    }
+
+    /**
+     * Initializes the item manager.
+     */
+    public void init ()
+    {
+        // map our various repositories
+        registerRepository(Item.AUDIO, _audioRepo);
+        registerRepository(Item.AVATAR, _avatarRepo);
+        registerRepository(Item.DECOR, _decorRepo);
+        registerRepository(Item.DOCUMENT, _documentRepo);
+        registerRepository(Item.FURNITURE, _furniRepo);
+        registerRepository(Item.TOY, _toyRepo);
+        registerRepository(Item.GAME, _gameRepo);
+        registerRepository(Item.PET, _petRepo);
+        registerRepository(Item.PHOTO, _photoRepo);
+        registerRepository(Item.VIDEO, _videoRepo);
+        registerRepository(Item.LEVEL_PACK, _lpackRepo);
+        registerRepository(Item.ITEM_PACK, _ipackRepo);
+        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
+        registerRepository(Item.PRIZE, _prizeRepo);
+        registerRepository(Item.PROP, _propRepo);
 
         ItemRepository.setNewAndHotDropoffDays(RuntimeConfig.server.newAndHotDropoffDays);
 
@@ -1231,28 +1232,29 @@ public class ItemManager
         }
     }
 
-    /** A reference to our game repository. We'd just look this up from the table but we can't
-     * downcast an ItemRepository to a GameRepository, annoyingly. */
-    protected GameRepository _gameRepo;
-
-    /** A reference to our pet repository. See {@link #_gameRepository} for complaint. */
-    protected PetRepository _petRepo;
-
-    /** A reference to our avatar repository. See {@link #_gameRepository} for complaint. */
-    protected AvatarRepository _avatarRepo;
-
-    /** A reference to our decor repository. See {@link #_gameRepository} for complaint. */
-    protected DecorRepository _decorRepo;
-
-    /** A reference to our trophy source repository. See {@link #_gameRepository} for complaint. */
-    protected TrophySourceRepository _tsourceRepo;
-
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
 
+    // our various repositories
+    @Inject protected AudioRepository _audioRepo;
+    @Inject protected AvatarRepository _avatarRepo;
+    @Inject protected DecorRepository _decorRepo;
+    @Inject protected DocumentRepository _documentRepo;
+    @Inject protected FurnitureRepository _furniRepo;
+    @Inject protected ToyRepository _toyRepo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected PhotoRepository _photoRepo;
+    @Inject protected VideoRepository _videoRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected PrizeRepository _prizeRepo;
+    @Inject protected PropRepository _propRepo;
+
     /** The special repository that stores item lists. */
-    protected ItemListRepository _listRepo;
+    @Inject protected ItemListRepository _listRepo;
 
     /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
 }

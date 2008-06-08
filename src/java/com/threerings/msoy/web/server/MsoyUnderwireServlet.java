@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.web.server;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.IndiscriminateSiteIdentifier;
 import com.samskivert.servlet.SiteIdentifier;
@@ -20,9 +23,12 @@ import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.OOOAuthenticationDomain;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.server.persist.OOODatabase;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -48,13 +54,13 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected SupportRepository createSupportRepository ()
     {
-        return ((OOOAuthenticationDomain)MsoyServer.author.getDefaultDomain()).getRepository();
+        return _authrep;
     }
 
     @Override // from UnderwireServlet
     protected UnderwireRepository createUnderwireRepository ()
     {
-        return new UnderwireRepository(MsoyServer.userCtx);
+        return new UnderwireRepository(_userCtx);
     }
 
     @Override // from UnderwireServlet
@@ -62,7 +68,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         throws PersistenceException, AuthenticationFailedException
     {
         try {
-            MemberRecord mrec = MsoyServer.author.authenticateSession(username, password);
+            MemberRecord mrec = _author.authenticateSession(username, password);
 
             Caller caller = new Caller();
             caller.username = Integer.toString(mrec.memberId);
@@ -132,9 +138,6 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected GameActionHandler getActionHandler ()
     {
-        if (_actionHandler == null) {
-            _actionHandler = new MsoyGameActionHandler();
-        }
         return _actionHandler;
     }
 
@@ -162,5 +165,9 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     }
 
     protected MsoyGameInfoProvider _infoprov;
-    protected MsoyGameActionHandler _actionHandler;
+
+    @Inject protected MsoyGameActionHandler _actionHandler;
+    @Inject protected MsoyAuthenticator _author;
+    @Inject protected MsoyOOOUserRepository _authrep;
+    @Inject protected @OOODatabase PersistenceContext _userCtx;
 }

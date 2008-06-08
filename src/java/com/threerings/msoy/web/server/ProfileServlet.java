@@ -73,7 +73,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public ProfileResult loadProfile (WebIdent ident, int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = getAuthedUser(ident);
+        MemberRecord memrec = _mhelper.getAuthedUser(ident);
 
         try {
             MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
@@ -122,7 +122,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public void updateProfile (WebIdent ident, String displayName, Profile profile)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         if (displayName != null) {
             displayName = displayName.trim();
@@ -176,7 +176,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public void updateInterests (WebIdent ident, List interests)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // store the supplied interests in the repository; blank interests will be deleted
@@ -193,7 +193,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public List<MemberCard> findProfiles (WebIdent ident, String search)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // if the caller is a member, load up their friends set
@@ -220,8 +220,8 @@ public class ProfileServlet extends MsoyServiceServlet
             }
 
             // finally resolve cards for these members
-            List<MemberCard> results = ServletUtil.resolveMemberCards(mids, false, callerFriendIds);
-            Collections.sort(results, ServletUtil.SORT_BY_LAST_ONLINE);
+            List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
+            Collections.sort(results, MemberHelper.SORT_BY_LAST_ONLINE);
             return results;
 
         } catch (PersistenceException pe) {
@@ -234,7 +234,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public FriendsResult loadFriends (WebIdent ident, int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
@@ -253,9 +253,8 @@ public class ProfileServlet extends MsoyServiceServlet
                     callerFriendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
                 }
             }
-            List<MemberCard> list =
-                ServletUtil.resolveMemberCards(friendIds, false, callerFriendIds);
-            Collections.sort(list, ServletUtil.SORT_BY_LAST_ONLINE);
+            List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
+            Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
             result.friends = list;
             return result;
 
@@ -269,7 +268,7 @@ public class ProfileServlet extends MsoyServiceServlet
     public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // don't let someone attempt more than 5 imports in a 5 minute period

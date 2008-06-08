@@ -21,6 +21,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
@@ -31,6 +33,7 @@ import com.samskivert.util.Tuple;
 import com.facebook.api.FacebookRestClient;
 import com.facebook.api.ProfileField;
 
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
@@ -199,7 +202,7 @@ public class FacebookServlet extends HttpServlet
             String password = ""; // TODO?
 
             log.info("Creating Facebook account [name=" + name + ", id=" + fbUserId + "].");
-            mrec = MsoyServer.author.createAccount(email, password, name, true, null);
+            mrec = _author.createAccount(email, password, name, true, null);
             MsoyServer.memberRepo.mapExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 
@@ -335,6 +338,9 @@ public class FacebookServlet extends HttpServlet
         }
         return new FacebookRestClient(apiKey, secret, sessionKey, userId);
     }
+
+    /** Handles our authentication services. */
+    @Inject protected MsoyAuthenticator _author;
 
     /** Used to parse Facebook profile birthdays. */
     protected static SimpleDateFormat _bfmt = new SimpleDateFormat("MMMM dd, yyyy");

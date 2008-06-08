@@ -29,7 +29,6 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.crowd.server.BodyProvider;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.stats.data.StatSet;
@@ -359,8 +358,8 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         user.setAwayMessage(away ? message : null);
-        BodyProvider.updateOccupantStatus(user, user.location,
-            away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
+        MsoyServer.bodyman.updateOccupantStatus(
+            user, user.location, away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
     }
 
     // from interface MemberProvider

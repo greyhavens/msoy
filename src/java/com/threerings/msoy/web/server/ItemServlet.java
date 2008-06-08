@@ -52,7 +52,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Item createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo;
 
         // validate the item
@@ -126,7 +126,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void updateItem (WebIdent ident, Item item)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         // make sure the item in question is consistent as far as the item is concerned
         if (!item.isConsistent()) {
@@ -238,7 +238,7 @@ public class ItemServlet extends MsoyServiceServlet
     public IsSerializable loadItemDetail (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 
         try {
@@ -285,7 +285,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void scaleAvatar (WebIdent ident, int avatarId, float newScale)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         AvatarRepository repo = MsoyServer.itemMan.getAvatarRepository();
         try {
@@ -320,7 +320,7 @@ public class ItemServlet extends MsoyServiceServlet
 //    public Item remixItem (WebIdent ident, final ItemIdent iident)
 //        throws ServiceException
 //    {
-//        MemberRecord memrec = requireAuthedUser(ident);
+//        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 //        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 //
 //        try {
@@ -366,7 +366,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void deleteItem (final WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 
         try {
@@ -403,7 +403,7 @@ public class ItemServlet extends MsoyServiceServlet
     public float rateItem (WebIdent ident, ItemIdent iident, byte rating)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
 
         try {
@@ -469,7 +469,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Collection<TagHistory> getRecentTags (WebIdent ident)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser(ident);
+        final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + mrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -485,7 +485,7 @@ public class ItemServlet extends MsoyServiceServlet
                                final boolean set)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
             "tagItem[" + item + ", " + set + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -500,7 +500,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void wrapItem (WebIdent ident, ItemIdent iident, boolean wrap)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         byte type = iident.type;
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
@@ -543,7 +543,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void setMature (WebIdent ident, ItemIdent iident, boolean value)
         throws ServiceException
     {
-        MemberRecord mRec = requireAuthedUser(ident);
+        MemberRecord mRec = _mhelper.requireAuthedUser(ident);
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -569,7 +569,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void setFlags (WebIdent ident, ItemIdent iident, byte mask, byte value)
         throws ServiceException
     {
-        requireAuthedUser(ident);
+        _mhelper.requireAuthedUser(ident);
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
@@ -593,7 +593,7 @@ public class ItemServlet extends MsoyServiceServlet
     public List getFlaggedItems (WebIdent ident, int count)
         throws ServiceException
     {
-        MemberRecord mRec = requireAuthedUser(ident);
+        MemberRecord mRec = _mhelper.requireAuthedUser(ident);
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -631,7 +631,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Integer deleteItemAdmin (WebIdent ident, ItemIdent iident, String subject, String body)
         throws ServiceException
     {
-        MemberRecord admin = requireAuthedUser(ident);
+        MemberRecord admin = _mhelper.requireAuthedUser(ident);
         if (!admin.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -729,7 +729,7 @@ public class ItemServlet extends MsoyServiceServlet
     protected ItemRecord editClone (WebIdent ident, ItemIdent itemIdent, CloneEditOp op)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemIdent.type);
         try {

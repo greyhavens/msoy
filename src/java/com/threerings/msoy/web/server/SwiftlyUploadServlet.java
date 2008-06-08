@@ -13,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.ServiceException;
@@ -100,7 +103,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         throws AccessDeniedException, FileUploadException
     {
         try {
-            MemberRecord record = MsoyServiceServlet.requireAuthedUser(ident);
+            MemberRecord record = _mhelper.requireAuthedUser(ident);
             if (!MsoyServer.swiftlyRepo.isCollaborator(projectId, record.memberId)) {
                 throw new AccessDeniedException("Access denied. Not a collaborator: [memberId=" +
                     record.memberId + ", projectId=" + projectId + "]");
@@ -114,6 +117,9 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
             throw new FileUploadException("Failed when trying to check collaborator status");
         }
     }
+
+    /** Provides useful member related services. */
+    @Inject protected MemberHelper _mhelper;
 
     /** Restrict all Swiftly file uploads to 4 megabytes. */
     protected static final int UPLOAD_MAX_SIZE = 4 * MEGABYTE;

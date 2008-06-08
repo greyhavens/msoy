@@ -69,7 +69,7 @@ public class MemberServlet extends MsoyServiceServlet
     public boolean getFriendStatus (WebIdent ident, final int memberId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
             return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
@@ -82,7 +82,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void addFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
             MemberName friendName = MsoyServer.memberRepo.noteFriendship(memrec.memberId, friendId);
             if (friendName == null) {
@@ -104,7 +104,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void removeFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(ident);
+        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
             MsoyServer.memberRepo.clearFriendship(memrec.memberId, friendId);
             FriendManager.friendshipCleared(memrec.memberId, friendId);
@@ -120,7 +120,7 @@ public class MemberServlet extends MsoyServiceServlet
     public List loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         // convert the string they supplied to an item enumeration
         if (Item.getClassForType(type) == null) {
@@ -157,7 +157,7 @@ public class MemberServlet extends MsoyServiceServlet
     public MemberInvites getInvitationsStatus (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             MemberInvites result = new MemberInvites();
@@ -182,7 +182,7 @@ public class MemberServlet extends MsoyServiceServlet
                                           String customMessage, boolean anonymous)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // if they're requesting anonymous invites and are not an admin, rejecto!
         if (anonymous && !mrec.isAdmin()) {
@@ -260,7 +260,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void removeInvitation (WebIdent ident, String inviteId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, false);
@@ -303,8 +303,8 @@ public class MemberServlet extends MsoyServiceServlet
             mids.addAll(MsoyServer.memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
 
             // resolve cards for these members
-            List<MemberCard> results = ServletUtil.resolveMemberCards(mids, false, null);
-            Collections.sort(results, ServletUtil.SORT_BY_LEVEL);
+            List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, null);
+            Collections.sort(results, MemberHelper.SORT_BY_LEVEL);
             return results;
 
         } catch (PersistenceException pe) {

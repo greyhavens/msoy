@@ -60,6 +60,7 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -94,21 +95,18 @@ public class MsoyServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
-            // nada (yet)
+            bind(Authenticator.class).to(MsoyAuthenticator.class);
+            bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
+            bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
+                new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
         }
     }
-
-    /** TODO: Provides database access to the user databases. This should probably be removed. */
-    public static PersistenceContext userCtx;
 
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;
 
     /** An invoker for sending email. */
     public static Invoker mailInvoker;
-
-    /** Handles authentication of sessions. */
-    public static MsoyAuthenticator author;
 
     /** Our runtime admin manager. */
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
@@ -156,7 +154,7 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoySceneRepository sceneRepo;
 
     /** The Msoy item manager. */
-    public static ItemManager itemMan = new ItemManager();
+    public static ItemManager itemMan;
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
@@ -166,9 +164,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages our external game servers. */
     public static MsoyGameRegistry gameReg;
-
-    /** Handles HTTP servlet requests. */
-    public static MsoyHttpServer httpServer;
 
     /** Handles our cuddly little pets. */
     public static PetManager petMan = new PetManager();
@@ -269,7 +264,7 @@ public class MsoyServer extends MsoyBaseServer
     {
         // shut down our http server
         try {
-            httpServer.stop();
+            _httpServer.stop();
         } catch (Exception e) {
             log.warning("Failed to stop http server.", e);
         }
@@ -292,14 +287,10 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan = _swiftlyMan;
         sceneRepo = _sceneRepo;
         adminMan = _adminMan;
+        itemMan = _itemMan;
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
-
-        // we use this on dev to work with the dev ooouser database; TODO: nix
-        userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT,
-                                         ServerConfig.createConnectionProvider(),
-                                         _perCtx.getCacheAdapter());
 
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
@@ -329,6 +320,9 @@ public class MsoyServer extends MsoyBaseServer
         mailInvoker = new Invoker("mail_invoker", omgr);
         mailInvoker.setDaemon(true);
         mailInvoker.start();
+
+        // initialize our HTTP server
+        _httpServer.init(injector, _logdir);
     }
 
     @Override // from MsoyBaseServer
@@ -362,12 +356,6 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from PresentsServer
-    protected Authenticator createAuthenticator ()
-    {
-        return (author = new MsoyAuthenticator());
-    }
-
-    @Override // from PresentsServer
     protected int[] getListenPorts ()
     {
         return ServerConfig.serverPorts;
@@ -378,9 +366,6 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         super.finishInit();
-
-        // initialize our authenticator
-        author.init(_eventLog);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
@@ -393,10 +378,10 @@ public class MsoyServer extends MsoyBaseServer
         _adminMan.init();
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
-        mailMan.init(mailRepo, memberRepo, itemMan);
+        mailMan.init(mailRepo, memberRepo, _itemMan);
         channelMan.init(invmgr);
         _jabberMan.init();
-        itemMan.init(_perCtx, _eventLog);
+        _itemMan.init();
         swiftlyMan.init();
         petMan.init(invmgr);
         gameReg.init(itemMan.getGameRepository());
@@ -411,9 +396,8 @@ public class MsoyServer extends MsoyBaseServer
 
         sceneRepo.init(itemMan.getDecorRepository());
 
-        // create and start up our HTTP server
-        httpServer = new MsoyHttpServer(_logdir, _eventLog);
-        httpServer.start();
+        // start up our HTTP server
+        _httpServer.start();
 
         // if we're a dev deployment and our policy port is not privileged, run the policy server
         // right in the msoy server to simplify life for developers
@@ -444,7 +428,7 @@ public class MsoyServer extends MsoyBaseServer
         // resolve any remaining database schemas that have not yet been loaded
         if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
             _perCtx.initializeManagedRecords(true);
-            userCtx.initializeManagedRecords(true);
+            _userCtx.initializeManagedRecords(true);
         }
 
         log.info("Msoy server initialized.");
@@ -456,7 +440,7 @@ public class MsoyServer extends MsoyBaseServer
         super.invokerDidShutdown();
 
         // shutdown our persistence context (cache, JDBC connections)
-        userCtx.shutdown();
+        _userCtx.shutdown();
     }
 
     /**
@@ -508,6 +492,15 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime admin manager. */
     @Inject protected MsoyAdminManager _adminMan;
+
+    /** Handles HTTP servlet requests. */
+    @Inject protected MsoyHttpServer _httpServer;
+
+    /** Handles item-related services. */
+    @Inject protected ItemManager _itemMan;
+
+    /** Provides database access to the user databases. TODO: This should probably be removed. */
+    @Inject protected @OOODatabase PersistenceContext _userCtx;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

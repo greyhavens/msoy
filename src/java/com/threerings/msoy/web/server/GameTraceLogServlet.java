@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
@@ -43,12 +45,12 @@ public class GameTraceLogServlet extends HttpServlet
             }
  
             // make sure the user is authenticated, and pull out their record object
-            Integer memberId = ServletUtil.getMemberId(token);
+            Integer memberId = _mhelper.getMemberId(token);
             if (memberId == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-            MemberRecord member = MsoyServiceServlet.getAuthedUser(new WebIdent(memberId, token));
+            MemberRecord member = _mhelper.getAuthedUser(new WebIdent(memberId, token));
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
@@ -118,4 +120,7 @@ public class GameTraceLogServlet extends HttpServlet
         }
         StreamUtil.close(rsp.getOutputStream());
     }
+
+    /** Provides useful member related services. */
+    @Inject protected MemberHelper _mhelper;
 }

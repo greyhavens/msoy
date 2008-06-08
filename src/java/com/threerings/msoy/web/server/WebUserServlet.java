@@ -18,12 +18,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -32,6 +35,7 @@ import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.FriendManager;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -69,7 +73,7 @@ public class WebUserServlet extends MsoyServiceServlet
         checkClientVersion(clientVersion, username);
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
-        return startSession(MsoyServer.author.authenticateSession(username, password), expireDays);
+        return startSession(_author.authenticateSession(username, password), expireDays);
     }
 
     // from interface WebUserService
@@ -95,7 +99,7 @@ public class WebUserServlet extends MsoyServiceServlet
         InvitationRecord invite = null;
         if (inviteId != null) {
             try {
-                invite = MsoyServer.memberRepo.inviteAvailable(inviteId);
+                invite = _memberRepo.inviteAvailable(inviteId);
                 if (invite == null) {
                     throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
@@ -120,7 +124,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
-        final MemberRecord mrec = MsoyServer.author.createAccount(
+        final MemberRecord mrec = _author.createAccount(
             username, password, displayName, ignoreRestrict, invite);
 
         // store the user's birthday and realname in their profile
@@ -145,7 +149,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // if we are responding to an invitation, wire that all up
         if (invite != null && invite.inviterId != 0) {
             try {
-                MsoyServer.memberRepo.linkInvite(inviteId, mrec);
+                _memberRepo.linkInvite(inviteId, mrec);
             } catch (PersistenceException pe) {
                 log.warning("Linking invites failed [inviteId=" + inviteId +
                         ", memberId=" + mrec.memberId + "]", pe);
@@ -154,7 +158,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
             MemberRecord inviter;
             try {
-                inviter = MsoyServer.memberRepo.loadMember(invite.inviterId);
+                inviter = _memberRepo.loadMember(invite.inviterId);
             } catch (PersistenceException pe) {
                 log.warning("Failed to lookup inviter [inviteId=" + inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
@@ -183,7 +187,7 @@ public class WebUserServlet extends MsoyServiceServlet
                         displayName + "\t" + mrec.memberId);
 
                     // pay out a sign up bonus to the inviter
-                    MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                    _memberRepo.getFlowRepository().logUserAction(
                         new UserActionDetails(inviter.memberId, UserAction.INVITED_FRIEND_JOINED));
 
                 } catch (PersistenceException pe) {
@@ -193,7 +197,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
                 // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;
-                MsoyServer.omgr.postRunnable(new Runnable() {
+                _omgr.postRunnable(new Runnable() {
                     public void run () {
                         // TODO: This is really spammy; in fact, when somebody accepts your invite
                         // TODO: you may get, in practice, four separate notifications:
@@ -223,13 +227,13 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // refresh the token associated with their authentication session
         try {
-            MemberRecord mrec = MsoyServer.memberRepo.refreshSession(authtok, expireDays);
+            MemberRecord mrec = _memberRepo.refreshSession(authtok, expireDays);
             if (mrec == null) {
                 return null;
             }
 
             WebCreds creds = mrec.toCreds(authtok);
-            ServletUtil.mapMemberId(creds.token, mrec.memberId);
+            _mhelper.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
@@ -254,12 +258,12 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            String code = MsoyServer.author.generatePasswordResetCode(email);
+            String code = _author.generatePasswordResetCode(email);
             if (code == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
 
-            MemberRecord mrec = MsoyServer.memberRepo.loadMember(email);
+            MemberRecord mrec = _memberRepo.loadMember(email);
             if (mrec == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
@@ -285,14 +289,14 @@ public class WebUserServlet extends MsoyServiceServlet
     public void updateEmail (WebIdent ident, String newEmail)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         if (!MailUtil.isValidAddress(newEmail)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 
         try {
-            MsoyServer.memberRepo.configureAccountName(mrec.memberId, newEmail);
+            _memberRepo.configureAccountName(mrec.memberId, newEmail);
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         } catch (PersistenceException pe) {
@@ -302,7 +306,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // let the authenticator know that we updated our account name
-        MsoyServer.author.updateAccount(mrec.accountName, newEmail, null, null);
+        _author.updateAccount(mrec.accountName, newEmail, null, null);
     }
 
     // from interface WebUserService
@@ -310,7 +314,7 @@ public class WebUserServlet extends MsoyServiceServlet
                                   boolean emailAnnouncements)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // update their mail preferences if appropriate
         int oflags = mrec.flags;
@@ -318,7 +322,7 @@ public class WebUserServlet extends MsoyServiceServlet
         mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, !emailAnnouncements);
         if (mrec.flags != oflags) {
             try {
-                MsoyServer.memberRepo.storeFlags(mrec);
+                _memberRepo.storeFlags(mrec);
             } catch (PersistenceException pe) {
                 log.warning("Failed to update flags [who=" + mrec.memberId +
                         ", flags=" + mrec.flags + "].", pe);
@@ -331,8 +335,8 @@ public class WebUserServlet extends MsoyServiceServlet
     public void updatePassword (WebIdent ident, String newPassword)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
-        MsoyServer.author.updateAccount(mrec.accountName, null, null, newPassword);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        _author.updateAccount(mrec.accountName, null, null, newPassword);
     }
 
     // from interface WebUserService
@@ -340,20 +344,20 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            MemberRecord mrec = MsoyServer.memberRepo.loadMember(memberId);
+            MemberRecord mrec = _memberRepo.loadMember(memberId);
             if (mrec == null) {
                 log.info("No such member for password reset " + memberId + ".");
                 return false;
             }
 
-            if (!MsoyServer.author.validatePasswordResetCode(mrec.accountName, code)) {
-                String actual = MsoyServer.author.generatePasswordResetCode(mrec.accountName);
+            if (!_author.validatePasswordResetCode(mrec.accountName, code)) {
+                String actual = _author.generatePasswordResetCode(mrec.accountName);
                 log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
                          ", actual=" + actual + "].");
                 return false;
             }
 
-            MsoyServer.author.updateAccount(mrec.accountName, null, null, newPassword);
+            _author.updateAccount(mrec.accountName, null, null, newPassword);
             return true;
 
         } catch (PersistenceException pe) {
@@ -367,7 +371,7 @@ public class WebUserServlet extends MsoyServiceServlet
     public void configurePermaName (WebIdent ident, String permaName)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         if (mrec.permaName != null) {
             log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
                         ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
@@ -381,7 +385,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.memberRepo.configurePermaName(mrec.memberId, permaName);
+            _memberRepo.configurePermaName(mrec.memberId, permaName);
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
         } catch (PersistenceException pe) {
@@ -391,14 +395,14 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // let the authenticator know that we updated our permaname
-        MsoyServer.author.updateAccount(mrec.accountName, null, permaName, null);
+        _author.updateAccount(mrec.accountName, null, permaName, null);
     }
 
     // from interface WebUserService
     public AccountInfo getAccountInfo (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             AccountInfo ainfo = new AccountInfo();
@@ -421,7 +425,7 @@ public class WebUserServlet extends MsoyServiceServlet
     public void updateAccountInfo (WebIdent ident, AccountInfo info)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
@@ -505,9 +509,8 @@ public class WebUserServlet extends MsoyServiceServlet
     {
         try {
             // if they made it through that gauntlet, create or update their session token
-            WebCreds creds = mrec.toCreds(
-                MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
-            ServletUtil.mapMemberId(creds.token, mrec.memberId);
+            WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
+            _mhelper.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
@@ -556,6 +559,12 @@ public class WebUserServlet extends MsoyServiceServlet
 
         protected int _toMemberId;
     }
+
+    /** Handles our authentication services. */
+    @Inject protected MsoyAuthenticator _author;
+
+    /** Handles distriuted object stuff. */
+    @Inject protected PresentsDObjectMgr _omgr;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[A-Za-z][_A-Za-z0-9]*$";

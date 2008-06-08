@@ -11,9 +11,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.peer.server.PeerNode;
-import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 
@@ -23,9 +21,8 @@ import com.threerings.msoy.peer.data.MsoyClientInfo;
 public class MsoyPeerNode extends PeerNode
     implements SetListener
 {
-    public MsoyPeerNode (PeerManager peermgr, NodeRecord record, int httpPort)
+    public MsoyPeerNode (int httpPort)
     {
-        super(peermgr, record);
         _httpPort = httpPort;
     }
 

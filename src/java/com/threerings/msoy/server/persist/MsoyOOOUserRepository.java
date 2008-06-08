@@ -12,6 +12,9 @@ import java.util.Set;
 
 import java.sql.Date;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.util.Tuple;
 import com.samskivert.io.PersistenceException;
 
@@ -40,16 +43,18 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.underwire.server.persist.SupportRepository;
 
+import com.threerings.msoy.server.persist.OOODatabase;
+
 import static com.threerings.msoy.Log.log;
 
 /**
  * Whirled-specific table-compatible simulation of the parts of {@link OOOUserRepository} we want.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class MsoyOOOUserRepository extends DepotRepository
     implements SupportRepository
 {
-    public MsoyOOOUserRepository (PersistenceContext ctx)
+    @Inject public MsoyOOOUserRepository (@OOODatabase PersistenceContext ctx)
     {
         super(ctx);
     }
@@ -186,7 +191,8 @@ public class MsoyOOOUserRepository extends DepotRepository
         Where where = new Where(UserIdentRecord.USER_ID_C, userId);
         for (UserIdentRecord record : findAll(UserIdentRecord.class, where)) {
             if (!StringUtil.isBlank(record.machIdent)) {
-                log.info("Adding machine ident [userId=" + userId + " machIdent=" + record.machIdent + "].");
+                log.info("Adding machine ident [userId=" + userId +
+                         " machIdent=" + record.machIdent + "].");
                 idents.add(record.machIdent);
             }
         }

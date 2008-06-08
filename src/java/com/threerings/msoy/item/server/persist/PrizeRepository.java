@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -12,6 +15,7 @@ import com.threerings.msoy.server.persist.TagRecord;
 /**
  * Manages the persistent store of {@link PrizeRecord} items.
  */
+@Singleton
 public class PrizeRepository extends ItemRepository<
     PrizeRecord,
     PrizeCloneRecord,
@@ -28,7 +32,7 @@ public class PrizeRepository extends ItemRepository<
     {
     }
 
-    public PrizeRepository (PersistenceContext ctx)
+    @Inject public PrizeRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

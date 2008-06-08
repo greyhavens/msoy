@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -12,6 +15,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 /**
  * Manages the persistent store of {@link VideoRecord} items.
  */
+@Singleton
 public class VideoRepository extends ItemRepository<
     VideoRecord,
     VideoCloneRecord,
@@ -28,7 +32,7 @@ public class VideoRepository extends ItemRepository<
     {
     }
 
-    public VideoRepository (PersistenceContext ctx)
+    @Inject public VideoRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

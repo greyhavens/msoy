@@ -51,76 +51,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class ServletUtil
 {
-    /** A compartor for sorting lists of MemberCard, most recently online to least. */
-    public static Comparator<MemberCard> SORT_BY_LAST_ONLINE = new Comparator<MemberCard>() {
-        public int compare (MemberCard c1, MemberCard c2) {
-            int rv = MemberCard.compare(c1.status, c2.status);
-            if (rv != 0) {
-                return rv;
-            }
-            return MemberName.compareNames(c1.name, c2.name);
-        }
-    };
-    
-    /**
-     * A compartor for sorting lists of MemberCard, highest level to lowest, with
-     * last online then name as a tiebreaker.
-     */
-    public static Comparator<MemberCard> SORT_BY_LEVEL = new Comparator<MemberCard>() {
-        public int compare (MemberCard c1, MemberCard c2) {
-            if (c1.level > c2.level) {
-                return -1;
-            }
-            else if (c2.level > c1.level) {
-                return 1;
-            }
-            int rv = MemberCard.compare(c1.status, c2.status);
-            if (rv != 0) {
-                return rv;
-            }
-            return MemberName.compareNames(c1.name, c2.name);
-        }
-    };
-
-    /**
-     * Looks up a member id based on their session token. May return null if this member does not
-     * have a session mapped into memory on this server.
-     */
-    public static Integer getMemberId (String sessionToken)
-    {
-        return _members.get(sessionToken);
-    }
-
-    /**
-     * Maps a session token to a member id for later retrieval via {@link #getMemberId}.
-     */
-    public static void mapMemberId (String sessionToken, int memberId)
-    {
-        _members.put(sessionToken, memberId);
-    }
-
-    /**
-     * Clears a session token to member id mapping.
-     */
-    public static void clearMemberId (String sessionToken)
-    {
-        _members.remove(sessionToken);
-    }
-
-    /**
-     * Clears all session tokens for a member id.
-     */
-    public static void clearSessionToken (int memberId)
-    {
-        for (Iterator<Map.Entry<String,Integer>> iter = _members.entrySet().iterator();
-                iter.hasNext(); ) {
-            Map.Entry<String,Integer> entry = iter.next();
-            if (entry.getValue() == memberId) {
-                iter.remove();
-            }
-        }
-    }
-
     /**
      * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
      * and blocks the current thread until the execution has completed.
@@ -140,72 +70,6 @@ public class ServletUtil
             }
         });
         waiter.waitForResult();
-    }
-
-    /**
-     * Resolves a set of member ids into populated {@link MemberCard} instances with additional
-     * online status information.
-     *
-     * @param memberIds the ids of the members for whom to resolve cards.
-     * @param onlineOnly if true, all non-online members will be filtered from the results.
-     * @param friendIds if non-null, indicates the ids of the friends of the caller and will be
-     * used to fill in {@link MemberCard#isFriend}, otherwise isFriend will be left false.
-     */
-    public static List<MemberCard> resolveMemberCards (
-        final IntSet memberIds, boolean onlineOnly, IntSet friendIds)
-        throws ServiceException
-    {
-        List<MemberCard> cards = Lists.newArrayList();
-
-        // hop over to the dobj thread and figure out which of these members is online
-        final IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
-        invokePeerOperation("resolveMemberCards(" + memberIds + ")", new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                for (int memberId : memberIds) {
-                    MemberCard.Status status = mnobj.getMemberStatus(memberId);
-                    if (status != null) {
-                        statuses.put(memberId, status);
-                    }
-                }
-            }
-        });
-
-        // now load up the rest of their member card information
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-        try {
-            Set<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(keys)) {
-                MemberCard card = mcr.toMemberCard();
-                cards.add(card);
-
-                // if this member is online, fill in their online status
-                MemberCard.Status status = statuses.get(mcr.memberId);
-                if (status != null) {
-                    // game names are not filled in by MsoyNodeObject.getMemberCard so we have to
-                    // get those from the popular places snapshot
-                    if (status instanceof MemberCard.InGame) {
-                        MemberCard.InGame gstatus = (MemberCard.InGame)status;
-                        PlaceCard place = pps.getGame(gstatus.gameId);
-                        if (place != null) {
-                            gstatus.gameName = place.name;
-                        }
-                    }
-                    card.status = status;
-                }
-            }
-
-        } catch (PersistenceException pe) {
-            log.warning("Failed to populate member cards.", pe);
-        }
-
-        if (friendIds != null) {
-            for (MemberCard card : cards) {
-                card.isFriend = friendIds.contains(card.name.getMemberId());
-            }
-        }
-
-        return cards;
     }
 
     /**
@@ -258,8 +122,4 @@ public class ServletUtil
 
         return messages;
     }
-
-    /** Contains a mapping of authenticated members. */
-    protected static Map<String,Integer> _members = Collections.synchronizedMap(
-        new HashMap<String,Integer>());
 }

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -12,6 +15,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 /**
  * Manages the persistent store of {@link Document} items.
  */
+@Singleton
 public class DocumentRepository extends ItemRepository<
     DocumentRecord,
     DocumentCloneRecord,
@@ -28,7 +32,7 @@ public class DocumentRepository extends ItemRepository<
     {
     }
 
-    public DocumentRepository (PersistenceContext ctx)
+    @Inject public DocumentRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

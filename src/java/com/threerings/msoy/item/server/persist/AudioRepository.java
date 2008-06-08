@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -12,6 +15,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 /**
  * Manages the persistent store of {@link AudioRecord} items.
  */
+@Singleton
 public class AudioRepository extends ItemRepository<
     AudioRecord,
     AudioCloneRecord,
@@ -28,7 +32,7 @@ public class AudioRepository extends ItemRepository<
     {
     }
 
-    public AudioRepository (PersistenceContext ctx)
+    @Inject public AudioRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

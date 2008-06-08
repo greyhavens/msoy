@@ -81,7 +81,7 @@ public class GameServlet extends MsoyServiceServlet
     public GameDetail loadGameDetail (WebIdent ident, int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             GameDetailRecord gdr = _gameRepo.loadGameDetail(gameId);
@@ -137,7 +137,7 @@ public class GameServlet extends MsoyServiceServlet
     public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -172,7 +172,7 @@ public class GameServlet extends MsoyServiceServlet
     public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -193,7 +193,7 @@ public class GameServlet extends MsoyServiceServlet
     public void resetGameScores (WebIdent ident, int gameId, boolean single)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -215,7 +215,7 @@ public class GameServlet extends MsoyServiceServlet
     public List loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             GameRecord grec = _gameRepo.loadGameRecord(gameId);
@@ -236,7 +236,7 @@ public class GameServlet extends MsoyServiceServlet
     public CompareResult compareTrophies (WebIdent ident, int gameId, int[] memberIds)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         int callerId = (mrec == null) ? 0 : mrec.memberId;
 
         try {
@@ -273,7 +273,7 @@ public class GameServlet extends MsoyServiceServlet
     public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             MemberRecord tgtrec = _memberRepo.loadMember(memberId);
@@ -329,7 +329,7 @@ public class GameServlet extends MsoyServiceServlet
     public PlayerRating[][] loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
         if (mrec == null && onlyMyFriends) {
             log.warning("Requested friend rankings for non-authed member [gameId=" + gameId + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

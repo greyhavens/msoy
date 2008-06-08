@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -64,13 +66,13 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages persistent information stored on a per-member basis.
  */
-@BlockingThread
+@Singleton @BlockingThread
 public class MemberRepository extends DepotRepository
 {
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    public MemberRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public MemberRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
     {
         super(ctx);
 

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -15,6 +18,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the persistent store of {@link AvatarRecord} items.
  */
+@Singleton
 public class AvatarRepository extends ItemRepository<
     AvatarRecord,
     AvatarCloneRecord,
@@ -31,7 +35,7 @@ public class AvatarRepository extends ItemRepository<
     {
     }
 
-    public AvatarRepository (PersistenceContext ctx)
+    @Inject public AvatarRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

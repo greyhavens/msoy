@@ -6,6 +6,9 @@ package com.threerings.msoy.item.server.persist;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -20,10 +23,10 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 
-@BlockingThread
+@Singleton @BlockingThread
 public class ItemListRepository extends DepotRepository
 {
-    public ItemListRepository (PersistenceContext ctx)
+    @Inject public ItemListRepository (PersistenceContext ctx)
     {
         super(ctx);
 

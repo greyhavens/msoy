@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
@@ -35,13 +38,9 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles authentication on an MSOY Game server.
  */
+@Singleton
 public class MsoyGameAuthenticator extends Authenticator
 {
-    public MsoyGameAuthenticator (MemberRepository memberRepo)
-    {
-        _memberRepo = memberRepo;
-    }
-
     // from abstract Authenticator
     protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
         throws PersistenceException
@@ -150,7 +149,7 @@ public class MsoyGameAuthenticator extends Authenticator
         }
     }
 
-    protected MemberRepository _memberRepo;
+    @Inject protected MemberRepository _memberRepo;
 
     /** Used to assign unique usernames to guests that authenticate with the server. */
     protected static int _guestCount;

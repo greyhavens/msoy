@@ -57,7 +57,7 @@ public class ForumServlet extends MsoyServiceServlet
     public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // load up said member's group memberships
@@ -97,7 +97,7 @@ public class ForumServlet extends MsoyServiceServlet
         WebIdent ident, int groupId, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // make sure they have read access to this group
@@ -142,7 +142,7 @@ public class ForumServlet extends MsoyServiceServlet
     public List<ForumThread> findThreads (WebIdent ident, int groupId, String search, int limit)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // make sure they have read access to this group
@@ -167,7 +167,7 @@ public class ForumServlet extends MsoyServiceServlet
                                        int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // make sure they have read access to this thread
@@ -237,7 +237,7 @@ public class ForumServlet extends MsoyServiceServlet
     public List<ForumMessage> findMessages (WebIdent ident, int threadId, String search, int limit)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
             // make sure they have read access to this thread
@@ -287,7 +287,7 @@ public class ForumServlet extends MsoyServiceServlet
                                      String subject, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // make sure they're allowed to create a thread in this group
@@ -332,7 +332,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void updateThreadFlags (WebIdent ident, int threadId, int flags)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
             if (ftr == null) {
@@ -361,7 +361,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void ignoreThread (WebIdent ident, int threadId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
             _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
 
@@ -376,7 +376,7 @@ public class ForumServlet extends MsoyServiceServlet
     public ForumMessage postMessage (WebIdent ident, int threadId, int inReplyTo, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // make sure they're allowed to post a message to this thread's group
@@ -417,7 +417,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void editMessage (WebIdent ident, int messageId, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // make sure they are the message author
@@ -447,7 +447,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void deleteMessage (WebIdent ident, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // make sure they are the message author or a group admin or whirled support+
@@ -479,7 +479,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void complainMessage (WebIdent ident, String complaint, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(ident);
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // load up the message details
