@@ -31,6 +31,7 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
+import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
@@ -388,8 +389,7 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         // fetch all the rating records for the user
-        List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(
-            tgtrec.memberId, -1, MAX_PROFILE_GAMES);
+        List<RatingRecord> ratings = _ratingRepo.getRatings(tgtrec.memberId, -1, MAX_PROFILE_GAMES);
 
         // sort them by rating
         Collections.sort(ratings, new Comparator<RatingRecord>() {
@@ -464,6 +464,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected long _waCleared = System.currentTimeMillis();
 
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RatingRepository _ratingRepo;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;

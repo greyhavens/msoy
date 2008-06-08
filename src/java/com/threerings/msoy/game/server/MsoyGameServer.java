@@ -17,12 +17,10 @@ import com.samskivert.util.OneLineLogFormatter;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
-import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.ShutdownManager;
 
@@ -34,6 +32,7 @@ import com.threerings.bureau.server.BureauRegistry;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.whirled.server.SceneRegistry;
@@ -241,13 +240,16 @@ public class MsoyGameServer extends MsoyBaseServer
 
     protected static class GamePlaceRegistry extends PlaceRegistry
     {
-        @Inject public GamePlaceRegistry (
-            ShutdownManager shutmgr, InvocationManager invmgr, RootDObjectManager omgr) {
-            super(shutmgr, invmgr, omgr);
+        @Inject public GamePlaceRegistry (ShutdownManager shutmgr) {
+            super(shutmgr);
         }
-        @Override public ClassLoader getClassLoader (PlaceConfig config) {
+        @Override protected PlaceManager createPlaceManager (PlaceConfig config) throws Exception {
             ClassLoader loader = hostedMan.getClassLoader(config);
-            return (loader == null) ? super.getClassLoader(config) : loader;
+            if (loader == null) {
+                return super.createPlaceManager(config);
+            }
+            return (PlaceManager)Class.forName(
+                config.getManagerClassName(), true, loader).newInstance();
         }
     }
 
