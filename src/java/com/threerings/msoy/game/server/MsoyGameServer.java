@@ -24,6 +24,7 @@ import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.DatabaseConfigRegistry;
@@ -64,7 +65,7 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
-            // nada (yet)
+            bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
         }
     }
 
@@ -165,7 +166,7 @@ public class MsoyGameServer extends MsoyBaseServer
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
             public PresentsClient createClient (AuthRequest areq) {
-                // Bureaus don't have or need access to all the stuff in a full msoy game client, 
+                // Bureaus don't have or need access to all the stuff in a full msoy game client,
                 // so just give them a vanilla PresentsClient client for now.
                 // TODO: will bureaus need a more tailored client & resolver?
                 if (areq.getCredentials() instanceof BureauCredentials) {
@@ -223,17 +224,6 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     @Override // from CrowdServer
-    protected PlaceRegistry createPlaceRegistry (InvocationManager invmgr, RootDObjectManager omgr)
-    {
-        return new PlaceRegistry(invmgr, omgr) {
-            public ClassLoader getClassLoader (PlaceConfig config) {
-                ClassLoader loader = hostedMan.getClassLoader(config);
-                return (loader == null) ? super.getClassLoader(config) : loader;
-            }
-        };
-    }
-
-    @Override // from CrowdServer
     protected BodyLocator createBodyLocator ()
     {
         return new BodyLocator() {
@@ -254,23 +244,35 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         return new int[] { _listenPort };
     }
-    
-    protected static class ThaneCommandGenerator 
+
+    protected static class GamePlaceRegistry extends PlaceRegistry
+    {
+        @Inject public GamePlaceRegistry (
+            ShutdownManager shutmgr, InvocationManager invmgr, RootDObjectManager omgr) {
+            super(shutmgr, invmgr, omgr);
+        }
+        @Override public ClassLoader getClassLoader (PlaceConfig config) {
+            ClassLoader loader = hostedMan.getClassLoader(config);
+            return (loader == null) ? super.getClassLoader(config) : loader;
+        }
+    }
+
+    protected static class ThaneCommandGenerator
         implements BureauRegistry.CommandGenerator
     {
         public String[] createCommand (
-            String serverNameAndPort, 
-            String bureauId, 
+            String serverNameAndPort,
+            String bureauId,
             String token) {
 
             String localhostPrefix = "localhost:";
             if (!serverNameAndPort.startsWith(localhostPrefix)) {
-                log.warning("bin/runthaneclient cannot connect to " + 
+                log.warning("bin/runthaneclient cannot connect to " +
                     serverNameAndPort);
             }
             String port = serverNameAndPort.substring(localhostPrefix.length());
             Integer.parseInt(port);
-            return new String[] { 
+            return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient",
                 bureauId, token, port};
         }

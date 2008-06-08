@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
@@ -30,6 +31,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Connects back to our parent world server and keeps it up to date as to our goings on.
  */
+@Singleton
 public class WorldServerClient
     implements MessageListener
 {
