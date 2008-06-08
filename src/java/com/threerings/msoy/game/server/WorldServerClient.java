@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -10,7 +12,9 @@ import com.threerings.presents.client.Communicator;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
@@ -18,6 +22,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.data.all.Trophy;
 
 import static com.threerings.msoy.Log.log;
@@ -37,13 +42,15 @@ public class WorldServerClient
     /** A message sent by our world server to request that we reset our percentiler. */
     public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
 
-    public void init (MsoyGameServer server, int listenPort, int connectPort)
+    /**
+     * Configures our listen and connection ports and connects to our parent world server.
+     */
+    public void init (int listenPort, int connectPort)
     {
-        _server = server;
         _port = listenPort;
 
         // create our client and connect to the server
-        _client = new Client(null, MsoyGameServer.omgr) {
+        _client = new Client(null, _omgr) {
             protected Communicator createCommunicator () {
                 // TODO: make a custom communicator that uses the ClientManager NIO system to do
                 // its I/O instead of using two threads and blocking socket I/O
@@ -120,16 +127,16 @@ public class WorldServerClient
             // TODO: we could just stop listening for client connections and shut ourselves down
             // once all the games on this server have finally ended; might be fiddly
             log.info("Got shutdown notification from world server.");
-            _server.shutdown();
+            _shutmgr.shutdown();
 
         } else if (event.getName().equals(GAME_RECORD_UPDATED)) {
             int gameId = (Integer)event.getArgs()[0];
-            MsoyGameServer.gameReg.gameRecordUpdated(gameId);
+            _gameReg.gameRecordUpdated(gameId);
 
         } else if (event.getName().equals(RESET_SCORE_PERCENTILER)) {
             int gameId = (Integer)event.getArgs()[0];
             boolean single = (Boolean)event.getArgs()[1];
-            MsoyGameServer.gameReg.resetScorePercentiler(gameId, single);
+            _gameReg.resetScorePercentiler(gameId, single);
         }
     }
 
@@ -148,12 +155,15 @@ public class WorldServerClient
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
-            _server.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
+            _shutmgr.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
         }
     };
 
-    protected MsoyGameServer _server;
     protected int _port;
     protected Client _client;
     protected GameServerService _gssvc;
+
+    @Inject protected ShutdownManager _shutmgr;
+    @Inject protected GameGameRegistry _gameReg;
+    @Inject protected RootDObjectManager _omgr;
 }

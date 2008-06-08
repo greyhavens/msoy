@@ -37,6 +37,7 @@ import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ReportManager;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
@@ -86,6 +87,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class MsoyServer extends MsoyBaseServer
+    implements ShutdownManager.Shutdowner
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -262,6 +264,22 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
+    // from interface ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        // shut down our http server
+        try {
+            httpServer.stop();
+        } catch (Exception e) {
+            log.warning("Failed to stop http server.", e);
+        }
+
+        // and our policy server if one is running
+        if (_policyServer != null) {
+            _policyServer.unbindAll();
+        }
+    }
+
     @Override // from MsoyBaseServer
     public void init (Injector injector)
         throws Exception
@@ -274,6 +292,9 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan = _swiftlyMan;
         sceneRepo = _sceneRepo;
         adminMan = _adminMan;
+
+        // we need to know when we're shutting down
+        _shutmgr.registerShutdowner(this);
 
         // we use this on dev to work with the dev ooouser database; TODO: nix
         userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT,
@@ -308,24 +329,6 @@ public class MsoyServer extends MsoyBaseServer
         mailInvoker = new Invoker("mail_invoker", omgr);
         mailInvoker.setDaemon(true);
         mailInvoker.start();
-    }
-
-    @Override
-    public void shutdown ()
-    {
-        super.shutdown();
-
-        // shut down our http server
-        try {
-            httpServer.stop();
-        } catch (Exception e) {
-            log.warning("Failed to stop http server.", e);
-        }
-
-        // and our policy server if one is running
-        if (_policyServer != null) {
-            _policyServer.unbindAll();
-        }
     }
 
     @Override // from MsoyBaseServer

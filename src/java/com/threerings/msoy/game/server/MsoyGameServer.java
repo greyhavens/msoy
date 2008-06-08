@@ -78,7 +78,7 @@ public class MsoyGameServer extends MsoyBaseServer
     public static HostedGameManager hostedMan = new HostedGameManager();
 
     /** Manages our connection back to our parent world server. */
-    public static WorldServerClient worldClient = new WorldServerClient();
+    public static WorldServerClient worldClient;
 
     /**
      * Called when a player starts their session to associate the name with the player's
@@ -160,6 +160,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // TEMP: initialize our legacy static members
         gameReg = _gameReg;
+        worldClient = _worldClient;
 
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
@@ -192,7 +193,7 @@ public class MsoyGameServer extends MsoyBaseServer
         DictionaryManager.init("data/dictionary");
 
         // connect back to our parent world server
-        worldClient.init(this, _listenPort, _connectPort);
+        _worldClient.init(_listenPort, _connectPort);
 
         // hook up thane
         breg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
@@ -277,6 +278,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** Manages lobbies and other game bits on this server. */
     @Inject GameGameRegistry _gameReg;
+
+    /** Manages our connection back to our parent world server. */
+    @Inject protected WorldServerClient _worldClient;
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;

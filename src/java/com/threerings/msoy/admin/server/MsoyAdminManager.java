@@ -18,6 +18,8 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.RebootManager;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -45,7 +47,7 @@ public class MsoyAdminManager
     public void init ()
     {
         // create our reboot manager
-        _rebmgr = new MsoyRebootManager(_server, _omgr);
+        _rebmgr = new MsoyRebootManager(_shutmgr, _omgr);
 
         // create and configure our status object
         statObj = _omgr.registerObject(new StatusObject());
@@ -88,7 +90,7 @@ public class MsoyAdminManager
         // if this is a zero minute reboot, just do the deed
         if (minutes == 0) {
             log.info("Performing immediate shutdown [for=" + initiator + "].");
-            _server.shutdown();
+            _shutmgr.shutdown();
             return;
         }
 
@@ -101,8 +103,8 @@ public class MsoyAdminManager
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
     {
-        public MsoyRebootManager (MsoyServer server, RootDObjectManager omgr) {
-            super(server, omgr);
+        public MsoyRebootManager (ShutdownManager shutmgr, RootDObjectManager omgr) {
+            super(shutmgr, omgr);
             RuntimeConfig.server.addListener(this);
             RuntimeConfig.server.setCustomRebootMsg("");
         }
@@ -171,15 +173,16 @@ public class MsoyAdminManager
      * Interval dispatch thread. */
     protected Interval _conmgrStatsUpdater = new Interval() {
         public void expired () {
-            statObj.setConnStats(MsoyServer.conmgr.getStats());
+            statObj.setConnStats(_conmgr.getStats());
         }
     };
 
     protected MsoyRebootManager _rebmgr;
 
-    @Inject protected MsoyServer _server;
+    @Inject protected ShutdownManager _shutmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected ConnectionManager _conmgr;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

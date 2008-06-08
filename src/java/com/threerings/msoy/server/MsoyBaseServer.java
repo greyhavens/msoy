@@ -164,22 +164,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         });
     }
 
-    @Override
-    public void shutdown ()
-    {
-        super.shutdown();
-
-        // shut down all active games and rooms
-        for (Iterator<PlaceManager> iter = plreg.enumeratePlaceManagers(); iter.hasNext(); ) {
-            PlaceManager pmgr = iter.next();
-            try {
-                pmgr.shutdown();
-            } catch (Exception e) {
-                log.warning("Place manager failed shutting down [where=" + pmgr.where() + "].", e);
-            }
-        }
-    }
-
     @Override // from PresentsServer
     protected void invokerDidShutdown ()
     {
