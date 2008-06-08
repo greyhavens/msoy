@@ -294,10 +294,10 @@ public class MsoyServer extends MsoyBaseServer
 
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> createClient (AuthRequest areq) {
+            public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
                 return MsoyClient.class;
             }
-            public Class<? extends ClientResolver> createClientResolver (Name username) {
+            public Class<? extends ClientResolver> getClientResolverClass (Name username) {
                 return MsoyClientResolver.class;
             }
         });
