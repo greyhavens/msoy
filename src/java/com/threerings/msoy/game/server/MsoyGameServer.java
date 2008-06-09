@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.LoggingLogProvider;
@@ -238,6 +239,7 @@ public class MsoyGameServer extends MsoyBaseServer
         return new int[] { _listenPort };
     }
 
+    @Singleton
     protected static class GamePlaceRegistry extends PlaceRegistry
     {
         @Inject public GamePlaceRegistry (ShutdownManager shutmgr) {
