@@ -47,12 +47,13 @@ public class Downloader extends TitleWindow
         PopUpManager.centerPopUp(this);
     }
 
-    public function startDownload (url :String = null) :void
+    public function startDownload (url :String = null, forcedName :String = null) :void
     {
         if (url == null) {
             return;
         }
 
+        _forcedName = forcedName;
         _progress.includeInLayout = true;
         _progress.visible = true;
 
@@ -117,6 +118,10 @@ public class Downloader extends TitleWindow
 
     protected function makeFilename (url :String) :String
     {
+        if (_forcedName != null) {
+            return _forcedName;
+        }
+
         var lastSlash :int = url.lastIndexOf("/");
         if (lastSlash == -1) {
             return url;
@@ -148,5 +153,8 @@ public class Downloader extends TitleWindow
     protected var _progress :ProgressBar;
 
     protected var _url :String;
+
+    /** If non-null, a forced filename to use with this download. */
+    protected var _forcedName :String;
 }
 }

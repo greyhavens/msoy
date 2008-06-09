@@ -30,7 +30,7 @@ public class URLFileChooser extends Downloader
         title = "Get from URL";
     }
 
-    override public function startDownload (url :String = null) :void
+    override public function startDownload (url :String = null, forcedName :String = null) :void
     {
         url = url || _entry.text;
 
@@ -39,7 +39,7 @@ public class URLFileChooser extends Downloader
             _entry.enabled = false;
         }
 
-        super.startDownload(url);
+        super.startDownload(url, forcedName);
     }
 
     override protected function configureUI (box :VBox) :void
