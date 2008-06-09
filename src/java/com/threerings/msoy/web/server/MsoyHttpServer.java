@@ -55,17 +55,32 @@ public class MsoyHttpServer extends Server
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
+        HttpServlet servlet;
         for (int ii = 0; ii < SERVLETS.size(); ii++) {
-            HttpServlet servlet = injector.getInstance(SERVLETS.get(ii));
+            servlet = injector.getInstance(SERVLETS.get(ii));
             context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
         }
-        context.addServlet(new ServletHolder(new EmbedRouterServlet()), "/embed/*");
-        context.addServlet(new ServletHolder(new StatusServlet()), "/status/*");
-        context.addServlet(new ServletHolder(new MyStatsServlet()), "/mystats/*");
-        context.addServlet(new ServletHolder(new GameTraceLogServlet()), "/gamelogs/*");
-        context.addServlet(new ServletHolder(new PublicInfoServlet()), "/info/*");
-        context.addServlet(new ServletHolder(new RSSServlet()), "/rss/*");
-        context.addServlet(new ServletHolder(new MediaProxyServlet()),
+
+        servlet = injector.getInstance(EmbedRouterServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/embed/*");
+
+        servlet = injector.getInstance(StatusServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/status/*");
+
+        servlet = injector.getInstance(MyStatsServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/mystats/*");
+
+        servlet = injector.getInstance(GameTraceLogServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/gamelogs/*");
+
+        servlet = injector.getInstance(PublicInfoServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/info/*");
+
+        servlet = injector.getInstance(RSSServlet.class);
+        context.addServlet(new ServletHolder(servlet), "/rss/*");
+
+        servlet = injector.getInstance(MediaProxyServlet.class);
+        context.addServlet(new ServletHolder(servlet),
                            DeploymentConfig.PROXY_PREFIX + "*");
 
         // wire up serving of static content
@@ -75,9 +90,11 @@ public class MsoyHttpServer extends Server
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
         if (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia")) {
             log.info("NOTE: Serving static media via throttled servlet.");
-            context.addServlet(new ServletHolder(new MsoyThrottleServlet()), "/*");
+            servlet = injector.getInstance(MsoyThrottleServlet.class);
+            context.addServlet(new ServletHolder(servlet), "/*");
         } else {
-            context.addServlet(new ServletHolder(new MsoyDefaultServlet()), "/*");
+            servlet = injector.getInstance(MsoyDefaultServlet.class);
+            context.addServlet(new ServletHolder(servlet), "/*");
         }
 
         HandlerCollection handlers = new HandlerCollection();
