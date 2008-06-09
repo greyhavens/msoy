@@ -230,7 +230,7 @@ public class MsoyHttpServer extends Server
         "groupsvc",
         "mailsvc",
         "uploadsvc",
-        "echouploadsvc",
+        "remixuploadsvc",
         "gamesvc",
         "swiftlysvc",
         "swiftlyuploadsvc",
@@ -255,7 +255,7 @@ public class MsoyHttpServer extends Server
         SERVLETS.add(GroupServlet.class);
         SERVLETS.add(MailServlet.class);
         SERVLETS.add(UploadServlet.class);
-        SERVLETS.add(EchoUploadServlet.class);
+        SERVLETS.add(UploadRemixMediaServlet.class);
         SERVLETS.add(GameServlet.class);
         SERVLETS.add(SwiftlyServlet.class);
         SERVLETS.add(SwiftlyUploadServlet.class);
