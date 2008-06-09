@@ -152,8 +152,8 @@ public class FeedPanel extends TongueBox
             long header = startofDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;
             while (!messages.isEmpty()) {
-                buildMessageMap(messages, header, messageMapLeft, null);
-                buildMessageMap(messages, header, messageMapRight, messageMapLeft);
+                buildMessageMap(messages, header, messageMapLeft, true);
+                buildMessageMap(messages, header, messageMapRight, false);
 
                 FeedMessage message = null;
                 for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
@@ -162,23 +162,47 @@ public class FeedPanel extends TongueBox
                         break;
                     }
                     msgIter.remove();
-                    MessageKey key = getLeftKey(message);
-                    Object value = null;
-                    if (key != null) {
-                        value = messageMapLeft.get(key);
-                        if (value instanceof ArrayList) {
-                            addLeftAggregateFriendMessage((ArrayList)value);
-                            continue;
-                        }
+                    // Find the larger of the left or right aggregate message and display it
+                    MessageKey lkey = getLeftKey(message);
+                    Object lvalue = null;
+                    if (lkey != null) {
+                        lvalue = messageMapLeft.get(lkey);
                     }
-                    key = getRightKey(message);
-                    if (key != null) {
-                        value = messageMapRight.get(key);
-                        if (value instanceof ArrayList) {
-                            addRightAggregateFriendMessage((ArrayList)value);
-                            continue;
-                        }
+                    MessageKey rkey = getRightKey(message);
+                    Object rvalue = null;
+                    if (rkey != null) {
+                        rvalue = messageMapRight.get(rkey);
                     }
+                    int lsize = (lvalue == null ? 0 :
+                            (lvalue instanceof ArrayList ? ((ArrayList)lvalue).size() : 1));
+                    int rsize = (rvalue == null ? 0 :
+                            (rvalue instanceof ArrayList ? ((ArrayList)rvalue).size() : 1));
+                    // if one of the aggregate messages has been displayed, that means this message
+                    // is displayed and should be removed from any further aggregates
+                    if (lvalue instanceof Boolean || rvalue instanceof Boolean) {
+                        if (lvalue instanceof Boolean && rsize > 1) {
+                            ((ArrayList)rvalue).remove(message);
+                        } else if (rvalue instanceof Boolean && lsize > 1) {
+                            ((ArrayList)lvalue).remove(message);
+                        }
+                        continue;
+                    }
+                    if (lsize >= rsize && lsize > 1) {
+                        addLeftAggregateFriendMessage((ArrayList)lvalue);
+                        if (rsize > 1) {
+                            ((ArrayList)rvalue).remove(message);
+                        }
+                        messageMapLeft.put(lkey, new Boolean(true));
+                        continue;
+                    } else if (rsize > 1) {
+                        addRightAggregateFriendMessage((ArrayList)rvalue);
+                        if (lsize > 1) {
+                            ((ArrayList)lvalue).remove(message);
+                        }
+                        messageMapRight.put(rkey, new Boolean(true));
+                        continue;
+                    }
+                    // if this message is not aggregated than display it individually
                     if (message instanceof FriendFeedMessage) {
                         addFriendMessage((FriendFeedMessage)message);
                     } else if (message instanceof GroupFeedMessage) {
@@ -209,33 +233,24 @@ public class FeedPanel extends TongueBox
         }
 
         /**
-         * Builds a left side aggregation map if only one HashMap is supplied, otherwise builds
-         * a right side aggregation map.
+         * Builds a left side or right side aggregated HashMap for the supplied messages.
          */
-        protected void buildMessageMap (List messages, long header, HashMap map, HashMap lmap)
+        protected void buildMessageMap (List messages, long header, HashMap map, boolean left)
         {
-            // build right side aggregation map
             for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
                 FeedMessage message = (FeedMessage)msgIter.next();
                 if (header > message.posted) {
                     break;
                 }
-                MessageKey key = (lmap == null ? getLeftKey(message) : getRightKey(message));
+                MessageKey key = (left ? getLeftKey(message) : getRightKey(message));
                 if (key == null) {
                     continue;
-                }
-                if (lmap != null) {
-                    MessageKey lkey = getLeftKey(message);
-                    if (lkey != null && lmap.get(lkey) instanceof ArrayList) {
-                        continue;
-                    }
                 }
                 Object value = map.get(key);
                 if (value == null) {
                     map.put(key, message);
                     continue;
                 }
-                msgIter.remove();
                 if (value instanceof FeedMessage) {
                     ArrayList list = new ArrayList();
                     list.add(value);
@@ -481,14 +496,14 @@ public class FeedPanel extends TongueBox
             }
         }
 
-        protected void addSelfMessage (SelfFeedMessage message) 
+        protected void addSelfMessage (SelfFeedMessage message)
         {
             switch (message.type) {
             case 300: // SELF_ROOM_COMMENT
                 if (message.actor == null) {
                     return; // TEMP: skip old pre-actor messages
                 }
-                String roomPageLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(), 
+                String roomPageLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(),
                     Page.WORLD, Args.compose("room", message.data[0]));
                 String roomLink = Application.createLinkHtml(
                     message.data[1], Page.WORLD, "s" + message.data[0]);
