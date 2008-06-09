@@ -230,13 +230,22 @@ public class Frame
             _scroller.ensureVisible(widget);
         }
     }
-
+    
     /**
      * Displays the supplied dialog in the frame.
      */
     public static void showDialog (String title, Widget dialog)
     {
-        Dialog pd = new Dialog(title, dialog);
+        showDialog(title, dialog, false);
+    }
+
+    /**
+     * Displays the supplied dialog in the frame or floating over the page.
+     * @param floatingDialog Dialog will float over the page rather than be embedded in the frame
+     */
+    public static void showDialog (String title, Widget dialog, boolean floatingDialog)
+    {
+        Dialog pd = new Dialog(title, dialog, floatingDialog);
         if (_contlist != null) {
             _contlist.insert(pd, 0); // TODO: animate this sliding down
         } else {
@@ -399,6 +408,7 @@ public class Frame
         } else if (pageId.equals(Page.WHIRLEDS)) {
             subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
             if (!CShell.isGuest()) {
+                subnavi.addLink(null, "My Whirleds", Page.WHIRLEDS, "mywhirleds");
                 subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
                 if (CShell.isSupport()) {
                     subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
@@ -435,24 +445,37 @@ public class Frame
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
 
-    protected static class Dialog extends SmartTable
+    protected static class Dialog extends SimplePanel
     {
-        public Dialog (String title, Widget content) {
-            super("pageDialog", 0, 0);
-            setText(0, 0, title, 1, "DialogTitle");
-            setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
+        /**
+         * @param floatingDialog If true, encase content in a floating box
+         */
+        public Dialog (String title, Widget content, boolean floatingDialog) {
+            
+            if (floatingDialog) {
+                setStyleName("floatingDialogBox");
+            }
+            else {
+                setStyleName("pageDialogBox");
+            }
+            
+            add(_innerTable = new SmartTable("pageDialog", 0, 0));
+            
+            _innerTable.setText(0, 0, title, 1, "DialogTitle");
+            _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
                 public void onClick (Widget sender) {
                     Frame.clearDialog(getContent());
                 }
             }), 1, "Close");
-            setWidget(1, 0, content, 2, null);
-            getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
-            setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
+            _innerTable.setWidget(1, 0, content, 2, null);
+            _innerTable.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
+            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }
 
         public Widget getContent () {
-            return getWidget(1, 0);
+            return _innerTable.getWidget(1, 0);
         }
+        protected SmartTable _innerTable;
     }
 
     protected static class SubNaviPanel extends FlowPanel

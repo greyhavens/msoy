@@ -3,7 +3,6 @@ package client.me;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -63,7 +62,7 @@ public class LandingPanel extends SimplePanel
         final FlowPanel login = new FlowPanel();
         PushButton loginButton = new PushButton(CMe.msgs.landingLogin());
         loginButton.addStyleName("LoginButton");
-        login.add(new LogonPanel(true, loginButton));
+        login.add(new LogonPanel(true, loginButton, true));
         login.add(loginButton);
         content.add(login, 590, 0);
 

@@ -398,6 +398,22 @@ img, embed, applet, object {
   height: 13px;
 }
 
+/** container for a pageDialog that is floating instead of embedded */
+.floatingDialogBox {
+  position: absolute;
+  z-index: 10;
+  top: 320px;
+  left: 0;
+  width: 100%;
+}
+
+.floatingDialogBox .pageDialog {
+  background-color: #FFFFFF;
+  border: 3px solid #3F8EBA;
+  width: 600px;
+  margin: auto;
+}
+
 /** Box with rounded header */
 .headerBox .Corner {
   width: 10px;

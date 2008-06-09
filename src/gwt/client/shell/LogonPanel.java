@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -34,7 +35,24 @@ public class LogonPanel extends SmartTable
         this(headerMode, new Button(CShell.cmsgs.logonLogon()));
     }
 
+    /**
+     * Constructor that defaults showFloatingForgot to false
+     * @param headerMode headerMode Changes the location of the form elements
+     * @param logon logon Button to use for form submit
+     */
     public LogonPanel (boolean headerMode, ButtonBase logon)
+    {
+        this(headerMode, logon, false);
+    }
+    
+    /**
+     * Constructor
+     * @param headerMode Changes the location of the form elements
+     * @param logon Button to use for form submit
+     * @param showFloatingForgot If true, position it over the rest of the page, otherwise
+     *        display the forgot password dialog inside the page frame
+     */
+    public LogonPanel (boolean headerMode, ButtonBase logon, final boolean showFloatingForgot)
     {
         super("logonPanel", 0, 2);
 
@@ -55,8 +73,9 @@ public class LogonPanel extends SmartTable
         String lbl = CShell.cmsgs.forgotPassword();
         Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
             public void onClick (Widget widget) {
-                Frame.showDialog("Forgot your password?",
-                                 new ForgotPasswordDialog(_email.getText().trim()));
+                Frame.showDialog(
+                    "Forgot your password?",
+                    new ForgotPasswordDialog(_email.getText().trim()), showFloatingForgot);
             }
         });
         logon.addClickListener(new ClickListener() {
@@ -136,6 +155,7 @@ public class LogonPanel extends SmartTable
 
             int col = 0;
             getFlexCellFormatter().setStyleName(0, col, "rightLabel");
+            getFlexCellFormatter().setVerticalAlignment(0, col, HasAlignment.ALIGN_MIDDLE);
             setText(0, col++, CShell.cmsgs.logonEmail());
             setWidget(0, col++, _email = new TextBox());
             _email.setText(oemail);
