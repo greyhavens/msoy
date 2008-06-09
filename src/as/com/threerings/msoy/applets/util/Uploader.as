@@ -33,6 +33,16 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.utils.Base64Decoder;
 
+/**
+ * Dispatched when we're closed.
+ * value- null if the upload was cancelled or in error, or
+ *        [ local filename, response from server ]
+ */
+[Event(name="complete", type="com.threerings.util.ValueEvent")]
+
+/**
+ * Handles uploading a file to the remix upload servlet.
+ */
 public class Uploader extends TitleWindow
 {
     public function Uploader (serverURL :String, fileFilters :Array = null)
@@ -86,7 +96,7 @@ public class Uploader extends TitleWindow
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpManager.centerPopUp(this);
 
-        var req :URLRequest = new URLRequest(_serverURL + "echouploadsvc");
+        var req :URLRequest = new URLRequest(_serverURL);
         req.method = URLRequestMethod.POST;
         _fileRef.upload(req);
     }
@@ -103,10 +113,8 @@ public class Uploader extends TitleWindow
 
     protected function handleUploadComplete (event :DataEvent) :void
     {
-        var decoder :Base64Decoder = new Base64Decoder();
-        decoder.decode(event.data);
-        // automatically close with the completed data
-        close([ _fileRef.name, decoder.toByteArray() ]);
+        var data :Array = [ _fileRef.name, event.data ];
+        close(data);
     }
 
     protected var _serverURL :String;

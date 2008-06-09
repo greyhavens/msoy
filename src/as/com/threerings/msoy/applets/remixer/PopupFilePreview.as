@@ -40,11 +40,14 @@ import com.threerings.flex.PopUpUtil;
 
 import com.whirled.remix.data.EditableDataPack;
 
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
 
+import com.threerings.msoy.applets.util.Downloader;
 import com.threerings.msoy.applets.util.Uploader;
 
 public class PopupFilePreview extends TitleWindow
@@ -176,9 +179,12 @@ public class PopupFilePreview extends TitleWindow
         // massage the url from javascript (I admit I'm cargo-culting here)
         url = "" + url;
 
-        var downloader :PhotoDownloader = new PhotoDownloader();
+        var lastDot :int = url.lastIndexOf(".");
+        var name :String = "photo" + ((lastDot == -1) ? "" : url.substr(lastDot));
+
+        var downloader :Downloader = new Downloader();
         downloader.addEventListener(Event.COMPLETE, handleFileChosen);
-        downloader.startDownload(url);
+        downloader.startDownload(url, name);
     }
 
     protected function handleChoosePhoto () :void
@@ -189,8 +195,8 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseFile () :void
     {
-        var uploader :Uploader = new Uploader(_serverURL, getFilters());
-        uploader.addEventListener(Event.COMPLETE, handleFileChosen);
+        var uploader :Uploader = new Uploader(_serverURL + "remixuploadsvc", getFilters());
+        uploader.addEventListener(Event.COMPLETE, handleFileUploadComplete);
     }
 
     protected function handleChooseNewImage () :void
@@ -209,6 +215,26 @@ public class PopupFilePreview extends TitleWindow
     {
         var efc :ExistingFileChooser = new ExistingFileChooser(_ctx.pack, filenames);
         efc.addEventListener(Event.COMPLETE, handleFileChosen);
+    }
+
+    protected function handleFileUploadComplete (event :ValueEvent) :void
+    {
+        if (event.value == null) {
+            // upload was cancelled, do nothing
+            return;
+        }
+
+        // make a URL from the data we get back
+        var stuff :Array = event.value as Array;
+        var filename :String = stuff.shift();
+        var response :String = stuff.shift();
+        stuff = response.split(" ");
+        var desc :MediaDesc = new MediaDesc(MediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]));
+        var url :String = desc.getMediaPath();
+        // now, download the mofo
+        var downloader :Downloader = new Downloader();
+        downloader.addEventListener(Event.COMPLETE, handleFileChosen);
+        downloader.startDownload(url, filename);
     }
 
     protected function handleFileChosen (event :ValueEvent) :void
