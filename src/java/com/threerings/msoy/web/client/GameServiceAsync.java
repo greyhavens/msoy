@@ -23,6 +23,11 @@ public interface GameServiceAsync
     public void loadGameMetrics (WebIdent ident, int gameId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GameService#loadGameLogs}.
+     */
+    public void loadGameLogs (WebIdent ident, int gameId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GameService#updateGameInstructions}.
      */
     public void updateGameInstructions (WebIdent ident, int gameId, String instructions,

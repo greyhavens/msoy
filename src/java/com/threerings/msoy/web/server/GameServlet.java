@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
@@ -61,6 +63,7 @@ import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
+import com.threerings.msoy.web.data.GameLogs;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlaceCard;
@@ -165,6 +168,33 @@ public class GameServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.warning("Failed to load game metrics [id=" + gameId + "].", pe);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface GameService
+    public GameLogs loadGameLogs (WebIdent ident, int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        requireIsGameOwner(gameId, mrec);
+
+        try {
+            GameLogs logs = new GameLogs();
+            logs.gameId = gameId;
+
+            List<GameTraceLogEnumerationRecord> records = _gameRepo.enumerateTraceLogs(gameId);
+            logs.logIds = new int[records.size()];
+            logs.logTimes = new Date[records.size()];
+
+            for (int ii = 0; ii < records.size(); ii ++) {
+                logs.logIds[ii] = records.get(ii).logId;
+                logs.logTimes[ii] = new Date(records.get(ii).recorded.getTime());
+            }
+            return logs;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to load game logs [id=" + gameId + "].", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
     }

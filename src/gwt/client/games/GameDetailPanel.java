@@ -41,6 +41,7 @@ public class GameDetailPanel extends SmartTable
     public static final String MYRANKINGS_TAB = "mr";
     public static final String TOPRANKINGS_TAB = "tr";
     public static final String METRICS_TAB = "m";
+    public static final String LOGS_TAB = "l";
 
     public GameDetailPanel ()
     {
@@ -120,6 +121,7 @@ public class GameDetailPanel extends SmartTable
         if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
             CGames.isAdmin()) {
             addTab(METRICS_TAB, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
+            addTab(LOGS_TAB, CGames.msgs.tabLogs(), new GameLogsPanel(detail));
         }
     }
 

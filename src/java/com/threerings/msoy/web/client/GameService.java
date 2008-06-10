@@ -15,6 +15,7 @@ import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameGenreData;
+import com.threerings.msoy.web.data.GameLogs;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlayerRating;
@@ -57,6 +58,12 @@ public interface GameService extends RemoteService
      * Loads the metrics for the specified game. Caller must be an admin or the owner of the game.
      */
     public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads the logs for the specified game. Caller must be an admin or the owner of the game.
+     */
+    public GameLogs loadGameLogs (WebIdent ident, int gameId)
         throws ServiceException;
 
     /**
