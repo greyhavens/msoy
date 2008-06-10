@@ -101,19 +101,13 @@ public class GameEditor extends ItemEditor
             _extras.setText(childrenText);
         }
 
-        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager,
-            "serverclass", _serverClass };
+        Object[] bits = { "serverclass", _serverClass };
         for (int ii = 0; ii < bits.length; ii += 2) {
             NodeList elems = xml.getElementsByTagName((String)bits[ii]);
             if (elems.getLength() > 0) {
                 Element elem = (Element)elems.item(0);
                 ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
             }
-        }
-
-        NodeList lwjgl = xml.getElementsByTagName("lwjgl");
-        if (lwjgl.getLength() > 0) {
-            _lwjgl.setChecked(true);
         }
 
         NodeList avrg = xml.getElementsByTagName("avrg");
@@ -193,11 +187,6 @@ public class GameEditor extends ItemEditor
         addRow(CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
         addSpacer();
 
-        addTip(CShell.emsgs.gameJavaTip());
-        addRow(CShell.emsgs.gameIdent(), _ident = new TextBox());
-        addRow(CShell.emsgs.gameController(), _controller = new TextBox());
-        _controller.setVisibleLength(40);
-
         // add a tab for uploading the game server code
         addSpacer();
         addTip(CShell.emsgs.gameServerHeadingTip());
@@ -226,15 +215,6 @@ public class GameEditor extends ItemEditor
             _serverClass = new TextBox(),
             CShell.emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
-
-        // these are only available to OOO presently
-        _manager = new TextBox();
-        _lwjgl = new CheckBox();
-        if (CShell.isAdmin()) {
-            addRow(CShell.emsgs.gameManager(), _manager);
-            _manager.setVisibleLength(40);
-            addRow(CShell.emsgs.gameLWJGL(), _lwjgl);
-        }
     }
 
     // @Override // from ItemEditor
@@ -268,8 +248,7 @@ public class GameEditor extends ItemEditor
             match.appendChild(xml.createElement("unwatchable"));
         }
 
-        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager,
-            "serverclass", _serverClass};
+        Object[] bits = { "serverclass", _serverClass };
         for (int ii = 0; ii < bits.length; ii += 2) {
             String text = ((TextBox)bits[ii+1]).getText();
             if (text.length() > 0) {
@@ -277,10 +256,6 @@ public class GameEditor extends ItemEditor
                 elem.appendChild(xml.createTextNode(text));
                 xml.getFirstChild().appendChild(elem);
             }
-        }
-
-        if (_lwjgl.isChecked()) {
-            xml.getFirstChild().appendChild(xml.createElement("lwjgl"));
         }
 
         if (_avrg.isChecked()) {
@@ -330,11 +305,7 @@ public class GameEditor extends ItemEditor
     protected TextBox _minPlayers, _maxPlayers;
     protected ListBox _matchType;
     protected CheckBox _watchable;
-    protected TextBox _ident;
-    protected TextBox _controller;
-    protected TextBox _manager;
     protected TextBox _serverClass;
-    protected CheckBox _lwjgl;
     protected CheckBox _avrg;
     protected TextArea _extras;
 }
