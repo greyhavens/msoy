@@ -70,15 +70,38 @@
 .whirledDetail .WhirledDiscussionPanel .RSS {
   position: absolute;
   right: 10px;
+  width: 180px;
+  text-align: right;
 }
+.whirledDetail .WhirledDiscussionPanel .RSS .RssText {
+  width: 130px;
+  text-align: right;
+  padding-top: 3px;
+  padding-right: 5px;
+  float: left;
+}
+
+.whirledDetail .WhirledDiscussionPanel .RSS a.RssText {
+  font-size: 11px;
+  color: #2a6891;
+  text-decoration: none;
+}
+.whirledDetail .WhirledDiscussionPanel .RSS a:hover.RssText,
+.whirledDetail .WhirledDiscussionPanel .RSS a:active.RssText {
+  text-decoration: underline;
+}
+	
 .whirledDetail .WhirledDiscussionPanel .RSS img {
   border: none;
+  width: 38px;
+  height: 38px;
+  float: right;
 }
 
 .whirledDetail .WhirledDiscussionPanel .NoThreads {
   color: #2a6891;
   font-size: 15px;
-  margin: 10px;
+  margin: 11px;
 }
 
 .whirledDetail .WhirledDiscussionPanel .NoThreads {

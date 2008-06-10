@@ -5,21 +5,27 @@ package client.whirleds;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import client.me.CMe;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MediaUtil;
+import client.util.MsoyUI;
 
 /**
  * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.
@@ -41,9 +47,20 @@ public class WhirledDiscussionsPanel extends FlowPanel
         }
         _loaded = true;
         
-        Anchor rss = new Anchor("/rss/" + _detail.group.groupId, "", "_blank");
-        rss.setHTML("<img src='/images/whirled/thread_rss.png'/>");
+        FlowPanel rss = new FlowPanel();
         rss.setStyleName("RSS");
+        ClickListener rssClick = new ClickListener() {
+            public void onClick (Widget sender) {
+                Window.open("/rss/" + _detail.group.groupId, "_blank", "");
+            }
+        };
+        Anchor rssText = new Anchor("/rss/" + _detail.group.groupId, "", "_blank");
+        rssText.setHTML(CWhirleds.msgs.discussionRss());
+        rssText.setStyleName("RssText");
+        rss.add(rssText);
+        Image rssImage = MsoyUI.createActionImage(
+            "/images/whirled/thread_rss.png", CWhirleds.msgs.discussionRss(), rssClick);
+        rss.add(rssImage);
         add(rss);
         
         // there are no threads, print a message
@@ -95,12 +112,16 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(posterIcon);
             
             // posted by <a href="#people-{ID}">{NAME}</a> at {TIME}
-            HTML posterName = new HTML(CWhirleds.msgs.discussionPostedBy(
-                ""+thread.firstPost.poster.name.getMemberId(),
-                thread.firstPost.poster.name.toString(), 
-                TIME_FORMAT.format(thread.firstPost.created)));
-            posterName.setStyleName("PostedBy");
-            add(posterName);
+            FlowPanel postedBy = new FlowPanel();
+            postedBy.addStyleName("PostedBy");
+            postedBy.add(new InlineLabel(CWhirleds.msgs.discussionPostedBy() + " "));
+            InlineLabel author = new InlineLabel(thread.firstPost.poster.name.toString());
+            author.addClickListener(posterClick);
+            author.addStyleName("actionLabel");
+            postedBy.add(author);
+            postedBy.add (new InlineLabel(
+                " " + CWhirleds.msgs.discussionAt(TIME_FORMAT.format(thread.firstPost.created))));
+            add(postedBy);
             
             final String repliesText;
             if (thread.posts == 2) {
