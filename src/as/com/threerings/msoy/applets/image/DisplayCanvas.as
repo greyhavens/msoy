@@ -240,6 +240,12 @@ class ImageHolder extends UIComponent
         invalidateSize();
     }
 
+    public function setDarkBackground (dark :Boolean) :void
+    {
+        _darkBackground = dark;
+        setActualSize(width, height); // refresh
+    }
+
     override public function setActualSize (w :Number, h :Number) :void
     {
         super.setActualSize(w, h);
@@ -250,6 +256,9 @@ class ImageHolder extends UIComponent
         g.beginFill(0xFFFFFF);
         g.drawRect(0, 0, w / scaleX, h / scaleY);
         g.endFill();
+
+        var darkColor :uint = _darkBackground ? 0x333333 : 0x999999;
+        var lightColor :uint = _darkBackground ? 0x666666 : 0xCCCCCC;
 
         // draw the checkerboard on the background, which isn't even
         // technically our child
@@ -262,7 +271,7 @@ class ImageHolder extends UIComponent
             dark = darkY;
             darkY = !darkY;
             for (var xx :Number = 0; xx < w; xx += GRID_SIZE) {
-                g.beginFill(dark ? DARK_BKG : LIGHT_BKG);
+                g.beginFill(dark ? darkColor : lightColor);
                 g.drawRect(xx, yy, Math.min(GRID_SIZE, w - xx), Math.min(GRID_SIZE, h - yy));
                 g.endFill();
                 dark = !dark;
@@ -274,6 +283,5 @@ class ImageHolder extends UIComponent
 
     protected var _mask :Shape;
 
-    protected static const DARK_BKG :uint = 0x999999; //0xE3E3E3;
-    protected static const LIGHT_BKG :uint = 0xCCCCCC; //0xF3F3F3;
+    protected var _darkBackground :Boolean;
 }

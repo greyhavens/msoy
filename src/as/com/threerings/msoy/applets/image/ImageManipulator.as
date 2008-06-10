@@ -43,6 +43,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.KeyboardManager;
 import com.threerings.flex.ScrollBox;
@@ -217,6 +218,8 @@ public class ImageManipulator extends HBox
         // TODO: this will maybe change to a different UI
         _zoomSlider = addSlider(bar, "Zoom", .25, 4, 1, _editor.setZoom,
             [ .25, .5, 1, 2, 4, 8 ]);
+
+        bar.addChild(new CommandCheckBox("Dark background", _editor.setDarkBackground));
 
         _editor.addEventListener(EditCanvas.SELECTION_CHANGE, handleSelectionChange);
         _selectionWidth.addEventListener(Event.CHANGE, handleSelectionTyped);

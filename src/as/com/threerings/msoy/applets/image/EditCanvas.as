@@ -218,6 +218,11 @@ public class EditCanvas extends DisplayCanvas
         updateBrush();
     }
 
+    public function setDarkBackground (dark :Boolean) :void
+    {
+        _holder.setDarkBackground(dark);
+    }
+
     /**
      * Update the working area size from numbers entered by the user.
      */
