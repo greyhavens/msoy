@@ -82,7 +82,8 @@ public class GameLogsPanel extends VerticalPanel
             String href = "/gamelogs?gameId=" + _detail.gameId + "&logId=" + logs.logIds[ii];
             String label = DATE_FORMAT.format(logs.logTimes[ii]);
 
-            table.setWidget(row, col, new HTML("<a href='" + href + "'>" + label + "</a>"));
+            table.setWidget(row, col, new HTML(
+                                "<a target='_top' href='" + href + "'>" + label + "</a>"));
             row ++;
             if (row * (TABLE_COLUMNS - col) >= (logs.logIds.length - ii)) {
                 row = 0;
