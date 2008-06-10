@@ -63,6 +63,7 @@ public class PopupFilePreview extends TitleWindow
         _type = entry.type;
         _sizeRestriction = new SizeRestriction(Number(entry.width), Number(entry.height),
             Number(entry.maxWidth), Number(entry.maxHeight));
+        var imageOk :Boolean = (_type == "Image" || _type == "DisplayObject" || _type == "Blob");
 
         var externalAvail :Boolean = false;
         try {
@@ -86,14 +87,16 @@ public class PopupFilePreview extends TitleWindow
         hbox.addChild(previewBox);
 
         controlBox.addChild(makeHeader("Change..."));
-        if (externalAvail && (_type == "Image" || _type == "DisplayObject" || _type == "Blob")) {
+        if (externalAvail && imageOk) {
             controlBox.addChild(makeBullet(
                 new CommandLinkButton("Use one of your photos...", handleChoosePhoto)));
         }
         controlBox.addChild(makeBullet(
             new CommandLinkButton("Upload a new file...", handleChooseFile)));
-        controlBox.addChild(makeBullet(
-            new CommandLinkButton("Create a new image...", handleChooseNewImage)));
+        if (imageOk) {
+            controlBox.addChild(makeBullet(
+                new CommandLinkButton("Create a new image...", handleChooseNewImage)));
+        }
 // Flash security prevents us from using most loaded content as 'data'
 //        controlBox.addChild(makeBullet(
 //            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
@@ -104,7 +107,7 @@ public class PopupFilePreview extends TitleWindow
                 new CommandLinkButton("Use a file from the remix...",
                 handleChooseExistingFile, [ filenames ])));
         }
-        if ((_type == "Image" || _type == "DisplayObject") && CameraSnapshotter.hasCamera()) {
+        if (imageOk && CameraSnapshotter.hasCamera()) {
             controlBox.addChild(makeBullet(
                 new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
         }
