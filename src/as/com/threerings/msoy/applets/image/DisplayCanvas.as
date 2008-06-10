@@ -11,6 +11,8 @@ import flash.display.LoaderInfo;
 import flash.display.PixelSnapping;
 import flash.display.Sprite;
 
+import flash.events.IOErrorEvent;
+import flash.events.ErrorEvent;
 import flash.events.Event;
 
 import flash.net.URLRequest;
@@ -104,7 +106,7 @@ public class DisplayCanvas extends Canvas
             var notBytes :Boolean = (image is URLRequest);
             var loader :Loader = new Loader();
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleImageLoadComplete);
-            // TODO: error listeners
+            loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleImageLoadError);
             var lc :LoaderContext = new LoaderContext(notBytes, new ApplicationDomain(null));
             if (notBytes) {
                 loader.load(image as URLRequest, lc);
@@ -131,6 +133,13 @@ public class DisplayCanvas extends Canvas
                 imageSizeKnown(bmp.width, bmp.height);
             }
         }
+    }
+
+    protected function handleImageLoadError (event :ErrorEvent) :void
+    {
+        // nada for now.
+        // TODO: generate some event so that if the remixer was expecting an image, we know
+        // it didn't happen..
     }
 
     protected function handleImageLoadComplete (event :Event) :void
