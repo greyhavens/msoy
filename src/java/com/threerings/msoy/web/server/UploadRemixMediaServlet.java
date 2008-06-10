@@ -18,6 +18,10 @@ import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
+/**
+ * Just accepts a file upload and shoots it over to S3, returning the hash and mimetype
+ * info so that the caller can re-download it for inclusion in the remix.
+ */
 public class UploadRemixMediaServlet extends AbstractUploadServlet
 {
     @Override
