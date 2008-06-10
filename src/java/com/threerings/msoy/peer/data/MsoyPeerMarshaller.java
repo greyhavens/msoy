@@ -7,6 +7,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link MsoyPeerService} interface
