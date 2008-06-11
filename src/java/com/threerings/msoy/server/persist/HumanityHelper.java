@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -21,23 +22,37 @@ public class HumanityHelper
      */
     public void noteRecord (MemberActionLogRecord record)
     {
-        // right now we only care about time spent playing games
-        if (record.actionId != UserAction.PLAYED_GAME.getNumber()) {
+        switch (UserAction.getActionByNumber(record.actionId)) {
+        // most actions we don't care about
+        default:
             return;
-        }
 
-        // the data is "gameId seconds"
-        String[] data = record.data.split("\\s");
-        if (data.length == 2) {
-            try {
-                int gameId = Integer.parseInt(data[0]);
-                int seconds = Integer.parseInt(data[1]);
-                _timeInGames.increment(gameId, seconds);
-            } catch (Exception e) {
+        // some actions count towards a user's "activities"
+        case UPDATED_PROFILE:
+        case SENT_FRIEND_INVITE:
+        case ACCEPTED_FRIEND_INVITE:
+        case CREATED_ITEM:
+        case BOUGHT_ITEM:
+        case LISTED_ITEM:
+            _activities++;
+            return;
+
+        // Playing games is our main concern, we want to track play time
+        case PLAYED_GAME:
+            // the data is "gameId seconds"
+            String[] data = record.data.split("\\s");
+            if (data.length == 2) {
+                try {
+                    int gameId = Integer.parseInt(data[0]);
+                    int seconds = Integer.parseInt(data[1]);
+                    _timeInGames.increment(gameId, seconds);
+                } catch (Exception e) {
+                    log.warning("Malformed PLAYED_GAME details " + record + ".");
+                }
+            } else {
                 log.warning("Malformed PLAYED_GAME details " + record + ".");
             }
-        } else {
-            log.warning("Malformed PLAYED_GAME details " + record + ".");
+            return;
         }
     }
 
@@ -46,47 +61,52 @@ public class HumanityHelper
      */
     public int computeNewHumanity (int memberId, int currentHumanity, int secsSinceLast)
     {
-        // this will  be multiplied by MAX_HUMANITY and added to their current value
-        double adjust = 0;
-
-        // compute an adjustment based on gameplay time
-        adjust += computeGameplayAdjustment(memberId, secsSinceLast);
+        // compute the adjustment based on gameplay time and activities
+        float adjust = computeAdjustment(memberId, secsSinceLast);
 
         // actually adjust their current value and bound it
-        currentHumanity += (int)Math.round(MsoyCodes.MAX_HUMANITY * adjust);
+        currentHumanity += Math.round(MsoyCodes.MAX_HUMANITY * adjust);
         return Math.max(Math.min(currentHumanity, MsoyCodes.MAX_HUMANITY), 0);
     }
 
-    protected double computeGameplayAdjustment (int memberId, int secsSinceLast)
+    protected float computeAdjustment (int memberId, int secsSinceLast)
     {
-        // do some very straightforward and clearly labeled math
+        // start out with no adjustment
+        float adjust = 0;
+
+        // do some very straightforward and clearly labeled math to compute how much they've
+        // been playing each day
         int totalTime = 0;
         for (IntIntMap.IntIntEntry entry : _timeInGames.entrySet()) {
             totalTime += entry.getIntValue();
         }
-        double hoursOfPlay = totalTime / HOUR_IN_SECONDS;
-        double daysSinceLast = secsSinceLast / (24 * HOUR_IN_SECONDS);
-        double hoursPerDay = hoursOfPlay / daysSinceLast;
+        float hoursOfPlay = totalTime / HOUR_IN_SECONDS;
+        float daysSinceLast = secsSinceLast / (24 * HOUR_IN_SECONDS);
+        float hoursPerDay = hoursOfPlay / daysSinceLast;
 
         // based on their average hours of play per day, adjust their humanity assessment, less
         // than two means more human, greater than four means increasingly less human
-        double adjust = 0;
         if (hoursPerDay <= 0) {
             // no adjustments due to gameplay time
         } else if (hoursPerDay <= 2) {
-            adjust = 0.1;
+            adjust += 0.1f;
         } else if (hoursPerDay > 6) {
-            adjust = -0.2;
+            adjust += -0.2f;
         } else if (hoursPerDay > 4) {
-            adjust = -0.1;
-        } else /* (hoursPerDay > 2) */ {
+            adjust += -0.1f;
+        /*} else (hoursPerDay > 2) {
             // no adjustments due to gameplay time
+        */
         }
+
+        // give them .05 credit for each activity-per-day they've done
+        float activitiesPerDay = _activities / daysSinceLast;
+        adjust += .05f * Math.min(4, activitiesPerDay);
 
         // TEMP: log this so that we can eyeball what's happening for a while
         if (adjust != 0) {
             log.info("Adjusting humanity [id=" + memberId + ", hpd=" + hoursPerDay +
-                     ", adjust=" + adjust + "].");
+                ", apd=" + activitiesPerDay + ", adjust=" + adjust + "].");
         }
         // END TEMP
 
@@ -95,5 +115,7 @@ public class HumanityHelper
 
     protected IntIntMap _timeInGames = new IntIntMap();
 
-    protected static final double HOUR_IN_SECONDS = 60 * 60;
+    protected int _activities;
+
+    protected static final float HOUR_IN_SECONDS = 60 * 60;
 }
