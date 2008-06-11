@@ -28,6 +28,7 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
@@ -684,21 +685,24 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         log.info("Awarding flow [game=" + where() + ", type=" + payoutType +
                  ", to=" + players + "].");
 
-        // actually award flow and report it to the player
+        // finally, award the flow and report it to the player
+        boolean actuallyAward = !_content.game.isDeveloperVersion();
         for (Player player : players.values()) {
             FlowRecord record = _flowRecords.get(player.playerOid);
             if (record == null) {
                 continue;
             }
 
-            // accumulate their awarded flow into their flow record; we'll pay it all out in one
-            // database action when they leave the room or the game is shutdown
-            record.awarded += player.flowAward;
-            record.played++;
+            if (actuallyAward) {
+                // accumulate their awarded flow into their flow record; we'll pay it all out in one
+                // database action when they leave the room or the game is shutdown
+                record.awarded += player.flowAward;
+                record.played++;
 
-            // update the player's member object on their world server
-            if (player.flowAward > 0) {
-                MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
+                // update the player's member object on their world server
+                if (player.flowAward > 0) {
+                    MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
+                }
             }
 
             // report to the game that this player earned some flow
@@ -706,6 +710,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             if (user != null) {
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile);
+                if (!actuallyAward) {
+                    SpeakUtil.sendInfo(user, MsoyCodes.GAME_MSGS, "m.no_coins_dev");
+                }
             }
         }
     }

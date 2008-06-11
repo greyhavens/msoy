@@ -675,7 +675,8 @@ public class ChatOverlay
         // the same localtype - this special case would be unneccessary then, as game chat would
         // go to a tab with that localtype specified instead of PLACE_CHAT_TYPE
         if (_localtype == ChatCodes.PLACE_CHAT_TYPE && 
-            msg.localtype == WhirledGameCodes.USERGAME_CHAT_TYPE) {
+                (msg.localtype == WhirledGameCodes.USERGAME_CHAT_TYPE ||
+                 msg.localtype == ChatCodes.USER_CHAT_TYPE)) {
             return true;
         }
 
