@@ -10,7 +10,6 @@ import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
-import mx.controls.Spacer;
 
 import mx.containers.HBox;
 import mx.containers.Grid;
@@ -21,6 +20,7 @@ import mx.core.UIComponent;
 import com.threerings.util.ConfigValueSetEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -69,9 +69,7 @@ public class ChatPrefsDialog extends FloatingPanel
             but.value = ii;
             but.group = filterGroup;
             var hbox :HBox = new HBox();
-            var spacer :Spacer = new Spacer();
-            spacer.width = 20;
-            hbox.addChild(spacer);
+            hbox.addChild(FlexUtil.createSpacer(20));
             hbox.addChild(but);
             GridUtil.addRow(grid, hbox, [2, 1]);
         }

@@ -15,7 +15,6 @@ import mx.controls.ButtonBar;
 import mx.controls.ColorPicker;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
-import mx.controls.Spacer;
 import mx.controls.TextInput;
 
 import mx.containers.Grid;

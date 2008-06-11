@@ -23,7 +23,6 @@ import flash.utils.ByteArray;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
-import mx.controls.Spacer;
 import mx.controls.Text;
 import mx.controls.TextInput;
 
@@ -44,6 +43,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.KeyboardManager;
 import com.threerings.flex.ScrollBox;
@@ -137,13 +137,9 @@ public class ImageManipulator extends HBox
         // TODO: add a scrollbox?
 
         createPositionControls(bar, sizeForced);
-        var spacer :Spacer = new Spacer();
-        spacer.height = 10;
-        bar.addChild(spacer);
+        bar.addChild(FlexUtil.createSpacer(0, 10));
         createPaintControls(bar);
-        spacer = new Spacer();
-        spacer.height = 10;
-        bar.addChild(spacer);
+        bar.addChild(FlexUtil.createSpacer(0, 10));
         createUndoControls(bar);
 
         var buts :HBox = new HBox();

@@ -21,7 +21,6 @@ import mx.containers.VBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
-import mx.controls.Spacer;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;

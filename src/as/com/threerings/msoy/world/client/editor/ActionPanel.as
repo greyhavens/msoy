@@ -14,7 +14,6 @@ import mx.containers.ViewStack;
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
-import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.core.UIComponent;
 import mx.events.FlexEvent;
