@@ -85,18 +85,14 @@ public class HumanityHelper
         float hoursPerDay = hoursOfPlay / daysSinceLast;
 
         // based on their average hours of play per day, adjust their humanity assessment, less
-        // than two means more human, greater than four means increasingly less human
-        if (hoursPerDay <= 0) {
-            // no adjustments due to gameplay time
-        } else if (hoursPerDay <= 2) {
+        // than two means more human, greater than four means increasingly less human,
+        // between two and four hours is unadjusted
+        if (hoursPerDay <= 2) {
             adjust += 0.1f;
         } else if (hoursPerDay > 6) {
             adjust += -0.2f;
         } else if (hoursPerDay > 4) {
             adjust += -0.1f;
-        /*} else (hoursPerDay > 2) {
-            // no adjustments due to gameplay time
-        */
         }
 
         // give them .05 credit for each activity-per-day they've done, up to 4 per day
