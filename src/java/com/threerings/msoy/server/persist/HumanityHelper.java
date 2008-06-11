@@ -99,7 +99,7 @@ public class HumanityHelper
         */
         }
 
-        // give them .05 credit for each activity-per-day they've done
+        // give them .05 credit for each activity-per-day they've done, up to 4 per day
         float activitiesPerDay = _activities / daysSinceLast;
         adjust += .05f * Math.min(4, activitiesPerDay);
 
