@@ -9,18 +9,23 @@ import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
+
 import flash.net.URLLoader;
 import flash.net.URLRequest;
+
 import flash.system.Security;
+
 import flash.text.TextField;
+
+import caurina.transitions.Tweener;
 
 import mx.core.Container;
 
 import com.whirled.game.data.WhirledGameObject;
 
-import com.threerings.flash.path.Path;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MultiLoader;
@@ -297,16 +302,15 @@ public class GameLiaison
             image.y -= image.getContentHeight()/2;
             // then slide the award panel onto the screen, pause for a sec, then back off
             var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
-            var path :Path = Path.connect(
-                Path.move(_awardPanel, 250, -_awardPanel.height, 250, 0, 500),
-                Path.delay(3000), // TODO: play a sound when this path starts
-                Path.move(_awardPanel, 250, 0, 250, -_awardPanel.height, 500));
-            path.setOnComplete(function (path :Path) :void {
-                container.removeOverlay(_awardPanel);
-                checkPendingAwards();
-            });
-            path.start();
             container.addOverlay(_awardPanel, PlaceBox.LAYER_TRANSIENT);
+            _awardPanel.x = 250;
+            _awardPanel.y = -_awardPanel.height;
+            Tweener.addTween(_awardPanel, {y: 0, time: 0.75});
+            Tweener.addTween(_awardPanel, 
+                {y: -_awardPanel.height, time: 0.75, delay: 3, onComplete: function () :void {
+                    container.removeOverlay(_awardPanel); 
+                    checkPendingAwards();
+                }});
         });
     }
 
@@ -338,20 +342,20 @@ public class GameLiaison
             });
 
             // slide the panel onto the screen, and wait for a click
-            var path :Path = Path.move(_guestFlowPanel, 150, -_guestFlowPanel.height, 150, 0, 500);
-            path.start();
             _wctx.getTopPanel().getPlaceContainer().addOverlay(
                 _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
+            _guestFlowPanel.x = 150;
+            _guestFlowPanel.y = -_guestFlowPanel.height;
+            Tweener.addTween(_guestFlowPanel, {y: 0, time: 0.75});
         }
     }
 
     protected function clearGuestFlow (event :MouseEvent = null) :void
     {
-        var path :Path = Path.move(_guestFlowPanel, 150, 0, 150, -_guestFlowPanel.height, 500);
-        path.setOnComplete(function (path :Path) :void {
-            _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
-        });
-        path.start();
+        Tweener.addTween(_guestFlowPanel, 
+            {y: -_guestFlowPanel.height, time: 0.75, onComplete: function () :void {
+                _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
+            }});
     }
 
     /** Provides access to main client services. */
