@@ -41,6 +41,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.flash.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.applets.net.MediaUploader;
@@ -53,7 +54,9 @@ import com.threerings.msoy.utils.UberClientLoader;
  */
 public class RemixControls extends HBox
 {
+    // Magic fucking trial-and-error numbers, since flex can't lay out worth a shit.
     public static const CONTROLS_WIDTH :int = 325;
+    public static const CONTROLS_MAX_HEIGHT :int = 440;
 
     public static const PREVIEW_WIDTH :int = 340;
 
@@ -62,7 +65,7 @@ public class RemixControls extends HBox
         percentWidth = 100;
         percentHeight = 100;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-//        verticalScrollPolicy = ScrollPolicy.OFF;
+        verticalScrollPolicy = ScrollPolicy.OFF;
 
         var vbox :VBox = new VBox();
         vbox.width = PREVIEW_WIDTH;
@@ -79,19 +82,14 @@ public class RemixControls extends HBox
         vbox.addChild(_previewer);
 
         vbox = new VBox();
-        // TODO: sort out making the controls scroll but the buttons fixed to the bottom
-//        vbox.percentHeight = 100;
-//        vbox.verticalScrollPolicy = ScrollPolicy.OFF;
+        vbox.percentHeight = 100;
+        vbox.verticalScrollPolicy = ScrollPolicy.OFF;
 
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.width = CONTROLS_WIDTH;
+        vbox.percentHeight = 100;
+        vbox.setStyle("verticalGap", 0);
         addChild(vbox);
-
-        if (DeploymentConfig.devDeployment) {
-            var build :Label = new Label();
-            build.text = DeploymentConfig.buildTime;
-            vbox.addChild(build);
-        }
 
         var label :Label = new Label();
         label.percentWidth = 100;
@@ -100,23 +98,24 @@ public class RemixControls extends HBox
         label.setStyle("textAlign", "center");
         label.setStyle("fontSize", 16);
         vbox.addChild(label);
+        vbox.addChild(FlexUtil.createSpacer(0, 8));
+        vbox.addChild(createControlsHeader());
 
         _controls = new VBox();
-        _controls.addChild(createControlsHeader());
-
-//        _controls.verticalScrollPolicy = ScrollPolicy.ON;
+        _controls.horizontalScrollPolicy = ScrollPolicy.OFF;
         _controls.setStyle("top", 0);
         _controls.setStyle("left", 0);
         _controls.setStyle("right", 0);
         _controls.setStyle("verticalGap", 0);
         _controls.percentWidth = 100;
-        _controls.percentHeight = 100;
+        _controls.maxHeight = CONTROLS_MAX_HEIGHT;
         vbox.addChild(_controls);
 
         var butBox :HBox = new HBox();
         butBox.setStyle("bottom", 0);
         butBox.setStyle("horizontalAlign", "right");
         butBox.percentWidth = 100;
+        vbox.addChild(FlexUtil.createSpacer(0, 8));
         vbox.addChild(butBox);
 
         _cancelBtn = new CommandButton("Cancel", cancel);
@@ -189,6 +188,11 @@ public class RemixControls extends HBox
         lbl.setStyle("textAlign", "center");
         lbl.setStyle("fontSize", 16);
         mid.addChild(lbl);
+
+        // If we're on dev, include a buildstamp to aid debugging
+        if (DeploymentConfig.devDeployment) {
+            lbl.text += " (" + DeploymentConfig.buildTime + ")";
+        }
 
         return box;
     }

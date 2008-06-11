@@ -77,7 +77,7 @@ public class FieldEditor extends VBox
 
         // add the description label
         var desc :Text = new Text();
-        desc.width = 220;
+        desc.width = 210;
         desc.setStyle("color", 0xA1A2A2);
         if (entry.info != null) {
             desc.text = entry.info;
