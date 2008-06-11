@@ -294,23 +294,27 @@ public class GameLiaison
         var image :MsoyMediaContainer = new MsoyMediaContainer(media);
         clip.addChild(image);
 
+        // add the award panel to the stage now so that the logic that checks if it's used will
+        // be able to detect its state properly
+        _awardPanel.x = 250;
+        _awardPanel.y = -_awardPanel.height;
+        var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
+        container.addOverlay(_awardPanel, PlaceBox.LAYER_TRANSIENT);
+
         // wait for the award image to load
         var linfo :LoaderInfo = (image.getMedia() as Loader).contentLoaderInfo;
         linfo.addEventListener(Event.COMPLETE, function (event :Event) :void {
             // center the award image
             image.x -= image.getContentWidth()/2;
             image.y -= image.getContentHeight()/2;
-            // then slide the award panel onto the screen, pause for a sec, then back off
-            var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
-            container.addOverlay(_awardPanel, PlaceBox.LAYER_TRANSIENT);
-            _awardPanel.x = 250;
-            _awardPanel.y = -_awardPanel.height;
-            Tweener.addTween(_awardPanel, {y: 0, time: 0.75});
+            Tweener.addTween(_awardPanel, {y: 0, time: 0.75, transition: EASING_OUT});
             Tweener.addTween(_awardPanel, 
-                {y: -_awardPanel.height, time: 0.75, delay: 3, onComplete: function () :void {
-                    container.removeOverlay(_awardPanel); 
-                    checkPendingAwards();
-                }});
+                {y: -_awardPanel.height, time: 0.5, delay: 3, transition: EASING_IN, 
+                    onComplete: function () :void {
+                        container.removeOverlay(_awardPanel); 
+                        checkPendingAwards();
+                    }
+                });
         });
     }
 
@@ -346,16 +350,18 @@ public class GameLiaison
                 _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
             _guestFlowPanel.x = 150;
             _guestFlowPanel.y = -_guestFlowPanel.height;
-            Tweener.addTween(_guestFlowPanel, {y: 0, time: 0.75});
+            Tweener.addTween(_guestFlowPanel, {y: 0, time: 0.75, transition: EASING_OUT});
         }
     }
 
     protected function clearGuestFlow (event :MouseEvent = null) :void
     {
         Tweener.addTween(_guestFlowPanel, 
-            {y: -_guestFlowPanel.height, time: 0.75, onComplete: function () :void {
-                _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
-            }});
+            {y: -_guestFlowPanel.height, time: 0.75, transition: EASING_IN, 
+                onComplete: function () :void {
+                    _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
+                }
+            });
     }
 
     /** Provides access to main client services. */
@@ -377,7 +383,11 @@ public class GameLiaison
     protected var _pendingAwards :Array = [];
 
     /** Used to note that we're loading an embedded SWF. */
-    protected const LOADING :Sprite = new Sprite();
+    protected static const LOADING :Sprite = new Sprite();
+
+    /** The Tweener easing functions used for our award and guest coin displays */
+    protected static const EASING_OUT :String = "easeoutbounce";
+    protected static const EASING_IN :String = "easeoutcubic";
 
     [Embed(source="../../../../../../../rsrc/media/award_panel.swf",
            mimeType="application/octet-stream")]
