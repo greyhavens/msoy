@@ -50,6 +50,7 @@ public class index extends MsgsEntryPoint
             ainfo.name.gameName = CSupport.creds.name.toString();
             ainfo.email = CSupport.creds.accountName;
             ainfo.isAdmin = CSupport.isSupport();
+            ainfo.gameURL = "#admin-info_";
             _webctx.ainfo = ainfo;
         }
 
