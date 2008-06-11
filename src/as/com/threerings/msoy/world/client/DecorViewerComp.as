@@ -32,6 +32,7 @@ import mx.utils.ObjectUtil;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
+import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.MathUtil;
 
@@ -39,7 +40,6 @@ import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.item.data.all.Decor;
  
@@ -234,7 +234,7 @@ public class DecorViewerComp extends Canvas
         } 
 
         // and try to get any other params we may have
-        gotParams(MsoyParameters.get());
+        ParameterUtil.getParameters(this, gotParams);
     }
 
     // @Override from Canvas
