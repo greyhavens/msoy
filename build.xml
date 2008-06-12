@@ -921,7 +921,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,javaapps,tests"
+  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,thane-client,javaapps,tests"
         description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
