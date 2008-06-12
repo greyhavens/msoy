@@ -66,8 +66,8 @@ public enum UserAction
         _flow = flow;
     }
 
-    protected int _num;
-    protected int _flow;
+    protected final int _num;
+    protected final int _flow;
 
     protected static IntMap<UserAction> _reverse;
     static {
