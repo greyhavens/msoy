@@ -13,9 +13,16 @@ import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.Security;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
+import com.threerings.flash.TextFieldUtil;
 
 public class GameStub extends Sprite
 {
+    /** The id of the game we'd like to load. */
+    public static const GAME_ID :int = -3;
+
     public function GameStub ()
     {
         if (stage != null) {
@@ -23,11 +30,20 @@ public class GameStub extends Sprite
             stage.align = StageAlign.TOP_LEFT;
         }
 
+        _label = TextFieldUtil.createField("Loading...", {
+                autoSize: TextFieldAutoSize.LEFT,
+                selectable: false
+            }, {
+                size: 18, bold: true, color: 0xFFFFFF
+            });
+        addChild(_label);
+
         // ask Whirled where to find the SWF client that we'll load to play our game
         _clientDetailsLoader = new URLLoader();
         _clientDetailsLoader.addEventListener(Event.COMPLETE, onClientDetailsLoaded);
         _clientDetailsLoader.addEventListener(IOErrorEvent.IO_ERROR, onClientDetailsError);
-        _clientDetailsLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onClientDetailsError);
+        _clientDetailsLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
+            onClientDetailsError);
 
         _clientDetailsLoader.load(new URLRequest(URL));
     }
@@ -43,10 +59,16 @@ public class GameStub extends Sprite
         // Client details are returned as XML.
         var details :XML = XML(_clientDetailsLoader.data);
 
+        var error :Object = details.error[0];
+        if (error != null) {
+            TextFieldUtil.updateText(_label, String(error));
+            return;
+        }
+
         var clientUrl :String = String(details.url[0]);
         trace("GameStub: loading '" + clientUrl + "'");
 
-        _whirledParams = details.whirledParams[0];
+        _whirledParams = details.params[0];
 
         // allow all loaded content to cross-script this SWF
         // @TODO - is there any reason to make this more restrictive?
@@ -56,34 +78,46 @@ public class GameStub extends Sprite
         _clientLoader = new Loader();
         _clientLoader.contentLoaderInfo.addEventListener(Event.INIT, onClientLoaded);
         _clientLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onClientLoadError);
-        _clientLoader.load(new URLRequest(clientUrl), new LoaderContext(true, new ApplicationDomain(null)));
+        _clientLoader.load(new URLRequest(clientUrl),
+            new LoaderContext(true, new ApplicationDomain(null)));
+        addChild(_clientLoader);
     }
 
     protected function onClientDetailsError (e :ErrorEvent) :void
     {
         trace("client details load error: " + e);
+        reportError(e);
     }
 
     protected function onClientLoaded (...ignored) :void
     {
-        trace("client loaded");
-        this.addChild(_clientLoader);
+        removeChild(_label);
+        _label = null;
     }
 
     protected function onClientLoadError (e :ErrorEvent) :void
     {
+        removeChild(_clientLoader);
         trace("client load error: " + e);
+        reportError(e);
+    }
+
+    protected function reportError (e :ErrorEvent) :void
+    {
+        TextFieldUtil.updateText(_label, "Error loading: " + e.text);
     }
 
     protected var _clientDetailsLoader :URLLoader;
     protected var _clientLoader :Loader;
     protected var _whirledParams :String;
 
-    protected static const GAME_ID :uint = 10;
-    protected static const CLIENT_VERSION :uint = 0;
+    protected var _label :TextField;
+
+    protected static const STUB_VERSION :uint = 0;
 
     protected static const URL :String =
-        "http://noevil.sea.earth.threerings.net:8080/gamestubsvc?gameId=" + GAME_ID + "&v=" + CLIENT_VERSION;
+        "http://tasman.sea.earth.threerings.net:8080/gamestubsvc" +
+        "?gameId=" + GAME_ID +
+        "&v=" + STUB_VERSION;
 }
-
 }
