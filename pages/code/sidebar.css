@@ -1,22 +1,32 @@
 body {
   font-size: small;
+  font-family: sans-serif;
 }
+
+a:link {text-decoration: none;}
+a:hover {text-decoration: underline;}
+a:visited {text-decoration: none;}
 
 ul {
-  padding-left: 15px;
+  list-style-type: none;
+  padding: 2px 0px;
 }
 
-.events {
-  list-style-type: square;
+ul.events {
   font-weight: bold;
 }
 
-.methods {
-  list-style-type: circle;
+ul.methods {
   font-weight: normal;
 }
 
-.subcontrols {
-  list-style-type: disc;
-  font-weight: bold;
+ul.subcontrols {
+  font-weight: normal;
+}
+
+p.ctrlhdr {
+  background: #D0D0D0;
+  width: 100%;
+  padding: 1px 3px;
+  margin: 1px 0px;
 }
