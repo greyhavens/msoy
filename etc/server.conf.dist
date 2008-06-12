@@ -23,4 +23,4 @@ fi
 
 #
 # Path for launching a thane interpreter
-THANE_INTERPRETER=/export/thane/tamarin-central/dist/thane/avmthane
+THANE_INTERPRETER=/export/whirled/libraries/thane/tamarin-central/dist/thane/avmthane
