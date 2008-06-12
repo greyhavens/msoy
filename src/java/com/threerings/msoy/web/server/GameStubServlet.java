@@ -35,11 +35,17 @@ public class GameStubServlet extends HttpServlet
             return;
         }
 
-        sendResponse(rsp, "<r>" +
-            "<url>http://" + req.getServerName() + ":" + req.getServerPort() + "/clients/" +
-            DeploymentConfig.version + "/world-client.swf</url>" +
-            "<whirledParams>guest=t&amp;gameLobby=" + gameId + "</whirledParams>" +
-            "</r>");
+        String response;
+//        if (needToSendError) {
+//            response = "<error>" + someErrorMessage + "</error>";
+//
+//        } else {
+            response = "<url>http://" + req.getServerName() + ":" + req.getServerPort() +
+                "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
+                "<params>guest=t&amp;gameLobby=" + gameId + "</params>";
+//        }
+
+        sendResponse(rsp, "<r>" + response + "</r>");
     }
 
     protected void sendResponse (HttpServletResponse rsp, String response)
