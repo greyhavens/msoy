@@ -831,6 +831,20 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         float avgMins = getAverageGameDuration(multiplayer, playerSecs);
         float playerMins = playerSecs/60f;
 
+
+//        if (RAY_GETS_HIS_WAY) {
+//            // What the fuck?
+//            // Not our problem! If someone writes a buggy game, they can deal with the
+//            // consequences, fix their game, and reset the score distribution. Why should we
+//            // *always* do this wack-a-doo adjustment on all the NORMAL, PERFECTLY-FUNCTIONAL
+//            // games just to protect against a theoretical "problem"? Wrong wrong wrong.
+//            // This should be simplified so that games can do interesting things without
+//            // getting penalized for being "wrong". Example: a racing game with a shortcut
+//            // that's really hard to do, but if you can do it, you can shave massive time
+//            // off your lap and should reap a corresponding reward.
+//
+//        } else {
+//      // The non-ray-gets-his-way way:
         // a player within 80% of the average time will receive a payout based on the average time
         // to accomodate games where faster performance is desirable; however, below 80% we scale
         // down to prevent players who manage to get a game to payout in a degenerately low time
@@ -843,6 +857,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         } else /* playerMins < 0.2f*avgMins */ {
             awardMins = 2*playerMins;
         }
+//        }
 
         // log things for a while so we can see how often and to what extent this happens
         if (awardMins != avgMins) {
