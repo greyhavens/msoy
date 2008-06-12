@@ -278,10 +278,7 @@ public class RoomObjectController extends RoomController
             return false;
         }
 
-// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
-//        if (!checkCanRequest(ident, "updateMemory")) {
-//            return false;
-//        }
+        // NOTE: there is no need to be "in control" to update memory.
 
         // serialize datum
         // This will validate that the property set isn't greater than the MAXIMUM
