@@ -39,4 +39,13 @@ public class GroupDetail
     /** Recent discussion threads for this group
      * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread> */
     public List threads;
+
+    /** The number of people online in this group's scenes (as of the last snapshot). */
+    public int population;
+    
+    /** The top {@link NUM_TOP_MEMBERS} members of this group, ordered by rank
+     * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMemberCard> */
+    public List topMembers;
+    
+    public static int NUM_TOP_MEMBERS = 10;
 }

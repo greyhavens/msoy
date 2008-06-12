@@ -180,8 +180,18 @@ public class GroupServlet extends MsoyServiceServlet
                 Collections.singletonMap(detail.group.groupId, detail.group.getName());
             detail.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, false, true);
 
+            // fill in the current population of the group
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PlaceCard card = pps.getWhirled(groupId);
+            if (card != null) {
+                detail.population = card.population;
+            }
+            
+            // collect the top members ordered by rank, then last online
+            detail.topMembers = loadGroupMembers(
+                grec.groupId, GroupMembership.RANK_MEMBER, GroupDetail.NUM_TOP_MEMBERS, true);
+            
             return detail;
-
         } catch (PersistenceException pe) {
             log.warning("getGroupDetail failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -199,7 +209,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
             MembersResult result = new MembersResult();
             result.name = grec.toGroupName();
-            result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER);
+            result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER, 0, false);
             return result;
 
         } catch (PersistenceException pe) {
@@ -768,15 +778,21 @@ public class GroupServlet extends MsoyServiceServlet
         return groups;
     }
 
-    protected List<GroupMemberCard> loadGroupMembers (int groupId, byte minRank)
+    /**
+     * Load GroupMemberCard for members of this group
+     * @param minRank Only include members with at least this rank
+     * @param sortByRank If true, sort by rank then last online, if false by last online
+     * @param limit The maximum number of members to return, or <= 0 for no limit
+     */
+    protected List<GroupMemberCard> loadGroupMembers (
+        int groupId, byte minRank, int limit, boolean sortByRank)
         throws PersistenceException
     {
         IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
-        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId)) {
-            if (gmrec.rank >= minRank) { // TODO: filter in the database query
-                members.put(gmrec.memberId, gmrec.toGroupMemberCard());
-            }
+        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, minRank, true)) {
+            members.put(gmrec.memberId, gmrec.toGroupMemberCard());
         }
+        
         List<GroupMemberCard> mlist = Lists.newArrayList();
         for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
             mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));
@@ -788,8 +804,22 @@ public class GroupServlet extends MsoyServiceServlet
             }
             log.warning("Group has stale members [groupId=" + groupId + ", ids=" + stale + "].");
         }
-        Collections.sort(mlist, MemberHelper.SORT_BY_LAST_ONLINE);
-        return mlist;
+        if (sortByRank) {
+            Collections.sort(mlist, MemberHelper.SORT_BY_RANK);
+        }
+        else {
+            Collections.sort(mlist, MemberHelper.SORT_BY_LAST_ONLINE);
+        }
+        if (limit > 0 && mlist.size() > limit) {
+            List<GroupMemberCard> truncatedMemberList = Lists.newArrayList();
+            for (int i = 0; i < limit; i++) {
+                truncatedMemberList.add(mlist.get(i));
+            }
+            return truncatedMemberList;
+        }
+        else {
+            return mlist;
+        }
     }
 
     protected static boolean isValidName (String name)

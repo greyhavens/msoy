@@ -36,16 +36,17 @@ public class WhirledDiscussionsPanel extends FlowPanel
     {
         setStyleName("WhirledDiscussionPanel");
         _detail = detail;
-    }
-
-    // @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _loaded || _detail == null) {
-            return;
-        }
-        _loaded = true;
+//    }
+//
+//    // @Override // from UIObject
+//    public void setVisible (boolean visible)
+//    {
+//        
+//        super.setVisible(visible);
+//        if (!visible || _loaded || _detail == null) {
+//            return;
+//        }
+//        _loaded = true;
         
         FlowPanel rss = new FlowPanel();
         rss.setStyleName("RSS");
@@ -59,7 +60,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
         rssText.setStyleName("RssText");
         rss.add(rssText);
         Image rssImage = MsoyUI.createActionImage(
-            "/images/whirled/thread_rss.png", CWhirleds.msgs.discussionRss(), rssClick);
+            "/images/group/thread_rss.png", CWhirleds.msgs.discussionRss(), rssClick);
         rss.add(rssImage);
         add(rss);
         
@@ -139,8 +140,8 @@ public class WhirledDiscussionsPanel extends FlowPanel
         }
     }
 
-    /** Remembers once data is loaded for the first time to prevent reloading */
-    protected boolean _loaded = false;
+//    /** Remembers once data is loaded for the first time to prevent reloading */
+//    protected boolean _loaded = false;
 
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;

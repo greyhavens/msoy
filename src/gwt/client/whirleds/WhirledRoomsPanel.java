@@ -37,17 +37,6 @@ public class WhirledRoomsPanel extends VerticalPanel
     public WhirledRoomsPanel (GroupDetail detail)
     {
         _detail = detail;
-    }
-
-    // @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _loaded) {
-            return;
-        }
-
-        clear();
 
         CWhirleds.groupsvc.getGroupRooms(
             CWhirleds.ident, _detail.group.groupId, new MsoyCallback() {
@@ -55,7 +44,6 @@ public class WhirledRoomsPanel extends VerticalPanel
                 init((GroupService.RoomsResult)result);
             }
         });
-        _loaded = true; // note that we've asked for our data
     }
 
     protected void init (GroupService.RoomsResult rooms)
@@ -106,9 +94,7 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected void moveSceneToGrid (int index)
     {
-        // if we leave this tab and come back to it, this data should be refreshed from the server
-        _loaded = false;
-
+        // TODO if we leave this tab and come back to it, this data should be refreshed from the server
         GroupService.Room room = (GroupService.Room)_roomsResult.callerRooms.remove(index);
         _roomsListBox.removeItem(index);
         int row = _roomsGrid.getRowCount() - 1;
@@ -138,7 +124,6 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected static final int ROOM_COLUMNS = 6;
 
-    protected boolean _loaded;
     protected GroupDetail _detail;
     protected GroupService.RoomsResult _roomsResult;
     protected ListBox _roomsListBox;

@@ -35,6 +35,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.FriendFeedMessage;
@@ -59,6 +60,21 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MemberHelper
 {
+    /** A compartor for sorting lists of GroupMemberCard, by rank then most recently online to least. */
+    public static Comparator<GroupMemberCard> SORT_BY_RANK = new Comparator<GroupMemberCard>() {
+        public int compare (GroupMemberCard c1, GroupMemberCard c2) {
+            int rankDiff = c2.rank - c1.rank;
+            if (rankDiff != 0) {
+                return rankDiff;
+            }
+            int statusDiff = MemberCard.compare(c1.status, c2.status);
+            if (statusDiff != 0) {
+                return statusDiff;
+            }
+            return MemberName.compareNames(c1.name, c2.name);
+        }
+    };
+    
     /** A compartor for sorting lists of MemberCard, most recently online to least. */
     public static Comparator<MemberCard> SORT_BY_LAST_ONLINE = new Comparator<MemberCard>() {
         public int compare (MemberCard c1, MemberCard c2) {

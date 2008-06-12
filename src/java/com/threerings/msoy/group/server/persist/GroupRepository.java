@@ -439,10 +439,28 @@ public class GroupRepository extends DepotRepository
     public List<GroupMembershipRecord> getMembers (int groupId, byte rank)
         throws PersistenceException
     {
-        return findAll(GroupMembershipRecord.class,
-                       new Where(new And(
-                               new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
-                               new Equals(GroupMembershipRecord.RANK_C, rank))));
+        return getMembers(groupId, rank, false);
+    }
+
+    /**
+     * Fetches the membership roster of a given group for a given rank or minimum rank.
+     * @param minRank If true, return any member with a rank greater than or equal to the rank param
+     */
+    public List<GroupMembershipRecord> getMembers (int groupId, byte rank, boolean minRank)
+        throws PersistenceException
+    {
+        Where where;
+        if (minRank) {
+            where = new Where(new And(
+                new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
+                new GreaterThanEquals(GroupMembershipRecord.RANK_C, rank)));
+        }
+        else {
+            where = new Where(new And(
+                new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
+                new Equals(GroupMembershipRecord.RANK_C, rank)));
+        }
+        return findAll(GroupMembershipRecord.class, where);
     }
 
     /**

@@ -43,15 +43,6 @@ public class WhirledMembersPanel extends PagedGrid
         String args = Args.compose("w", "g", ""+_detail.group.groupId);
         _invite.addClickListener(Application.createLinkListener(Page.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
-    }
-
-    // @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _loaded) {
-            return;
-        }
 
         CWhirleds.groupsvc.getGroupMembers(
             CWhirleds.ident, _detail.group.groupId, new MsoyCallback() {
@@ -59,7 +50,6 @@ public class WhirledMembersPanel extends PagedGrid
                 setModel(new SimpleDataModel(((GroupService.MembersResult)result).members), 0);
             }
         });
-        _loaded = true; // note that we've asked for our data
     }
 
     // @Override // from PagedGrid
@@ -168,7 +158,6 @@ public class WhirledMembersPanel extends PagedGrid
         }
     }
 
-    protected boolean _loaded;
     protected GroupDetail _detail;
     protected Button _invite;
 }

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -72,6 +73,21 @@ public class MsoyUI
             label.addStyleName(styleName);
         }
         return label;
+    }
+    
+    /**
+     * Creates a SimplePanel with the supplied style and widget
+     */
+    public static SimplePanel createSimplePanel (String styleName, Widget widget)
+    {
+        SimplePanel panel = new SimplePanel();
+        if (styleName != null) {
+            panel.addStyleName(styleName);
+        }
+        if (widget != null) {
+            panel.setWidget(widget);
+        }
+        return panel;
     }
 
     /**

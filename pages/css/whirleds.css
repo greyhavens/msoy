@@ -10,66 +10,204 @@
 
 .whirledDetail {
   width: 100%;
-}
-
-.whirledDetail .Whirled {
-  border: 1px solid #408AB9;
-}
-
-.whirledDetail .Enter {
-  background: url(/images/group/enter_bg.png) center no-repeat;
-  height: 19px;
+  background: #509bd2 url(/images/group/detail_bg.png) top left repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  color: #408AB9;
+  min-height: 100%;
 }
 
-.whirledDetail .Bits {
-  font-size: 12px;
+.whirledDetail .MainDetails {
+  height: 250px;
+  width: 100%;
 }
 
-.whirledDetail .Bits table {
-  margin-left: auto;
-  margin-right: auto;
+.whirledDetail .MainDetails .TitleBox {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  width: 250px;
+  height: 80px;
+  background: transparent url(/images/group/title_bg.png) top left no-repeat;
+  padding: 5px;
+}
+.whirledDetail .MainDetails .TitleBox,
+.whirledDetail .MainDetails .TitleBox a {
+  color: #3f82af;
 }
 
-.whirledDetail .Bits .Name {
+.whirledDetail .MainDetails .TitleBox .Logo {
+  float: left;
+  width: 40px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+.whirledDetail .MainDetails .TitleBox .Name {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18px;
   font-weight: bold;
-  color: #204260;
+  color: #24598d;
+  width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 5px;
 }
 
-.whirledDetail .Bits .Established {
+.whirledDetail .MainDetails .TitleBox .Established {
+  clear: both;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 235px;
+  margin-bottom: 2px;
   font-style: italic;
 }
 
-.whirledDetail .Member {
-  width: 100%;
-  margin: 5px;
+.whirledDetail .MainDetails .EnterButton {
+  position: absolute;
+  top: 97px;
+  left: 25px;
 }
 
-.whirledDetail .Member .Photo {
-  padding-right: 5px;
+.whirledDetail .MainDetails .DiscussionsButton {
+  position: absolute;
+  top: 97px;
+  left: 155px;
 }
 
-.whirledDetail .Member .Name {
-  width: 100%;
+.whirledDetail .MainDetails .Actions {
+  position: absolute;
+  top: 135px;
+  left: 10px;
+  color: #FFFFFF;
 }
 
-.whirledDetail .Member .Edit {
-  color: #999999;
-  font-size: 12px;
-  padding: 0px 10px;
+.whirledDetail .MainDetails .Actions .actionLabel {
+  text-decoration: none;
+  width: 135px;
+  border-bottom: solid #5384ad 1px;
+  margin-bottom: 5px;
+  padding-bottom: 2px;
+}
+.whirledDetail .MainDetails .Actions .actionLabel:hover,
+.whirledDetail .MainDetails .Actions .actionLabel:active {
+  text-decoration: underline;
+}
+
+.whirledDetail .MainDetails .Actions .ManagerActions .actionLabel {
+  border-bottom: none;
+  width: auto;
+}
+
+.whirledDetail .MainDetails .ScreenshotBox {
+  position: absolute;
+  top: 0px;
+  left: 275px;
+  width: 410px;
+  min-height: 200px;
+  background: transparent url(/images/group/screenshot_bg.png) top center no-repeat;
+  text-align: center;
+}
+
+.whirledDetail .MainDetails .ScreenshotBox .Screenshot {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+/* adjust the flash box */
+.whirledDetail .MainDetails .ScreenshotBox .Screenshot .gwt-HTML {
+  margin-left: 15px;
+}
+
+.whirledDetail .MainDetails .ScreenshotBox .Online {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  color: #FFFFFF;
+  margin-bottom: 5px;
+}
+
+.whirledDetail .MainDetails .ScreenshotBox .Blurb {
+  font-size: 14px;
+  color: #88c3ed;
+}
+
+.whirledDetail .ContentPanel {
+  margin-left: 5px;
+  width: 525px;
+}
+
+.whirledDetail .ContentPanel .ContentPanelTitle {
+  width: 525px;
+  height: 25px; /* total image height = 30px*/
+  padding-top: 5px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  color: #FFFFFF;
+  text-align: center;
+  background: transparent url(/images/group/content_title_bg.png) bottom center no-repeat;
+}
+
+.whirledDetail .ContentPanel .ContentPanelContent {
+  background-color: #FFFFFF;
+  padding: 10px;
 }
 
 /* ------------------------------------
-   SINGLE WHIRLED DETAIL - DISCUSSIONS
+   SINGLE WHIRLED DETAIL - TOP MEMBERS
 -------------------------------------*/
 
+.whirledDetail .TopMembersPanel {
+  margin-left: 10px;
+  width: 140px;
+}
+
+.whirledDetail .TopMembersPanel .Title {
+  background: transparent url(/images/group/sidebar_bg.png) bottom center no-repeat;
+  width: 140px;
+  height: 25px; /* total image height = 30px*/
+  padding-top: 5px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.whirledDetail .TopMembersPanel .Content {
+  background-color: #FFFFFF;
+  padding: 5px;
+}
+.whirledDetail .TopMembersPanel .Content,
+.whirledDetail .TopMembersPanel .Content a {
+  color: #174c74;
+}
+
+.whirledDetail .TopMembersPanel .SeeAll {
+  text-decoration: underline;
+  font-style: italic;
+  text-align: right;
+}
+
+.whirledDetail .TopMembersPanel .Icon {
+  padding-right: 5px;
+  height: 35px;
+}
+
+.whirledDetail .TopMembersPanel .Manager {
+  font-weight: bold;
+}
+
+/* ------------------------------------
+   SINGLE WHIRLED DETAIL - RECENT DISCUSSIONS
+-------------------------------------*/
+	
+.whirledDetail .WhirledDiscussionPanel {
+  padding-bottom: 30px;
+}
+
+/* positioned absolutely to the page */
 .whirledDetail .WhirledDiscussionPanel .RSS {
   position: absolute;
-  right: 10px;
+  left: 350px;
+  top: 290px;
   width: 180px;
   text-align: right;
 }
@@ -118,13 +256,13 @@
 
 .whirledDetail .Thread .Date {
   color: #78a3c5;
-  margin: 15px 0 0 5px;
+  margin: 15px 0 0 0px;
 }
 
 .whirledDetail .Thread .Subject {
   float: left;
   width: 500px;
-  padding: 2px 0 5px 5px;
+  padding: 2px 0 5px 0px;
 }
 .whirledDetail .Thread .Subject a {
   font-size: 16px;
@@ -133,11 +271,14 @@
 }
 
 .whirledDetail .Thread .Text {
-  background: #dfedfa url(/images/whirled/thread_text_bg.png) no-repeat top left;
+  background: #dfedfa url(/images/group/thread_text_bg.png) no-repeat top left;
+  width: 450px;
   min-height: 50px;
+  max-height: 700px;
   clear: both;
   margin: 5px 5px 5px 0;
-  padding: 10px 10px 10px 50px;
+  padding: 10px 10px 10px 40px;
+  overflow: auto;
 }
 
 .whirledDetail .Thread .PostedByIcon {
@@ -152,12 +293,12 @@
 
 .whirledDetail .Thread .Replies {
   float: right;
-  margin: 7px 5px 0 0;
+  margin: 7px 10px 0 0;
 }
 
 .whirledDetail .WhirledDiscussionPanel .Divider {
   clear: both;
-  background: transparent url(/images/whirled/thread_divider_bg.png) repeat-x bottom left;
+  background: transparent url(/images/group/thread_divider_bg.png) repeat-x bottom left;
   height: 15px;
 }
 
@@ -381,4 +522,14 @@
   left: 70px;
   top: 50px;
   z-index: 10;
+}
+
+
+/* ------------------------------------
+   EDIT WHIRLED
+-------------------------------------*/
+
+.groupEditor .tagDetailPanel {
+	padding: 10px;
+	border: solid black 1px;
 }

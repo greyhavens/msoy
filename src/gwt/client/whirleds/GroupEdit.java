@@ -5,6 +5,8 @@ package client.whirleds;
 
 import java.util.Collection;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,6 +20,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
@@ -27,6 +30,8 @@ import client.shell.Page;
 import client.util.LimitedTextArea;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.PopupMenu;
+import client.util.TagDetailPanel;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -124,6 +129,40 @@ public class GroupEdit extends FlexTable
         int frow = getRowCount();
         setWidget(frow, 1, footer);
         getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
+        
+        // TODO integrate tags into the main form
+        if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
+            TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
+                public void tag (String tag, AsyncCallback cback) {
+                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
+                }
+                public void untag (String tag, AsyncCallback cback) {
+                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
+                }
+                public void getRecentTags (AsyncCallback cback) {
+                    CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, cback);
+                }
+                public void getTags (AsyncCallback cback) {
+                    CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
+                }
+                public boolean supportFlags () {
+                    return false;
+                }
+                public void setFlags (byte flag) {
+                    // nada
+                }
+                public void addMenuItems (final String tag, PopupMenu menu) {
+                    menu.addMenuItem(CWhirleds.msgs.detailTagLink(), new Command() {
+                        public void execute () {
+                            Application.go(Page.WHIRLEDS, Args.compose("tag", "0", tag));
+                        }
+                    });
+                }
+            }, true);
+            addRow("", WidgetUtil.makeShim(1, 20));
+            addRow("", tags);
+        }
+        
     }
 
     protected void addRow (String label, Widget contents)
