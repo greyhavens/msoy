@@ -379,6 +379,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         super.didShutdown();
 
         stopTracking();
+        resetTracking();
 
         // pay out to all the players who have not yet been paid
         int[] oids = _flowRecords.intKeySet().toIntArray();
@@ -513,6 +514,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // stop accumulating "game time" for players
         stopTracking();
+        resetTracking();
     }
 
     public void recordAgentTrace (String trace)
@@ -821,6 +823,18 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
+    /**
+     * Reset tracking. Done at the end of a game so that the secondsPlayed is
+     * fresh for the next round. This may change if games can reward flow without
+     * ending the game.
+     */
+    protected void resetTracking ()
+    {
+        for (FlowRecord record : _flowRecords.values()) {
+            record.resetSecondsPlayed();
+        }
+    }
+
     protected int getAwardableFlow (boolean multiplayer, int now, int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
@@ -857,7 +871,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         } else /* playerMins < 0.2f*avgMins */ {
             awardMins = 2*playerMins;
         }
-//        }
 
         // log things for a while so we can see how often and to what extent this happens
         if (awardMins != avgMins) {
@@ -865,6 +878,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                      ", memberId=" + record.memberId + ", avgMins=" + avgMins +
                      ", playerMins=" + playerMins + ", awardMins=" + awardMins + "].");
         }
+//        }
 
         return Math.round(record.humanity * _flowPerMinute * awardMins);
     }
@@ -883,11 +897,13 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         if (_tracking) {
             record.stopTracking(now());
         }
+        // move any accumulated seconds into 'totalSecondsPlayed'
+        record.resetSecondsPlayed();
 
         // if this player earned any flow, they contribute to the game's total accumulated
         // playtime, payouts and other metrics
         if (record.awarded > 0) {
-            _totalTrackedSeconds += record.secondsPlayed;
+            _totalTrackedSeconds += record.totalSecondsPlayed;
             _totalAwardedFlow += record.awarded;
             _totalTrackedGames += record.played;
         }
@@ -903,8 +919,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             return;
         }
 
-        // see how much they actually get (also uses their secondsPlayed)
-        final String details = _content.game.gameId + " " + record.secondsPlayed;
+        // see how much they actually get (also uses their totalSecondsPlayed)
+        final String details = _content.game.gameId + " " + record.totalSecondsPlayed;
 
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
@@ -916,7 +932,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 try {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(action, record.awarded);
                     MsoyGameServer.gameReg.gamePayout(
-                        action, _content.game, record.awarded, record.secondsPlayed); 
+                        action, _content.game, record.awarded, record.totalSecondsPlayed); 
                 } catch (PersistenceException pe) {
                     log.warning("Failed to grant flow [amount=" + 
                             record.awarded + ", action=" + action + "].", pe);
@@ -978,6 +994,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         public int beganStamp;
         public int secondsPlayed;
 
+        /** Tracks total seconds played even after restarts. */
+        public int totalSecondsPlayed;
+
         public int played;
         public int awarded;
 
@@ -999,6 +1018,14 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 secondsPlayed += endStamp - beganStamp;
                 beganStamp = 0;
             }
+        }
+
+        /**
+         * To be called when the game is ended or before examining totalSecondsPlayed.
+         */
+        public void resetSecondsPlayed () {
+            totalSecondsPlayed += secondsPlayed;
+            secondsPlayed = 0;
         }
     }
 
