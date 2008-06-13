@@ -87,6 +87,7 @@
     <file name="${extlibs.dir}/svnkit-cli.jar"/>
     <file name="${extlibs.dir}/svnkit-javahl.jar"/>
     <file name="${extlibs.dir}/svnkit.jar"/>
+    <file name="${extlibs.dir}/swfutils-ooo.jar"/>
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
@@ -160,8 +161,6 @@
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-abc" version="0.0-SNAPSHOT"
-                  type="abc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenyalib" version="0.0-SNAPSHOT"
@@ -188,12 +187,10 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.thane" artifactId="tamarin-builtin" version="0.0-SNAPSHOT"
-                  type="abc"/>
       <dependency groupId="com.threerings.thane" artifactId="thane" version="0.0-SNAPSHOT"
-                  type="abc"/>
+                  type="swc"/>
       <dependency groupId="com.threerings.thane" artifactId="http" version="0.0-SNAPSHOT"
-                  type="abc"/>
+                  type="swc"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="dependency.fileset"/>
@@ -530,21 +527,59 @@
 
   <!-- builds our thane game client -->
   <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
-    <taskdef name="asc" classname="flex.ant.AscTask" classpathref="classpath"/>
-    <asc as3="true" strict="true" classpathref="classpath" use="AS3">
-      <import dir=".">
-        <include name="dist/lib/tamarin-builtin*.abc"/>
-        <include name="dist/lib/thane*.abc"/>
-        <include name="dist/lib/narya-abc*.abc"/>
-        <include name="dist/lib/vilya-abc*.abc"/>
-        <include name="dist/lib/whirled-abc*.abc"/>
-        <include name="dist/lib/http*.abc"/>
-      </import>
-      <in dir="src/as" includesfile="etc/asc-files-00.txt"/>
-      <in dir="src/as" includesfile="etc/asc-files-01.txt"/>
-      <filespec dir="src/thane" includes="MsoyThaneClient.as"/>
-    </asc>
-    <move overwrite="true" file="src/thane/MsoyThaneClient.abc" todir="dist"/>
+    <copy file="etc/thane-config.xml.in" tofile="${deploy.dir}/thane-config.xml">
+      <filterset>
+        <filter token="flex_sdk_dir" value="${flexsdk.dir}"/>
+      </filterset>
+    </copy>
+    <!-- create msoylib.swc to hold the entire set of dependent classes -->
+    <java jar="${flexsdk.dir}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="dist/thane-config.xml"/>
+      <arg value="-compiler.external-library-path"/>
+      <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path"/>
+      <arg value="${deploy.dir}/lib/http-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/whirledthanelib-0.0-SNAPSHOT.swc"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/msoylib.swc"/>
+      <arg value="-compiler.source-path"/>
+      <arg value="src/thane"/>
+      <arg value="src/as"/>
+      <arg value="-include-sources=src/thane/Reference.as"/>
+    </java>
+
+    <!-- link the executable -->
+    <java jar="${flexsdk.dir}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="dist/thane-config.xml"/>
+      <arg value="-compiler.external-library-path"/>
+      <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/http-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/msoylib.swc"/>
+      <arg value="-compiler.source-path=src/thane"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/MsoyThaneClient.swf"/>
+      <arg value="src/thane/MsoyThaneClient.as"/>
+    </java>
+
+    <echo message="Turning .swfs into .abcs..."/>
+    <java outputproperty="dump" classpathref="classpath"
+          classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
+      <arg value="-dump"/>
+      <arg value="${deploy.dir}/msoylib.abc"/>
+      <arg value="${deploy.dir}/msoylib.swc"/>
+    </java>
+    <java outputproperty="dump" classpathref="classpath"
+          classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
+      <arg value="-dump"/>
+      <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
+      <arg value="${deploy.dir}/MsoyThaneClient.swf"/>
+    </java>
   </target>
 
   <!-- builds the mediastub that's used to wrap SWF media -->

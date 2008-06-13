@@ -42,7 +42,6 @@
       <es>false</es>
       <!-- compiler.external-library-path: list of SWC files or directories to compile against but to omit from linking-->
       <external-library-path>
-         <path-element>../lib/flex_sdk/frameworks/libs/player/playerglobal.swc</path-element>
       </external-library-path>
       <fonts>
          <!-- compiler.fonts.advanced-anti-aliasing: enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts.-->
@@ -62,7 +61,7 @@
             -->
          </languages>
          <!-- compiler.fonts.local-fonts-snapshot: File containing system font data produced by flex2.tools.FontSnapshot.-->
-         <local-fonts-snapshot>../lib/flex_sdk/frameworks/localFonts.ser</local-fonts-snapshot>
+         <local-fonts-snapshot>@flex_sdk_dir@/frameworks/localFonts.ser</local-fonts-snapshot>
          <!-- compiler.fonts.managers: Compiler font manager classes, in policy resolution order-->
          <managers>
             <manager-class>flash.fonts.JREFontManager</manager-class>
@@ -104,17 +103,6 @@
       <keep-generated-actionscript>false</keep-generated-actionscript>
       <!-- compiler.library-path: list of SWC files or directories that contain SWC files-->
       <library-path>
-         <path-element>../dist/lib/naryalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/toyboxlib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/corelib.swc</path-element>
-         <path-element>../dist/lib/flexlib.swc</path-element>
-         <path-element>../dist/lib/tweener.swc</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs/player</path-element>
-         <path-element>../lib/flex_sdk/frameworks/locale/{locale}</path-element>
       </library-path>
       <!-- compiler.locale: specifies the locale for internationalization-->
       <locale>
@@ -130,7 +118,7 @@
          <!-- compiler.namespaces.namespace: Specify a URI to associate with a manifest of components for use as MXML elements-->
          <namespace>
             <uri>http://www.adobe.com/2006/mxml</uri>
-            <manifest>../lib/flex_sdk/frameworks/mxml-manifest.xml</manifest>
+            <manifest>@flex_sdk_dir@/frameworks/mxml-manifest.xml</manifest>
          </namespace>
       </namespaces>
       <!-- compiler.optimize: Enable post-link SWF optimization-->
@@ -146,7 +134,7 @@
       <!-- compiler.show-shadowed-device-font-warnings: toggles whether warnings are displayed when an embedded font name shadows a device font name-->
       <show-shadowed-device-font-warnings>true</show-shadowed-device-font-warnings>
       <!-- compiler.show-unused-type-selector-warnings: toggle whether warnings generated from unused CSS type selectors are displayed-->
-      <show-unused-type-selector-warnings>false</show-unused-type-selector-warnings>
+      <show-unused-type-selector-warnings>true</show-unused-type-selector-warnings>
       <!-- compiler.source-path: list of path elements that form the roots of ActionScript class hierarchies-->
       <!-- compiler.source-path usage:
       <source-path>
@@ -243,13 +231,13 @@
    <!-- debug-password: the password to include in debuggable SWFs-->
    <debug-password></debug-password>
    <!-- default-background-color: default background color (may be overridden by the application code)-->
-   <default-background-color>0x000000</default-background-color>
+   <default-background-color>0x869CA7</default-background-color>
    <!-- default-frame-rate: default frame rate to be used in the SWF.-->
    <default-frame-rate>30</default-frame-rate>
    <!-- default-script-limits: default script execution limits (may be overridden by root attributes)-->
    <default-script-limits>
       <max-recursion-depth>1000</max-recursion-depth>
-      <max-execution-time>5</max-execution-time>
+      <max-execution-time>15</max-execution-time>
    </default-script-limits>
    <!-- default-size: default application size (may be overridden by root attributes in the application)-->
    <default-size>
@@ -354,11 +342,6 @@
    </runtime-shared-libraries>
    -->
    <runtime-shared-library-path>
-      <path-element>../lib/flex_sdk/frameworks/libs/framework.swc</path-element>
-      <rsl-url>framework_3.0.0.477.swz</rsl-url>
-      <policy-file-url></policy-file-url>
-      <rsl-url>framework_3.0.0.477.swf</rsl-url>
-      <policy-file-url></policy-file-url>
    </runtime-shared-library-path>
    <!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
    <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
@@ -367,7 +350,7 @@
    <target-player>version</target-player>
    -->
    <!-- use-network: toggle whether the SWF is flagged for access to network resources-->
-   <use-network>false</use-network>
+   <use-network>true</use-network>
    <!-- verify-digests: verifies the libraries loaded at runtime are the correct ones.-->
    <!-- verify-digests usage:
    <verify-digests>boolean</verify-digests>
