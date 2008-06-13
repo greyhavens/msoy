@@ -326,8 +326,25 @@ public class WhirledDetailPanel extends FlowPanel
             setStyleName("ContentPanel");
             add(_title = new SimplePanel());
             _title.setStyleName("ContentPanelTitle");
-            add(_content = new SimplePanel());
+
+            // contains content and discussions button for css min-height
+            FlowPanel container = new FlowPanel();
+            container.setStyleName("ContentPanelContainer");
+            add(container);
+            container.add(_content = new SimplePanel());
             _content.setStyleName("ContentPanelContent");
+            
+            // back to discussions button hidden by default
+            container.add(_backButton = new Label(CWhirleds.msgs.detailBackToDiscussions()));
+            _backButton.setVisible(false);
+            _backButton.addStyleName("actionLabel");
+            _backButton.addStyleName("ContentBackButton");
+            ClickListener backClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    _contentPanel.showDiscussions();
+                }
+            };
+            _backButton.addClickListener(backClick);
         }
         
         public void showDiscussions () {
@@ -339,6 +356,7 @@ public class WhirledDetailPanel extends FlowPanel
                 _discussions = new WhirledDiscussionsPanel(_detail);
             }
             _content.setWidget(_discussions);
+            _backButton.setVisible(false);
         }
         
         public void showCharter () {
@@ -352,6 +370,7 @@ public class WhirledDetailPanel extends FlowPanel
                 _charter = new PrettyTextPanel(charterText);
             }
             _content.setWidget(_charter);
+            _backButton.setVisible(true);
         }
         
         public void showMembers () {
@@ -363,6 +382,7 @@ public class WhirledDetailPanel extends FlowPanel
                 _members = new WhirledMembersPanel(_detail);
             }
             _content.setWidget(_members);
+            _backButton.setVisible(true);
         }
 
         public void showRooms () {
@@ -374,10 +394,12 @@ public class WhirledDetailPanel extends FlowPanel
                 _rooms = new WhirledRoomsPanel(_detail);
             }
             _content.setWidget(_rooms);
+            _backButton.setVisible(true);
         }
         
         protected SimplePanel _title;
         protected SimplePanel _content;
+        protected Label _backButton;
         protected WhirledDiscussionsPanel _discussions;
         protected PrettyTextPanel _charter;
         protected WhirledMembersPanel _members;

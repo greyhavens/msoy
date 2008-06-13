@@ -146,9 +146,27 @@
   background: transparent url(/images/group/content_title_bg.png) bottom center no-repeat;
 }
 
-.whirledDetail .ContentPanel .ContentPanelContent {
+.whirledDetail .ContentPanel .ContentPanelContainer {
   background-color: #FFFFFF;
+  min-height: 400px;
+}
+
+.whirledDetail .ContentPanel .ContentPanelContent {
   padding: 10px;
+}
+
+.whirledDetail .ContentPanel .ContentBackButton {
+  text-align: right;
+  padding: 10px;
+}
+
+.whirledDetail .ContentPanel .ContentBackButton a {
+  text-decoration: none;
+}
+
+.whirledDetail .ContentPanel .ContentBackButton a:hover,
+.whirledDetail .ContentPanel .ContentBackButton a:active {
+  text-decoration: underline;
 }
 
 /* ------------------------------------
