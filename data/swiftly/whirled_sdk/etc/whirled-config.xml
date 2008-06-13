@@ -104,7 +104,11 @@
       <keep-generated-actionscript>false</keep-generated-actionscript>
       <!-- compiler.library-path: list of SWC files or directories that contain SWC files-->
       <library-path>
-         <path-element>../lib</path-element>
+         <path-element>../lib/naryalib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../lib/naryalib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../../flex_sdk/frameworks/libs</path-element>
          <path-element>../../flex_sdk/frameworks/libs/player</path-element>
          <path-element>../../flex_sdk/frameworks/locale/{locale}</path-element>
