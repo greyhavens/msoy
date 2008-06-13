@@ -220,6 +220,19 @@
   text-align: right;
 }
 
+.gameLogs {
+  width: 100%;
+}
+
+.gameLogs .Table {
+  width: 100%;
+}
+
+.gameLogs .Header {
+  padding-top: 5px;
+  font-weight: bold;
+}
+
 .trophyCase {
   width: 100%;
 }
