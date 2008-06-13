@@ -191,6 +191,7 @@ public class ThreadListPanel extends PagedGrid
             }
 
             setWidget(0, col, bits);
+            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_LEFT);
             getFlexCellFormatter().setStyleName(0, col++, "Subject");
 
             setText(0, col, "" + thread.posts);

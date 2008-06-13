@@ -105,13 +105,19 @@
   font-weight: bold;
 }
 
+.titledListPanel .Header .TitleBox {
+  width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .titledListPanel .Header .Search {
   width: 105px;
   padding-right: 5px;
 }
 
 .titledListPanel .Header .Posts {
-  width: 50px;
+  width: 30px;
   font-size: 12px;
   text-align: right;
   vertical-align: bottom;

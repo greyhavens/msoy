@@ -4,7 +4,11 @@
 package client.msgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
@@ -12,9 +16,13 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.images.msgs.MsgsImages;
+import client.shell.Application;
+import client.shell.Args;
 import client.shell.Frame;
+import client.shell.Page;
 import client.util.MsoyUI;
 import client.util.SearchBox;
+import client.whirleds.CWhirleds;
 
 /**
  * Displays forum threads and messages.
@@ -26,26 +34,33 @@ public class ForumPanel extends TitledListPanel
         _fmodels = fmodels;
     }
 
-    public void displayGroupThreads (int groupId)
+    /**
+     * Display threads from a single group
+     */
+    public void displayGroupThreads (final int groupId)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
-        setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(), threads), threads);
+        setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(""), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
         _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback() {
             public void onSuccess (Object result) {
                 Frame.setTitle(result.toString());
+                setGroupTitle(groupId, result.toString());
             }
             public void onFailure (Throwable error) { /* not used */ }
         });
     }
 
+    /**
+     * Display unread threads from all groups
+     */
     public void displayUnreadThreads (boolean refresh)
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
-        setContents(createHeader(0, CMsgs.mmsgs.groupUnreadThreadsHeader(), null), threads);
+        setContents(createHeader(0, CMsgs.mmsgs.msgUnreadThreadsHeader(), null), threads);
     }
 
     public void startNewThread (int groupId)
@@ -64,13 +79,29 @@ public class ForumPanel extends TitledListPanel
             rss.setHTML(_images.rss().getHTML());
             header.setWidget(0, col++, rss, 1, "RSS");
         }
-        header.setText(0, col++, title, 1, "Title");
+        // default title may be overwritten later
+        _title = MsoyUI.createSimplePanel("TitleBox", new Label(title));
+        header.setWidget(0, col++, _title, 1, "Title");
+        
         if (listener != null) {
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
         }
         header.setText(0, col++, CMsgs.mmsgs.groupThreadPosts(), 1, "Posts");
         header.setText(0, col++, CMsgs.mmsgs.groupThreadLastPost(), 1, "LastPost");
         return header;
+    }
+    
+    /**
+     * After _fmodels is filled, override the default title with the group name and a link to it.
+     */
+    protected void setGroupTitle (int groupId, String groupName)
+    {
+        if (groupId > 0) {
+            String title = CMsgs.mmsgs.groupThreadListHeader(groupName);
+            Label titleLink = MsoyUI.createActionLabel(
+                title, Application.createLinkListener(Page.WHIRLEDS, Args.compose("d", groupId)));
+            _title.setWidget(titleLink);
+        }
     }
 
     protected void newThreadPosted (ForumThread thread)
@@ -87,6 +118,9 @@ public class ForumPanel extends TitledListPanel
 
     /** Our forum model cache. */
     protected ForumModels _fmodels;
+    
+    /** Title for the page, set to group name after data load */
+    protected SimplePanel _title;
 
     /** Our action icon images. */
     protected static MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
