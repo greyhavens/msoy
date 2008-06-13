@@ -161,6 +161,10 @@
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings.narya" artifactId="player-env" version="0.0-SNAPSHOT"
+                  type="swc"/>
+      <dependency groupId="com.threerings.narya" artifactId="thane-env" version="0.0-SNAPSHOT"
+                  type="swc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-media" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenyalib" version="0.0-SNAPSHOT"
