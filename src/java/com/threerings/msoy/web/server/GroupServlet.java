@@ -683,7 +683,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<MyGroupCard> getMyGroups (WebIdent ident)
+    public List<MyGroupCard> getMyGroups (WebIdent ident, byte sortMethod)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
@@ -706,8 +706,8 @@ public class GroupServlet extends MsoyServiceServlet
                 card.name = record.toGroupName();
 
                 // fetch thread information
-                // TODO this will match the My Discussions page: no ignored threads, etc.
-                card.numUnreadThreads = 3;
+                card.numThreads = MsoyServer.forumRepo.loadThreadCount(record.groupId);
+                card.numPosts = MsoyServer.forumRepo.loadMessageCount(record.groupId);
 
                 List<ForumThreadRecord> threads =
                     MsoyServer.forumRepo.loadRecentThreads(record.groupId, 1);
@@ -733,9 +733,20 @@ public class GroupServlet extends MsoyServiceServlet
 
                 myGroupCards.add(card);
             }
-
-            // sort groups by members online, then newest post
-            Collections.sort(myGroupCards, SORT_MYGROUPCARD);
+            
+            // sort by the preferred sort method
+            if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
+                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_PEOPLE_ONLINE);
+            }
+            else if (sortMethod == MyGroupCard.SORT_BY_NAME) {
+                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_NAME);
+            }
+            else if (sortMethod == MyGroupCard.SORT_BY_MANAGER) {
+                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_MANAGER);
+            }
+            else if (sortMethod == MyGroupCard.SORT_BY_NEWEST_POST) {
+                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_NEWEST_POST);
+            }
 
             return myGroupCards;
 
@@ -744,9 +755,9 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-
+    
     /** Compartor for sorting MyGroupCards, by population then by last post date. */
-    protected static Comparator<MyGroupCard> SORT_MYGROUPCARD = new Comparator<MyGroupCard>() {
+    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_PEOPLE_ONLINE = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
             int rv = c2.population - c1.population;
             if (rv != 0) {
@@ -760,6 +771,63 @@ public class GroupServlet extends MsoyServiceServlet
             }
             else if (c1.latestThread != null && c2.latestThread != null) {
                 return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting MyGroupCards, by population then by last post date. */
+    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_NAME = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting MyGroupCards, by manager status then population then by last post date. */
+    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_MANAGER = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            if (c1.rank == GroupMembership.RANK_MANAGER && c2.rank < GroupMembership.RANK_MANAGER) {
+                return -1;
+            }
+            else if (c2.rank == GroupMembership.RANK_MANAGER && c1.rank < GroupMembership.RANK_MANAGER) {
+                return 1;
+            }
+            
+            // from here down is the same as SORT_MYGROUPCARD_BY_PEOPLE_ONLINE
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
+            }
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            }
+            else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            }
+            else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting MyGroupCards, by last post date then by population. */
+    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            }
+            else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            }
+            else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
             }
             // if neither has a single post or active user, sort by name
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());

@@ -307,7 +307,8 @@
 -------------------------------------*/
 
 .galaxy {
-  width: 683px;
+  width: 685px;
+  overflow-x: hidden;
 }
 
 .galaxy .Title, .galaxy .FeaturedWhirled .Name {
@@ -376,7 +377,7 @@
 }
 
 .galaxy .Contents {
-  width: 100%;
+  width: 665px;
   margin: 0px 10px;
 }
 
@@ -419,109 +420,178 @@
    MY WHIRLEDS
 -------------------------------------*/
 
-.MyWhirleds .whirledWidget {
-  height: 80px;
-  text-align: left;
-}
-.MyWhirleds .whirledWidget,
-.MyWhirleds .whirledWidget a {
-  font-size: 13px;
-  color: #2a6891;
+.myWhirleds {
+  background-color: #1d5884;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 700px;
 }
 
-.MyWhirleds .LogoBox {
+.myWhirleds .WhirledsGrid {
+  margin: 10px;
+}
+
+.myWhirleds .WhirledsGrid .Header {
+  background-position: top center;
+}
+
+.myWhirleds .WhirledsGrid .Header .TopLeft,
+.myWhirleds .WhirledsGrid .Header .TopRight {
+  background-color: #1d5884;
+  height: 29px;
+}
+
+.myWhirleds .WhirledsGrid .Header .SortBy {
+  padding-right: 5px;
+  width: 50px;
+}
+
+.myWhirleds .WhirledsGrid .Header td.Info {
+  width: 350px;
+}
+
+.myWhirleds .WhirledsGrid .Headers div {
+  float: left;
+  height: 17px;
+  background-color: #5683a4;
+  border: solid #1d5884 1px;
+  border-right: none;
+  padding-top: 5px;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.myWhirleds .WhirledsGrid .Headers div.WhirledNameHeader {
+  border-left: none;
+  width: 227px;
+}
+
+.myWhirleds .WhirledsGrid .Headers div.LatestPostHeader {
+  width: 345px;
+}
+
+.myWhirleds .WhirledsGrid .Headers div.ThreadsHeader {
+  width: 54px;
+}
+
+.myWhirleds .WhirledsGrid .Headers div.PostsHeader {
+  width: 51px;
+}
+
+.myWhirleds .WhirledWidget {
+  height: 80px;
+  text-align: left;
+  background: transparent url(/images/group/mywhirleds_row_bg.png) repeat-y top left;
+  margin-bottom: 10px;
+}
+.myWhirleds .WhirledWidget,
+.myWhirleds .WhirledWidget a {
+  color: #073859;
+}
+
+.myWhirleds .LogoBox {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 5px;
 }
 /* vertical centering not supported in ie */
-.MyWhirleds .LogoBox div {
+.myWhirleds .LogoBox div {
   display: table-cell;
   vertical-align: middle;
   horizontal-align: center;
   text-align: center;
 }
 
-.MyWhirleds .Name {
+.myWhirleds .Name {
   position: absolute;
   top: 10px;
-  left: 100px;
-  width: 250px;
-  white-space: nowrap;
+  left: 90px;
+  width: 130px;
+  height: 45px;
   overflow: hidden;
 }
-.MyWhirleds .Name a {
+.myWhirleds .Name a {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 17px;
-  font-weight: bold;
-  text-decoration: none;
+  color: #6692af;
 }
 
-.MyWhirleds .MembersOnline {
-  position: absolute;
-  top: 40px;
-  left: 100px;
-  background: url(/images/game/players_bg.png) no-repeat;
-  color: #FFFFFF;
-  width: 134px;
-  height: 21px;
-  font-size: 14px;
-  font-weight: bold;
+.myWhirleds .MembersOnline {
+  color: #6692af;
+  font-size: 12px;
   text-align: center;
-  padding-top: 2px;
-}
-
-.MyWhirleds .UnreadThreads {
-  position: absolute;
-  top: 50px;
-  left: 400px;
-  display: none;
-}
-
-.MyWhirleds .LatestThread {
-  position: absolute;
-  top: 38px;
-  left: 250px;
-  color: #78a3c5;
-  width: 100px;
-}
-
-.MyWhirleds .LatestThreadSubject,
-.MyWhirleds .NoThreads {
-  position: absolute;
-  top: 38px;
-  left: 340px;
-  width: 340px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-decoration: none;
-}
-.MyWhirleds .LatestThreadSubject a {
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.MyWhirleds .PostedBy {
   position: absolute;
   top: 60px;
-  right: 10px;
-  color: #78a3c5;
-}
-.MyWhirleds .PostedBy a {
-  color: #78a3c5;
+  left: 90px;
 }
 
-.MyWhirleds .Discussions {
+.myWhirleds .LatestThreadSubject,
+.myWhirleds .NoThreads {
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 235px;
+  width: 325px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: none;
+}
+.myWhirleds .LatestThreadSubject a {
+  font-size: 14px;
 }
 
-.MyWhirleds .ManagerStar {
+.myWhirleds .PostedBy {
   position: absolute;
-  left: 70px;
-  top: 50px;
-  z-index: 10;
+  top: 30px;
+  left: 235px;
+  width: 325px;
+}
+
+.myWhirleds .Date {
+  position: absolute;
+  top: 60px;
+  left: 365px;
+  width: 200px;
+  text-align: right;
+}
+
+.myWhirleds .Date .Time {
+  color: #6692af;
+}
+
+.myWhirleds .NumThreads,
+.myWhirleds .NumPosts {
+  position: absolute;
+  top: 10px;
+  font-size: 15px;
+  width: 50px;
+  height: 40px; /* plus 20 padding */
+  padding-top: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.myWhirleds .NumThreads a,
+.myWhirleds .NumPosts a {
+  text-decoration: none;
+}
+
+.myWhirleds .NumThreads a:hover,
+.myWhirleds .NumPosts a:hover,
+.myWhirleds .NumThreads a:active,
+.myWhirleds .NumPosts a:active {
+  text-decoration: underline;
+}
+
+.myWhirleds .NumThreads {
+  left: 575px;
+}
+
+.myWhirleds .NumPosts {
+  left: 630px;
+}
+
+.myWhirleds .ManagerStar {
+  margin-left: 5px;
 }
 
 

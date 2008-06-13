@@ -216,7 +216,7 @@ public interface GroupService extends RemoteService
      *
      * @gwt.typeArgs <com.threerings.msoy.web.data.MyGroupCard>
      */
-    public List getMyGroups (WebIdent ident)
+    public List getMyGroups (WebIdent ident, byte sortMethod)
         throws ServiceException;
 
 }

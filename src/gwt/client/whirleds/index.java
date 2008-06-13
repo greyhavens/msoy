@@ -52,8 +52,8 @@ public class index extends MsgsEntryPoint
             }
             
         } else if (action.equals("mywhirleds")) {
-            MyWhirleds myWhirleds = new MyWhirleds();
-            //fpanel.displayUnreadThreads(false);
+            byte sortMethod = (byte) args.get(1, 0);
+            MyWhirleds myWhirleds = new MyWhirleds(sortMethod);
             setContent(CWhirleds.msgs.myWhirledsTitle(), myWhirleds);
 
         } else if (action.equals("unread")) {

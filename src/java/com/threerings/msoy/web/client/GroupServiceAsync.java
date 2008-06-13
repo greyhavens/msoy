@@ -118,5 +118,5 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getMyGroups}
      */
-    public void getMyGroups (WebIdent ident, AsyncCallback callback);
+    public void getMyGroups (WebIdent ident, byte sortMethod, AsyncCallback callback);
 }

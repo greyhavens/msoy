@@ -95,6 +95,20 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Loads the total number of threads in the specified group.
+     */
+    public int loadMessageCount (int groupId)
+        throws PersistenceException
+    {
+        return load(CountRecord.class,
+            new FromOverride(ForumThreadRecord.class, ForumMessageRecord.class),
+            new Where(new And(
+                new Equals(ForumThreadRecord.GROUP_ID_C, groupId),
+                new Equals(ForumThreadRecord.THREAD_ID_C, ForumMessageRecord.THREAD_ID_C)))
+            ).count;
+    }
+
+    /**
      * Loads the specified range of forum threads for the specified group. Ordered first stickyness
      * and then by most recently updated (newer first).
      */
