@@ -34,6 +34,7 @@ import client.util.FlashClients;
 import client.util.HeaderBox;
 import client.util.ItemUtil;
 import client.util.MsoyCallback;
+import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.RoundBox;
 import client.util.ShopUtil;
@@ -102,7 +103,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets = new RoundBox(RoundBox.WHITE);
         _indeets.addStyleName("Description");
         _details.add(_indeets);
-        _indeets.add(new Label(ItemUtil.getDescription(_item)));
+        _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
         MediaDesc prim = _item.getPrimaryMedia();
         boolean remixable = (prim != null) && prim.isRemixable();

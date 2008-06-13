@@ -129,6 +129,19 @@ public class MsoyUI
         return label;
     }
 
+    /** Creates a safe, restricted HTML from user input. */
+    public static HTML createRestrictedHTML (String html)
+    {
+        html = html.replaceAll("&", "&amp;");
+        html = html.replaceAll("<", "&lt;");
+        html = html.replaceAll(">", "&gt;");
+        html = html.replaceAll("\"", "&quot;");
+
+        html = html.replaceAll("(http://.*?whirled.com/([^ ]+))", "<a href=\"$1\">$2</a>");
+
+        return new HTML(html);
+    }
+
     /**
      * Creates a text box with all of the configuration that you're bound to want to do.
      */
@@ -146,18 +159,6 @@ public class MsoyUI
         }
         return box;
     }
-
-    /*public static PasswordTextBox createPasswordTextBox (int visibleLength)
-    {
-        PasswordTextBox box = new PasswordTextBox();
-        if (maxLength > 0) {
-            box.setMaxLength(maxLength);
-        }
-        if (visibleLength > 0) {
-            box.setVisibleLength(visibleLength);
-        }
-        return box;
-    }*/
 
     /**
      * Creates a text area with all of the configuration that you're bound to want to do.
