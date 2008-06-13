@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,6 +19,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.CShell;
 
@@ -142,6 +146,18 @@ public class MsoyUI
         }
         return box;
     }
+
+    /*public static PasswordTextBox createPasswordTextBox (int visibleLength)
+    {
+        PasswordTextBox box = new PasswordTextBox();
+        if (maxLength > 0) {
+            box.setMaxLength(maxLength);
+        }
+        if (visibleLength > 0) {
+            box.setVisibleLength(visibleLength);
+        }
+        return box;
+    }*/
 
     /**
      * Creates a text area with all of the configuration that you're bound to want to do.
@@ -348,6 +364,11 @@ public class MsoyUI
         }
         panel.add(new Button(CShell.cmsgs.dismiss(), hider));
         popup.show();
+    }
+
+    public static void showPasswordExpired (String message)
+    {
+        new PasswordDialog(message).show();
     }
 
     /**
