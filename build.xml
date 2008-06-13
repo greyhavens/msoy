@@ -543,6 +543,7 @@
       <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
       <arg value="-compiler.library-path"/>
       <arg value="${deploy.dir}/lib/http-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/thane-env-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
@@ -562,7 +563,6 @@
       <arg value="dist/thane-config.xml"/>
       <arg value="-compiler.external-library-path"/>
       <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/http-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
       <arg value="-compiler.source-path=src/thane"/>
       <arg value="-output"/>
