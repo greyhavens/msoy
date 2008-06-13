@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client.editor {
+package com.threerings.msoy.world.client.snapshot {
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;

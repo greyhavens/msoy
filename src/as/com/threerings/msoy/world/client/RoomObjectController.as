@@ -82,7 +82,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 import com.threerings.msoy.world.client.editor.RoomEditorController;
-import com.threerings.msoy.world.client.editor.SnapshotController;
+import com.threerings.msoy.world.client.snapshot.SnapshotController;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
