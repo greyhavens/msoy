@@ -107,7 +107,6 @@
          <path-element>../lib/naryalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../lib/naryalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../../flex_sdk/frameworks/libs</path-element>
          <path-element>../../flex_sdk/frameworks/libs/player</path-element>
