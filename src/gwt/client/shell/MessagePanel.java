@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.util.MsoyUI;
 import client.util.ThumbBox;
 
 /**
@@ -77,7 +78,7 @@ public class MessagePanel extends FlexTable
             text = text.replaceAll("href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
             scroller.add(new HTML(text));
         } else {
-            scroller.add(new Label(text));
+            scroller.add(MsoyUI.createRestrictedHTML(text));
         }
         setWidget(1, 0, scroller);
 

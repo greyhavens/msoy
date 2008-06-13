@@ -137,7 +137,7 @@ public class MsoyUI
         html = html.replaceAll(">", "&gt;");
         html = html.replaceAll("\"", "&quot;");
 
-        html = html.replaceAll("(http://.*?whirled.com/([^ ]+))", "<a href=\"$1\">$2</a>");
+        html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))", "<a href=\"$1\">$3</a>");
 
         return new HTML(html);
     }
