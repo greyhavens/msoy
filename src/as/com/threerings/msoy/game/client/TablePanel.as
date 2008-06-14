@@ -29,7 +29,6 @@ import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SimpleGrid;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -162,6 +161,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.data.Table;
 
@@ -169,7 +169,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -223,7 +222,7 @@ class SeatPanel extends VBox
             hbox.addChild(_leaveBtn = new CommandButton());
             _leaveBtn.styleName = "closeButton";
             addChild(hbox);
-            addChild(_name = MsoyUI.createLabel("", "nameLabel"));
+            addChild(_name = FlexUtil.createLabel("", "nameLabel"));
         } 
     }
 

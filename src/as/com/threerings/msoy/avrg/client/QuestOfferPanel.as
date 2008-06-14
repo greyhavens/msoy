@@ -15,7 +15,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MsoyUI;
 
 public class QuestOfferPanel extends FloatingPanel
 {

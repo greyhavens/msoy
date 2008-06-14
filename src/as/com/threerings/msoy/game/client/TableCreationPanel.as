@@ -10,10 +10,12 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;
@@ -27,7 +29,6 @@ import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.SimpleGrid;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -53,7 +54,7 @@ public class TableCreationPanel extends VBox
         _friendsBox.removeAllChildren();
         var onlineFriends :Array = _ctx.getOnlineFriends();
         if (onlineFriends.length ==  0) {
-            _friendsBox.addChild(MsoyUI.createLabel(Msgs.GAME.get("l.invite_no_friends")));
+            _friendsBox.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
         } else {
             var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
             _friendsGrid = new SimpleGrid(columns);
@@ -155,7 +156,7 @@ public class TableCreationPanel extends VBox
     {
         var wrapper :VBox = new VBox();
         wrapper.setStyle("verticalGap", 0);
-        wrapper.addChild(MsoyUI.createLabel(title));
+        wrapper.addChild(FlexUtil.createLabel(title));
         wrapper.addChild(contents);
         if (hstretch) {
             wrapper.percentWidth = 100;
@@ -203,10 +204,11 @@ import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.Label;
 
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.MediaWrapper;
 
 class FriendCheckBox extends VBox
@@ -219,7 +221,7 @@ class FriendCheckBox extends VBox
         this.friend = friend;
 
         addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
-        var name :Label = MsoyUI.createLabel(friend.name.toString());
+        var name :Label = FlexUtil.createLabel(friend.name.toString());
         name.maxWidth = 2*MediaDesc.THUMBNAIL_WIDTH/3;
         addChild(name);
         addChild(_check = new CheckBox());

@@ -29,12 +29,12 @@ import com.threerings.flash.FPSDisplay;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
+import com.threerings.flex.FlexUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.MsoyParameters;
 
-import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.OccupantSprite;
 
 public class AvatarViewerComp extends VBox
@@ -103,7 +103,7 @@ public class AvatarViewerComp extends VBox
         mode.selectedIndex = 0;
         controls.addChild(mode);
 
-        controls.addChild(MsoyUI.createLabel("Facing angle:"));
+        controls.addChild(FlexUtil.createLabel("Facing angle:"));
 
         var canv :Canvas = new Canvas();
         canv.width = OrientationControl.SIZE;

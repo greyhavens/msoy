@@ -22,6 +22,7 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableObserver;
@@ -31,7 +32,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -170,7 +170,7 @@ public class LobbyPanel extends FloatingPanel
             runningHeader = Msgs.GAME.get("l.running_header_party");
         }
 
-        _noTablesLabel = MsoyUI.createLabel(noPendersMsg, "tableMessage");
+        _noTablesLabel = FlexUtil.createLabel(noPendersMsg, "tableMessage");
         _tableList.addChild(_noTablesLabel);
 
         _tableList.addChild(_pendingList = new VBox());
@@ -179,7 +179,7 @@ public class LobbyPanel extends FloatingPanel
         var header :HBox = new HBox();
         header.percentWidth = 100;
         header.styleName = "tableHeader";
-        header.addChild(MsoyUI.createLabel(pendersHeader));
+        header.addChild(FlexUtil.createLabel(pendersHeader));
         _pendingList.addChild(header);
 
         _tableList.addChild(_runningList = new VBox());
@@ -188,7 +188,7 @@ public class LobbyPanel extends FloatingPanel
         header = new HBox();
         header.percentWidth = 100;
         header.styleName = "tableHeader";
-        header.addChild(MsoyUI.createLabel(runningHeader));
+        header.addChild(FlexUtil.createLabel(runningHeader));
         _runningList.addChild(header);
 
         // create our table creation panel now that we have our game config
@@ -372,7 +372,7 @@ public class LobbyPanel extends FloatingPanel
 //         titleBox.percentWidth = 100;
 //         titleBox.height = 20;
 //         main.addChild(titleBox);
-//         _title = MsoyUI.createLabel("", "locationName");
+//         _title = FlexUtil.createLabel("", "locationName");
 //         _title.width = 160;
 //         titleBox.addChild(_title);
 //         var padding :HBox = new HBox();
@@ -439,7 +439,7 @@ public class LobbyPanel extends FloatingPanel
         var tablesHeader :HBox = new HBox();
         tablesHeader.styleName = "tablesTitle";
         tablesHeader.percentWidth = 100;
-        tablesHeader.addChild(MsoyUI.createLabel("Join a Game"));
+        tablesHeader.addChild(FlexUtil.createLabel("Join a Game"));
         _contents.addChild(tablesHeader);
 
         _tableList = new VBox();
@@ -452,7 +452,7 @@ public class LobbyPanel extends FloatingPanel
         // display the real UI
         var loading :HBox = new HBox();
         loading.styleName = "lobbyLoadingBox";
-        loading.addChild(MsoyUI.createLabel(Msgs.GAME.get("m.locating_game")));
+        loading.addChild(FlexUtil.createLabel(Msgs.GAME.get("m.locating_game")));
         this.title = Msgs.GAME.get("t.locating_game");
         addChild(loading);
     }
