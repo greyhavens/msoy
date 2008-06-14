@@ -22,6 +22,9 @@ public interface MsoyCodes extends InvocationCodes
     /** The translation message bundle for our general client bits. */
     public static final String GENERAL_MSGS = "general";
 
+    /** The translation message bundle for our world client bits. */
+    public static final String WORLD_MSGS = "world";
+
     /** The translation message bundle for our chat messages. */
     public static final String CHAT_MSGS = "chat";
 

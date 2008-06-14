@@ -19,6 +19,12 @@ public class Msgs
         return _general;
     }
 
+    /** The world message bundle. */
+    public static function get WORLD () :MessageBundle
+    {
+        return _world;
+    }
+
     /** The chat message bundle. */
     public static function get CHAT () :MessageBundle
     {
@@ -65,6 +71,7 @@ public class Msgs
         }
 
         _general = msgMgr.getBundle(MsoyCodes.GENERAL_MSGS);
+        _world = msgMgr.getBundle(MsoyCodes.WORLD_MSGS);
         _chat = msgMgr.getBundle(MsoyCodes.CHAT_MSGS);
         _editing = msgMgr.getBundle(MsoyCodes.EDITING_MSGS);
         _game = msgMgr.getBundle(MsoyCodes.GAME_MSGS);
@@ -74,6 +81,7 @@ public class Msgs
     }
 
     protected static var _general :MessageBundle;
+    protected static var _world :MessageBundle;
     protected static var _chat :MessageBundle;
     protected static var _editing :MessageBundle;
     protected static var _game :MessageBundle;

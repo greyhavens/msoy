@@ -82,7 +82,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 import com.threerings.msoy.world.client.editor.RoomEditorController;
-import com.threerings.msoy.world.client.snapshot.SnapshotController;
+import com.threerings.msoy.world.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
@@ -378,8 +378,9 @@ public class RoomObjectController extends RoomController
      */
     public function takeSnapshot () :void
     {
-        _snap.takeScreenshot(_roomView);
-    };
+        new SnapshotPanel(_wdctx, _scene.getId(), _roomView);
+        // TODO: have button dim while a snapper is up. etc.
+    }
 
     /**
      * Handles EDIT_DOOR.
@@ -909,9 +910,6 @@ public class RoomObjectController extends RoomController
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
-        // TODO: for god's sake, lazy-initialize this
-        _snap = new SnapshotController(_wdctx, _scene.getId());
-
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         _roomView.addChildAt(_flyTarget, _roomView.numChildren);
@@ -949,7 +947,6 @@ public class RoomObjectController extends RoomController
 
         _roomObj.removeListener(_roomListener);
 
-        _snap = null;
         _scene = null;
         _roomObj = null;
 
@@ -1312,9 +1309,6 @@ public class RoomObjectController extends RoomController
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;
     
-    /** Controller for room snapshots. */
-    protected var _snap :SnapshotController;
-
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
 

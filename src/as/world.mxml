@@ -16,6 +16,7 @@
     [ResourceBundle("item")]
     [ResourceBundle("notify")]
     [ResourceBundle("prefs")]
+    [ResourceBundle("world")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[
