@@ -1,6 +1,0 @@
-com/threerings/msoy/client/DeploymentConfig.as
-com/threerings/msoy/game/data/MsoyGameDefinition.as
-com/threerings/msoy/game/data/MsoyMatchConfig.as
-com/threerings/msoy/data/VizMemberName.as
-com/threerings/msoy/item/data/all/ItemTypes.as
-com/threerings/msoy/item/data/all/StaticMediaDesc.as
