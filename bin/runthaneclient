@@ -64,7 +64,7 @@ echo "           Main: $MAIN"
 echo "------------------------------------------------------------------------------"
 ) >>$LOGFILE
 
-$THANE_INTERPRETER "${LIBS[@]}" $MAIN -- $BUREAU_ID $CONNECT_TOKEN $CONNECT_PORT >>$LOGFILE 2>&1
+$THANE_INTERPRETER -Dinterp "${LIBS[@]}" $MAIN -- $BUREAU_ID $CONNECT_TOKEN $CONNECT_PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
