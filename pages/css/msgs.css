@@ -131,6 +131,10 @@
   white-space: nowrap;
 }
 
+.titledListPanel .Header .IgnoreThread {
+  width: 19px;
+}
+
 .titledListPanel .Header .Back {
   padding-left: 5px;
   width: 15px;
@@ -192,6 +196,15 @@
   width: 150px;
   font-size: 12px;
   padding: 2px 0px;
+}
+
+.threadSummaryPanel .IgnoreThread {
+  width: 19px;
+  text-align: left;
+}
+
+.threadSummaryPanel .IgnoreThread img {
+  cursor: pointer;
 }
 
 .issueSummaryPanel {

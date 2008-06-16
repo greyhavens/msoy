@@ -88,6 +88,9 @@ public class ForumPanel extends TitledListPanel
         }
         header.setText(0, col++, CMsgs.mmsgs.groupThreadPosts(), 1, "Posts");
         header.setText(0, col++, CMsgs.mmsgs.groupThreadLastPost(), 1, "LastPost");
+        if (groupId == 0) {
+            header.setText(0, col++, "", 1, "IgnoreThread");
+        }
         return header;
     }
     

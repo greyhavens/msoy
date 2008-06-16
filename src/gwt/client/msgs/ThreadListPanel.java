@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -27,6 +28,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -59,7 +61,7 @@ public class ThreadListPanel extends PagedGrid
         _fmodels = fmodels;
         setModel(fmodels.getUnreadThreads(refresh), 0);
     }
-
+    
     // from interface SearchBox.Listener
     public void search (String search)
     {
@@ -206,6 +208,26 @@ public class ThreadListPanel extends PagedGrid
             mrp.add(latest);
             setWidget(0, col, mrp);
             getFlexCellFormatter().setStyleName(0, col++, "LastPost");
+            
+            // add an ignore button when displaying unread threads from many groups
+            if (_groupId == 0) {
+                Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
+                ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
+                new ClickCallback(ignoreThread) {
+                    public boolean callService () {
+                        CMsgs.forumsvc.ignoreThread(CMsgs.ident, thread.threadId, this);
+                        return true;
+                    }
+                    public boolean gotResult (Object result) {
+                        MsoyUI.info(CMsgs.mmsgs.threadIgnored());
+                        setModel(_fmodels.getUnreadThreads(true), getPage());
+                        return false;
+                    }
+                };
+                setWidget(0, col, ignoreThread);
+                getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
+                getFlexCellFormatter().setStyleName(0, col++, "IgnoreThread");
+            }
         }
     }
 
