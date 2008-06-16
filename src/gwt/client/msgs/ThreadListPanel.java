@@ -160,8 +160,16 @@ public class ThreadListPanel extends PagedGrid
             setCellSpacing(0);
 
             int col = 0;
-            String itype = thread.hasUnreadMessages() ? "unread" : "read";
-            setWidget(0, col, new Image("/images/msgs/" + itype + ".png"));
+            Image statusImage = new Image();
+            if (thread.hasUnreadMessages()) {
+                statusImage.setUrl("/images/msgs/unread.png");
+                statusImage.setTitle(CMsgs.mmsgs.tlpStatusUnreadTip());
+            }
+            else {
+                statusImage.setUrl("/images/msgs/read.png");
+                statusImage.setTitle(CMsgs.mmsgs.tlpStatusReadTip());
+            }
+            setWidget(0, col, statusImage);
             getFlexCellFormatter().setStyleName(0, col++, "Status");
 
             RowPanel bits = new RowPanel();
