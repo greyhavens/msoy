@@ -197,9 +197,9 @@ public class RemixControls extends HBox
         _previewer = new UberClientLoader(mode);
         _previewer.width = PREVIEW_WIDTH;
         _previewer.height = 488;
-        _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
-        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
-        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
+        _previewer.addEventListener(Event.COMPLETE, handlePreviewerComplete);
+        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerError);
+        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerError);
         _previewer.load();
         _previewContainer.addChild(_previewer);
     }
@@ -227,10 +227,15 @@ public class RemixControls extends HBox
         }
     }
 
-    protected function handlePreviewerEvent (event :Event) :void
+    protected function handlePreviewerComplete (event :Event) :void
     {
-        // TODO
-        trace("Previewer event: " + event);
+        _previewReady = true;
+        maybeUpdatePreview();
+    }
+
+    protected function handlePreviewerError (event :ErrorEvent) :void
+    {
+        trace("Previewer error: " + event);
     }
 
     protected function handlePackError (event :ErrorEvent) :void
@@ -240,11 +245,7 @@ public class RemixControls extends HBox
 
     protected function handlePackComplete (event :Event) :void
     {
-        updatePreview();
-
         addEventListener(FieldEditor.FIELD_CHANGED, handleFieldChanged);
-
-        // TODO: add the little header
 
         var name :String;
         for each (name in _ctx.pack.getDataFields()) {
@@ -255,6 +256,9 @@ public class RemixControls extends HBox
         for each (name in _ctx.pack.getFileFields()) {
             _controls.addChild(new FileEditor(_ctx, name, serverURL));
         }
+
+        _packReady = true;
+        maybeUpdatePreview();
     }
 
     /**
@@ -262,8 +266,16 @@ public class RemixControls extends HBox
      */
     protected function handleFieldChanged (event :Event) :void
     {
-        updatePreview();
         _saveBtn.enabled = true;
+        maybeUpdatePreview();
+    }
+
+    protected function maybeUpdatePreview () :void
+    {
+        if (_packReady && _previewReady) {
+            // wait a frame...
+            callLater(updatePreview);
+        }
     }
 
     protected function updatePreview () :void
@@ -272,6 +284,9 @@ public class RemixControls extends HBox
         sendPreview();
     }
 
+    /**
+     * Send the bytes to the previewer, automatically retrying until they get through.
+     */
     protected function sendPreview () :void
     {
         if (_bytes == null) {
@@ -348,6 +363,9 @@ public class RemixControls extends HBox
         trace("Oh noes! : " + event.text);
         _saveBtn.enabled = true;
     }
+
+    protected var _previewReady :Boolean;
+    protected var _packReady :Boolean;
 
     protected var _previewContainer :VBox;
 
