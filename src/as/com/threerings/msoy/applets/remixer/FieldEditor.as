@@ -77,6 +77,7 @@ public class FieldEditor extends VBox
 
         // add the description label
         var desc :Text = new Text();
+        desc.selectable = false;
         desc.width = 210;
         desc.setStyle("color", 0xA1A2A2);
         if (entry.info != null) {
@@ -100,6 +101,7 @@ public class FieldEditor extends VBox
     protected function getUI (entry :Object) :Array
     {
         var label :Label = new Label();
+        label.selectable = false;
         label.text = "Unknown entry of type '" + entry.type + "'.";
         return [ label, new Spacer(), label ];
     }

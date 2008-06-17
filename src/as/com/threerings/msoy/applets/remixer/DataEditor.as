@@ -57,6 +57,7 @@ public class DataEditor extends FieldEditor
     protected function setupString (entry :Object, validator :Validator = null) :Array
     {
         var label :Label = new Label();
+        label.selectable = false;
         label.setStyle("color", NAME_AND_VALUE_COLOR);
         updateLabel(label, entry);
         _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED,

@@ -23,6 +23,7 @@ public class FileEditor extends FieldEditor
     override protected function getUI (entry :Object) :Array
     {
         _label = new Label();
+        _label.selectable = false;
         //_label.setStyle("color", NAME_AND_VALUE_COLOR);
         _label.text = entry.value as String;
 
