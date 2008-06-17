@@ -428,7 +428,7 @@ public class WhirledDetailPanel extends FlowPanel
                 members.setWidget(i*2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(i*2, 0, 2);
                 if (member.rank == GroupMembership.RANK_MANAGER) {
-                    members.setHTML(i, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
+                    members.setHTML(i*2, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(
                   "Name", Application.memberViewLink(""+member.name, member.name.getMemberId()));
