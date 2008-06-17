@@ -67,21 +67,12 @@ public class RemixControls extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
+        _previewContainer = new VBox();
+        _previewContainer.width = PREVIEW_WIDTH;
+        addChild(_previewContainer);
+        _previewContainer.addChild(createPreviewHeader());
+
         var vbox :VBox = new VBox();
-        vbox.width = PREVIEW_WIDTH;
-        addChild(vbox);
-        vbox.addChild(createPreviewHeader());
-
-        _previewer = new UberClientLoader(UberClientLoader.AVATAR_VIEWER);
-        _previewer.width = PREVIEW_WIDTH;
-        _previewer.height = 488;
-        _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
-        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
-        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
-        _previewer.load();
-        vbox.addChild(_previewer);
-
-        vbox = new VBox();
         vbox.percentHeight = 100;
         vbox.verticalScrollPolicy = ScrollPolicy.OFF;
 
@@ -129,6 +120,8 @@ public class RemixControls extends HBox
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
             var media :String = params["media"] as String;
+
+            createPreviewer(params["type"] as String);
 
             _ctx = new RemixContext(new EditableDataPack(media), viewStack);
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
@@ -195,6 +188,43 @@ public class RemixControls extends HBox
         }
 
         return box;
+    }
+
+    protected function createPreviewer (itemType :String) :void
+    {
+        var mode :int = getUberClientModeForType(itemType);
+
+        _previewer = new UberClientLoader(mode);
+        _previewer.width = PREVIEW_WIDTH;
+        _previewer.height = 488;
+        _previewer.addEventListener(Event.COMPLETE, handlePreviewerEvent);
+        _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerEvent);
+        _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerEvent);
+        _previewer.load();
+        _previewContainer.addChild(_previewer);
+    }
+
+    protected function getUberClientModeForType (itemType :String) :int
+    {
+        switch (itemType) {
+        case "avatar":
+            return UberClientLoader.AVATAR_VIEWER;
+
+        case "pet":
+            return UberClientLoader.PET_VIEWER;
+
+        case "furniture":
+            return UberClientLoader.FURNI_VIEWER;
+
+        case "decor":
+            return UberClientLoader.DECOR_VIEWER;
+
+        case "toy":
+            return UberClientLoader.TOY_VIEWER;
+
+        default:
+            return UberClientLoader.GENERIC_VIEWER;
+        }
     }
 
     protected function handlePreviewerEvent (event :Event) :void
@@ -318,6 +348,8 @@ public class RemixControls extends HBox
         trace("Oh noes! : " + event.text);
         _saveBtn.enabled = true;
     }
+
+    protected var _previewContainer :VBox;
 
     protected var _previewer :SWFLoader;
 

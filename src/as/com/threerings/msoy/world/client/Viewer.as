@@ -4,7 +4,10 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
+
+import flash.utils.ByteArray;
 
 import com.threerings.util.ValueEvent;
 
@@ -13,6 +16,8 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.utils.UberClientLoader;
 
 /**
  * A generic viewer, like the AvatarViewer, but for any item.
@@ -38,14 +43,36 @@ public class Viewer extends Sprite
         }
     }
 
+    /**
+     * Load the media to display at a ByteArray.
+     */
+    public function loadBytes (bytes :ByteArray) :void
+    {
+        (_sprite as MsoySprite).setMediaBytes(bytes);
+    }
+
     protected function gotParams (params :Object) :void
     {
         var media :String = params["media"] as String;
+        var mode :int = int(params["mode"]);
 
-        _sprite = new ViewerSprite();
-        _sprite.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        switch (mode) {
+        // AVATAR handled elsewhere. This class is TEMP, anyway.
+
+        default: // FURNI, TOY, DECOR
+            _sprite = new FurniViewerSprite();
+            break;
+
+        case UberClientLoader.PET_VIEWER:
+            _sprite = new PetViewerSprite();
+            break;
+        }
+
+        var d :DisplayObject = _sprite as DisplayObject;
+
+        d.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
         _sprite.setMedia(media);
-        addChild(_sprite);
+        addChild(d);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -55,8 +82,9 @@ public class Viewer extends Sprite
         var scale :Number = Math.min(1, Math.min(WIDTH / width, HEIGHT / height));
         _sprite.setScale(scale);
 
-        _sprite.x = (WIDTH - (scale * width)) / 2;
-        _sprite.y = (HEIGHT - (scale * height)) / 2;
+        var d :DisplayObject = _sprite as DisplayObject;
+        d.x = (WIDTH - (scale * width)) / 2;
+        d.y = (HEIGHT - (scale * height)) / 2;
     }
 
     protected var  _sprite :ViewerSprite;
@@ -66,17 +94,29 @@ public class Viewer extends Sprite
 }
 }
 
-import com.threerings.msoy.world.client.EntityBackend;
-import com.threerings.msoy.world.client.MsoySprite;
+import flash.events.IEventDispatcher;
+
+import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.PetSprite;
+
+import com.threerings.msoy.world.data.FurniData;
+
+interface ViewerSprite
+{
+    function setScale (scale :Number) :void;
+
+    function setMedia (url :String) :void;
+}
 
 /**
- * A generic MsoySprite used for viewing, with no backend logic.
+ * A simple sprite used for viewing.
  */
-class ViewerSprite extends MsoySprite
+class FurniViewerSprite extends FurniSprite
+    implements ViewerSprite
 {
-    public function ViewerSprite ()
+    public function FurniViewerSprite ()
     {
-        super(null);
+        super(null, new FurniData());
     }
 
     public function setScale (scale :Number) :void
@@ -100,15 +140,33 @@ class ViewerSprite extends MsoySprite
         return _scale;
     }
 
-    override protected function createBackend () :EntityBackend
-    {
-        return null;
-    }
-
     override protected function allowSetMedia () :Boolean
     {
         return true;
     }
 
     protected var _scale :Number = 1;
+}
+
+/**
+ * A simple sprite used for viewing.
+ */
+class PetViewerSprite extends PetSprite
+    implements ViewerSprite
+{
+    public function PetViewerSprite ()
+    {
+        super(null, null);
+    }
+
+    public function setScale (scale :Number) :void
+    {
+        _scale = scale;
+        scaleUpdated();
+    }
+
+    override protected function allowSetMedia () :Boolean
+    {
+        return true;
+    }
 }

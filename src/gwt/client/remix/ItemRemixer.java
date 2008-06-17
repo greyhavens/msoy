@@ -65,6 +65,7 @@ public class ItemRemixer extends FlexTable
                                           : "http://localhost:8080/";
 
         String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) + "&" +
+            "type=" + URL.encodeComponent(Item.getTypeName(item.getType())) + "&" +
             "server=" + URL.encodeComponent(serverURL) + "&" +
             "mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) + "&" +
             "auth=" + URL.encodeComponent(CShell.ident.token);
