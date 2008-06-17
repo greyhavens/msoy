@@ -281,6 +281,7 @@ public class RemixControls extends HBox
     protected function updatePreview () :void
     {
         _bytes = _ctx.pack.serialize();
+        _lastBytes = _bytes;
         sendPreview();
     }
 
@@ -317,6 +318,7 @@ public class RemixControls extends HBox
     protected function cancel () :void
     {
         if (ExternalInterface.available) {
+            _saveBtn.enabled = false;
             _cancelBtn.enabled = false;
             ExternalInterface.call("cancelRemix");
         }
@@ -328,21 +330,27 @@ public class RemixControls extends HBox
     protected function commit () :void
     {
         _saveBtn.enabled = false;
+        _cancelBtn.enabled = false;
+        callLater(callLater, [ startUpload ]);
+    }
+
+    protected function startUpload () :void
+    {
+        if (_lastBytes == null) {
+            _lastBytes = _ctx.pack.serialize();
+        }
+
         var uploader :MediaUploader = new MediaUploader(_params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
         uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
         uploader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleUploadError);
-        uploader.upload(_params["mediaId"], "datapack.zip", _ctx.pack.serialize());
+        uploader.upload(_params["mediaId"], "datapack.zip", _lastBytes);
     }
 
     protected function handleUploadProgress (event :ProgressEvent) :void
     {
-        // TODO
-        // unfortunately, it seems that the uploader doesn't show upload progress, only
-        // the progress of downloading the data back from the server.
-
-        //trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
+        trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
     }
 
     protected function handleUploadComplete (event :Event) :void
@@ -350,6 +358,7 @@ public class RemixControls extends HBox
         var uploader :MediaUploader = event.target as MediaUploader;
 
         var result :Object = uploader.getResult();
+        uploader.close();
 
         if (ExternalInterface.available) {
             ExternalInterface.call("setHash", result.mediaId, result.hash, result.mimeType,
@@ -362,6 +371,7 @@ public class RemixControls extends HBox
         // TODO
         trace("Oh noes! : " + event.text);
         _saveBtn.enabled = true;
+        _cancelBtn.enabled = true;
     }
 
     protected var _previewReady :Boolean;
@@ -380,7 +390,11 @@ public class RemixControls extends HBox
 
     protected var _snapper :CameraSnapshotter;
 
+    /** The serialized pack we're currently trying to send to the previewer. */
     protected var _bytes :ByteArray;
+
+    /** The last serialization of the pack. */
+    protected var _lastBytes :ByteArray;
 
     protected var _params :Object;
 

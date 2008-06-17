@@ -18,6 +18,17 @@ import flash.net.URLRequestMethod;
 
 import flash.utils.ByteArray;
 
+import mx.controls.ProgressBar;
+import mx.controls.TextArea;
+
+import mx.containers.TitleWindow;
+
+import mx.core.Application;
+
+import mx.events.CloseEvent;
+
+import mx.managers.PopUpManager;
+
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
@@ -53,7 +64,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * Uploads media to whirled from flash.
  */
-public class MediaUploader extends EventDispatcher
+public class MediaUploader extends TitleWindow
 {
     /**
      * Create a new media uploader.
@@ -62,6 +73,11 @@ public class MediaUploader extends EventDispatcher
     {
         _serverURL = serverURL;
         _authToken = authToken;
+
+        title = "Saving...";
+
+        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.centerPopUp(this);
     }
 
     /**
@@ -122,6 +138,8 @@ public class MediaUploader extends EventDispatcher
             }
             _loader = null;
         }
+
+        PopUpManager.removePopUp(this);
     }
 
     /**
@@ -152,6 +170,16 @@ public class MediaUploader extends EventDispatcher
             width: parseInt(bits[4]),
             height: parseInt(bits[5])
         };
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        var bar :ProgressBar = new ProgressBar();
+        bar.percentWidth = 100;
+        bar.indeterminate = true;
+        addChild(bar);
     }
 
     protected var _serverURL :String;
