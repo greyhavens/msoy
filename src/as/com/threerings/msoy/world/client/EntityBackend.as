@@ -177,7 +177,7 @@ public class EntityBackend extends ControlBackend
         title :String, panel :DisplayObject, w :Number, h :Number, 
         color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
     {
-        if (_sprite == null) {
+        if (_sprite == null || !(_sprite.parent is RoomView)) {
             return false;
         }
         return (_sprite.parent as RoomView).getRoomController().showEntityPopup(
