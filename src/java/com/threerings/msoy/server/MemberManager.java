@@ -220,6 +220,11 @@ public class MemberManager
         MemberObject user = (MemberObject) caller;
         if (user.location == null) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+//            // TEST: let's pretend that we KNOW that they're in a game... just move them home
+//            MemberObject bootee = MsoyServer.lookupMember(booteeId);
+//            MsoyServer.screg.moveBody(bootee, bootee.getHomeSceneId());
+//            listener.requestProcessed();
+//            return;
         }
 
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location.placeOid);
