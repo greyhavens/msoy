@@ -18,6 +18,7 @@ import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.RoomView;
@@ -78,23 +79,24 @@ public class SnapshotController extends Controller
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
     {
-        var output :ByteArray = new ByteArray();
         var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
 
-        var b :String = "--" + BOUNDARY + "\r\n";
-        output.writeBytes(
-            StringUtil.toBytes(
-                "\r\n" + b +
-                "Content-Disposition: form-data; name=\"member\"\r\n" +
-                "\r\n" + String(memberId) + "\r\n" + b +
-                "Content-Disposition: form-data; name=\"scene\"\r\n" +
-                "\r\n" + String(sceneId) + "\r\n" + b +
-                "Content-Disposition: form-data; name=\"snapshot\"; " +
-                "filename=\"snapshot.jpg\"\r\n" +
-                "Content-Type: image/jpg\r\n" +
-                "\r\n"));
+        const b :String = "--" + BOUNDARY + "\r\n";
+        var output :ByteArray = new ByteArray();
+        output.writeUTFBytes(
+            "\r\n" + b +
+//            "Content-Disposition: form-data; name=\"auth\"\r\n" +
+//            "\r\n" + Prefs.getSessionToken() + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"member\"\r\n" +
+            "\r\n" + String(memberId) + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"scene\"\r\n" +
+            "\r\n" + String(sceneId) + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"snapshot\"; " +
+            "filename=\"snapshot.jpg\"\r\n" +
+            "Content-Type: image/jpg\r\n" +
+            "\r\n");
         output.writeBytes(data);
-        output.writeBytes(StringUtil.toBytes("\r\n--" + BOUNDARY + "--\r\n"));
+        output.writeUTFBytes("\r\n--" + BOUNDARY + "--\r\n");
         return output;
     }
 
