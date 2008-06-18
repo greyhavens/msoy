@@ -12,6 +12,7 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 
 import flash.net.URLLoader;
 import flash.net.URLRequest;
@@ -19,6 +20,8 @@ import flash.net.URLRequest;
 import flash.system.Security;
 
 import flash.text.TextField;
+
+import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
 
@@ -321,6 +324,9 @@ public class GameLiaison
     protected function displayGuestFlowEarnage (amount :int) :void
     {
         if (_guestFlowPanel == null) {
+            _guestFlowPanel = LOADING;
+            _flowPanelAutoDismiss = new Timer(15000, 1);
+            _flowPanelAutoDismiss.addEventListener(TimerEvent.TIMER, clearGuestFlow);
             MultiLoader.getContents(
                 GUEST_FLOW_PANEL, function (result :DisplayObjectContainer) :void {
                 _guestFlowPanel = result;
@@ -351,11 +357,13 @@ public class GameLiaison
             _guestFlowPanel.x = 150;
             _guestFlowPanel.y = -_guestFlowPanel.height;
             Tweener.addTween(_guestFlowPanel, {y: 0, time: 0.75, transition: EASING_OUT});
+            _flowPanelAutoDismiss.start();
         }
     }
 
-    protected function clearGuestFlow (event :MouseEvent = null) :void
+    protected function clearGuestFlow (... ignored) :void
     {
+        _flowPanelAutoDismiss.reset();
         Tweener.addTween(_guestFlowPanel, 
             {y: -_guestFlowPanel.height, time: 0.75, transition: EASING_IN, 
                 onComplete: function () :void {
@@ -375,6 +383,9 @@ public class GameLiaison
 
     /** The "guest earned flow" popup. */
     protected var _guestFlowPanel :DisplayObjectContainer;
+
+    /** Automatically dismisses the flow panel. */
+    protected var _flowPanelAutoDismiss :Timer;
 
     /** The award display movie. */
     protected var _awardPanel :DisplayObjectContainer;
