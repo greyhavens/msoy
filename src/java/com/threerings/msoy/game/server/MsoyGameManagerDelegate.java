@@ -67,6 +67,15 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
+// TODO: If the game is a test game, the players never get any coins awarded, and so
+// stats are not saved, and the average number of minutes is not updated, which causes
+// all of the testing a creator may do to be invalid, as once it's listed the game will
+// start to calculate flow differently. Bleah.
+// Look- I can't edit this class. If I do that, I'll rip half this shit out that "adjusts" things
+// or "tweaks" numbers- I don't think we should do any of that. We should keep all the calculations
+// as straightforward as possible and let the game creator deal with the consequences.
+// OR mdb can continue to maintain this class with all his silly adjustments, and figure out
+// how he wants this to work.
 public class MsoyGameManagerDelegate extends RatingManagerDelegate
 {
     /** The string we append to an agent's trace log that's about to exceed 64K. */
@@ -221,6 +230,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
+
+        // TEMP? Log scores.
+        log.info("endGameWithScores [name=" + _content.game.name + ", id=" + _content.game.gameId +
+            ", payoutType=" + payoutType + ", playerOids=" + StringUtil.toString(playerOids) +
+            ", scores=" + StringUtil.toString(scores) + "].");
+
         int now = now();
 
         // convert the players into record indexed on player oid which will weed out duplicates and
