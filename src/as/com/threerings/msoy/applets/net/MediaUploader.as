@@ -31,6 +31,8 @@ import mx.managers.PopUpManager;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.applets.AppletContext;
+
 /**
  * @eventType flash.events.Event.COMPLETE
  */
@@ -69,12 +71,12 @@ public class MediaUploader extends TitleWindow
     /**
      * Create a new media uploader.
      */
-    public function MediaUploader (serverURL :String, authToken :String)
+    public function MediaUploader (ctx :AppletContext, serverURL :String, authToken :String)
     {
         _serverURL = serverURL;
         _authToken = authToken;
 
-        title = "Saving...";
+        title = ctx.APPLET.get("t.saving");
 
         PopUpManager.addPopUp(this, Application(Application.application), true);
         PopUpManager.centerPopUp(this);

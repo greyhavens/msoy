@@ -32,9 +32,9 @@ import com.threerings.msoy.applets.image.DisplayCanvas;
 
 public class ExistingFileChooser extends TitleWindow
 {
-    public function ExistingFileChooser (pack :EditableDataPack, filenames :Array)
+    public function ExistingFileChooser (ctx :RemixContext, filenames :Array)
     {
-        title = "Choose existing file";
+        title = ctx.REMIX.get("t.choose_file");
 
         var box :VBox = new VBox();
         addChild(box);
@@ -44,11 +44,11 @@ public class ExistingFileChooser extends TitleWindow
         box.addChild(grid);
 
         for each (var filename :String in filenames) {
-            addFile(grid, pack, filename);
+            addFile(grid, ctx.pack, filename);
         }
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(new CommandButton("Cancel", close));
+        bar.addChild(new CommandButton(ctx.REMIX.get("b.cancel"), close));
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);

@@ -68,8 +68,10 @@ public class ImageManipulator extends HBox
 
     public static const CLOSE :String = Event.CLOSE;
 
-    public function ImageManipulator (maxW :int = 400, maxH :int = 400, sizeRestrict :SizeRestriction = null)
+    public function ImageManipulator (
+        ctx :ImageContext, maxW :int = 400, maxH :int = 400, sizeRestrict :SizeRestriction = null)
     {
+        _ctx = ctx;
         this.maxWidth = maxW;
         this.maxHeight = maxH;
         this.width = maxW;
@@ -149,8 +151,8 @@ public class ImageManipulator extends HBox
         buts.setStyle("horizontalAlign", "center");
         buts.setStyle("paddingTop", 8);
         buts.setStyle("paddingBottom", 8);
-        buts.addChild(new CommandButton("Cancel", doClose, false));
-        buts.addChild(new CommandButton("Save", doClose, true));
+        buts.addChild(new CommandButton(_ctx.IMAGE.get("b.cancel"), doClose, false));
+        buts.addChild(new CommandButton(_ctx.IMAGE.get("b.save"), doClose, true));
         bar.addChild(buts);
 
         _editor.setBrushSize(10);
@@ -169,27 +171,27 @@ public class ImageManipulator extends HBox
 
     protected function createPositionControls (bar :VBox, sizeForced :Boolean) :void
     {
-        bar.addChild(createControlHeader("Position Image"));
+        bar.addChild(createControlHeader("h.position"));
 
         var box :HBox = new HBox();
-        box.addChild(addModeBtn(EditCanvas.MOVE, "move", "Adjust the image position"));
-        box.addChild(createTip("Move, Scale, and Rotate the Image to fit the area"));
+        box.addChild(addModeBtn(EditCanvas.MOVE, "move", "i.position"));
+        box.addChild(createTip("m.position"));
         bar.addChild(box);
 
-        _scaleSlider = addSlider(bar, "Scale Image", .25, 4, 1, _editor.setScale);
-        _rotSlider = addSlider(bar, "Rotate Image", -180, 180, 0, _editor.setRotation,
+        _scaleSlider = addSlider(bar, "l.scale", .25, 4, 1, _editor.setScale);
+        _rotSlider = addSlider(bar, "l.rotate", -180, 180, 0, _editor.setRotation,
             [ -180, -90, 0, 90, 180 ]);
 
         box = new HBox();
         var crop :CommandButton = new CommandButton(null, _editor.doCrop);
         crop.styleName = "cropButton";
-        crop.toolTip = "Crop";
+        crop.toolTip = _ctx.IMAGE.get("i.crop");
         box.addChild(crop);
-        box.addChild(createTip("Crop the image to the selected region"));
+        box.addChild(createTip("m.crop"));
         bar.addChild(box);
 
         box = new HBox();
-        box.addChild(addModeBtn(EditCanvas.SELECT, "select", "Select the active area"));
+        box.addChild(addModeBtn(EditCanvas.SELECT, "select", "i.select"));
 
         var innerBox :HBox = new HBox();
         innerBox.setStyle("horizontalGap", 0);
@@ -212,10 +214,10 @@ public class ImageManipulator extends HBox
         bar.addChild(box);
 
         // TODO: this will maybe change to a different UI
-        _zoomSlider = addSlider(bar, "Zoom", .25, 4, 1, _editor.setZoom,
+        _zoomSlider = addSlider(bar, "l.zoom", .25, 4, 1, _editor.setZoom,
             [ .25, .5, 1, 2, 4, 8 ]);
 
-        bar.addChild(new CommandCheckBox("Dark background", _editor.setDarkBackground));
+        bar.addChild(new CommandCheckBox(_ctx.IMAGE.get("b.dark_bg"), _editor.setDarkBackground));
 
         _editor.addEventListener(EditCanvas.SELECTION_CHANGE, handleSelectionChange);
         _selectionWidth.addEventListener(Event.CHANGE, handleSelectionTyped);
@@ -224,45 +226,45 @@ public class ImageManipulator extends HBox
 
     protected function createPaintControls (bar :VBox) :void
     {
-        bar.addChild(createControlHeader("Erase and Paint"));
+        bar.addChild(createControlHeader("h.paint"));
 
         var box :HBox = new HBox();
-        box.addChild(addModeBtn(EditCanvas.ERASE, "eraser", "Erase to transparency"));
-        box.addChild(createTip("Erase around the image. Paint your own touches!"));
+        box.addChild(addModeBtn(EditCanvas.ERASE, "eraser", "i.erase"));
+        box.addChild(createTip("m.erase"));
         bar.addChild(box);
 
         box = new HBox();
-        box.addChild(addModeBtn(EditCanvas.PAINT, "brush", "Paint a color"));
-        box.addChild(addModeBtn(EditCanvas.SELECT_COLOR, "eyedropper", "Pick a color"));
+        box.addChild(addModeBtn(EditCanvas.PAINT, "brush", "i.paint"));
+        box.addChild(addModeBtn(EditCanvas.SELECT_COLOR, "eyedropper", "i.dropper"));
         _colorPicker = new ColorPicker();
-        _colorPicker.toolTip = "The current painting color";
+        _colorPicker.toolTip = _ctx.IMAGE.get("i.color");
         _colorPicker.selectedColor = 0x0000FF;
         _colorPicker.addEventListener(ColorPickerEvent.CHANGE, handleColorPicked);
         box.addChild(_colorPicker);
         bar.addChild(box);
 
-        _brushSlider = addSlider(bar, "Brush Size", 1, 40, 10, _editor.setBrushSize,
+        _brushSlider = addSlider(bar, "l.brush", 1, 40, 10, _editor.setBrushSize,
             [ 1, 2, 5, 10, 20, 40 ]);
     }
 
     protected function createUndoControls (bar :VBox) :void
     {
-        bar.addChild(createControlHeader("Undo Mistakes"));
+        bar.addChild(createControlHeader("h.undo")); 
 
         var box :HBox = new HBox();
         box.addChild(_undo = new CommandButton(null, _editor.doUndo));
         box.addChild(_redo = new CommandButton(null, _editor.doRedo));
         bar.addChild(box);
 
-        _undo.toolTip = "Undo";
-        _redo.toolTip = "Redo";
+        _undo.toolTip = _ctx.IMAGE.get("i.undo");
+        _redo.toolTip = _ctx.IMAGE.get("i.redo");
         _undo.styleName = "undoButton";
         _redo.styleName = "redoButton";
         KeyboardManager.setShortcut(_undo, 26/*should be: Keyboard.Z*/, Keyboard.CONTROL);
         KeyboardManager.setShortcut(_redo, 25/*should be: Keyboard.Y*/, Keyboard.CONTROL);
     }
 
-    protected function createControlHeader (title :String) :HBox
+    protected function createControlHeader (transTitle :String) :HBox
     {
         var box :HBox = new HBox();
         box.percentWidth = 100;
@@ -272,26 +274,26 @@ public class ImageManipulator extends HBox
         var lbl :Label = new Label();
         lbl.setStyle("color", 0xFFFFFF);
         lbl.setStyle("fontWeight", "bold");
-        lbl.text = title;
+        lbl.text = _ctx.IMAGE.get(transTitle);
 
         box.addChild(lbl);
 
         return box;
     }
 
-    protected function createTip (text :String) :Text
+    protected function createTip (trans :String) :Text
     {
         var tip :Text = new Text();
         tip.selectable = false;
         tip.width = 95;
         tip.setStyle("fontFamily", "_sans");
         tip.setStyle("fontSize", 9);
-        tip.text = text;
+        tip.text = _ctx.IMAGE.get(trans);
         return tip;
     }
 
     protected function addSlider (
-        container :Container, name :String, min :Number, max :Number, value :Number,
+        container :Container, trans :String, min :Number, max :Number, value :Number,
         changeHandler :Function, tickValues :Array = null, snapInterval :Number = 0) :HSlider
     {
         if (tickValues == null) {
@@ -311,7 +313,7 @@ public class ImageManipulator extends HBox
         var lbl :Label = new Label();
         lbl.setStyle("fontSize", 10);
         lbl.setStyle("fontWeight", "bold");
-        lbl.text = name;
+        lbl.text = _ctx.IMAGE.get(trans);
 
         var slider :HSlider = new HSlider();
         slider.maxWidth = 100;
@@ -336,7 +338,7 @@ public class ImageManipulator extends HBox
         container.addChild(hbox);
 
         if (snapInterval == 0) {
-            var but :CommandButton = new CommandButton("Snap", function () :void {
+            var but :CommandButton = new CommandButton(_ctx.IMAGE.get("b.snap"), function () :void {
                 // snap it to the closest tickValue
                 var closeValue :Number = value;
                 var closeness :Number = Number.MAX_VALUE;
@@ -352,7 +354,7 @@ public class ImageManipulator extends HBox
 
                 slider.value = closeValue;
             });
-            but.toolTip = "Snap this slider to the closest value";
+            but.toolTip = _ctx.IMAGE.get("i.snap");
             but.setStyle("fontSize", 8);
             hbox.addChild(but);
         }
@@ -360,13 +362,13 @@ public class ImageManipulator extends HBox
         return slider;
     }
 
-    protected function addModeBtn (mode :int, styleBase :String, toolTip :String) :CommandButton
+    protected function addModeBtn (mode :int, styleBase :String, transTip :String) :CommandButton
     {
         var but :CommandButton = new CommandButton(null, setMode, mode);
         but.data = mode;
         but.styleName = styleBase + "Button";
         but.toggle = true;
-        but.toolTip = toolTip;
+        but.toolTip = _ctx.IMAGE.get(transTip);
         _buttons.push(but);
         return but;
     }
@@ -455,6 +457,8 @@ public class ImageManipulator extends HBox
     protected static const CONTROL_BAR_WIDTH :int = 150;
 
     protected static const HGAP :int = 8;
+
+    protected var _ctx :ImageContext;
 
     protected var _controlBar :VBox;
 

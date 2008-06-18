@@ -30,11 +30,13 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;
 
+import com.threerings.msoy.applets.AppletContext;
+
 public class Downloader extends TitleWindow
 {
-    public function Downloader ()
+    public function Downloader (ctx :AppletContext)
     {
-        title = "Downloading...";
+        title = ctx.APPLET.get("t.downloading");
 
         _loader = new URLLoader();
         _loader.dataFormat = URLLoaderDataFormat.BINARY;

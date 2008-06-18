@@ -28,7 +28,8 @@ import com.threerings.flex.PopUpUtil;
 
 public class PopupEditor extends TitleWindow
 {
-    public function PopupEditor (parent :DataEditor, entry :Object, validator :Validator = null)
+    public function PopupEditor (
+        ctx :RemixContext, parent :DataEditor, entry :Object, validator :Validator = null)
     {
         _parent = parent;
         _validator = validator;
@@ -38,23 +39,23 @@ public class PopupEditor extends TitleWindow
 
         var grid :Grid = new Grid();
         addChild(grid);
-        GridUtil.addRow(grid, "Name:", entry.name as String);
+        GridUtil.addRow(grid, ctx.REMIX.get("l.name"), entry.name as String);
         var desc :String = entry.info as String;
         if (desc == null) {
-            desc = "<none>";
+            desc = ctx.REMIX.get("m.none");
         }
-        GridUtil.addRow(grid, "Description:", desc);
-        GridUtil.addRow(grid, "Type:", type);
+        GridUtil.addRow(grid, ctx.REMIX.get("l.desc"), desc);
+        GridUtil.addRow(grid, ctx.REMIX.get("l.type"), type);
 
         if (type == "Number") {
             var min :Number = Number(entry.min);
             var max :Number = Number(entry.max);
 
             if (!isNaN(min)) {
-                GridUtil.addRow(grid, "Minimum:", String(min));
+                GridUtil.addRow(grid, ctx.REMIX.get("l.min"), String(min));
             }
             if (!isNaN(max)) {
-                GridUtil.addRow(grid, "Maximum:", String(max));
+                GridUtil.addRow(grid, ctx.REMIX.get("l.max"), String(max));
             }
         }
 
@@ -71,8 +72,8 @@ public class PopupEditor extends TitleWindow
         var buttonBar :HBox = new HBox();
         buttonBar.setStyle("horizontalAlign", "right");
         buttonBar.percentWidth = 100;
-        buttonBar.addChild(new CommandButton("Cancel", close, false));
-        _okBtn = new CommandButton("OK", close, true);
+        buttonBar.addChild(new CommandButton(ctx.REMIX.get("b.cancel"), close, false));
+        _okBtn = new CommandButton(ctx.REMIX.get("b.ok"), close, true);
         buttonBar.addChild(_okBtn);
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 

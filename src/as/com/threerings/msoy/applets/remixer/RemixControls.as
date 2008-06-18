@@ -38,8 +38,6 @@ import com.whirled.remix.data.EditableDataPack;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.StringUtil;
 
-import com.threerings.flash.CameraSnapshotter;
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
@@ -62,6 +60,8 @@ public class RemixControls extends HBox
 
     public function RemixControls (app :Application, viewStack :ViewStack)
     {
+        _ctx = new RemixContext(viewStack);
+
         percentWidth = 100;
         percentHeight = 100;
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -84,7 +84,7 @@ public class RemixControls extends HBox
 
         var label :Label = new Label();
         label.percentWidth = 100;
-        label.text = "Remixable Options";
+        label.text = _ctx.REMIX.get("t.options");
         label.setStyle("color", 0x4995C6);
         label.setStyle("textAlign", "center");
         label.setStyle("fontSize", 16);
@@ -109,11 +109,11 @@ public class RemixControls extends HBox
         vbox.addChild(FlexUtil.createSpacer(0, 8));
         vbox.addChild(butBox);
 
-        _cancelBtn = new CommandButton("Cancel", cancel);
+        _cancelBtn = new CommandButton(_ctx.REMIX.get("b.cancel"), cancel);
         _cancelBtn.styleName = "longThinOrangeButton";
         butBox.addChild(_cancelBtn);
 
-        butBox.addChild(_saveBtn = new CommandButton("Save Remixes", commit));
+        butBox.addChild(_saveBtn = new CommandButton(_ctx.REMIX.get("b.save_all"), commit));
         _saveBtn.styleName = "longThinOrangeButton";
         _saveBtn.enabled = false;
 
@@ -123,7 +123,7 @@ public class RemixControls extends HBox
 
             createPreviewer(params["type"] as String);
 
-            _ctx = new RemixContext(new EditableDataPack(media), viewStack);
+            _ctx.pack = new EditableDataPack(media);
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
             _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
         });
@@ -139,14 +139,14 @@ public class RemixControls extends HBox
         box.setStyle("paddingRight", 8);
 
         var label :Label = new Label();
-        label.text = "Component";
+        label.text = _ctx.REMIX.get("l.component");
         label.setStyle("textAlign", "left");
         label.setStyle("color", 0x2270A5);
         label.percentWidth = 50;
         box.addChild(label);
 
         label = new Label();
-        label.text = "Value / Remix";
+        label.text = _ctx.REMIX.get("l.value");
         label.setStyle("textAlign", "right");
         label.setStyle("color", 0x2270A5);
         label.percentWidth = 50;
@@ -175,7 +175,7 @@ public class RemixControls extends HBox
         box.addChild(right);
 
         var lbl :Label = new Label();
-        lbl.text = "Preview";
+        lbl.text = _ctx.REMIX.get("t.preview");
         lbl.percentWidth = 100;
         lbl.setStyle("color", 0xFFFFFF);
         lbl.setStyle("textAlign", "center");
@@ -340,7 +340,7 @@ public class RemixControls extends HBox
             _lastBytes = _ctx.pack.serialize();
         }
 
-        var uploader :MediaUploader = new MediaUploader(_params["server"], _params["auth"]);
+        var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
         uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
@@ -350,7 +350,7 @@ public class RemixControls extends HBox
 
     protected function handleUploadProgress (event :ProgressEvent) :void
     {
-        trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
+        //trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
     }
 
     protected function handleUploadComplete (event :Event) :void
@@ -387,8 +387,6 @@ public class RemixControls extends HBox
     protected var _saveBtn :CommandButton;
 
     protected var _ctx :RemixContext;
-
-    protected var _snapper :CameraSnapshotter;
 
     /** The serialized pack we're currently trying to send to the previewer. */
     protected var _bytes :ByteArray;

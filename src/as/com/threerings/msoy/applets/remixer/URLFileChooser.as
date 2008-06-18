@@ -23,11 +23,13 @@ import com.threerings.msoy.applets.util.Downloader;
 
 public class URLFileChooser extends Downloader
 {
-    public function URLFileChooser ()
+    public function URLFileChooser (ctx :RemixContext)
     {
-        super();
+        super(ctx);
 
-        title = "Get from URL";
+        _ctx = ctx;
+
+        title = ctx.REMIX.get("t.choose_url");
     }
 
     override public function startDownload (url :String = null, forcedName :String = null) :void
@@ -45,7 +47,7 @@ public class URLFileChooser extends Downloader
     override protected function configureUI (box :VBox) :void
     {
         var lbl :Label = new Label();
-        lbl.text = "Enter the URL of the file:";
+        lbl.text = _ctx.REMIX.get("m.url_prompt");
         box.addChild(lbl);
 
         _entry = new TextInput();
@@ -58,9 +60,9 @@ public class URLFileChooser extends Downloader
         super.configureUI(box);
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(_ok = new CommandButton("OK", startDownload));
+        bar.addChild(_ok = new CommandButton(_ctx.REMIX.get("b.ok"), startDownload));
         _ok.enabled = false;
-        bar.addChild(new CommandButton("Cancel", close));
+        bar.addChild(new CommandButton(_ctx.REMIX.get("b.cancel"), close));
         box.addChild(bar);
 
         _validator = new RegExpValidator();
@@ -92,6 +94,8 @@ public class URLFileChooser extends Downloader
         super.downloadStopped();
         _entry.enabled = true;
     }
+
+    protected var _ctx :RemixContext;
 
     protected var _entry :TextInput;
 

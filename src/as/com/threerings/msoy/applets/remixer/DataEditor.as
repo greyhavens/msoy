@@ -69,7 +69,7 @@ public class DataEditor extends FieldEditor
 
         var dataEditor :DataEditor = this;
         var change :CommandButton = createEditButton(function () :void {
-            new PopupEditor(dataEditor, _ctx.pack.getDataEntry(entry.name), validator);
+            new PopupEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name), validator);
         });
 
         return [ label, change, change ];

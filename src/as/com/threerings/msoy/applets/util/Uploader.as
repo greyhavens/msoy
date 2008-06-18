@@ -33,6 +33,8 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.utils.Base64Decoder;
 
+import com.threerings.msoy.applets.AppletContext;
+
 /**
  * Dispatched when we're closed.
  * value- null if the upload was cancelled or in error, or
@@ -45,8 +47,9 @@ import com.threerings.msoy.utils.Base64Decoder;
  */
 public class Uploader extends TitleWindow
 {
-    public function Uploader (serverURL :String, fileFilters :Array = null)
+    public function Uploader (ctx :AppletContext, serverURL :String, fileFilters :Array = null)
     {
+        _ctx = ctx;
         _serverURL = serverURL;
 
         _fileRef = new FileReference();
@@ -82,14 +85,14 @@ public class Uploader extends TitleWindow
 
     protected function handleFileSelected (event :Event) :void
     {
-        this.title = "Uploading " + _fileRef.name;
+        this.title = _ctx.APPLET.get("t.uploading", _fileRef.name);
 
         var box :VBox = new VBox();
         _label = new Label();
-        _label.text = "Uploading " + _fileRef.name;
+        _label.text = _ctx.APPLET.get("l.uploading", _fileRef.name);
         _progress = new ProgressBar();
         addChild(_progress);
-        addChild(_stop = new CommandButton("Cancel", close));
+        addChild(_stop = new CommandButton(_ctx.APPLET.get("b.cancel"), close));
 
         _progress.source = _fileRef;
 
@@ -106,8 +109,8 @@ public class Uploader extends TitleWindow
         _progress.visible = false;
         _progress.includeInLayout = false;
 
-        _label.text = "Error uploading: " + event.text;
-        _stop.label = "OK";
+        _label.text = _ctx.APPLET.get("e.upload", event.text);
+        _stop.label = _ctx.APPLET.get("b.ok");
         // wait to continue until the user hits "OK"
     }
 
@@ -116,6 +119,8 @@ public class Uploader extends TitleWindow
         var data :Array = [ _fileRef.name, event.data ];
         close(data);
     }
+
+    protected var _ctx :AppletContext;
 
     protected var _serverURL :String;
 

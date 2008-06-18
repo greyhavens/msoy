@@ -9,11 +9,14 @@ import mx.containers.ViewStack;
 
 import mx.core.UIComponent;
 
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Util;
 
 import com.whirled.remix.data.EditableDataPack;
 
-public class RemixContext
+import com.threerings.msoy.applets.image.ImageContext;
+
+public class RemixContext extends ImageContext
 {
     /** The data pack we're using. */
     public var pack :EditableDataPack;
@@ -21,10 +24,21 @@ public class RemixContext
     /**
      * Create a RemixContext.
      */
-    public function RemixContext (pack :EditableDataPack, viewStack :ViewStack)
+    public function RemixContext (viewStack :ViewStack)
     {
-        this.pack = pack;
+        super();
+
         _viewStack = viewStack;
+
+        _remixBundle = _msgMgr.getBundle("remix");
+    }
+
+    /**
+     * Access the remix message bundle.
+     */
+    public function get REMIX () :MessageBundle
+    {
+        return _remixBundle;
     }
 
     /**
@@ -138,5 +152,8 @@ public class RemixContext
 
     /** Lazy-initialized with a Boolean value. */
     protected var _hasOptionalFields :Object;
+
+    /** The remix message bundle. */
+    protected var _remixBundle :MessageBundle;
 }
 }

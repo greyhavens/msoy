@@ -14,6 +14,12 @@
       color: #000000;
    }
 </mx:Style>
+<mx:Metadata>
+    [ResourceBundle("global")]
+    [ResourceBundle("applet")]
+    [ResourceBundle("image")]
+    [ResourceBundle("remix")]
+</mx:Metadata>
 <mx:Script>
     <![CDATA[
         import com.threerings.msoy.applets.remixer.RemixControls;

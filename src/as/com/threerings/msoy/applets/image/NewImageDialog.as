@@ -39,9 +39,9 @@ import com.threerings.flex.PopUpUtil;
 
 public class NewImageDialog extends TitleWindow
 {
-    public function NewImageDialog (sizeRestriction :SizeRestriction)
+    public function NewImageDialog (ctx :ImageContext, sizeRestriction :SizeRestriction)
     {
-        title = "Create new image";
+        title = ctx.IMAGE.get("t.new_image");
 
         var box :VBox = new VBox();
         box.setStyle("horizontalAlign", "right");
@@ -93,19 +93,19 @@ public class NewImageDialog extends TitleWindow
         _fillColor = new ColorPicker();
         _fillColor.selectedColor = 0xFFFFFF;
         var trans :RadioButton = new RadioButton();
-        trans.label = "Transparent";
+        trans.label = ctx.IMAGE.get("l.transparent");
         trans.value = false;
         trans.selected = true;
         trans.group = _fillGroup;
 
         var fill :RadioButton = new RadioButton();
-        fill.label = "Fill";
+        fill.label = ctx.IMAGE.get("l.fill");
         fill.value = true;
         fill.group = _fillGroup;
 
         // kinda pointless to use Grids here...
         var grid :Grid = new Grid();
-        GridUtil.addRow(grid, "Width:", _width, "Height:", _height);
+        GridUtil.addRow(grid, ctx.IMAGE.get("l.width"), _width, ctx.IMAGE.get("l.height"), _height);
         box.addChild(grid);
 
         grid = new Grid();
@@ -113,8 +113,8 @@ public class NewImageDialog extends TitleWindow
         box.addChild(grid);
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(new CommandButton("Cancel", close));
-        bar.addChild(_okBtn = new CommandButton("OK", close, true));
+        bar.addChild(new CommandButton(ctx.IMAGE.get("b.cancel"), close));
+        bar.addChild(_okBtn = new CommandButton(ctx.IMAGE.get("b.ok"), close, true));
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, Application(Application.application), true);

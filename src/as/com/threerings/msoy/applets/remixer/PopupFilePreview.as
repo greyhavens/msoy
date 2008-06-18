@@ -86,33 +86,33 @@ public class PopupFilePreview extends TitleWindow
         hbox.addChild(controlBox);
         hbox.addChild(previewBox);
 
-        controlBox.addChild(makeHeader("Change..."));
+        controlBox.addChild(makeHeader(_ctx.REMIX.get("t.file_change")));
         if (externalAvail && imageOk) {
             controlBox.addChild(makeBullet(
-                new CommandLinkButton("Use one of your photos...", handleChoosePhoto)));
+                new CommandLinkButton(_ctx.REMIX.get("b.use_image"), handleChoosePhoto)));
         }
         controlBox.addChild(makeBullet(
-            new CommandLinkButton("Upload a new file...", handleChooseFile)));
+            new CommandLinkButton(_ctx.REMIX.get("b.use_newfile"), handleChooseFile)));
         if (imageOk) {
             controlBox.addChild(makeBullet(
-                new CommandLinkButton("Create a new image...", handleChooseNewImage)));
+                new CommandLinkButton(_ctx.REMIX.get("b.create_image"), handleChooseNewImage)));
         }
 // Flash security prevents us from using most loaded content as 'data'
 //        controlBox.addChild(makeBullet(
-//            new CommandLinkButton("Use file at a URL...", handleChooseURL)));
+//            new CommandLinkButton(_ctx.REMIX.get("b.use_url"), handleChooseURL)));
         var filenames :Array = ctx.pack.getFilenames();
         if (filenames.length > 0) {
             // we need to wrap the array commandbutton arg in another array...
             controlBox.addChild(makeBullet(
-                new CommandLinkButton("Use a file from the remix...",
+                new CommandLinkButton(_ctx.REMIX.get("b.use_file"),
                 handleChooseExistingFile, [ filenames ])));
         }
         if (imageOk && CameraSnapshotter.hasCamera()) {
             controlBox.addChild(makeBullet(
-                new CommandLinkButton("Take a snapshot with my webcam...", handleChooseCamera)));
+                new CommandLinkButton(_ctx.REMIX.get("b.use_snapshot"), handleChooseCamera)));
         }
 
-        previewBox.addChild(makeHeader("Preview"));
+        previewBox.addChild(makeHeader(_ctx.REMIX.get("t.preview")));
         _image = new DisplayCanvas(400, 400);
         _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
         previewBox.addChild(_image);
@@ -120,7 +120,7 @@ public class PopupFilePreview extends TitleWindow
         _label.maxWidth = 250;
 
         hbox = new HBox();
-        hbox.addChild(_edit = new CommandButton("Edit", doEdit));
+        hbox.addChild(_edit = new CommandButton(_ctx.REMIX.get("b.edit"), doEdit));
         hbox.addChild(_label);
         previewBox.addChild(hbox);
 
@@ -131,8 +131,8 @@ public class PopupFilePreview extends TitleWindow
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addChild(new CommandButton("Cancel", close, false));
-        buttonBar.addChild(_ok = new CommandButton("Save", close, true));
+        buttonBar.addChild(new CommandButton(_ctx.REMIX.get("b.cancel"), close, false));
+        buttonBar.addChild(_ok = new CommandButton(_ctx.REMIX.get("b.save"), close, true));
         box.addChild(buttonBar);
 
         setImage(entry.value, ctx.pack.getFile(name));
@@ -144,7 +144,7 @@ public class PopupFilePreview extends TitleWindow
     {
         if (filename == null) {
             _filename = null;
-            _label.text = "<no file>";
+            _label.text = _ctx.REMIX.get("m.no_file");
 
         } else {
             _filename = _ctx.createFilename(filename, bytes);
@@ -185,7 +185,7 @@ public class PopupFilePreview extends TitleWindow
         var lastDot :int = url.lastIndexOf(".");
         var name :String = "photo" + ((lastDot == -1) ? "" : url.substr(lastDot));
 
-        var downloader :Downloader = new Downloader();
+        var downloader :Downloader = new Downloader(_ctx);
         downloader.addEventListener(Event.COMPLETE, handleFileChosen);
         downloader.startDownload(url, name);
     }
@@ -198,25 +198,25 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseFile () :void
     {
-        var uploader :Uploader = new Uploader(_serverURL + "remixuploadsvc", getFilters());
+        var uploader :Uploader = new Uploader(_ctx, _serverURL + "remixuploadsvc", getFilters());
         uploader.addEventListener(Event.COMPLETE, handleFileUploadComplete);
     }
 
     protected function handleChooseNewImage () :void
     {
-        var newImage :NewImageDialog = new NewImageDialog(_sizeRestriction);
+        var newImage :NewImageDialog = new NewImageDialog(_ctx, _sizeRestriction);
         newImage.addEventListener(Event.COMPLETE, handleImageCreated);
     }
 
     protected function handleChooseURL () :void
     {
-        var ufc :URLFileChooser = new URLFileChooser();
+        var ufc :URLFileChooser = new URLFileChooser(_ctx);
         ufc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
     protected function handleChooseExistingFile (filenames :Array) :void
     {
-        var efc :ExistingFileChooser = new ExistingFileChooser(_ctx.pack, filenames);
+        var efc :ExistingFileChooser = new ExistingFileChooser(_ctx, filenames);
         efc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
@@ -235,7 +235,7 @@ public class PopupFilePreview extends TitleWindow
         var desc :MediaDesc = new MediaDesc(MediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]));
         var url :String = desc.getMediaPath();
         // now, download the mofo
-        var downloader :Downloader = new Downloader();
+        var downloader :Downloader = new Downloader(_ctx);
         downloader.addEventListener(Event.COMPLETE, handleFileChosen);
         downloader.startDownload(url, filename);
     }
@@ -271,7 +271,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseCamera () :void
     {
-        new CameraSnapshotControl(this, handleSnapshotTaken);
+        new CameraSnapshotControl(_ctx, this, handleSnapshotTaken);
     }
     
     protected function handleSnapshotTaken (bitmapData :BitmapData) :void
@@ -325,10 +325,10 @@ public class PopupFilePreview extends TitleWindow
             return null; // no filter: show all files
 
         case "DisplayObject":
-            return [ new FileFilter("Images and SWFs", "*.jpg;*.jpeg;*.gif;*.png;*.swf") ];
+            return [ new FileFilter(_ctx.REMIX.get("m.DisplayObject"), "*.jpg;*.jpeg;*.gif;*.png;*.swf") ];
 
         case "Image":
-            return [ new FileFilter("Images", "*.jpg;*.jpeg;*.gif;*.png") ];
+            return [ new FileFilter(_ctx.REMIX.get("m.Image"), "*.jpg;*.jpeg;*.gif;*.png") ];
 
         default:
             throw new Error("Don't understand " + _type + " files yet.");

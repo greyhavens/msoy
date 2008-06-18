@@ -26,9 +26,11 @@ import com.threerings.flex.FlexWrapper;
 
 public class CameraSnapshotControl extends TitleWindow
 {
-    public function CameraSnapshotControl (parent :UIComponent, returnFn :Function)
+    public function CameraSnapshotControl (
+        ctx :ImageContext, parent :UIComponent, returnFn :Function)
     {
-        title = "Capture from Camera";
+        _ctx = ctx;
+        title = ctx.IMAGE.get("t.camera");
         _snapper = new CameraSnapshotter();
         _returnFn = returnFn;
 
@@ -40,7 +42,7 @@ public class CameraSnapshotControl extends TitleWindow
         box.addChild(_wrapper);
 
         var sources :ComboBox = new ComboBox();
-        sources.prompt = "Choose camera:";
+        sources.prompt = ctx.IMAGE.get("p.cam_src");
         sources.dataProvider = Camera.names;
         sources.selectedItem = _snapper.getCameraName();
         sources.addEventListener(ListEvent.CHANGE, handleCameraChange);
@@ -59,9 +61,9 @@ public class CameraSnapshotControl extends TitleWindow
         box.addChild(hbox);
 
         var bar :ButtonBar = new ButtonBar();
-        bar.addChild(_cancel = new CommandButton("Cancel", doCancel));
-        bar.addChild(_snap = new CommandButton("Snapshot", takeSnapshot));
-        _ok = new CommandButton("OK", close, true);
+        bar.addChild(_cancel = new CommandButton(ctx.IMAGE.get("b.cancel"), doCancel));
+        bar.addChild(_snap = new CommandButton(ctx.IMAGE.get("b.snapshot"), takeSnapshot));
+        _ok = new CommandButton(ctx.IMAGE.get("b.ok"), close, true);
         _ok.enabled = false;
         bar.addChild(_ok);
         box.addChild(bar);
@@ -99,7 +101,7 @@ public class CameraSnapshotControl extends TitleWindow
             _snapper.clearSnapshot();
             _ok.enabled = false;
             _snap.enabled = true;
-            _cancel.label = "Cancel";
+            _cancel.label = _ctx.IMAGE.get("b.cancel");
         }
     }
 
@@ -108,7 +110,7 @@ public class CameraSnapshotControl extends TitleWindow
         _snapper.takeSnapshot();
         _ok.enabled = true;
         _snap.enabled = false;
-        _cancel.label = "Clear"
+        _cancel.label = _ctx.IMAGE.get("b.clear");
     }
 
     protected function close (save :Boolean) :void
@@ -118,6 +120,8 @@ public class CameraSnapshotControl extends TitleWindow
         }
         PopUpManager.removePopUp(this);
     }
+
+    protected var _ctx :ImageContext;
 
     protected var _returnFn :Function;
 
