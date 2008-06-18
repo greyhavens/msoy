@@ -93,6 +93,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../TurnTimer.html#_amInControl">_amInControl</a> : Function<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="../TurnTimer.html">TurnTimer</a></td>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bids">_bids</a> : <a href="../trick/Bids.html">Bids</a>
 <div class="summaryTableDescription"></div>
@@ -164,7 +168,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#TrickTurnTimer()">TrickTurnTimer</a>(gameCtrl:GameControl, table:<a href="../Table.html">Table</a>, bids:<a href="Bids.html">Bids</a>, trick:<a href="Trick.html">Trick</a>)</div>
+<a class="signatureLink" href="#TrickTurnTimer()">TrickTurnTimer</a>(gameCtrl:GameControl, table:<a href="../Table.html">Table</a>, bids:<a href="Bids.html">Bids</a>, trick:<a href="Trick.html">Trick</a>, useServerAgent:Boolean = false)</div>
 <div class="summaryTableDescription"> Creates a new timer.</div>
 </td><td class="summaryTableOwnerCol">TrickTurnTimer</td>
 </tr>
@@ -364,7 +368,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function TrickTurnTimer(gameCtrl:GameControl, table:<a href="../Table.html">Table</a>, bids:<a href="Bids.html">Bids</a>, trick:<a href="Trick.html">Trick</a>)</code><p> Creates a new timer. The bids and trick are used to determine the state of the game and 
+<code>public function TrickTurnTimer(gameCtrl:GameControl, table:<a href="../Table.html">Table</a>, bids:<a href="Bids.html">Bids</a>, trick:<a href="Trick.html">Trick</a>, useServerAgent:Boolean = false)</code><p> Creates a new timer. The bids and trick are used to determine the state of the game and 
       thus how much time the turn holder should be given to make a move. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -387,6 +391,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">trick</span>:<a href="Trick.html">Trick</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useServerAgent</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>

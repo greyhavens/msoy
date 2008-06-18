@@ -627,8 +627,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function prepare(deck:<a href="CardArray.html">CardArray</a>):void</code><p> Reset the deck on the server to the given deck. Note that this method should only be 
-      called by one of the players in the game, presumably the one for which 
-      GameSubControl.amInControl returns true. </p><span class="label">Parameters</span>
+      called by one of the players in the game (the one for which GameSubControl.amInControl
+      returns true) or the server agent. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">deck</span>:<a href="CardArray.html">CardArray</a></code></td>
@@ -644,9 +644,9 @@ showHideInherited();
 <div class="detailBody">
 <code>public function prepareAndDeal(deck:<a href="CardArray.html">CardArray</a>, numCards:int):void</code><p> Deal the given deck to all players, giving each player the same number of cards. Leftover
       cards will be held on the server. Note that this method should only be called by one of 
-      the players in the game, presumably the one for which GameSubControl.amInControl returns 
-      true. When the cards arrive to the player, each local hand will dispatch a HandEvent.DEALT
-      message.
+      the players in the game (the one for which GameSubControl.amInControl returns true) or the 
+      server agent. When the cards arrive to the player, each local hand will dispatch a 
+      HandEvent.DEALT message.
       </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

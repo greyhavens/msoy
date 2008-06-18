@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
+<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
 <title>com.whirled.game.GameSubControl</title>
 </head>
 <body>
@@ -92,6 +92,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#amInControl()">amInControl</a>():Boolean</div>
 <div class="summaryTableDescription">
      Returns true if we are in control of this game.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#amServerAgent()">amServerAgent</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Returns true if this control is connected to a server agent.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -417,6 +425,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SERVER_AGENT_ID">SERVER_AGENT_ID</a> : int = -2.147483648E9<div class="summaryTableDescription">[static] ID constant returned by {</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TO_EACH_THEIR_OWN">TO_EACH_THEIR_OWN</a> : int = 2<div class="summaryTableDescription">[static] Each player receives a payout based only on their score and not influenced by the
      scores of any other player.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
@@ -443,7 +455,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>seating:<a href="../game/SeatingSubControl.html">SeatingSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Access the 'seating' subcontrol.
+     Access the 'seating' subcontrol. Note that this will be null in "party" games,
+     because there's no such thing as seats.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get seating():<a href="../game/SeatingSubControl.html">SeatingSubControl</a></code>
@@ -460,6 +473,24 @@ showHideInherited();
 <div class="detailBody">
 <code>public function amInControl():Boolean</code><p>
      Returns true if we are in control of this game. False if another client is in control.
+     Always returns false when called from the game's server agent.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="amServerAgent()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">amServerAgent</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function amServerAgent():Boolean</code><p>
+     Returns true if this control is connected to a server agent.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -695,8 +726,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getMyId():int</code><p>
-     Returns this client's player id.
-     </p><p></p>
+     Returns this client's player id. If this method is called from the game's server agent,
+     the result is {</p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -713,6 +744,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getOccupantIds():Array</code><p>
      Returns the player ids of all occupants in the game room: players and watchers.
+     The occupants will be returned in no particular order, and unlike getPlayerIds() there
+     will never be any zeros in the array.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -844,8 +877,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function restartGameIn(seconds:int):void</code><p>
      Requests to start the game again in the specified number of seconds. This should only be
-     used for party games. Seated table games should have each player report that they are ready
-     again and the game will automatically start.
+     used for party games. Seated table games (including single player games) should have
+     each player report that they are ready again and the game will automatically start.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1048,6 +1081,14 @@ showHideInherited();
      against a global standard, but where the scores are subjective to the particular players
      currently playing. Each player vies to get their score the highest, and the coins are split
      up according to the relative scores. </p></div>
+<a name="SERVER_AGENT_ID"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SERVER_AGENT_ID</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SERVER_AGENT_ID:int = -2.147483648E9</code><p> ID constant returned by {</p></div>
 <a name="TO_EACH_THEIR_OWN"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
