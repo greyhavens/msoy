@@ -18,10 +18,11 @@ import flash.text.TextFieldAutoSize;
 
 import com.threerings.flash.TextFieldUtil;
 
+[SWF(width="1000", height="600")]
 public class GameStub extends Sprite
 {
     /** The id of the game we'd like to load. */
-    public static const GAME_ID :int = -3;
+    public static const GAME_ID :int = 12;
 
     public function GameStub ()
     {
