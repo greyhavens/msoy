@@ -14,6 +14,8 @@ import com.samskivert.servlet.user.AuthenticationFailedException;
 import com.samskivert.servlet.user.InvalidPasswordException;
 import com.samskivert.servlet.user.NoSuchUserException;
 
+import com.threerings.presents.data.InvocationCodes;
+
 import com.threerings.user.OOOUser;
 
 import com.threerings.underwire.server.GameActionHandler;
@@ -107,17 +109,18 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     protected String getUsername (String username)
         throws UnderwireException
     {
-        MemberName name = null;
+        MemberName name;
         try {
             name = MsoyServer.memberRepo.loadMemberName(username);
         } catch (PersistenceException pe) {
-            // handled with the next check
+            log.warning("Error looking up member", pe);
+            name = null; // handled with the next check
         }
         if (name == null) {
             log.warning("Unable to find member information [email=" + username + "].");
-            throw new UnderwireException("m.internal_error");
+            throw new UnderwireException(InvocationCodes.INTERNAL_ERROR);
         }
-        return Integer.toString(name.getMemberId());
+        return String.valueOf(name.getMemberId());
     }
 
     @Override // from UnderwireServlet
