@@ -18,7 +18,9 @@ import flash.text.TextFieldAutoSize;
 
 import com.threerings.flash.TextFieldUtil;
 
-[SWF(width="1000", height="600")]
+// On Kongregate, the width limit is 700, but there appears to be
+// no height limit.
+[SWF(width="700", height="600")]
 public class GameStub extends Sprite
 {
     /** The id of the game we'd like to load. */
