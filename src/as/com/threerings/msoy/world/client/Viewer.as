@@ -165,6 +165,11 @@ class PetViewerSprite extends PetSprite
         scaleUpdated();
     }
 
+    override public function getState () :String
+    {
+        return null;
+    }
+
     override protected function allowSetMedia () :Boolean
     {
         return true;
