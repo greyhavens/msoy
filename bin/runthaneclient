@@ -36,7 +36,11 @@ if [ -z "$THANE_INTERPRETER" ]; then
     exit 255
 fi
 
-if [ ! -f "$THANE_INTERPRETER" ]; then
+if [ ! -x "$THANE_INTERPRETER" ]; then
+    THANE_INTERPRETER=$MSOY_HOME/$THANE_INTERPRETER
+fi
+
+if [ ! -x "$THANE_INTERPRETER" ]; then
     echo "Thane interpreter not found; can't run bureau."
     exit 255
 fi

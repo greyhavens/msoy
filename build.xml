@@ -24,7 +24,7 @@
   <property name="version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="facebook"/>
+  <property name="projects" value="facebook,thane"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
@@ -189,10 +189,6 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.thane" artifactId="thane" version="0.0-SNAPSHOT"
-                  type="swc"/>
-      <dependency groupId="com.threerings.thane" artifactId="http" version="0.0-SNAPSHOT"
-                  type="swc"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="dependency.fileset"/>
@@ -540,9 +536,9 @@
       <arg value="-load-config"/>
       <arg value="dist/thane-config.xml"/>
       <arg value="-compiler.external-library-path"/>
-      <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/thane.swc"/>
       <arg value="-compiler.library-path"/>
-      <arg value="${deploy.dir}/lib/http-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/http.swc"/>
       <arg value="${deploy.dir}/lib/thane-env-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
@@ -562,7 +558,7 @@
       <arg value="-load-config"/>
       <arg value="dist/thane-config.xml"/>
       <arg value="-compiler.external-library-path"/>
-      <arg value="${deploy.dir}/lib/thane-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/thane.swc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
       <arg value="-compiler.source-path=src/thane"/>
       <arg value="-output"/>
@@ -571,13 +567,13 @@
     </java>
 
     <echo message="Turning .swfs into .abcs..."/>
-    <java outputproperty="dump" classpathref="classpath"
+    <java  classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/msoylib.abc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
     </java>
-    <java outputproperty="dump" classpathref="classpath"
+    <java  classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
@@ -958,8 +954,16 @@
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
   </target>
 
+  <target name="distprojects-extra" depends="distprojects">
+    <!-- this is not copied automatically :( -->
+    <copy file="projects/thane/dist/avmthane" todir="dist/lib"/>
+
+    <!-- executable permission must be set manually :( -->
+    <chmod perm="oug+x" file="dist/lib/avmthane"/>
+  </target>
+
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,mavendeps,distprojects,dist,flashapps,thane-client,javaapps,tests"
+  <target name="distall" depends="prepare,mavendeps,distprojects-extra,dist,flashapps,thane-client,javaapps,tests"
         description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
