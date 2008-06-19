@@ -84,7 +84,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /**
      * Handles WhirledGameService.awardTrophy, via MsoyGameManager
      */
-    public void awardTrophy (ClientObject caller, String ident,
+    public void awardTrophy (ClientObject caller, String ident, int playerId,
                              final InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -158,7 +158,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     }
 
     // from interface WhirledGameProvider
-    public void awardPrize (ClientObject caller, String ident,
+    public void awardPrize (ClientObject caller, String ident, int playerId,
                             final InvocationService.InvocationListener listener)
         throws InvocationException
     {

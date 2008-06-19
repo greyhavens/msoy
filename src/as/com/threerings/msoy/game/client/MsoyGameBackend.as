@@ -64,7 +64,7 @@ public class MsoyGameBackend extends WhirledGameBackend
     }
 
     // from BaseGameBackend
-    override protected function playerOwnsData (type :int, ident :String) :Boolean
+    override protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
     {
         var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
         return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)

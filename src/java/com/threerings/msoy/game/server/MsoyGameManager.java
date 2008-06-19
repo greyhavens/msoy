@@ -44,18 +44,18 @@ public class MsoyGameManager extends WhirledGameManager
 
     // from interface WhirledGameProvider
     public void awardTrophy (
-        ClientObject caller, String ident, InvocationService.InvocationListener listener)
+        ClientObject caller, String ident, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.awardTrophy(caller, ident, listener);
+        _awardDelegate.awardTrophy(caller, ident, playerId, listener);
     }
 
     // from interface WhirledGameProvider
     public void awardPrize (
-        ClientObject caller, String ident, InvocationService.InvocationListener listener)
+        ClientObject caller, String ident, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.awardPrize(caller, ident, listener);
+        _awardDelegate.awardPrize(caller, ident, playerId, listener);
     }
 
     // from interface WhirledGameProvider
