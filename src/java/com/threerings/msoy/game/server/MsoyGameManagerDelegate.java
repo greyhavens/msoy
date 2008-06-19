@@ -67,15 +67,6 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
-// TODO: If the game is a test game, the players never get any coins awarded, and so
-// stats are not saved, and the average number of minutes is not updated, which causes
-// all of the testing a creator may do to be invalid, as once it's listed the game will
-// start to calculate flow differently. Bleah.
-// Look- I can't edit this class. If I do that, I'll rip half this shit out that "adjusts" things
-// or "tweaks" numbers- I don't think we should do any of that. We should keep all the calculations
-// as straightforward as possible and let the game creator deal with the consequences.
-// OR mdb can continue to maintain this class with all his silly adjustments, and figure out
-// how he wants this to work.
 public class MsoyGameManagerDelegate extends RatingManagerDelegate
 {
     /** The string we append to an agent's trace log that's about to exceed 64K. */
@@ -710,16 +701,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 continue;
             }
 
-            if (actuallyAward) {
-                // accumulate their awarded flow into their flow record; we'll pay it all out in one
-                // database action when they leave the room or the game is shutdown
-                record.awarded += player.flowAward;
-                record.played++;
-
-                // update the player's member object on their world server
-                if (player.flowAward > 0) {
-                    MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
-                }
+            // update the player's member object on their world server
+            if (actuallyAward && player.flowAward > 0) {
+                MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
             }
 
             // report to the game that this player earned some flow
@@ -731,6 +715,11 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                     SpeakUtil.sendInfo(user, MsoyCodes.GAME_MSGS, "m.no_coins_dev");
                 }
             }
+
+            // accumulate their awarded flow into their flow record; we'll pay it all out in one
+            // database action when they leave the room or the game is shutdown
+            record.awarded += player.flowAward;
+            record.played++;
         }
     }
 
@@ -924,7 +913,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
 
         // see if we even care
-        if (record.awarded == 0 || MemberName.isGuest(record.memberId)) {
+        if (record.awarded == 0 || MemberName.isGuest(record.memberId) ||
+                _content.game.isDeveloperVersion()) {
             return;
         }
 
@@ -1074,11 +1064,11 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** The base flow per player per minute rate that can be awarded by this game. */
     protected int _flowPerMinute = -1; // marker for 'unknown'.
 
-    /** The average duration (in seconds) of this game. */
-    protected int _averageDuration;
-
-    /** The number of samples used to compute {@link #_averageDuration}. */
-    protected int _averageSamples;
+//    /** The average duration (in seconds) of this game. */
+//    protected int _averageDuration;
+//
+//    /** The number of samples used to compute {@link #_averageDuration}. */
+//    protected int _averageSamples;
 
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;
