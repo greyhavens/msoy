@@ -33,7 +33,7 @@ public class SubItemPanel extends PagedGrid
         _create.setVisible(_parent.sourceId == 0);
     }
 
-    // @Override // from UIObject
+    @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
@@ -48,25 +48,25 @@ public class SubItemPanel extends PagedGrid
         });
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new SubItemEntry((Item)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         controls.setWidget(0, 0, _create = new Button(CStuff.msgs.panelCreateNew()));

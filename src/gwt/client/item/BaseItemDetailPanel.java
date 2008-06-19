@@ -178,7 +178,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         }
         _belowTabs.add(content, title);
         if (select) {
-            _belowTabs.selectTab(0);
+            _belowTabs.selectTab(_belowTabs.getWidgetCount() - 1);
         }
     }
 
