@@ -33,6 +33,12 @@ public class Prize extends SubItem
     }
 
     @Override // from Item
+    public MediaDesc getPrimaryMedia ()
+    {
+        return getThumbnailMedia();
+    }
+
+    @Override // from Item
     public MediaDesc getThumbnailMedia ()
     {
         return getDefaultThumbnailMediaFor(targetType);
