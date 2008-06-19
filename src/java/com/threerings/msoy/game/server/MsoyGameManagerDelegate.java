@@ -710,10 +710,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             DObject user = MsoyGameServer.omgr.getObject(player.playerOid);
             if (user != null) {
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
-                                 player.flowAward, player.percentile);
-                if (!actuallyAward) {
-                    SpeakUtil.sendInfo(user, MsoyCodes.GAME_MSGS, "m.no_coins_dev");
-                }
+                                 player.flowAward, player.percentile, actuallyAward);
             }
 
             // accumulate their awarded flow into their flow record; we'll pay it all out in one

@@ -228,14 +228,15 @@ public class GameLiaison
     public function messageReceived (event :MessageEvent) :void
     {
         const name :String = event.getName();
+        const args :Array = event.getArgs();
         if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
-            _pendingAwards.push(event.getArgs()[0]);
+            _pendingAwards.push(args[0]);
             checkPendingAwards();
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE &&
-                _gctx.getPlayerObject().isGuest()) {
+                _gctx.getPlayerObject().isGuest() && Boolean(args[2]) /* for real */) {
             // if a guest earns flow, we want to show them the "please register" dialog
-            displayGuestFlowEarnage(int(event.getArgs()[0]));
+            displayGuestFlowEarnage(int(args[0]));
         }
     }
 
