@@ -567,13 +567,13 @@
     </java>
 
     <echo message="Turning .swfs into .abcs..."/>
-    <java  classpathref="classpath"
+    <java outputproperty="dump" classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/msoylib.abc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
     </java>
-    <java  classpathref="classpath"
+    <java outputproperty="dump" classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
