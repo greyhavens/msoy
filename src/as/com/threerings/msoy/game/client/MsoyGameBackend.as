@@ -11,8 +11,6 @@ import flash.geom.Point;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-import flash.utils.Dictionary;
-
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.WhirledGameBackend;
@@ -42,11 +40,8 @@ public class MsoyGameBackend extends WhirledGameBackend
         if (info != null) {
             var vizName :VizMemberName = info.username as VizMemberName;
             if (vizName != null) {
-                var headshot :Headshot = _headshots[occupant];
-                if (headshot == null) {
-                    _headshots[occupant] = headshot = new Headshot(vizName.getPhoto());
-                }
-                return headshot;
+                // now, we return a new one every time (in case the game wants to use two.)
+                return new Headshot(vizName.getPhoto());
             }
         }
 
@@ -69,9 +64,6 @@ public class MsoyGameBackend extends WhirledGameBackend
         var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
         return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)
     }
-
-    /** A cache of loaded avatar headshots, indexed by occupant id. */
-    protected var _headshots :Dictionary = new Dictionary();
 }
 }
 
