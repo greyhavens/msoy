@@ -1045,6 +1045,7 @@
     <copy todir="${approot.server}/${deploy.dir}/lib">
       <fileset dir="${deploy.dir}/lib">
         <include name="*.jar"/>
+        <include name="avmthane"/>
       </fileset>
     </copy>
 
@@ -1056,6 +1057,8 @@
         <include name="*.properties"/>
         <include name="*.conf"/>
         <include name="*.policy"/>
+        <include name="msoylib.abc"/>
+        <include name="MsoyThaneClient.abc"/>
         <!-- skip build_settings.properties since it's only needed at build time -->
         <exclude name="build_settings.properties"/>
       </fileset>
@@ -1077,6 +1080,7 @@
         <file name="swiftlycompiler"/>
         <file name="runcommon"/>
         <file name="runpolicy"/>
+        <file name="runthaneclient"/>
       </filelist>
     </copyfilelist>
     <copyfilelist dest="${approot.server}/tools/bin">
@@ -1167,6 +1171,7 @@
             <path>pages/buildresults/</path>
             <path>data/swiftly/projects/</path>
             <path>data/swiftly/build/</path>
+            <path>dist/lib/avmthane</path>
           </permission>
           <permission mode="555" recursive="true">
             <path>bin/</path>
