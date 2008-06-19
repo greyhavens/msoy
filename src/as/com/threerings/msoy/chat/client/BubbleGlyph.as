@@ -21,6 +21,8 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.TextFieldUtil;
 
+import com.threerings.msoy.utils.TextUtil;
+
 public class BubbleGlyph extends ChatGlyph
 {
     public function BubbleGlyph (
@@ -40,7 +42,9 @@ public class BubbleGlyph extends ChatGlyph
         txt.width = overlay.getTargetTextWidth();
         txt.autoSize = TextFieldAutoSize.CENTER;
 
-        setText(txt, defaultFmt, texts);
+        TextUtil.setText(txt, texts, defaultFmt);
+        // mouse enabled will get turned on when/if the mouse is hovering over an actual URL.
+        txt.mouseEnabled = false;
         makeGolden(txt);
         sizeFieldToText(txt);
 

@@ -19,6 +19,8 @@ import mx.events.FlexEvent;
 
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
+
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
@@ -203,12 +205,12 @@ public class ControlBar extends HBox
     /**
      * Checks to see which controls the client should see.
      */
-    protected function checkControls () :void
+    protected function checkControls () :Boolean
     {
         var isMember :Boolean = (_ctx.getMyName() != null &&
                                  !MemberName.isGuest(_ctx.getMyName().getMemberId()));
         if (numChildren > 0 && (isMember == _isMember)) {
-            return;
+            return false;
         }
 
         removeAllChildren();
@@ -228,20 +230,16 @@ public class ControlBar extends HBox
         // add our various control buttons
         addControlButtons();
 
-        // some elements that are common to guest and logged in users
         var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
-        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
-
-        var footerRight :SkinnableImage = new SkinnableImage();
-        footerRight.styleName = "controlBarFooterRight";
-        addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
+        addGroupChild(blank, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
 
         // and remember how things are set for now
         _isMember = isMember;
         _isMinimized = false;
+        return true;
     }
 
     protected function addControlButtons () :void
@@ -263,11 +261,11 @@ public class ControlBar extends HBox
     protected function addGroupChild (child :UIComponent, groupNames :Array) :void
     {
         addChild(child);
+        if (!ArrayUtil.contains(groupNames, UI_ALL)) {
+            groupNames.push(UI_ALL);
+        }
         for each (var groupName :String in groupNames) {
-            if (groupName != UI_ALL) {
-                _groups[groupName].push(child);
-            }
-            _groups[UI_ALL].push(child);
+            _groups[groupName].push(child);
         }
     }
 

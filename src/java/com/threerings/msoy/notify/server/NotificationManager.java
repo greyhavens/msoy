@@ -3,17 +3,16 @@
 
 package com.threerings.msoy.notify.server;
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.presents.annotation.EventThread;
-import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.data.NotifyMessage;
+import com.threerings.msoy.notify.data.FollowInviteNotification;
+import com.threerings.msoy.notify.data.InviteAcceptedNotification;
+import com.threerings.msoy.notify.data.GameInviteNotification;
 
 /**
  * Manages most notifications to users.
@@ -26,11 +25,7 @@ public class NotificationManager
      */
     public void notify (MemberObject target, Notification note)
     {
-        if (note.isPersistent()) {
-            target.notify(note);
-        } else {
-            dispatchChatOnlyNotification(target, note.getAnnouncement());
-        }
+        target.postMessage(MemberObject.NOTIFICATION, note);
     }
 
     /**
@@ -44,8 +39,7 @@ public class NotificationManager
         // PEER TODO: user may be resolved on another world server
         MemberObject target = MsoyServer.lookupMember(inviterId);
         if (target != null) {
-            dispatchChatOnlyNotification(target, MessageBundle.tcompose(
-                "m.invite_accepted", inviteeEmail, inviteeDisplayName));
+            notify(target, new InviteAcceptedNotification(inviteeEmail, inviteeDisplayName));
         }
     }
 
@@ -56,19 +50,17 @@ public class NotificationManager
                                   String game, int gameId)
     {
         if (target.isAvailableTo(inviterId)) {
-            dispatchChatOnlyNotification(
-                target, MessageBundle.tcompose("m.game_invite", inviter, inviterId, game, gameId));
+            notify(target, new GameInviteNotification(inviter, inviterId, game, gameId));
         }
     }
 
     /**
-     * Dispatch a chat-only notification to the specified target.
+     * Notifies the target player that they've been invited to follow someone.
      */
-    protected void dispatchChatOnlyNotification (MemberObject target, String msg)
+    public void notifyFollowInvite (MemberObject target, String inviter, int inviterId)
     {
-        SpeakUtil.sendMessage(target, new NotifyMessage(msg));
+        if (target.isAvailableTo(inviterId)) {
+            notify(target, new FollowInviteNotification(inviter, inviterId));
+        }
     }
-
-    /** The next id we'll use for a notification. */
-    protected int _nextNotificationId;
 }

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -15,9 +14,6 @@ import com.threerings.presents.client.InvocationService_ResultListener;
  */
 public interface MemberService extends InvocationService
 {
-    // from Java interface MemberService
-    function acknowledgeNotifications (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_InvocationListener) :void;
-
     // from Java interface MemberService
     function acknowledgeWarning (arg1 :Client) :void;
 

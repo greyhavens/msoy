@@ -48,8 +48,6 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.chat.client.JabberService;
 
-import com.threerings.msoy.notify.data.NotifyMessage;
-
 import com.threerings.msoy.world.client.WorldContext;
 
 /**

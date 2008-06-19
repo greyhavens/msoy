@@ -54,7 +54,9 @@ import com.threerings.flash.ColorUtil;
 
 import com.threerings.whirled.spot.data.SpotCodes;
 
+import com.threerings.msoy.utils.ElementExpiredEvent;
 import com.threerings.msoy.utils.ExpiringSet;
+import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -73,8 +75,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyScene;
 
 import com.threerings.msoy.game.client.MsoyGamePanel;
-
-import com.threerings.msoy.notify.data.NotifyMessage;
 
 public class ChatOverlay
     implements TabbedChatDisplay
@@ -121,7 +121,8 @@ public class ChatOverlay
         layout();
         displayChat(true);
 
-        _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME, localtypeExpired);
+        _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME);
+        _closedTabs.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, localtypeExpired);
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
@@ -452,9 +453,9 @@ public class ChatOverlay
         }
     }
 
-    protected function localtypeExpired (localtype :String) :void
+    protected function localtypeExpired (event :ElementExpiredEvent) :void
     {
-        _localtypeDisplayTimes.remove(localtype);
+        _localtypeDisplayTimes.remove(event.element as String);
     }
 
     protected function getOverlays () :Array
@@ -680,15 +681,8 @@ public class ChatOverlay
             return true;
         }
 
-        // let the notify message decide if the notification it dispatched is at all related
-        // to our current localtype
-        if (msg is NotifyMessage && (msg as NotifyMessage).isRelated(_localtype)) {
-            return true;
-        }
-
-        // If we're on the room tab, display all NotifyMessages, and any System message that does
-        // not have a custom localtype
-        if (type == BROADCAST || msg is NotifyMessage || 
+        // If we're on the room tab, display any System message that do not have a custom localtype
+        if (type == BROADCAST ||
             (msg is SystemMessage && msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
             // in WorldContext we pull out the scene and check the id against the current localtype
             if (_ctx is WorldContext) {
@@ -768,7 +762,8 @@ public class ChatOverlay
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
         // first parse the message text into plain and links
-        var texts :Array = parseLinks(msg.message, userSpeakFmt, shouldParseSpecialLinks(type));
+        var texts :Array = 
+            TextUtil.parseLinks(msg.message, userSpeakFmt, shouldParseSpecialLinks(type));
 
         // possibly insert the formatting
         if (forceSpeaker || alwaysUseSpeaker(type)) {
@@ -789,70 +784,7 @@ public class ChatOverlay
         return texts;
     }
 
-    /**
-     * Return an array of text strings, with any string needing special formatting preceeded by
-     * that format.
-     */
-    protected function parseLinks (
-        text :String, userSpeakFmt :TextFormat, parseSpecial :Boolean) :Array
-    {
-        // parse the text into an array with urls at odd elements
-        var array :Array = StringUtil.parseURLs(text);
-
-        // insert the appropriate format before each element
-        for (var ii :int = array.length - 1; ii >= 0; ii--) {
-            if (ii % 2 == 0) {
-                // normal text at even-numbered elements...
-                if (parseSpecial) {
-                    var specialBits :Array = parseSpecialLinks(String(array[ii]), userSpeakFmt);
-                    specialBits.unshift(ii, 1);
-                    array.splice.apply(array, specialBits);
-
-                } else {
-                    // just insert the speak format before the text
-                    array.splice(ii, 0, userSpeakFmt);
-                }
-
-            } else {
-                // links at the odd indexes
-                array.splice(ii, 0, createLinkFormat(String(array[ii]), userSpeakFmt));
-            }
-        }
-
-        return array;
-    }
-
-    /**
-     * Parse any "special links" (in the format "[text|url]") in the specified text.
-     *
-     * @return an array containing [ format, text, format, text, ... ].
-     */
-    protected function parseSpecialLinks (text :String, userSpeakFmt :TextFormat) :Array
-    {
-        var array :Array = [];
-
-        var result :Object;
-        do {
-            result = _specialLinkRegExp.exec(text);
-            if (result != null) {
-                var index :int = int(result.index);
-                array.push(userSpeakFmt, text.substring(0, index));
-                array.push(createLinkFormat(String(result[2]), userSpeakFmt), String(result[1]));
-
-                // and advance the text
-                var match :String = String(result[0]);
-                text = text.substring(index + match.length);
-
-            } else {
-                // it's just left-over text
-                array.push(userSpeakFmt, text);
-            }
-
-        } while (result != null);
-
-        return array;
-    }
-
+    
     /**
      * (Re)create the standard formats.
      */
@@ -871,21 +803,6 @@ public class ChatOverlay
         _userSpeakFmt = createChatFormat();
     }
 
-    /**
-     * Create a link format for the specified link text.
-     */
-    protected function createLinkFormat (url :String, userSpeakFmt :TextFormat) :TextFormat
-    {
-        var fmt :TextFormat = new TextFormat();
-        fmt.align = userSpeakFmt.align;
-        fmt.font = FONT;
-        fmt.size = Prefs.getChatFontSize();
-        fmt.underline = true;
-        fmt.color = 0x0093dd;
-        fmt.bold = true;
-        fmt.url = "event:" + url;
-        return fmt;
-    }
 
     /**
      * Get the expire time for the specified chat.
@@ -938,7 +855,6 @@ public class ChatOverlay
         case FEEDBACK:
         case INFO:
         case ATTENTION:
-        case NOTIFICATION:
             return true;
 
         default:
@@ -959,7 +875,6 @@ public class ChatOverlay
         case INFO: return INFO_COLOR;
         case FEEDBACK: return FEEDBACK_COLOR;
         case ATTENTION: return ATTENTION_COLOR;
-        case NOTIFICATION: return NOTIFY_COLOR;
         case CHANNEL: return CHANNEL_COLOR;
         case GAME: return GAME_COLOR;
         default: return BLACK;
@@ -1106,9 +1021,6 @@ public class ChatOverlay
 
             // otherwise
             return IGNORECHAT;
-
-        } else if (msg is NotifyMessage) {
-            return NOTIFICATION;
         }
 
         log.warning("Skipping received message of unknown type [msg=" + msg + "].");
@@ -1331,9 +1243,6 @@ public class ChatOverlay
     /** Type code for game chat. */
     protected static const GAME :int = 10 << 4;
 
-    /** Type code for notifications. */
-    protected static const NOTIFICATION :int = 11 << 4;
-
     /** Our internal code for channel chat. This is currently unused, as all channel chat is 
      * associated with a place.  If we have private, non-place channels in the future, this will
      * be used again. */
@@ -1350,7 +1259,6 @@ public class ChatOverlay
     protected static const INFO_COLOR :uint = 0xAAAA00;
     protected static const ATTENTION_COLOR :uint = 0xFF5000;
     protected static const GAME_COLOR :uint = 0x777777;
-    protected static const NOTIFY_COLOR :uint = 0x008A83;
     protected static const CHANNEL_COLOR :uint = 0x5500AA;
     protected static const BLACK :uint = 0x000000;
     protected static const WHITE :uint = 0xFFFFFF;
@@ -1410,9 +1318,6 @@ public class ChatOverlay
 
     /** The format for user-entered text. */
     protected var _userSpeakFmt :TextFormat;
-
-    /** Matches "special links", which are in the format "[text|url]". */
-    protected var _specialLinkRegExp :RegExp = new RegExp("\\[(.+?)\\|(.+?)\\]");
 
     /** The history scrollbar. */
     protected var _historyBar :VScrollBar;

@@ -6,14 +6,20 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
+
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+
 import flash.text.TextField;
+
 import flash.utils.Timer;
 
+import mx.core.UIComponent;
+
 import com.threerings.flex.CommandButton;
+
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
@@ -24,6 +30,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.RoomObject;
@@ -59,20 +66,9 @@ public class WorldControlBar extends ControlBar
         }
     }
 
-    /**
-     * Sets whether or not there are notifications available for review.
-     */
-    public function setNotificationsAvailable (avail :Boolean) :void
+    public function setNotificationDisplay (notificationDisplay :UIComponent) :void
     {
-        // NOOP - notifications do not persist: TODO: fully rip out the old notification system
-    }
-
-    /**
-     * Sets whether the notification display is showing or not. Called by the NotificationDirector.
-     */
-    public function setNotificationsShowing (showing :Boolean) :void
-    {
-        // NOOP - see setNotificationsAvailable
+        _notificationDisplay = notificationDisplay;
     }
 
     // from ControlBar
@@ -132,15 +128,27 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
-    override protected function checkControls () :void
+    override protected function checkControls () :Boolean
     {
-        super.checkControls();
+        var retVal :Boolean = super.checkControls();
+        // if our parent didn't recheck, we don't either
+        if (!retVal) {
+            return retVal;
+        }
+
         _isEditing = false;
+
+        if (_notificationDisplay != null) {
+            addGroupChild(_notificationDisplay, [ UI_STD, UI_EDIT ]);
+        }
+        
+        return retVal;
     }
 
     // from ControlBar
     override protected function addControlButtons () :void
     {
+        super.addControlButtons(); 
         addGroupChild(_roomeditBtn, [ UI_STD ]);
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit
@@ -267,6 +275,9 @@ public class WorldControlBar extends ControlBar
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;
+
+    /** The little gray area that displays incoming notifications. */
+    protected var _notificationDisplay :UIComponent;
 
     /** We stop showing the "type here to chat" tip after the user reaches level 5. */
     protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;

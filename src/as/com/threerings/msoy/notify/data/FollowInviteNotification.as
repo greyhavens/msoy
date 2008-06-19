@@ -8,23 +8,24 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.util.MessageBundle;
 
 /**
- * Notifies a user that they've leveled up.
+ * Notifies a user they have been requested to follow someone
  */
-public class LevelUpNotification extends Notification
+public class FollowInviteNotification extends Notification
 {
     // from Notification
     override public function getAnnouncement () :String
     {
-        return MessageBundle.tcompose("m.level_up", _newLevel);
+        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviterId);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _newLevel = ins.readInt();
+        _inviter = ins.readField(String) as String;
+        _inviterId = ins.readInt();
     }
 
-    /** Our new level. */
-    protected var _newLevel :int;
+    protected var _inviter :String;
+    protected var _inviterId :int;
 }
 }

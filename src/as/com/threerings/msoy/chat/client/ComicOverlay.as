@@ -35,8 +35,6 @@ import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.data.all.RoomName;
 
-import com.threerings.msoy.notify.data.NotifyMessage;
-
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -102,8 +100,8 @@ public class ComicOverlay extends ChatOverlay
         var displayed :Boolean = false;
         var type :int = getType(msg, false);
 
-        // display all notify messages, and system messages if they don't have a custom localtype.
-        if (type == BROADCAST || msg is NotifyMessage || 
+        // display all system messages if they don't have a custom localtype.
+        if (type == BROADCAST ||
             (msg is SystemMessage && (msg.localtype == ChatCodes.PLACE_CHAT_TYPE || 
                                       msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
             displayed = displayBubble(msg, type);
@@ -263,7 +261,6 @@ public class ComicOverlay extends ChatOverlay
         case FEEDBACK:
         case ATTENTION:
         case BROADCAST:
-        case NOTIFICATION:
             return createAndAddBubble(msg, type, null, null);
 
         case PLACE: 
@@ -307,8 +304,8 @@ public class ComicOverlay extends ChatOverlay
         if (cloud == null) {
             var local :Point = 
                 speakerBubblePos == null ? null : _scrollOverlay.globalToLocal(speakerBubblePos);
-            var maxBubbles :int = speaker == null ? MAX_NOTIFICATION_BUBBLES : MAX_BUBBLES_PER_USER;
-            cloud = new BubbleCloud(this, maxBubbles, local, _target.width, _target.height);
+            cloud = 
+                new BubbleCloud(this, MAX_BUBBLES_PER_USER, local, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
         cloud.addBubble(bubble);
@@ -334,7 +331,6 @@ public class ComicOverlay extends ChatOverlay
         switch (placeOf(type)) {
         case INFO:
         case ATTENTION:
-        case NOTIFICATION:
             return drawRectangle;
         }
 
@@ -578,9 +574,6 @@ public class ComicOverlay extends ChatOverlay
 
     /** The maximum number of bubbles to show per user. */
     protected static const MAX_BUBBLES_PER_USER :int = 3;
-
-    /** The maximum number of notification bubbles to show. */
-    protected static const MAX_NOTIFICATION_BUBBLES :int = 5;
 }
 }
 

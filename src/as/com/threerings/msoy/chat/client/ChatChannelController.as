@@ -29,6 +29,7 @@ import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
+import com.threerings.msoy.utils.ElementExpiredEvent;
 import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -62,7 +63,8 @@ public class ChatChannelController
             _channel.type != ChatChannel.JABBER_CHANNEL) {
             _occList = new ChannelPlayerList(new MsoyNameLabelCreator(ctx));
 
-            _departing = new ExpiringSet(3.0, handleDeparted);
+            _departing = new ExpiringSet(3);
+            _departing.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, handleDeparted);
 
             _ccsvc = _ctx.getClient().requireService(ChatChannelService) as ChatChannelService;
             connect();
@@ -253,10 +255,10 @@ public class ChatChannelController
         _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
     }
 
-    protected function handleDeparted (name :MemberName) :void
+    protected function handleDeparted (event :ElementExpiredEvent) :void
     {
         if (_occList != null) {
-            _occList.removeItem(name);
+            _occList.removeItem(event.element as MemberName);
         }
     }
 

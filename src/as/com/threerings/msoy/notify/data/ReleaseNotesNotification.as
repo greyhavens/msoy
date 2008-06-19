@@ -15,13 +15,5 @@ public class ReleaseNotesNotification extends Notification
     {
         return "m.new_release_notes";
     }
-
-    override public function getDisplay () :UIComponent
-    {
-        var txt :Text = new Text();
-        txt.text = "These are the new cool release notes, bla de bla.";
-        txt.percentWidth = 100;
-        return txt;
-    }
 }
 }

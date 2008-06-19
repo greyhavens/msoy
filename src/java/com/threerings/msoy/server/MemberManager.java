@@ -39,14 +39,17 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.notify.data.LevelUpNotification;
-import com.threerings.msoy.notify.data.NotifyMessage;
+
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.person.server.MailManager;
+
 import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberLocation;
@@ -55,12 +58,17 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.notify.data.LevelUpNotification;
+
 import com.threerings.msoy.server.persist.FlowRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -315,8 +323,8 @@ public class MemberManager
         }
 
         // issue the follow invitation to the target
-        String msg = MessageBundle.tcompose("m.follow_invite", user.memberName, user.getMemberId());
-        SpeakUtil.sendMessage(target, new NotifyMessage(msg));
+        MsoyServer.notifyMan.notifyFollowInvite(
+            target, user.memberName.toString(), user.getMemberId());
 
         // add this player to our followers set, if they ratify the follow request before we leave
         // our current location, the wiring up will be complete; if we leave the room before they
@@ -456,23 +464,6 @@ public class MemberManager
             }
             protected String _groupName;
         });
-    }
-
-    // from interface MemberProvider
-    public void acknowledgeNotifications (ClientObject caller, int[] ids,
-                                          InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        MemberObject user = (MemberObject) caller;
-
-        user.startTransaction();
-        try {
-            for (int id : ids) {
-                user.acknowledgeNotification(id);
-            }
-        } finally {
-            user.commitTransaction();
-        }
     }
 
     // from interface MemberProvider
@@ -670,7 +661,7 @@ public class MemberManager
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
                 public void handleSuccess () {
-                    member.notify(new LevelUpNotification(newLevel));
+                    MsoyServer.notifyMan.notify(member, new LevelUpNotification(newLevel));
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" +

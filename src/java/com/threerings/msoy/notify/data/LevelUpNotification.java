@@ -22,12 +22,6 @@ public class LevelUpNotification extends Notification
     }
 
     @Override // from Notification
-    public boolean isPersistent ()
-    {
-        return false;
-    }
-
-    // from Notification
     public String getAnnouncement ()
     {
         return MessageBundle.tcompose("m.level_up", _newLevel);

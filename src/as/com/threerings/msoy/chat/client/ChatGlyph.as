@@ -103,45 +103,6 @@ public class ChatGlyph extends Sprite
     }
 
     /**
-     * Populate the TextField with the specified formatted strings.
-     *
-     * @param texts A mixed array of String and TextFormat objects, with
-     * each String being rendered in the TextFormat preceding it, or the
-     * default format if not preceded by a TextFormat.
-     */
-    protected function setText (
-        txt :TextField, defaultFmt :TextFormat, texts :Array) :void
-    {
-        var fmt :TextFormat = null;
-        var length :int = 0;
-        for each (var o :Object in texts) {
-            if (o is TextFormat) {
-                fmt = (o as TextFormat);
-
-            } else {
-                // Note: we should just be able to set the defaultFormat
-                // for the entire field and then format the different
-                // stretches, but SURPRISE! It doesn't quite work right,
-                // so we format every goddamn piece of the text by hand.
-                var append :String = String(o);
-                var newLength :int = length + append.length;
-                txt.appendText(append);
-                if (fmt == null) {
-                    fmt = defaultFmt;
-                }
-                if (length != newLength) {
-                    txt.setTextFormat(fmt, length, newLength);
-                }
-                fmt = null;
-                length = newLength;
-            }
-        }
-
-        // mouse enabled will get turned on when/if the mouse is hovering over an actual URL.
-        txt.mouseEnabled = false;
-    }
-
-    /**
      * After the text is set and positioned, and any desired
      * adjustments have been made, this "bakes-in" the text size
      * into the TextField's width/height.

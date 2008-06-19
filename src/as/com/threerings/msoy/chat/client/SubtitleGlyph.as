@@ -9,6 +9,8 @@ import flash.text.TextFormat;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.utils.TextUtil;
+
 public class SubtitleGlyph extends ChatGlyph
 {
     /** If this glyph is showing chat history, the index into the HistoryList
@@ -34,7 +36,9 @@ public class SubtitleGlyph extends ChatGlyph
         txt.autoSize = TextFieldAutoSize.LEFT;
 
         // then set the text
-        setText(txt, defaultFmt, texts);
+        TextUtil.setText(txt, texts, defaultFmt);
+        // mouse enabled will get turned on when/if the mouse is hovering over an actual URL.
+        txt.mouseEnabled = false;
         sizeFieldToText(txt);
 
         // add the text and draw a shape around it

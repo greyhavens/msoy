@@ -44,8 +44,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
-import com.threerings.msoy.notify.data.NotifyMessage;
-
 public class ChatTabBar extends HBox
     implements ChatDisplay
 {
@@ -229,10 +227,10 @@ public class ChatTabBar extends HBox
         }
 
         var index :int = -1;
-        // If this is a SystemMessage, NotifyMessage or broadcast with PLACE_CHAT_TYPE localtype, 
+        // If this is a SystemMessage, broadcast with PLACE_CHAT_TYPE localtype, 
         // it's aimed for the first tab, regardless of that tab's actual localtype
         if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE &&
-            (msg is SystemMessage || msg is NotifyMessage || 
+            (msg is SystemMessage ||
             (msg is UserMessage && (msg as UserMessage).mode == ChatCodes.BROADCAST_MODE))) {
             index = 0;
         } else {

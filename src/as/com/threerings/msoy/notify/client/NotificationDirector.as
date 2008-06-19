@@ -19,10 +19,13 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.utils.ElementExpiredEvent;
 import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.client.MemberService;
@@ -43,56 +46,37 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.data.FollowInviteNotification;
+import com.threerings.msoy.notify.data.GameInviteNotification;
+import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 public class NotificationDirector extends BasicDirector
-    implements AttributeChangeListener, SetListener
+    implements AttributeChangeListener, SetListener, MessageListener
 {
     public function NotificationDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
-        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME, memberExpired);
+        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
+        _membersLoggingOff.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, memberExpired);
+        _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
+        _currentNotifications.addEventListener(
+            ElementExpiredEvent.ELEMENT_EXPIRED, notificationExpired);
+
+        var controlBar :WorldControlBar = ctx.getTopPanel().getControlBar() as WorldControlBar;
+        if (controlBar != null) {
+            controlBar.setNotificationDisplay(_notificationDisplay = new NotificationDisplay(ctx));
+        }
 
         // ensure that the compiler includes these necessary symbols
         var c :Class;
         c = LevelUpNotification;
         c = ReleaseNotesNotification;
-    }
-
-    /**
-     * Display all currently pending notifications.
-     */
-    public function displayNotifications () :void
-    {
-        if (_notifyPanel != null) {
-            _notifyPanel.close();
-            return;
-        }
-
-        _notifyPanel = new NotificationDisplay(_wctx);
-        _notifyPanel.open();
-        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
-            if (notif.isPersistent()) {
-                _notifyPanel.addNotification(notif);
-            }
-        }
-        updateNotificationButton(true);
-    }
-
-    public function notificationPanelClosed () :void
-    {
-        _notifyPanel = null;
-        updateNotificationButton(false);
-    }
-
-    public function acknowledgeNotification (id :int) :void
-    {
-        var ids :TypedArray = TypedArray.create(int);
-        ids.push(id);
-        acknowledgeNotifications(ids);
+        c = InviteAcceptedNotification;
+        c = GameInviteNotification;
+        c = FollowInviteNotification;
     }
 
     // from interface AttributeChangeListener
@@ -101,7 +85,7 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.NEW_MAIL_COUNT) {
             if (event.getValue() > 0 && !event.getOldValue()) {
-                dispatchChatNotification("m.new_mail");
+                addNotification(Msgs.NOTIFY.get("m.new_mail"));
             }
         }
     }
@@ -110,13 +94,10 @@ public class NotificationDirector extends BasicDirector
     public function entryAdded (event :EntryAddedEvent) :void
     {
         var name :String = event.getName();
-        if (name == MemberObject.NOTIFICATIONS) {
-            updateNotifications();
-
-        } else if (name == MemberObject.FRIENDS) {
+        if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
-            dispatchChatNotification(MessageBundle.tcompose(
-                "m.friend_added", entry.name, entry.name.getMemberId()));
+            addNotification(
+                Msgs.NOTIFY.get("m.friend_added", entry.name, entry.name.getMemberId()));
         }
     }
 
@@ -137,9 +118,7 @@ public class NotificationDirector extends BasicDirector
                         _membersLoggingOff.remove(entry);
                     } else {
                         var memberId :int = entry.name.getMemberId();
-                        dispatchChatNotification(
-                            MessageBundle.tcompose("m.friend_online", entry.name, memberId),
-                            NotifyMessage.LOGON_LOCALTYPE + ":" + memberId);
+                        addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
                     }
                 } else {
                     _membersLoggingOff.add(entry);
@@ -152,35 +131,34 @@ public class NotificationDirector extends BasicDirector
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         var name :String = event.getName();
-        if (name == MemberObject.NOTIFICATIONS) {
-            // delete any memories associated with this notification
-            var id :int = event.getKey() as int;
-            delete _acked[id];
-            delete _announced[id];
-            // and update the button if applicable
-            updateNotifications();
-
-        } else if (name == MemberObject.FRIENDS) {
+        if (name == MemberObject.FRIENDS) {
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            dispatchChatNotification(MessageBundle.tcompose("m.friend_removed", oldEntry.name));
+            addNotification(Msgs.NOTIFY.get("m.friend_removed", oldEntry.name));
         }
     }
 
-    protected function memberExpired (entry :FriendEntry) :void
+    // from interface MessageListener
+    public function messageReceived (event :MessageEvent) :void
     {
+        var name :String = event.getName();
+        if (name == MemberObject.NOTIFICATION) {
+            var notification :Notification = event.getArgs()[0] as Notification;
+            if (notification != null) {
+                addNotification(Msgs.NOTIFY.xlate(notification.getAnnouncement()));
+            }
+        }
+    }
+
+    public function getCurrentNotifications () :Array
+    {
+        return _notifications;
+    }
+
+    protected function memberExpired (event :ElementExpiredEvent) :void
+    {
+        var entry :FriendEntry = event.element as FriendEntry;
         var memberId :int = entry.name.getMemberId();
-        dispatchChatNotification(MessageBundle.tcompose("m.friend_offline", entry.name, memberId),
-                                 NotifyMessage.LOGOFF_LOCALTYPE + ":" + memberId);
-    }
-
-    protected function acknowledgeNotifications (notifyIds :TypedArray /* of int */) :void
-    {
-        // record that we've sent off an ack to the server, from here on out we act like
-        // each of these notifications doesn't exist on the client...
-        for each (var id :int in notifyIds) {
-            _acked[id] = true;
-        }
-        _msvc.acknowledgeNotifications(_wctx.getClient(), notifyIds, new ReportingListener(_wctx));
+        addNotification(Msgs.NOTIFY.get("m.friend_offline", entry.name, memberId));
     }
 
     // from BasicDirector
@@ -190,22 +168,7 @@ public class NotificationDirector extends BasicDirector
         client.getClientObject().addListener(this);
 
         // and, let's always update the control bar button
-        updateNotifications();
         showStartupNotifications();
-    }
-
-    // from BasicDirector
-    override protected function registerServices (client :Client) :void
-    {
-        super.registerServices(client);
-        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
-    }
-
-    // from BasicDirector
-    override protected function fetchServices (client :Client) :void
-    {
-        super.fetchServices(client);
-        _msvc = (client.requireService(MemberService) as MemberService);
     }
 
     /**
@@ -217,90 +180,51 @@ public class NotificationDirector extends BasicDirector
     {
         var us :MemberObject = _wctx.getMemberObject();
         if (us.newMailCount > 0) {
-            dispatchChatNotification("m.new_mail");
+            addNotification(Msgs.NOTIFY.get("m.new_mail"));
         }
 
         // and so forth..
     }
 
-    protected function updateNotifications () :void
+    protected function addNotification (notification :String) :void
     {
-        var hasPersistent :Boolean = false;
-        var shouldAck :TypedArray = TypedArray.create(int);
-        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
-            // skip it if we've already acked it
-            if (_acked[notif.id]) {
-                continue;
-            }
-            // if we haven't announced it, do that now
-            if (!_announced[notif.id]) {
-                _announced[notif.id] = true;
-                var ann :String = notif.getAnnouncement();
-                if (ann != null) {
-                    dispatchChatNotification(ann);
-                }
-                // if it's announcement-only, ack it
-                if (!notif.isPersistent()) {
-                    shouldAck.push(notif.id);
-                }
-            }
-            if (notif.isPersistent()) {
-                hasPersistent = true;
-                // if the panel is currently showing, add the notification
-                if (_notifyPanel != null) {
-                    _notifyPanel.addNotification(notif);
-                }
-            }
-        }
-
-        // ack those we need to ack
-        if (shouldAck.length > 0) {
-            acknowledgeNotifications(shouldAck);
-        }
-        // and update the button if there are any persistent notifications
-        var controlBar :WorldControlBar = (_wctx.getTopPanel().getControlBar() as WorldControlBar);
-        if (controlBar != null) {
-            controlBar.setNotificationsAvailable(hasPersistent);
-        }
+        // we can't just store the notifications in the array, because some notifications may be
+        // identical (bob invites you to play captions twice within 15 minutes);
+        _currentNotifications.add(_lastId++);
+        _notifications.push(notification);
+        _notificationDisplay.displayNotification(notification);
     }
 
-    /**
-     * Dispatch a notification chat message to the user.
-     */
-    protected function dispatchChatNotification (text :String, 
-        localtype :String = ChatCodes.USER_CHAT_TYPE) :void
+    protected function notificationExpired (event :ElementExpiredEvent) :void
     {
-        var msg :NotifyMessage = new NotifyMessage(text);
-        _wctx.getChatDirector().dispatchMessage(msg, localtype);
-    }
+        // all we currently need to do is check if this list is empty, and if so, have the 
+        // display fade it out.
+        if (_currentNotifications.size() == 0) {
+            _notifications.length = 0;
+            _notificationDisplay.clearDisplay();
+            return;
+        }
 
-    /**
-     * Update the button on the control bar to indicate whether notifications are 
-     * showing or not.
-     */
-    protected function updateNotificationButton (notifsShowing :Boolean) :void
-    {
-        (_wctx.getTopPanel().getControlBar() as WorldControlBar).
-            setNotificationsShowing(notifsShowing);
+        // we'll always get one event per element, so we can just lop the oldest element off
+        _notifications.splice(0, 1);
     }
 
     /** Give members 15 seconds to get back on before we announce that they're left */
     protected static const MEMBER_EXPIRE_TIME :int = 15;
 
+    /** Give notifications 15 minutes to be relevant. */
+    protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
+
     protected var _wctx :WorldContext;
-    protected var _msvc :MemberService;
-    protected var _notifyPanel :NotificationDisplay;
-
-    /** Tracks notifications we've announced. */
-    protected var _announced :Dictionary = new Dictionary();
-
-    /** Tracks notifications we've acknowledged but that haven't yet been removed. */
-    protected var _acked :Dictionary = new Dictionary();
-
-    /** Contains a list of notification popups currently being shown. */
-    protected var _popups :Array = new Array();
+    protected var _notificationDisplay :NotificationDisplay;
 
     /** An ExpiringSet to track members that may only be switching servers. */
     protected var _membersLoggingOff :ExpiringSet;
+
+    /** An ExpiringSet to track which notifications are relevant */
+    protected var _currentNotifications :ExpiringSet;
+
+    protected var _lastId :uint = 0;
+    protected var _notifications :Array = [];
 }
 }

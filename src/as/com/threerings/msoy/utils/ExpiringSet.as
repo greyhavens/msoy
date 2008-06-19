@@ -3,136 +3,213 @@
 
 package com.threerings.msoy.utils {
 
-import flash.events.TimerEvent;    
+import flash.events.EventDispatcher;
+import flash.events.TimerEvent;
+
+import flash.utils.getTimer; // function import
 import flash.utils.Timer;
+
+import com.threerings.util.Log;
+import com.threerings.util.Set;
+
+/**
+ * Dispatched when a set element expires.
+ *
+ * @eventType com.threerings.msoy.utils.ElementExpiredEvent.ELEMENT_EXPIRED
+ */
+[Event(name="ElementExpired", type="com.threerings.msoy.utils.ElementExpiredEvent")]
 
 /**
  * Data structure that keeps its elements for a short time, and then removes them automatically.
  */
-public class ExpiringSet
+public class ExpiringSet extends EventDispatcher
+    implements Set
 {
     /**
      * Initializes the expiring set.
      *
      * @param ttl Time to live value for set elements, in seconds.
-     * @param expirationHandler Optional function to be called when elements are forcibly
-     *            expired, due to exceeding their TTL. The function should be of the form:
-     *              <pre>  function (element :*) :void { }  </pre>
-     *            and it will be called with the element expired from the set.
      */
-    public function ExpiringSet (ttl :Number, expirationHandler :Function)
+    public function ExpiringSet (ttl :Number)
     {
-        _callback = expirationHandler;
-        _ttl = int(ttl * 1000);
-
-        _timer.addEventListener(TimerEvent.TIMER, expireElements);
+        _ttl = Math.round(ttl * 1000);
     }
 
-    public function empty () :Boolean
+    /**
+     * Returns the time to live value for this ExpiringSet.  This value cannot be changed after
+     * set creation.
+     */
+    public function get ttl () :Number
     {
-        return _q.length == 0;
+        return _ttl / 1000;  
     }
 
-    /** Returns true if the set already contains this element. */
-    public function contains (element :*) :Boolean
+    // from Set
+    public function isEmpty () :Boolean
     {
-        for each (var e :ExpiringElement in _q) {
-            if (e.equals(element)) {
+        return size() == 0;
+    }
+
+    /**
+     * Calling this function will not expire the elements, it simply removes them. No 
+     * ElementExpiredEvent will be dispatched.
+     */
+    public function clear () :void
+    {
+        // simply trunate the data array
+        _data.length = 0;
+    }
+
+    // from Set
+    public function size () :int
+    {
+        return _data.length;
+    }
+
+    // from Set
+    public function contains (o :Object) :Boolean
+    {
+        for each (var e :ExpiringElement in _data) {
+            if (e.objectEquals(o)) {
                 return true;
             }
         }
         return false;
     }
     
-    /** If element is not present in the set, adds it and returns true; otherwise returns false. */
-    public function add (element :*) :Boolean
+    /**
+     * Note that if you add an object that the list already contains, this method will return 
+     * false, but it will also update the expire time on that object to be this sets ttl from now, 
+     * as if the item really were being added to the list now.
+     */
+    public function add (o :Object) :Boolean
     {
-        if (contains(element)) {
-            return false;
-        }
-        
-        // push the item on the end of the queue. since each element has the same TTL,
-        // elements end up being ordered by their expiration time.
-        _q.push(new ExpiringElement(element, _ttl));
-        _timer.start();
-        return true;
-    }
-
-    /** If element is present in the set, removes it and returns true; otherwise returns false. */
-    public function remove (element :*) :Boolean
-    {
-        var result :Boolean = false;
-        
-        // pull the item from anywhere in the queue
-        for (var ii :int = 0; ii < _q.length; ii++) {
-            var e :ExpiringElement = _q[ii] as ExpiringElement;
-            if (e.equals(element)) {
-                _q.splice(ii, 1);
-                result = true;
+        var added :Boolean = true;
+        var element :ExpiringElement;
+        var expire :int = getTimer() + _ttl;
+        for (var ii :int = 0; ii < _data.length; ii++) {
+            if ((_data[ii] as ExpiringElement).objectEquals(o)) {
+                // already contained - update expire time and remove from current position.
+                element = _data[ii] as ExpiringElement;
+                element.expirationTime = expire;
+                _data.splice(ii, 1);
+                added = false;
                 break;
             }
         }
 
-        if (empty()) {
-            _timer.stop(); // we ran out of elements. nothing left to expire.
-        }
-
-        return result;
+        // push the item onto the queue. since each element has the same TTL, elements end up 
+        // being ordered by their expiration time.
+        _data.push(element || new ExpiringElement(o, expire));
+        checkTimer();
+        return added;
     }
 
-    /** Is the oldest element expired already? */
-    protected function headExpired () :Boolean
+    // from Set
+    public function remove (o :Object) :Boolean
     {
-        return empty() ? false : (_q[0] as ExpiringElement).expired();
-    }
-    
-    /** Called on a timer, expires any elements that exceeded their time to live. */ 
-    protected function expireElements (event :TimerEvent) :void
-    {
-        while (headExpired()) {
-            // pop the head of the queue and send it to the custom callback
-            var head :ExpiringElement = _q.shift() as ExpiringElement;
-            if (_callback != null) {
-                _callback(head.element);
+        // pull the item from anywhere in the queue.  If we remove the first element, the timer
+        // will harmlessly NOOP when it wakes up
+        for (var ii :int = 0; ii < _data.length; ii++) {
+            var e :ExpiringElement = _data[ii] as ExpiringElement;
+            if (e.objectEquals(o)) {
+                _data.splice(ii, 1);
+                return true;
             }
         }
 
-        if (empty()) {
-            _timer.stop(); // nothing left to expire. let's wait until something is added again.
-        }
+        return false;
     }
 
+    /**
+     * This implementation of Set returns a fresh array that it will never reference again.  
+     * Modification of this array will not change the ExpiringSet's structure.
+     */
+    public function toArray () :Array
+    {
+        var elements :Array = [];
+        for each (var element :ExpiringElement in _data) {
+            elements.push(element.element);
+        }
+        return elements;
+    }
+
+    protected function checkTimer (...ignored) :void
+    {
+        // expiration check
+        var now :int = getTimer();
+        while (headIsExpired(now)) {
+            // pop the head off the queue and dispatch an event
+            var head :ExpiringElement = _data.shift() as ExpiringElement;
+            dispatchEvent(new ElementExpiredEvent(head.element));
+        }
+
+        // empty check
+        if (isEmpty()) {
+            return;
+        }
+
+        // if the timer is already running, and we're not empty, we want to just let it finish
+        // its current delay, and set up a new one then
+        if (_timer != null && _timer.running) {
+            return;
+        }
+
+        // sanity check
+        var delay :int = (_data[0] as ExpiringElement).expirationTime - now;
+        if (delay <= 0) {
+            // blow up
+            log.warning("calculated delay after expiring elements is invalid! [" + delay + "]");
+            return;
+        }
+
+        // set up next delay
+        if (_timer == null) {
+            _timer = new Timer(delay, 1);
+            _timer.addEventListener(TimerEvent.TIMER, checkTimer);
+        } else {
+            _timer.delay = delay;
+            _timer.reset();
+        }
+        _timer.start();
+    }
+
+    protected function headIsExpired (now :int) :Boolean
+    {
+        return isEmpty() ? false : (_data[0] as ExpiringElement).isExpired(now);
+    }
+
+    protected static const log :Log = Log.getLog(ExpiringSet);
+
+    /** The time to live for this set, not to be changed after construction. */
+    protected /* final */ var _ttl :int;
+
     /** Array of ExpiringElement instances, sorted by expiration time. */
-    protected var _q :Array = new Array();
+    protected var _data :Array = new Array();
 
-    protected var _timer :Timer = new Timer(1000); // check every second
-    protected var _callback :Function;
-    protected var _ttl :int;
+    protected var _timer :Timer;
 }
 }
-
-
-import flash.utils.getTimer; // function import
 
 import com.threerings.util.Util;
 
-internal class ExpiringElement
+class ExpiringElement
 {
     public var expirationTime :int;
-    public var element :*;
+    public var element :Object;
     
-    public function ExpiringElement (element :*, ttl :int)
+    public function ExpiringElement (element :Object, expiration :int)
     {
         this.element = element;
-        this.expirationTime = getTimer() + ttl;
+        this.expirationTime = expiration;
     }
 
-    public function expired () :Boolean
+    public function isExpired (now :int) :Boolean
     {
-        return expirationTime < getTimer();
+        return expirationTime <= now;
     }
 
-    public function equals (element :*) :Boolean
+    public function objectEquals (element :Object) :Boolean
     {
         return Util.equals(element, this.element);
     }

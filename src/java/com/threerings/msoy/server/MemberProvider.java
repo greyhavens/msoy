@@ -14,12 +14,6 @@ import com.threerings.presents.server.InvocationProvider;
 public interface MemberProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link MemberService#acknowledgeNotifications} request.
-     */
-    public void acknowledgeNotifications (ClientObject caller, int[] arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#acknowledgeWarning} request.
      */
     public void acknowledgeWarning (ClientObject caller);
