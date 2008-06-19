@@ -110,13 +110,13 @@ public class Game extends Item
         return (shotMedia == null) ? getThumbnailMedia() : shotMedia;
     }
 
-    // @Override from Item
+    @Override // from Item
     public byte getType ()
     {
         return GAME;
     }
 
-    // @Override from Item
+    @Override // from Item
     public SubItem[] getSubTypes ()
     {
         return (isInWorld() ?
@@ -126,7 +126,7 @@ public class Game extends Item
                     new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), });
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         if (furniMedia != null) {
@@ -135,13 +135,13 @@ public class Game extends Item
         return getThumbnailMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPrimaryMedia ()
     {
         return gameMedia;
     }
  
-    // @Override // from Item
+    @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {
         gameMedia = desc;
@@ -155,7 +155,7 @@ public class Game extends Item
         return (config != null) && (config.indexOf("<avrg/>") >= 0);
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (gameMedia != null);

@@ -45,13 +45,13 @@ public final class MailHeaders
         return (sender.getMemberId() == myMemberId) ? recipient : sender;
     }
 
-    // @Override
+    @Override
     public int hashCode ()
     {
         return messageId + 31*folderId;
     }
 
-    // @Override
+    @Override
     public boolean equals (Object obj)
     {
         if (this == obj) {

@@ -30,7 +30,7 @@ public class GroupInvitePayload extends MailPayload
         this.responded = responded;
     }
 
-    // @Override
+    @Override
     public int getType ()
     {
         return MailPayload.TYPE_GROUP_INVITE;

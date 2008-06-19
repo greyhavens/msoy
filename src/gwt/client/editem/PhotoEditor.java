@@ -14,7 +14,7 @@ import client.shell.CShell;
  */
 public class PhotoEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -22,13 +22,13 @@ public class PhotoEditor extends ItemEditor
         setUploaderMedia(Item.MAIN_MEDIA, _photo.photoMedia);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Photo();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();

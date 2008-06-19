@@ -17,13 +17,13 @@ import client.shell.Page;
  */
 public class TrophiesBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return (pdata.trophies != null && pdata.trophies.size() > 0);
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);

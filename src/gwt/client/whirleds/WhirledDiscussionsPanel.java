@@ -38,7 +38,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
         _detail = detail;
 //    }
 //
-//    // @Override // from UIObject
+//    @Override // from UIObject
 //    public void setVisible (boolean visible)
 //    {
 //        

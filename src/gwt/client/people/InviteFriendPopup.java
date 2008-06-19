@@ -77,7 +77,7 @@ public class InviteFriendPopup extends BorderedDialog
         }));
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onLoad ()
     {
         super.onLoad();

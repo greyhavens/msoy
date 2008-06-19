@@ -46,20 +46,20 @@ public class SceneBookmarkEntry
         return this.sceneId - that.sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof SceneBookmarkEntry) &&
             ((SceneBookmarkEntry) other).sceneId == this.sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public String toString ()
     {
         return sceneName;

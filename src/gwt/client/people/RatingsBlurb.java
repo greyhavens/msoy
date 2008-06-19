@@ -28,13 +28,13 @@ import client.util.MsoyUI;
  */
 public class RatingsBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return (pdata.ratings != null && pdata.ratings.size() > 0);
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
@@ -50,19 +50,19 @@ public class RatingsBlurb extends Blurb
             setModel(new SimpleDataModel(ratings), 0);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
             return ""; // not used
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items)
         {
             return (items > _rows * _cols);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
             return new RatingWidget((GameRating)item);

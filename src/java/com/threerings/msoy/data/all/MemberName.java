@@ -86,19 +86,19 @@ public class MemberName extends Name
         return new Integer(_memberId); // TODO: make this not suck when GWT learns not to suck
     }
 
-    // @Override // from Name
+    @Override // from Name
     public int hashCode ()
     {
         return _memberId;
     }
 
-    // @Override // from Name
+    @Override // from Name
     public boolean equals (Object other)
     {
         return (other instanceof MemberName) && (((MemberName) other).getMemberId() == _memberId);
     }
 
-    // @Override // from Name
+    @Override // from Name
     public int compareTo (Name o)
     {
         // Note: You may be tempted to have names sort by the String value, but Names are used
@@ -111,7 +111,7 @@ public class MemberName extends Name
         return (_memberId > otherId) ? 1 : ((_memberId == otherId) ? 0 : -1);
     }
 
-    // @Override // from Name
+    @Override // from Name
     protected String normalize (String name)
     {
         return name; // do not adjust

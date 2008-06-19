@@ -67,7 +67,7 @@ public class HeaderBox extends FlowPanel
         return this;
     }
 
-    // @Override // from Panel
+    @Override // from Panel
     public void add (Widget widget)
     {
         _contents.add(widget);

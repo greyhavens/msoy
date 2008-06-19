@@ -30,7 +30,7 @@ public class ItemGiftPayload extends MailPayload
         this.item = item;
     }
 
-    // @Override
+    @Override
     public int getType ()
     {
         return MailPayload.TYPE_ITEM_GIFT;

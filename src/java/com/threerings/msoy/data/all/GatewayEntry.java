@@ -57,19 +57,19 @@ public class GatewayEntry
         return this.gateway.compareTo(that.gateway);
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return gateway.hashCode();
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof GatewayEntry) && gateway.equals(((GatewayEntry)other).gateway);
     }
 
-    // @Override
+    @Override
     public String toString ()
     {
         return "GatewayEntry[" + gateway + "]";

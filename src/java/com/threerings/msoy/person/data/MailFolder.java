@@ -33,13 +33,13 @@ final public class MailFolder
     /** The number of read messages in the folder, a computed value. */
     public int readCount;
     
-    // @Override
+    @Override
     public int hashCode ()
     {
         return folderId + 31*ownerId;
     }
     
-    // @Override
+    @Override
     public boolean equals (Object obj)
     {
         if (this == obj) {

@@ -14,7 +14,7 @@ import client.shell.CShell;
  */
 public class VideoEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -22,13 +22,13 @@ public class VideoEditor extends ItemEditor
         setUploaderMedia(Item.MAIN_MEDIA, _video.videoMedia);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Video();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         addRow(CShell.emsgs.videoLabel(), createMainUploader(TYPE_VIDEO, false, new MediaUpdater() {

@@ -11,14 +11,14 @@ import com.threerings.msoy.item.data.all.Toy;
  */
 public class ToyEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
         _toy = (Toy)item;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Toy();

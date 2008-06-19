@@ -14,20 +14,20 @@ import client.shell.CShell;
  */
 public class DocumentEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
         _doc = (Document)item;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Document();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         String label = CShell.emsgs.documentLabel();

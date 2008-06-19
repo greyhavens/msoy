@@ -34,13 +34,13 @@ public class GameRating
     {
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return gameId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof GameRating) && gameId == ((GameRating)other).gameId;

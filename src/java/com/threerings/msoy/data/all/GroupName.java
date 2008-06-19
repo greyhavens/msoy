@@ -52,19 +52,19 @@ public class GroupName extends Name
         return _groupId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return _groupId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof GroupName) && _groupId == ((GroupName)other)._groupId;
     }
 
-    // @Override // from Name
+    @Override // from Name
     public int compareTo (Name o) 
     {
         return _groupId - ((GroupName) o)._groupId;

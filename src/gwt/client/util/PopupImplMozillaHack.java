@@ -12,14 +12,14 @@ import com.google.gwt.user.client.ui.impl.PopupImplMozilla;
  */
 public class PopupImplMozillaHack extends PopupImplMozilla
 {
-    // @Override // from PopupImpl
+    @Override // from PopupImpl
     public void onShow (Element popup)
     {
         super.onShow(popup);
         createIFrame(popup);
     }
 
-    // @Override // from PopupImpl
+    @Override // from PopupImpl
     public void onHide (Element popup)
     {
         super.onHide(popup);

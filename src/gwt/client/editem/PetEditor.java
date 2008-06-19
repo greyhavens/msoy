@@ -14,20 +14,20 @@ import client.shell.CShell;
  */
 public class PetEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
         _pet = (Pet)item;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Pet();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // pets are special; their furni media are their primary media

@@ -35,19 +35,19 @@ public class IssueModels
             return (Issue)_issues.get(issueId);
         }
 
-        // @Override // from ServieBackedDataModel
+        @Override // from ServieBackedDataModel
         public void prependItem (Object item) {
             super.prependItem(item);
             mapIssue((Issue)item);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void appendItem (Object item) {
             super.appendItem(item);
             mapIssue((Issue)item);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void onSuccess (Object result) {
             IssueService.IssueResult iresult = (IssueService.IssueResult)result;
             _isManager = iresult.isManager;
@@ -57,17 +57,17 @@ public class IssueModels
             super.onSuccess(result);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
             CMsgs.issuesvc.loadIssues(CMsgs.ident, _type, _state, start, count, needCount, this);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected int getCount (Object result) {
             return ((IssueService.IssueResult)result).issueCount;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected List getRows (Object result) {
             return ((IssueService.IssueResult)result).issues;
         }
@@ -89,7 +89,7 @@ public class IssueModels
             super(type, state);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
             CMsgs.issuesvc.loadOwnedIssues(
                     CMsgs.ident, _type, _state, start, count, needCount, this);

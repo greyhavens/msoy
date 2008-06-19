@@ -59,7 +59,7 @@ public class GameContentOwnership extends SimpleStreamableObject
         return oo.ident.compareTo(ident);
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (compareTo(other) == 0);

@@ -75,7 +75,7 @@ public abstract class ComplainPopup extends BorderedDialog
 
     protected abstract boolean callService();
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onLoad ()
     {
         super.onLoad();

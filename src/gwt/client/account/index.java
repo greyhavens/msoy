@@ -27,7 +27,7 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         _onLogonPage = null;
@@ -62,7 +62,7 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void didLogon (WebCreds creds)
     {
         if (_onLogonPage != null) {
@@ -72,13 +72,13 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return ACCOUNT;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

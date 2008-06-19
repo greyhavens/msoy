@@ -19,7 +19,7 @@ import client.util.ThumbBox;
  */
 public class GameAwardDisplay extends MailPayloadDisplay
 {
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     public Widget widgetForSender ()
     {
         FlexTable table = new FlexTable();
@@ -45,7 +45,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
         return table;
     }
 
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     protected void didInit ()
     {
         _payload = (GameAwardPayload)_message.payload;

@@ -46,7 +46,7 @@ public class PresentPayload extends MailPayload
         return (thumbMedia == null) ? Item.getDefaultThumbnailMediaFor(ident.type) : thumbMedia;
     }
 
-    // @Override
+    @Override
     public int getType ()
     {
         return MailPayload.TYPE_PRESENT;

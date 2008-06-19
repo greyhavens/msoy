@@ -54,7 +54,7 @@ public class GameAwardPayload extends MailPayload
         this.awardMimeType = awardMedia.mimeType;
     }
 
-    // @Override // from MailPayload
+    @Override // from MailPayload
     public int getType ()
     {
         return MailPayload.TYPE_GAME_AWARD;

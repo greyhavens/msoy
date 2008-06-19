@@ -88,25 +88,25 @@ public class MyWhirleds extends AbsolutePanel
             setWidth("100%");
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
             return new WhirledWidget((MyGroupCard) item);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
             return CWhirleds.msgs.myNoWhirleds();
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items)
         {
             return true;
         }
         
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void addCustomControls (FlexTable controls) {           
             controls.setWidget(
                 0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));

@@ -28,7 +28,7 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
@@ -55,13 +55,13 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return SHOP;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

@@ -27,13 +27,13 @@ import client.util.ThumbBox;
  */
 public class GroupsBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return (pdata.groups != null);
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
@@ -56,13 +56,13 @@ public class GroupsBlurb extends Blurb
             setModel(new SimpleDataModel(groups), 0);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
             return CPeople.msgs.notInGroupsOther();
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createEmptyContents ()
         {
             if (CPeople.getMemberId() != _name.getMemberId()) {
@@ -72,19 +72,19 @@ public class GroupsBlurb extends Blurb
                                     CPeople.msgs.notInGroupsJoin(), Page.WHIRLEDS, "");
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items)
         {
             return (items > _rows * _cols);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
             return new GroupWidget((GroupCard)item);
         }
 
-//         // @Override // from PagedGrid
+//         @Override // from PagedGrid
 //         protected void addCustomControls (FlexTable controls)
 //         {
 //             if (CPeople.getMemberId() > 0 && CPeople.getMemberId() != _name.getMemberId()) {

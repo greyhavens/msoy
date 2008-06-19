@@ -66,19 +66,19 @@ public class ForumModels
             return (ForumThread)_threads.get(threadId);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void prependItem (Object item) {
             super.prependItem(item);
             mapThread((ForumThread)item);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void appendItem (Object item) {
             super.appendItem(item);
             mapThread((ForumThread)item);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void onSuccess (Object result) {
             ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
             _canStartThread = tresult.canStartThread;
@@ -94,17 +94,17 @@ public class ForumModels
             super.onSuccess(result);
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
             CMsgs.forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this); 
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected int getCount (Object result) {
             return ((ForumService.ThreadResult)result).threadCount;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected List getRows (Object result) {
             return ((ForumService.ThreadResult)result).threads;
         }
@@ -207,7 +207,7 @@ public class ForumModels
             return _isManager;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void appendItem (Object item) {
             super.appendItem(item);
             _thread.posts++;
@@ -216,7 +216,7 @@ public class ForumModels
             _thread.lastReadPostIndex = _thread.posts;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void removeItem (Object item) {
             // if we're deleting the last message in this thread...
             ForumMessage msg = (ForumMessage)item;
@@ -235,7 +235,7 @@ public class ForumModels
             _thread.posts--;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         public void onSuccess (Object result) {
             // note some bits
             ForumService.MessageResult mresult = (ForumService.MessageResult)result;
@@ -260,18 +260,18 @@ public class ForumModels
             }
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
             CMsgs.forumsvc.loadMessages(CMsgs.ident, _threadId, _thread.lastReadPostId,
                                         start, count, needCount, this); 
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected int getCount (Object result) {
             return ((ForumService.MessageResult)result).thread.posts;
         }
 
-        // @Override // from ServiceBackedDataModel
+        @Override // from ServiceBackedDataModel
         protected List getRows (Object result) {
             return ((ForumService.MessageResult)result).messages;
         }

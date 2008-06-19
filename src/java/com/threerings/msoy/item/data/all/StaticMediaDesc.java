@@ -52,7 +52,7 @@ public class StaticMediaDesc extends MediaDesc
         return _mediaType;
     }
 
-    // @Override // from MediaDesc
+    @Override // from MediaDesc
     public String getMediaPath ()
     {
         return DeploymentConfig.staticMediaURL +

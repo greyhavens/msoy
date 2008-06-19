@@ -23,7 +23,7 @@ public class FriendEvent extends FlashEvent
     /** The name of this event type: defined in BaseClient.as. */
     public static final String NAME = "friend";
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public String getEventName ()
     {
         return NAME;
@@ -40,7 +40,7 @@ public class FriendEvent extends FlashEvent
         _displayName = friend.toString();
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {
         _action = FlashClients.getIntElement(args, 0);
@@ -48,7 +48,7 @@ public class FriendEvent extends FlashEvent
         _memberId = FlashClients.getIntElement(args, 2);
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof FriendsListener) {

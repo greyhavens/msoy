@@ -21,7 +21,7 @@ public class SceneBookmarkEvent extends FlashEvent
     /** The name of this event type: defined in BaseClient.as. */
     public static final String NAME = "sceneBookmark";
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public String getEventName ()
     {
         return NAME;
@@ -38,7 +38,7 @@ public class SceneBookmarkEvent extends FlashEvent
         _sceneId = sceneId;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {
         _action = FlashClients.getIntElement(args, 0);
@@ -46,7 +46,7 @@ public class SceneBookmarkEvent extends FlashEvent
         _sceneId = FlashClients.getIntElement(args, 2);
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof SceneBookmarkListener) {

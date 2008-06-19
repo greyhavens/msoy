@@ -21,19 +21,19 @@ public class NameChangeEvent extends FlashEvent
         _name = newName;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {
         _name = FlashClients.getStringElement(args, 0);
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof NameChangeListener) {

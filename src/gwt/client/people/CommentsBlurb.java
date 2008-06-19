@@ -17,13 +17,13 @@ import client.shell.CommentsPanel;
  */
 public class CommentsBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return true;
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
@@ -56,18 +56,18 @@ public class CommentsBlurb extends Blurb
             showPostPanel();
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items) {
             return false; // don't need it
         }
 
-        // @Override // from CommentsPanel
+        @Override // from CommentsPanel
         protected void clearPostPanel (PostPanel panel) {
             super.clearPostPanel(panel);
             restorePostFooter();
         }
 
-        // @Override // from CommentsPanel
+        @Override // from CommentsPanel
         protected int getThumbnailSize() {
             return MediaDesc.HALF_THUMBNAIL_SIZE;
         }

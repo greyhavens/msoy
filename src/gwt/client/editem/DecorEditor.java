@@ -18,7 +18,7 @@ import client.util.FlashClients;
  */
 public class DecorEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         Decor d = new Decor();
@@ -34,7 +34,7 @@ public class DecorEditor extends ItemEditor
         return d;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
@@ -67,7 +67,7 @@ public class DecorEditor extends ItemEditor
         configureCallbacks(this);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);

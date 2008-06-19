@@ -11,13 +11,13 @@ public class ItemUsageEvent extends FlashEvent
 {
     public static final String NAME = "ItemUsageChanged";
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args)
     {
         _type = FlashClients.getByteElement(args, 0);
@@ -26,7 +26,7 @@ public class ItemUsageEvent extends FlashEvent
         _loc = FlashClients.getIntElement(args, 3);
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof ItemUsageListener) {

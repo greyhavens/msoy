@@ -20,7 +20,7 @@ public abstract class ForumCallback extends ClickCallback
         super(trigger);
     }
 
-    // @Override // from ClickCallback
+    @Override // from ClickCallback
     protected String convertError (Throwable cause) {
         if (cause instanceof MessageTooLongException) {
             int extra = ((MessageTooLongException)cause).getMessageLength() -

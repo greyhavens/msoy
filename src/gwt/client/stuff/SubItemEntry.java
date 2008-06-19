@@ -57,7 +57,7 @@ public class SubItemEntry extends ItemEntry
         }
     }
 
-    // @Override // from ItemBox
+    @Override // from ItemBox
     protected int getColumns ()
     {
         return 2;

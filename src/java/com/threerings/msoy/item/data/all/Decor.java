@@ -50,13 +50,13 @@ public class Decor extends Item
     public float offsetY;
 
     
-    // @Override from Item
+    @Override // from Item
     public byte getType ()
     {
         return DECOR;
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() &&
@@ -65,13 +65,13 @@ public class Decor extends Item
             horizon <= 1.0f && horizon >= 0.0f;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getFurniMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

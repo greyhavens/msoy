@@ -26,7 +26,7 @@ import client.shell.Page;
  */
 public abstract class MsgsEntryPoint extends Page
 {
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

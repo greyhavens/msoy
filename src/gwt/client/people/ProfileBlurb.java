@@ -47,7 +47,7 @@ import client.util.events.NameChangeEvent;
  */
 public class ProfileBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);

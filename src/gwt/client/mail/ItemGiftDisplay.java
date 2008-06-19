@@ -19,19 +19,19 @@ import client.util.MsoyUI;
  */
 public class ItemGiftDisplay extends MailPayloadDisplay
 {
-    // @Override
+    @Override
     public Widget widgetForRecipient ()
     {
         return new DisplayWidget(true);
     }
 
-    // @Override
+    @Override
     public Widget widgetForSender ()
     {
         return new DisplayWidget(false);
     }
 
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     protected void didInit ()
     {
         _giftPayload = (ItemGiftPayload) _message.payload;

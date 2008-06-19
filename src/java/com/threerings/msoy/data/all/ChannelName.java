@@ -41,13 +41,13 @@ public class ChannelName extends Name
         return _creatorId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return _name.hashCode() ^ _creatorId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof ChannelName) {
@@ -57,7 +57,7 @@ public class ChannelName extends Name
         return  false;
     }
 
-    // @Override // from Name
+    @Override // from Name
     public int compareTo (Name o) 
     {
         ChannelName oc = (ChannelName)o;

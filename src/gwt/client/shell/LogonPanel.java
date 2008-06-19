@@ -105,7 +105,7 @@ public class LogonPanel extends SmartTable
         }
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onAttach ()
     {
         super.onAttach();

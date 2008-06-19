@@ -36,7 +36,7 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onPageLoad ()
     {
         super.onPageLoad();
@@ -44,7 +44,7 @@ public class index extends Page
         _models.startup();
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onPageUnload ()
     {
         _models.shutdown();
@@ -52,7 +52,7 @@ public class index extends Page
         super.onPageUnload();
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         if (CStuff.ident == null) {
@@ -158,19 +158,19 @@ public class index extends Page
         };
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return STUFF;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getTabPageId ()
     {
         return ME;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

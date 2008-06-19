@@ -87,7 +87,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
     }
 
-    // @Override
+    @Override
     protected void onAttach ()
     {
         super.onAttach();
@@ -95,7 +95,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         FlashEvents.addListener(this);
     }
 
-    // @Override
+    @Override
     protected void onDetach ()
     {
         super.onDetach();
@@ -103,13 +103,13 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         FlashEvents.removeListener(this);
     }
 
-    // @Override // BaseItemDetailPanel
+    @Override // BaseItemDetailPanel
     protected boolean allowAvatarScaleEditing ()
     {
         return (_item.ownerId == CShell.getMemberId());
     }
 
-    // @Override // BaseItemDetailPanel
+    @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
         CStuff.viewParent(_item);

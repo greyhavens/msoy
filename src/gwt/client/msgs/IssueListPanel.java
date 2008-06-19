@@ -55,13 +55,13 @@ public class IssueListPanel extends PagedGrid
         setModel(imodels.getIssues(type, state, false), 0);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new IssueSummaryPanel((Issue)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
         HTML empty = new HTML(CMsgs.mmsgs.noIssues());
@@ -69,19 +69,19 @@ public class IssueListPanel extends PagedGrid
         return empty;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return CMsgs.mmsgs.noIssues();
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always show our navigation for consistency
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         super.addCustomControls(controls);
@@ -103,7 +103,7 @@ public class IssueListPanel extends PagedGrid
         }
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void displayResults (int start, int count, List list)
     {
         super.displayResults(start, count, list);

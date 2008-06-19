@@ -16,13 +16,13 @@ import client.util.NumberTextBox;
  */
 public class PrizeEditor extends SubItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Prize();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -38,7 +38,7 @@ public class PrizeEditor extends SubItemEditor
         _targetCatalogId.setText("" + _prize.targetCatalogId);
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();
@@ -60,19 +60,19 @@ public class PrizeEditor extends SubItemEditor
         addTip(CShell.emsgs.prizeTargetIdTip());
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addDescription ()
     {
         // we want no description
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         // we don't have a furni media or a thumbnail media
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

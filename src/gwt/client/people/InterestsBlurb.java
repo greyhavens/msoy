@@ -30,13 +30,13 @@ import client.util.MsoyUI;
  */
 public class InterestsBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return (pdata.interests.size() > 0 || CPeople.getMemberId() == pdata.name.getMemberId());
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);

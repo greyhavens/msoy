@@ -72,17 +72,17 @@ public class ConvosModel extends ServiceBackedDataModel
         return null;
     }
 
-    // @Override // from ServiceBackedDataModel
+    @Override // from ServiceBackedDataModel
     protected void callFetchService (int start, int count, boolean needCount) {
         CMail.mailsvc.loadConversations(CMail.ident, start, count, needCount, this); 
     }
 
-    // @Override // from ServiceBackedDataModel
+    @Override // from ServiceBackedDataModel
     protected int getCount (Object result) {
         return ((MailService.ConvosResult)result).totalConvoCount;
     }
 
-    // @Override // from ServiceBackedDataModel
+    @Override // from ServiceBackedDataModel
     protected List getRows (Object result) {
         return ((MailService.ConvosResult)result).convos;
     }

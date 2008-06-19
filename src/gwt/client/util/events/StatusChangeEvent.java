@@ -29,13 +29,13 @@ public class StatusChangeEvent extends FlashEvent
         _oldValue = oldValue;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {
         _type = FlashClients.getIntElement(args, 0);
@@ -43,7 +43,7 @@ public class StatusChangeEvent extends FlashEvent
         _oldValue = FlashClients.getIntElement(args, 2);
     }
 
-    // @Override // FlashEvent
+    @Override // FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof StatusChangeListener) {

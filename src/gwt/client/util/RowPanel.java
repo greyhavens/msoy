@@ -19,7 +19,7 @@ public class RowPanel extends FlexTable
         setCellSpacing(0);
     }
 
-    // @Override // from Panel
+    @Override // from Panel
     public void add (Widget child)
     {
         add(child, HasVerticalAlignment.ALIGN_TOP);

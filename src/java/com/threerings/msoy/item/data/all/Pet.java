@@ -26,25 +26,25 @@ public class Pet extends Item
      * issue this order on any pet that is bound to that room. */
     public static final int ORDER_SLEEP = 4;
 
-    // @Override from Item
+    @Override // from Item
     public byte getType ()
     {
         return PET;
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() && (furniMedia != null) && nonBlank(name, MAX_NAME_LENGTH);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getFurniMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

@@ -194,7 +194,7 @@ public class ThreadPanel extends TitledListPanel
             addFooterButton(submit);
         }
 
-        // @Override // from Widget
+        @Override // from Widget
         protected void onAttach ()
         {
             super.onAttach();
@@ -243,7 +243,7 @@ public class ThreadPanel extends TitledListPanel
             addFooterButton(submit);
         }
 
-        // @Override // from Widget
+        @Override // from Widget
         protected void onAttach ()
         {
             super.onAttach();
@@ -311,12 +311,6 @@ public class ThreadPanel extends TitledListPanel
                 protected int _flags;
             };
             addButton(update);
-        }
-
-        // @Override // from BorderedDialog
-        protected Widget createContents ()
-        {
-            return new VerticalPanel();
         }
 
         protected CheckBox _announce, _sticky, _locked;

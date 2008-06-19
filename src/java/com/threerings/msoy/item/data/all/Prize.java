@@ -14,38 +14,38 @@ public class Prize extends SubItem
     /** The catalog id of the target prize item's listing. */
     public int targetCatalogId;
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return PRIZE;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public byte getSuiteMasterType ()
     {
         return GAME;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getThumbnailMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getThumbnailMedia ()
     {
         return getDefaultThumbnailMediaFor(targetType);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (targetType != Item.NOT_A_TYPE) &&
             (targetCatalogId != 0);
     }
 
-    // @Override // from SubItem
+    @Override // from SubItem
     public boolean isSalable ()
     {
         return false;

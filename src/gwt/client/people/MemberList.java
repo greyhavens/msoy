@@ -38,19 +38,19 @@ public class MemberList extends PagedGrid
         _emptyMessage = emptyMessage;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new MemberWidget((MemberCard) item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return _emptyMessage;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true;

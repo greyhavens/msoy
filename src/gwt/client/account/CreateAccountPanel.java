@@ -156,7 +156,7 @@ public class CreateAccountPanel extends VerticalPanel
         setCellHeight(slurp, "100%");
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onLoad ()
     {
         super.onLoad();

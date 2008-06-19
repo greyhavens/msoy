@@ -25,7 +25,7 @@ public class MailMessage
     /** Was this message unread before it was read just now? */
     public boolean wasUnread;
 
-    // @Override
+    @Override
     public int hashCode ()
     {
         int hashCode = headers.hashCode();
@@ -38,7 +38,7 @@ public class MailMessage
         return hashCode;
     }
 
-    // @Override
+    @Override
     public boolean equals (Object obj)
     {
         if (this == obj) {

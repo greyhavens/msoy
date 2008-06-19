@@ -14,7 +14,7 @@ import client.shell.CShell;
  */
 public class AudioEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -22,13 +22,13 @@ public class AudioEditor extends ItemEditor
         setUploaderMedia(Item.MAIN_MEDIA, _audio.audioMedia);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Audio();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         addRow(CShell.emsgs.audioLabel(), createMainUploader(TYPE_AUDIO, false, new MediaUpdater() {

@@ -9,25 +9,25 @@ package com.threerings.msoy.item.data.all;
  */
 public class Toy extends Item
 {
-    // @Override from Item
+    @Override // from Item
     public byte getType ()
     {
         return TOY;
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getFurniMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

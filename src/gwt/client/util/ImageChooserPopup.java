@@ -92,7 +92,7 @@ public class ImageChooserPopup extends VerticalPanel
             }
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createWidget (Object item) {
             Photo photo = (Photo)item;
             final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
@@ -106,19 +106,19 @@ public class ImageChooserPopup extends VerticalPanel
             return image;
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected String getEmptyMessage () {
             return ""; // not used
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
             super.formatCell(formatter, row, col, limit);
             formatter.setWidth(row, col, MediaDesc.THUMBNAIL_WIDTH+"px");
             formatter.setHeight(row, col, MediaDesc.THUMBNAIL_HEIGHT+"px");
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items) {
             return true;
         }

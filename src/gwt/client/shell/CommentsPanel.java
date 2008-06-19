@@ -48,7 +48,7 @@ public class CommentsPanel extends PagedGrid
         add(new Label(CShell.cmsgs.loadingComments()));
     }
 
-    // @Override // from UIObject
+    @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
@@ -57,25 +57,25 @@ public class CommentsPanel extends PagedGrid
         }
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new CommentPanel(this, (Comment)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return CShell.cmsgs.noComments();
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always need our navigation because it has the "post" button
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         super.addCustomControls(controls);

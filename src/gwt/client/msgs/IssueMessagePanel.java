@@ -22,14 +22,14 @@ public class IssueMessagePanel extends SimpleMessagePanel
         setMessage(message);
     }
 
-    // @Override // from SimpleMessagePanel
+    @Override // from SimpleMessagePanel
     public void setMessage (ForumMessage message)
     {
         _threadId = message.threadId;
         super.setMessage(message);
     }
 
-    // @Override // from MessagePanel
+    @Override // from MessagePanel
     public void addInfo (FlowPanel info)
     {
         super.addInfo(info);

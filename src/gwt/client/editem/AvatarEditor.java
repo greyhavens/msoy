@@ -14,7 +14,7 @@ import client.shell.CShell;
  */
 public class AvatarEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -22,31 +22,32 @@ public class AvatarEditor extends ItemEditor
         setUploaderMedia(Item.MAIN_MEDIA, _avatar.avatarMedia);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Avatar();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         addSpacer();
-        addRow(CShell.emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!isValidPrimaryMedia(desc)) {
-                    return CShell.emsgs.errAvatarNotFlash();
+        addRow(CShell.emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false, 
+            new MediaUpdater() {
+                public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                    if (!isValidPrimaryMedia(desc)) {
+                        return CShell.emsgs.errAvatarNotFlash();
+                    }
+                    _avatar.avatarMedia = desc;
+                    _avatar.scale = 1f;
+                    return null;
                 }
-                _avatar.avatarMedia = desc;
-                _avatar.scale = 1f;
-                return null;
-            }
-        }), CShell.emsgs.avatarTip());
+            }), CShell.emsgs.avatarTip());
 
         super.addExtras();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // nada: avatars should no longer have a furni visualization

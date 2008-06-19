@@ -44,7 +44,7 @@ public class ListingCard implements IsSerializable
     /** The item's gold cost. */
     public int goldCost;
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof ListingCard) {

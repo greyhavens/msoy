@@ -35,13 +35,13 @@ public class BorderedPopup extends PopupPanel
         });
     }
 
-    // @Override // from SimplePanel
+    @Override // from SimplePanel
     public void setWidget (Widget contents)
     {
         _widget.setWidget(contents);
     }
 
-    // @Override // from PopupPanel
+    @Override // from PopupPanel
     public void show ()
     {
         if (_centerOnShow) {
@@ -52,7 +52,7 @@ public class BorderedPopup extends PopupPanel
         }
     }
 
-    // @Override // from PopupPanel
+    @Override // from PopupPanel
     public void center ()
     {
         boolean initiallyShowing = (getParent() != null); // can't access super.showing, yay!

@@ -237,7 +237,7 @@ public class RichTextToolbar extends Composite
         setBlockFormatImpl(richText.getElement(), format);
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onAttach ()
     {
         super.onAttach();

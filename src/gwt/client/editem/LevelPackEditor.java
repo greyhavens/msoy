@@ -16,7 +16,7 @@ import client.shell.CShell;
  */
 public class LevelPackEditor extends SubItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -24,13 +24,13 @@ public class LevelPackEditor extends SubItemEditor
         _premium.setChecked(_pack.premium);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new LevelPack();
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();
@@ -40,7 +40,7 @@ public class LevelPackEditor extends SubItemEditor
         addTip(CShell.emsgs.lpackPremiumTip());
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // level packs' furni media are their primary media
@@ -56,7 +56,7 @@ public class LevelPackEditor extends SubItemEditor
         addRow(CShell.emsgs.lpackLabel(), upper, CShell.emsgs.lpackTip());
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

@@ -17,7 +17,7 @@ import client.util.RowPanel;
  */
 public class FurnitureEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -26,13 +26,13 @@ public class FurnitureEditor extends ItemEditor
         _hotSpotY.setText("" + _furniture.hotSpotY);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Furniture();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
@@ -55,7 +55,7 @@ public class FurnitureEditor extends ItemEditor
         addTip(CShell.emsgs.furniHotSpotTip());
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void setHash (String id, String mediaHash, int mimeType, int constraint,
                             int width, int height)
     {
@@ -66,7 +66,7 @@ public class FurnitureEditor extends ItemEditor
         }
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

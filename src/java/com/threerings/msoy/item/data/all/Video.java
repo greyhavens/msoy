@@ -11,20 +11,20 @@ public class Video extends Item
     /** The video media.*/
     public MediaDesc videoMedia;
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return VIDEO;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (videoMedia != null) && videoMedia.isVideo() &&
             nonBlank(name, MAX_NAME_LENGTH);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         if (videoMedia != null && videoMedia.isExternalVideo()) {
@@ -33,19 +33,19 @@ public class Video extends Item
         return getThumbnailMedia(); // TODO: support preview image
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPrimaryMedia ()
     {
         return videoMedia;
     }
  
-    // @Override // from Item
+    @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {
         videoMedia = desc;
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         if (videoMedia != null && videoMedia.isExternalVideo()) {

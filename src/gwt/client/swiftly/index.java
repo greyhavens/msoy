@@ -31,25 +31,25 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         updateInterface(args);
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return SWIFTLY;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getTabPageId ()
     {
         return CREATE;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

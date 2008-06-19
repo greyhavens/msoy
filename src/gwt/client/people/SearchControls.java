@@ -79,7 +79,7 @@ public class SearchControls extends SmartTable
         Application.go(Page.PEOPLE, Args.compose("search", "0", getQuery()));
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onAttach ()
     {
         super.onAttach();

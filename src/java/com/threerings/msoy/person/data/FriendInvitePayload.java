@@ -15,7 +15,7 @@ public class FriendInvitePayload extends MailPayload
     {
     }
 
-    // @Override
+    @Override
     public int getType ()
     {
         return MailPayload.TYPE_FRIEND_INVITE;

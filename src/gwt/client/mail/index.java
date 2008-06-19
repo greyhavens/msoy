@@ -22,7 +22,7 @@ public class index extends MsgsEntryPoint
         };
     }
 
-    // @Override // from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         // if we have no creds, just display a message saying login
@@ -54,19 +54,19 @@ public class index extends MsgsEntryPoint
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return MAIL;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getTabPageId ()
     {
         return ME;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

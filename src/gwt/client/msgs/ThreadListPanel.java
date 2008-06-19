@@ -78,13 +78,13 @@ public class ThreadListPanel extends PagedGrid
         setModel(_fmodels.getGroupThreads(_groupId), 0);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new ThreadSummaryPanel((ForumThread)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
         if (_groupId != 0) {
@@ -96,19 +96,19 @@ public class ThreadListPanel extends PagedGrid
         return empty;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return CMsgs.mmsgs.noThreads();
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always show our navigation for consistency
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         super.addCustomControls(controls);
@@ -131,7 +131,7 @@ public class ThreadListPanel extends PagedGrid
         controls.setWidget(0, 1, _refresh);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void displayResults (int start, int count, List list)
     {
         super.displayResults(start, count, list);

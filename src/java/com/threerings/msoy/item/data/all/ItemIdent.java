@@ -61,7 +61,7 @@ public class ItemIdent
         }
     }
 
-    // @Override from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof ItemIdent) {
@@ -71,7 +71,7 @@ public class ItemIdent
         return false;
     }
 
-    // @Override from Object
+    @Override // from Object
     public int hashCode ()
     {
         return (type * 37) | itemId;

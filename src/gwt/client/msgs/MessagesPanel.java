@@ -62,19 +62,19 @@ public class MessagesPanel extends PagedGrid
         displayPage(_page, true);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return (_model == _tmodel) ? CMsgs.mmsgs.noMessages() : CMsgs.mmsgs.noMatches();
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true; // we always show our navigation for consistency
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         super.addCustomControls(controls);
@@ -113,7 +113,7 @@ public class MessagesPanel extends PagedGrid
         controls.setWidget(0, 2, _editFlags);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void displayResults (int start, int count, List list)
     {
         // if we're displaying results from our main thread model, update our ephemera; this must
@@ -137,7 +137,7 @@ public class MessagesPanel extends PagedGrid
         }
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         ForumMessage msg = (ForumMessage)item;
@@ -208,7 +208,7 @@ public class MessagesPanel extends PagedGrid
             super.setMessage(message);
         }
 
-        // @Override // from MessagePanel
+        @Override // from MessagePanel
         protected void addInfo (FlowPanel info)
         {
             super.addInfo(info);
@@ -285,7 +285,7 @@ public class MessagesPanel extends PagedGrid
             }
         }
 
-        // @Override // from MessagePanel
+        @Override // from MessagePanel
         protected String getIconPath ()
         {
             return "/images/msgs/" +

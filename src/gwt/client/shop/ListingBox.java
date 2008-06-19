@@ -48,7 +48,7 @@ public class ListingBox extends ItemBox
         }
     }
 
-    // @Override // from ItemBox
+    @Override // from ItemBox
     protected int getColumns ()
     {
         return 2;

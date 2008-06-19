@@ -62,19 +62,19 @@ public class MailPanel extends VerticalPanel
             addStyleName("Folder");
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected Widget createWidget (Object item)
         {
             return new ConvoWidget(this, (Conversation)item);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
             return CMail.msgs.mailNoMail();
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, Object item)
         {
             super.formatCell(formatter, row, col, item);
@@ -84,7 +84,7 @@ public class MailPanel extends VerticalPanel
             }
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void displayResults (int start, int count, List list)
         {
             super.displayResults(start, count, list);
@@ -97,19 +97,19 @@ public class MailPanel extends VerticalPanel
             add(footer);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void displayPageFromClick (int page)
         {
             Application.go(Page.MAIL, ""+page);
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected boolean displayNavi (int items)
         {
             return true;
         }
 
-        // @Override // from PagedGrid
+        @Override // from PagedGrid
         protected void addCustomControls (FlexTable controls)
         {
             super.addCustomControls(controls);

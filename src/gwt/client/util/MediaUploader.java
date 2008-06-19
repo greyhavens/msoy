@@ -90,7 +90,7 @@ public class MediaUploader extends FormPanel
         });
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     public void onLoad ()
     {
         super.onLoad();
@@ -100,7 +100,7 @@ public class MediaUploader extends FormPanel
         _uploaders.put(_mediaId, this);
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     public void onUnload ()
     {
         super.onUnload();

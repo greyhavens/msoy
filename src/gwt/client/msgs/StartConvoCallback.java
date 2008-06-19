@@ -24,7 +24,7 @@ public abstract class StartConvoCallback extends ClickCallback
         _body = body;
     }
 
-    // @Override // from ClickCallback
+    @Override // from ClickCallback
     public boolean callService ()
     {
         String subject = _subject.getText().trim();

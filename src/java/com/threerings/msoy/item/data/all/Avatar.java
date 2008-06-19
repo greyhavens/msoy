@@ -30,37 +30,37 @@ public class Avatar extends Item
         return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
     }
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return AVATAR;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return avatarMedia;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (avatarMedia != null);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPrimaryMedia ()
     {
         return avatarMedia;
     }
  
-    // @Override // from Item
+    @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {
         avatarMedia = desc;
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return avatarMedia;

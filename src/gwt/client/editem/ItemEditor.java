@@ -196,7 +196,7 @@ public abstract class ItemEditor extends FlexTable
      */
     public abstract Item createBlankItem ();
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onLoad ()
     {
         super.onLoad();

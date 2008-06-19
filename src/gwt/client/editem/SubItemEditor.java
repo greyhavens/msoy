@@ -15,7 +15,7 @@ import client.shell.CShell;
  */
 public abstract class SubItemEditor extends ItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -23,7 +23,7 @@ public abstract class SubItemEditor extends ItemEditor
         safeSetText(_ident, _subi.ident);
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();
@@ -34,7 +34,7 @@ public abstract class SubItemEditor extends ItemEditor
         addTip(CShell.emsgs.subIdentTip());
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

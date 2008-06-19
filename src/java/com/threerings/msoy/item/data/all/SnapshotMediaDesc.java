@@ -45,19 +45,19 @@ public class SnapshotMediaDesc extends MediaDesc
         this.sceneId = sceneId;
     }
 
-    // @Override // from MediaDesc
+    @Override // from MediaDesc
     public String getMediaPath ()
     {
         return getMediaPath(sceneId, mimeType, false);
     }
 
-    // @Override // from MediaDesc
+    @Override // from MediaDesc
     public String getProxyMediaPath ()
     {
         return getMediaPath(sceneId, mimeType, true);
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof SnapshotMediaDesc) {
@@ -69,13 +69,13 @@ public class SnapshotMediaDesc extends MediaDesc
         return false;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public String toString ()
     {
         return sceneToName(sceneId) + mimeTypeToSuffix(mimeType);

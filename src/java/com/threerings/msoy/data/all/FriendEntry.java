@@ -63,20 +63,20 @@ public class FriendEntry
         return this.name.compareTo(that.name);
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return getMemberId();
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof FriendEntry) &&
             (getMemberId() == ((FriendEntry)other).getMemberId());
     }
 
-    // @Override
+    @Override
     public String toString ()
     {
         return "FriendEntry[" + name + "]";

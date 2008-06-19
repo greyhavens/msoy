@@ -35,19 +35,19 @@ public class RoomName extends Name
         return _sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return _sceneId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         return (other instanceof RoomName) && _sceneId == ((RoomName)other)._sceneId;
     }
 
-    // @Override // from Name
+    @Override // from Name
     public int compareTo (Name o) 
     {
         // TODO:

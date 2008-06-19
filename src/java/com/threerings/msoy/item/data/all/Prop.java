@@ -12,31 +12,31 @@ public class Prop extends SubItem
     /** The id of the game with which we're associated. */
     public int gameId;
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return PROP;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public byte getSuiteMasterType ()
     {
         return GAME;
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getFurniMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

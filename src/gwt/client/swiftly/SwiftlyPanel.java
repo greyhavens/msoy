@@ -58,7 +58,7 @@ public class SwiftlyPanel extends FlexTable
         _status.setText(error);
     }
 
-    // @Override // from Widget
+    @Override // from Widget
     protected void onLoad ()
     {
         super.onLoad();

@@ -49,7 +49,7 @@ public class ItemActivator extends FlowPanel
         }
     }
 
-    // @Override // from Panel
+    @Override // from Panel
     protected void onAttach ()
     {
         super.onAttach();
@@ -58,7 +58,7 @@ public class ItemActivator extends FlowPanel
         update();
     }
 
-    // @Override // from Panel
+    @Override // from Panel
     protected void onDetach ()
     {
         super.onDetach();

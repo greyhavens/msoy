@@ -29,7 +29,7 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         if (CAdmin.ident == null) {
@@ -56,19 +56,19 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return ADMIN;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getTabPageId ()
     {
         return ME;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

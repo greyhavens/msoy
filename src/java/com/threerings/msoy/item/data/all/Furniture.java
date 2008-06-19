@@ -19,25 +19,25 @@ public class Furniture extends Item
     /** The y position of the hot spot to use for this furniture. */
     public short hotSpotY;
 
-    // @Override from Item
+    @Override // from Item
     public byte getType ()
     {
         return FURNITURE;
     }
 
-    // @Override
+    @Override
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getFurniMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
         return null; // there is no default

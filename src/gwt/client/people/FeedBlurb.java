@@ -14,13 +14,13 @@ import client.msgs.FeedPanel;
  */
 public class FeedBlurb extends Blurb
 {
-    // @Override // from Blurb
+    @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
         return true;
     }
 
-    // @Override // from Blurb
+    @Override // from Blurb
     public void init (final ProfileService.ProfileResult pdata)
     {
         super.init(pdata);

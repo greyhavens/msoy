@@ -607,7 +607,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         return isWhirledVideo() || isExternalVideo();
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof MediaDesc) {
@@ -618,7 +618,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         return false;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         int code = 0;
@@ -629,7 +629,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
         return code;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public String toString ()
     {
         return hashToString(hash) + mimeTypeToSuffix(mimeType);

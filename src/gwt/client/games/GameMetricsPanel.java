@@ -32,7 +32,7 @@ public class GameMetricsPanel extends VerticalPanel
         _detail = detail;
     }
 
-    // @Override // from UIObject
+    @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);

@@ -30,7 +30,7 @@ public class GameEditor extends ItemEditor
     public static String SEATED_CONTINUOUS = "1";
     public static String PARTY = "2";
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -116,7 +116,7 @@ public class GameEditor extends ItemEditor
         }
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         Game game = new Game();
@@ -124,7 +124,7 @@ public class GameEditor extends ItemEditor
         return game;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addExtras ()
     {
         _genre = new ListBox();
@@ -217,7 +217,7 @@ public class GameEditor extends ItemEditor
         _serverClass.setVisibleLength(40);
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

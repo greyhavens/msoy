@@ -17,7 +17,7 @@ import client.util.NumberTextBox;
  */
 public class TrophySourceEditor extends SubItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
@@ -26,13 +26,13 @@ public class TrophySourceEditor extends SubItemEditor
         _secret.setChecked(_tsource.secret);
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new TrophySource();
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();
@@ -47,13 +47,13 @@ public class TrophySourceEditor extends SubItemEditor
         addTip(CShell.emsgs.trophySecretTip());
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // we have no furni tab
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addThumbUploader ()
     {
         // trophy' thumb media are their primary media
@@ -70,13 +70,13 @@ public class TrophySourceEditor extends SubItemEditor
         }));
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected String getThumbnailHint ()
     {
         return CShell.emsgs.trophyTip();
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void prepareItem ()
         throws Exception
     {

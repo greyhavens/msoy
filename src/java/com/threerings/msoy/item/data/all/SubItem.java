@@ -33,7 +33,7 @@ public abstract class SubItem extends Item
         return true;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(ident, MAX_IDENT_LENGTH);

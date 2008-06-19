@@ -236,7 +236,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         History.back();
     }
 
-    // @Override // Panel
+    @Override // Panel
     protected void onDetach ()
     {
         super.onDetach();

@@ -20,37 +20,37 @@ public class TrophySource extends SubItem
     /** Whether or not this trophy's description is a secret. */
     public boolean secret;
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return TROPHY_SOURCE;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public byte getSuiteMasterType ()
     {
         return GAME;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return thumbMedia;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPrimaryMedia ()
     {
         return thumbMedia;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (thumbMedia != null);
     }
 
-    // @Override // from SubItem
+    @Override // from SubItem
     public boolean isSalable ()
     {
         return false;

@@ -52,25 +52,25 @@ public class WhirledMembersPanel extends PagedGrid
         });
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new MemberWidget((GroupMemberCard)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return "This group has no members.";
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
         controls.setWidget(0, 0, _invite = new Button(CWhirleds.msgs.wmpInvite()));

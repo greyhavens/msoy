@@ -32,7 +32,7 @@ public class CommentPanel extends MessagePanel
         setMessage(card, new Date(comment.posted), comment.text);
     }
 
-    // @Override // from MessagePanel
+    @Override // from MessagePanel
     protected void addInfo (FlowPanel info)
     {
         super.addInfo(info);
@@ -60,7 +60,7 @@ public class CommentPanel extends MessagePanel
         }
     }
 
-    // @Override // from MessagePanel
+    @Override // from MessagePanel
     protected int getThumbnailSize ()
     {
         return _parent.getThumbnailSize();

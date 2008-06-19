@@ -56,14 +56,14 @@ public class CatalogQuery
         this.creatorId = source.creatorId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return itemType ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
             (search == null ? 0 : search.hashCode()) ^ creatorId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         CatalogQuery oquery = (CatalogQuery)other;
@@ -72,7 +72,7 @@ public class CatalogQuery
                 (search == null ? (oquery.search == null) : search.equals(oquery.search)));
     }
 
-    // @Override // from Object
+    @Override // from Object
     public String toString ()
     {
         return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag +

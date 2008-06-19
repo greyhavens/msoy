@@ -16,7 +16,7 @@ import client.util.MsoyCallback;
  */
 public class FriendInviteDisplay extends MailPayloadDisplay
 {
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     public Widget widgetForRecipient ()
     {
         return new InvitationWidget();

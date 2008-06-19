@@ -37,7 +37,7 @@ public class GameTrophyPanel extends PagedGrid
         setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
     }
 
-    // @Override // from UIObject
+    @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
@@ -57,25 +57,25 @@ public class GameTrophyPanel extends PagedGrid
         _gameId = 0; // note that we've asked for our data
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected Widget createWidget (Object item)
     {
         return new TrophyDetail((Trophy)item);
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
         return CGames.msgs.gameTrophyNoTrophies();
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
         return true;
     }
 
-    // @Override // from PagedGrid
+    @Override // from PagedGrid
     protected boolean padToFullPage ()
     {
         return true;

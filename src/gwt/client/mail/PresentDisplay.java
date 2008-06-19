@@ -23,13 +23,13 @@ import client.util.ThumbBox;
  */
 public class PresentDisplay extends MailPayloadDisplay
 {
-    // @Override
+    @Override
     public Widget widgetForRecipient ()
     {
         return new DisplayWidget((PresentPayload)_message.payload, true);
     }
 
-    // @Override
+    @Override
     public Widget widgetForSender ()
     {
         return new DisplayWidget((PresentPayload)_message.payload, false);

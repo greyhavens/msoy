@@ -14,20 +14,20 @@ import client.shell.CShell;
  */
 public class PropEditor extends SubItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
         _prop = (Prop)item;
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new Prop();
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // props are special; their furni media are their primary media

@@ -51,7 +51,7 @@ public class JabberName extends Name
         return _displayName;
     }
 
-    // @Override // from Name
+    @Override // from Name
     public String toString ()
     {
         return _displayName != null ? _displayName : _name.substring(0, _name.indexOf("@"));

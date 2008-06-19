@@ -27,7 +27,7 @@ public class TopRankingPanel extends VerticalPanel
         _onlyMyFriends = onlyMyFriends;
     }
 
-    // @Override // from UIObject
+    @Override // from UIObject
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);

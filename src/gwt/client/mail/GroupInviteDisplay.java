@@ -23,13 +23,13 @@ import client.util.MsoyUI;
  */
 public class GroupInviteDisplay extends MailPayloadDisplay
 {
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     public Widget widgetForRecipient ()
     {
         return new DisplayWidget(_invitePayload.responded == false);
     }
 
-    // @Override // from MailPayloadDisplay
+    @Override // from MailPayloadDisplay
     protected void didInit ()
     {
         // no sanity checks: if anything breaks here, it's already a disaster

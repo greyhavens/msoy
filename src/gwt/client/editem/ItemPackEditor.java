@@ -16,13 +16,13 @@ import client.shell.CShell;
  */
 public class ItemPackEditor extends SubItemEditor
 {
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     public Item createBlankItem ()
     {
         return new ItemPack();
     }
 
-    // @Override // from ItemEditor
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();
@@ -35,7 +35,7 @@ public class ItemPackEditor extends SubItemEditor
         addTip(CShell.emsgs.ipackPremiumTip());
     }
 
-    // @Override from ItemEditor
+    @Override // from ItemEditor
     protected void addFurniUploader ()
     {
         // item packs' furni media are their primary media

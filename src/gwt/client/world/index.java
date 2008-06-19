@@ -41,7 +41,7 @@ public class index extends Page
         };
     }
 
-    // @Override // from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         try {
@@ -96,14 +96,14 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     public void onPageLoad ()
     {
         super.onPageLoad();
         configureCallbacks(this);
     }
 
-    // @Override // from Page
+    @Override // from Page
     public void onPageUnload ()
     {
         super.onPageUnload();
@@ -111,7 +111,7 @@ public class index extends Page
         clearCallbacks();
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();
@@ -124,7 +124,7 @@ public class index extends Page
         CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return WORLD;

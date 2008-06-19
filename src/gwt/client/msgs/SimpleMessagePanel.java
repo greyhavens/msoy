@@ -34,7 +34,7 @@ public class SimpleMessagePanel extends MessagePanel
         }
     }
 
-    // @Override // from MessagePanel
+    @Override // from MessagePanel
     public boolean textIsHTML ()
     {
         return true;

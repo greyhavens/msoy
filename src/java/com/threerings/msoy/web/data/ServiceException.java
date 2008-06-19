@@ -27,7 +27,7 @@ public class ServiceException extends Exception
     {
     }
 
-    // @Override // from Exception
+    @Override // from Exception
     public String getMessage ()
     {
         // we have to return our own message because GWT won't serialize anything in our parent

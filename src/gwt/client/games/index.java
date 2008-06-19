@@ -29,7 +29,7 @@ public class index extends Page
         };
     }
 
-    // @Override from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         // if we have d-NNN then we want to see game detail
@@ -58,13 +58,13 @@ public class index extends Page
         }
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return GAMES;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

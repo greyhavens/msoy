@@ -429,13 +429,13 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         return getIdent();
     }
 
-    // @Override // from Object
+    @Override // from Object
     public int hashCode ()
     {
         return itemId;
     }
 
-    // @Override // from Object
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof Item) {
@@ -461,7 +461,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         }
     }
 
-    // @Override // from Object
+    @Override // from Object
     public String toString ()
     {
         return "[type=" + getTypeName(getType()) + ", id=" + itemId + ", name=" + name + "]";
@@ -504,8 +504,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         }
 
         if (_mapping == null) {
-            _mapping = new HashMap();
-            _reverseMapping = new HashMap();
+            // we can't use google collections here because this class is used in GWT.
+            _mapping = new HashMap<Byte, Class>();
+            _reverseMapping = new HashMap<Class, Byte>();
         }
 
         Byte otype = new Byte(type);
@@ -515,8 +516,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         return type;
     }
 
-    private static HashMap _mapping;
-    private static HashMap _reverseMapping;
+    private static HashMap<Byte, Class> _mapping;
+    private static HashMap<Class, Byte> _reverseMapping;
 
     protected static final SubItem[] NO_SUBTYPES = {};
 }

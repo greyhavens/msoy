@@ -20,19 +20,19 @@ public class index extends Page
         };
     }
 
-    // @Override // from Page
+    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         setContent(new HelpPanel());
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected String getPageId ()
     {
         return HELP;
     }
 
-    // @Override // from Page
+    @Override // from Page
     protected void initContext ()
     {
         super.initContext();

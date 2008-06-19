@@ -187,7 +187,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
     }
 
-    // @Override
+    @Override
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
         menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
