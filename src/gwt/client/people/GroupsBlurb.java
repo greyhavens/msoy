@@ -51,7 +51,7 @@ public class GroupsBlurb extends Blurb
 
     protected class GroupsGrid extends PagedGrid
     {
-        public GroupsGrid (List groups) {
+        public GroupsGrid (List<GroupCard> groups) {
             super(GROUP_ROWS, GROUP_COLUMNS, PagedGrid.NAV_ON_BOTTOM);
             setModel(new SimpleDataModel(groups), 0);
         }

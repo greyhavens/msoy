@@ -3,8 +3,8 @@
 
 package client.msgs;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -16,7 +16,6 @@ import com.threerings.msoy.web.client.ForumService;
 import com.threerings.gwt.util.ListenerList;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import client.util.HashIntMap;
 import client.util.ServiceBackedDataModel;
 
 /**
@@ -63,7 +62,7 @@ public class ForumModels
          */
         public ForumThread getThread (int threadId)
         {
-            return (ForumThread)_threads.get(threadId);
+            return _threads.get(threadId);
         }
 
         @Override // from ServiceBackedDataModel
@@ -130,7 +129,7 @@ public class ForumModels
         protected boolean _canStartThread, _isManager;
 
         protected ListenerList _gotNameListeners;
-        protected HashIntMap _threads = new HashIntMap();
+        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
     /** A data model that provides all threads unread by the authenticated user. */
@@ -146,7 +145,7 @@ public class ForumModels
          */
         public ForumThread getThread (int threadId)
         {
-            return (ForumThread)_threads.get(threadId);
+            return _threads.get(threadId);
         }
 
         // from interface DataModel
@@ -169,8 +168,7 @@ public class ForumModels
                 public void onSuccess (Object result) {
                     ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
                     _items = tresult.threads;
-                    for (int ii = 0; ii < _items.size(); ii++) {
-                        ForumThread thread = (ForumThread)_items.get(ii);
+                    for (ForumThread thread : tresult.threads) {
                         _threads.put(thread.threadId, thread);
                     }
                     doFetchRows(start, count, callback);
@@ -181,7 +179,7 @@ public class ForumModels
             }); 
         }
 
-        protected HashIntMap _threads = new HashIntMap();
+        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
     /** A data model that provides a particular thread's messages. */
@@ -252,7 +250,7 @@ public class ForumModels
             // messages as having been read
             if (mresult.messages.size() > 0) {
                 int lastReadIndex = mresult.messages.size()-1;
-                int highestPostId = ((ForumMessage)mresult.messages.get(lastReadIndex)).messageId;
+                int highestPostId = (mresult.messages.get(lastReadIndex)).messageId;
                 if (highestPostId > _thread.lastReadPostId) {
                     _thread.lastReadPostId = highestPostId;
                     _thread.lastReadPostIndex = _pageOffset + lastReadIndex;
@@ -291,7 +289,7 @@ public class ForumModels
         thread.lastReadPostIndex = thread.posts;
 
         // if we already have this model loaded, let it know about the new thread
-        GroupThreads gmodel = (GroupThreads)_gmodels.get(thread.group.getGroupId());
+        GroupThreads gmodel = _gmodels.get(thread.group.getGroupId());
         if (gmodel != null) {
             gmodel.prependItem(thread);
         }
@@ -303,7 +301,7 @@ public class ForumModels
      */
     public GroupThreads getGroupThreads (int groupId)
     {
-        GroupThreads gmodel = (GroupThreads)_gmodels.get(groupId);
+        GroupThreads gmodel = _gmodels.get(groupId);
         if (gmodel == null) {
             _gmodels.put(groupId, gmodel = new GroupThreads(groupId));
         }
@@ -336,8 +334,7 @@ public class ForumModels
         }
 
         // next, check for the thread in the group models
-        for (Iterator iter = _gmodels.values().iterator(); iter.hasNext(); ) {
-            GroupThreads model = (GroupThreads)iter.next();
+        for (GroupThreads model : _gmodels.values()) {
             ForumThread thread = model.getThread(threadId);
             if (thread != null) {
                 return thread;
@@ -348,7 +345,7 @@ public class ForumModels
     }
 
     /** A cache of GroupThreads data models. */
-    protected HashIntMap _gmodels = new HashIntMap();
+    protected HashMap<Integer, GroupThreads> _gmodels = new HashMap<Integer, GroupThreads>();
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;

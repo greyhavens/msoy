@@ -44,7 +44,7 @@ public class RatingsBlurb extends Blurb
 
     protected class RatingGrid extends PagedGrid
     {
-        public RatingGrid (List ratings)
+        public RatingGrid (List<GameRating> ratings)
         {
             super(RATING_ROWS, 2, NAV_ON_BOTTOM);
             setModel(new SimpleDataModel(ratings), 0);

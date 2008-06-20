@@ -9,9 +9,12 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.data.ForumMessage;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Defines issue related services available to the GWT client.
@@ -27,9 +30,8 @@ public interface IssueService extends RemoteService
         /** Returns true if we're able to manage issues. */
         public boolean isManager;
 
-        /** The range of issues that were requested.
-         * @gwt.typeArgs <com.threerings.msoy.fora.data.Issue> */
-        public List issues;
+        /** The range of issues that were requested. */
+        public List<Issue> issues;
     }
 
     /**
@@ -54,9 +56,8 @@ public interface IssueService extends RemoteService
 
     /**
      * Loads a list of ForumMessage for an issueId.
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage>
      */
-    public List loadMessages (WebIdent ident, int issueId, int messageId)
+    public List<ForumMessage> loadMessages (WebIdent ident, int issueId, int messageId)
         throws ServiceException;
 
     /**
@@ -79,8 +80,7 @@ public interface IssueService extends RemoteService
 
     /**
      * Loads a list of possible issue owners.
-     * @gwt.typeArgs <com.threerings.msoy.data.all.MemberName>
      */
-    public List loadOwners (WebIdent ident)
+    public List<MemberName> loadOwners (WebIdent ident)
         throws ServiceException;
 }

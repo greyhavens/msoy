@@ -19,6 +19,8 @@ import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.web.data.GalaxyData;
+import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
@@ -36,10 +38,8 @@ public interface GroupService extends RemoteService
 
         /**
          * The members of this group.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMemberCard>
          */
-        public List members;
+        public List<GroupMemberCard> members;
     }
 
     /** Delivers the respose to {@link #getGroupRooms}. */
@@ -47,17 +47,13 @@ public interface GroupService extends RemoteService
     {
         /**
          * The rooms of this group.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.client.GroupService.Room>
          */
-        public List groupRooms;
+        public List<Room> groupRooms;
 
         /**
          * The rooms owned by the caller.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.client.GroupService.Room>
          */
-        public List callerRooms;
+        public List<Room> callerRooms;
     }
 
     /** Contains information about one of our rooms. */
@@ -91,26 +87,20 @@ public interface GroupService extends RemoteService
 
     /**
      * Get the list of all groups.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
-    public List getGroupsList (WebIdent ident)
+    public List<GroupCard> getGroupsList (WebIdent ident)
         throws ServiceException;
 
     /**
      * Performs a search against the name, blurb and charter fields.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
-    public List searchGroups (WebIdent ident, String searchString)
+    public List<GroupCard> searchGroups (WebIdent ident, String searchString)
         throws ServiceException;
 
     /**
      * Return all groups that are tagged with the given tag.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
      */
-    public List searchForTag (WebIdent ident, String tag)
+    public List<GroupCard> searchForTag (WebIdent ident, String tag)
         throws ServiceException;
 
     /**
@@ -128,10 +118,9 @@ public interface GroupService extends RemoteService
     /**
      * Fetch a list of {@link GroupMembership} records, one for each group of which memberId is a
      * member. If canInvite is true, only include groups to which the member can invite.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.group.data.GroupMembership>
      */
-    public List getMembershipGroups (WebIdent ident, int memberId, boolean canInvite)
+    public List<GroupMembership> getMembershipGroups (
+        WebIdent ident, int memberId, boolean canInvite)
         throws ServiceException;
 
     /**
@@ -196,27 +185,21 @@ public interface GroupService extends RemoteService
 
     /**
      * Gets the tags recently used by the user.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.TagHistory>
      */
-    public Collection getRecentTags (WebIdent ident)
+    public Collection<TagHistory> getRecentTags (WebIdent ident)
         throws ServiceException;
 
     /**
      * Gets the tags on the indicated Group.
-     *
-     * @gwt.typeArgs <java.lang.String>
      */
-    public Collection getTags (WebIdent ident, int groupId)
+    public Collection<String> getTags (WebIdent ident, int groupId)
         throws ServiceException;
 
     /**
      * Fetch a list of {@link MyGroupCard} records, one for each group of which the caller is a
      * member.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MyGroupCard>
      */
-    public List getMyGroups (WebIdent ident, byte sortMethod)
+    public List<MyGroupCard> getMyGroups (WebIdent ident, byte sortMethod)
         throws ServiceException;
 
 }

@@ -167,8 +167,8 @@ public class ComposePanel extends FlowPanel
                 public void onSuccess (Object result) {
                     _friends = ((ProfileService.FriendsResult)result).friends;
                     _friendBox.addItem("Select...");
-                    for (int ii = 0; ii < _friends.size(); ii++) {
-                        _friendBox.addItem(""+((MemberCard)_friends.get(ii)).name);
+                    for (MemberCard friend : _friends) {
+                        _friendBox.addItem("" + friend.name);
                     }
                 }
             });
@@ -190,7 +190,7 @@ public class ComposePanel extends FlowPanel
     protected MailPayload _payload;
 
     protected ListBox _friendBox;
-    protected List _friends;
+    protected List<MemberCard> _friends;
 
     protected TextBox _subject;
     protected TextArea _body;

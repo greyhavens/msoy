@@ -54,7 +54,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         for (int ii = 0; ii < rooms.groupRooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
             _roomsGrid.setWidget(row, col, 
-                new RoomWidget((GroupService.Room)rooms.groupRooms.get(ii)));
+                new RoomWidget(rooms.groupRooms.get(ii)));
         }
         add(new TongueBox(CWhirleds.msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
 
@@ -64,8 +64,8 @@ public class WhirledRoomsPanel extends VerticalPanel
         transferPanel.add(transferForm);
         transferForm.setSpacing(10);
         transferForm.add(_roomsListBox = new ListBox());
-        for (int ii = 0; ii < _roomsResult.callerRooms.size(); ii++) {
-            _roomsListBox.addItem(((GroupService.Room)_roomsResult.callerRooms.get(ii)).name);
+        for (GroupService.Room callerRoom : _roomsResult.callerRooms) {
+            _roomsListBox.addItem(callerRoom.name);
         }
         Button transferButton = new Button(CWhirleds.msgs.detailTransferRoom(_detail.group.name),
             new ClickListener() {
@@ -83,7 +83,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         if (index < 0) {
             return;
         }
-        GroupService.Room room = (GroupService.Room)_roomsResult.callerRooms.get(index);
+        GroupService.Room room = _roomsResult.callerRooms.get(index);
         CWhirleds.groupsvc.transferRoom(CWhirleds.ident, _detail.group.groupId, room.sceneId,
             new MsoyCallback() {
                 public void onSuccess (Object result) {
@@ -94,8 +94,9 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected void moveSceneToGrid (int index)
     {
-        // TODO if we leave this tab and come back to it, this data should be refreshed from the server
-        GroupService.Room room = (GroupService.Room)_roomsResult.callerRooms.remove(index);
+        // TODO if we leave this tab and come back to it, this data should be refreshed from the 
+        // server
+        GroupService.Room room = _roomsResult.callerRooms.remove(index);
         _roomsListBox.removeItem(index);
         int row = _roomsGrid.getRowCount() - 1;
         int col = _roomsGrid.getCellCount(row);

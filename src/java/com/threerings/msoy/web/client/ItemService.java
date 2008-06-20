@@ -96,26 +96,20 @@ public interface ItemService extends RemoteService
 
     /**
      * Fetches the tags associated with an item.
-     *
-     * @gwt.typeArgs <java.lang.String>
      */
-    public Collection getTags (WebIdent ident, ItemIdent item)
+    public Collection<String> getTags (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**
      * Fetches the tagging history for a given item.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.TagHistory>
      */
-    public Collection getTagHistory (WebIdent ident, ItemIdent item)
+    public Collection<TagHistory> getTagHistory (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**
      * Fetches the recently used tags for the calling member.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.TagHistory>
      */
-    public Collection getRecentTags (WebIdent ident)
+    public Collection<TagHistory> getRecentTags (WebIdent ident)
         throws ServiceException;
 
     /**
@@ -145,10 +139,8 @@ public interface ItemService extends RemoteService
 
     /**
      * Fetches the first 'count' items flagged as mature or copyright in the database.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.item.data.gwt.ItemDetail>
      */
-    public List getFlaggedItems (WebIdent ident, int count)
+    public List<ItemDetail> getFlaggedItems (WebIdent ident, int count)
         throws ServiceException;
 
     /**

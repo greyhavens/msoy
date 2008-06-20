@@ -52,7 +52,7 @@ public class FriendsBlurb extends Blurb
             setContent(grid);
         }
 
-        setFooterLink(CPeople.msgs.seeAllFriends(""+pdata.totalFriendCount),
+        setFooterLink(CPeople.msgs.seeAllFriends("" + pdata.totalFriendCount),
                       Page.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
     }
 

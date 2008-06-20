@@ -31,9 +31,8 @@ public interface ForumService extends RemoteService
         /** Returns true if we're manager of the group from which these threads came. */
         public boolean isManager;
 
-        /** The range of threads that were requested.
-         * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread> */
-        public List threads;
+        /** The range of threads that were requested. */
+        public List<ForumThread> threads;
     }
 
     /** Provides results for {@link #loadMessages}. */
@@ -48,9 +47,8 @@ public interface ForumService extends RemoteService
         /** Returns true if we're manager of the group from which this thread came. */
         public boolean isManager;
 
-        /** The range of messages that were requested.
-         * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage> */
-        public List messages;
+        /** The range of messages that were requested. */
+        public List<ForumMessage> messages;
     }
 
     /**
@@ -70,10 +68,8 @@ public interface ForumService extends RemoteService
 
     /**
      * Searches the subjects and messages in all threads in the specified group.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumThread>
      */
-    public List findThreads (WebIdent ident, int groupId, String search, int limit)
+    public List<ForumThread> findThreads (WebIdent ident, int groupId, String search, int limit)
         throws ServiceException;
 
     /**
@@ -85,10 +81,8 @@ public interface ForumService extends RemoteService
 
     /**
      * Searches the messages in a particular thread.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.fora.data.ForumMessage>
      */
-    public List findMessages (WebIdent ident, int threadId, String search, int limit)
+    public List<ForumMessage> findMessages (WebIdent ident, int threadId, String search, int limit)
         throws ServiceException;
 
     /**

@@ -51,7 +51,7 @@ public class InterestsBlurb extends Blurb
     {
         SmartTable contents = new SmartTable("Interests", 0, 5);
         for (int ii = 0; ii < _interests.size(); ii++) {
-            Interest interest = (Interest) _interests.get(ii);
+            Interest interest = _interests.get(ii);
             contents.setText(ii, 0, CPeople.dmsgs.getString("interest" + interest.type), 1, "Type");
             if (Interest.isLinkedType(interest.type)) {
                 contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
@@ -115,7 +115,7 @@ public class InterestsBlurb extends Blurb
                 return true;
             }
 
-            protected List _newInterests;
+            protected List<Interest> _newInterests;
         };
 
         editor.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
@@ -125,9 +125,9 @@ public class InterestsBlurb extends Blurb
         setFooter(null);
     }
 
-    protected List getNewInterests ()
+    protected List<Interest> getNewInterests ()
     {
-        List interests = new ArrayList();
+        List<Interest> interests = new ArrayList<Interest>();
         for (int ii = 0; ii < _iEditors.length; ii++) {
             Interest interest = new Interest();
             interest.type = Interest.TYPES[ii];
@@ -166,6 +166,6 @@ public class InterestsBlurb extends Blurb
         return panel;
     }
 
-    protected List _interests;
+    protected List<Interest> _interests;
     protected TextBox[] _iEditors;
 }

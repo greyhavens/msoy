@@ -10,8 +10,15 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.person.data.Profile;
 
+import com.threerings.msoy.game.data.all.Trophy;
+
+import com.threerings.msoy.web.data.EmailContact;
+import com.threerings.msoy.web.data.GameRating;
+import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
@@ -38,45 +45,33 @@ public interface ProfileService extends RemoteService
 
         /**
          * This user's featured friends.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.person.data.Interest>
          */
-        public List interests;
+        public List<Interest> interests;
 
         /**
          * This user's featured friends.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
          */
-        public List friends;
+        public List<MemberCard> friends;
 
         /**
          * This user's groups.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.GroupCard>
          */
-        public List groups;
+        public List<GroupCard> groups;
 
         /**
          * This user's game ratings.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.GameRating>
          */
-        public List ratings;
+        public List<GameRating> ratings;
 
         /**
          * This user's recently earned trophies.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
          */
-        public List trophies;
+        public List<Trophy> trophies;
 
         /** 
-        * This member's recent self feed messages.
-        *
-        * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
-        */
-        public List feed;
+         * This member's recent self feed messages.
+         */
+        public List<FeedMessage> feed;
     }
 
     /** Provides results for {@link #loadFriends}. */
@@ -87,10 +82,8 @@ public interface ProfileService extends RemoteService
 
         /**
          * This user's friends.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
          */
-        public List friends;
+        public List<MemberCard> friends;
     }
 
     /**
@@ -107,19 +100,15 @@ public interface ProfileService extends RemoteService
 
     /**
      * Updates the calling user's interests.
-     *
-     * @gwt.typeArgs interests <com.threerings.msoy.person.data.Interest>
      */
-    public void updateInterests (WebIdent ident, List interests)
+    public void updateInterests (WebIdent ident, List<Interest> interests)
         throws ServiceException;
 
     /**
      * Looks for profiles that match the specified search term. We'll aim to be smart about what we
      * search. Returns a (possibly empty) list of {@link MemberCard} records.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
-    public List findProfiles (WebIdent ident, String search)
+    public List<MemberCard> findProfiles (WebIdent ident, String search)
         throws ServiceException;
 
     /**
@@ -130,17 +119,13 @@ public interface ProfileService extends RemoteService
 
     /**
      * Loads up e-mail addresses from a user's webmail account.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.EmailContact>
      */
-    public List getWebMailAddresses (WebIdent ident, String email, String password)
+    public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
         throws ServiceException;
 
     /**
      * Loads the self feed for the specified member
-     *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
      */
-    public List loadSelfFeed (int profileMemberId, int cutoffDays)
+    public List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException;
 }

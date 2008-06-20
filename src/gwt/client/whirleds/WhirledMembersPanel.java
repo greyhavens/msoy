@@ -34,7 +34,7 @@ import client.util.ThumbBox;
  */
 public class WhirledMembersPanel extends PagedGrid
 {
-    public WhirledMembersPanel (GroupDetail detail)
+   public WhirledMembersPanel (GroupDetail detail)
     {
         super(5, 2, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");

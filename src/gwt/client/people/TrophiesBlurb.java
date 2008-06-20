@@ -31,7 +31,7 @@ public class TrophiesBlurb extends Blurb
 
         // display our trophies in a nice grid
         SmartTable grid = new SmartTable(0, 4);
-        Trophy[] tvec = (Trophy[])pdata.trophies.toArray(new Trophy[pdata.trophies.size()]);
+        Trophy[] tvec = pdata.trophies.toArray(new Trophy[pdata.trophies.size()]);
         TrophyGrid.populateTrophyGrid(grid, tvec);
         setContent(grid);
 

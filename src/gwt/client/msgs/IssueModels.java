@@ -3,14 +3,12 @@
 
 package client.msgs;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 import com.threerings.msoy.fora.data.Issue;
 import com.threerings.msoy.web.client.IssueService;
 
-
-import client.util.HashIntMap;
 import client.util.ServiceBackedDataModel;
 
 /**
@@ -32,7 +30,7 @@ public class IssueModels
          */
         public Issue getIssue (int issueId)
         {
-            return (Issue)_issues.get(issueId);
+            return _issues.get(issueId);
         }
 
         @Override // from ServieBackedDataModel
@@ -51,8 +49,8 @@ public class IssueModels
         public void onSuccess (Object result) {
             IssueService.IssueResult iresult = (IssueService.IssueResult)result;
             _isManager = iresult.isManager;
-            for (int ii = 0; ii < iresult.issues.size(); ii++) {
-                mapIssue((Issue)iresult.issues.get(ii));
+            for (Issue issue : iresult.issues) {
+                mapIssue(issue);
             }
             super.onSuccess(result);
         }
@@ -78,7 +76,7 @@ public class IssueModels
 
         protected int _type, _state;
         protected boolean _isManager;
-        protected HashIntMap _issues = new HashIntMap();
+        protected HashMap<Integer, Issue> _issues = new HashMap<Integer, Issue>();
     }
 
     /** A data model that provides owned issues. */
@@ -101,11 +99,11 @@ public class IssueModels
      */
     public void newIssuePosted (Issue issue)
     {
-        HashIntMap typeIssues = (HashIntMap)_issuesModel.get(issue.type);
+        HashMap<Integer, Issues> typeIssues = _issuesModel.get(issue.type);
         if (typeIssues == null) {
             return;
         }
-        Issues imodel = (Issues)typeIssues.get(issue.state);
+        Issues imodel = typeIssues.get(issue.state);
         if (imodel != null) {
             imodel.prependItem(issue);
         }
@@ -117,9 +115,9 @@ public class IssueModels
      */
     public Issues getIssues (int type, int state, boolean refresh)
     {
-        HashIntMap typeIssues = getTypeMap(type, _issuesModel);
+        HashMap<Integer, Issues> typeIssues = getTypeMap(type, _issuesModel);
         Issues issues;
-        if (refresh || (issues = (Issues)typeIssues.get(state)) == null) {
+        if (refresh || (issues = typeIssues.get(state)) == null) {
             typeIssues.put(state, issues = new Issues(type, state));
         }
         return issues;
@@ -131,7 +129,7 @@ public class IssueModels
      */
     public OwnedIssues getOwnedIssues (int type, int state, boolean refresh)
     {
-        HashIntMap typeIssues = getTypeMap(type, _ownedModel);
+        HashMap<Integer, OwnedIssues> typeIssues = getTypeMap(type, _ownedModel);
         OwnedIssues issues;
         if (refresh || (issues = (OwnedIssues)typeIssues.get(state)) == null) {
             typeIssues.put(state, issues = new OwnedIssues(type, state));
@@ -142,11 +140,12 @@ public class IssueModels
     /**
      * Returns a mapping of states to Issues/OwnedIssues for a certain type.
      */
-    public HashIntMap getTypeMap (int type, HashIntMap model)
+    public <V extends Issues> HashMap<Integer, V> getTypeMap (
+        int type, HashMap<Integer, HashMap<Integer, V>> model)
     {
-        HashIntMap typeIssues = (HashIntMap)model.get(type);
+        HashMap<Integer, V> typeIssues = model.get(type);
         if (typeIssues == null) {
-            model.put(type, typeIssues = new HashIntMap());
+            model.put(type, typeIssues = new HashMap<Integer, V>());
         }
         return typeIssues;
     }
@@ -163,12 +162,11 @@ public class IssueModels
     /**
      * Finds an issue in a specified model.
      */
-    protected Issue findIssue (int issueId, HashIntMap map)
+    protected <V extends Issues> Issue findIssue (
+        int issueId, HashMap<Integer, HashMap<Integer, V>> map)
     {
-        for (Iterator iter = map.values().iterator(); iter.hasNext(); ) {
-            HashIntMap typeIssues = (HashIntMap)iter.next();
-            for (Iterator iter2 = typeIssues.values().iterator(); iter2.hasNext(); ) {
-                Issues model = (Issues)iter2.next();
+        for (HashMap<Integer, V> typeIssues : map.values()) {
+            for (V model : typeIssues.values()) {
                 Issue issue = model.getIssue(issueId);
                 if (issue != null) {
                     return issue;
@@ -179,8 +177,10 @@ public class IssueModels
     }
 
     /** A cached Issues data model. */
-    protected HashIntMap _issuesModel = new HashIntMap();
+    protected HashMap<Integer, HashMap<Integer, Issues>> _issuesModel = 
+        new HashMap<Integer, HashMap<Integer, Issues>>();
 
     /** A cached OwnedIssues data model. */
-    protected HashIntMap _ownedModel = new HashIntMap();
+    protected HashMap<Integer, HashMap<Integer, OwnedIssues>> _ownedModel = 
+        new HashMap<Integer, HashMap<Integer, OwnedIssues>>();
 }
