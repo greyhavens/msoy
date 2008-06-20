@@ -73,10 +73,10 @@ public class WhirledDiscussionsPanel extends FlowPanel
         }
         
         // add a ThreadWidget and divider for each thread
-        for (int i = 0; i < _detail.threads.size(); i++) {
-            ForumThread thread = (ForumThread)_detail.threads.get(i);
+        for (int ii = 0; ii < _detail.threads.size(); ii++) {
+            ForumThread thread = _detail.threads.get(ii);
             add(new ThreadWidget(thread));
-            if (_detail.threads.size() > i+1) {
+            if (_detail.threads.size() > ii + 1) {
                 SimplePanel divider = new SimplePanel();
                 divider.setStyleName("Divider");
                 add(divider);

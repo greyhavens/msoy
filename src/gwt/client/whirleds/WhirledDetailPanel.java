@@ -413,7 +413,8 @@ public class WhirledDetailPanel extends FlowPanel
     {
         public TopMembersPanel () {
             setStyleName("TopMembersPanel");
-            add(MsoyUI.createSimplePanel("Title", new HTML(CWhirleds.msgs.detailTopMembersTitle())));
+            add(MsoyUI.createSimplePanel("Title", 
+                new HTML(CWhirleds.msgs.detailTopMembersTitle())));
             
             FlowPanel content = new FlowPanel();
             content.setStyleName("Content");
@@ -421,18 +422,21 @@ public class WhirledDetailPanel extends FlowPanel
 
             SmartTable members = new SmartTable("Members", 0, 0); 
             content.add(members);
-            for (int i = 0; i < _detail.topMembers.size(); i++) {
-                GroupMemberCard member = (GroupMemberCard)_detail.topMembers.get(i);
-                ClickListener iconClick = Application.createLinkListener(Page.PEOPLE, ""+member.name.getMemberId());
-                ThumbBox icon = new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE, iconClick);
-                members.setWidget(i*2, 0, icon, 1, "Icon");
-                members.getFlexCellFormatter().setRowSpan(i*2, 0, 2);
+            for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
+                GroupMemberCard member = _detail.topMembers.get(ii);
+                ClickListener iconClick = Application.createLinkListener(
+                    Page.PEOPLE, "" + member.name.getMemberId());
+                ThumbBox icon = 
+                    new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE, iconClick);
+                members.setWidget(ii * 2, 0, icon, 1, "Icon");
+                members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
                 if (member.rank == GroupMembership.RANK_MANAGER) {
-                    members.setHTML(i*2, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
+                    members.setHTML(
+                        ii * 2, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(
-                  "Name", Application.memberViewLink(""+member.name, member.name.getMemberId()));
-                members.setWidget((i*2)+1, 0, name);
+                  "Name", Application.memberViewLink("" + member.name, member.name.getMemberId()));
+                members.setWidget((ii * 2) + 1, 0, name);
             }
             
             // see all opens in contentPanel
