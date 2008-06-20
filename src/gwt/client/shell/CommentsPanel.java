@@ -172,12 +172,15 @@ public class CommentsPanel extends PagedGrid
 
     protected class CommentModel extends ServiceBackedDataModel
     {
+        @Override
         protected void callFetchService (int start, int count, boolean needCount) {
             CShell.commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
         }
+        @Override
         protected int getCount (Object result) {
             return ((CommentService.CommentResult)result).commentCount;
         }
+        @Override
         protected List getRows (Object result) {
             return ((CommentService.CommentResult)result).comments;
         }

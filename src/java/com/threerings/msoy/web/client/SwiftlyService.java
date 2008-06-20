@@ -6,7 +6,10 @@ package com.threerings.msoy.web.client;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
@@ -25,18 +28,14 @@ public interface SwiftlyService extends RemoteService
 
     /**
      * Returns the list of SwiftlyProjects that are remixable.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.SwiftlyProject>
      */
-    public List getRemixableProjects (WebIdent ident)
+    public List<SwiftlyProject> getRemixableProjects (WebIdent ident)
         throws ServiceException;
 
     /**
      * Returns the list of SwiftlyProjects on which the supplied member is a collaborator.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.SwiftlyProject>
      */
-    public List getMembersProjects (WebIdent ident)
+    public List<SwiftlyProject> getMembersProjects (WebIdent ident)
         throws ServiceException;
 
     /**
@@ -72,18 +71,14 @@ public interface SwiftlyService extends RemoteService
 
     /**
      * Loads the collaborators for the given project.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.MemberName>
      */
-    public List getProjectCollaborators (WebIdent ident, int projectId)
+    public List<MemberName> getProjectCollaborators (WebIdent ident, int projectId)
         throws ServiceException;
 
     /**
      * Loads the friends for a given member.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
      */
-    public List getFriends (WebIdent ident)
+    public List<FriendEntry> getFriends (WebIdent ident)
         throws ServiceException;
 
     /**

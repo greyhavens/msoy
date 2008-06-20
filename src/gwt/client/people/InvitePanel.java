@@ -223,11 +223,9 @@ public class InvitePanel extends VerticalPanel
 
     protected void checkAndSend ()
     {
-        final List invited = new ArrayList();
-        Set accepted = new HashSet();
-        ArrayList contacts = _emailList.getItems();
-        for (int ii = 0; ii < contacts.size(); ii++) {
-            EmailContact contact = (EmailContact)contacts.get(ii);
+        final List<EmailContact> invited = new ArrayList<EmailContact>();
+        Set<String> accepted = new HashSet<String>();
+        for (EmailContact contact : _emailList.getItems()) {
             if (!contact.email.matches(MsoyUI.EMAIL_REGEX)) {
                 MsoyUI.error(CPeople.msgs.inviteInvalidAddress(contact.email));
                 return;
@@ -393,7 +391,7 @@ public class InvitePanel extends VerticalPanel
             getFlexCellFormatter().setColSpan(1, 0, 3);
         }
 
-        public ArrayList getItems ()
+        public List<EmailContact> getItems ()
         {
             return _items;
         }
@@ -439,7 +437,7 @@ public class InvitePanel extends VerticalPanel
             _listTable.getFlexCellFormatter().setWidth(row, 1, "40px");
         }
 
-        protected ArrayList _items = new ArrayList();
+        protected List<EmailContact> _items = new ArrayList<EmailContact>();
         protected FlexTable _listTable;
     }
 

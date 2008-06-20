@@ -7,6 +7,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.item.data.all.Item;
+
+import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
@@ -46,10 +49,8 @@ public interface MemberService extends RemoteService
     /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.item.data.all.Item>
      */
-    public List loadInventory (WebIdent ident, byte type, int suiteId)
+    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException;
 
     /**
@@ -63,11 +64,9 @@ public interface MemberService extends RemoteService
      *
      * @param anonymous if true, the invitations will not be from the caller but will be
      * anonymous. This is only allowed for admin callers.
-     *
-     * @gwt.typeArgs addresses <com.threerings.msoy.web.data.EmailContact>
      */
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String fromName,
-                                          String customMessage, boolean anonymous)
+    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses, 
+        String fromName, String customMessage, boolean anonymous)
         throws ServiceException;
 
     /**
@@ -94,9 +93,7 @@ public interface MemberService extends RemoteService
     /**
      * Fetch the highest ranked Whirled memebers for display on a leader board. 
      * Returns a list of {@link MemberCard} records.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
-    public List getLeaderList ()
+    public List<MemberCard> getLeaderList ()
         throws ServiceException;
 }

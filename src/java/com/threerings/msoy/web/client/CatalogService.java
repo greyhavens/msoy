@@ -32,10 +32,8 @@ public interface CatalogService extends RemoteService
 
         /**
          * The particular set of listings requested.
-         *
-         * @gwt.typeArgs <com.threerings.msoy.web.data.ListingCard>
          */
-        public List listings;
+        public List<ListingCard> listings;
     }
 
     /**
@@ -103,9 +101,7 @@ public interface CatalogService extends RemoteService
 
     /**
      * Fetches the N most-used tags for a given item type.
-     *
-     * @gwt.typeArgs <java.lang.String, java.lang.Integer>
      */
-    public Map getPopularTags (byte type, int rows)
+    public Map<String, Integer> getPopularTags (byte type, int rows)
         throws ServiceException;
 }

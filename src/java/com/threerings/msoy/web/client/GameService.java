@@ -86,10 +86,8 @@ public interface GameService extends RemoteService
     /**
      * Loads and returns the trophies awarded by the specified game. Filling in when they were
      * earned by the caller if possible.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.game.data.all.Trophy>
      */
-    public List loadGameTrophies (WebIdent ident, int gameId)
+    public List<Trophy> loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException;
 
     /**

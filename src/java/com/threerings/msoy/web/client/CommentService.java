@@ -24,9 +24,8 @@ public interface CommentService extends RemoteService
         /** The total count of comments. */
         public int commentCount;
 
-        /** The range of comments that were requested.
-         * @gwt.typeArgs <com.threerings.msoy.fora.data.Comment> */
-        public List comments;
+        /** The range of comments that were requested. */
+        public List<Comment> comments;
     }
 
     /**
