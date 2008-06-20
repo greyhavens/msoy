@@ -48,7 +48,8 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#loadItemDetail}.
      */
-    public void loadItemDetail (WebIdent ident, ItemIdent item, AsyncCallback callback);
+    public void loadItemDetail (
+        WebIdent ident, ItemIdent item, AsyncCallback<ItemService.DetailOrIdent> callback);
 
     /**
      * The asynchronous version of {@link ItemService#scaleAvatar}.

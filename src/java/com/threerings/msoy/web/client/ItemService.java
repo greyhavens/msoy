@@ -22,6 +22,26 @@ import com.threerings.msoy.web.data.TagHistory;
  */
 public interface ItemService extends RemoteService
 {
+    /** Provides results for {@link #loadItemDetail}. */
+    public static class DetailOrIdent implements IsSerializable
+    {
+        public DetailOrIdent () 
+        {
+        }
+
+        public DetailOrIdent (ItemDetail detail, ItemIdent ident) 
+        {
+            this.detail = detail;
+            this.ident = ident;
+        }
+
+        /** Set if the user has access to the item in question. */
+        public ItemDetail detail;
+
+        /** Else, this is set.  Only one of detail and ident will be non-null. */
+        public ItemIdent ident;
+    }
+
     /**
      * Requests that the supplied item be created and inserted into the creating user's inventory.
      *
@@ -67,11 +87,8 @@ public interface ItemService extends RemoteService
 
     /**
      * Loads the detailed details of a particular item.
-     *
-     * @return an ItemDetail, or if the specified user doesn't have access to the item,
-     * an ItemIdent representing the associated catalog listing.
      */
-    public IsSerializable loadItemDetail (WebIdent ident, ItemIdent item)
+    public DetailOrIdent loadItemDetail (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**

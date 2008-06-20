@@ -237,7 +237,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public IsSerializable loadItemDetail (WebIdent ident, final ItemIdent iident)
+    public ItemService.DetailOrIdent loadItemDetail (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
@@ -254,7 +254,8 @@ public class ItemServlet extends MsoyServiceServlet
                     (mrec == null || (!mrec.isSupport() && mrec.memberId != record.ownerId))) {
                 // if it's listed, send them to the catalog
                 if (record.catalogId != 0) {
-                    return new ItemIdent(iident.type, record.catalogId);
+                    return new ItemService.DetailOrIdent(null, 
+                        new ItemIdent(iident.type, record.catalogId));
                 } else {
                     throw new ServiceException(ItemCodes.E_ACCESS_DENIED); // fall back to error
                 }
@@ -275,7 +276,7 @@ public class ItemServlet extends MsoyServiceServlet
                 detail.useLocation = MsoyServer.sceneRepo.identifyScene(detail.item.location);
                 break;
             }
-            return detail;
+            return new ItemService.DetailOrIdent(detail, null);
 
         } catch (PersistenceException pe) {
             log.warning("Failed to load item detail [id=" + iident + "].", pe);
@@ -592,7 +593,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public List getFlaggedItems (WebIdent ident, int count)
+    public List<ItemDetail> getFlaggedItems (WebIdent ident, int count)
         throws ServiceException
     {
         MemberRecord mRec = _mhelper.requireAuthedUser(ident);

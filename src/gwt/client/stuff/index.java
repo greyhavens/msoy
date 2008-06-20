@@ -8,16 +8,21 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
+import com.threerings.msoy.web.client.ItemService;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+
 import client.remix.ItemRemixer;
+
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -81,22 +86,23 @@ public class index extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        if (result instanceof ItemDetail) {
-                            _detail = (ItemDetail)result;
-                            _models.updateItem(_detail.item);
-                            setContent(title, new ItemDetailPanel(_models, _detail));
-
-                        } else {
-                            // We didn't have access to that specific item, but have been given
-                            // the catalog id for the prototype.
-                            ItemIdent id = (ItemIdent)result;
-                            Application.go(Page.SHOP,
-                                Args.compose("l", "" + id.type, "" + id.itemId));
+                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, 
+                    new MsoyCallback<ItemService.DetailOrIdent>() {
+                        public void onSuccess (ItemService.DetailOrIdent result) {
+                            if (result.detail != null) {
+                                _detail = result.detail;
+                                _models.updateItem(_detail.item);
+                                setContent(title, new ItemDetailPanel(_models, _detail));
+    
+                            } else {
+                                // We didn't have access to that specific item, but have been given
+                                // the catalog id for the prototype.
+                                ItemIdent id = result.ident;
+                                Application.go(Page.SHOP,
+                                    Args.compose("l", "" + id.type, "" + id.itemId));
+                            }
                         }
-                    }
-                });
+                    });
             }
 
         // if we're editing an item, display that interface
