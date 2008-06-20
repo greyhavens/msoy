@@ -1045,7 +1045,13 @@
     <copy todir="${approot.server}/${deploy.dir}/lib">
       <fileset dir="${deploy.dir}/lib">
         <include name="*.jar"/>
-        <include name="avmthane"/>
+      </fileset>
+    </copy>
+
+    <!-- copy the thane native binaries needed by all servers -->
+    <copy todir="${approot.server}/bin/thane">
+      <fileset dir="projects/thane/bin">
+        <include name="*/avmthane"/>
       </fileset>
     </copy>
 
@@ -1171,7 +1177,6 @@
             <path>pages/buildresults/</path>
             <path>data/swiftly/projects/</path>
             <path>data/swiftly/build/</path>
-            <path>dist/lib/avmthane</path>
           </permission>
           <permission mode="555" recursive="true">
             <path>bin/</path>
