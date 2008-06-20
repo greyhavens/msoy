@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # $Id$
 #
@@ -16,6 +16,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ]; then
     echo "Parameters: $@"
     exit 255
 fi
+
 BUREAU_ID=$1
 CONNECT_TOKEN=$2
 CONNECT_PORT=$3
@@ -46,7 +47,7 @@ if [ ! -x "$THANE_INTERPRETER" ]; then
 fi
 
 # gather all .abc files
-LIBS=( $MSOY_HOME/dist/msoylib.abc )
+LIBS=$MSOY_HOME/dist/msoylib.abc
 
 # the 'main' abc file
 MAIN=$MSOY_HOME/dist/MsoyThaneClient.abc
@@ -55,7 +56,7 @@ MAIN=$MSOY_HOME/dist/MsoyThaneClient.abc
 touch $LOGFILE
 
 # Start up the server
-(
+{
 echo "Running $DESC"
 echo "------------------------------------------------------------------------------"
 echo "      Bureau ID: $BUREAU_ID"
@@ -63,12 +64,12 @@ echo "    Interpreter: $THANE_INTERPRETER"
 echo "Deployment root: $MSOY_HOME"
 echo "          Token: $CONNECT_TOKEN"
 echo "           Port: $CONNECT_PORT"
-echo "           Libs: ${LIBS[@]}"
+echo "           Libs: $LIBS"
 echo "           Main: $MAIN"
-echo "------------------------------------------------------------------------------"
-) >>$LOGFILE
+echo "------------------------------------------------------------------------------";
+} >>$LOGFILE
 
-$THANE_INTERPRETER -Dinterp "${LIBS[@]}" $MAIN -- $BUREAU_ID $CONNECT_TOKEN $CONNECT_PORT >>$LOGFILE 2>&1
+$THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN $CONNECT_PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
