@@ -91,12 +91,22 @@ class Headshot extends Sprite
 
     override public function get width () :Number
     {
-        return MediaDesc.THUMBNAIL_WIDTH;
+        return MediaDesc.THUMBNAIL_WIDTH * scaleX;
+    }
+
+    override public function set width (newVal :Number) :void
+    {
+        scaleX = newVal / MediaDesc.THUMBNAIL_WIDTH;
     }
 
     override public function get height () :Number
     {
-        return MediaDesc.THUMBNAIL_HEIGHT;
+        return MediaDesc.THUMBNAIL_HEIGHT * scaleY;
+    }
+
+    override public function set height (newVal :Number) :void
+    {
+        scaleY = newVal / MediaDesc.THUMBNAIL_HEIGHT;
     }
 
     override public function addChild (child :DisplayObject) :DisplayObject
