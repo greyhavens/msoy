@@ -253,6 +253,11 @@ public class CreateAccountPanel extends VerticalPanel
         String inviteId = (Application.activeInvite == null) ?
             null : Application.activeInvite.inviteId;
         int guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
+        // TODO: I'm not sure if this is right.. I could just change CShell.getMemberId()
+        // to use the ident if there are no creds...
+        if (guestId == 0 && (CAccount.ident != null) && CAccount.ident.memberId < 0) {
+            guestId = CAccount.ident.memberId;
+        }
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
 
