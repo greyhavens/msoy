@@ -39,7 +39,6 @@ public class InvitationResults
     /** MemberNames for registered users. */
     public MemberName[] names;
 
-    /** The pending invitations generated.
-     * @gwt.typeArgs <com.threerings.msoy.web.data.Invitation> */
-    public List pendingInvitations;
+    /** The pending invitations generated. */
+    public List<Invitation> pendingInvitations;
 }

@@ -26,8 +26,6 @@ public class GalaxyData
 
     /**
      * Popular Whirled tags.
-     * 
-     * @gwt.typeArgs <java.lang.String>
      */
-    public List popularTags;
+    public List<String> popularTags;
 }

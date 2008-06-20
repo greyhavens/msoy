@@ -121,7 +121,7 @@ public class MemberInfoPanel extends SmartTable
             if (ii > 0) {
                 invited.add(MsoyUI.createHTML(", ", "inline"));
             }
-            invited.add(infoLink((MemberName)info.invitees.get(ii)));
+            invited.add(infoLink(info.invitees.get(ii)));
         }
         setWidget(row, 1, invited);
 
@@ -130,6 +130,7 @@ public class MemberInfoPanel extends SmartTable
 
     protected Widget infoLink (MemberName name)
     {
-        return Application.createLink(""+name, Page.ADMIN, Args.compose("info", name.getMemberId()));
+        return Application.createLink(
+            "" + name, Page.ADMIN, Args.compose("info", name.getMemberId()));
     }
 }

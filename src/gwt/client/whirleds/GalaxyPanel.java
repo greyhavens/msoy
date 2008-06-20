@@ -145,8 +145,7 @@ public class GalaxyPanel extends VerticalPanel
         if (data.popularTags.size() == 0) {
             _popularTags.add(MsoyUI.createLabel(CWhirleds.msgs.galaxyNoPopularTags(), "Link"));
         } else {
-            for (int ii = 0; ii < data.popularTags.size(); ii++) {
-                String tag = (String)data.popularTags.get(ii);
+            for (String tag : data.popularTags) {
                 Widget link = Application.createLink(
                     tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
                 link.addStyleName("Link");

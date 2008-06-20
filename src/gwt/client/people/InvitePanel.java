@@ -189,13 +189,13 @@ public class InvitePanel extends VerticalPanel
         addPendingInvites(_invites.pendingInvitations);
     }
 
-    protected void addPendingInvites  (List penders)
+    protected void addPendingInvites (List<Invitation> penders)
     {
         int prow = (_penders.getRowCount() == 2 || _penders.getCellCount(2) == 1) ?
             2 : _penders.getRowCount();
         for (int ii = 0; ii < penders.size(); ii++) {
             final int frow = prow++;
-            final Invitation inv = (Invitation)penders.get(ii);
+            final Invitation inv = penders.get(ii);
             _penders.setWidget(frow, 0,
                     MsoyUI.createActionImage("/images/profile/remove.png", new ClickListener() {
                 public void onClick (Widget widget) {

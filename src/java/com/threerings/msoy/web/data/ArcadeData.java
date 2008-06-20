@@ -38,15 +38,11 @@ public class ArcadeData
 
     /** 
      * Information about each game genre.
-     * 
-     * @gwt.typeArgs <com.threerings.msoy.web.data.ArcadeData.Genre>
      */
-    public List genres;
+    public List<Genre> genres;
 
     /** 
      * Info for this player's favorite games or null if they're a guest or have none.
-     * 
-     * @gwt.typeArgs <com.threerings.msoy.web.data.GameInfo>
      */
-    public List favorites;
+    public List<GameInfo> favorites;
 }

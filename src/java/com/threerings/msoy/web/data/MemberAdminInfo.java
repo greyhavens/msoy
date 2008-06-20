@@ -57,8 +57,6 @@ public class MemberAdminInfo
 
     /**
      * The names of members that this member invited.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.data.all.MemberName>
      */
-    public List invitees;
+    public List<MemberName> invitees;
 }
