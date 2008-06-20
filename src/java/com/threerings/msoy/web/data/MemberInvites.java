@@ -16,9 +16,8 @@ public class MemberInvites
     /** The number of invites available. */
     public int availableInvitations;
 
-    /** The list of pending invitations.
-     * @gwt.typeArgs <com.threerings.msoy.web.data.Invitation> */
-    public List pendingInvitations;
+    /** The list of pending invitations. */
+    public List<Invitation> pendingInvitations;
 
     /** The server host string that should be prepended to the invite id */
     public String serverUrl;

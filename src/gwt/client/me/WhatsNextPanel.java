@@ -146,8 +146,7 @@ public class WhatsNextPanel extends SmartTable
         // group our friends by location (in rooms or games)
         Map games = new HashMap();
         Map rooms = new HashMap();
-        for (int ii = 0; ii < data.friends.size(); ii++) {
-            MemberCard card = (MemberCard)data.friends.get(ii);
+        for (MemberCard card : data.friends) {
             if (card.status instanceof MemberCard.InScene) {
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
                 FlowPanel room = getPlacePanel(

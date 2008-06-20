@@ -61,7 +61,7 @@ public class ConvoPanel extends FlowPanel
         add(header);
 
         for (int ii = 0; ii < result.messages.size(); ii++) {
-            ConvMessage msg = (ConvMessage)result.messages.get(ii);
+            ConvMessage msg = result.messages.get(ii);
             add(new MessageWidget((ii == 0) ? result.subject : null, msg,
                                   msg.sent.getTime() > result.lastRead,
                                   ii == result.messages.size()-1));

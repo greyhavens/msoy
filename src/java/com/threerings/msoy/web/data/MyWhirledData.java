@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.person.data.FeedMessage;
+
 /** 
  * Contains the data that we need for the My Whirled views.
  */
@@ -21,15 +23,11 @@ public class MyWhirledData
 
     /** 
      * This member's online friends.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberCard>
      */
-    public List friends;
+    public List<MemberCard> friends;
 
     /** 
      * This member's recent feed messages.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
      */
-    public List feed;
+    public List<FeedMessage> feed;
 }

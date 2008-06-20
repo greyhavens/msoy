@@ -60,7 +60,7 @@ public class FeedPanel extends TongueBox
         _feedLoader = feedLoader;
     }
 
-    public void setFeed (List feed, boolean fullPage)
+    public void setFeed (List<FeedMessage> feed, boolean fullPage)
     {
         _fullPage = fullPage;
         _feeds.clear();
@@ -125,7 +125,7 @@ public class FeedPanel extends TongueBox
             setStyleName("FeedList");
         }
 
-        public void populate (List messages, String emptyMessage, boolean fullPage)
+        public void populate (List<FeedMessage> messages, String emptyMessage, boolean fullPage)
         {
             if (messages.size() == 0) {
                 add(new BasicWidget(emptyMessage));
@@ -133,13 +133,10 @@ public class FeedPanel extends TongueBox
             }
 
             // sort in descending order by posted
-            Object[] messageArray = messages.toArray();
-            Arrays.sort(messageArray, new Comparator () {
-                public int compare (Object o1, Object o2) {
-                    if (!(o1 instanceof FeedMessage) || !(o2 instanceof FeedMessage)) {
-                        return 0;
-                    }
-                    return (int)(((FeedMessage)o2).posted - ((FeedMessage)o1).posted);
+            FeedMessage[] messageArray = messages.toArray(new FeedMessage[messages.size()]);
+            Arrays.sort(messageArray, new Comparator<FeedMessage> () {
+                public int compare (FeedMessage f1, FeedMessage f2) {
+                    return f2.posted > f1.posted ? 1 : (f1.posted > f2.posted ? -1 : 0);
                 }
                 public boolean equals (Object obj) {
                     return obj == this;
@@ -235,10 +232,10 @@ public class FeedPanel extends TongueBox
         /**
          * Builds a left side or right side aggregated HashMap for the supplied messages.
          */
-        protected void buildMessageMap (List messages, long header, HashMap map, boolean left)
+        protected void buildMessageMap (List<FeedMessage> messages, long header, HashMap map, 
+            boolean left)
         {
-            for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
-                FeedMessage message = (FeedMessage)msgIter.next();
+            for (FeedMessage message : messages) {
                 if (header > message.posted) {
                     break;
                 }

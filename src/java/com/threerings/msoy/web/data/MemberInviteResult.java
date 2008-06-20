@@ -21,8 +21,6 @@ public class MemberInviteResult
 
     /**
      * The list of the people that this member has invited.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberInviteStatus>
      */
-    public List invitees;
+    public List<MemberInviteStatus> invitees;
 }

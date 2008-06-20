@@ -17,6 +17,8 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.LandingData;
 
+import com.threerings.msoy.person.data.FeedMessage;
+
 /**
  * Provides information related to the world (and the whirled).
  */
@@ -61,19 +63,15 @@ public interface WorldService extends RemoteService
 
     /**
      * Loads the list of rooms owned by the calling user.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.web.client.WorldService.Room>
      */
-    public List loadMyRooms (WebIdent ident)
+    public List<Room> loadMyRooms (WebIdent ident)
         throws ServiceException;
 
     /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
-     *
-     * @gwt.typeArgs <com.threerings.msoy.person.data.FeedMessage>
      */
-    public List loadFeed (WebIdent ident, int cutoffDays)
+    public List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
         throws ServiceException;
 
     /**

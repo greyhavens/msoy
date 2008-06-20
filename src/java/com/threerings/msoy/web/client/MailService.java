@@ -27,9 +27,8 @@ public interface MailService extends RemoteService
         /** The total conversation count for this player (if requested). */
         public int totalConvoCount;
 
-        /** The conversations.
-         * @gwt.typeArgs <com.threerings.msoy.person.data.Conversation> */
-        public List convos;
+        /** The conversations. */
+        public List<Conversation> convos;
     }
 
     /** Communicates results for {@link #loadConversation}. */
@@ -44,9 +43,8 @@ public interface MailService extends RemoteService
         /** The sent time of the last message in this conversation the caller has read. */
         public long lastRead;
 
-        /** The messages in this conversation.
-         * @gwt.typeArgs <com.threerings.msoy.person.data.ConvMessage> */
-        public List messages;
+        /** The messages in this conversation. */
+        public List<ConvMessage> messages;
     }
 
     /**

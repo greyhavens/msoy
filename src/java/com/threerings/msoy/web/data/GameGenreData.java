@@ -18,8 +18,6 @@ public class GameGenreData
 
     /** 
      * Information about each game in this genre.
-     * 
-     * @gwt.typeArgs <com.threerings.msoy.web.data.GameInfo>
      */
-    public List games;
+    public List<GameInfo> games;
 }
