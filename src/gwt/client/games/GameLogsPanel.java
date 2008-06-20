@@ -83,7 +83,7 @@ public class GameLogsPanel extends VerticalPanel
             String label = DATE_FORMAT.format(logs.logTimes[ii]);
 
             table.setWidget(row, col, new HTML(
-                                "<a target='_top' href='" + href + "'>" + label + "</a>"));
+                                "<a target='_blank' href='" + href + "'>" + label + "</a>"));
             row ++;
             if (row * (TABLE_COLUMNS - col) >= (logs.logIds.length - ii)) {
                 row = 0;
