@@ -43,7 +43,7 @@ public interface ItemServiceAsync
     /**
      * Loads the details of a particular item.
      */
-    public void loadItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
+    public void loadItem (WebIdent ident, ItemIdent item, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadItemDetail}.

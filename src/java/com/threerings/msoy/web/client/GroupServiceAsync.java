@@ -38,7 +38,8 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGroupInfo}
      */
-    public void getGroupInfo (WebIdent ident, int groupId, AsyncCallback callback);
+    public void getGroupInfo (
+        WebIdent ident, int groupId, AsyncCallback<GroupService.GroupInfo> callback);
 
     /**
      * The asynchronous version of {@link GroupService#getGroupHomeId}
@@ -86,12 +87,13 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService.leaveGroup} 
      */
-    public void leaveGroup (WebIdent ident, int groupId, int memberId, AsyncCallback callback);
+    public void leaveGroup (
+        WebIdent ident, int groupId, int memberId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GroupService.joinGroup} 
      */
-    public void joinGroup (WebIdent ident, int groupId, AsyncCallback callback);
+    public void joinGroup (WebIdent ident, int groupId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GroupService.updateMemberRank}

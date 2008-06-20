@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -17,7 +18,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getMemberCard}.
      */
-    public void getMemberCard (int memberId, AsyncCallback callback);
+    public void getMemberCard (int memberId, AsyncCallback<MemberCard> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.

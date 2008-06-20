@@ -306,10 +306,10 @@ public class WhirledDetailPanel extends FlowPanel
         };
     }
 
-    protected MsoyCallback refresh ()
+    protected MsoyCallback<Void> refresh ()
     {
-        return new MsoyCallback() {
-            public void onSuccess (Object result) {
+        return new MsoyCallback<Void>() {
+            public void onSuccess (Void result) {
                 loadGroup(_group.groupId);
             }
         };

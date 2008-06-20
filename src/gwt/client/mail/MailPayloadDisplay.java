@@ -95,11 +95,11 @@ public class MailPayloadDisplay
      * argument is null, one is created for you which does nothing on success and throws
      * a RuntimeException on failure.
      */
-    protected void updateState (MailPayload payload, AsyncCallback callback)
+    protected void updateState (MailPayload payload, AsyncCallback<Void> callback)
     {
         if (callback == null) {
-            callback = new AsyncCallback() {
-                public void onSuccess (Object result) {
+            callback = new AsyncCallback<Void>() {
+                public void onSuccess (Void result) {
                 }
                 public void onFailure (Throwable caught) {
                     throw new RuntimeException(caught);

@@ -48,12 +48,13 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI ()
         {
-            CMail.groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _info = (GroupService.GroupInfo) result;
-                    buildUI();
-                }
-            });
+            CMail.groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId, 
+                new MsoyCallback<GroupService.GroupInfo>() {
+                    public void onSuccess (GroupService.GroupInfo result) {
+                        _info = result;
+                        buildUI();
+                    }
+                });
         }
 
         protected void buildUI ()
@@ -79,20 +80,21 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void joinGroup ()
         {
-            CMail.groupsvc.joinGroup(CMail.ident, _invitePayload.groupId, new MsoyCallback() {
-                // if joining the group succeeds, mark this invitation as accepted
-                public void onSuccess (Object result) {
-                    _invitePayload.responded = true;
-                    updateState(_invitePayload, new MsoyCallback() {
-                        // and if that succeded to, let the mail app know to refresh
-                        public void onSuccess (Object result) {
-//                             if (_listener != null) {
-//                                 _listener.messageChanged(_convoId, _message);
-//                             }
-                        }
-                    });
-                }
-            });
+            CMail.groupsvc.joinGroup(CMail.ident, _invitePayload.groupId, 
+                new MsoyCallback<Void>() {
+                    // if joining the group succeeds, mark this invitation as accepted
+                    public void onSuccess (Void result) {
+                        _invitePayload.responded = true;
+                        updateState(_invitePayload, new MsoyCallback<Void>() {
+                            // and if that succeded to, let the mail app know to refresh
+                            public void onSuccess (Void result) {
+//                               if (_listener != null) {
+//                                  _listener.messageChanged(_convoId, _message);
+//                               }
+                            }
+                        });
+                    }
+                });
         }
 
         protected boolean _enabled;

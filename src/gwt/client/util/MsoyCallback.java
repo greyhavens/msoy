@@ -10,7 +10,7 @@ import client.shell.CShell;
 /**
  * Reports a callback error via {@link MsoyUI}.
  */
-public abstract class MsoyCallback implements AsyncCallback
+public abstract class MsoyCallback<T> implements AsyncCallback<T>
 {
     // from AsyncCallback
     public void onFailure (Throwable cause)

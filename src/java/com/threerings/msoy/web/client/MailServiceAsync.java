@@ -21,7 +21,8 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#loadConversation}
      */
-    public void loadConversation (WebIdent ident, int convoId, AsyncCallback callback);
+    public void loadConversation (
+        WebIdent ident, int convoId, AsyncCallback<MailService.ConvoResult> callback);
 
     /**
      * The asynchronous version of {@link MailService#startConversation}
@@ -44,5 +45,5 @@ public interface MailServiceAsync
      * The asynchronous version of {@link MailService#updatePayload}
      */
     public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload obj,
-                               AsyncCallback callback);
+                               AsyncCallback<Void> callback);
 }

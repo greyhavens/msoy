@@ -150,11 +150,12 @@ public abstract class ItemEditor extends FlexTable
      */
     public void setItem (int itemId)
     {
-        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId), new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setItem((Item)result);
-            }
-        });
+        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId), 
+            new MsoyCallback<Item>() {
+                public void onSuccess (Item result) {
+                    setItem(result);
+                }
+            });
     }
 
     /**

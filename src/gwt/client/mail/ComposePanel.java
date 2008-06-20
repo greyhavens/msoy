@@ -123,10 +123,10 @@ public class ComposePanel extends FlowPanel
 
     public void setRecipientId (int recipientId)
     {
-        CMail.membersvc.getMemberCard(recipientId, new MsoyCallback() {
-            public void onSuccess (Object result) {
+        CMail.membersvc.getMemberCard(recipientId, new MsoyCallback<MemberCard>() {
+            public void onSuccess (MemberCard result) {
                 if (result != null) {
-                    setRecipient((MemberCard)result, true);
+                    setRecipient(result, true);
                 }
             }
         });
@@ -134,27 +134,29 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId), new MsoyCallback() {
-            public void onSuccess (Object result) {
-                PresentPayload payload = new PresentPayload((Item)result);
-                _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
-                _contents.getFlexCellFormatter().setVerticalAlignment(3, 0, HasAlignment.ALIGN_TOP);
-                _contents.setWidget(3, 1, new ThumbBox(payload.getThumbnailMedia(), null));
-                _payload = payload;
-            }
-        });
+        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId), 
+            new MsoyCallback<Item>() {
+                public void onSuccess (Item result) {
+                    PresentPayload payload = new PresentPayload(result);
+                    _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
+                    _contents.getFlexCellFormatter().setVerticalAlignment(
+                        3, 0, HasAlignment.ALIGN_TOP);
+                    _contents.setWidget(3, 1, new ThumbBox(payload.getThumbnailMedia(), null));
+                    _payload = payload;
+                }
+            });
     }
 
     public void setGroupInviteId (int groupId)
     {
-        CMail.groupsvc.getGroupInfo(CMail.ident, groupId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                GroupService.GroupInfo info = (GroupService.GroupInfo)result;
-                _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
-                _contents.setText(3, 1, CMail.msgs.composeGroupDeets(""+info.name));
-                _payload = new GroupInvitePayload(info.name.getGroupId(), false);
-            }
-        });
+        CMail.groupsvc.getGroupInfo(CMail.ident, groupId, 
+            new MsoyCallback<GroupService.GroupInfo>() {
+                public void onSuccess (GroupService.GroupInfo result) {
+                    _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
+                    _contents.setText(3, 1, CMail.msgs.composeGroupDeets("" + result.name));
+                    _payload = new GroupInvitePayload(result.name.getGroupId(), false);
+                }
+            });
     }
 
     protected void onLoad ()
@@ -163,15 +165,16 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(), new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _friends = ((ProfileService.FriendsResult)result).friends;
-                    _friendBox.addItem("Select...");
-                    for (MemberCard friend : _friends) {
-                        _friendBox.addItem("" + friend.name);
+            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(), 
+                new MsoyCallback<ProfileService.FriendsResult>() {
+                    public void onSuccess (ProfileService.FriendsResult result) {
+                        _friends = result.friends;
+                        _friendBox.addItem("Select...");
+                        for (MemberCard friend : _friends) {
+                            _friendBox.addItem("" + friend.name);
+                        }
                     }
-                }
-            });
+                });
         }
     }
 

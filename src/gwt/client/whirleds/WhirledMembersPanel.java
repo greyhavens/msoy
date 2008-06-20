@@ -105,11 +105,11 @@ public class WhirledMembersPanel extends PagedGrid
         return new Command() {
             public void execute () {
                 CWhirleds.groupsvc.leaveGroup(CWhirleds.ident, _detail.group.groupId,
-                                              card.name.getMemberId(), new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        removeItem(card);
-                    }
-                });
+                    card.name.getMemberId(), new MsoyCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            removeItem(card);
+                        }
+                    });
             }
         };
     }
