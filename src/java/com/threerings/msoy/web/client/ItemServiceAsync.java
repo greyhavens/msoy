@@ -95,13 +95,14 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService.setFlags}.
      */
-    public void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values,
-                          AsyncCallback callback);
+    public void setFlags (
+        WebIdent ident, ItemIdent item, byte mask, byte values, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setMature}.
      */
-    public void setMature (WebIdent ident, ItemIdent item, boolean value, AsyncCallback callback);
+    public void setMature (
+        WebIdent ident, ItemIdent item, boolean value, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.getFlaggedItems}.

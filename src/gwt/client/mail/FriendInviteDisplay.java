@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.person.data.ConvMessage;
+
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
 
@@ -51,13 +53,13 @@ public class FriendInviteDisplay extends MailPayloadDisplay
                 setText(0, 0, CMail.msgs.friendInvitation(), 0, "rowPanelCell");
 
                 Button ayeButton = new Button(CMail.msgs.friendBtnAccept());
-                new ClickCallback(ayeButton) {
+                new ClickCallback<Void>(ayeButton) {
                     public boolean callService () {
                         CMail.membersvc.addFriend(
                             CMail.ident, _message.author.name.getMemberId(), this);
                         return true;
                     }
-                    public boolean gotResult (Object result) {
+                    public boolean gotResult (Void result) {
                         mailResponse();
                         refreshUI(true);
                         return false;
@@ -70,11 +72,12 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void mailResponse ()
         {
             CMail.mailsvc.continueConversation(
-                CMail.ident, _convoId, CMail.msgs.friendReplyBody(), null, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    // Well that's nice.
-                }
-            });
+                CMail.ident, _convoId, CMail.msgs.friendReplyBody(), null, 
+                new MsoyCallback<ConvMessage>() {
+                    public void onSuccess (ConvMessage result) {
+                        // Well that's nice.
+                    }
+                });
         }
 
         protected boolean _thirdPerson;

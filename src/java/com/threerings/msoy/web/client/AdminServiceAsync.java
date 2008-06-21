@@ -39,12 +39,13 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#spamPlayers}.
      */
-    public void spamPlayers (WebIdent ident, String subject, String body, int startId, int endId,
-                             AsyncCallback callback);
+    public void spamPlayers (
+        WebIdent ident, String subject, String body, int startId, int endId, 
+        AsyncCallback<int[]> callback);
 
     /**
      * The asynchronous version of {@link AdminService#setIsSupport}.
      */
-    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport,
-                              AsyncCallback callback);
+    public void setIsSupport (
+        WebIdent ident, int memberId, boolean isSupport, AsyncCallback<Void> callback);
 }

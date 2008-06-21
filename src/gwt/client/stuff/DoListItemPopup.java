@@ -153,15 +153,15 @@ public class DoListItemPopup extends VerticalPanel
         if (firstTime) {
             final String resultMsg = firstTime ?
                 CStuff.msgs.doListListed() : CStuff.msgs.doListUpdated();
-            new ClickCallback(_doIt) {
+            new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
                     CStuff.catalogsvc.listItem(
                         CStuff.ident, _item.getIdent(), _description.getText(), getPricing(),
                         getSalesTarget(), getFlowCost(), getGoldCost(), this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
-                    _item.catalogId = ((Integer)result).intValue();
+                public boolean gotResult (Integer result) {
+                    _item.catalogId = result;
                     MsoyUI.info(resultMsg);
                     Frame.clearDialog(DoListItemPopup.this);
                     _listener.itemListed(_item, false);

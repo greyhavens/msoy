@@ -37,7 +37,8 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#updateProject}.
      */
-    public void updateProject (WebIdent ident, SwiftlyProject project, AsyncCallback callback);
+    public void updateProject (
+        WebIdent ident, SwiftlyProject project, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#loadProject}.

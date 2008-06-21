@@ -28,7 +28,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
-    public void addFriend (WebIdent ident, int friendId, AsyncCallback callback);
+    public void addFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#declineFriend}.

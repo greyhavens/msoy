@@ -139,13 +139,12 @@ public class MailPanel extends VerticalPanel
             } else {
                 delete.setTitle(CMail.msgs.mailDeleteTip());
                 delete.addStyleName("actionLabel");
-                new ClickCallback(delete, CMail.msgs.deleteConfirm()) {
+                new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
                     public boolean callService () {
                         CMail.mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
                         return true;
                     }
-                    public boolean gotResult (Object result) {
-                        boolean deleted = ((Boolean)result).booleanValue();
+                    public boolean gotResult (Boolean deleted) {
                         if (!deleted) {
                             MsoyUI.info(CMail.msgs.deleteNotDeleted());
                         } else {

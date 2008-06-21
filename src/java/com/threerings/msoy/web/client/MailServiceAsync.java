@@ -4,7 +4,10 @@
 package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.MailPayload;
+
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -28,18 +31,19 @@ public interface MailServiceAsync
      * The asynchronous version of {@link MailService#startConversation}
      */
     public void startConversation (WebIdent ident, int recipientId, String subject, String body,
-                                   MailPayload attachment, AsyncCallback callback);
+                                   MailPayload attachment, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MailService#continueConversation}
      */
-    public void continueConversation (WebIdent ident, int convoId, String text,
-                                      MailPayload attachment, AsyncCallback callback);
+    public void continueConversation (
+        WebIdent ident, int convoId, String text, MailPayload attachment, 
+        AsyncCallback<ConvMessage> callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteConversation}
      */
-    public void deleteConversation (WebIdent ident, int convoId, AsyncCallback callback);
+    public void deleteConversation (WebIdent ident, int convoId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link MailService#updatePayload}

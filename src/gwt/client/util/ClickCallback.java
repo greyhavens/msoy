@@ -17,8 +17,8 @@ import client.shell.CShell;
  * code. Be sure to call <code>super.onSuccess()</code> and <code>super.onFailure()</code> if you
  * override those methods so that they can automatically reenable the trigger button.
  */
-public abstract class ClickCallback
-    implements AsyncCallback
+public abstract class ClickCallback<T>
+    implements AsyncCallback<T>
 {
     /**
      * Creates a callback for the supplied trigger (the constructor will automatically add this
@@ -59,10 +59,10 @@ public abstract class ClickCallback
      * This method will be called when the service returns successfully. Return true if the trigger
      * should now be reenabled, false to leave it disabled.
      */
-    public abstract boolean gotResult (Object result);
+    public abstract boolean gotResult (T result);
 
     // from interface AsyncCallback
-    public void onSuccess (Object result)
+    public void onSuccess (T result)
     {
         setEnabled(gotResult(result));
     }

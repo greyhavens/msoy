@@ -51,7 +51,7 @@ public class SpamPlayersDialog extends BorderedDialog
         setContents(contents);
 
         Button spam = new Button(CAdmin.msgs.spamSend());
-        new ClickCallback(spam, CAdmin.msgs.spamConfirm()) {
+        new ClickCallback<int[]>(spam, CAdmin.msgs.spamConfirm()) {
             public boolean callService () {
                 String subject = _subject.getText().trim();
                 String body = _body.getText().trim();
@@ -60,8 +60,7 @@ public class SpamPlayersDialog extends BorderedDialog
                 MsoyUI.info(CAdmin.msgs.spammingPleaseWait());
                 return true;
             }
-            public boolean gotResult (Object result) {
-                int[] counts = (int[])result;
+            public boolean gotResult (int[] counts) {
                 MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
                                                  Integer.toString(counts[1]),
                                                  Integer.toString(counts[2])));

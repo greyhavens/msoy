@@ -100,7 +100,7 @@ public class ProjectSelectionPanel extends FlexTable
 
         Button create = new Button(CSwiftly.msgs.createProject());
         table.setWidget(3, 1, create);
-        new ClickCallback(create) {
+        new ClickCallback<SwiftlyProject>(create) {
             public boolean callService () {
                 String name = projectName.getText().trim();
                 if (name.length() == 0) {
@@ -111,8 +111,7 @@ public class ProjectSelectionPanel extends FlexTable
                                                   _remixable.isChecked(), this);
                 return true;
             }
-            public boolean gotResult (Object result) {
-                SwiftlyProject newProject = (SwiftlyProject)result;
+            public boolean gotResult (SwiftlyProject newProject) {
                 Application.go(Page.SWIFTLY, "" + newProject.projectId);
                 return true;
             }

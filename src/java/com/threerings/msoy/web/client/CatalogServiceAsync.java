@@ -33,8 +33,9 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
-                          int salesTarget, int flowCost, int goldCost, AsyncCallback callback);
+    public void listItem (
+        WebIdent ident, ItemIdent item, String descrip, int pricing, int salesTarget, int flowCost, 
+        int goldCost, AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}

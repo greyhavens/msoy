@@ -82,7 +82,7 @@ public class ComposePanel extends FlowPanel
         _send = new Button(CMail.msgs.composeSend());
         _send.setEnabled(false);
         new StartConvoCallback(_send, _subject, _body) {
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 MsoyUI.info(CMail.msgs.composeSent(_recipient.name.toString()));
                 // if we just mailed an item as a gift, we can't go back to the item detail page
                 // because we no longer have access to it, so go to the STUFF page instead

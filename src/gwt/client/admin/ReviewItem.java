@@ -59,12 +59,12 @@ public class ReviewItem extends FlowPanel
 //             // TODO: Let's nix 'delist' for a bit and see if we need it later.
 //             if (item.ownerId == 0) {
 //                 Button button = new Button("Delist");
-//                 new ClickCallback(button) {
+//                 new ClickCallback<Integer>(button) {
 //                     public boolean callService () {
 //                         CAdmin.catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
 //                         return true;
 //                     }
-//                     public boolean gotResult (Object result) {
+//                     public boolean gotResult (Integer result) {
 //                         if (result != null) {
 //                             MsoyUI.info(CAdmin.msgs.reviewDelisted());
 //                             return false; // don't reenable delist
@@ -79,7 +79,7 @@ public class ReviewItem extends FlowPanel
         // a button to mark someting as mature
         if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
             _mark = new Button(CAdmin.msgs.reviewMark());
-            new ClickCallback(_mark) {
+            new ClickCallback<Void>(_mark) {
                 public boolean callService () {
                     if (_item == null) {
                         // should not happen, but let's be careful
@@ -88,7 +88,7 @@ public class ReviewItem extends FlowPanel
                     CAdmin.itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CAdmin.msgs.reviewMarked());
                     return false; // don't reenable button
                 }
@@ -112,7 +112,7 @@ public class ReviewItem extends FlowPanel
 
         // a button to signal we're done
         _done = new Button(CAdmin.msgs.reviewDone());
-        new ClickCallback(_done) {
+        new ClickCallback<Void>(_done) {
             public boolean callService () {
                 if (_item == null) {
                     _parent.refresh();
@@ -122,7 +122,7 @@ public class ReviewItem extends FlowPanel
                 CAdmin.itemsvc.setFlags(CAdmin.ident, _item.getIdent(), flags, (byte) 0, this);
                 return true;
             }
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 // the flags are set: refresh the UI
                 _parent.refresh();
                 // keep the button disabled until the UI refreshes

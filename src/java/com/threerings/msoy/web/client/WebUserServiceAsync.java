@@ -42,7 +42,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
      */
-    public void sendForgotPasswordEmail (String email, AsyncCallback callback);
+    public void sendForgotPasswordEmail (String email, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.

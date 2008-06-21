@@ -57,7 +57,7 @@ public class MemberInfoPanel extends SmartTable
 
             final CheckBox support = new CheckBox();
             support.setChecked(info.isSupport);
-            new ClickCallback(support) {
+            new ClickCallback<Void>(support) {
                 public boolean callService () {
                     _isSupport = support.isChecked();
                     if (_isSupport == info.isSupport) {
@@ -67,7 +67,7 @@ public class MemberInfoPanel extends SmartTable
                         CAdmin.ident, info.name.getMemberId(), _isSupport, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     info.isSupport = _isSupport;
                     MsoyUI.info(_isSupport ? CAdmin.msgs.mipMadeSupport() :
                                 CAdmin.msgs.mipMadeNotSupport());

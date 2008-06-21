@@ -142,8 +142,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
             }
             public void setFlags (final byte flag) {
                 ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-                CShell.itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback() {
-                    public void onSuccess (Object result) {
+                CShell.itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
                         _item.flagged |= flag;
                     }
                 });

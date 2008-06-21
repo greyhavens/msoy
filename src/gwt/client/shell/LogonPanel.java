@@ -162,7 +162,7 @@ public class LogonPanel extends SmartTable
 
             Button forgot = new Button(CShell.cmsgs.send());
             setWidget(0, col++, forgot);
-            new ClickCallback(forgot) {
+            new ClickCallback<Void>(forgot) {
                 public boolean callService () {
                     String account = _email.getText();
                     if (account.length() <= 0) {
@@ -171,7 +171,7 @@ public class LogonPanel extends SmartTable
                     CShell.usersvc.sendForgotPasswordEmail(account, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CShell.cmsgs.forgotEmailSent());
                     Frame.clearDialog(ForgotPasswordDialog.this);
                     return false;

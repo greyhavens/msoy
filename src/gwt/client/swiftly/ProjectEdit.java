@@ -143,12 +143,12 @@ public class ProjectEdit extends FlexTable
         // Submit button
         Button submit = new Button(CSwiftly.cmsgs.change());
         cell.add(submit);
-        new ClickCallback(submit) {
+        new ClickCallback<Void>(submit) {
             public boolean callService () {
                 CSwiftly.swiftlysvc.updateProject(CSwiftly.ident, _project, this);
                 return true;
             }
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 closeDialog();
                 return true;
             }

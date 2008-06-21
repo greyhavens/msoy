@@ -15,7 +15,7 @@ import client.util.MsoyUI;
 /**
  * A callback that handles starting a conversation.
  */
-public abstract class StartConvoCallback extends ClickCallback
+public abstract class StartConvoCallback extends ClickCallback<Void>
 {
     public StartConvoCallback (SourcesClickEvents trigger, TextBox subject, TextArea body)
     {

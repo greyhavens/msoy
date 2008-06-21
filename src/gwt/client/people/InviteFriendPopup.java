@@ -56,7 +56,7 @@ public class InviteFriendPopup extends BorderedDialog
 
         Button send = new Button(CPeople.msgs.ifriendSend());
         new StartConvoCallback(send, _subject, _body) {
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 MsoyUI.info(CPeople.msgs.ifriendSent());
                 hide();
                 return false;
