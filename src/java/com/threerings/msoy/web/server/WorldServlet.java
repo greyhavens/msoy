@@ -273,7 +273,7 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     // from interface WorldService
-    public List loadMyRooms (WebIdent ident)
+    public List<WorldService.Room> loadMyRooms (WebIdent ident)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
@@ -296,7 +296,7 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     // from interface WorldService
-    public List loadFeed (WebIdent ident, int cutoffDays)
+    public List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);

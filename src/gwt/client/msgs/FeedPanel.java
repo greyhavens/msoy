@@ -115,7 +115,7 @@ public class FeedPanel extends TongueBox
 
     protected interface StringBuilder
     {
-        public String build (FeedMessage message);
+        public String build (FriendFeedMessage message);
     }
 
     protected static class FeedList extends VerticalPanel
@@ -142,61 +142,62 @@ public class FeedPanel extends TongueBox
                     return obj == this;
                 }
             });
-            messages = Arrays.asList(messageArray);
-            HashMap messageMapLeft = new HashMap();
-            HashMap messageMapRight = new HashMap();
+            messages = new ArrayList<FeedMessage>();
+            // messages needs to be mutable, and the list returned from Arrays.asList() is fixed
+            // size, resulting in an annoying messages-less break in execution in GWT1.5 compiled 
+            // javascript
+            messages.addAll(Arrays.asList(messageArray));
+            HashMap<MessageKey, MessageAggregate> messageMapLeft = 
+                new HashMap<MessageKey, MessageAggregate>();
+            HashMap<MessageKey, MessageAggregate> messageMapRight = 
+                new HashMap<MessageKey, MessageAggregate>();
 
             long header = startofDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;
+            MessageAggregate dummyValue = new MessageAggregate();
             while (!messages.isEmpty()) {
                 buildMessageMap(messages, header, messageMapLeft, true);
                 buildMessageMap(messages, header, messageMapRight, false);
 
                 FeedMessage message = null;
-                for (Iterator msgIter = messages.iterator(); msgIter.hasNext(); ) {
-                    message = (FeedMessage)msgIter.next();
+                for (Iterator<FeedMessage> msgIter = messages.iterator(); msgIter.hasNext(); ) {
+                    message = msgIter.next();
                     if (header > message.posted) {
                         break;
                     }
                     msgIter.remove();
                     // Find the larger of the left or right aggregate message and display it
                     MessageKey lkey = getLeftKey(message);
-                    Object lvalue = null;
-                    if (lkey != null) {
-                        lvalue = messageMapLeft.get(lkey);
-                    }
+                    MessageAggregate lvalue = lkey == null ? null : messageMapLeft.get(lkey);
+                    lvalue = lvalue == null ? dummyValue : lvalue;
                     MessageKey rkey = getRightKey(message);
-                    Object rvalue = null;
-                    if (rkey != null) {
-                        rvalue = messageMapRight.get(rkey);
-                    }
-                    int lsize = (lvalue == null ? 0 :
-                            (lvalue instanceof ArrayList ? ((ArrayList)lvalue).size() : 1));
-                    int rsize = (rvalue == null ? 0 :
-                            (rvalue instanceof ArrayList ? ((ArrayList)rvalue).size() : 1));
+                    MessageAggregate rvalue = rkey == null ? null : messageMapRight.get(rkey);
+                    rvalue = rvalue == null ? dummyValue : rvalue;
+                    int lsize = lvalue.size();
+                    int rsize = rvalue.size();
                     // if one of the aggregate messages has been displayed, that means this message
                     // is displayed and should be removed from any further aggregates
-                    if (lvalue instanceof Boolean || rvalue instanceof Boolean) {
-                        if (lvalue instanceof Boolean && rsize > 1) {
-                            ((ArrayList)rvalue).remove(message);
-                        } else if (rvalue instanceof Boolean && lsize > 1) {
-                            ((ArrayList)lvalue).remove(message);
+                    if (lvalue.getDisplayed() || rvalue.getDisplayed()) {
+                        if (lvalue.getDisplayed() && rsize > 1) {
+                            rvalue.remove(message);
+                        } else if (rvalue.getDisplayed() && lsize > 1) {
+                            lvalue.remove(message);
                         }
                         continue;
                     }
                     if (lsize >= rsize && lsize > 1) {
-                        addLeftAggregateFriendMessage((ArrayList)lvalue);
+                        addLeftAggregateFriendMessage(lvalue.getList());
                         if (rsize > 1) {
-                            ((ArrayList)rvalue).remove(message);
+                            rvalue.remove(message);
                         }
-                        messageMapLeft.put(lkey, new Boolean(true));
+                        lvalue.setDisplayed(true);
                         continue;
                     } else if (rsize > 1) {
-                        addRightAggregateFriendMessage((ArrayList)rvalue);
+                        addRightAggregateFriendMessage(rvalue.getList());
                         if (lsize > 1) {
-                            ((ArrayList)lvalue).remove(message);
+                            lvalue.remove(message);
                         }
-                        messageMapRight.put(rkey, new Boolean(true));
+                        rvalue.setDisplayed(true);
                         continue;
                     }
                     // if this message is not aggregated than display it individually
@@ -232,8 +233,8 @@ public class FeedPanel extends TongueBox
         /**
          * Builds a left side or right side aggregated HashMap for the supplied messages.
          */
-        protected void buildMessageMap (List<FeedMessage> messages, long header, HashMap map, 
-            boolean left)
+        protected void buildMessageMap (List<FeedMessage> messages, long header, 
+            HashMap<MessageKey, MessageAggregate> map, boolean left)
         {
             for (FeedMessage message : messages) {
                 if (header > message.posted) {
@@ -243,19 +244,12 @@ public class FeedPanel extends TongueBox
                 if (key == null) {
                     continue;
                 }
-                Object value = map.get(key);
+                MessageAggregate value = map.get(key);
                 if (value == null) {
-                    map.put(key, message);
-                    continue;
+                    value = new MessageAggregate();
+                    map.put(key, value);
                 }
-                if (value instanceof FeedMessage) {
-                    ArrayList list = new ArrayList();
-                    list.add(value);
-                    list.add(message);
-                    map.put(key, list);
-                } else {
-                    ((ArrayList)value).add(message);
-                }
+                value.add(message);
             }
         }
 
@@ -369,30 +363,30 @@ public class FeedPanel extends TongueBox
             }
         }
 
-        protected String standardCombine (ArrayList list)
+        protected String standardCombine (List<FriendFeedMessage> list)
         {
             return standardCombine(list, new StringBuilder() {
-                public String build (FeedMessage message) {
+                public String build (FriendFeedMessage message) {
                     return buildString(message);
                 }
             });
         }
 
-        protected String friendLinkCombine (ArrayList list)
+        protected String friendLinkCombine (List<FriendFeedMessage> list)
         {
             return standardCombine(list, new StringBuilder() {
-                public String build (FeedMessage message) {
+                public String build (FriendFeedMessage message) {
                     return CMsgs.mmsgs.colonCombine(
-                        profileLink(((FriendFeedMessage)message).friend), buildString(message));
+                        profileLink(message.friend), buildString(message));
                 }
             });
         }
 
-        protected String profileCombine (ArrayList list)
+        protected String profileCombine (List<FriendFeedMessage> list)
         {
             return standardCombine(list, new StringBuilder() {
-                public String build (FeedMessage message) {
-                    return profileLink(((FriendFeedMessage)message).friend);
+                public String build (FriendFeedMessage message) {
+                    return profileLink(message.friend);
                 }
             });
         }
@@ -401,11 +395,11 @@ public class FeedPanel extends TongueBox
          * Helper function which combines the core feed message data into a translated, comma
          * separated and ending in 'and' list.
          */
-        protected String standardCombine (ArrayList list, StringBuilder builder)
+        protected String standardCombine (List<FriendFeedMessage> list, StringBuilder builder)
         {
-            String combine = builder.build((FeedMessage)list.get(0));
+            String combine = builder.build(list.get(0));
             for (int ii = 1, ll = list.size(); ii < ll; ii++) {
-                FeedMessage message = (FeedMessage)list.get(ii);
+                FriendFeedMessage message = list.get(ii);
                 if (ii + 1 == ll) {
                     combine = CMsgs.mmsgs.andCombine(combine, builder.build(message));
                 } else {
@@ -418,24 +412,26 @@ public class FeedPanel extends TongueBox
         /**
          * Helpfer function with creates an array of media widgets from feed messages.
          */
-        protected Widget[] buildMediaArray (ArrayList list)
+        protected Widget[] buildMediaArray (List<FriendFeedMessage> list)
         {
-            ArrayList media = new ArrayList();
-            for (int ii = 0, ll = list.size(); ii < ll; ii++) {
-                Widget w = buildMedia((FeedMessage)list.get(ii));
+            List<Widget> media = new ArrayList();
+            for (FriendFeedMessage message : list) {
+                Widget w = buildMedia(message);
                 if (w != null) {
                     media.add(w);
                 }
+
             }
             if (media.isEmpty()) {
                 return null;
             }
-            return (Widget[])media.toArray(new Widget[media.size()]);
+            return media.toArray(new Widget[media.size()]);
         }
 
-        protected void addLeftAggregateFriendMessage (ArrayList list)
+        protected void addLeftAggregateFriendMessage (List<FriendFeedMessage> list)
         {
-            FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
+            // friend feed messages are the only ones that get aggregated
+            FriendFeedMessage message = list.get(0);
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
@@ -465,9 +461,9 @@ public class FeedPanel extends TongueBox
             }
         }
 
-        protected void addRightAggregateFriendMessage (ArrayList list)
+        protected void addRightAggregateFriendMessage (List<FriendFeedMessage> list)
         {
-            FriendFeedMessage message = (FriendFeedMessage)((ArrayList)list).get(0);
+            FriendFeedMessage message = list.get(0);
             String friendLinks = profileCombine(list);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
@@ -651,6 +647,64 @@ public class FeedPanel extends TongueBox
             MessageKey other = (MessageKey)o;
             return type.equals(other.type) && key.equals(other.key);
         }
+    }
+
+    /**
+     * A class to encapsulate the various purposes of the value in a message map.
+     */
+    protected static class MessageAggregate
+    {
+        public boolean displayed = false;
+
+        public void add (FeedMessage message) 
+        {
+            if (displayed) {
+                CShell.log(
+                    "Ignoring addition of messages to a MessageAggregate that has been displayed");
+                return;
+            }
+
+            if (!(message instanceof FriendFeedMessage)) {
+                // don't need to log it - this value is being stored with a throwaway key.
+                return;
+            }
+            list.add((FriendFeedMessage)message);
+        }
+
+        public void remove (FeedMessage message)
+        {
+            if (message instanceof FriendFeedMessage) {
+                list.remove((FriendFeedMessage)message);
+            }
+        }
+
+        public int size () 
+        {
+            return list.size();
+        }
+
+        /**
+         * Setting displayed to true nulls out the values in the map
+         */
+        public void setDisplayed (boolean displayed)
+        {
+            this.displayed = displayed;
+            if (displayed) {
+                list = null;
+            }
+        }
+
+        public boolean getDisplayed ()
+        {
+            return displayed;
+        }
+
+        public List<FriendFeedMessage> getList ()
+        {
+            return list;
+        }
+
+        protected List<FriendFeedMessage> list = new ArrayList<FriendFeedMessage>();
     }
 
     protected FeedList _feeds;
