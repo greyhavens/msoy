@@ -87,7 +87,7 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public List loadMessages (WebIdent ident, int issueId, int messageId)
+    public List<ForumMessage> loadMessages (WebIdent ident, int issueId, int messageId)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
@@ -151,7 +151,7 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public void updateIssue (WebIdent ident, Issue issue)
+    public Issue updateIssue (WebIdent ident, Issue issue)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
@@ -172,6 +172,7 @@ public class IssueServlet extends MsoyServiceServlet
             }
 
             MsoyServer.issueRepo.updateIssue(issue);
+            return issue;
 
         } catch (PersistenceException pe) {
             log.warning("Failed to update issue [for=" + who(mrec) +
@@ -203,7 +204,7 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public List loadOwners (WebIdent ident)
+    public List<MemberName> loadOwners (WebIdent ident)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);

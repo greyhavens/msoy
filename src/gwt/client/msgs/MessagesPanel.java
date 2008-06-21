@@ -91,12 +91,12 @@ public class MessagesPanel extends PagedGrid
         // add a button for ignoring this thread
         _ignoreThread = new Button(CMsgs.mmsgs.ignoreThread());
         _ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
-        new ClickCallback(_ignoreThread) {
+        new ClickCallback<Void>(_ignoreThread) {
             public boolean callService () {
                 CMsgs.forumsvc.ignoreThread(CMsgs.ident, _parent.getThreadId(), this);
                 return true;
             }
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 MsoyUI.info(CMsgs.mmsgs.threadIgnored());
                 return false;
             }

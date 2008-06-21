@@ -177,7 +177,7 @@ public class ThreadPanel extends TitledListPanel
             }));
             Button submit = new Button(CMsgs.cmsgs.send());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
-            new ForumCallback(submit) {
+            new ForumCallback<ForumMessage>(submit) {
                 public boolean callService () {
                     String text = _editor.getHTML();
                     if (!checkMessageText(text)) {
@@ -186,8 +186,8 @@ public class ThreadPanel extends TitledListPanel
                     CMsgs.forumsvc.postMessage(CMsgs.ident, _threadId, replyId, text, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
-                    replyPosted((ForumMessage)result);
+                public boolean gotResult (ForumMessage result) {
+                    replyPosted(result);
                     return false;
                 }
             };
@@ -221,7 +221,7 @@ public class ThreadPanel extends TitledListPanel
             }));
 
             Button submit = new Button(CMsgs.cmsgs.change());
-            new ForumCallback(submit) {
+            new ForumCallback<Void>(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
                     if (!checkMessageText(_text)) {
@@ -230,7 +230,7 @@ public class ThreadPanel extends TitledListPanel
                     CMsgs.forumsvc.editMessage(CMsgs.ident, _message.messageId, _text, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CMsgs.mmsgs.msgPostUpdated());
                     _message.message = _text;
                     _message.lastEdited = new Date();
@@ -291,7 +291,7 @@ public class ThreadPanel extends TitledListPanel
             }));
 
             Button update = new Button(CMsgs.cmsgs.update());
-            new ClickCallback(update) {
+            new ClickCallback<Void>(update) {
                 public boolean callService () {
                     _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
                     _flags |= (_sticky.isChecked() ? ForumThread.FLAG_STICKY : 0);
@@ -299,7 +299,7 @@ public class ThreadPanel extends TitledListPanel
                     CMsgs.forumsvc.updateThreadFlags(CMsgs.ident, _thread.threadId, _flags, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     _thread.flags = _flags;
                     // TODO: have ForumModels update all instances of this thread
                     MsoyUI.info(CMsgs.mmsgs.tfepUpdated());

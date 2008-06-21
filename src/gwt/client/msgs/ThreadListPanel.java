@@ -211,7 +211,8 @@ public class ThreadListPanel extends PagedGrid
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
             Hyperlink latest = Application.createLink(
                 CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
-                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
+                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1, 
+                thread.mostRecentPostId));
             latest.setTitle(CMsgs.mmsgs.tlpLastTip());
             mrp.add(latest);
             setWidget(0, col, mrp);
@@ -221,12 +222,12 @@ public class ThreadListPanel extends PagedGrid
             if (_groupId == 0) {
                 Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
                 ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
-                new ClickCallback(ignoreThread) {
+                new ClickCallback<Void>(ignoreThread) {
                     public boolean callService () {
                         CMsgs.forumsvc.ignoreThread(CMsgs.ident, thread.threadId, this);
                         return true;
                     }
-                    public boolean gotResult (Object result) {
+                    public boolean gotResult (Void result) {
                         MsoyUI.info(CMsgs.mmsgs.threadIgnored());
                         setModel(_fmodels.getUnreadThreads(true), getPage());
                         return false;

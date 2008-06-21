@@ -69,7 +69,7 @@ public interface IssueService extends RemoteService
     /**
      * Updates an issue.
      */
-    public void updateIssue (WebIdent ident, Issue issue)
+    public Issue updateIssue (WebIdent ident, Issue issue)
         throws ServiceException;
 
     /**

@@ -39,17 +39,19 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#createIssue}.
      */
-    public void createIssue (WebIdent ident, Issue issue, int messageId, AsyncCallback callback);
+    public void createIssue (
+        WebIdent ident, Issue issue, int messageId, AsyncCallback<Issue> callback);
 
     /**
      * The asynchronous version of {@link IssueService#updateIssue}.
      */
-    public void updateIssue (WebIdent ident, Issue issue, AsyncCallback callback);
+    public void updateIssue (WebIdent ident, Issue issue, AsyncCallback<Issue> callback);
 
     /**
      * The asynchronous version of {@link IssueService#assignMessage}.
      */
-    public void assignMessage (WebIdent ident, int issueId, int messageId, AsyncCallback callback);
+    public void assignMessage (
+        WebIdent ident, int issueId, int messageId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link IssueService#loadOwners}.

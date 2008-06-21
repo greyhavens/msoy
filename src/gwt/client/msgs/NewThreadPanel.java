@@ -51,19 +51,19 @@ public class NewThreadPanel extends TableFooterPanel
             }
         }));
         Button submit = new Button(CMsgs.mmsgs.ntpSubmit());
-        new ForumCallback(submit) {
+        new ForumCallback<ForumThread>(submit) {
             public boolean callService () {
                 return submitNewThread(this);
             }
-            public boolean gotResult (Object result) {
-                ((ForumPanel)getParent()).newThreadPosted((ForumThread)result);
+            public boolean gotResult (ForumThread result) {
+                ((ForumPanel)getParent()).newThreadPosted(result);
                 return false;
             }
         };
         addFooterButton(submit);
     }
 
-    protected boolean submitNewThread (ForumCallback callback)
+    protected boolean submitNewThread (ForumCallback<ForumThread> callback)
     {
         String subject = _subject.getText().trim();
         if (subject.length() == 0) {

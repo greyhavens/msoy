@@ -7,6 +7,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
 
+import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.data.ForumThread;
+
 /**
  * The asynchronous (client-side) version of {@link ForumService}.
  */
@@ -44,29 +47,33 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#createThread}.
      */
-    public void createThread (WebIdent ident, int groupId, int flags, String subject, String message,
-                              AsyncCallback callback);
+    public void createThread (
+        WebIdent ident, int groupId, int flags, String subject, String message, 
+        AsyncCallback<ForumThread> callback);
 
     /**
      * The asynchronous version of {@link ForumService#updateThreadFlags}.
      */
-    public void updateThreadFlags (WebIdent ident, int threadId, int flags, AsyncCallback callback);
+    public void updateThreadFlags (
+        WebIdent ident, int threadId, int flags, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#ignoreThread}.
      */
-    public void ignoreThread (WebIdent ident, int threadId, AsyncCallback callback);
+    public void ignoreThread (WebIdent ident, int threadId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#postMessage}.
      */
-    public void postMessage (WebIdent ident, int threadId, int inReplyTo, String message,
-                             AsyncCallback callback);
+    public void postMessage (
+        WebIdent ident, int threadId, int inReplyTo, String message, 
+        AsyncCallback<ForumMessage> callback);
 
     /**
      * The asynchronous version of {@link ForumService#editMessage}.
      */
-    public void editMessage (WebIdent ident, int messageId, String message, AsyncCallback callback);
+    public void editMessage (
+        WebIdent ident, int messageId, String message, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#deleteMessage}.

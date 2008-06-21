@@ -115,12 +115,12 @@ public class EditIssuePanel extends TableFooterPanel
         _messagesRow = 8;
         if (_messageId > 0) {
             Button assign = new Button(CMsgs.mmsgs.assign());
-            new ClickCallback(assign) {
+            new ClickCallback<Void>(assign) {
                 public boolean callService () {
                     CMsgs.issuesvc.assignMessage(CMsgs.ident, _issue.issueId, _messageId, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     CMsgs.app.go(Page.WHIRLEDS,
                             "t_" + _message.threadId + "_" + _page + "_" + _messageId);
                     return false;
@@ -189,12 +189,12 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             });
             right = new Button(CMsgs.mmsgs.create());
-            new ClickCallback(right) {
+            new ClickCallback<Issue>(right) {
                 public boolean callService () {
                     return commitEdit(true, this);
                 }
-                public boolean gotResult (Object result) {
-                    _message.issueId = ((Issue)result).issueId;
+                public boolean gotResult (Issue result) {
+                    _message.issueId = result.issueId;
                     _tpanel.showMessages(true);
                     return false;
                 }
@@ -207,11 +207,11 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             });
             right = new Button(_newIssue ? CMsgs.mmsgs.create() : CMsgs.mmsgs.update());
-            new ClickCallback(right) {
+            new ClickCallback<Issue>(right) {
                 public boolean callService () {
                     return commitEdit(_newIssue, this);
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Issue result) {
                     _ipanel.redisplayIssues();
                     return false;
                 }
@@ -251,7 +251,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setWidget(_messagesRow++, 0, new IssueMessagePanel(message));
     }
 
-    protected boolean commitEdit (boolean create, ClickCallback callback)
+    protected boolean commitEdit (boolean create, ClickCallback<Issue> callback)
     {
         _issue.owner = (_ownerBox.getSelectedIndex() > 0) ?
             (MemberName)_ownerNames.get(_ownerBox.getSelectedIndex() - 1) : null;

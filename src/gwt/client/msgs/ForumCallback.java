@@ -13,7 +13,7 @@ import client.util.ClickCallback;
 /**
  * Extends {@link ClickCallback} and handles the special {@link MessageTooLongException}.
  */
-public abstract class ForumCallback extends ClickCallback
+public abstract class ForumCallback<T> extends ClickCallback<T>
 {
     public ForumCallback (SourcesClickEvents trigger)
     {
