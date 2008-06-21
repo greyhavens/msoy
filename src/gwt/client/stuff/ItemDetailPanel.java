@@ -288,12 +288,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
      */
     protected void createDeleteCallback (SourcesClickEvents trigger)
     {
-        new ClickCallback(trigger, CStuff.msgs.detailConfirmDelete()) {
+        new ClickCallback<Void>(trigger, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
                 CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 // remove the item from our cached models
                 int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
                 DataModel model = _models.getModel(_item.getType(), suiteId);
@@ -312,13 +312,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
      */
     protected void createRevertCallback (SourcesClickEvents trigger)
     {
-        new ClickCallback(trigger, CStuff.msgs.detailConfirmRevert()) {
+        new ClickCallback<Item>(trigger, CStuff.msgs.detailConfirmRevert()) {
             public boolean callService () {
                 CStuff.itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
-            public boolean gotResult (Object result) {
-                Item item = (Item) result;
+            public boolean gotResult (Item item) {
                 _models.updateItem(item);
                 _item = item;
                 _detail.item = item;

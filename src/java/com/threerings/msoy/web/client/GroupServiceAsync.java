@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -49,8 +52,9 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getMembershipGroups}
      */
-    public void getMembershipGroups (WebIdent ident, int memberId, boolean canInvite,
-                                     AsyncCallback callback);
+    public void getMembershipGroups (
+        WebIdent ident, int memberId, boolean canInvite, 
+        AsyncCallback<List<GroupMembership>> callback);
 
     /**
      * The asynchronous version of {@link GroupService.getGroupDetail} 

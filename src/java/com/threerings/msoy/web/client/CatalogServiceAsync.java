@@ -5,7 +5,9 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -28,7 +30,8 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (WebIdent ident, byte itemType, int catalogId, AsyncCallback callback);
+    public void purchaseItem (
+        WebIdent ident, byte itemType, int catalogId, AsyncCallback<Item> callback);
     
     /**
      * The asynchronous version of {@link CatalogService#listItem}
@@ -45,20 +48,21 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#updateListing}
      */
-    public void updateListing (WebIdent ident, ItemIdent item, String descrip,
-                               AsyncCallback callback);
+    public void updateListing (
+        WebIdent ident, ItemIdent item, String descrip, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
-    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing,
-                               int salesTarget, int flowCost, int goldCost, AsyncCallback callback);
+    public void updatePricing (
+        WebIdent ident, byte itemType, int catalogId, int pricing, int salesTarget, int flowCost, 
+        int goldCost, AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.
      */
-    public void removeListing (WebIdent ident, byte itemType, int catalogId,
-                               AsyncCallback callback);
+    public void removeListing (
+        WebIdent ident, byte itemType, int catalogId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#returnItem}

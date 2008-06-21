@@ -21,7 +21,7 @@ import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 
-public class RenameHandler extends ClickCallback
+public class RenameHandler extends ClickCallback<String>
 {
     public RenameHandler (SourcesClickEvents trigger, Item item, InventoryModels models)
     {
@@ -42,8 +42,8 @@ public class RenameHandler extends ClickCallback
     }
 
     // from ClickCallback
-    public boolean gotResult (Object result) {
-        _item.name = (String) result;
+    public boolean gotResult (String result) {
+        _item.name = result;
         _models.updateItem(_item);
         // just force a reload of the detail page
         Application.replace(Page.STUFF, Args.compose(new String[] {

@@ -54,8 +54,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(new PriceLabel(_listing.flowCost, _listing.goldCost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
-        PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
-        new ClickCallback(purchase) {
+        PushButton purchase = 
+            MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
+        new ClickCallback<Item>(purchase) {
             public boolean callService () {
                 if (CShop.getMemberId() > 0) {
                     CShop.catalogsvc.purchaseItem(
@@ -66,8 +67,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
                 return true;
             }
-            public boolean gotResult (Object result) {
-                itemPurchased((Item)result);
+            public boolean gotResult (Item item) {
+                itemPurchased(item);
                 return false; // don't reenable buy button
             }
         };
@@ -100,13 +101,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             info.addWidget(reprice, 2, null);
 
             Label delist = new Label(CShop.msgs.listingDelist());
-            new ClickCallback(delist, CShop.msgs.listingDelistConfirm()) {
+            new ClickCallback<Void>(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
                     CShop.catalogsvc.removeListing(
                         CShop.ident, _item.getType(), _listing.catalogId, this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CShop.msgs.msgListingDelisted());
                     _models.itemDelisted(_listing);
                     History.back();

@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.person.data.Profile;
+
+import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -29,7 +31,7 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#updateInterests}.
      */
-    public void updateInterests (WebIdent ident, List interests, AsyncCallback callback);
+    public void updateInterests (WebIdent ident, List interests, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.
@@ -45,8 +47,8 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#getWebMailAddresses}.
      */
-    public void getWebMailAddresses (WebIdent ident, String email, String password,
-                                     AsyncCallback callback);
+    public void getWebMailAddresses (
+        WebIdent ident, String email, String password, AsyncCallback<List<EmailContact>> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadSelfFeed}.

@@ -21,7 +21,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameLogs;
 
-import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 

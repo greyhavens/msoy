@@ -95,14 +95,14 @@ public class InterestsBlurb extends Blurb
             }
         });
         Button update = new Button(CPeople.cmsgs.update());
-        new ClickCallback(update) {
+        new ClickCallback<Void>(update) {
             public boolean callService () {
                 _newInterests = getNewInterests();
                 CPeople.profilesvc.updateInterests(CPeople.ident, _newInterests, this);
                 return true;
             }
 
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 // filter out our blank new interests
                 for (int ii = 0; ii < _newInterests.size(); ii++) {
                     Interest interest = (Interest) _newInterests.get(ii);

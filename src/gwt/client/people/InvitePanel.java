@@ -84,7 +84,7 @@ public class InvitePanel extends VerticalPanel
         input.setText(row, 1, CPeople.msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
         Button webImport = new Button(CPeople.msgs.inviteWebImport());
-        new ClickCallback(webImport) {
+        new ClickCallback<List<EmailContact>>(webImport) {
             public boolean callService () {
                 if ("".equals(_webAddress.getText())) {
                     MsoyUI.info(CPeople.msgs.inviteEnterWebAddress());
@@ -98,10 +98,8 @@ public class InvitePanel extends VerticalPanel
                     CPeople.ident, _webAddress.getText(), _webPassword.getText(), this);
                 return true;
             }
-            public boolean gotResult (Object result) {
-                List addresses = (List)result;
-                for (int ii = 0; ii < addresses.size(); ii++) {
-                    EmailContact ec = (EmailContact)addresses.get(ii);
+            public boolean gotResult (List<EmailContact> addresses) {
+                for (EmailContact ec : addresses) {
                     if (ec.mname == null) {
                         _emailList.addItem(ec.name, ec.email);
                     }

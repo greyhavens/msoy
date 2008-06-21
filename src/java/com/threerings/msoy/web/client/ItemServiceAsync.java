@@ -32,13 +32,14 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#revertRemixClone}.
      */
-    public void revertRemixedClone (WebIdent ident, ItemIdent itemIdent, AsyncCallback callback);
+    public void revertRemixedClone (
+        WebIdent ident, ItemIdent itemIdent, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#renameClone}.
      */
     public void renameClone (
-        WebIdent ident, ItemIdent itemIdent, String name, AsyncCallback callback);
+        WebIdent ident, ItemIdent itemIdent, String name, AsyncCallback<String> callback);
 
     /**
      * Loads the details of a particular item.
@@ -59,7 +60,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#deleteItem}.
      */
-    public void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback callback);
+    public void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#rateItem}.

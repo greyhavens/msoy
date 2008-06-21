@@ -123,12 +123,12 @@ public class GameMetricsPanel extends VerticalPanel
         row.add(MsoyUI.createLabel(CGames.msgs.gmpResetHint(), "tipLabel"));
         Button reset = new Button(CGames.msgs.gmpResetScores());
         row.add(reset);
-        new ClickCallback(reset, CGames.msgs.gmpResetConfirm()) {
+        new ClickCallback<Void>(reset, CGames.msgs.gmpResetConfirm()) {
             public boolean callService () {
                 CGames.gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
                 return true;
             }
-            public boolean gotResult (Object result) {
+            public boolean gotResult (Void result) {
                 MsoyUI.info(CGames.msgs.gmpScoresReset());
                 return true;
             }

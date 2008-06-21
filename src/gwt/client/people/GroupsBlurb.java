@@ -89,14 +89,13 @@ public class GroupsBlurb extends Blurb
 //         {
 //             if (CPeople.getMemberId() > 0 && CPeople.getMemberId() != _name.getMemberId()) {
 //                 Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
-//                 new ClickCallback(inviteButton) {
+//                 new ClickCallback<List<GroupMembership>>(inviteButton) {
 //                     public boolean callService () {
 //                         CPeople.groupsvc.getMembershipGroups(
 //                             CPeople.ident, CPeople.getMemberId(), true, this);
 //                         return true;
 //                     }
-//                     public boolean gotResult (Object result) {
-//                         List inviteGroups = (List) result;
+//                     public boolean gotResult (List<GropuMembership> inviteGroups) {
 //                         if (inviteGroups.size() == 0) {
 //                             MsoyUI.infoNear(CPeople.msgs.haveNoGroups(), _trigger);
 //                         } else {

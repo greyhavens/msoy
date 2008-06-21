@@ -170,7 +170,7 @@ public class DoListItemPopup extends VerticalPanel
             };
 
         } else if (repricing) {
-            new ClickCallback(_doIt) {
+            new ClickCallback<Void>(_doIt) {
                 public boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&
@@ -183,7 +183,7 @@ public class DoListItemPopup extends VerticalPanel
                         salesTarget, getFlowCost(), getGoldCost(), this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
                     Frame.clearDialog(DoListItemPopup.this);
                     _listener.itemListed(_item, true);
@@ -192,13 +192,13 @@ public class DoListItemPopup extends VerticalPanel
             };
 
         } else {
-            new ClickCallback(_doIt) {
+            new ClickCallback<Void>(_doIt) {
                 public boolean callService () {
                     CStuff.catalogsvc.updateListing(
                         CStuff.ident, _item.getIdent(), _description.getText(), this);
                     return true;
                 }
-                public boolean gotResult (Object result) {
+                public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
                     Frame.clearDialog(DoListItemPopup.this);
                     return false;
