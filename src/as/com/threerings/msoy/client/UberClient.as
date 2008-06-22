@@ -13,6 +13,9 @@ import com.threerings.msoy.world.client.AvatarViewerComp;
 import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.Viewer;
 
+import com.threerings.msoy.world.client.StudioClient;
+import com.threerings.msoy.world.client.RoomStudioView;
+
 /**
  * Assists in the usage of the UberClient.
  * This could just be part of world.mxml, but I don't like having a bunch of code
@@ -66,7 +69,15 @@ public class UberClient
             break;
 
         case UberClientLoader.AVATAR_VIEWER:
-            Object(app).setViewer(new AvatarViewerComp(params));
+        if (true) {
+            // ye olde avatar viewer
+            Object(app).setViewerObject(new AvatarViewerComp(params));
+        } else {
+            var sc :StudioClient = new StudioClient(app.stage);
+            var rsv :RoomStudioView = sc.getPlaceView();
+            rsv.initForViewing(params, mode);
+            Object(app).setViewer(rsv);
+        }
             break;
 
         case UberClientLoader.PET_VIEWER:
@@ -74,7 +85,7 @@ public class UberClient
         case UberClientLoader.TOY_VIEWER:
         case UberClientLoader.DECOR_VIEWER:
         case UberClientLoader.GENERIC_VIEWER:
-            Object(app).setViewer(new Viewer(params));
+            Object(app).setViewerObject(new Viewer(params));
             break;
         }
     }

@@ -41,17 +41,27 @@
         }
 
         /**
-         * Called by UberClient.
+         * Called by UberClient to set a viewer that's already on-screen.
          */
-        public function setViewer (disp :DisplayObject) :void
+        public function setViewer (viewer :Object) :void
         {
-            _viewer = disp;
+            _viewer = viewer;
+        }
+
+        /**
+         * Called by UberClient to set a viewer that must be added to the screen.
+         */
+        public function setViewerObject (disp :DisplayObject) :void
+        {
             if (!(disp is UIComponent)) {
                 var wrapper :UIComponent = new UIComponent();
                 wrapper.addChild(disp);
                 disp = wrapper;
             }
             addChild(disp);
+
+            // also set it as the viewer
+            setViewer(disp);
         }
 
         protected function doInit () :void

@@ -616,9 +616,18 @@ public class RoomController extends SceneController
                     Math.atan2(newLoc.z - curLoc.z, newLoc.x - curLoc.x);
                 // we rotate so that 0 faces forward
                 newLoc.orient = (degrees + 90 + 360) % 360;
-                _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
+                // effect the move
+                requestAvatarMove(newLoc);
             }
         }
+    }
+
+    /**
+     * Effect a move for our avatar.
+     */
+    protected function requestAvatarMove (newLoc :MsoyLocation) :void
+    {
+        // nada here, see subclasses
     }
 
     protected function keyEvent (event :KeyboardEvent) :void

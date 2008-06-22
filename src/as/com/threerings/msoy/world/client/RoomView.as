@@ -200,17 +200,6 @@ public class RoomView extends Sprite
      */
     public function moveFinished (sprite :OccupantSprite) :void
     {
-//        if (_pendingRemovals.get(sprite.getOid()) != null) {
-//            sprite.whirlOut(_scene);
-//        }
-//    }
-//
-//    public function whirlDone (sprite :OccupantSprite) :void
-//    {
-        if (sprite.getOid() == _ctx.getMemberObject().getOid()) {
-            _ctx.getGameDirector().tutorialEvent("playerMoved");
-        }
-
         if (null != _pendingRemovals.remove(sprite.getOid())) {
             // trigger a portal traversal
             portalTraversed(sprite.getLocation(), false);

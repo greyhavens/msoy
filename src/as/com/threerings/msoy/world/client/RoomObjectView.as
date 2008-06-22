@@ -169,6 +169,15 @@ public class RoomObjectView extends RoomView
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
+    override public function moveFinished (sprite :OccupantSprite) :void
+    {
+        if (sprite.getOid() == _ctx.getMemberObject().getOid()) {
+            _ctx.getGameDirector().tutorialEvent("playerMoved");
+        }
+
+        super.moveFinished(sprite);
+    }
+
     /**
      * Update the 'my' user's specified avatar's scale, non-permanently.  This is called via the
      * avatar viewer, so that scale changes they make are instantly viewable in the world.

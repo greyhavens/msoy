@@ -46,14 +46,10 @@ public class WorldContext extends MsoyContext
     {
         super(client);
 
-        _sceneDir = new MsoySceneDirector(this, _locDir, new RuntimeSceneRepository());
-        _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
+        // some directors we create here,
         _mediaDir = new MediaDirector(this);
-        _gameDir = new GameDirector(this);
-        _worldDir = new WorldDirector(this);
-        _notifyDir = new NotificationDirector(this);
-        _memberDir = new MemberDirector(this);
-        _controller = new WorldController(this, _topPanel);
+        // and some we want suppressed in StudioContext
+        createWorldDirectors();
     }
 
     // from WhirledContext
@@ -157,6 +153,20 @@ public class WorldContext extends MsoyContext
     override protected function createChatDirector () :MsoyChatDirector
     {
         return new WorldChatDirector(this);
+    }
+
+    /**
+     * Create world-specific directors. Overridden in StudioContext to .. not.
+     */
+    protected function createWorldDirectors () :void
+    {
+        _sceneDir = new MsoySceneDirector(this, _locDir, new RuntimeSceneRepository());
+        _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
+        _gameDir = new GameDirector(this);
+        _worldDir = new WorldDirector(this);
+        _notifyDir = new NotificationDirector(this);
+        _memberDir = new MemberDirector(this);
+        _controller = new WorldController(this, _topPanel);
     }
 
     protected var _controller :WorldController;

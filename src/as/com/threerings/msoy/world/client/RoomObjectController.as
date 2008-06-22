@@ -1074,6 +1074,11 @@ public class RoomObjectController extends RoomController
         super.mouseClicked(event);
     }
 
+    override protected function requestAvatarMove (newLoc :MsoyLocation) :void
+    {
+        _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
+    }
+
     override protected function keyEvent (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.F6) {
