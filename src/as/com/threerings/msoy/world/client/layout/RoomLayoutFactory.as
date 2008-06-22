@@ -19,7 +19,7 @@ public class RoomLayoutFactory {
     public static function isDecorSupported (layout :RoomLayout, decor :Decor) :Boolean
     {
         var layoutClass :Class = layoutClassForDecor(decor);
-        return (ClassUtil.getClass(layout) === layoutClass);
+        return Object(layout).constructor === layoutClass;
     }
 
     /**
