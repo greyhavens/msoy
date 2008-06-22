@@ -30,14 +30,22 @@ public class UberClient
     public function UberClient (app :Application)
     {
         var mode :int;
+        var params :Object = MsoyParameters.get();
 
         // determine how this app should be configured!
         var d :DisplayObject = app;
         while (d != null) {
             if (d is UberClientLoader) {
-                mode = (d as UberClientLoader).getMode();
-                MsoyParameters.get().mode = mode; // stash the mode in our real params
-                setMode(app, mode);
+                var ucl :UberClientLoader = d as UberClientLoader;
+
+                mode = ucl.getMode();
+
+                // stash the mode and some other bits in our real params
+                params.mode = mode;
+                params.width = ucl.width;
+                params.height = ucl.height;
+
+                setMode(app, mode, params);
                 return;
             }
             try {
@@ -47,7 +55,6 @@ public class UberClient
             }
         }
 
-        var params :Object = MsoyParameters.get();
         if ("mode" in params) {
             // if a mode is specified, that overrides all
             mode = parseInt(params["mode"]);
@@ -73,7 +80,7 @@ public class UberClient
             // ye olde avatar viewer
             Object(app).setViewerObject(new AvatarViewerComp(params));
         } else {
-            var sc :StudioClient = new StudioClient(app.stage);
+            var sc :StudioClient = new StudioClient(app.stage, params);
             var rsv :RoomStudioView = sc.getPlaceView();
             rsv.initForViewing(params, mode);
             Object(app).setViewer(rsv);

@@ -66,6 +66,7 @@
 
         protected function doInit () :void
         {
+            this.name = "WorldApplication";
             var theThis :Application = this;
             MsoyParameters.init(this, function () :void {
                 new UberClient(theThis);

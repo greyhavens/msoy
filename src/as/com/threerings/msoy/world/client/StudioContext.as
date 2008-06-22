@@ -12,7 +12,23 @@ public class StudioContext extends WorldContext
     public function StudioContext (client :StudioClient)
     {
         super(client);
-        _name = new MemberName("It's-a me!", 0);
+        _name = new MemberName("Esther Bestertester", 0);
+    }
+
+    public function setDimensions (w :Number, h :Number) :void
+    {
+        _w = w;
+        _h = h;
+    }
+
+    override public function getWidth () :Number
+    {
+        return isNaN(_w) ? super.getWidth() : _w;
+    }
+
+    override public function getHeight () :Number
+    {
+        return isNaN(_h) ? super.getHeight() : _h;
     }
 
     override public function getMyName () :MemberName
@@ -27,5 +43,11 @@ public class StudioContext extends WorldContext
 
     /** Our name in the studio. */
     protected var _name :MemberName;
+
+    /** An overridden width for the studio. */
+    protected var _w :Number;
+
+    /** An overridden height for the studio */
+    protected var _h :Number;
 }
 }

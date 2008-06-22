@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.utils.ByteArray;
+
 /**
  * A non-network RoomView for testing avatars and other room entities.
  */
@@ -13,6 +15,14 @@ public class RoomStudioView extends RoomView
         super(ctx, ctrl);
 
         _sctx = ctx;
+    }
+
+    /**
+     * This method is needed for anything registered as a "Viewer" in world.mxml.
+     */
+    public function loadBytes (bytes :ByteArray) :void
+    {
+        _avatar.setMediaBytes(bytes);
     }
 
     public function initForViewing (params :Object, uberMode :int) :void

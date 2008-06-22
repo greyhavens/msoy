@@ -29,6 +29,8 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.flash.DisplayUtil;
+
 import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
@@ -105,6 +107,13 @@ public class TopPanel extends Canvas
 
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);
+        // UGLY ASS HACK, but we now name world.mxml this, and look for it so that
+        // we work inside the remixer
+        var lower :Application = Application(DisplayUtil.findInHierarchy(app,
+            "WorldApplication", false));
+        if (lower != null) {
+            app = lower;
+        }
         app.removeAllChildren();
         app.addChild(this);
 
@@ -249,11 +258,11 @@ public class TopPanel extends Canvas
         var bounds :Rectangle = new Rectangle();
         bounds.x = 0;
         bounds.y = HeaderBar.HEIGHT;
-        bounds.width = stage.stageWidth - getRightPanelWidth();
+        bounds.width = _ctx.getWidth() - getRightPanelWidth();
         if (_chat != null) {
             bounds.width -= _chatBounds.width + CHAT_PADDING;
         }
-        bounds.height = stage.stageHeight - HeaderBar.HEIGHT;
+        bounds.height = _ctx.getHeight() - HeaderBar.HEIGHT;
         if (padVertical(_placeBox.getPlaceView())) {
             bounds.y += DECORATIVE_MARGIN_HEIGHT;
             bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
@@ -384,8 +393,8 @@ public class TopPanel extends Canvas
     {
         var x :Number = _placeBox.getStyle("left");
         var y :Number = _placeBox.getStyle("top");
-        var width :Number = stage.stageWidth - _placeBox.getStyle("right") - x;
-        var height :Number = stage.stageHeight - _placeBox.getStyle("bottom") - y;
+        var width :Number = _ctx.getWidth() - _placeBox.getStyle("right") - x;
+        var height :Number = _ctx.getHeight() - _placeBox.getStyle("bottom") - y;
         return new Rectangle(x, y, width, height);
     }
 
@@ -461,7 +470,7 @@ public class TopPanel extends Canvas
                 _rightPanel.setStyle("left", 0);
             }
 
-            _controlBar.setSpacerWidth(stage.stageWidth - _rightPanel.width);
+            _controlBar.setSpacerWidth(_ctx.getWidth() - _rightPanel.width);
         } else {
             _controlBar.setSpacerWidth(0);
         }
@@ -480,12 +489,12 @@ public class TopPanel extends Canvas
             _placeBox.clearStyle("bottom");
             _placeBox.clearStyle("left");
             _placeBox.clearStyle("right");
-            _placeBox.setActualSize(stage.stageWidth, stage.stageHeight);
+            _placeBox.setActualSize(_ctx.getWidth(), _ctx.getHeight());
             return;
         }
 
-        var w :int = stage.stageWidth - getRightPanelWidth();
-        var h :int = stage.stageHeight - HeaderBar.HEIGHT - getTopPanelHeight();
+        var w :int = _ctx.getWidth() - getRightPanelWidth();
+        var h :int = _ctx.getHeight() - HeaderBar.HEIGHT - getTopPanelHeight();
         var top :int = HeaderBar.HEIGHT + getTopPanelHeight();
         if (padVertical(_placeBox.getPlaceView())) {
             top += DECORATIVE_MARGIN_HEIGHT;

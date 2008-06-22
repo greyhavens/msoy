@@ -11,9 +11,11 @@ import com.threerings.msoy.world.data.RoomConfig;
 
 public class StudioClient extends WorldClient
 {
-    public function StudioClient (stage :Stage)
+    public function StudioClient (stage :Stage, params :Object)
     {
         super(stage);
+
+        StudioContext(_wctx).setDimensions(Number(params.width), Number(params.height));
 
         _roomStudioController = new RoomStudioController();
         _roomStudioController.init(_wctx, new RoomConfig());
