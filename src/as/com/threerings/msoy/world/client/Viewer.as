@@ -17,7 +17,7 @@ import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.utils.UberClientLoader;
+import com.threerings.msoy.data.UberClientModes;
 
 /**
  * A generic viewer, like the AvatarViewer, but for any item.
@@ -63,7 +63,7 @@ public class Viewer extends Sprite
             _sprite = new FurniViewerSprite();
             break;
 
-        case UberClientLoader.PET_VIEWER:
+        case UberClientModes.PET_VIEWER:
             _sprite = new PetViewerSprite();
             break;
         }

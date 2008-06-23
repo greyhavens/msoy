@@ -66,9 +66,10 @@ public class ControlBar extends HBox
     public static const UI_EDIT :String = "Member UI Edit";
     public static const UI_GUEST :String = "Guest UI";
     public static const UI_SIDEBAR :String = "Member UI Sidebar";
+    public static const UI_VIEWER :String = "Room Entity Viewer";
 
     public static const ALL_UI_GROUPS :Array = [
-        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST ];
+        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER ];
 
     public function init (ctx :MsoyContext, top :TopPanel) :void
     {
@@ -223,8 +224,8 @@ public class ControlBar extends HBox
         _chatControl = null;
         _chatControl = new ChatControl(
             _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
-        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
+        addGroupChild(_chatControl, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR /*,UI_VIEWER */]);
         addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
 
         // add our various control buttons
@@ -234,7 +235,7 @@ public class ControlBar extends HBox
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
-        addGroupChild(blank, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR ]);
+        addGroupChild(blank, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
 
         // and remember how things are set for now
         _isMember = isMember;

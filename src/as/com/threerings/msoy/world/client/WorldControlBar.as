@@ -28,10 +28,12 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.world.data.RoomObject;
 
@@ -160,6 +162,10 @@ public class WorldControlBar extends ControlBar
     // from ControlBar
     override protected function getMode () :String
     {
+        if (int(MsoyParameters.get()["mode"]) != UberClientModes.CLIENT) {
+            return UI_VIEWER;
+        }
+
         var mode :String = super.getMode();
         return (mode == UI_STD && _isEditing) ? UI_EDIT : mode;
     }

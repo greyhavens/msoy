@@ -46,6 +46,7 @@ import com.threerings.msoy.applets.net.MediaUploader;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
+import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
 /**
@@ -208,22 +209,22 @@ public class RemixControls extends HBox
     {
         switch (itemType) {
         case "avatar":
-            return UberClientLoader.AVATAR_VIEWER;
+            return UberClientModes.AVATAR_VIEWER;
 
         case "pet":
-            return UberClientLoader.PET_VIEWER;
+            return UberClientModes.PET_VIEWER;
 
         case "furniture":
-            return UberClientLoader.FURNI_VIEWER;
+            return UberClientModes.FURNI_VIEWER;
 
         case "decor":
-            return UberClientLoader.DECOR_VIEWER;
+            return UberClientModes.DECOR_VIEWER;
 
         case "toy":
-            return UberClientLoader.TOY_VIEWER;
+            return UberClientModes.TOY_VIEWER;
 
         default:
-            return UberClientLoader.GENERIC_VIEWER;
+            return UberClientModes.GENERIC_VIEWER;
         }
     }
 

@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 
 import mx.core.Application;
 
+import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
 import com.threerings.msoy.world.client.AvatarViewerComp;
@@ -23,7 +24,7 @@ import com.threerings.msoy.world.client.RoomStudioView;
  */
 public class UberClient
 {
-    // NOTE: The mode constants are defined in UberClientLoader, so that users of that
+    // NOTE: The mode constants are defined in UberClientModes, so that users of that
     // class do not also need to include this class, which will drag in all the world client
     // classes.
 
@@ -40,8 +41,7 @@ public class UberClient
 
                 mode = ucl.getMode();
 
-                // stash the mode and some other bits in our real params
-                params.mode = mode;
+                // stash the width/height in our real params
                 params.width = ucl.width;
                 params.height = ucl.height;
 
@@ -59,23 +59,29 @@ public class UberClient
             // if a mode is specified, that overrides all
             mode = parseInt(params["mode"]);
         } else if ("avatar" in params) {
-            mode = UberClientLoader.AVATAR_VIEWER;
+            mode = UberClientModes.AVATAR_VIEWER;
         } else if ("media" in params) {
-            mode = UberClientLoader.GENERIC_VIEWER;
+            mode = UberClientModes.GENERIC_VIEWER;
         } else {
-            mode = UberClientLoader.CLIENT;
+            mode = UberClientModes.CLIENT;
         }
         setMode(app, mode, params);
     }
 
     protected function setMode (app :Application, mode :int, params :Object = null) :void
     {
+        // Stash the mode back into the real parameters, in case we figured it out
+        // somehow else.
+        if (params != null) {
+            params.mode = mode;
+        }
+
         switch (mode) {
         default:
             new WorldClient(app.stage);
             break;
 
-        case UberClientLoader.AVATAR_VIEWER:
+        case UberClientModes.AVATAR_VIEWER:
         if (true) {
             // ye olde avatar viewer
             Object(app).setViewerObject(new AvatarViewerComp(params));
@@ -87,11 +93,11 @@ public class UberClient
         }
             break;
 
-        case UberClientLoader.PET_VIEWER:
-        case UberClientLoader.FURNI_VIEWER:
-        case UberClientLoader.TOY_VIEWER:
-        case UberClientLoader.DECOR_VIEWER:
-        case UberClientLoader.GENERIC_VIEWER:
+        case UberClientModes.PET_VIEWER:
+        case UberClientModes.FURNI_VIEWER:
+        case UberClientModes.TOY_VIEWER:
+        case UberClientModes.DECOR_VIEWER:
+        case UberClientModes.GENERIC_VIEWER:
             Object(app).setViewerObject(new Viewer(params));
             break;
         }
