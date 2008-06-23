@@ -314,7 +314,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems, _roomView);
             menu.variableRowHeight = true;
-            menu.setBounds(_wdctx.getTopPanel().getPlaceBounds());
+            menu.setBounds(_wdctx.getTopPanel().getPlaceViewBounds());
             menu.popUpAtMouse();
 
 //            var menu :RadialMenu = new RadialMenu(100);

@@ -300,7 +300,7 @@ public class WorldController extends MsoyController
         var r :Rectangle = trigger.getBounds(trigger.stage);
         var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse(), _topPanel);
         menu.variableRowHeight = true;
-        menu.setBounds(_wctx.getTopPanel().getPlaceBounds());
+        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
         menu.popUpAt(r.left, r.top, true);
     }
 

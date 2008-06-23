@@ -255,21 +255,21 @@ public class TopPanel extends Canvas
      */
     public function getPlaceViewBounds () :Rectangle
     {
-        var bounds :Rectangle = new Rectangle();
-        bounds.x = 0;
-        bounds.y = HeaderBar.HEIGHT;
-        bounds.width = _ctx.getWidth() - getRightPanelWidth();
-        if (_chat != null) {
-            bounds.x += _chatBounds.width + CHAT_PADDING;
-            bounds.width -= _chatBounds.width + CHAT_PADDING;
-        }
-        bounds.height = _ctx.getHeight() - HeaderBar.HEIGHT;
-        if (padVertical(_placeBox.getPlaceView())) {
-            bounds.y += DECORATIVE_MARGIN_HEIGHT;
-            bounds.height -= 2*DECORATIVE_MARGIN_HEIGHT;
-        }
-        bounds.height -= ControlBar.HEIGHT;
-        return bounds;
+        var x :Number = _placeBox.getStyle("left");
+        var y :Number = _placeBox.getStyle("top");
+        var width :Number = _ctx.getWidth() - _placeBox.getStyle("right") - x;
+        var height :Number = _ctx.getHeight() - _placeBox.getStyle("bottom") - y;
+        return new Rectangle(x, y, width, height);
+    }
+
+    /**
+     * Returns a rectangle in stage coordinates that specifies the main game area.  This is 
+     * basically just the bounds on the client, minus the any margins from control/header bars, etc.
+     */
+    public function getMainAreaBounds () :Rectangle
+    {
+        var height: Number = _ctx.getHeight() - _placeBox.getStyle("bottom");
+        return new Rectangle(0, _placeBox.getStyle("top"), _ctx.getWidth(), height);
     }
 
     /**
@@ -384,19 +384,6 @@ public class TopPanel extends Canvas
         removeChild(_chat);
         _chat = null;
         layoutPanels();
-    }
-
-    /**
-     * Returns a rectangle in stage coordinates that specifies the current bounds of the 
-     * place container.
-     */
-    public function getPlaceBounds () :Rectangle
-    {
-        var x :Number = _placeBox.getStyle("left");
-        var y :Number = _placeBox.getStyle("top");
-        var width :Number = _ctx.getWidth() - _placeBox.getStyle("right") - x;
-        var height :Number = _ctx.getHeight() - _placeBox.getStyle("bottom") - y;
-        return new Rectangle(x, y, width, height);
     }
 
     protected function stageResized (event :Event) :void
