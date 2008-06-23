@@ -38,6 +38,8 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.ElementExpiredEvent;
+import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
@@ -54,8 +56,6 @@ import com.threerings.flash.ColorUtil;
 
 import com.threerings.whirled.spot.data.SpotCodes;
 
-import com.threerings.msoy.utils.ElementExpiredEvent;
-import com.threerings.msoy.utils.ExpiringSet;
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.chat.data.ChannelMessage;

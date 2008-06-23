@@ -5,6 +5,8 @@ package com.threerings.msoy.chat.client {
 
 import com.whirled.ui.PlayerList;
 
+import com.threerings.util.ElementExpiredEvent;
+import com.threerings.util.ExpiringSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -28,9 +30,6 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
-
-import com.threerings.msoy.utils.ElementExpiredEvent;
-import com.threerings.msoy.utils.ExpiringSet;
 
 import com.threerings.msoy.client.MsoyContext;
 
