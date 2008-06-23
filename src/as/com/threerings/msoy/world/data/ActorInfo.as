@@ -39,6 +39,15 @@ public class ActorInfo extends OccupantInfo
         return _state;
     }
 
+    override public function clone () :Object
+    {
+        var that :ActorInfo = super.clone() as ActorInfo;
+        that._media = this._media;
+        that._ident = this._ident;
+        that._state = this._state;
+        return that;
+    }
+
     // from OccupantInfo
     override public function readObject (ins :ObjectInputStream) :void
     {

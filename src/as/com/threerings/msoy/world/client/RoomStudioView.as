@@ -33,7 +33,7 @@ public class RoomStudioView extends RoomView
 
         var avatar :String = params["avatar"];
 
-        _avatar = new MemberSprite(_ctx, new StudioInfo(_sctx, avatar));
+        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx, avatar));
         addSprite(_avatar);
     }
 
@@ -42,47 +42,17 @@ public class RoomStudioView extends RoomView
         return _avatar;
     }
 
+    public function setAvatarState (state :String) :void
+    {
+        var studioInfo :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
+        studioInfo.setState(state);
+        _avatar.setOccupantInfo(studioInfo);
+    }
+
     // much TODO
 
     protected var _sctx :StudioContext;
 
     protected var _avatar :MemberSprite;
 }
-}
-
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import com.threerings.msoy.world.client.StudioContext;
-import com.threerings.msoy.world.data.MemberInfo;
-
-class StudioInfo extends MemberInfo
-{
-    public function StudioInfo (ctx :StudioContext, avatarUrl :String)
-    {
-        username = ctx.getMyName();
-        _media = new StudioMediaDesc(avatarUrl);
-        _scale = 1;
-    }
-}
-
-class StudioMediaDesc extends MediaDesc
-{
-    public function StudioMediaDesc (avatarUrl :String)
-    {
-        _url = avatarUrl;
-    }
-
-    override public function getMediaId () :String
-    {
-        return "studio";
-    }
-
-    override public function getMediaPath () :String
-    {
-        return _url;
-    }
-
-    protected var _url :String;
 }

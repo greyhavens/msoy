@@ -328,7 +328,7 @@ public class RoomController extends SceneController
      */
     public function handleAvatarClicked (avatar :MemberSprite) :void
     {
-        // TODO
+        // nada here, see subclasses
     }
 
     /**

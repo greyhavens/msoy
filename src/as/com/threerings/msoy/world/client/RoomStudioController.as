@@ -12,6 +12,8 @@ import com.threerings.io.TypedArray;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.msoy.client.Msgs;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -34,6 +36,31 @@ public class RoomStudioController extends RoomController
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+
+        setControlledPanel(_studioView);
+    }
+
+    // documentation inherited
+    override public function handleAvatarClicked (avatar :MemberSprite) :void
+    {
+        var menuItems :Array = [];
+        addSelfMenuItems(avatar, menuItems, true);
+        if (menuItems.length == 0) {
+            menuItems.push({ label: Msgs.GENERAL.get("l.noAvActions"), enabled: false });
+        }
+        popActorMenu(avatar, menuItems);
+    }
+
+    // documentation inherited
+    override public function doAvatarAction (action :String) :void
+    {
+        _studioView.getMyAvatar().messageReceived(action, null, true);
+    }
+
+    // documentation inherited
+    override public function doAvatarState (state :String) :void
+    {
+        _studioView.setAvatarState(state);
     }
 
     // documentation inherited

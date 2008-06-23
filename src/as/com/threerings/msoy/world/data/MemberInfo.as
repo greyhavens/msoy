@@ -55,6 +55,16 @@ public class MemberInfo extends ActorInfo
     }
 
     // from ActorInfo
+    override public function clone () :Object
+    {
+        var that :MemberInfo = super.clone() as MemberInfo;
+        that._scale = this._scale;
+        that._game = this._game;
+        return that;
+    }
+
+
+    // from ActorInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

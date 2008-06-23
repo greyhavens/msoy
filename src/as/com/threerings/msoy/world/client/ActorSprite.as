@@ -76,8 +76,8 @@ public class ActorSprite extends OccupantSprite
 
         // if the state has changed, dispatch an event 
         if (stateChanged) {
-            callUserCode("stateSet_v1", getActorInfo().getState());
-            callAVRGCode("actorStateSet_v1", getActorInfo().getState());
+            callUserCode("stateSet_v1", getState());
+            callAVRGCode("actorStateSet_v1", getState());
         }
     }
 
