@@ -1203,7 +1203,7 @@ BasePanel {
   borderStyle: "solid";
   borderThickness: 2;
   cornerRadius: 3;
-  backgroundAlpha: 0.6;
+  backgroundAlpha: 0.8;
   verticalGap: 0;
 }
 
