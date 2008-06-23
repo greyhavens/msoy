@@ -260,6 +260,7 @@ public class TopPanel extends Canvas
         bounds.y = HeaderBar.HEIGHT;
         bounds.width = _ctx.getWidth() - getRightPanelWidth();
         if (_chat != null) {
+            bounds.x += _chatBounds.width + CHAT_PADDING;
             bounds.width -= _chatBounds.width + CHAT_PADDING;
         }
         bounds.height = _ctx.getHeight() - HeaderBar.HEIGHT;
