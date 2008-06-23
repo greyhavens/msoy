@@ -88,12 +88,13 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                              final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final PlayerObject plobj = verifyIsPlayer(caller);
+        final PlayerObject plobj = verifyWritePermission(caller, playerId);
 
         // guests are not currently awarded trophies; some day when we have infinite time or
         // infinite monkeys, we will track trophies awarded to guests and transfer them to their
         // newly created account
         if (plobj.isGuest()) {
+            log.info("Guest " + playerId + " not awarded trophy " + ident);
             return;
         }
 
@@ -162,7 +163,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                             final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final PlayerObject plobj = verifyIsPlayer(caller);
+        final PlayerObject plobj = verifyWritePermission(caller, playerId);
 
         // guests are not currently awarded prizes; some day when we have infinite time or infinite
         // monkeys, we will track prizes awarded to guests and transfer them to their newly created
@@ -975,6 +976,24 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             !((WhirledGameManager)_gmgr).isAgent(caller)) {
             throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
         }
+    }
+
+    /** 
+     *  Make sure that the given caller is a player or an agent and can write to the data 
+     *  of the given playerId.
+     *  @return the resolved player object to write to
+     **/
+    protected PlayerObject verifyWritePermission(ClientObject caller, int playerId)
+        throws InvocationException
+    {
+        if (!(_gmgr instanceof WhirledGameManager)) {
+            throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
+        }
+
+        verifyIsPlayerOrAgent(caller);
+
+        WhirledGameManager wgmgr = (WhirledGameManager)_gmgr;
+        return (PlayerObject)wgmgr.validateWritePermission(caller, playerId);
     }
 
     /**

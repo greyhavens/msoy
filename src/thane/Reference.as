@@ -9,9 +9,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.ItemTypes;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 import com.whirled.bureau.client.WhirledBureauClient;
 import com.whirled.thane.HttpUserCodeLoader;
 
@@ -23,13 +22,13 @@ public class Reference
     MemberName;
     MsoyGameDefinition;
     MsoyMatchConfig;
-    MediaDesc;
-    ItemTypes;
-    StaticMediaDesc;
     WhirledBureauClient;
     HttpUserCodeLoader;
     PlayerObject;
     CrowdPermissionPolicy;
     MsoyBureauClient;
+    Item;
+    Trophy;
 }
 }
+
