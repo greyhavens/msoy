@@ -684,13 +684,13 @@ public class FeedPanel extends TongueBox
         }
 
         /**
-         * Setting displayed to true nulls out the values in the map
+         * Setting displayed to true clears out the map.
          */
         public void setDisplayed (boolean displayed)
         {
             this.displayed = displayed;
             if (displayed) {
-                list = null;
+                list.clear();
             }
         }
 
