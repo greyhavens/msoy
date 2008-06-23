@@ -30,6 +30,7 @@ import com.threerings.admin.server.DatabaseConfigRegistry;
 
 import com.threerings.bureau.data.BureauCredentials;
 import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.bureau.server.BureauAuthenticator;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
@@ -198,6 +199,8 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // hook up thane
         breg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
+
+        _conmgr.addChainedAuthenticator(new BureauAuthenticator(breg));
 
         log.info("Game server initialized.");
     }
