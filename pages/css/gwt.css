@@ -542,7 +542,7 @@ img, embed, applet, object {
   padding: 10px 0px;
 }
 
-.imageChooser .Preview {
+.imageChooser .ItemPreview {
   background-image: url(/images/item/detail_preview_bg.png);
   width: 320px;
   height: 240px;

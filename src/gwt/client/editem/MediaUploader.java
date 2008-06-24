@@ -52,7 +52,7 @@ public class MediaUploader extends FlexTable
         _updater = updater;
 
         getFlexCellFormatter().setRowSpan(0, 0, 2);
-        getFlexCellFormatter().setStyleName(0, 0, "Preview");
+        getFlexCellFormatter().setStyleName(0, 0, "ItemPreview");
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
         setText(0, 0, "");
