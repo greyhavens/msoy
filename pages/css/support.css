@@ -69,6 +69,13 @@
   text-align: left;
 }
 
+.uInputPopup {
+  border: 1px solid;
+  padding: 5px;
+  background: #FFFFFF;
+  text-align: left;
+}
+
 .uLinkLabel {
   text-decoration: underline;
   cursor: pointer;
