@@ -21,6 +21,8 @@ import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.client.Msgs;
 
+import com.threerings.msoy.world.data.MsoyLocation;
+
 /**
  * A non-network RoomView for testing avatars and other room entities.
  */
@@ -56,7 +58,9 @@ public class RoomStudioView extends RoomView
             var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
             info.setScale(scale);
             _avatar = new MemberSprite(_ctx, info);
+            _avatar.setEntering(new MsoyLocation(.1, 0, .25));
             addSprite(_avatar);
+            setCenterSprite(_avatar);
 
             if ("true" == String(params["scaling"])) {
                 createScaleControls(scale);
