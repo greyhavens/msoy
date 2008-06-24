@@ -27,25 +27,3 @@ public class StudioMemberInfo extends MemberInfo
     }
 }
 }
-
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-class StudioMediaDesc extends MediaDesc
-{
-    public function StudioMediaDesc (avatarUrl :String)
-    {
-        _url = avatarUrl;
-    }
-
-    override public function getMediaId () :String
-    {
-        return "studio";
-    }
-
-    override public function getMediaPath () :String
-    {
-        return _url;
-    }
-
-    protected var _url :String;
-}

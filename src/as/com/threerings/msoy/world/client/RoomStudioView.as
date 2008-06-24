@@ -47,26 +47,48 @@ public class RoomStudioView extends RoomView
     {
         (_ctrl as RoomStudioController).studioOnStage();
 
-        if (uberMode == UberClientModes.AVATAR_VIEWER) {
+        switch (uberMode) {
+        case UberClientModes.AVATAR_VIEWER:
+            initViewAvatar(params);
+            break;
 
-            var scale :Number = Number(params["scale"]);
-            if (isNaN(scale) || scale == 0) {
-                scale = 1;
-            }
-
-            var avatar :String = params["avatar"];
-            var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
-            info.setScale(scale);
-            _avatar = new MemberSprite(_ctx, info);
-            _avatar.setEntering(new MsoyLocation(.1, 0, .25));
-            addSprite(_avatar);
-            setCenterSprite(_avatar);
-
-            if ("true" == String(params["scaling"])) {
-                createScaleControls(scale);
-                _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-            }
+        case UberClientModes.PET_VIEWER:
+            initViewPet(params);
+            break;
         }
+    }
+
+    protected function initViewAvatar (params :Object) :void
+    {
+        var scale :Number = Number(params["scale"]);
+        if (isNaN(scale) || scale == 0) {
+            scale = 1;
+        }
+
+        // newstyle is that everything comes in on the "media" param, but let's still fall
+        // back to "avatar" for a bit.
+        var avatar :String = params["media"] || params["avatar"];
+        var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
+        info.setScale(scale);
+        _avatar = new MemberSprite(_ctx, info);
+        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
+        addSprite(_avatar);
+        setCenterSprite(_avatar);
+
+        if ("true" == String(params["scaling"])) {
+            createScaleControls(scale);
+            _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        }
+    }
+
+    protected function initViewPet (params :Object) :void
+    {
+        var pet :String = params["media"];
+        var info :StudioPetInfo = new StudioPetInfo(pet);
+        _pet = new PetSprite(_ctx, info);
+        _pet.setEntering(new MsoyLocation(.1, 0, .25));
+        addSprite(_pet);
+        setCenterSprite(_pet);
     }
 
     override public function getMyAvatar () :MemberSprite
@@ -159,9 +181,10 @@ public class RoomStudioView extends RoomView
     protected var _sctx :StudioContext;
 
     protected var _avatar :MemberSprite;
+    protected var _pet :PetSprite;
 
+    /** Used for sizing our own avatar. */
     protected var _scaleReset :CommandButton;
-
     protected var _scaleSlider :HSlider;
 }
 }

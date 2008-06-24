@@ -19,6 +19,14 @@ public class PetInfo extends ActorInfo
     }
 
     // from ActorInfo
+    override public function clone () :Object
+    {
+        var that :PetInfo = super.clone() as PetInfo;
+        that._ownerId = this._ownerId;
+        return that;
+    }
+
+    // from ActorInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

@@ -113,6 +113,7 @@ public class UberClient
             break;
 
         case UberClientModes.AVATAR_VIEWER:
+        case UberClientModes.PET_VIEWER:
 //        if (true) {
 //            // ye olde avatar viewer
 //            Object(app).setViewerObject(new AvatarViewerComp(params));
@@ -124,7 +125,6 @@ public class UberClient
 //        }
             break;
 
-        case UberClientModes.PET_VIEWER:
         case UberClientModes.FURNI_VIEWER:
         case UberClientModes.TOY_VIEWER:
         case UberClientModes.DECOR_VIEWER:
