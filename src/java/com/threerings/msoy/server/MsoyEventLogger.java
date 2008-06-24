@@ -15,7 +15,6 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import com.threerings.panopticon.client.net.EventLogger;
@@ -151,6 +150,12 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
+    public void gameLeft (
+        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer) 
+    {
+        post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer));
+    }
+    
     public void gamePlayed (
         int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId) 
     {

@@ -12,7 +12,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
@@ -453,7 +452,7 @@ public class GameGameRegistry
                     return;
                 }
 
-                LobbyManager lmgr = new LobbyManager(_omgr, GameGameRegistry.this);
+                LobbyManager lmgr = new LobbyManager(_omgr, _eventLog, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
                 _lobbies.put(gameId, lmgr);
 

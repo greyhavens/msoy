@@ -228,6 +228,28 @@ public class MsoyEvents
         }
     }
     
+    @Event(name="GameExit")
+    public static class GameExit implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp; 
+        @Index @Field final public int gameId;
+        @Field final public byte gameGenre;
+        @Field final public int playerId;
+        @Field final public int secondsInGame;
+        @Field final public boolean multiplayer;
+        
+        public GameExit (
+            int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer)
+        {
+            this.timestamp = new Date();
+            this.playerId = playerId;
+            this.gameGenre = gameGenre;
+            this.gameId = gameId;
+            this.secondsInGame = seconds;
+            this.multiplayer = multiplayer;
+        }
+    }
+
     @Event(name="GamePlayed")
     public static class GamePlayed implements MsoyEvent
     {

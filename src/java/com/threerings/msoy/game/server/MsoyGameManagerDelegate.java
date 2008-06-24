@@ -28,7 +28,6 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;

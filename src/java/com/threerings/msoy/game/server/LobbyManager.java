@@ -31,6 +31,7 @@ import com.whirled.game.data.TableMatchConfig;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -57,10 +58,11 @@ public class LobbyManager
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (RootDObjectManager omgr, ShutdownObserver shutObs)
+    public LobbyManager (RootDObjectManager omgr, MsoyEventLogger log, ShutdownObserver shutObs)
     {
         _omgr = omgr;
         _shutObs = shutObs;
+        _eventLog = log;
 
         _lobj = _omgr.registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
@@ -252,6 +254,7 @@ public class LobbyManager
         throws InstantiationException, InvocationException
     {
         List<PlaceManagerDelegate> delegates = Lists.newArrayList();
+        delegates.add(new MsoyGameLoggingDelegate(_content, _eventLog));
         delegates.add(new MsoyGameManagerDelegate(_content));
         return (GameManager) MsoyGameServer.plreg.createPlace(config, delegates);
     }
@@ -309,6 +312,9 @@ public class LobbyManager
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
+    
+    /** Event logger. */
+    protected MsoyEventLogger _eventLog;
 
     /** This fellow wants to hear when we shutdown. */
     protected ShutdownObserver _shutObs;
