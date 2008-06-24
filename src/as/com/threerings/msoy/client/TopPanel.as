@@ -16,6 +16,7 @@ import mx.core.UIComponent;
 import mx.containers.Canvas;
 import mx.containers.HBox;
 
+import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.util.ConfigValueSetEvent;
@@ -89,6 +90,21 @@ public class TopPanel extends Canvas
             _controlBar.setStyle("right", 0);
             addChild(_controlBar);
             _controlBar.enableZoomControl(false);
+
+            // show a subtle build-stamp on dev builds
+            if (DeploymentConfig.devDeployment) {
+                var buildStamp :Label = new Label();
+                buildStamp.includeInLayout = false;
+                buildStamp.mouseEnabled = false;
+                buildStamp.mouseChildren = false;
+                buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+                buildStamp.setStyle("color", "#F7069A");
+                buildStamp.setStyle("fontSize", 8);
+                buildStamp.setStyle("bottom", ControlBar.HEIGHT);
+                // The scrollbar isn't really this thick, but it's pretty close.
+                buildStamp.setStyle("right", ScrollBar.THICKNESS);
+                addChild(buildStamp);
+            }
         }
 
         // clear out the application and install ourselves as the only child
