@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -74,6 +75,19 @@ public class MsoyGameManager extends WhirledGameManager
         throws InvocationException
     {
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
+    }
+
+    /** 
+     * Returns true if the game is multiplayer, which happens when:
+     * <ul>
+     *   <li> The game is a party game, or
+     *   <li> The table contains more than one player slot
+     * </ul>
+     */ 
+    public boolean isMultiplayer () 
+    {
+        return (_gameconfig.getMatchType() == GameConfig.PARTY) 
+            || (_gameconfig.players.length > 1);
     }
     
     @Override // from WhirledGameManager
