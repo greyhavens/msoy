@@ -7,6 +7,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import flash.system.Security;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.crowd.client.PlaceView;
@@ -74,6 +76,11 @@ public class RoomStudioController extends RoomController
         model.ownerType = MsoySceneModel.OWNER_TYPE_MEMBER;
         model.furnis = TypedArray.create(FurniData);
         model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+
+        // TODO: sort out what exactly we want to do when we're run from disk
+        if (Security.sandboxType == Security.LOCAL_WITH_FILE) {
+            model.decor.furniMedia = null; // this will cause a black room to be shown
+        }
         _scene = new MsoyScene(model, _config);
         _studioView.setScene(_scene);
         _studioView.setBackground(model.decor);
