@@ -14,6 +14,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import com.threerings.msoy.data.all.UberClientModes;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.data.all.MediaDesc;
+
 import client.shell.Frame;
 
 /**
@@ -111,51 +118,57 @@ public class FlashClients
     }
 
     /**
-     * Creates a generic item viewer.
-     * TODO: this will eventually be removed in favor of smarter viewers for each type.
+     * Creates a generic item viewer, mostly using the UberClient!
      */
-    public static HTML createViewer (String mediaPath)
+    public static HTML createViewer (Item item, boolean userOwnsItem)
     {
-        String definition = getUpgradeString(320, 240);
+        int w, h;
+        int mode;
+        if (item instanceof Avatar) {
+            w = 360;
+            h = 385;
+            mode = UberClientModes.AVATAR_VIEWER;
+
+        } else if (item instanceof Pet) {
+            w = 360;
+            h = 385;
+            mode = UberClientModes.PET_VIEWER;
+
+        } else {
+            w = 320;
+            h = 240;
+            mode = UberClientModes.GENERIC_VIEWER;
+        }
+
+        // see if we need to display an upgrade message
+        String definition = getUpgradeString(w, h);
         if (definition != null) {
             return new HTML(definition);
         }
-        String flashVars = "media=" + URL.encodeComponent(mediaPath);
+
+        MediaDesc preview = item.getPreviewMedia();
+        String encodedPath = URL.encodeComponent(preview.getMediaPath());
+
+        // A special case for video, for now...
+        if (preview.isWhirledVideo()) {
+            return WidgetUtil.createFlashContainer(
+                "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
+                320, 240, "video=" + encodedPath);
+        }
+
+        // set up the flashvars
+        String flashVars = "mode=" + mode + "&media=" + encodedPath;
+
+        if (mode == UberClientModes.AVATAR_VIEWER) {
+            flashVars += "&scale=" + ((Avatar) item).scale;
+            if (userOwnsItem) {
+                flashVars += "&scaling=true";
+            }
+        }
+
+        // and emit the widget
         return WidgetUtil.createFlashContainer("viewer",
-            "/clients/" + DeploymentConfig.version + "/world-client.swf", 320, 240, flashVars);
-    }
-
-    /**
-     * Creates an avatar viewer without equipping it for communication with Javascript.
-     */
-    public static HTML createAvatarViewer (String avatarPath, float scale, boolean allowScaleChange)
-    {
-        String definition = getUpgradeString(360, 385);
-        if (definition != null) {
-            return new HTML(definition);
-        }
-        String flashVars = "avatar=" + URL.encodeComponent(avatarPath) + "&scale=" + scale;
-        if (allowScaleChange) {
-            flashVars += "&scaling=true";
-        }
-        return WidgetUtil.createFlashContainer(
-            "avatarViewer",
-            "/clients/" + DeploymentConfig.version + "/world-client.swf",
-            360, 385, flashVars);
-    }
-
-    /**
-     * Creates an video viewer without equipping it for communication with Javascript.
-     */
-    public static HTML createVideoViewer (String videoPath)
-    {
-        String definition = getUpgradeString(320, 240);
-        if (definition != null) {
-            return new HTML(definition);
-        }
-        return WidgetUtil.createFlashContainer(
-            "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
-            320, 240, "video=" + URL.encodeComponent(videoPath));
+            "/clients/" + DeploymentConfig.version + "/world-client.swf", w, h, flashVars);
     }
 
     /**

@@ -56,7 +56,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         HeaderBox bits = new HeaderBox(null, _item.name);
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("ItemPreview");
-        preview.setWidget(createPreview(_item));
+        preview.setWidget(FlashClients.createViewer(_item, userOwnsItem()));
         bits.add(preview);
         if (_item.isRatable()) {
             ItemRating rating = new ItemRating(_detail.item, _detail.memberRating, true);
@@ -156,21 +156,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         configureCallbacks(this);
     }
 
-    protected Widget createPreview (Item item)
-    {
-        MediaDesc preview = item.getPreviewMedia();
-        if (item instanceof Avatar) {
-            return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
-                allowAvatarScaleEditing());
-
-        } else if (preview.isWhirledVideo()) {
-            return FlashClients.createVideoViewer(preview.getMediaPath());
-         
-        } else {
-            return FlashClients.createViewer(preview.getMediaPath());
-        }
-    }
-
     protected void addTabBelow (String title, Widget content, boolean select)
     {
         if (_belowTabs == null) {
@@ -201,11 +186,11 @@ public abstract class BaseItemDetailPanel extends SmartTable
     }
 
     /**
-     * Overrideable by subclasses to enable avatar scale editing.
+     * Returns true if the user owns this specific item.
      */
-    protected boolean allowAvatarScaleEditing ()
+    protected boolean userOwnsItem ()
     {
-        return false;
+        return false; // overrideable in subclasses
     }
 
     /**
