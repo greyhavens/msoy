@@ -105,7 +105,7 @@ public class WorldClient extends Widget
 
         String flashArgs = "gameLobby=" + config.gameId;
         if (!action.equals("")) {
-            flashArgs += "&mode=" + action;
+            flashArgs += "&gameMode=" + action;
         }
         flashArgs += ("&host=" + config.server + "&port=" + config.port);
         if (CShell.ident != null) {

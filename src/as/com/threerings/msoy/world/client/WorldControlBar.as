@@ -32,8 +32,8 @@ import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.world.data.RoomObject;
 
@@ -162,7 +162,7 @@ public class WorldControlBar extends ControlBar
     // from ControlBar
     override protected function getMode () :String
     {
-        if (int(MsoyParameters.get()["mode"]) != UberClientModes.CLIENT) {
+        if (!UberClient.isRegularClient()) {
             return UI_VIEWER;
         }
 

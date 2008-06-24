@@ -55,6 +55,7 @@ import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 
@@ -501,8 +502,8 @@ public class WorldController extends MsoyController
     {
         // TEMP: we are a guest and guests cannot currently go to scenes via URLs so we need to do
         // this for now to support guests moving around once they come in via an invite
-        if ((!_wctx.getMsoyClient().isFeaturedPlaceView() && _wctx.getMemberObject().isGuest()) ||
-            !displayPageGWT("world", "s" + sceneId)) {
+        if ((UberClient.isRegularClient() && _wctx.getMemberObject().isGuest()) ||
+                !displayPageGWT("world", "s" + sceneId)) {
             // fall back to breaking the back button
             _wctx.getSceneDirector().moveTo(sceneId);
         }
@@ -703,7 +704,7 @@ public class WorldController extends MsoyController
      */
     public function wentToScene (sceneId :int) :void
     {
-        if (_wctx.getWorldClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             return;
         }
         // this will result in another request to move to the scene we're already in, but we'll
@@ -781,7 +782,7 @@ public class WorldController extends MsoyController
                 int(params["gameLobby"]), String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["playNow"]) {
-            _wctx.getGameDirector().playNow(int(params["playNow"]), params["mode"] as String,
+            _wctx.getGameDirector().playNow(int(params["playNow"]), params["gameMode"] as String,
                                             String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["worldGame"]) {

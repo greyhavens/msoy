@@ -89,9 +89,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
         setVersion(DeploymentConfig.version);
         _creds = createStartupCreds(null);
-
-        var params :Object = MsoyParameters.get();
-        _featuredPlaceView = params["featuredPlace"] != null;
+        
+        _featuredPlaceView = UberClient.isFeaturedPlaceView();
         if (_featuredPlaceView) {
             // mute all sound in featured place view.
             var mute :SoundTransform = new SoundTransform();
@@ -163,14 +162,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function isEmbedded () :Boolean
     {
         return _embedded;
-    }
-
-    /**
-     * Find out whether this client is being used as a featured place view.
-     */
-    public function isFeaturedPlaceView () :Boolean
-    {
-        return _featuredPlaceView;
     }
 
     /**

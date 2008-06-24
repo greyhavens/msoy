@@ -59,7 +59,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -129,7 +129,7 @@ public class RoomObjectController extends RoomController
     {
         super.init(ctx, config);
 
-        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             _suppressNormalHovering = true;
             // show the pointer cursor
             _roomView.buttonMode = true;
@@ -831,7 +831,7 @@ public class RoomObjectController extends RoomController
 
     public function setBackgroundMusic (data :AudioData) :void
     {
-        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+        if (!UberClient.isRegularClient()) {
             return;
         }
 
@@ -1066,7 +1066,7 @@ public class RoomObjectController extends RoomController
     override protected function mouseClicked (event :MouseEvent) :void
     {
         // if we're in a featured place view, any click should take the member to this room.
-        if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             _wdctx.getWorldController().handleGoScene(_scene.getId());
             return;
         }
@@ -1101,7 +1101,7 @@ public class RoomObjectController extends RoomController
         var args :Array = event.getArgs();
         switch (event.getName()) {
         case RoomObject.LOAD_MUSIC:
-            if (_wdctx.getWorldClient().isFeaturedPlaceView()) {
+            if (UberClient.isFeaturedPlaceView()) {
                 break;
             }
             if (_loadingMusic != null) {

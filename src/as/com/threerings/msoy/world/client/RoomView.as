@@ -40,6 +40,7 @@ import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -463,7 +464,9 @@ public class RoomView extends Sprite
         var scale :Number = computeScale();
         scaleY = scale;
         scaleX = scale;
-        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+        // TODO: What is this line of code actually doing? Can I omit in the
+        // avatar viewer mode?
+        if (!UberClient.isFeaturedPlaceView()) {
             y = (_actualHeight - _layout.metrics.sceneHeight * scale) / 2;
         }
 
@@ -499,20 +502,19 @@ public class RoomView extends Sprite
      */
     protected function computeScale () :Number
     {
-        var maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
+        const maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
         if (isNaN(_fullSizeActualWidth) || !_ctx.getTopPanel().isMinimized()) {
             _fullSizeActualWidth = _actualWidth;
         }
-        var minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
-        if (maxScale > minScale && !_ctx.getMsoyClient().isFeaturedPlaceView()) {
-            _ctx.getTopPanel().getControlBar().enableZoomControl(true);
-            return minScale + (maxScale - minScale) * Prefs.getZoom();
-        } else {
-            if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
-                _ctx.getTopPanel().getControlBar().enableZoomControl(false);
+        const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
+        if (UberClient.isRegularClient()) {
+            const canScale :Boolean = maxScale > minScale;
+            _ctx.getTopPanel().getControlBar().enableZoomControl(canScale);
+            if (canScale) {
+                return minScale + (maxScale - minScale) * Prefs.getZoom();
             }
-            return maxScale;
         }
+        return maxScale;
     }
 
     protected function scrollView () :void

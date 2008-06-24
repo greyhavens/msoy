@@ -31,7 +31,6 @@ public class MsoyParameters
         while (d != null) {
             try {
                 var s :String = Object(d).getWhirledParams();
-                trace("Got params!: " + s);
                 _params = new URLVariables(s);
                 thenRun();
                 return;

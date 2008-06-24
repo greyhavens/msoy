@@ -61,7 +61,7 @@ public class TopPanel extends Canvas
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
-        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (UberClient.isRegularClient()) {
             _headerBar = new HeaderBar(_ctx, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
@@ -75,7 +75,7 @@ public class TopPanel extends Canvas
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
-        if (!_ctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (!UberClient.isFeaturedPlaceView()) {
             // only create and display an overlay for real clients
             _comicOverlay = new ComicOverlay(_ctx, _placeBox);
             _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
@@ -349,7 +349,7 @@ public class TopPanel extends Canvas
     public function slideInChat (chat :Container, bounds :Rectangle) :void
     {
         _chatBounds = bounds;
-        if (_chat != null || _ctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (_chat != null || !UberClient.isRegularClient()) {
             // we already own the chat, or we shouldn't be showing slide chat.
             return;
         }
@@ -413,17 +413,24 @@ public class TopPanel extends Canvas
         return _topPanel != null ? Math.round(_topPanel.height) : 0;
     }
 
+    protected function getHeaderBarHeight () :int
+    {
+        return _headerBar != null ? HeaderBar.HEIGHT : 0;
+    }
+
     protected function layoutPanels () :void
     {
-        if (_ctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             // in this case, we only have one panel...
             updatePlaceViewSize();
             return;
         }
 
         _controlBar.setStyle("left", 0);
-        _headerBar.setStyle("left", 0);
-        _headerBar.setStyle("top", getTopPanelHeight());
+        if (_headerBar != null) {
+            _headerBar.setStyle("left", 0);
+            _headerBar.setStyle("top", getTopPanelHeight());
+        }
 
         if (_topPanel != null) {
             _topPanel.setStyle("top", 0);
@@ -432,7 +439,7 @@ public class TopPanel extends Canvas
         }
 
         if (_rightPanel != null) {
-            _rightPanel.setStyle("top", getTopPanelHeight() + HeaderBar.HEIGHT);
+            _rightPanel.setStyle("top", getTopPanelHeight() + getHeaderBarHeight());
             _rightPanel.setStyle("right", 0);
             _rightPanel.setStyle("bottom", ControlBar.HEIGHT);
 
@@ -458,7 +465,7 @@ public class TopPanel extends Canvas
             return; // nothing doing if we're not in control
         }
 
-        if (_ctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             _placeBox.clearStyle("top");
             _placeBox.clearStyle("bottom");
             _placeBox.clearStyle("left");
@@ -468,8 +475,8 @@ public class TopPanel extends Canvas
         }
 
         var w :int = _ctx.getWidth() - getRightPanelWidth();
-        var h :int = _ctx.getHeight() - HeaderBar.HEIGHT - getTopPanelHeight();
-        var top :int = HeaderBar.HEIGHT + getTopPanelHeight();
+        var h :int = _ctx.getHeight() - getHeaderBarHeight() - getTopPanelHeight();
+        var top :int = getHeaderBarHeight() + getTopPanelHeight();
         if (padVertical(_placeBox.getPlaceView())) {
             top += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;

@@ -55,6 +55,7 @@ import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ComicOverlay;
@@ -661,7 +662,7 @@ public class RoomObjectView extends RoomView
 
         relayoutSprites(_effects.values())
 
-        if (_ctx.getWorldClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             var sceneWidth :int = Math.round(_scene.getWidth() * scaleX) as int;
             if (sceneWidth < _actualWidth) {
                 // center a scene that is narrower than our view area.

@@ -101,6 +101,7 @@ public class RoomStudioView extends RoomView
         BindingUtils.bindSetter(scaleUpdated, _scaleSlider, "value");
 
         var box :HBox = new HBox();
+        box.percentHeight = 100;
         box.styleName = "controlBarSpacer";
         box.addChild(_scaleSlider);
         box.addChild(_scaleReset);

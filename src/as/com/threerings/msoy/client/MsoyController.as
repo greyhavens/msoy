@@ -484,7 +484,7 @@ public class MsoyController extends Controller
      */
     protected function locationDidChange (place :PlaceObject) :void
     {
-        if (!_mctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (UberClient.isRegularClient()) {
             updateLocationDisplay();
         }
     }

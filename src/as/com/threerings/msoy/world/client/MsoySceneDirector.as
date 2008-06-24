@@ -18,6 +18,7 @@ import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -119,7 +120,7 @@ public class MsoySceneDirector extends SceneDirector
         wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
 
         // if we're in the featured place view...
-        if (wctx.getMsoyClient().isFeaturedPlaceView()) {
+        if (UberClient.isFeaturedPlaceView()) {
             return; // ...there's nothing we can do but display a black scene
         }
 
