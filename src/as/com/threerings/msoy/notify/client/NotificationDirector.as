@@ -7,9 +7,9 @@ import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.util.ElementExpiredEvent;
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 
@@ -59,10 +59,9 @@ public class NotificationDirector extends BasicDirector
         super(ctx);
         _wctx = ctx;
         _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
-        _membersLoggingOff.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, memberExpired);
+        _membersLoggingOff.addEventListener(ExpiringSet.ELEMENT_EXPIRED, memberExpired);
         _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
-        _currentNotifications.addEventListener(
-            ElementExpiredEvent.ELEMENT_EXPIRED, notificationExpired);
+        _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
 
         var controlBar :WorldControlBar = ctx.getTopPanel().getControlBar() as WorldControlBar;
         if (controlBar != null) {
@@ -153,9 +152,9 @@ public class NotificationDirector extends BasicDirector
         return _notifications;
     }
 
-    protected function memberExpired (event :ElementExpiredEvent) :void
+    protected function memberExpired (event :ValueEvent) :void
     {
-        var entry :FriendEntry = event.element as FriendEntry;
+        var entry :FriendEntry = event.value as FriendEntry;
         var memberId :int = entry.name.getMemberId();
         addNotification(Msgs.NOTIFY.get("m.friend_offline", entry.name, memberId));
     }
@@ -194,7 +193,7 @@ public class NotificationDirector extends BasicDirector
         _notificationDisplay.displayNotification(notification);
     }
 
-    protected function notificationExpired (event :ElementExpiredEvent) :void
+    protected function notificationExpired (event :ValueEvent) :void
     {
         // all we currently need to do is check if this list is empty, and if so, have the 
         // display fade it out.

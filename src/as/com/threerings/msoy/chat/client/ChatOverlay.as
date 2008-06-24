@@ -38,13 +38,13 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.ElementExpiredEvent;
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -122,7 +122,7 @@ public class ChatOverlay
         displayChat(true);
 
         _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME);
-        _closedTabs.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, localtypeExpired);
+        _closedTabs.addEventListener(ExpiringSet.ELEMENT_EXPIRED, localtypeExpired);
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
@@ -453,9 +453,9 @@ public class ChatOverlay
         }
     }
 
-    protected function localtypeExpired (event :ElementExpiredEvent) :void
+    protected function localtypeExpired (event :ValueEvent) :void
     {
-        _localtypeDisplayTimes.remove(event.element as String);
+        _localtypeDisplayTimes.remove(event.value as String);
     }
 
     protected function getOverlays () :Array

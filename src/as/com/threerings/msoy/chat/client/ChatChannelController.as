@@ -5,12 +5,12 @@ package com.threerings.msoy.chat.client {
 
 import com.whirled.ui.PlayerList;
 
-import com.threerings.util.ElementExpiredEvent;
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ResultWrapper;
 
@@ -63,7 +63,7 @@ public class ChatChannelController
             _occList = new ChannelPlayerList(new MsoyNameLabelCreator(ctx));
 
             _departing = new ExpiringSet(3);
-            _departing.addEventListener(ElementExpiredEvent.ELEMENT_EXPIRED, handleDeparted);
+            _departing.addEventListener(ExpiringSet.ELEMENT_EXPIRED, handleDeparted);
 
             _ccsvc = _ctx.getClient().requireService(ChatChannelService) as ChatChannelService;
             connect();
@@ -254,10 +254,10 @@ public class ChatChannelController
         _ctx.getChatDirector().dispatchMessage(msg, _channel.toLocalType());
     }
 
-    protected function handleDeparted (event :ElementExpiredEvent) :void
+    protected function handleDeparted (event :ValueEvent) :void
     {
         if (_occList != null) {
-            _occList.removeItem(event.element as MemberName);
+            _occList.removeItem(event.value as MemberName);
         }
     }
 
