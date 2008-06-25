@@ -13,7 +13,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
@@ -112,7 +111,8 @@ public class CommentServlet extends MsoyServiceServlet
             MsoyServer.commentRepo.postComment(etype, eid, mrec.memberId, text);
 
             // find out the owner id of and the entity name for the entity that was commented on
-            Tuple<Integer, String> entityInfo = null;
+            int ownerId = 0;
+            String entityName = null;
 
             // if this is a comment on a user room, post a self feed message
             if (etype == Comment.TYPE_ROOM) {
@@ -121,11 +121,12 @@ public class CommentServlet extends MsoyServiceServlet
                     String data = scene.sceneId + "\t" + scene.name;
                     MsoyServer.feedRepo.publishSelfMessage(
                         scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
-                    entityInfo = new Tuple<Integer, String>(scene.ownerId, scene.name);
+                    ownerId = scene.ownerId;
+                    entityName = scene.name;
                 }
 
             } else if (etype == Comment.TYPE_PROFILE_WALL) {
-                entityInfo = new Tuple<Integer, String>(eid, null);
+                ownerId = eid;
 
             } else {
                 try {
@@ -135,7 +136,8 @@ public class CommentServlet extends MsoyServiceServlet
                     if (listing != null) {
                         ItemRecord item = listing.item;
                         if (item != null) {
-                            entityInfo = new Tuple<Integer, String>(item.creatorId, item.name);
+                            ownerId = item.creatorId;
+                            entityName = item.name;
                         }
                     }
     
@@ -152,9 +154,8 @@ public class CommentServlet extends MsoyServiceServlet
             }
 
             // notify the item creator that a comment was made
-            if (entityInfo != null && entityInfo.left != null) {
-                MsoyServer.notifyMan.notifyEntityCommented(
-                    entityInfo.left, etype, eid, entityInfo.right);
+            if (ownerId != 0) {
+                MsoyServer.notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
             }
 
             // fake up a comment record to return to the client

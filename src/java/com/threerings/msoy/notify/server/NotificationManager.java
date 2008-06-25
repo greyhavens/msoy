@@ -5,14 +5,9 @@ package com.threerings.msoy.notify.server;
 
 import com.threerings.presents.annotation.EventThread;
 
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.Notification;
