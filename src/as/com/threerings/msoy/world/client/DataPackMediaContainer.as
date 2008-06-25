@@ -76,7 +76,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Set the media to be displayed as a ByteArray representing zipped (remixable) media.
      */
-    public function setMediaBytes (zippedBytes :ByteArray) :void
+    public function setZippedMediaBytes (zippedBytes :ByteArray) :void
     {
         if (_media != null) {
             shutdown(false);

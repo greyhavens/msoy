@@ -59,7 +59,7 @@ public class AvatarViewerComp extends VBox
         avatar = new ViewerAvatarSprite(this);
         _avatars.push(avatar);
 
-        avatar.setMediaBytes(bytes);
+        avatar.setZippedMediaBytes(bytes);
         _holder.rawChildren.addChild(avatar);
 
         // on the last one, add a listener

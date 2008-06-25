@@ -44,7 +44,7 @@ public class RoomStudioView extends RoomView
      */
     public function loadBytes (bytes :ByteArray) :void
     {
-        _testingSprite.setMediaBytes(bytes);
+        _testingSprite.setZippedMediaBytes(bytes);
     }
 
     public function initForViewing (params :Object, uberMode :int) :void
