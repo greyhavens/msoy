@@ -5,6 +5,9 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.world.data.MemberInfo;
 
 /**
@@ -17,6 +20,7 @@ public class StudioMemberInfo extends MemberInfo
         if (ctx != null) {
             username = ctx.getMyName();
             _media = new StudioMediaDesc(avatarUrl);
+            _ident = new ItemIdent(Item.OCCUPANT, 0);
             _scale = 1;
         }
     }

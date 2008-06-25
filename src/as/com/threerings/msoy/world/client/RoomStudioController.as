@@ -11,10 +11,15 @@ import flash.system.Security;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.MethodQueue;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.UberClientModes;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -27,19 +32,36 @@ public class RoomStudioController extends RoomController
     /**
      * Called by the view once it's on stage.
      */
-    public function studioOnStage () :void
+    public function studioOnStage (uberMode :int) :void
     {
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
-        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
-    
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
-        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+        if (uberMode == UberClientModes.AVATAR_VIEWER) {
+            _walkTarget.visible = false;
+            _flyTarget.visible = false;
+            _roomView.addChildAt(_flyTarget, _roomView.numChildren);
+            _roomView.addChildAt(_walkTarget, _roomView.numChildren);
+        
+            _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+        }
 
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         setControlledPanel(_studioView);
+    }
+
+    // allow other actor moves (pet)
+    override public function requestMove (ident :ItemIdent, newLoc :MsoyLocation) :Boolean
+    {
+        // move it one frame later
+        MethodQueue.callLater(_studioView.getPet().moveTo, [ newLoc, _scene ]);
+        //_studioView.getPet().moveTo(newLoc, _scene);
+        return true;
+    }
+
+    // handle control requests
+    override public function requestControl (ident :ItemIdent) :void
+    {
+        MethodQueue.callLater(_studioView.getPet().gotControl);
     }
 
     // documentation inherited

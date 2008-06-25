@@ -178,7 +178,7 @@ public class RoomController extends SceneController
      */
     public function requestControl (ident :ItemIdent) :void
     {
-        // TODO
+        // see subclasses
     }
 
     /**
@@ -240,7 +240,7 @@ public class RoomController extends SceneController
      */
     public function requestMove (ident :ItemIdent, newloc :MsoyLocation) :Boolean
     {
-        // TODO
+        // handled in subclasses
         return false;
     }
 

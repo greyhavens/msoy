@@ -748,7 +748,6 @@ public class RoomView extends Sprite
         addToEntityMap(sprite);
     }
 
-
     /**
      * Remove the specified sprite from the view.
      */

@@ -11,6 +11,7 @@ import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
 import mx.controls.HSlider;
 
+import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
@@ -40,12 +41,12 @@ public class RoomStudioView extends RoomView
      */
     public function loadBytes (bytes :ByteArray) :void
     {
-        _avatar.setMediaBytes(bytes);
+        _testingSprite.setMediaBytes(bytes);
     }
 
     public function initForViewing (params :Object, uberMode :int) :void
     {
-        (_ctrl as RoomStudioController).studioOnStage();
+        (_ctrl as RoomStudioController).studioOnStage(uberMode);
 
         switch (uberMode) {
         case UberClientModes.AVATAR_VIEWER:
@@ -58,37 +59,12 @@ public class RoomStudioView extends RoomView
         }
     }
 
-    protected function initViewAvatar (params :Object) :void
+    /**
+     * Provide access to the pet we're previewing.
+     */
+    public function getPet () :PetSprite
     {
-        var scale :Number = Number(params["scale"]);
-        if (isNaN(scale) || scale == 0) {
-            scale = 1;
-        }
-
-        // newstyle is that everything comes in on the "media" param, but let's still fall
-        // back to "avatar" for a bit.
-        var avatar :String = params["media"] || params["avatar"];
-        var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
-        info.setScale(scale);
-        _avatar = new MemberSprite(_ctx, info);
-        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
-        addSprite(_avatar);
-        setCenterSprite(_avatar);
-
-        if ("true" == String(params["scaling"])) {
-            createScaleControls(scale);
-            _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-        }
-    }
-
-    protected function initViewPet (params :Object) :void
-    {
-        var pet :String = params["media"];
-        var info :StudioPetInfo = new StudioPetInfo(pet);
-        _pet = new PetSprite(_ctx, info);
-        _pet.setEntering(new MsoyLocation(.1, 0, .25));
-        addSprite(_pet);
-        setCenterSprite(_pet);
+        return _pet;
     }
 
     override public function getMyAvatar () :MemberSprite
@@ -108,6 +84,47 @@ public class RoomStudioView extends RoomView
         var studioInfo :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
         studioInfo.setScale(scale);
         _avatar.setOccupantInfo(studioInfo);
+    }
+
+    /**
+     * Configure the sprite we're testing.
+     */
+    protected function setTestingSprite (sprite :MsoySprite) :void
+    {
+        addSprite(sprite);
+        setCenterSprite(sprite);
+        _testingSprite = sprite;
+    }
+
+    protected function initViewAvatar (params :Object) :void
+    {
+        var scale :Number = Number(params["scale"]);
+        if (isNaN(scale) || scale == 0) {
+            scale = 1;
+        }
+
+        // newstyle is that everything comes in on the "media" param, but let's still fall
+        // back to "avatar" for a bit.
+        var avatar :String = params["media"] || params["avatar"];
+        var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
+        info.setScale(scale);
+        _avatar = new MemberSprite(_ctx, info);
+        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
+        setTestingSprite(_avatar);
+
+        if ("true" == String(params["scaling"])) {
+            createScaleControls(scale);
+            _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        }
+    }
+
+    protected function initViewPet (params :Object) :void
+    {
+        var pet :String = params["media"];
+        var info :StudioPetInfo = new StudioPetInfo(pet);
+        _pet = new PetSprite(_ctx, info);
+        _pet.setEntering(new MsoyLocation(.1, 0, .25));
+        setTestingSprite(_pet);
     }
 
     protected function createScaleControls (scale :Number) :void
@@ -176,10 +193,17 @@ public class RoomStudioView extends RoomView
         }
     }
 
-    // much TODO
+// HMM
+//    override protected function addSprite (sprite :MsoySprite) :void
+//    {
+//        super.addSprite(sprite);
+//
+//        MethodQueue.callLater(sprite.gotControl);
+//    }
 
     protected var _sctx :StudioContext;
 
+    protected var _testingSprite :MsoySprite;
     protected var _avatar :MemberSprite;
     protected var _pet :PetSprite;
 
