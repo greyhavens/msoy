@@ -17,8 +17,11 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyParameters;
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.UberClientModes;
 
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.data.FurniData;
@@ -34,7 +37,7 @@ public class RoomStudioController extends RoomController
      */
     public function studioOnStage (uberMode :int) :void
     {
-        if (uberMode == UberClientModes.AVATAR_VIEWER) {
+        if (uberMode == UberClientModes.AVATAR_VIEWER || uberMode == UberClientModes.DECOR_VIEWER) {
             _walkTarget.visible = false;
             _flyTarget.visible = false;
             _roomView.addChildAt(_flyTarget, _roomView.numChildren);
@@ -97,9 +100,27 @@ public class RoomStudioController extends RoomController
         var model :MsoySceneModel = new MsoySceneModel();
         model.ownerType = MsoySceneModel.OWNER_TYPE_MEMBER;
         model.furnis = TypedArray.create(FurniData);
-        model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-        model.decor.furniMedia = null; // the view does some stuff to render a line drawing instead
 
+        var params :Object = MsoyParameters.get();
+        var decor :Decor;
+        if (UberClient.getMode() == UberClientModes.DECOR_VIEWER) {
+            decor = new Decor();
+            decor.type = int(params.decorType);
+            decor.width = int(params.decorWidth);
+            decor.height = int(params.decorHeight);
+            decor.depth = int(params.decorDepth);
+            decor.horizon = Number(params.decorHorizon);
+            decor.hideWalls = ("true" == String(params.decorHideWalls));
+            decor.offsetX = Number(params.decorOffsetX);
+            decor.offsetY = Number(params.decorOffsetY);
+            decor.furniMedia = new StudioMediaDesc(String(params.media));
+
+        } else {
+            decor = MsoySceneModel.defaultMsoySceneModelDecor();
+            decor.furniMedia = null; // the view does some stuff to render a line drawing instead
+        }
+
+        model.decor = decor;
         _scene = new MsoyScene(model, _config);
         _studioView.setScene(_scene);
         _studioView.setBackground(model.decor);

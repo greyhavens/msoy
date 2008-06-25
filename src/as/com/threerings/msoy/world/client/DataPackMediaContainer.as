@@ -61,6 +61,18 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         return ba;
     }
 
+    public function setPlainBytes (bytes :ByteArray) :void
+    {
+        if (_media != null) {
+            shutdown(false);
+        }
+        _url = null;
+
+        startedLoading();
+        var loader :Loader = initLoader();
+        loader.loadBytes(bytes, getContext(null));
+    }
+
     /**
      * Set the media to be displayed as a ByteArray representing zipped (remixable) media.
      */
@@ -141,6 +153,11 @@ public class DataPackMediaContainer extends MsoyMediaContainer
 
         // we use the stub only on non-file non-images
         return !(isImage(url) || isFileUrl(url));
+    }
+
+    override protected function isImage (url :String) :Boolean
+    {
+        return (url != null) && super.isImage(url);
     }
 
     /**

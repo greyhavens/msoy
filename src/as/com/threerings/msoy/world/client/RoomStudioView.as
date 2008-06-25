@@ -21,6 +21,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.item.data.all.Decor;
 
@@ -58,6 +59,10 @@ public class RoomStudioView extends RoomView
         case UberClientModes.PET_VIEWER:
             initViewPet(params);
             break;
+
+        case UberClientModes.DECOR_VIEWER:
+            initViewDecor(params);
+            break;
         }
     }
 
@@ -92,17 +97,10 @@ public class RoomStudioView extends RoomView
     {
         super.setBackground(decor);
 
-        _backdrop.drawRoom(_bg.graphics, decor.width, decor.height, true, true);
-    }
-
-    /**
-     * Configure the sprite we're testing.
-     */
-    protected function setTestingSprite (sprite :MsoySprite) :void
-    {
-        addSprite(sprite);
-        setCenterSprite(sprite);
-        _testingSprite = sprite;
+        // if we're not specifically viewing a decor, show a wireframe decor
+        if (UberClient.getMode() != UberClientModes.DECOR_VIEWER) {
+            _backdrop.drawRoom(_bg.graphics, decor.width, decor.height, true, true);
+        }
     }
 
     protected function initViewAvatar (params :Object) :void
@@ -119,7 +117,9 @@ public class RoomStudioView extends RoomView
         info.setScale(scale);
         _avatar = new MemberSprite(_ctx, info);
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
-        setTestingSprite(_avatar);
+        addSprite(_avatar);
+        setCenterSprite(_avatar);
+        _testingSprite = _avatar;
 
         _ctx.getTopPanel().getControlBar().addCustomComponent(
             new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
@@ -137,7 +137,22 @@ public class RoomStudioView extends RoomView
         var info :StudioPetInfo = new StudioPetInfo(name, pet);
         _pet = new PetSprite(_ctx, info);
         _pet.setEntering(new MsoyLocation(.1, 0, .25));
-        setTestingSprite(_pet);
+        addSprite(_pet);
+        setCenterSprite(_pet);
+        _testingSprite = _pet;
+    }
+
+    protected function initViewDecor (params :Object) :void
+    {
+        // the Backdrop media will be set all up in RoomStudioController
+        _testingSprite = _bg;
+
+        // but also add an avatar so we can walk around and such
+        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
+        _avatar.setPlainBytes(new DEFAULT_AVATAR());
+        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
+        addSprite(_avatar);
+        setCenterSprite(_avatar);
     }
 
     protected function createScaleControls (scale :Number) :void
@@ -231,5 +246,9 @@ public class RoomStudioView extends RoomView
     /** Used for sizing our own avatar. */
     protected var _scaleReset :CommandButton;
     protected var _scaleSlider :HSlider;
+
+    [Embed(source="../../../../../../../pages/media/static/avatar/member.swf",
+        mimeType="application/octet-stream")]
+    protected static const DEFAULT_AVATAR :Class;
 }
 }

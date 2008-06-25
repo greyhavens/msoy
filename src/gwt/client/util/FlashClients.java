@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.data.all.UberClientModes;
 
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -134,6 +135,11 @@ public class FlashClients
             h = 385;
             mode = UberClientModes.PET_VIEWER;
 
+        } else if (item instanceof Decor) {
+            w = 360;
+            h = 385;
+            mode = UberClientModes.DECOR_VIEWER;
+
         } else {
             w = 320;
             h = 240;
@@ -159,12 +165,21 @@ public class FlashClients
         // set up the flashvars
         String flashVars = "mode=" + mode + "&media=" + encodedPath +
             "&name=" + URL.encodeComponent(item.name);
-
-        if (mode == UberClientModes.AVATAR_VIEWER) {
+        switch (mode) {
+        case UberClientModes.AVATAR_VIEWER:
             flashVars += "&scale=" + ((Avatar) item).scale;
             if (userOwnsItem) {
                 flashVars += "&scaling=true";
             }
+            break;
+
+        case UberClientModes.DECOR_VIEWER:
+            Decor decor = (Decor) item;
+            flashVars += "&decorType=" + decor.type + "&decorWidth=" + decor.width +
+                "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +
+                "&decorHorizon=" + decor.horizon + "&decorHideWalls=" + decor.hideWalls +
+                "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY;
+            break;
         }
 
         // and emit the widget
