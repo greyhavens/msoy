@@ -29,6 +29,7 @@ import client.util.MsoyUI;
  * Displays a logon user interface.
  */
 public class LogonPanel extends SmartTable
+        implements AsyncCallback
 {
     public LogonPanel (boolean headerMode)
     {
@@ -124,23 +125,26 @@ public class LogonPanel extends SmartTable
         }
 
         CShell.usersvc.login(
-            DeploymentConfig.version, account, CShell.md5hex(password), 1, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _password.setText("");
-                CShell.app.didLogon((SessionData)result);
-            }
-            public void onFailure (Throwable caught) {
-                CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
-                String message = null;
-                if (caught instanceof BannedException) {
-                    BannedException be = (BannedException)caught;
-                    message = CShell.cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
-                } else {
-                    message = CShell.serverError(caught);
-                }
-                MsoyUI.errorNear(CShell.serverError(message), _password);
-            }
-        });
+            DeploymentConfig.version, account, CShell.md5hex(password), 1, this);
+    }
+
+    public void onSuccess (Object result)
+    {
+        _password.setText("");
+        CShell.app.didLogon((SessionData)result);
+    }
+
+    public void onFailure (Throwable caught)
+    {
+        CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
+        String message = null;
+        if (caught instanceof BannedException) {
+            BannedException be = (BannedException)caught;
+            message = CShell.cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+        } else {
+            message = CShell.serverError(caught);
+        }
+        MsoyUI.errorNear(CShell.serverError(message), _password);
     }
 
     protected class ForgotPasswordDialog extends SmartTable

@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -24,6 +25,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.CShell;
+import client.shell.LogonPanel;
 
 /**
  * Contains useful user interface related methods.
@@ -369,7 +371,19 @@ public class MsoyUI
 
     public static void showPasswordExpired (String message)
     {
-        new PasswordDialog(message).show();
+        final BorderedPopup popup = new BorderedPopup();
+        VerticalPanel content = new VerticalPanel();
+
+        content.add(MsoyUI.createLabel(message, "Content"));
+        content.add(new LogonPanel(true) {
+                    @Override public void onSuccess(Object result) {
+                        popup.hide();
+                        super.onSuccess(result);
+                    }
+                });
+
+        popup.setWidget(content);
+        popup.show();
     }
 
     /**
