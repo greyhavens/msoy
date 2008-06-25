@@ -154,7 +154,7 @@ public class CommentServlet extends MsoyServiceServlet
             }
 
             // notify the item creator that a comment was made
-            if (ownerId != 0) {
+            if (ownerId > 0) {
                 MsoyServer.notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
             }
 
