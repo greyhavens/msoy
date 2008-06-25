@@ -83,9 +83,6 @@ public class MsoyController extends Controller
     /** Command to display a volume slider. */
     public static const POP_VOLUME :String = "PopVolume";
 
-    /** Command to display a zoom slider. */
-    public static const POP_ZOOM :String = "PopZoom";
-
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
@@ -295,19 +292,6 @@ public class MsoyController extends Controller
             VolumePopup.destroyCurrentInstance();
         } else {
             var popup :VolumePopup = new VolumePopup(trigger);
-            popup.show();
-        }
-    }
-
-    /**
-     * Handle the POP_ZOOM command.
-     */
-    public function handlePopZoom (trigger :Button) :void
-    {
-        if (ZoomPopup.popupExists()) {
-            ZoomPopup.destroyCurrentInstance();
-        } else {
-            var popup :ZoomPopup = new ZoomPopup(trigger);
             popup.show();
         }
     }

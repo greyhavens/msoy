@@ -17,6 +17,7 @@ import flash.utils.ByteArray;
 import flash.utils.getTimer; // function import
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
@@ -71,6 +72,10 @@ public class RoomView extends Sprite
         _ctx = ctx;
         _ctrl = ctrl;
         _layout = RoomLayoutFactory.createLayout(null, this);
+
+        // listen for preferences changes, update zoom
+        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+            handlePrefsUpdated, false, 0, true);
     }
 
     /**
@@ -455,6 +460,15 @@ public class RoomView extends Sprite
         addAllOccupants();
     }
 
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        switch (event.name) {
+        case Prefs.ZOOM:
+            relayout();
+            break;
+        }
+    }
+
     /**
      * Layout everything.
      */
@@ -506,7 +520,7 @@ public class RoomView extends Sprite
             _fullSizeActualWidth = _actualWidth;
         }
         const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
-        if (UberClient.isRegularClient()) {
+        if (!UberClient.isFeaturedPlaceView()) {
             const canScale :Boolean = maxScale > minScale;
             _ctx.getTopPanel().getControlBar().enableZoomControl(canScale);
             if (canScale) {

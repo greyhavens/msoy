@@ -12,7 +12,6 @@ import flash.geom.Rectangle;
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
@@ -54,7 +53,6 @@ import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
@@ -96,10 +94,6 @@ public class RoomObjectView extends RoomView
     {
         super(ctx, ctrl);
         _octrl = ctrl;
-
-        // listen for preferences changes, update zoom
-        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
     }
 
     public function getRoomObjectController () :RoomObjectController
@@ -626,15 +620,6 @@ public class RoomObjectView extends RoomView
         }
         log.debug("AVRG got control [gameId=" + gameId + "]");
         callAVRGCode("gotControl_v1");
-    }
-
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
-    {
-        switch (event.name) {
-        case Prefs.ZOOM:
-            relayout();
-            break;
-        }
     }
 
     override protected function backgroundFinishedLoading () :void

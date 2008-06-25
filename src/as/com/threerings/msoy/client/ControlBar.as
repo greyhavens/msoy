@@ -198,9 +198,9 @@ public class ControlBar extends HBox
         _volBtn.styleName = "controlBarButtonVolume";
 
         _zoomBtn = new CommandButton();
-        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
-        _zoomBtn.setCommand(MsoyController.POP_ZOOM, _zoomBtn);
         _zoomBtn.styleName = "controlBarButtonZoom";
+        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
+        _zoomBtn.setCallback(handlePopZoom);
     }
 
     /**
@@ -227,7 +227,7 @@ public class ControlBar extends HBox
         addGroupChild(_chatControl,
             [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR /*,UI_VIEWER*/]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
+        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT /*, UI_VIEWER*/ ]);
 
         // add our various control buttons
         addControlButtons();
@@ -295,6 +295,19 @@ public class ControlBar extends HBox
             return UI_STD;
         } else {
             return UI_GUEST;
+        }
+    }
+
+    /**
+     * Handle the zoom button popup.
+     */
+    protected function handlePopZoom () :void
+    {
+        if (ZoomPopup.popupExists()) {
+            ZoomPopup.destroyCurrentInstance();
+        } else {
+            var popup :ZoomPopup = new ZoomPopup(_zoomBtn);
+            popup.show();
         }
     }
 
