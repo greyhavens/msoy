@@ -98,11 +98,8 @@ public class RoomStudioController extends RoomController
         model.ownerType = MsoySceneModel.OWNER_TYPE_MEMBER;
         model.furnis = TypedArray.create(FurniData);
         model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+        model.decor.furniMedia = null; // the view does some stuff to render a line drawing instead
 
-        // TODO: sort out what exactly we want to do when we're run from disk
-        if (Security.sandboxType == Security.LOCAL_WITH_FILE) {
-            model.decor.furniMedia = null; // this will cause a black room to be shown
-        }
         _scene = new MsoyScene(model, _config);
         _studioView.setScene(_scene);
         _studioView.setBackground(model.decor);

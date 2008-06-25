@@ -22,6 +22,8 @@ import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.client.Msgs;
 
+import com.threerings.msoy.item.data.all.Decor;
+
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
@@ -84,6 +86,13 @@ public class RoomStudioView extends RoomView
         var studioInfo :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
         studioInfo.setScale(scale);
         _avatar.setOccupantInfo(studioInfo);
+    }
+
+    override public function setBackground (decor :Decor) :void
+    {
+        super.setBackground(decor);
+
+        _backdrop.drawRoom(_bg.graphics, decor.width, decor.height, true, true);
     }
 
     /**
