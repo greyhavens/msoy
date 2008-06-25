@@ -205,7 +205,7 @@ public class RoomController extends SceneController
      */
     public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
     {
-        // TODO
+        // see subclasses
     }
 
     /**

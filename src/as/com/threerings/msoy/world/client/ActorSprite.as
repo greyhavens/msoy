@@ -116,6 +116,7 @@ public class ActorSprite extends OccupantSprite
             _moveSpeed = speed;
         }
     }
+
     // from OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean

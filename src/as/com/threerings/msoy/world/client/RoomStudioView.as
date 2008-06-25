@@ -121,7 +121,7 @@ public class RoomStudioView extends RoomView
     protected function initViewPet (params :Object) :void
     {
         var pet :String = params["media"];
-        var info :StudioPetInfo = new StudioPetInfo(pet);
+        var info :StudioPetInfo = new StudioPetInfo(_sctx, pet);
         _pet = new PetSprite(_ctx, info);
         _pet.setEntering(new MsoyLocation(.1, 0, .25));
         setTestingSprite(_pet);
