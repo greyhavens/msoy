@@ -149,7 +149,7 @@ public class RoomStudioView extends RoomView
 
         // but also add an avatar so we can walk around and such
         _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
-        _avatar.setPlainBytes(new DEFAULT_AVATAR());
+        _avatar.setMediaBytes(new DEFAULT_AVATAR());
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
