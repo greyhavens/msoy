@@ -35,11 +35,11 @@ public class GameChatContainer extends LayeredContainer
 
         _chatDtr = chatDtr;
         _playerList = playerList;
-        _playerList.width = width;
+        _playerList.width = width - 3;
         _listContainer = new HBox();
         _listContainer.styleName = "gameListContainer";
         _listContainer.height = _playerList.height;
-        _listContainer.width = width;
+        _listContainer.width = width - 3;
         _listContainer.addChild(_playerList);
         addChild(_listContainer);
 
@@ -48,7 +48,7 @@ public class GameChatContainer extends LayeredContainer
         _tabBar.horizontalScrollPolicy = ScrollPolicy.OFF;
         _tabBar.y = _playerList.height
         _tabBar.height = _ctx.getTopPanel().getHeaderBar().height;
-        _tabBar.width = width;
+        _tabBar.width = width - 3;
         _tabBar.styleName = "headerBar";
         _tabBar.addChild(tabs);
         addChild(_tabBar);
@@ -108,7 +108,7 @@ public class GameChatContainer extends LayeredContainer
             _listContainer.addChild(_playerList);
         } else {
             _channelOccList = occList;
-            _channelOccList.width = 300;
+            _channelOccList.width = TopPanel.RIGHT_SIDEBAR_WIDTH - 3;
             _listContainer.addChild(_channelOccList);
         }
     }
@@ -117,7 +117,7 @@ public class GameChatContainer extends LayeredContainer
     {
         if (_overlay != null && (width != uh || height != uh)) {
             var chatTop :Number = _tabBar.y + _tabBar.height;
-            _overlay.setTargetBounds(new Rectangle(0, chatTop, uw, uh - chatTop));
+            _overlay.setTargetBounds(new Rectangle(0, chatTop, uw - 3, uh - chatTop));
         }
 
         super.setActualSize(uw, uh);

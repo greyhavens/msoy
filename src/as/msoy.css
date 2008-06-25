@@ -1139,7 +1139,11 @@ BasePanel {
 }
 
 .gameChatContainer {
-  backgroundColor: white;
+  backgroundColor: black;
+  borderColor: #56C3E2;
+  borderSides: "left";
+  borderStyle: solid;
+  borderThickness: 3;
 }
 
 .playerList {
