@@ -12,10 +12,10 @@ import com.threerings.msoy.world.data.PetInfo;
 
 public class StudioPetInfo extends PetInfo
 {
-    public function StudioPetInfo (ctx :StudioContext = null, petUrl :String = null)
+    public function StudioPetInfo (name :String = null, petUrl :String = null)
     {
-        if (ctx != null) {
-            username = new Name("Pet"); // TODO
+        if (name != null) {
+            username = new Name(name);
             _media = new StudioMediaDesc(petUrl);
             _ident = new ItemIdent(Item.OCCUPANT, 0);
         }

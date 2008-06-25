@@ -157,7 +157,8 @@ public class FlashClients
         }
 
         // set up the flashvars
-        String flashVars = "mode=" + mode + "&media=" + encodedPath;
+        String flashVars = "mode=" + mode + "&media=" + encodedPath +
+            "&name=" + URL.encodeComponent(item.name);
 
         if (mode == UberClientModes.AVATAR_VIEWER) {
             flashVars += "&scale=" + ((Avatar) item).scale;

@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.whirled.client.SceneDirector;
 
+import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.all.MemberName;
 
 public class StudioContext extends WorldContext
@@ -12,7 +13,10 @@ public class StudioContext extends WorldContext
     public function StudioContext (client :StudioClient)
     {
         super(client);
-        _name = new MemberName("Esther Bestertester", 0);
+
+        var params :Object = MsoyParameters.get();
+        _name = new MemberName(
+            String(params["username"] || params["name"] || "Fester Bestertester"), 0);
     }
 
     public function setDimensions (w :Number, h :Number) :void
