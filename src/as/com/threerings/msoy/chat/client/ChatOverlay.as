@@ -1380,10 +1380,10 @@ class ChatContainer extends Container
 
     public function clearOccupantList () :void
     {
-        if (_occList != null) {
+        if (_occList != null && _occList.parent == this) {
             removeChild(_occList);
-            _occList = null;
         }
+        _occList = null;
     }
 
     private static const log :Log = Log.getLog(ChatContainer);
