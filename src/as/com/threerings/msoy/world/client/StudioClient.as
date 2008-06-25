@@ -15,8 +15,6 @@ public class StudioClient extends WorldClient
     {
         super(stage);
 
-        StudioContext(_wctx).setDimensions(Number(params.width), Number(params.height));
-
         _roomStudioController = new RoomStudioController();
         _roomStudioController.init(_wctx, new RoomConfig());
         _wctx.getTopPanel().setPlaceView(_roomStudioController.getPlaceView());

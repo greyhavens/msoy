@@ -17,12 +17,8 @@ public class StudioContext extends WorldContext
         var params :Object = MsoyParameters.get();
         _name = new MemberName(
             String(params["username"] || params["name"] || "Fester Bestertester"), 0);
-    }
-
-    public function setDimensions (w :Number, h :Number) :void
-    {
-        _w = w;
-        _h = h;
+        _w = Number(params["width"]);
+        _h = Number(params["height"]);
     }
 
     override public function getWidth () :Number

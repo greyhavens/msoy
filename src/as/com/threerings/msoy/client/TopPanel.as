@@ -78,8 +78,10 @@ public class TopPanel extends Canvas
 
         if (!UberClient.isFeaturedPlaceView()) {
             // only create and display an overlay for real clients
-            _comicOverlay = new ComicOverlay(_ctx, _placeBox);
-            _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
+            if (UberClient.isRegularClient()) {
+                _comicOverlay = new ComicOverlay(_ctx, _placeBox);
+                _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
+            }
 
             // set up the control bar
             _controlBar = controlBar;
@@ -517,8 +519,11 @@ public class TopPanel extends Canvas
             _chat.setStyle("right", getRightPanelWidth() + w + CHAT_PADDING);
             _chatBounds.height = h;
         }
-        _comicOverlay.setTargetBounds(_chatBounds != null ? _chatBounds : 
-            new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
+        if (_comicOverlay != null) {
+            _comicOverlay.setTargetBounds(_chatBounds != null ? _chatBounds : 
+                new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
+        }
+
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("left", left);

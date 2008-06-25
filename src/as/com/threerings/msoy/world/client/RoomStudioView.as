@@ -112,6 +112,9 @@ public class RoomStudioView extends RoomView
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         setTestingSprite(_avatar);
 
+        _ctx.getTopPanel().getControlBar().addCustomComponent(
+            new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
+
         if ("true" == String(params["scaling"])) {
             createScaleControls(scale);
             _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
@@ -135,7 +138,7 @@ public class RoomStudioView extends RoomView
         });
 
         _scaleSlider = new HSlider();
-        _scaleSlider.width = 40; // TODO: This is tiny! The scale slider mayhap needs a new UI?
+        _scaleSlider.width = 140; // TODO: This is tiny! The scale slider mayhap needs a new UI?
         _scaleSlider.liveDragging = true;
         _scaleSlider.minimum = 0;
         _scaleSlider.maximum = int.MAX_VALUE;
@@ -150,6 +153,14 @@ public class RoomStudioView extends RoomView
         box.addChild(_scaleSlider);
         box.addChild(_scaleReset);
         _ctx.getTopPanel().getControlBar().addCustomComponent(box);
+    }
+
+    /**
+     * Tell the avatar that it chatted.
+     */
+    protected function emulateChat () :void
+    {
+        _avatar.performAvatarSpoke();
     }
 
     /**

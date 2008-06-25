@@ -35,7 +35,6 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
