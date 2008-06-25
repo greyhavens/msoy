@@ -5,10 +5,16 @@ package com.threerings.msoy.notify.server;
 
 import com.threerings.presents.annotation.EventThread;
 
+import com.threerings.presents.data.InvocationMarshaller;
+
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+
+import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
@@ -20,9 +26,6 @@ import com.threerings.msoy.notify.data.GameInviteNotification;
 @EventThread
 public class NotificationManager
 {
-    /**
-     * Notify the specified user of the specified notification.
-     */
     public void notify (MemberObject target, Notification note)
     {
         target.postMessage(MemberObject.NOTIFICATION, note);
@@ -35,12 +38,18 @@ public class NotificationManager
     public void notifyInvitationAccepted (
         int inviterId, String inviteeDisplayName, String inviteeEmail)
     {
-        // avoid creating any objects unless the target is around to receive it
-        // PEER TODO: user may be resolved on another world server
-        MemberObject target = MsoyServer.lookupMember(inviterId);
-        if (target != null) {
-            notify(target, new InviteAcceptedNotification(inviteeEmail, inviteeDisplayName));
-        }
+        MemberNodeActions.sendNotification(inviterId, 
+            new InviteAcceptedNotification(inviteeEmail, inviteeDisplayName));
+    }
+
+    /**
+     * Notifies the member that someone commented on something they own or created
+     */
+    public void notifyEntityCommented (
+        int targetId, int entityType, int entityId, String entityName)
+    {
+        MemberNodeActions.sendNotification(targetId,
+            new EntityCommentedNotification(entityType, entityId, entityName));
     }
 
     /**

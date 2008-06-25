@@ -325,7 +325,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List loadSelfFeed (int profileMemberId, int cutoffDays)
+    public List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException
     {
         try {

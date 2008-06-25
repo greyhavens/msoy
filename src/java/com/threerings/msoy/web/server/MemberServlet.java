@@ -118,7 +118,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
-    public List loadInventory (WebIdent ident, byte type, int suiteId)
+    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);

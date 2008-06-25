@@ -44,6 +44,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
+import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
@@ -70,6 +71,7 @@ public class NotificationDirector extends BasicDirector
 
         // ensure that the compiler includes these necessary symbols
         var c :Class;
+        c = EntityCommentedNotification;
         c = LevelUpNotification;
         c = ReleaseNotesNotification;
         c = InviteAcceptedNotification;

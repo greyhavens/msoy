@@ -371,6 +371,16 @@ public class WorldController extends MsoyController
 //    }
 
     /**
+     * Handles the VIEW_COMMENTED_ITEM command.
+     */
+    public function handleViewCommentedItem (itemType :int, itemId :int) :void
+    {
+        // in this case we are looking for an item that we were told was commented, so we can
+        // assume that it's listed in the shop
+        displayPage("shop", "l_" + itemType + "_" + itemId);
+    }
+
+    /**
      * Handles the VIEW_ITEM command.
      */
     public function handleViewItem (ident :ItemIdent) :void

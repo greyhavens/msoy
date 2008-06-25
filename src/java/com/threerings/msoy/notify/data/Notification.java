@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.notify.data;
 
+import java.io.Serializable;
+
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
 
@@ -10,6 +12,7 @@ import com.threerings.util.ActionScript;
  * Notification from the server to the client.
  */
 public abstract class Notification extends SimpleStreamableObject
+    implements Serializable
 {
     @ActionScript(omit=true)
     public Notification ()

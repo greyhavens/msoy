@@ -243,7 +243,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List loadGameTrophies (WebIdent ident, int gameId)
+    public List<Trophy> loadGameTrophies (WebIdent ident, int gameId)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);

@@ -5,6 +5,8 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.fora.data.Comment;
+
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -22,7 +24,7 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#postComment}.
      */
     public void postComment (WebIdent ident, int entityType, int entityId, String text,
-                             AsyncCallback callback);
+                             AsyncCallback<Comment> callback);
 
     /**
      * The asynchronous version of {@link CommentService#deleteComment}.

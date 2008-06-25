@@ -125,11 +125,12 @@ public class CommentsPanel extends PagedGrid
 
     protected void postComment (String text)
     {
-        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                postedComment((Comment)result);
-            }
-        });
+        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text, 
+            new MsoyCallback<Comment>() {
+                public void onSuccess (Comment result) {
+                    postedComment(result);
+                }
+            });
     }
 
     protected void postedComment (Comment comment)

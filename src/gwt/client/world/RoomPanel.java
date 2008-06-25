@@ -44,7 +44,7 @@ public class RoomPanel extends SmartTable
         Frame.setTitle(info.name);
 
         FlowPanel obits = new FlowPanel();
-        obits.add(new InlineLabel("Owner:", false, false, true));
+        obits.add(new InlineLabel(CWorld.msgs.owner(), false, false, true));
         if (info.owner instanceof MemberName) {
             MemberName name = (MemberName)info.owner;
             obits.add(Application.memberViewLink(name.toString(), name.getMemberId()));
@@ -55,7 +55,7 @@ public class RoomPanel extends SmartTable
         addWidget(obits, 1, null);
 
         StyledTabPanel tabs = new StyledTabPanel();
-        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, info.sceneId), "Comments");
+        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, info.sceneId), CWorld.msgs.tabComments());
         addWidget(tabs, 1, null);
         tabs.selectTab(0);
     }

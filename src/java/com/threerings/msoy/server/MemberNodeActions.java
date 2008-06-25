@@ -5,11 +5,17 @@ package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
+
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 
+import com.threerings.msoy.notify.data.Notification;
+
 import com.threerings.msoy.group.data.GroupMembership;
+
 import com.threerings.msoy.peer.server.MemberNodeAction;
 
 /**
@@ -87,6 +93,14 @@ public class MemberNodeActions
     public static void avatarDeleted (int memberId, int avatarId)
     {
         MsoyServer.peerMan.invokeNodeAction(new AvatarDeleted(memberId, avatarId));
+    }
+
+    /**
+     * Send a notification to a member
+     */
+    public static void sendNotification (int memberId, Notification notification)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new SendNotification(memberId, notification));
     }
 
     protected static class DisplayNameChanged extends MemberNodeAction
@@ -215,5 +229,19 @@ public class MemberNodeActions
         }
 
         protected int _avatarId;
+    }
+
+    protected static class SendNotification extends MemberNodeAction
+    {
+        public SendNotification (int memberId, Notification notification) {
+            super(memberId);
+            _notification = notification;
+        }
+
+        protected void execute (MemberObject memobj) {
+            MsoyServer.notifyMan.notify(memobj, _notification);
+        }
+
+        protected Notification _notification;
     }
 }

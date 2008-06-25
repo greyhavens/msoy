@@ -127,7 +127,8 @@ public class WorldServlet extends MsoyServiceServlet
             data.topGames = GameUtil.loadTopGames(_gameRepo, _memberRepo, pps);
 
             // select the top rated avatars
-            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.AVATAR);
+            ItemRepository<ItemRecord, ?, ?, ?> repo = 
+                MsoyServer.itemMan.getRepository(Item.AVATAR);
             List<ListingCard> cards = Lists.newArrayList();
             for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,
                                                        0, null, 0, ShopData.TOP_ITEM_COUNT)) {
@@ -145,7 +146,8 @@ public class WorldServlet extends MsoyServiceServlet
         }
     }
 
-    protected FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
+    protected FeaturedGameInfo toFeaturedGameInfo (
+        GameRecord game, GameDetailRecord detail, int pop)
         throws PersistenceException
     {
         FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());

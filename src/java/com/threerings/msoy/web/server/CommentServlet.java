@@ -8,13 +8,19 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.samskivert.io.PersistenceException;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
+
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -104,7 +110,10 @@ public class CommentServlet extends MsoyServiceServlet
         try {
             // record the comment to the data-ma-base
             MsoyServer.commentRepo.postComment(etype, eid, mrec.memberId, text);
-            
+
+            // find out the owner id of and the entity name for the entity that was commented on
+            Tuple<Integer, String> entityInfo = null;
+
             // if this is a comment on a user room, post a self feed message
             if (etype == Comment.TYPE_ROOM) {
                 SceneRecord scene = MsoyServer.sceneRepo.loadScene(eid);
@@ -112,7 +121,40 @@ public class CommentServlet extends MsoyServiceServlet
                     String data = scene.sceneId + "\t" + scene.name;
                     MsoyServer.feedRepo.publishSelfMessage(
                         scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
+                    entityInfo = new Tuple<Integer, String>(scene.ownerId, scene.name);
                 }
+
+            } else if (etype == Comment.TYPE_PROFILE_WALL) {
+                entityInfo = new Tuple<Integer, String>(eid, null);
+
+            } else {
+                try {
+                    ItemRepository<ItemRecord, ?, ?, ?> repo = 
+                        MsoyServer.itemMan.getRepository((byte)etype);
+                    CatalogRecord listing = repo.loadListing(eid, true);
+                    if (listing != null) {
+                        ItemRecord item = listing.item;
+                        if (item != null) {
+                            entityInfo = new Tuple<Integer, String>(item.creatorId, item.name);
+                        }
+                    }
+    
+                } catch (ServiceException se) {
+                    // this is merely a failure to send the notification, don't let this 
+                    // exception make it back to the commenter
+                    log.warning(    
+                        "unable to locate repository for apparent item type [" + etype + "]");
+    
+                } catch (PersistenceException pe) {
+                    log.warning("unable to load the item commented on [" + etype + ", " + eid + 
+                        ", " + pe + "]");
+                }
+            }
+
+            // notify the item creator that a comment was made
+            if (entityInfo != null && entityInfo.left != null) {
+                MsoyServer.notifyMan.notifyEntityCommented(
+                    entityInfo.left, etype, eid, entityInfo.right);
             }
 
             // fake up a comment record to return to the client
