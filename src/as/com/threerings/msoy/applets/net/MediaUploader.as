@@ -73,6 +73,7 @@ public class MediaUploader extends TitleWindow
      */
     public function MediaUploader (ctx :AppletContext, serverURL :String, authToken :String)
     {
+        _ctx = ctx;
         _serverURL = serverURL;
         _authToken = authToken;
 
@@ -181,8 +182,11 @@ public class MediaUploader extends TitleWindow
         var bar :ProgressBar = new ProgressBar();
         bar.percentWidth = 100;
         bar.indeterminate = true;
+        bar.label = _ctx.APPLET.get("m.wait");
         addChild(bar);
     }
+
+    protected var _ctx :AppletContext;
 
     protected var _serverURL :String;
 
