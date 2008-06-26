@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.samskivert.util.HashIntMap;
 
-import com.threerings.crowd.server.PlaceManagerDelegate;
+import com.threerings.parlor.game.server.GameManagerDelegate;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyEventLogger;
 
@@ -18,7 +18,7 @@ import static com.threerings.msoy.Log.log;
  * this logs the entire time from joining the table to leaving it, 
  * whether or not a 'game' is active or not. 
  */
-public class MsoyGameLoggingDelegate extends PlaceManagerDelegate
+public class MsoyGameLoggingDelegate extends GameManagerDelegate
 {
     public MsoyGameLoggingDelegate (GameContent content, MsoyEventLogger eventLog) 
     {
