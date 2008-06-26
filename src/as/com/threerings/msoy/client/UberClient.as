@@ -10,7 +10,6 @@ import mx.core.Application;
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
-import com.threerings.msoy.world.client.AvatarViewerComp;
 import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.Viewer;
 
