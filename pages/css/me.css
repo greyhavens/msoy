@@ -59,6 +59,11 @@
   text-align: center;
 }
 
+.whatsNext .Friends .FriendsScroller { 
+  height: 326px;
+  width: 217px; 
+}
+
 .whatsNext .NoFriends .Title, .whatsNext .Friends .Title {
   font-weight: bold;
 }

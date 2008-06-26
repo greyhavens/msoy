@@ -404,19 +404,4 @@ public class MsoyUI
         // TODO: style this differently than info feedback
         new InfoPopup(message).showNear(source);
     }
-
-    /**
-     * A string longer than /limit/ will be copied, truncated, and have its last three
-     * characters replaced with "..." - the result will be a string whose length is exactly
-     * /limit/, including ellipsis. Strings that fit within the limit will be returned
-     * immediately (without copy).
-     */
-    public static String truncate (String text, int limit)
-    {
-        if (text.length() <= limit) {
-            return text;
-        } else {
-            return text.substring(0, limit - 3) + "...";
-        }
-    }
 }

@@ -177,7 +177,7 @@ public class WhatsNextPanel extends SmartTable
         }
 
         ScrollPanel scroller = new ScrollPanel(friends);
-        scroller.setHeight("326px");
+        scroller.addStyleName("FriendsScroller");
         return scroller;
     }
 
@@ -187,7 +187,7 @@ public class WhatsNextPanel extends SmartTable
         FlowPanel place = (FlowPanel)places.get(key);
         if (place == null) {
             places.put(key, place = new FlowPanel());
-            place.add(MsoyUI.createLabel(MsoyUI.truncate(placeName, 32), "PlaceName"));
+            place.add(MsoyUI.createLabel(placeName, "PlaceName"));
         }
         return place;
     }
