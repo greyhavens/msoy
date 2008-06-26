@@ -85,17 +85,17 @@ public class RoomBackdrop
         
         if (fillWalls) {
             // fill in the floor
-            g.beginFill(0x333333);
+            g.beginFill(0x995a01);
             drawLines([llf, llb, rlb, rlf, llf]);
             g.endFill();
 
             // fill in the three walls
-            g.beginFill(0x666666);
+            g.beginFill(0x195178);
             drawLines([luf, lub, rub, ruf, rlf, rlb, llb, llf, luf]);
             g.endFill();
 
             // fill in the ceiling
-            g.beginFill(0x999999);
+            g.beginFill(0x97c3e1);
             drawLines([luf, lub, rub, ruf, luf]);
             g.endFill();
         } 
