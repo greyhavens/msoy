@@ -17,6 +17,7 @@ import flash.net.URLRequest;
 
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flash.system.Security;
 
 import flash.utils.ByteArray;
 
@@ -79,9 +80,11 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         willShowNewMedia();
         startedLoading();
         setupSwfOrImage(_url);
-//        initLoader();
-//        checkPackComplete(); // in here the bytes will be extracted
-//        didShowNewMedia();
+        if (!shouldUseStub(_url)) {
+            initLoader();
+            checkPackComplete(); // in here the bytes will be extracted
+            didShowNewMedia();
+        }
     }
 
     override protected function setupSwfOrImage (url :String) :void
@@ -136,7 +139,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     protected function shouldUseStub (url :String) :Boolean
     {
         if (url == null) {
-            return true;
+            return (Security.sandboxType != Security.LOCAL_WITH_FILE);
         }
 
         // we use the stub only on non-file non-images
