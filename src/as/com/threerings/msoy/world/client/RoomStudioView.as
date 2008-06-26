@@ -23,6 +23,7 @@ import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UberClient;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -148,8 +149,13 @@ public class RoomStudioView extends RoomView
         _testingSprite = _bg;
 
         // but also add an avatar so we can walk around and such
-        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
-        _avatar.setMediaBytes(new DEFAULT_AVATAR());
+
+        // TODO: when this is sorted out so that we can test decor in the SDK with this,
+        // we'll need to re-enable the built-in avatar
+        //_avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
+        //_avatar.setMediaBytes(new DEFAULT_AVATAR());
+        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx,
+            Avatar.getDefaultMemberAvatarMedia().getMediaPath()));
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
@@ -229,14 +235,6 @@ public class RoomStudioView extends RoomView
         }
     }
 
-// HMM
-//    override protected function addSprite (sprite :MsoySprite) :void
-//    {
-//        super.addSprite(sprite);
-//
-//        MethodQueue.callLater(sprite.gotControl);
-//    }
-
     protected var _sctx :StudioContext;
 
     protected var _testingSprite :MsoySprite;
@@ -247,8 +245,8 @@ public class RoomStudioView extends RoomView
     protected var _scaleReset :CommandButton;
     protected var _scaleSlider :HSlider;
 
-    [Embed(source="../../../../../../../pages/media/static/avatar/member.swf",
-        mimeType="application/octet-stream")]
-    protected static const DEFAULT_AVATAR :Class;
+//    [Embed(source="../../../../../../../pages/media/static/avatar/member.swf",
+//        mimeType="application/octet-stream")]
+//    protected static const DEFAULT_AVATAR :Class;
 }
 }
