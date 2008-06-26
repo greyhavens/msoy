@@ -12,6 +12,8 @@ import flash.events.SecurityErrorEvent;
 
 import flash.external.ExternalInterface;
 
+import flash.net.URLVariables;
+
 import flash.utils.ByteArray;
 
 import mx.core.Application;
@@ -128,6 +130,20 @@ public class RemixControls extends HBox
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
             _ctx.pack.addEventListener(ErrorEvent.ERROR, handlePackError);
         });
+    }
+
+    /**
+     * Provide parameters pass-through for the uberclient.
+     */
+    public function getWhirledParams () :String
+    {
+        var copy :URLVariables = new URLVariables();
+        for (var n :String in _params) {
+            if (n != "media") {
+                copy[n] = _params[n];
+            }
+        }
+        return copy.toString();
     }
 
     protected function createControlsHeader () :UIComponent

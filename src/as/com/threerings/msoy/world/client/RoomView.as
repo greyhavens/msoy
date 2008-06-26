@@ -145,7 +145,7 @@ public class RoomView extends Sprite
      */
     public function getMyAvatar () :MemberSprite
     {
-        // TODO
+        // see subclasses
         return null;
     }
 

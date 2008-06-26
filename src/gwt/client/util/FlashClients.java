@@ -174,17 +174,25 @@ public class FlashClients
             break;
 
         case UberClientModes.DECOR_VIEWER:
-            Decor decor = (Decor) item;
-            flashVars += "&decorType=" + decor.type + "&decorWidth=" + decor.width +
-                "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +
-                "&decorHorizon=" + decor.horizon + "&decorHideWalls=" + decor.hideWalls +
-                "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY;
+            flashVars += "&" + createDecorViewerParams((Decor) item);
             break;
         }
 
         // and emit the widget
         return WidgetUtil.createFlashContainer("viewer",
             "/clients/" + DeploymentConfig.version + "/world-client.swf", w, h, flashVars);
+    }
+
+    /**
+     * Exposed. Also called from ItemRemixer.
+     */
+    public static String createDecorViewerParams (Decor decor) 
+    {
+        return "decorType=" + decor.type + "&decorWidth=" + decor.width +
+            "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +
+            "&decorHorizon=" + decor.horizon + "&decorHideWalls=" + decor.hideWalls +
+            "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY +
+            "&username=Test%20Avatar"; // add a name for the test avatar..
     }
 
     /**

@@ -113,7 +113,7 @@ public class RoomStudioController extends RoomController
             decor.hideWalls = ("true" == String(params.decorHideWalls));
             decor.offsetX = Number(params.decorOffsetX);
             decor.offsetY = Number(params.decorOffsetY);
-            decor.furniMedia = new StudioMediaDesc(String(params.media));
+            decor.furniMedia = new StudioMediaDesc(params.media as String);
 
         } else {
             decor = MsoySceneModel.defaultMsoySceneModelDecor();

@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -24,6 +25,7 @@ import client.shell.CShell;
 import client.editem.EditorHost;
 
 import client.util.ImageChooserPopup;
+import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -65,11 +67,17 @@ public class ItemRemixer extends FlexTable
         String serverURL = GWT.isScript() ? GWT.getHostPageBaseURL()
                                           : "http://localhost:8080/";
 
-        String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) + "&" +
-            "type=" + URL.encodeComponent(Item.getTypeName(item.getType())) + "&" +
-            "server=" + URL.encodeComponent(serverURL) + "&" +
-            "mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) + "&" +
-            "auth=" + URL.encodeComponent(CShell.ident.token);
+        String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) +
+            "&name=" + URL.encodeComponent(item.name) +
+            "&type=" + URL.encodeComponent(Item.getTypeName(item.getType())) +
+            "&server=" + URL.encodeComponent(serverURL) +
+            "&mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) +
+            "&auth=" + URL.encodeComponent(CShell.ident.token);
+
+        if (item instanceof Decor) {
+            flashVars += "&" + FlashClients.createDecorViewerParams((Decor) item);
+        }
+
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
             680, 550, flashVars);
