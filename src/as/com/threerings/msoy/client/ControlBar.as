@@ -21,6 +21,7 @@ import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
@@ -121,8 +122,8 @@ public class ControlBar extends HBox
      */
     public function addCustomComponent (comp :UIComponent) :void
     {
-        if (_spacer.width != 0) {
-            _spacer.addChild(comp);
+        if (_leftSpacer.width != 0) {
+            _leftSpacer.addChild(comp);
         } else {
             addChild(comp);
         }
@@ -151,7 +152,7 @@ public class ControlBar extends HBox
      */
     public function setSpacerWidth (width :Number) :void
     {
-        _spacer.width = width;
+        _leftSpacer.width = width;
     }
 
     /**
@@ -182,10 +183,10 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
-        _spacer = new HBox();
-        _spacer.styleName = "controlBarSpacer";
-        _spacer.height = this.height;
-        _spacer.percentWidth = 100;
+        _leftSpacer = new HBox();
+        _leftSpacer.styleName = "controlBarSpacer";
+        _leftSpacer.height = this.height;
+        _leftSpacer.percentWidth = 100;
 
         _chatBtn = new CommandButton();
         _chatBtn.toolTip = Msgs.GENERAL.get("i.channel"); // i.chatPrefs
@@ -217,7 +218,7 @@ public class ControlBar extends HBox
         removeAllChildren();
         clearAllGroups();
 
-        addGroupChild(_spacer, [ UI_SIDEBAR ]);
+        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
 
         // add our standard control bar features
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
@@ -232,11 +233,11 @@ public class ControlBar extends HBox
         // add our various control buttons
         addControlButtons();
 
-        var blank :Canvas = new Canvas();
-        blank.styleName = "controlBarSpacer";
-        blank.height = this.height;
-        blank.percentWidth = 100;
-        addGroupChild(blank, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+        _rightSpacer = new Canvas();
+        _rightSpacer.styleName = "controlBarSpacer";
+        _rightSpacer.height = this.height;
+        _rightSpacer.percentWidth = 100;
+        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
 
         // and remember how things are set for now
         _isMember = isMember;
@@ -338,10 +339,10 @@ public class ControlBar extends HBox
     /** Handles room zooming. */
     protected var _zoomBtn :CommandButton;
 
-    /** Bookend image at the other end of name label. */
-    protected var _bookend :SkinnableImage;
-
     /** A spacer to bump the UI bits over to the right if needed */
-    protected var _spacer :HBox;
+    protected var _leftSpacer :HBox;
+
+    /** A spacer to the right of the UI bits in this class, set to percentWidth = 100 */
+    protected var _rightSpacer :Canvas;
 }
 }

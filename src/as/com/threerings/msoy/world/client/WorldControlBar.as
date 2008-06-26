@@ -96,6 +96,21 @@ public class WorldControlBar extends ControlBar
         }
     }
 
+    // from Container
+    override public function setActualSize (uw :Number, uh :Number) :void
+    {
+        super.setActualSize(uw, uh);
+
+        // display the notification display in mini mode if we have enough room for it to show fully
+        if (getMode() == UI_MINI) {
+            if (!_notificationDisplay.visible && _rightSpacer.width > _notificationDisplay.width) {
+                _notificationDisplay.visible = _notificationDisplay.includeInLayout = true;
+            } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
+                _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
+            }
+        }
+    }
+
     // from ControlBar
     override protected function createControls () :void
     {
