@@ -235,6 +235,12 @@ public class RoomStudioView extends RoomView
         }
     }
 
+    // from RoomView
+    override protected function getZoom () :Number
+    {
+        return 1; // don't let a user's zoom pref be used in the viewer
+    }
+
     protected var _sctx :StudioContext;
 
     protected var _testingSprite :MsoySprite;

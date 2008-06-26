@@ -524,10 +524,18 @@ public class RoomView extends Sprite
             const canScale :Boolean = maxScale > minScale;
             _ctx.getTopPanel().getControlBar().enableZoomControl(canScale);
             if (canScale) {
-                return minScale + (maxScale - minScale) * Prefs.getZoom();
+                return minScale + (maxScale - minScale) * getZoom();
             }
         }
         return maxScale;
+    }
+
+    /**
+     * Get the zoom level of the room.
+     */
+    protected function getZoom () :Number
+    {
+        return Prefs.getZoom();
     }
 
     protected function scrollView () :void
