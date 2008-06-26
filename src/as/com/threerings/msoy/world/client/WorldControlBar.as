@@ -111,7 +111,6 @@ public class WorldControlBar extends ControlBar
             } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
                 _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
             }
-
         }
 
         if (_notificationDisplay.visible) {
