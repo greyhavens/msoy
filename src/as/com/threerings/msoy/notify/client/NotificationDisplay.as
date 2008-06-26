@@ -30,7 +30,6 @@ import mx.managers.PopUpManager;
 import caurina.transitions.Tweener;
 
 import com.threerings.flex.FlexWrapper;
-import com.threerings.flex.PopUpUtil;
 
 import com.threerings.util.Log;
 
@@ -79,6 +78,14 @@ public class NotificationDisplay extends HBox
                 });
             }
             _notificationHistory.addChild(createDisplay(notification, true));
+        }
+    }
+
+    public function updatePopupLocation () :void
+    {
+        if (_notificationHistory != null) {
+            var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
+            _notificationHistory.x = buttonPos.x;
         }
     }
 
@@ -178,7 +185,6 @@ public class NotificationDisplay extends HBox
         var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
         _notificationHistory.x = buttonPos.x;
         _notificationHistory.y = buttonPos.y - _notificationHistory.height;
-        PopUpUtil.fitInRect(_notificationHistory, _ctx.getTopPanel().getPlaceViewBounds());
 
         // prevent the hide logic from firing off of this mouse click
         _opening = true;

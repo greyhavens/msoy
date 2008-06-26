@@ -33,9 +33,12 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.client.UberClient;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.RoomObject;
+
+import com.threerings.msoy.notify.client.NotificationDisplay;
 
 /**
  * Configures the control bar with World-specific stuff.
@@ -68,7 +71,7 @@ public class WorldControlBar extends ControlBar
         }
     }
 
-    public function setNotificationDisplay (notificationDisplay :UIComponent) :void
+    public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
     {
         _notificationDisplay = notificationDisplay;
     }
@@ -108,6 +111,13 @@ public class WorldControlBar extends ControlBar
             } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
                 _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
             }
+
+        }
+
+        if (_notificationDisplay.visible) {
+            callLater(function () :void {
+                _notificationDisplay.updatePopupLocation();
+            });
         }
     }
 
@@ -298,7 +308,7 @@ public class WorldControlBar extends ControlBar
     protected var _avatarIntro :DisplayObjectContainer;
 
     /** The little gray area that displays incoming notifications. */
-    protected var _notificationDisplay :UIComponent;
+    protected var _notificationDisplay :NotificationDisplay;
 
     /** We stop showing the "type here to chat" tip after the user reaches level 5. */
     protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;
