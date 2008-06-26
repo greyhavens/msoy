@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.DataModel;
 
+import com.threerings.msoy.data.all.GwtAuthCodes;
+
 import client.shell.CShell;
 import client.util.MsoyUI;
 
@@ -99,7 +101,12 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
     public void onFailure (Throwable caught)
     {
         CShell.log(this + " failed", caught);
-        MsoyUI.error(CShell.serverError(caught));
+
+        if (GwtAuthCodes.SESSION_EXPIRED.equals(caught.getMessage())) {
+            MsoyUI.showPasswordExpired(CShell.serverError(caught));
+        } else {
+            MsoyUI.error(CShell.serverError(caught));
+        }
     }
 
     /** Calls the service to obtain data, should pass this as the callback. */
