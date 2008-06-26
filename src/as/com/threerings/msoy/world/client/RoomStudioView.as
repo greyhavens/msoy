@@ -14,12 +14,15 @@ import mx.controls.HSlider;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.data.UberClientModes;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UberClient;
 
@@ -80,18 +83,32 @@ public class RoomStudioView extends RoomView
         return _avatar;
     }
 
+    public function doAvatarMove (newLoc :MsoyLocation) :void
+    {
+        emulateIdle(false);
+        _avatar.moveTo(newLoc, _scene);
+    }
+
+    public function doAvatarAction (action :String) :void
+    {
+        emulateIdle(false);
+        _avatar.messageReceived(action, null, true);
+    }
+
     public function setAvatarState (state :String) :void
     {
-        var studioInfo :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
-        studioInfo.setState(state);
-        _avatar.setOccupantInfo(studioInfo);
+        var info :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
+        info.setState(state);
+        info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
+        _avatar.setOccupantInfo(info);
     }
 
     public function setAvatarScale (scale :Number) :void
     {
-        var studioInfo :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
-        studioInfo.setScale(scale);
-        _avatar.setOccupantInfo(studioInfo);
+        var info :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
+        info.setScale(scale);
+        info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
+        _avatar.setOccupantInfo(info);
     }
 
     override public function setBackground (decor :Decor) :void
@@ -122,8 +139,9 @@ public class RoomStudioView extends RoomView
         setCenterSprite(_avatar);
         _testingSprite = _avatar;
 
-        _ctx.getTopPanel().getControlBar().addCustomComponent(
-            new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
+        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
+        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
 
         if ("true" == String(params["scaling"])) {
             createScaleControls(scale);
@@ -190,7 +208,23 @@ public class RoomStudioView extends RoomView
      */
     protected function emulateChat () :void
     {
+        emulateIdle(false);
         _avatar.performAvatarSpoke();
+    }
+
+    /**
+     * Tell the avatar that it is idle.
+     */
+    protected function emulateIdle (idle :Boolean = true) :void
+    {
+        var info :StudioMemberInfo = _avatar.getActorInfo() as StudioMemberInfo;
+        var newStatus :int = idle ? OccupantInfo.IDLE : OccupantInfo.ACTIVE;
+        if (info.status == newStatus) {
+            return; // our work here is done
+        }
+        info = info.clone() as StudioMemberInfo;
+        info.status = newStatus;
+        _avatar.setOccupantInfo(info);
     }
 
     /**

@@ -81,7 +81,7 @@ public class RoomStudioController extends RoomController
     // documentation inherited
     override public function doAvatarAction (action :String) :void
     {
-        _studioView.getMyAvatar().messageReceived(action, null, true);
+        _studioView.doAvatarAction(action);
     }
 
     // documentation inherited
@@ -130,7 +130,7 @@ public class RoomStudioController extends RoomController
 
     override protected function requestAvatarMove (newLoc :MsoyLocation) :void
     {
-        _studioView.getMyAvatar().moveTo(newLoc, _scene);
+        _studioView.doAvatarMove(newLoc);
     }
 
     protected var _studioView :RoomStudioView;
