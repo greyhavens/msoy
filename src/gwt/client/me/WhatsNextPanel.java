@@ -187,7 +187,7 @@ public class WhatsNextPanel extends SmartTable
         FlowPanel place = (FlowPanel)places.get(key);
         if (place == null) {
             places.put(key, place = new FlowPanel());
-            place.add(MsoyUI.createLabel(placeName, "PlaceName"));
+            place.add(MsoyUI.createLabel(MsoyUI.truncate(placeName, 32), "PlaceName"));
         }
         return place;
     }
