@@ -113,7 +113,7 @@ public class WorldControlBar extends ControlBar
             }
         }
 
-        if (_notificationDisplay.visible) {
+        if (_notificationDisplay != null && _notificationDisplay.visible) {
             callLater(function () :void {
                 _notificationDisplay.updatePopupLocation();
             });
