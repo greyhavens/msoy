@@ -39,6 +39,14 @@ public class ActorInfo extends OccupantInfo
         return _state;
     }
 
+    /**
+     * NOTE: This should only be used in the studio view.
+     */
+    public function setState (state :String) :void
+    {
+        _state = state;
+    }
+
     override public function clone () :Object
     {
         var that :ActorInfo = super.clone() as ActorInfo;
