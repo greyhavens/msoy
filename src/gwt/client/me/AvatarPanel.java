@@ -55,7 +55,7 @@ public class AvatarPanel extends FlowPanel
                 card.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, click), 1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, MsoyUI.createLabel(card.name, "Name"));
-            setText(1, 0, CShop.msgs.itemBy(card.creator.toString()), 1, "Creator");
+            setWidget(1, 0, MsoyUI.createLabel(CShop.msgs.itemBy(card.creator.toString()), "Creator"));
         }
     }
 }

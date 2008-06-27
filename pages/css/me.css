@@ -440,18 +440,17 @@
 }
 
 .LandingPanel .TopGamesPanel .GameInfo .MoreGames {
-  background: transparent url(/images/landing/more_games.png) no-repeat;
-  width: 105px;
-  height: 31px;
+  background-image: url(/images/landing/more_games.png);
+  background-repeat: no-repeat;
+  width: 101px;
+  height: 27px;
   position: absolute;
   top: 239px;
   left: 325px;
 }
-.LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering {
-  background: transparent url(/images/landing/more_games_over.png);
-}
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering,
 .LandingPanel .TopGamesPanel .GameInfo .MoreGames-down-hovering {
-  background: transparent url(/images/landing/more_games_down.png);
+  background-image: url(/images/landing/more_games_over.png);
 }
 
 /* ------------------------------------
@@ -477,9 +476,8 @@
   font-weight: bold;
   font-size: 14px;
   padding-left: 5px;
-  padding-top: 10px;
   width: 100px;
-  white-space: nowrap;
+  height: 40px;
   overflow: hidden;
 }
 
