@@ -471,17 +471,15 @@ public class RoomView extends Sprite
      */
     public function dispatchSpriteSignal (name :String, data :ByteArray) :void
     {
-        // TODO: shite. We really need to decode the data for each and every sprite
-        // that gets the message, because they could destructively modify it.
-        // What would be cool is constructing events with the data array that only
-        // gets decoded via a getter when the usercode actually reads the value...
-        // The problem with that is that we'd probably need to increment the version number
-        // of the by-name method in the SDK, and then if we're dispatching both ways it's even worse
-        var value :Object = ObjectMarshaller.decode(data);
-        // TODO: see todo note above. :)
+        // TODO: We are decoding the data for each sprite, because we can't trust
+        // the usercode to not destructively modify the value in its event handler.
+        // In the future, it might be good to rework this so that the value is not decoded
+        // until the event handler actually requests the value using a getter(), but I
+        // suspect that will require an increment to the version number in the function we
+        // call... I don't want to do that just now.
         _entities.forEach(function (key :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
-                MsoySprite(sprite).signalReceived(name, value);
+                MsoySprite(sprite).signalReceived(name, ObjectMarshaller.decode(data));
             } else {
                 log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
             }
@@ -507,17 +505,15 @@ public class RoomView extends Sprite
      */
     public function dispatchRoomPropertyChanged (key :String, data :ByteArray) :void
     {
-        // TODO: shite. We really need to decode the data for each and every sprite
-        // that gets the message, because they could destructively modify it.
-        // What would be cool is constructing events with the data array that only
-        // gets decoded via a getter when the usercode actually reads the value...
-        // The problem with that is that we'd probably need to increment the version number
-        // of the by-name method in the SDK, and then if we're dispatching both ways it's even worse
-        var value :Object = ObjectMarshaller.decode(data);
-        // TODO: see todo note above. :)
+        // TODO: We are decoding the data for each sprite, because we can't trust
+        // the usercode to not destructively modify the value in its event handler.
+        // In the future, it might be good to rework this so that the value is not decoded
+        // until the event handler actually requests the value using a getter(), but I
+        // suspect that will require an increment to the version number in the function we
+        // call... I don't want to do that just now.
         _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
-                MsoySprite(sprite).roomPropertyChanged(key, value);
+                MsoySprite(sprite).roomPropertyChanged(key, ObjectMarshaller.decode(data));
             } else {
                 log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
             }
