@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -17,12 +15,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
@@ -76,87 +71,27 @@ public class GameGenrePanel extends FlowPanel
             }
         });
         
+        String titleText; 
+        if (genre >= 0) {
+            String genreTitle = CGames.dmsgs.getString("genre" + genre);
+            if (genreTitle.length() > 8) {
+                titleText = genreTitle;
+            }
+            else {
+                titleText = genreTitle + " Games"; 
+            }
+        }
+        else {
+            titleText = CGames.msgs.genreAllGames();
+        }
+        add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
+        
         CGames.gamesvc.loadGameGenre(
             CGames.ident, genre, sortMethod, query, new MsoyCallback() {
                 public void onSuccess (Object result) {
                     init(genre, (List)result);
                 }
         });
-        
-        // build the title, find a game dropown and search box
-        FlowPanel titleArea = MsoyUI.createFlowPanel("TitleArea");
-        add(titleArea);
-        
-        String titleText; 
-        if (genre >= 0) {
-            titleText = CGames.dmsgs.getString("genre" + genre);
-        }
-        else {
-            titleText = CGames.msgs.genreAllGames();
-        }
-        titleArea.add(MsoyUI.createLabel(titleText, "GenreTitle"));
-        
-//        VerticalPanel titleBox = new VerticalPanel();
-//        titleBox.addStyleName("TitleBox");
-//        titleBox.add(new Image("/images/game/genre_title_left.png"));
-//        if (genre >= 0) {
-//            titleBox.add(new Label(CGames.dmsgs.getString("genre" + genre)));
-//        }
-//        else {
-//            titleBox.add(new Label(CGames.msgs.genreAllGames()));
-//        }
-//        titleBox.add(MsoyUI.createInlineImage("/images/game/genre_title_right.png"));
-//        titleArea.add(titleBox);
-        
-//        FlowPanel titleBox = MsoyUI.createFlowPanel("TitleBox");
-//        titleBox.add(new Image("/images/game/genre_title_left.png"));
-//        if (genre >= 0) {
-//            titleBox.add(new Label(CGames.dmsgs.getString("genre" + genre)));
-//        }
-//        else {
-//            titleBox.add(new Label(CGames.msgs.genreAllGames()));
-//        }
-//        titleBox.add(MsoyUI.createInlineImage("/images/game/genre_title_right.png"));
-//        titleArea.add(titleBox);
-        
-        // find a game fast dropdown box
-        FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
-        findGame.add(MsoyUI.createLabel(CGames.msgs.genreFindGame(), "Title"));
-        titleArea.add(findGame);
-        _findGameBox = new ListBox();
-        _findGameBox.addItem("", "");
-        _findGameBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
-                ListBox listBox = (ListBox) widget;
-                String selectedValue = listBox.getValue(listBox.getSelectedIndex());
-                if (!selectedValue.equals("")) {
-                    Application.go(Page.GAMES, Args.compose(new String[] {"d", selectedValue}));
-                }
-            }
-        });
-        findGame.add(_findGameBox);
-
-        // search for games
-        FlowPanel search = MsoyUI.createFlowPanel("Search");
-        search.add(MsoyUI.createLabel(CGames.msgs.genreSearch(), "Title"));
-        titleArea.add(search);
-        final TextBox searchBox = new TextBox();
-        searchBox.setVisibleLength(20);
-        if (query != null) {
-            searchBox.setText(query);
-        }
-        ClickListener searchListener = new ClickListener() {
-            public void onClick (Widget sender) {
-                String newQuery = searchBox.getText().trim();
-                Application.go(Page.GAMES, Args.compose(
-                    new String[] {"g", genre+"", sortMethod+"", newQuery}));
-            }
-        };
-        searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
-        search.add(searchBox);
-        Button searchGo = new Button("", searchListener);
-        searchGo.setStyleName("GoButton");
-        search.add(searchGo);
     }
 
     /**
@@ -164,27 +99,12 @@ public class GameGenrePanel extends FlowPanel
      */
     protected void init (byte genre, List games)
     {
-        // make a copy of the list of games sorted by name for the dropdown
-        List gamesByName = (List)((ArrayList) games).clone();
-        Collections.sort(gamesByName, SORT_GAMEINFO_BY_NAME);
-        for (Object gameObject : gamesByName) {
-            GameInfo gameInfo = (GameInfo) gameObject;
-            String gameName = gameInfo.name;
-            _findGameBox.addItem(gameName, gameInfo.gameId+"");
-        }
+        // set the dropdown list of all games
+        _header.init(games);
         
         // add the games to the page
         add(new GameGenreGrid(games));
     }
-
-    /** Compartor for sorting {@link GameInfo}, by name. */
-    protected static Comparator SORT_GAMEINFO_BY_NAME = new Comparator() {
-        public int compare (Object object1, Object object2) {
-            GameInfo game1 = (GameInfo)object1;
-            GameInfo game2 = (GameInfo)object2;
-            return game1.name.toString().toLowerCase().compareTo(game2.name.toString().toLowerCase());
-        }
-    };
 
     /**
      * Displays a grid of games with paging and sort
@@ -349,8 +269,8 @@ public class GameGenrePanel extends FlowPanel
         GameInfo.SORT_BY_PLAYERS_ONLINE
     };
 
-    /** Dropdown of all games */
-    protected ListBox _findGameBox;
+    /** Header area with title, games dropdown and search */
+    protected GameHeaderPanel _header;
     
     /** Dropdown of sort methods */
     protected ListBox _sortBox;

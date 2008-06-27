@@ -1,0 +1,108 @@
+//
+// $Id: GameGenrePanel.java 9605 2008-06-27 21:08:39Z sarah $
+
+package client.games;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.msoy.web.data.GameInfo;
+
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
+import client.util.MsoyUI;
+
+/**
+ * Displays the title of the page, "find a game fast" and "search for games" boxes
+ */
+public class GameHeaderPanel extends FlowPanel
+{
+    public GameHeaderPanel (final byte genre, final byte sortMethod, final String query, String titleText)
+    {       
+        setStyleName("gameHeaderPanel");
+        _genre = genre;
+                
+        add(MsoyUI.createLabel(titleText, "GenreTitle"));
+        
+        // find a game fast dropdown box
+        FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
+        findGame.add(MsoyUI.createLabel(CGames.msgs.genreFindGame(), "Title"));
+        add(findGame);
+        _findGameBox = new ListBox();
+        _findGameBox.addItem("", "");
+        _findGameBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget widget) {
+                ListBox listBox = (ListBox) widget;
+                String selectedValue = listBox.getValue(listBox.getSelectedIndex());
+                if (!selectedValue.equals("")) {
+                    Application.go(Page.GAMES, Args.compose(new String[] {"d", selectedValue}));
+                }
+            }
+        });
+        findGame.add(_findGameBox);
+
+        // search for games
+        FlowPanel search = MsoyUI.createFlowPanel("Search");
+        search.add(MsoyUI.createLabel(CGames.msgs.genreSearch(), "Title"));
+        add(search);
+        final TextBox searchBox = new TextBox();
+        searchBox.setVisibleLength(20);
+        if (query != null) {
+            searchBox.setText(query);
+        }
+        ClickListener searchListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                String newQuery = searchBox.getText().trim();
+                Application.go(Page.GAMES, Args.compose(
+                    new String[] {"g", genre+"", sortMethod+"", newQuery}));
+            }
+        };
+        searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
+        search.add(searchBox);
+        Button searchGo = new Button("", searchListener);
+        searchGo.setStyleName("GoButton");
+        search.add(searchGo);
+    }
+
+    /**
+     * After data is received, display the genre header and the data grid
+     */
+    protected void init (List games)
+    {
+        // make a copy of the list of games sorted by name for the dropdown
+        List gamesByName = (List)((ArrayList) games).clone();
+        Collections.sort(gamesByName, SORT_GAMEINFO_BY_NAME);
+        for (Object gameObject : gamesByName) {
+            GameInfo gameInfo = (GameInfo) gameObject;
+            String gameName = gameInfo.name;
+            _findGameBox.addItem(gameName, gameInfo.gameId+"");
+        }
+    }
+
+    /** Compartor for sorting {@link GameInfo}, by name. */
+    protected static Comparator SORT_GAMEINFO_BY_NAME = new Comparator() {
+        public int compare (Object object1, Object object2) {
+            GameInfo game1 = (GameInfo)object1;
+            GameInfo game2 = (GameInfo)object2;
+            return game1.name.toString().toLowerCase().compareTo(game2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Dropdown of all games */
+    protected ListBox _findGameBox;
+    
+    /** Genre ID or -1 for All Games page */
+    protected byte _genre;
+}

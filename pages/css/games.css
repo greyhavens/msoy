@@ -372,6 +372,71 @@
 
 
 /* ------------------------------------
+   GAMES PAGES HEADER
+-------------------------------------*/
+
+.gameHeaderPanel {
+  height: 65px;
+}
+
+.gameHeaderPanel .GenreTitle {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 324px; /* plus padding */
+  height: 59px;
+  white-space: nowrap;
+  overflow: hidden;
+  background: transparent url(/images/game/genre_title.png) no-repeat top center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+  padding-right: 10px;
+}
+
+.gameHeaderPanel .FindGame {
+  position: absolute;
+  top: 5px;
+  left: 360px;
+}
+
+.gameHeaderPanel .FindGame .Title,
+.gameHeaderPanel .Search .Title {
+  width: 120px;
+  color: #a6cae2;
+  margin-bottom: 3px;
+}
+
+.gameHeaderPanel .FindGame select {
+  width: 150px;
+}
+
+.gameHeaderPanel .Search {
+  position: absolute;
+  top: 5px;
+  left: 520px;
+}
+
+.gameHeaderPanel .Search input {
+  width: 110px;
+}
+
+.gameHeaderPanel .Search .GoButton {
+  position: absolute;
+  bottom: 1px;
+  left: 120px;
+  width: 32px;
+  height: 17px;
+  background: url(/images/game/go_button.png) no-repeat top center;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+/* ------------------------------------
    GENRE GAMES LIST / ALL GAMES PAGE
 -------------------------------------*/
 
@@ -382,64 +447,6 @@
   width: 100%;
   min-height: 100%;
   color: #407a9f;
-}
-
-.gameGenre .TitleArea {
-  height: 70px;
-}
-
-.gameGenre .GenreTitle {
-  position: absolute;
-  top: 0;
-  left: 10px;
-  width: 334px;
-  height: 59px;
-  white-space: nowrap;
-  overflow: hidden;
-  background: transparent url(/images/game/genre_title.png) no-repeat top center;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 28px;
-  color: #FFFFFF;
-  text-align: center;
-  padding-top: 5px;
-}
-
-.gameGenre .FindGame {
-  position: absolute;
-  top: 5px;
-  left: 360px;
-}
-
-.gameGenre .FindGame .Title,
-.gameGenre .Search .Title {
-  width: 120px;
-  color: #a6cae2;
-  margin-bottom: 3px;
-}
-
-.gameGenre .FindGame select {
-  width: 150px;
-}
-
-.gameGenre .Search {
-  position: absolute;
-  top: 5px;
-  left: 520px;
-}
-
-.gameGenre .Search input {
-  width: 110px;
-}
-
-.gameGenre .Search .GoButton {
-  position: absolute;
-  bottom: 1px;
-  left: 120px;
-  width: 32px;
-  height: 17px;
-  background: url(/images/game/go_button.png) no-repeat top center;
-  border: none;
-  cursor: pointer;
 }
 
 .gameGenre .Games {
