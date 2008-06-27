@@ -114,14 +114,14 @@ public class UberClient
         case UberClientModes.AVATAR_VIEWER:
         case UberClientModes.PET_VIEWER:
         case UberClientModes.DECOR_VIEWER:
+        case UberClientModes.FURNI_VIEWER:
+        case UberClientModes.TOY_VIEWER:
             var sc :StudioClient = new StudioClient(app.stage, params);
             var rsv :RoomStudioView = sc.getPlaceView();
             rsv.initForViewing(params, mode);
             Object(app).setViewer(rsv);
             break;
 
-        case UberClientModes.FURNI_VIEWER:
-        case UberClientModes.TOY_VIEWER:
         case UberClientModes.GENERIC_VIEWER:
             Object(app).setViewerObject(new Viewer(params));
             break;

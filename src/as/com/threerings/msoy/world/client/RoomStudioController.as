@@ -45,16 +45,14 @@ public class RoomStudioController extends RoomController
      */
     public function studioOnStage (uberMode :int) :void
     {
-        if (uberMode == UberClientModes.AVATAR_VIEWER || uberMode == UberClientModes.DECOR_VIEWER) {
-            _walkTarget.visible = false;
-            _flyTarget.visible = false;
-            _roomView.addChildAt(_flyTarget, _roomView.numChildren);
-            _roomView.addChildAt(_walkTarget, _roomView.numChildren);
-        
-            _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-            _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-            _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
-        }
+        _walkTarget.visible = false;
+        _flyTarget.visible = false;
+        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
+        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
+    
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         setControlledPanel(_studioView);

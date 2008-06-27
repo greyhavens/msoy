@@ -18,9 +18,11 @@ import com.threerings.msoy.data.all.UberClientModes;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.data.all.Toy;
 
 import client.shell.Frame;
 
@@ -123,22 +125,23 @@ public class FlashClients
      */
     public static HTML createViewer (Item item, boolean userOwnsItem)
     {
-        int w, h;
+        int w = 360;
+        int h = 385;
         int mode;
         if (item instanceof Avatar) {
-            w = 360;
-            h = 385;
             mode = UberClientModes.AVATAR_VIEWER;
 
         } else if (item instanceof Pet) {
-            w = 360;
-            h = 385;
             mode = UberClientModes.PET_VIEWER;
 
         } else if (item instanceof Decor) {
-            w = 360;
-            h = 385;
             mode = UberClientModes.DECOR_VIEWER;
+
+        } else if (item instanceof Furniture) {
+            mode = UberClientModes.FURNI_VIEWER;
+
+        } else if (item instanceof Toy) {
+            mode = UberClientModes.TOY_VIEWER;
 
         } else {
             w = 320;
@@ -176,6 +179,10 @@ public class FlashClients
         case UberClientModes.DECOR_VIEWER:
             flashVars += "&" + createDecorViewerParams((Decor) item);
             break;
+        }
+
+        if (mode != UberClientModes.AVATAR_VIEWER) {
+            flashVars += "&username=Tester";
         }
 
         // and emit the widget

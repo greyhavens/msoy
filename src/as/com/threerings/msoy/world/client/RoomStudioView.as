@@ -29,9 +29,11 @@ import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.data.ActorInfo;
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
@@ -73,6 +75,11 @@ public class RoomStudioView extends RoomView
 
         case UberClientModes.DECOR_VIEWER:
             initViewDecor(params);
+            break;
+
+        case UberClientModes.FURNI_VIEWER:
+        case UberClientModes.TOY_VIEWER:
+            initViewFurni(params);
             break;
         }
     }
@@ -184,6 +191,8 @@ public class RoomStudioView extends RoomView
         addSprite(_pet);
         setCenterSprite(_pet);
         _testingSprite = _pet;
+
+        addDefaultAvatar();
     }
 
     protected function initViewDecor (params :Object) :void
@@ -191,8 +200,25 @@ public class RoomStudioView extends RoomView
         // the Backdrop media will be set all up in RoomStudioController
         _testingSprite = _bg;
 
-        // but also add an avatar so we can walk around and such
+        addDefaultAvatar();
+    }
 
+    protected function initViewFurni (params :Object) :void
+    {
+        var furni :FurniData = new FurniData();
+        furni.id = _scene.getNextFurniId(0);
+        furni.itemType = Item.FURNITURE;
+        furni.itemId = 150;
+        furni.media = new StudioMediaDesc(params["media"] as String);
+        furni.loc = new MsoyLocation(0.5, 0, 0);
+
+        _testingSprite = addFurni(furni);
+
+        addDefaultAvatar();
+    }
+
+    protected function addDefaultAvatar () :void
+    {
         // TODO: when this is sorted out so that we can test decor in the SDK with this,
         // we'll need to re-enable the built-in avatar
         //_avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
