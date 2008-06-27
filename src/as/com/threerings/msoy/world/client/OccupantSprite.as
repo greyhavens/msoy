@@ -570,12 +570,12 @@ public class OccupantSprite extends MsoySprite
     {
         var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x / _extras.scaleX -
+        _label.x = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX)*/ * hotSpot.x / _extras.scaleX -
             (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
-            Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
+            Math.abs(getMediaScaleY() * _locScale /* * _fxScaleY*/) * (hotSpot.y - _height);
         // NOTE: At one point we thought we'd bound names to be on-screen, but names mean so
         // little in Whirled, and we've decided we don't care. Avatars with hidden names are cool,
         // and you can still click on the avatar to do whatever you need to do.
@@ -591,7 +591,7 @@ public class OccupantSprite extends MsoySprite
     {
         // note: may overflow the media area..
         var hotSpot :Point = getMediaHotSpot();
-        var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
+        var hotX :Number = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) * hotSpot.x;
 
         var baseY :Number = _label.y; // we depend on recheckLabel()
         if (_decorations != null) {

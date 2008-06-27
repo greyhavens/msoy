@@ -196,12 +196,12 @@ public class MsoySprite extends DataPackMediaContainer
         }
     }
 
-    public function setEffectScales (xscale :Number, yscale :Number) :void
-    {
-        _fxScaleX = xscale;
-        _fxScaleY = yscale;
-        scaleUpdated();
-    }
+//    public function setEffectScales (xscale :Number, yscale :Number) :void
+//    {
+//        _fxScaleX = xscale;
+//        _fxScaleY = yscale;
+//        scaleUpdated();
+//    }
 
     /**
      * Get a translatable message briefly describing this type of item.
@@ -226,7 +226,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function getActualWidth () :Number
     {
-        return getContentWidth() * _locScale * _fxScaleX;
+        return getContentWidth() * _locScale /* * _fxScaleX*/;
     }
 
     /**
@@ -234,7 +234,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function getActualHeight () :Number
     {
-        return getContentHeight() * _locScale * _fxScaleY;
+        return getContentHeight() * _locScale /* * _fxScaleY*/;
     }
 
     /**
@@ -312,8 +312,8 @@ public class MsoySprite extends DataPackMediaContainer
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale * _fxScaleX),
-                         Math.abs(p.y * getMediaScaleY() * _locScale * _fxScaleY));
+        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale /* * _fxScaleX*/),
+                         Math.abs(p.y * getMediaScaleY() * _locScale /* * _fxScaleY*/));
     }
 
     public function setActive (active :Boolean) :void
@@ -370,12 +370,12 @@ public class MsoySprite extends DataPackMediaContainer
         var anchor :Point = new Point(getActualWidth() / 2, getActualHeight() / 2);
 
         // if the furni is mirrored along one of the axes, undo that for anchor calculation
-        var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
+        var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
         if (xscale < 0) {
             anchor.x = -anchor.x;
         }
 
-        var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
+        var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
         if (yscale < 0) {
             anchor.y = -anchor.y;
         }
@@ -556,8 +556,8 @@ public class MsoySprite extends DataPackMediaContainer
     protected function scaleUpdated () :void
     {
         if (!(_media is Perspectivizer)) {
-            var scalex :Number = _locScale * getMediaScaleX() * _fxScaleX;
-            var scaley :Number = _locScale * getMediaScaleY() * _fxScaleY;
+            var scalex :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
+            var scaley :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
 
             _media.scaleX = scalex;
             _media.scaleY = scaley;
@@ -585,8 +585,8 @@ public class MsoySprite extends DataPackMediaContainer
     protected function updateMediaPosition () :void
     {
         // if scale is negative, the image is flipped and we need to move the origin
-        var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
-        var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
+        var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
+        var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
         _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
         _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
 
@@ -888,8 +888,8 @@ public class MsoySprite extends DataPackMediaContainer
      * assumed, but an Entity can configure its height when configuring its hotspot. */
     protected var _height :Number = NaN;
 
-    protected var _fxScaleX :Number = 1;
-    protected var _fxScaleY :Number = 1;
+//    protected var _fxScaleX :Number = 1;
+//    protected var _fxScaleY :Number = 1;
 
     /** The 'location' scale of the media: the scaling that is the result of emulating perspective
      * while we move around the room. */
