@@ -24,8 +24,9 @@ public class PetSprite extends ActorSprite
      */
     public function sendChatMessage (msg :String) :void
     {
-        if (_ident != null && (parent is RoomView)) {
-            (parent as RoomView).getRoomController().sendPetChatMessage(msg, getActorInfo());
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null) {
+            ctrl.sendPetChatMessage(msg, getActorInfo());
         }
     }
 

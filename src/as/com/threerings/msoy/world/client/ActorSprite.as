@@ -31,9 +31,9 @@ public class ActorSprite extends OccupantSprite
      */
     public function setState (state :String) :void
     {
-        if (_ident != null && (parent is RoomView) && validateUserData(state, null)) {
-            (parent as RoomView).getRoomController().setActorState(
-                _ident, _occInfo.bodyOid, state);
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null && validateUserData(state, null)) {
+            ctrl.setActorState(_ident, _occInfo.bodyOid, state);
         }
     }
 
@@ -93,9 +93,9 @@ public class ActorSprite extends OccupantSprite
      */
     public function setLocationFromUser (x :Number, y :Number, z: Number, orient :Number) :void
     {
-        if (_ident != null && parent is RoomView) {
-            (parent as RoomView).getRoomController().requestMove(
-                _ident, new MsoyLocation(x, y, z, orient));
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null) {
+            ctrl.requestMove(_ident, new MsoyLocation(x, y, z, orient));
         }
     }
 
