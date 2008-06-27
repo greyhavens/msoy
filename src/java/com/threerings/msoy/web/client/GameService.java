@@ -14,7 +14,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameGenreData;
+import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameLogs;
 import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.MemberCard;
@@ -123,7 +123,7 @@ public interface GameService extends RemoteService
     /**
      * Loads up information on the specified game genre.
      */
-    public GameGenreData loadGameGenre (WebIdent ident, byte genre)
+    public List<GameInfo> loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query)
         throws ServiceException;
     
     /**

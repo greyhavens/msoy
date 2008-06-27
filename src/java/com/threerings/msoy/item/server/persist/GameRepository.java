@@ -38,6 +38,8 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -224,14 +226,24 @@ public class GameRepository extends ItemRepository<
     public List<GameRecord> loadGenre (byte genre, int limit)
         throws PersistenceException
     {
+        return loadGenre(genre, limit, null);
+    }
+    
+    /**
+     * Loads all listed game records in the specified genre, sorted from highest to lowest rating.
+     *
+     * @param genre the genre of game record to load or -1 to load all (listed) games.
+     * @param limit a limit to the number of records loaded or <= 0 to load all records.
+     * @param searchQuery string to search for in the title, tags and description
+     */
+    public List<GameRecord> loadGenre (byte genre, int limit, String searchQuery)
+        throws PersistenceException
+    {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getItemClass(), ItemRecord.ITEM_ID,
                              getCatalogClass(), CatalogRecord.LISTED_ITEM_ID));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
-        }
-        if (genre >= 0) {
-            clauses.add(new Where(new Conditionals.Equals(GameRecord.GENRE_C, genre)));
         }
 
         // sort out the primary and secondary order by clauses
@@ -241,6 +253,18 @@ public class GameRepository extends ItemRepository<
         clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
                                 obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
+        // build the where clause with genre and/or search string
+        List<SQLOperator> whereBits = Lists.newArrayList();
+        if (genre >= 0) {
+            whereBits.add(new Conditionals.Equals(GameRecord.GENRE_C, genre));
+        }    
+        if (searchQuery != null && searchQuery.length() > 0) {
+            whereBits.add(buildSearchStringClause(searchQuery));
+        }
+        if (whereBits.size() > 0) {
+            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
+        }
+        
         // finally fetch all the game records of interest
         return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
     }

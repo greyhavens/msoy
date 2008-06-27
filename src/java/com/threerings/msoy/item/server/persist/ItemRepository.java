@@ -973,6 +973,49 @@ public abstract class ItemRepository<
 
         return results;
     }
+    
+    /**
+     * Return an sql operator representing a search for the given string in the item's 
+     * name, description and tags.
+     * 
+     * an item matches the search query either if there is a full-text match against name
+     * and/or description, or if one or more of the search words match one or more of the
+     * item's tags; this is accomplished with an 'exists' subquery
+     */
+    protected SQLOperator buildSearchStringClause (String search)
+        throws PersistenceException
+    {
+        SQLOperator ftMatch = new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search);
+
+        // to match tags we first have to split our search up into words
+        String[] searchTerms = search.toLowerCase().split("\\W+");
+        if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
+            searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
+        }
+
+        // look up each word as a tag
+        IntSet tagIds = new ArrayIntSet();
+        if (searchTerms.length > 0) {
+            for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
+                tagIds.add(tRec.tagId);
+            }
+        }
+
+        // if we have no tags, just do the text match
+        if (tagIds.size() == 0) {
+            return ftMatch;
+
+        } else {
+            // a search match is either a full-text match, or a hit on the tag sub-query
+            return new Or(ftMatch, new Exists<TagRecord>(new SelectClause<TagRecord>(
+                getTagRepository().getTagClass(),
+                new String[] { TagRecord.TAG_ID },
+                new Where(new And(
+                    new Equals(getTagColumn(TagRecord.TARGET_ID),
+                               getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
+                    new In(getTagColumn(TagRecord.TAG_ID), tagIds))))));
+        }
+    }
 
     /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
@@ -982,42 +1025,9 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-
-        if (search != null && search.length() > 0) {
-            // an item matches the search query either if there is a full-text match against name
-            // and/or description, or if one or more of the search words match one or more of the
-            // item's tags; this is accomplished with an 'exists' subquery
-
-            SQLOperator ftMatch = new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search);
-
-            // to match tags we first have to split our search up into words
-            String[] searchTerms = search.toLowerCase().split("\\W+");
-            if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
-                searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
-            }
-
-            // look up each word as a tag
-            IntSet tagIds = new ArrayIntSet();
-            if (searchTerms.length > 0) {
-                for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
-                    tagIds.add(tRec.tagId);
-                }
-            }
-
-            // if we have no tags, just do the text match
-            if (tagIds.size() == 0) {
-                whereBits.add(ftMatch);
-
-            } else {
-                // a search match is either a full-text match, or a hit on the tag sub-query
-                whereBits.add(new Or(ftMatch, new Exists<TagRecord>(new SelectClause<TagRecord>(
-                    getTagRepository().getTagClass(),
-                    new String[] { TagRecord.TAG_ID },
-                    new Where(new And(
-                        new Equals(getTagColumn(TagRecord.TARGET_ID),
-                                   getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
-                        new In(getTagColumn(TagRecord.TAG_ID), tagIds)))))));
-            }
+        
+        if (search != null && search.length() > 0) {   
+            whereBits.add(buildSearchStringClause(search));
         }
 
         if (tag > 0) {
@@ -1044,6 +1054,7 @@ public abstract class ItemRepository<
 
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
                                          CatalogListing.PRICING_HIDDEN)));
+        
         clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
     }
 

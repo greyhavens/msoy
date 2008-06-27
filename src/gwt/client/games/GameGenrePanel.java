@@ -3,59 +3,360 @@
 
 package client.games;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.data.GameGenreData;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GameInfo;
 
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.MsoyUI;
+import client.util.Stars;
 
 /**
- * Displays games in a particular genre.
+ * Displays games in a particular genre, or of all genres for the "All Games" page.
+ * For genre pages it displays a featured game; for "All Games" page displays a search.
  */
-public class GameGenrePanel extends VerticalPanel
+public class GameGenrePanel extends FlowPanel
 {
-    public GameGenrePanel (final byte genre)
-    {
+    public GameGenrePanel (final byte genre, final byte sortMethod, final String query)
+    {       
         setStyleName("gameGenre");
+        _genre = genre;
 
-        CGames.gamesvc.loadGameGenre(CGames.ident, genre, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init(genre, (GameGenreData)result);
+        _sortBox = new ListBox();
+        for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
+            _sortBox.addItem(SORT_LABELS[ii]);
+            if (SORT_VALUES[ii] == sortMethod) {
+                _sortBox.setSelectedIndex(ii);
+            }
+        }
+        _sortBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget widget) {
+                byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
+                if (query == null) {
+                    Application.go(Page.GAMES, Args.compose(
+                        new String[] {"g", genre+"", newSortMethod+""}));
+                }
+                else {
+                    Application.go(Page.GAMES, Args.compose(
+                        new String[] {"g", genre+"", newSortMethod+"", query}));
+                }
+                
             }
         });
-    }
-
-    protected void init (byte genre, GameGenreData data)
-    {
+        
+        CGames.gamesvc.loadGameGenre(
+            CGames.ident, genre, sortMethod, query, new MsoyCallback() {
+                public void onSuccess (Object result) {
+                    init(genre, (List)result);
+                }
+        });
+        
+        // build the title, find a game dropown and search box
+        FlowPanel titleArea = MsoyUI.createFlowPanel("TitleArea");
+        add(titleArea);
+        
+        String titleText; 
         if (genre >= 0) {
-            HorizontalPanel row = new HorizontalPanel();
-            row.setStyleName("Features");
-            row.add(new WhyPlayPanel());
-            row.add(new FeaturedGamePanel(data.featuredGames));
-            add(row);
+            titleText = CGames.dmsgs.getString("genre" + genre);
         }
-
-        int rows = (genre >= 0) ? ROWS : FEATURELESS_ROWS;
-        PagedGrid games = new PagedGrid(rows, COLUMNS, PagedGrid.NAV_ON_TOP) {
-            protected Widget createWidget (Object item) {
-                return new GameEntry((GameInfo)item);
+        else {
+            titleText = CGames.msgs.genreAllGames();
+        }
+        titleArea.add(MsoyUI.createLabel(titleText, "GenreTitle"));
+        
+//        VerticalPanel titleBox = new VerticalPanel();
+//        titleBox.addStyleName("TitleBox");
+//        titleBox.add(new Image("/images/game/genre_title_left.png"));
+//        if (genre >= 0) {
+//            titleBox.add(new Label(CGames.dmsgs.getString("genre" + genre)));
+//        }
+//        else {
+//            titleBox.add(new Label(CGames.msgs.genreAllGames()));
+//        }
+//        titleBox.add(MsoyUI.createInlineImage("/images/game/genre_title_right.png"));
+//        titleArea.add(titleBox);
+        
+//        FlowPanel titleBox = MsoyUI.createFlowPanel("TitleBox");
+//        titleBox.add(new Image("/images/game/genre_title_left.png"));
+//        if (genre >= 0) {
+//            titleBox.add(new Label(CGames.dmsgs.getString("genre" + genre)));
+//        }
+//        else {
+//            titleBox.add(new Label(CGames.msgs.genreAllGames()));
+//        }
+//        titleBox.add(MsoyUI.createInlineImage("/images/game/genre_title_right.png"));
+//        titleArea.add(titleBox);
+        
+        // find a game fast dropdown box
+        FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
+        findGame.add(MsoyUI.createLabel(CGames.msgs.genreFindGame(), "Title"));
+        titleArea.add(findGame);
+        _findGameBox = new ListBox();
+        _findGameBox.addItem("", "");
+        _findGameBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget widget) {
+                ListBox listBox = (ListBox) widget;
+                String selectedValue = listBox.getValue(listBox.getSelectedIndex());
+                if (!selectedValue.equals("")) {
+                    Application.go(Page.GAMES, Args.compose(new String[] {"d", selectedValue}));
+                }
             }
-            protected String getEmptyMessage () {
-                return "No games!";
+        });
+        findGame.add(_findGameBox);
+
+        // search for games
+        FlowPanel search = MsoyUI.createFlowPanel("Search");
+        search.add(MsoyUI.createLabel(CGames.msgs.genreSearch(), "Title"));
+        titleArea.add(search);
+        final TextBox searchBox = new TextBox();
+        searchBox.setVisibleLength(20);
+        if (query != null) {
+            searchBox.setText(query);
+        }
+        ClickListener searchListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                String newQuery = searchBox.getText().trim();
+                Application.go(Page.GAMES, Args.compose(
+                    new String[] {"g", genre+"", sortMethod+"", newQuery}));
             }
         };
-        games.addStyleName("Games");
-        add(games);
-        games.setModel(new SimpleDataModel(data.games), 0);
+        searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
+        search.add(searchBox);
+        Button searchGo = new Button("", searchListener);
+        searchGo.setStyleName("GoButton");
+        search.add(searchGo);
     }
 
-    protected static final int COLUMNS = 3;
-    protected static final int ROWS = 3;
-    protected static final int FEATURELESS_ROWS = 7;
+    /**
+     * After data is received, display the genre header and the data grid
+     */
+    protected void init (byte genre, List games)
+    {
+        // make a copy of the list of games sorted by name for the dropdown
+        List gamesByName = (List)((ArrayList) games).clone();
+        Collections.sort(gamesByName, SORT_GAMEINFO_BY_NAME);
+        for (Object gameObject : gamesByName) {
+            GameInfo gameInfo = (GameInfo) gameObject;
+            String gameName = gameInfo.name;
+            _findGameBox.addItem(gameName, gameInfo.gameId+"");
+        }
+        
+        // add the games to the page
+        add(new GameGenreGrid(games));
+    }
+
+    /** Compartor for sorting {@link GameInfo}, by name. */
+    protected static Comparator SORT_GAMEINFO_BY_NAME = new Comparator() {
+        public int compare (Object object1, Object object2) {
+            GameInfo game1 = (GameInfo)object1;
+            GameInfo game2 = (GameInfo)object2;
+            return game1.name.toString().toLowerCase().compareTo(game2.name.toString().toLowerCase());
+        }
+    };
+
+    /**
+     * Displays a grid of games with paging and sort
+     */
+    protected class GameGenreGrid extends PagedGrid
+    {
+        public GameGenreGrid (List games) {
+            super(GAMES_PER_PAGE, 1, PagedGrid.NAV_ON_TOP);
+            addStyleName("Games");
+            setModel(new SimpleDataModel(games), 0);
+        }
+        
+        protected Widget createWidget (Object item) {
+            return new GameInfoPanel((GameInfo)item);
+        }
+        
+        protected String getEmptyMessage () {
+            return CGames.msgs.genreNoGames();
+        }
+
+        /**
+         * Add the sort box and header row
+         */
+        protected void addCustomControls (FlexTable controls) {           
+            controls.setWidget(
+                0, 0, new InlineLabel(CGames.msgs.genreSortBy(), false, false, false));
+            controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
+            controls.setWidget(0, 1, _sortBox);
+            
+            // add a second row with table titles
+            FlowPanel headers = new FlowPanel();
+            headers.setStyleName("Titles");
+            controls.setWidget(1, 0, headers);
+            controls.getFlexCellFormatter().setColSpan(1, 0, 7);
+            
+            headers.add(createTitle("Name", "NameTitle", GameInfo.SORT_BY_RATING));
+            headers.add(createTitle("Rating", "RatingTitle", GameInfo.SORT_BY_NAME));
+            headers.add(createTitle("Category", "CategoryTitle", GameInfo.SORT_BY_GENRE));
+            headers.add(createTitle("Now Playing", "NowPlayingTitle", GameInfo.SORT_BY_PLAYERS_ONLINE));
+        }
+        
+        /**
+         * Creates a title for display in the grid header that performs a sort action onclick
+         */
+        protected Widget createTitle (String text, String styleName, byte sortMethod) {
+            Hyperlink link = Application.createLink(text, Page.GAMES, 
+                Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
+            link.addStyleName(styleName);
+            return link;
+        }
+
+        /**
+         * Alternate row styles
+         */
+        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit)
+        {
+            if (row % 2 == 1) {
+                formatter.addStyleName(row, col, "Alternating");
+            }
+        }
+        
+        /**
+         * One row of the grid with details on a single game.
+         */
+        protected class GameInfoPanel extends SmartTable
+        {
+            public GameInfoPanel (final GameInfo game)
+            {
+                setStyleName("GameInfoPanel");
+                int col = 0;
+                
+                ClickListener gameClick = new ClickListener() {
+                    public void onClick (Widget widget) {
+                        Application.go(Page.GAMES, Args.compose("d", game.gameId));
+                    }
+                };
+                setWidget(0, col++, MediaUtil.createMediaView(
+                    game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick), 1, "Thumbnail");
+                
+                FlowPanel name = new FlowPanel();
+                name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));
+                name.add(MsoyUI.createLabel(truncateParagraph(game.description, 80), "Description"));
+                setWidget(0, col++, name, 1, "NameDesc");
+                
+                FlowPanel ratingPanel = new FlowPanel();
+                ratingPanel.add(new Stars(game.rating, true, false, null));
+                ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""), "NumRatings"));
+                setWidget(0, col++, ratingPanel, 1, "Rating");
+                
+                setText(0, col++, CGames.dmsgs.getString("genre" + game.genre), 1, "Category");
+                
+                setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
+
+                FlowPanel playButtonsPanel = new FlowPanel();
+                playButtonsPanel.setStyleName("PlayButtonsPanel");
+                // add single player button
+                if (game.minPlayers == 1) {
+                    ClickListener singleClick = new ClickListener() {
+                        public void onClick (Widget sender) {
+                            Application.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
+                        }
+                    };
+                    PushButton single = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
+                    single.addStyleName("PlaySingleButton");
+                    playButtonsPanel.add(single);
+                    if (game.maxPlayers > 1) {
+                        playButtonsPanel.add(WidgetUtil.makeShim(5, 5));
+                    }
+                }
+                // add multiplayer button
+                if (game.maxPlayers > 1) {
+                    ClickListener multiClick = new ClickListener() {
+                        public void onClick (Widget sender) {
+                            Application.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
+                        }
+                    };
+                    PushButton multi = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
+                    multi.addStyleName("PlayMultiButton");
+                    playButtonsPanel.add(multi);
+                }
+                setWidget(0, col++, playButtonsPanel, 1, "PlayButtons");
+                
+            }
+        }
+    }
+    
+    /**
+     * Truncate a paragraph to the maximum number of full sentences, or to the
+     * max number of characters followed by "..."
+     */
+    protected static String truncateParagraph (String text, int maxLen)
+    {
+        if (text.length() <= maxLen) {
+            return text;
+        }
+        for (int ii = maxLen-1; ii >= 0; ii--) {
+            char c = text.charAt(ii);
+            if (c == '.' || c == '!') {
+                return text.substring(0, ii+1);
+            }
+        }
+        return text.substring(0, maxLen-3) + "...";
+    }
+
+    protected static final String[] SORT_LABELS = new String[] {
+        CGames.msgs.genreSortByRating(),
+        CGames.msgs.genreSortByNewest(),
+        CGames.msgs.genreSortByAlphabetical(),
+        CGames.msgs.genreSortByMultiplayer(),
+        CGames.msgs.genreSortBySinglePlayer(),
+        CGames.msgs.genreSortByCategory(),
+        CGames.msgs.genreSortByNowPlaying()
+    };
+    
+    protected static final byte[] SORT_VALUES = new byte[] {
+        GameInfo.SORT_BY_RATING,
+        GameInfo.SORT_BY_NEWEST,
+        GameInfo.SORT_BY_NAME,
+        GameInfo.SORT_BY_MULTIPLAYER,
+        GameInfo.SORT_BY_SINGLE_PLAYER,
+        GameInfo.SORT_BY_GENRE,
+        GameInfo.SORT_BY_PLAYERS_ONLINE
+    };
+
+    /** Dropdown of all games */
+    protected ListBox _findGameBox;
+    
+    /** Dropdown of sort methods */
+    protected ListBox _sortBox;
+    
+    /** Genre ID or -1 for All Games page */
+    protected byte _genre;
+    
+    protected static final int GAMES_PER_PAGE = 6;
 }

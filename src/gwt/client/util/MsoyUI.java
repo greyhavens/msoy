@@ -3,10 +3,10 @@
 
 package client.util;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -20,9 +20,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-
-import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.CShell;
 import client.shell.LogonPanel;
@@ -92,6 +89,18 @@ public class MsoyUI
         }
         if (widget != null) {
             panel.setWidget(widget);
+        }
+        return panel;
+    }
+    
+    /**
+     * Creates a FlowPanel with the provided style
+     */
+    public static FlowPanel createFlowPanel (String styleName)
+    {
+        FlowPanel panel = new FlowPanel();
+        if (styleName != null) {
+            panel.addStyleName(styleName);
         }
         return panel;
     }

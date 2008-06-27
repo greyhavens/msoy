@@ -54,14 +54,12 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameGenreData;
 import com.threerings.msoy.web.data.GameInfo;
 import com.threerings.msoy.web.data.GameLogs;
 import com.threerings.msoy.web.data.GameMetrics;
@@ -486,35 +484,51 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public GameGenreData loadGameGenre (WebIdent ident, byte genre)
+    public List<GameInfo> loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query)
         throws ServiceException
     {
         try {
-            GameGenreData data = new GameGenreData();
+            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
 
             // load up all the games in this genre
-            List<GameRecord> games = _gameRepo.loadGenre(genre, -1);
-
+            List<GameRecord> games = _gameRepo.loadGenre(genre, -1, query);
+            
             // convert them to game info objects
             List<GameInfo> infos = Lists.newArrayList();
             for (GameRecord grec : games) {
-                infos.add(grec.toGameInfo());
+                GameInfo info = grec.toGameInfo();
+                // add the players online
+                PlaceCard gameCard = pps.getGame(grec.gameId);
+                if (gameCard != null) {
+                    info.playersOnline = gameCard.population;
+                }
+                infos.add(info);
             }
-            data.games = infos;
-
-            // determine the "featured" games
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-            List<FeaturedGameInfo> featured = Lists.newArrayList();
-            for (int ii = 0; ii < Math.min(games.size(), ArcadeData.FEATURED_GAME_COUNT); ii++) {
-                GameRecord game = games.get(ii);
-                GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
-                PlaceCard card = pps.getGame(game.gameId);
-                featured.add(GameUtil.toFeaturedGameInfo(
-                                 _memberRepo, game, detail, card == null ? 0 : card.population));
+            
+            // sort by the preferred sort method (sorted by rating within groups)
+            if (sortMethod == GameInfo.SORT_BY_RATING) {
+                // do nothing, this is the default from the repository
             }
-            data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
+            else if (sortMethod == GameInfo.SORT_BY_NEWEST) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_NEWEST);
+            }
+            else if (sortMethod == GameInfo.SORT_BY_NAME) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_NAME);
+            }
+            else if (sortMethod == GameInfo.SORT_BY_MULTIPLAYER) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_MULTIPLAYER);
+            }
+            else if (sortMethod == GameInfo.SORT_BY_SINGLE_PLAYER) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_SINGLE_PLAYER);
+            }
+            else if (sortMethod == GameInfo.SORT_BY_GENRE) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_GENRE);
+            }
+            else if (sortMethod == GameInfo.SORT_BY_PLAYERS_ONLINE) {
+                Collections.sort(infos, SORT_GAMEINFO_BY_PLAYERS_ONLINE);
+            }
 
-            return data;
+            return infos;
 
         } catch (PersistenceException pe) {
             log.warning("loadGameGenre failed [for=" + ident + ", genre=" + genre + "].");
@@ -535,7 +549,61 @@ public class GameServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
+    
+    /** Compartor for sorting {@link GameInfo}, by gameId. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_NEWEST = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            return c2.gameId - c1.gameId;
+        }
+    };
+    
+    /** Compartor for sorting {@link GameInfo}, by name. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_NAME = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
 
+    /** Compartor for sorting {@link GameInfo}, with multiplayer games first. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_MULTIPLAYER = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            if (c1.maxPlayers == 1 && c2.maxPlayers > 1) {
+                return 1;
+            }
+            else if (c1.maxPlayers > 1 && c2.maxPlayers == 1) {
+                return -1;
+            }
+            return 0;
+        }
+    };
+
+    /** Compartor for sorting {@link GameInfo}, with single player games first. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_SINGLE_PLAYER = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            if (c1.minPlayers == 1 && c2.minPlayers > 1) {
+                return -1;
+            }
+            else if (c1.minPlayers > 1 && c2.minPlayers == 1) {
+                return 1;
+            }
+            return 0;
+        }
+    };
+
+    /** Compartor for sorting {@link GameInfo}, by genre. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_GENRE = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            return c2.genre - c1.genre;
+        }
+    };
+
+    /** Compartor for sorting {@link GameInfo}, by # of players online. */
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_PLAYERS_ONLINE = new Comparator<GameInfo>() {
+        public int compare (GameInfo c1, GameInfo c2) {
+            return c2.playersOnline - c1.playersOnline;
+        }
+    };
+    
     protected PlayerRating[] toRatingResult (
         List<RatingRecord> records, IntMap<PlayerRating> players)
     {

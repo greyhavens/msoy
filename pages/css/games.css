@@ -345,18 +345,6 @@
   font-size: 10px;
 }
 
-.gameGenre .Games {
-  border-top: 5px solid white;
-  border-left: 5px solid white;
-  width: 681px;
-  margin-top: 5px;
-}
-
-.gameGenre .gameEntry {
-  border: none;
-  width: 220px;
-}
-
 .trophyCompare {
 }
 
@@ -380,4 +368,198 @@
 
 .trophyCompare .Italic {
   font-style: italic;
+}
+
+
+/* ------------------------------------
+   GENRE GAMES LIST / ALL GAMES PAGE
+-------------------------------------*/
+
+.gameGenre {
+  background-color: #1d5884;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 100%;
+  min-height: 100%;
+  color: #407a9f;
+}
+
+.gameGenre .TitleArea {
+  height: 70px;
+}
+
+.gameGenre .GenreTitle {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 334px;
+  height: 59px;
+  white-space: nowrap;
+  overflow: hidden;
+  background: transparent url(/images/game/genre_title.png) no-repeat top center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 28px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+}
+
+.gameGenre .FindGame {
+  position: absolute;
+  top: 5px;
+  left: 360px;
+}
+
+.gameGenre .FindGame .Title,
+.gameGenre .Search .Title {
+  width: 120px;
+  color: #a6cae2;
+  margin-bottom: 3px;
+}
+
+.gameGenre .FindGame select {
+  width: 150px;
+}
+
+.gameGenre .Search {
+  position: absolute;
+  top: 5px;
+  left: 520px;
+}
+
+.gameGenre .Search input {
+  width: 110px;
+}
+
+.gameGenre .Search .GoButton {
+  position: absolute;
+  bottom: 1px;
+  left: 120px;
+  width: 32px;
+  height: 17px;
+  background: url(/images/game/go_button.png) no-repeat top center;
+  border: none;
+  cursor: pointer;
+}
+
+.gameGenre .Games {
+  margin: 0px 10px 0 10px;
+  width: 665px;
+}
+
+.gameGenre .Games .Header {
+  background-position: top center;
+}
+
+.gameGenre .Games .Header .TopLeft,
+.gameGenre .Games .Header .TopRight {
+  background-color: #1d5884;
+  height: 29px;
+}
+
+.gameGenre .Games .Header .SortBy {
+  padding-right: 5px;
+  width: 50px;
+}
+
+.gameGenre .Games .Header td.Info {
+  width: 450px;
+}
+
+.gameGenre .Games .Titles {
+  background-color: #FFFFFF;
+  height: 25px;
+  border-bottom: solid #aac4d1 1px;
+}
+
+.gameGenre .Games .Titles div {
+  position: absolute;
+  margin-top: 5px;
+  color: #000000;
+  text-decoration: underline;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.gameGenre .Games .Titles .NameTitle {
+  left: 108px;
+}
+
+.gameGenre .Games .Titles .RatingTitle {
+  left: 310px;
+}
+
+.gameGenre .Games .Titles .CategoryTitle {
+  left: 410px;
+}
+
+.gameGenre .Games .Titles .NowPlayingTitle {
+  left: 505px;
+}
+
+.gameGenre .GameInfoPanel {
+  background-color: #FFFFFF;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.gameGenre .Alternating .GameInfoPanel {
+  background-color: #ddeef8;
+}
+
+.gameGenre .GameInfoPanel .Thumbnail {
+  width: 90px;
+}
+
+.gameGenre .GameInfoPanel .NameDesc {
+  width: 200px;
+}
+
+.gameGenre .GameInfoPanel .Name {
+  width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.gameGenre .GameInfoPanel .Description {
+  font-size: 11px;
+  width: 180px;
+  height: 45px;
+  overflow: hidden;
+}
+
+.gameGenre .GameInfoPanel .Rating {
+  width: 95px;
+}
+
+.gameGenre .GameInfoPanel .Rating .NumRatings {
+  font-size: 11px;
+  color: #000000;
+  font-style: italic;
+}
+
+.gameGenre .GameInfoPanel .Category {
+  width: 100px;
+}
+
+.gameGenre .GameInfoPanel .NowPlaying {
+  text-align: center;
+}
+
+.gameGenre .GameInfoPanel .PlayButtons {
+  width: 100px;
+}
+
+.gameGenre .GameInfoPanel .PlayButtons .PlaySingleButton .html-face {
+  font-size: 12px;
+  padding-top: 3px;
+}
+
+.gameGenre .GameInfoPanel .PlayButtons .PlayMultiButton .html-face {
+  font-size: 10px;
+  padding-top: 5px;
 }

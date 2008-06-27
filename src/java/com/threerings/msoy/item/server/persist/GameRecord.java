@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GameInfo;
+import com.threerings.msoy.web.server.GameUtil;
 
 /**
  * Extends Item with game info.
@@ -225,6 +226,11 @@ public class GameRecord extends ItemRecord
         if (info instanceof FeaturedGameInfo && shotMediaHash != null) {
             ((FeaturedGameInfo)info).shotMedia = new MediaDesc(shotMediaHash, shotMimeType);
         }
+        int[] players = GameUtil.getMinMaxPlayers((Game)toItem());
+        info.minPlayers = players[0];
+        info.maxPlayers = players[1];
+        info.rating = rating;
+        info.ratingCount = ratingCount;
         return info;
     }
 
