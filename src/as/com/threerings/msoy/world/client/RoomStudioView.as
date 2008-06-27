@@ -11,6 +11,7 @@ import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
 import mx.controls.HSlider;
 
+import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
@@ -30,6 +31,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
@@ -102,18 +104,27 @@ public class RoomStudioView extends RoomView
         _avatar.moveTo(newLoc, _scene);
     }
 
-    public function doAvatarAction (action :String) :void
+    public function setActorState (ident :ItemIdent, state :String) :void
     {
-        emulateIdle(false);
-        _avatar.messageReceived(action, null, true);
+        var actor :ActorSprite = _entities.get(ident) as ActorSprite;
+        if (actor == null) {
+            Log.dumpStack();
+            return;
+        }
+        var info :ActorInfo = actor.getActorInfo().clone() as ActorInfo;
+        info.setState(state);
+        info.status = OccupantInfo.ACTIVE; // un-idle, if needed
+        actor.setOccupantInfo(info);
     }
 
-    public function setAvatarState (state :String) :void
+    override public function dispatchSpriteMessage (
+        item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
     {
-        var info :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
-        info.setState(state);
-        info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
-        _avatar.setOccupantInfo(info);
+        // un-idle our avatar
+        if (isAction && (_avatar == _entities.get(item))) {
+            emulateIdle(false);
+        }
+        super.dispatchSpriteMessage(item, name, arg, isAction);
     }
 
     public function setAvatarScale (scale :Number) :void

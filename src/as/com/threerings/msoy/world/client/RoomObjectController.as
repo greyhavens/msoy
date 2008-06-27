@@ -192,90 +192,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Handles a request by an actor item to change its persistent state.  Requires control.
-     */
-    override public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
-    {
-        if (!checkCanRequest(ident, "setState")) {
-            log.info("Dropping state change for lack of control [ident=" + ident +
-                     ", state=" + state + "].");
-            return;
-        }
-
-        log.info("Changing actor state [ident=" + ident + ", state=" + state + "].");
-        _roomObj.roomService.setActorState(_wdctx.getClient(), ident, actorOid, state);
-    }
-
-    /**
-     * Handles a request by an entity item to send a chat message.
-     */
-    override public function sendPetChatMessage (msg :String, info :ActorInfo) :void
-    {
-        var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
-        if (checkCanRequest(info.getItemIdent(), "PetService")) {
-            svc.sendChat(_wdctx.getClient(), info.bodyOid, _scene.getId(), msg,
-                         new ReportingListener(_wdctx));
-        }
-    }
-
-    /**
-     * Handles a request by an item in our room to update its memory.
-     */
-    override public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
-    {
-        if (_roomObj == null) {
-            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");
-            return false;
-        }
-
-        // NOTE: there is no need to be "in control" to update memory.
-
-        // serialize datum
-        // This will validate that the property set isn't greater than the MAXIMUM
-        //      alloted memory space, but further checks are done serverside.
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
-
-        // ship the update request off to the server
-        _roomObj.roomService.updateMemory(
-            _wdctx.getClient(), new EntityMemoryEntry(ident, key, data));
-        return true;
-    }
-
-    /**
-     * Handles a request to update a property in this room.
-     */
-    override public function setRoomProperty (key :String, value: Object) :Boolean
-    {
-        if (_roomObj == null) {
-            log.info("Dropping room property update, not in room [key=" + key + "].");
-            return false;
-        }
-
-        // serialize datum
-        // This will validate that the property set isn't greater than the MAXIMUM
-        //      alloted memory space, but further checks are done serverside.
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
-
-        // TODO: Total length validation should be done on the server
-        //if (key.length > RoomPropertyEntry.MAX_KEY_LENGTH ||
-        //    (data != null && data.length > RoomPropertyEntry.MAX_VALUE_LENGTH)) {
-        //    return false;
-        //}
-        //
-        var entry :RoomPropertyEntry = new RoomPropertyEntry(key, data);
-        //if (_roomObj.roomProperties.contains(entry) &&
-        //    _roomObj.roomProperties.size() >= RoomPropertyEntry.MAX_ENTRIES) {
-        //    return false;
-        //}
-
-        // ship the update request off to the server
-        _roomObj.roomService.setRoomProperty(_wdctx.getClient(), entry);
-        return true;
-    }
-
-    /**
      * Handles a request by an actor to change its location. Returns true if the request was
      * dispatched, false if funny business prevented it.
      */
@@ -1063,17 +979,51 @@ public class RoomObjectController extends RoomController
         _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
     }
 
+    // documentation inherited
+    override protected function setActorState2 (
+        ident :ItemIdent, actorOid :int, state :String) :void
+    {
+        _roomObj.roomService.setActorState(_wdctx.getClient(), ident, actorOid, state);
+    }
+
+    // documentation inherited
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
         _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
     }
 
+    // documentation inherited
     override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
     {
         _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
     }
 
+    // documentation inherited
+    override protected function sendPetChatMessage2 (msg :String, info :ActorInfo) :void
+    {
+        var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
+        svc.sendChat(_wdctx.getClient(), info.bodyOid, _scene.getId(), msg,
+            new ReportingListener(_wdctx));
+    }
+
+    // documentation inherited
+    override protected function updateMemory2 (ident :ItemIdent, key :String, data: ByteArray) :void
+    {
+        // ship the update request off to the server
+        _roomObj.roomService.updateMemory(_wdctx.getClient(),
+            new EntityMemoryEntry(ident, key, data));
+    }
+
+    // documentation inherited
+    override protected function setRoomProperty2 (key :String, data: ByteArray) :void
+    {
+        // ship the update request off to the server
+        _roomObj.roomService.setRoomProperty(_wdctx.getClient(), 
+            new RoomPropertyEntry(key, data));
+    }
+
+    // documentation inherited
     override protected function keyEvent (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.F6) {

@@ -24,10 +24,5 @@ public class StudioMemberInfo extends MemberInfo
             _media = new StudioMediaDesc(avatarUrl);
         }
     }
-
-    public function setState (state :String) :void
-    {
-        _state = state;
-    }
 }
 }

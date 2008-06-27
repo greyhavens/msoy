@@ -328,10 +328,12 @@ public class RoomObjectView extends RoomView
             portalTraversed(sceneLoc.loc, true);
 
         } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
+            var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
+            dispatchMemoryChanged(mem.item, mem.key, mem.value);
 
         } else if (RoomObject.ROOM_PROPERTIES == name) {
-            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
+            var prop :RoomPropertyEntry = event.getEntry() as RoomPropertyEntry;
+            dispatchRoomPropertyChanged(prop.key, prop.value);
 
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
@@ -363,10 +365,12 @@ public class RoomObjectView extends RoomView
             moveBody((event.getEntry() as SceneLocation).bodyOid);
 
         } else if (RoomObject.MEMORIES == name) {
-            dispatchMemoryChanged(event.getEntry() as EntityMemoryEntry);
+            var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
+            dispatchMemoryChanged(mem.item, mem.key, mem.value);
 
         } else if (RoomObject.ROOM_PROPERTIES == name) {
-            dispatchRoomPropertyChanged(event.getEntry() as RoomPropertyEntry);
+            var prop :RoomPropertyEntry = event.getEntry() as RoomPropertyEntry;
+            dispatchRoomPropertyChanged(prop.key, prop.value);
 
         } else if (RoomObject.EFFECTS == name) {
             updateEffect(event.getEntry() as EffectData);
@@ -383,6 +387,9 @@ public class RoomObjectView extends RoomView
 
         } else if (RoomObject.EFFECTS == name) {
             removeEffect(event.getKey() as int);
+
+        } else if (RoomObject.ROOM_PROPERTIES == name) {
+            dispatchRoomPropertyChanged(event.getKey() as String, null);
         }
     }
 
@@ -519,6 +526,14 @@ public class RoomObjectView extends RoomView
         if (overlay != null) {
             overlay.setScrollRect(r);
         }
+    }
+
+    // documentation inherited
+    override public function dispatchRoomPropertyChanged (key :String, data :ByteArray) :void
+    {
+        super.dispatchRoomPropertyChanged(key, data);
+        // TODO: Fuck me, I wish we could not decode unless there is a backend..
+        callAVRGCode("roomPropertyChanged_v1", key, ObjectMarshaller.decode(data));
     }
 
     /** Return an array of the MOB sprites associated with the identified game. */
@@ -786,15 +801,6 @@ public class RoomObjectView extends RoomView
         if (sprite != null) {
             removeSprite(sprite);
         }
-    }
-
-    /**
-     * Called when a memory entry is added or updated in the room object.
-     */
-    override protected function dispatchRoomPropertyChanged2 (key :String, value :Object) :void
-    {
-        super.dispatchRoomPropertyChanged2(key, value);
-        callAVRGCode("roomPropertyChanged_v1", key, value);
     }
 
     override protected function addAllOccupants () :void

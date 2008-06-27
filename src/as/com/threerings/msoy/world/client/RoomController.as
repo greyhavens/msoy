@@ -250,7 +250,13 @@ public class RoomController extends SceneController
      */
     public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
     {
-        // see subclasses
+        if (!checkCanRequest(ident, "setState")) {
+            log.info("Dropping state change for lack of control [ident=" + ident +
+                ", state=" + state + "].");
+            return;
+        } 
+
+        setActorState2(ident, actorOid, state);
     }
 
     /**
@@ -258,7 +264,9 @@ public class RoomController extends SceneController
      */
     public function sendPetChatMessage (msg :String, info :ActorInfo) :void
     {
-        // TODO
+        if (checkCanRequest(info.getItemIdent(), "PetService")) { 
+            sendPetChatMessage2(msg, info);
+        }
     }
 
     /**
@@ -266,8 +274,21 @@ public class RoomController extends SceneController
      */
     public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
     {
-        // TODO
-        return false;
+        // TODO: I want to know wtf is requesting to up-mem after it's been shut down...
+//        if (_roomObj == null) {
+//            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");        
+//            return false;
+//        }
+    
+        // NOTE: there is no need to be "in control" to update memory.
+      
+        // serialize datum
+        // This will validate that the property set isn't greater than the MAXIMUM
+        //      alloted memory space, but further checks are done serverside.
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
+                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
+        updateMemory2(ident, key, data);
+        return true;
     }
 
     /**
@@ -275,8 +296,19 @@ public class RoomController extends SceneController
      */
     public function setRoomProperty (key :String, value: Object) :Boolean
     {
-        // TODO
-        return false;
+        // TODO: I want to know wtf is requesting to set-props after it's been shut down...
+//        if (_roomObj == null) {
+//            log.info("Dropping room property update, not in room [key=" + key + "].");
+//            return false;
+//        }
+
+        // serialize datum
+        // This will validate that the property set isn't greater than the MAXIMUM
+        //      alloted memory space, but further checks are done serverside.
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
+                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
+        setRoomProperty2(key, data);
+        return true;
     }
 
     /**
@@ -311,7 +343,7 @@ public class RoomController extends SceneController
      */
     public function handleFurniClicked (furni :FurniData) :void
     {
-        // TODO
+        // see subclasses
     }
 
     /**
@@ -381,7 +413,7 @@ public class RoomController extends SceneController
      */
     public function handlePetClicked (pet :ActorSprite) :void
     {
-        // TODO
+        // see subclasses
     }
 
     /**
@@ -389,7 +421,7 @@ public class RoomController extends SceneController
      */
     public function handleOrderPet (petId :int, command :int) :void
     {
-        // TODO
+        // see subclasses / TODO
     }
 
     /**
@@ -676,6 +708,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Once the state change has been validated, effect it.
+     */
+    protected function setActorState2 (ident :ItemIdent, actorOid :int, state :String) :void
+    {
+        // see subclasses
+    }
+
+    /**
      * Once a sprite message is validated and ready to go, it is sent here.
      */
     protected function sendSpriteMessage2 (
@@ -688,6 +728,30 @@ public class RoomController extends SceneController
      * Once a sprite signal is validated and ready to go, it is sent here.
      */
     protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    {
+        // see subclasses
+    }
+
+    /**
+     * Once a pet chat is validated and ready to go, it is sent here.
+     */
+    protected function sendPetChatMessage2 (msg :String, info :ActorInfo) :void
+    {
+        // see subclasses
+    }
+
+    /**
+     * Once a memory update is validated and ready to go, it is sent here.
+     */
+    protected function updateMemory2 (ident :ItemIdent, key :String, data :ByteArray) :void
+    {
+        // see subclasses
+    }
+
+    /**
+     * Once a property update is validated and ready to go, it is sent here.
+     */
+    protected function setRoomProperty2 (key :String, data :ByteArray) :void
     {
         // see subclasses
     }

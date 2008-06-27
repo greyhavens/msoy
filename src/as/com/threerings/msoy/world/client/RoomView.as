@@ -451,6 +451,80 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Called when a sprite message arrives on the room object.
+     */
+    public function dispatchSpriteMessage (
+        item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
+    {
+        var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
+        if (sprite != null) {
+            sprite.messageReceived(name, ObjectMarshaller.decode(arg), isAction);
+        } else {
+            log.info("Received sprite message for unknown sprite [item=" + item +
+                     ", name=" + name + "].");
+        }
+    }
+
+    /**
+     * Called when a sprite signal arrives on the room object; iterates over the
+     * entities present and notify them.
+     */
+    public function dispatchSpriteSignal (name :String, data :ByteArray) :void
+    {
+        // TODO: shite. We really need to decode the data for each and every sprite
+        // that gets the message, because they could destructively modify it.
+        // What would be cool is constructing events with the data array that only
+        // gets decoded via a getter when the usercode actually reads the value...
+        // The problem with that is that we'd probably need to increment the version number
+        // of the by-name method in the SDK, and then if we're dispatching both ways it's even worse
+        var value :Object = ObjectMarshaller.decode(data);
+        // TODO: see todo note above. :)
+        _entities.forEach(function (key :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).signalReceived(name, value);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
+            }
+        });
+    }
+
+    /**
+     * Called when a memory entry is added or updated in the room object.
+     */
+    public function dispatchMemoryChanged (ident :ItemIdent, key :String, data :ByteArray) :void
+    {
+        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
+        if (sprite != null) {
+            sprite.memoryChanged(key, ObjectMarshaller.decode(data));
+        } else {
+            log.info("Received memory update for unknown sprite [item=" + ident +
+                ", key=" + key + "].");
+        }
+    }
+
+    /**
+     * Called when a memory entry is added or updated in the room object.
+     */
+    public function dispatchRoomPropertyChanged (key :String, data :ByteArray) :void
+    {
+        // TODO: shite. We really need to decode the data for each and every sprite
+        // that gets the message, because they could destructively modify it.
+        // What would be cool is constructing events with the data array that only
+        // gets decoded via a getter when the usercode actually reads the value...
+        // The problem with that is that we'd probably need to increment the version number
+        // of the by-name method in the SDK, and then if we're dispatching both ways it's even worse
+        var value :Object = ObjectMarshaller.decode(data);
+        // TODO: see todo note above. :)
+        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).roomPropertyChanged(key, value);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+            }
+        });
+    }
+
+    /**
      * Once the background image is finished, we want to load all the rest of the sprites.
      */
     protected function backgroundFinishedLoading () :void
@@ -589,70 +663,6 @@ public class RoomView extends Sprite
         // and finally, we want ensure it can happen on the next frame if
         // our avatar doesn't move
         _suppressAutoScroll = false;
-    }
-
-    /**
-     * Called when a sprite message arrives on the room object.
-     */
-    protected function dispatchSpriteMessage (
-        item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
-    {
-        var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
-        if (sprite != null) {
-            sprite.messageReceived(name, ObjectMarshaller.decode(arg), isAction);
-        } else {
-            log.info("Received sprite message for unknown sprite [item=" + item +
-                     ", name=" + name + "].");
-        }
-    }
-
-    /**
-     * Called when a sprite signal arrives on the room object; iterates over the
-     * entities present and notify them.
-     */
-    protected function dispatchSpriteSignal (name :String, arg :ByteArray) :void
-    {
-        var value :Object = ObjectMarshaller.decode(arg);
-        _entities.forEach(function (key :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).signalReceived(name, value);
-            } else {
-                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
-            }
-        });
-    }
-
-    /**
-     * Called when a memory entry is added or updated in the room object.
-     */
-    protected function dispatchMemoryChanged (entry :EntityMemoryEntry) :void
-    {
-        var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
-        if (sprite != null) {
-            sprite.memoryChanged(entry.key, ObjectMarshaller.decode(entry.value));
-        } else {
-            log.info("Received memory update for unknown sprite [item=" + entry.item +
-                     ", key=" + entry.key + "].");
-        }
-    }
-
-    /**
-     * Called when a memory entry is added or updated in the room object.
-     */
-    protected function dispatchRoomPropertyChanged (entry :RoomPropertyEntry) :void
-    {
-        dispatchRoomPropertyChanged2(entry.key, ObjectMarshaller.decode(entry.value));
-    }
-
-    protected function dispatchRoomPropertyChanged2 (key :String, value :Object) :void
-    {
-        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).roomPropertyChanged(key, value);
-            } else {
-                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
-            }
-        });
     }
 
     /**

@@ -20,10 +20,5 @@ public class StudioPetInfo extends PetInfo
             _ident = new ItemIdent(Item.OCCUPANT, RoomStudioView.PET_ID);
         }
     }
-
-    public function setState (state :String) :void
-    {
-        _state = state;
-    }
 }
 }

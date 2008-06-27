@@ -10,10 +10,13 @@ import flash.events.MouseEvent;
 import flash.system.Security;
 
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.HashMap;
 import com.threerings.util.MethodQueue;
+import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.util.CrowdContext;
@@ -28,6 +31,7 @@ import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -66,6 +70,47 @@ public class RoomStudioController extends RoomController
         return true;
     }
 
+    // documentation inherited
+    override public function getMemories (ident :ItemIdent) :Object
+    {
+        var mems :Object = {};
+        var dict :Dictionary = _memories.get(ident) as Dictionary;
+        for (var key :String in dict) {
+            mems[key] = ObjectMarshaller.decode(dict[key]);
+        }
+        return mems;
+    }
+
+    // documentation inherited
+    override public function lookupMemory (ident :ItemIdent, key :String) :Object
+    {
+        var dict :Dictionary = _memories.get(ident) as Dictionary;
+        return (dict == null) ? null : ObjectMarshaller.decode(dict[key]);
+    }
+
+    // documentation inherited
+    override public function getRoomProperties () :Object
+    {
+        var props :Object = {};
+        for (var key :String in _properties) {
+            props[key] = ObjectMarshaller.decode(_properties[key]);
+        }
+        return props;
+    }
+
+    // documentation inherited
+    override public function getRoomProperty (key :String) :Object
+    {
+        return ObjectMarshaller.decode(_properties[key]);
+    }
+
+    // documentation inherited
+    override public function canManageRoom () :Boolean
+    {
+        // Pretend we have rights to this room
+        return true;
+    }
+
     // handle control requests
     override public function requestControl (ident :ItemIdent) :void
     {
@@ -81,18 +126,6 @@ public class RoomStudioController extends RoomController
             menuItems.push({ label: Msgs.GENERAL.get("l.noAvActions"), enabled: false });
         }
         popActorMenu(avatar, menuItems);
-    }
-
-    // documentation inherited
-    override public function doAvatarAction (action :String) :void
-    {
-        _studioView.doAvatarAction(action);
-    }
-
-    // documentation inherited
-    override public function doAvatarState (state :String) :void
-    {
-        _studioView.setAvatarState(state);
     }
 
     // documentation inherited
@@ -141,22 +174,72 @@ public class RoomStudioController extends RoomController
         _studioView.setBackground(model.decor);
     }
 
+    // documentation inherited
     override protected function requestAvatarMove (newLoc :MsoyLocation) :void
     {
         _studioView.doAvatarMove(newLoc);
     }
 
+    // documentation inherited
+    override protected function setActorState2 (
+        ident :ItemIdent, actorOid :int, state :String) :void
+    {
+        _studioView.setActorState(ident, state);
+    }
+
+    // documentation inherited
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
-        // TODO NOW
+        MethodQueue.callLater(_studioView.dispatchSpriteMessage, [ ident, name, data, isAction ]);
     }
 
+    // documentation inherited
     override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
     {
-        // TODO NOW
+        MethodQueue.callLater(_studioView.dispatchSpriteSignal, [ name, data ]);
+    }
+
+    // documentation inherited
+    override protected function sendPetChatMessage2 (msg :String, info :ActorInfo) :void
+    {
+        // TODO?
+    }
+
+    // documentation inherited
+    override protected function updateMemory2 (ident :ItemIdent, key :String, data :ByteArray) :void
+    {
+        var dict :Dictionary = _memories.get(ident) as Dictionary;
+        if (dict == null) {
+            dict = new Dictionary();
+            _memories.put(ident, dict);
+        }
+        if (data == null) {
+            delete dict[key];
+        } else {
+            dict[key] = data;
+        }
+
+        MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
+    }
+
+    override protected function setRoomProperty2 (key :String, data :ByteArray) :void
+    {
+        if (data == null) {
+            delete _properties[key];
+        } else {
+            _properties[key] = data;
+        }
+
+        MethodQueue.callLater(_studioView.dispatchRoomPropertyChanged, [ key, data ]);
     }
 
     protected var _studioView :RoomStudioView;
+
+    /** Maps ItemIdent -> (Dictionary[key] -> encoded value) */
+    protected var _memories :HashMap = new HashMap();
+
+    /** Maps key -> encoded value */
+    protected var _properties :Dictionary = new Dictionary();
 }
 }
