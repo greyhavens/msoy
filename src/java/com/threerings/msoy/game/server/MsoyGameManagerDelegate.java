@@ -234,7 +234,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         boolean haveNonZeroScore = false;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
-            int availFlow = getAwardableFlow(playerOids.length > 1, now, playerOids[ii]);
+            int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
             haveNonZeroScore = haveNonZeroScore || (scores[ii] > 0);
         }
@@ -304,14 +304,14 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player pl = new Player(winnerOids[ii], 1, getAwardableFlow(true, now, winnerOids[ii]));
+            Player pl = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
             pl.percentile = 49;
             players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player pl = new Player(loserOids[ii], 0, getAwardableFlow(true, now, loserOids[ii]));
+            Player pl = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
             pl.percentile = 49;
             players.put(loserOids[ii], pl);
         }
@@ -416,13 +416,12 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
 
         // update our statistics for this game (plays, duration, etc.)
-        final boolean isMP = isMultiPlayer();
         int totalMinutes = Math.round(_totalTrackedSeconds / 60f);
 
         // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
         int perPlayerDuration = _totalTrackedSeconds/_totalTrackedGames;
-        int avgDuration = Math.round(60 * getAverageGameDuration(isMP, perPlayerDuration));
+        int avgDuration = Math.round(60 * getAverageGameDuration(perPlayerDuration));
         int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
             log.info("Capping player minutes at 120% of average [game=" + where() +
@@ -453,7 +452,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
                 // note that this game was played
                 gameRepo.noteGamePlayed(
-                    gameId, isMP, _totalTrackedGames, playerMins, _totalAwardedFlow);
+                    gameId, isMultiplayer(), _totalTrackedGames, playerMins, _totalAwardedFlow);
                 // if it's time to recalc our payout factor, do that
                 if (newFlowToNextRecalc > 0) {
                     _newData = gameRepo.computeAndUpdatePayoutFactor(
@@ -735,7 +734,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     {
         // single player ratings are stored as -gameId, multi-player as gameId
         int gameId = Math.abs(super.getGameId());
-        return isMultiPlayer() ? gameId : -gameId;
+        return isMultiplayer() ? gameId : -gameId;
     }
 
     @Override
@@ -748,9 +747,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /**
      * Returns the average duration for this game in fractional minutes.
      */
-    protected float getAverageGameDuration (boolean multiplayer, int playerSeconds)
+    protected float getAverageGameDuration (int playerSeconds)
     {
-        int avgSeconds = multiplayer ?
+        int avgSeconds = isMultiplayer() ?
             _content.detail.avgMultiDuration : _content.detail.avgSingleDuration;
         // if we have average duration data for this game, use it
         if (avgSeconds > 0) {
@@ -761,30 +760,16 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
-    protected boolean isMultiPlayer ()
+    protected boolean isMultiplayer ()
     {
-        switch (_gmgr.getGameConfig().getMatchType()) {
-        case GameConfig.PARTY:
-            // all party games are multiplayer; we can't know when the game starts whether more
-            // than one player will show up so we must always load and save multiplayer ratings and
-            // percentile information
-            return true;
-
-        case GameConfig.SEATED_CONTINUOUS:
-            // same goes for seated continuous where players can show up after the game starts
-            return true;
-
-        default:
-        case GameConfig.SEATED_GAME:
-            return (_gmgr.getGameConfig().players.length > 1);
-        }
+        return ((MsoyGameManager) _gmgr).isMultiplayer();
     }
 
     protected Percentiler getScoreDistribution ()
     {
         // we want the "rating" game id so we use getGameId()
         Percentiler tiler = MsoyGameServer.gameReg.getScoreDistribution(
-            getGameId(), isMultiPlayer());
+            getGameId(), isMultiplayer());
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
@@ -836,14 +821,14 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
-    protected int getAwardableFlow (boolean multiplayer, int now, int playerOid)
+    protected int getAwardableFlow (int now, int playerOid)
     {
         FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
             return 0;
         }
         int playerSecs = record.getPlayTime(now);
-        float avgMins = getAverageGameDuration(multiplayer, playerSecs);
+        float avgMins = getAverageGameDuration(playerSecs);
         float playerMins = playerSecs/60f;
 
 
