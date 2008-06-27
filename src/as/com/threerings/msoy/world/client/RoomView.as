@@ -32,11 +32,15 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.ChatPlaceView;
+import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -59,7 +63,7 @@ import com.threerings.msoy.world.data.RoomPropertyEntry;
  * The base room view. Should not contain any RoomObject or other network-specific crap.
  */
 public class RoomView extends Sprite
-    implements MsoyPlaceView, ChatPlaceView
+    implements MsoyPlaceView, ChatPlaceView, ContextMenuProvider
 {
     /** Logging facilities. */
     protected static const log :Log = Log.getLog(RoomView);
@@ -120,6 +124,25 @@ public class RoomView extends Sprite
     public function isShowing () :Boolean
     {
         return _showing;
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
+    {
+        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
+        if (hit === undefined) {
+            return;
+        } 
+        var sprite :MsoySprite = (hit as MsoySprite);
+        if (sprite == null) {
+            if (_bg == null) {
+                return;
+            } else { 
+                sprite = _bg;
+            }
+        } 
+
+        populateSpriteContextMenu(sprite, menuItems);
     }
 
     /**
@@ -518,6 +541,19 @@ public class RoomView extends Sprite
                 log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
             }
         });
+    }
+
+    /**
+     * Populate the context menu for a sprite.
+     */
+    protected function populateSpriteContextMenu (sprite :MsoySprite, menuItems :Array) :void
+    {
+        if (sprite.getItemIdent() != null && (sprite is FurniSprite) && _ctrl.canManageRoom() &&
+                (null != (sprite as FurniSprite).getCustomConfigPanel())) {
+            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+            menuItems.push(MenuUtil.createControllerMenuItem(
+                Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
+        }
     }
 
     /**

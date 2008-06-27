@@ -49,7 +49,6 @@ import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -84,8 +83,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.
  */
 public class RoomObjectView extends RoomView
-    implements ContextMenuProvider, SetListener, MessageListener,
-               ChatDisplay, ChatInfoProvider
+    implements SetListener, MessageListener, ChatDisplay, ChatInfoProvider
 {
     /**
      * Create a roomview.
@@ -273,46 +271,6 @@ public class RoomObjectView extends RoomView
         return _occupants.values().filter(function (o :*, i :int, a :Array) :Boolean {
             return (o is PetSprite);
         });
-    }
-    
-    // from ContextMenuProvider
-    public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
-    {
-        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
-        if (hit === undefined) {
-            return;
-        }
-        var sprite :MsoySprite = (hit as MsoySprite);
-        if (sprite == null) {
-            if (_bg == null) {
-                return;
-            } else {
-                sprite = _bg;
-            }
-        }
-
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident != null) {
-            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                                   Msgs.GENERAL.get("b.view_item", kind),
-                                   MsoyController.VIEW_ITEM, ident));
-            }
-
-            if (sprite.isBlockable()) {
-                var isBlocked :Boolean = sprite.isBlocked();
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked, ctx));
-            }
-
-            if ((sprite is FurniSprite) && _octrl.canManageRoom() &&
-                    (null != (sprite as FurniSprite).getCustomConfigPanel())) {
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
-            }
-        }
     }
 
     // from interface SetListener
@@ -534,6 +492,30 @@ public class RoomObjectView extends RoomView
         super.dispatchRoomPropertyChanged(key, data);
         // TODO: Fuck me, I wish we could not decode unless there is a backend..
         callAVRGCode("roomPropertyChanged_v1", key, ObjectMarshaller.decode(data));
+    }
+ 
+    // documentation inherited
+    override protected function populateSpriteContextMenu (
+        sprite :MsoySprite, menuItems :Array) :void
+    {
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident != null) {
+            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+            if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                                   Msgs.GENERAL.get("b.view_item", kind),
+                                   MsoyController.VIEW_ITEM, ident));
+            }
+
+            if (sprite.isBlockable()) {
+                var isBlocked :Boolean = sprite.isBlocked();
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
+                    sprite.toggleBlocked, _ctx));
+            }
+        }
+
+        super.populateSpriteContextMenu(sprite, menuItems);
     }
 
     /** Return an array of the MOB sprites associated with the identified game. */
