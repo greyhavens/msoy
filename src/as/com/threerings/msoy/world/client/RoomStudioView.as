@@ -138,8 +138,9 @@ public class RoomStudioView extends RoomView
         var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
         info.setScale(scale);
         _avatar = new MemberSprite(_ctx, info);
-        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
+        _avatar.setEntering(new MsoyLocation(.1, 0, .25));
+        _avatar.roomScaleUpdated();
         setCenterSprite(_avatar);
         _testingSprite = _avatar;
 

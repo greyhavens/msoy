@@ -20,6 +20,7 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyParameters;
+import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.UberClientModes;
@@ -53,6 +54,8 @@ public class RoomStudioController extends RoomController
 
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         setControlledPanel(_studioView);
+
+        initScene();
     }
 
     // allow other actor moves (pet)
@@ -98,6 +101,16 @@ public class RoomStudioController extends RoomController
     {
         _studioView = new RoomStudioView(ctx as StudioContext, this);
         _roomView = _studioView; // also copy it to that
+        return _studioView;
+    }
+
+    /**
+     * Initialize the scene.
+     */
+    protected function initScene () :void
+    {
+        FurniSprite.setLoadingWatcher(
+            new PlaceLoadingDisplay(_wdctx.getTopPanel().getPlaceContainer()));
 
         // and.. initialize it!
         var model :MsoySceneModel = new MsoySceneModel();
@@ -127,8 +140,6 @@ public class RoomStudioController extends RoomController
         _scene = new MsoyScene(model, _config);
         _studioView.setScene(_scene);
         _studioView.setBackground(model.decor);
-
-        return _studioView;
     }
 
     override protected function requestAvatarMove (newLoc :MsoyLocation) :void

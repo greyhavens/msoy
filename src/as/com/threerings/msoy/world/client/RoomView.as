@@ -750,7 +750,7 @@ public class RoomView extends Sprite
 
     protected function addAllOccupants () :void
     {
-        // TODO
+        // see subclasses
     }
 
     protected function removeAllOccupants () :void
