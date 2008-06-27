@@ -28,6 +28,7 @@ import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -85,6 +86,14 @@ public class RoomStudioView extends RoomView
     override public function getMyAvatar () :MemberSprite
     {
         return _avatar;
+    }
+
+    public function doEntityMove (ident :ItemIdent, newLoc :MsoyLocation) :void
+    {
+        var sprite :OccupantSprite = _entities.get(ident) as OccupantSprite;
+        if (sprite != null) {
+            sprite.moveTo(newLoc, _scene);
+        }
     }
 
     public function doAvatarMove (newLoc :MsoyLocation) :void

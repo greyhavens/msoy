@@ -58,12 +58,11 @@ public class RoomStudioController extends RoomController
         initScene();
     }
 
-    // allow other actor moves (pet)
+    // allow other actor moves
     override public function requestMove (ident :ItemIdent, newLoc :MsoyLocation) :Boolean
     {
         // move it one frame later
-        MethodQueue.callLater(_studioView.getPet().moveTo, [ newLoc, _scene ]);
-        //_studioView.getPet().moveTo(newLoc, _scene);
+        MethodQueue.callLater(_studioView.doEntityMove, [ ident, newLoc ]);
         return true;
     }
 
