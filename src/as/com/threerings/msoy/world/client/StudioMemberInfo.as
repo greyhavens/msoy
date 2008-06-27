@@ -19,7 +19,7 @@ public class StudioMemberInfo extends MemberInfo
     {
         if (ctx != null) {
             username = ctx.getMyName();
-            _ident = new ItemIdent(Item.OCCUPANT, 0);
+            _ident = new ItemIdent(Item.OCCUPANT, RoomStudioView.MEMBER_ID);
             _scale = 1;
             _media = new StudioMediaDesc(avatarUrl);
         }

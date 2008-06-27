@@ -16,7 +16,7 @@ public class StudioContext extends WorldContext
 
         var params :Object = MsoyParameters.get();
         _name = new MemberName(
-            String(params["username"] || params["name"] || "Fester Bestertester"), 0);
+            String(params["username"] || params["name"] || "Fester Bestertester"), int.MAX_VALUE);
         _w = Number(params["width"]);
         _h = Number(params["height"]);
     }

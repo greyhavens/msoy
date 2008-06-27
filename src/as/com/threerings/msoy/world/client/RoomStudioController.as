@@ -9,6 +9,8 @@ import flash.events.MouseEvent;
 
 import flash.system.Security;
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.util.MethodQueue;
@@ -19,6 +21,7 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.UberClient;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -64,7 +67,7 @@ public class RoomStudioController extends RoomController
     // handle control requests
     override public function requestControl (ident :ItemIdent) :void
     {
-        MethodQueue.callLater(_studioView.getPet().gotControl);
+        MethodQueue.callLater(_studioView.dispatchEntityGotControl, [ ident ]);
     }
 
     // documentation inherited
@@ -131,6 +134,17 @@ public class RoomStudioController extends RoomController
     override protected function requestAvatarMove (newLoc :MsoyLocation) :void
     {
         _studioView.doAvatarMove(newLoc);
+    }
+
+    override protected function sendSpriteMessage2 (
+        ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
+    {
+        // TODO NOW
+    }
+
+    override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    {
+        // TODO NOW
     }
 
     protected var _studioView :RoomStudioView;

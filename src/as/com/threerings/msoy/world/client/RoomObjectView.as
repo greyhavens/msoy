@@ -130,40 +130,6 @@ public class RoomObjectView extends RoomView
         updateEditingOverlay();
     }
 
-    override public function getMemories (ident :ItemIdent) :Object
-    {
-        var mems :Object = {};
-        for each (var entry :EntityMemoryEntry in _roomObj.memories.toArray()) {
-            // filter out memories with null as the value, those will not be persisted
-            if (entry.value != null && entry.item.equals(ident)) {
-                mems[entry.key] = ObjectMarshaller.decode(entry.value);
-            }
-        }
-        return mems;
-    }
-
-    override public function lookupMemory (ident :ItemIdent, key :String) :Object
-    {
-        var mkey :EntityMemoryEntry = new EntityMemoryEntry(ident, key, null);
-        var entry :EntityMemoryEntry = _roomObj.memories.get(mkey) as EntityMemoryEntry;
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    override public function getRoomProperties () :Object
-    {
-        var props :Object = {};
-        for each (var entry :RoomPropertyEntry in _roomObj.roomProperties.toArray()) {
-            props[entry.key] = ObjectMarshaller.decode(entry.value);
-        }
-        return props;
-    }
-
-    override public function getRoomProperty (key :String) :Object
-    {
-        var entry :RoomPropertyEntry = _roomObj.roomProperties.get(key) as RoomPropertyEntry;
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
     override public function moveFinished (sprite :OccupantSprite) :void
     {
         if (sprite.getOid() == _ctx.getMemberObject().getOid()) {

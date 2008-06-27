@@ -161,29 +161,20 @@ public class RoomObjectController extends RoomController
         _suppressNormalHovering = hovered;
     }
 
-    override public function getEntityInstanceId () :int
-    {
-        // every sprite uses our own memberId as the instanceid.
-        return _wdctx.getMemberObject().getMemberId();
-    }
-
     override public function getViewerName (instanceId :int = 0) :String
     {
-        if (instanceId == 0) {
-            // get our name
-            return _wdctx.getMemberObject().getVisibleName().toString();
-        }
-
-        // otherwise, locate the name in the OccupantInfos
-        for each (var obj :Object in _roomObj.occupantInfo.toArray()) {
-            if (obj is MemberInfo) {
+        var name :String = super.getViewerName(instanceId);
+        if (name == null) {
+            // look for the name in the OccupantInfos
+            for each (var obj :Object in _roomObj.occupantInfo.toArray()) {
                 var memInfo :MemberInfo = obj as MemberInfo;
-                if (memInfo.getMemberId() == instanceId) {
-                    return memInfo.username.toString();
+                if (memInfo != null && memInfo.getMemberId() == instanceId) {
+                    name = memInfo.username.toString();
+                    break;
                 }
             }
         }
-        return null;
+        return name;
     }
 
     /**
@@ -191,11 +182,6 @@ public class RoomObjectController extends RoomController
      */
     override public function requestControl (ident :ItemIdent) :void
     {
-        if (_roomObj == null) {
-            log.info("Cannot request entity control, no room object [ident=" + ident + "].");
-            return;
-        }
-
         var result :Object = hasEntityControl(ident);
         // side-effect of calling hasEntityControl: the sprite will be notified (possibly again)
         // that it has control if it does
@@ -203,42 +189,6 @@ public class RoomObjectController extends RoomController
             // only if nobody currently has control do we issue the request
             _roomObj.roomService.requestControl(_wdctx.getClient(), ident);
         }
-    }
-
-    /**
-     * Handles a request by an item in our room to send an "action" (requires control) or a
-     * "message" (doesn't require control).
-     */
-    override public function sendSpriteMessage (
-        ident :ItemIdent, name :String, arg :Object, isAction :Boolean) :void
-    {
-        if (isAction && !checkCanRequest(ident, "triggerAction")) {
-            log.info("Dropping message for lack of control [ident=" + ident +
-                     ", name=" + name + "].");
-            return;
-        }
-
-        // send the request off to the server
-        log.info("Sending sprite message [ident=" + ident + ", name=" + name + "].");
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
-        _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
-    }
-
-    /**
-     * Handles a request by an item in our room to send a "signal" to all the instances of
-     * all the entities in the room. This does not require control.
-     */
-    override public function sendSpriteSignal (name :String, arg :Object) :void
-    {
-        if (_roomObj == null) {
-            log.info("Dropping sprite signal, not in room [name=" + name + ", arg=" + arg + "].");
-            return;
-        }
-
-        // send the request off to the server
-        log.info("Sending sprite signal [name=" + name + "].");
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
-        _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
     }
 
     /**
@@ -624,6 +574,40 @@ public class RoomObjectController extends RoomController
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
         svc.orderPet(_wdctx.getClient(), petId, command,
             new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
+    }
+
+    override public function getMemories (ident :ItemIdent) :Object
+    {
+        var mems :Object = {};
+        for each (var entry :EntityMemoryEntry in _roomObj.memories.toArray()) {
+            // filter out memories with null as the value, those will not be persisted
+            if (entry.value != null && entry.item.equals(ident)) {
+                mems[entry.key] = ObjectMarshaller.decode(entry.value);
+            }
+        }
+        return mems;
+    }
+
+    override public function lookupMemory (ident :ItemIdent, key :String) :Object
+    {
+        var mkey :EntityMemoryEntry = new EntityMemoryEntry(ident, key, null);
+        var entry :EntityMemoryEntry = _roomObj.memories.get(mkey) as EntityMemoryEntry;
+        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
+    }
+
+    override public function getRoomProperties () :Object
+    {
+        var props :Object = {};
+        for each (var entry :RoomPropertyEntry in _roomObj.roomProperties.toArray()) {
+            props[entry.key] = ObjectMarshaller.decode(entry.value);
+        }
+        return props;
+    }
+
+    override public function getRoomProperty (key :String) :Object
+    {
+        var entry :RoomPropertyEntry = _roomObj.roomProperties.get(key) as RoomPropertyEntry;
+        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
     override public function canManageRoom () : Boolean
@@ -1079,6 +1063,17 @@ public class RoomObjectController extends RoomController
         _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
     }
 
+    override protected function sendSpriteMessage2 (
+        ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
+    {
+        _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
+    }
+
+    override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    {
+        _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
+    }
+
     override protected function keyEvent (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.F6) {
@@ -1178,16 +1173,7 @@ public class RoomObjectController extends RoomController
             return false;
         }
 
-        // make sure we are in control of this entity (or that no one has control)
-        var result :Object = hasEntityControl(ident);
-        if (result == null || result == true) {
-            // it's ok if nobody has control
-            return true;
-        }
-
-        log.info("Dropping request as we are not controller [from=" + from +
-                 ", item=" + ident + "].");
-        return false;
+        return super.checkCanRequest(ident, from);
     }
 
     /**

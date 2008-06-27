@@ -674,8 +674,9 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function requestControl () :void
     {
-        if (_ident != null && parent is RoomView) {
-            (parent as RoomView).getRoomController().requestControl(_ident);
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null) {
+            ctrl.requestControl(_ident);
         }
     }
 
@@ -685,8 +686,9 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function sendMessage (name :String, arg :Object, isAction :Boolean) :void
     {
-        if (_ident != null && (parent is RoomView) && validateUserData(name, arg)) {
-            (parent as RoomView).getRoomController().sendSpriteMessage(_ident, name, arg, isAction);
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null && validateUserData(name, arg)) {
+            ctrl.sendSpriteMessage(_ident, name, arg, isAction);
         }
     }
 
@@ -696,8 +698,9 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function sendSignal (name :String, arg :Object) :void
     {
-        if ((parent is RoomView) && validateUserData(name, arg)) {
-            (parent as RoomView).getRoomController().sendSpriteSignal(name, arg);
+        var ctrl :RoomController = getController();
+        if (ctrl != null && validateUserData(name, arg)) {
+            ctrl.sendSpriteSignal(name, arg);
         }
     }
 
@@ -707,10 +710,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getInstanceId () :int
     {
-        if (parent is RoomView) {
-            return (parent as RoomView).getRoomController().getEntityInstanceId();
-        }
-        return 0; // not connected, not an instance
+        var ctrl :RoomController = getController();
+        return (ctrl != null) ? ctrl.getEntityInstanceId() : 0; // 0 == not connected, not instance
     }
 
     /**
@@ -719,10 +720,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getViewerName (instanceId :int) :String
     {
-        if (parent is RoomView) {
-            return (parent as RoomView).getRoomController().getViewerName(instanceId);
-        }
-        return null;
+        var ctrl :RoomController = getController();
+        return (ctrl != null) ? ctrl.getViewerName(instanceId) : null;
     }
 
     /**
@@ -731,10 +730,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function getMemories () :Object
     {
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).getMemories(_ident);
-        }
-        return {};
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) ? ctrl.getMemories(_ident) : {};
     }
 
     /**
@@ -743,10 +740,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function lookupMemory (key :String) :Object
     {
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).lookupMemory(_ident, key);
-        }
-        return null;
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) ? ctrl.lookupMemory(_ident, key) : null;
     }
 
     /**
@@ -754,10 +749,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function updateMemory (key :String, value: Object) :Boolean
     {
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).getRoomController().updateMemory(_ident, key, value);
-        }
-        return false;
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) && ctrl.updateMemory(_ident, key, value); // false if ctrl is null
     }
 
     /**
@@ -766,10 +759,8 @@ public class MsoySprite extends DataPackMediaContainer
     internal function getRoomProperties () :Object
     {
         // TODO: do you need an _ident (be an entity) to read properties?
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).getRoomProperties();
-        }
-        return {};
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) ? ctrl.getRoomProperties() : {};
     }
 
     /**
@@ -778,10 +769,8 @@ public class MsoySprite extends DataPackMediaContainer
     internal function getRoomProperty (key :String) :Object
     {
         // TODO: do you need an _ident (be an entity) to read properties?
-        if (_ident != null && parent is RoomView) {
-            return (parent as RoomView).getRoomProperty(key);
-        }
-        return null;
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) ? ctrl.getRoomProperty(key) : null;
     }
 
     /**
@@ -793,10 +782,8 @@ public class MsoySprite extends DataPackMediaContainer
         if (_ident == null || _ident.type == Item.AVATAR || _ident.type == Item.PET) {
             return false;
         }
-        if (parent is RoomView) {
-            return (parent as RoomView).getRoomController().setRoomProperty(key, value);
-        }
-        return false;
+        var ctrl :RoomController = getController(true);
+        return (ctrl != null) && ctrl.setRoomProperty(key, value); // false if ctrl is null
     }
 
     /**
@@ -805,7 +792,20 @@ public class MsoySprite extends DataPackMediaContainer
      */
     internal function canManageRoom () :Boolean
     {
-        return (parent as RoomView).getRoomController().canManageRoom();
+        var ctrl :RoomController = getController();
+        return (ctrl != null) && ctrl.canManageRoom();
+    }
+
+    /**
+     * Convenience function to get the room controller, or null if we're disconnected.
+     */
+    protected function getController (requireIdent :Boolean = false) :RoomController
+    {
+        if (requireIdent && _ident == null) {
+            return null;
+        }
+        var room :RoomView = parent as RoomView;
+        return (room != null) ? room.getRoomController() : null;
     }
 
     /**
@@ -837,15 +837,13 @@ public class MsoySprite extends DataPackMediaContainer
      *
      * Note: name is taken as an Object, some methods accept an array from users and we verify
      * Stringliness too.
-     *
-     * TODO: memory too? (keys and values)
      */
     protected function validateUserData (name :Object, arg :Object) :Boolean
     {
         if (name != null && (!(name is String) || String(name).length > 64)) {
             return false;
         }
-        // TODO: validate the size of the arg
+        // NOTE: the size of the arg is validated elsewhere
 
         // looks OK!
         return true;

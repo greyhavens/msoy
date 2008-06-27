@@ -92,8 +92,8 @@ public /*abstract*/ class MsoyContext
      */
     public function getMyName () :MemberName
     {
-        return (_client.getClientObject() == null) ? null :
-            ((_client.getClientObject() as BodyObject).getVisibleName() as MemberName);
+        var body :BodyObject = _client.getClientObject() as BodyObject;
+        return (body == null) ? null : body.getVisibleName() as MemberName;
     }
 
     /**

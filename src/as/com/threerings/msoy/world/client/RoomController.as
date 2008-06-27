@@ -152,8 +152,8 @@ public class RoomController extends SceneController
      */
     public function getEntityInstanceId () :int
     {
-        // placeholder. See RoomObjectController
-        return 1;
+        // we use the memberId, which is valid (but negative) even if you're a guest
+        return _wdctx.getMyName().getMemberId();
     }
 
     /**
@@ -161,8 +161,44 @@ public class RoomController extends SceneController
      */
     public function getViewerName (instanceId :int = 0) :String
     {
-        // placeholder. See RoomObjectController
-        return "Viewer";
+        var name :MemberName = _wdctx.getMyName();
+        if (instanceId == 0 || instanceId == name.getMemberId()) {
+            return name.toString();
+        }
+        return null;
+        // see subclasses for more...
+    }
+
+    /**
+     * Get the specified item's room memories in a map.
+     */
+    public function getMemories (ident :ItemIdent) :Object
+    {
+        return {}; // see subclasses
+    }
+
+    /**
+     * Look up a particular memory key for the specified item.
+     */
+    public function lookupMemory (ident :ItemIdent, key :String) :Object
+    {
+        return null; // see subclasses
+    }
+
+    /**
+     * Get the non-persistent room properties in a map.
+     */
+    public function getRoomProperties () :Object
+    {
+        return {}; // see subclasses
+    }
+
+    /**
+     * Look up a particular non-persistent room property.
+     */
+    public function getRoomProperty (key :String) :Object
+    {
+        return null; // see subclasses
     }
 
     /**
@@ -188,7 +224,15 @@ public class RoomController extends SceneController
     public function sendSpriteMessage (
         ident :ItemIdent, name :String, arg :Object, isAction :Boolean) :void
     {
-        // TODO
+        if (isAction && !checkCanRequest(ident, "triggerAction")) {
+            log.info("Dropping message for lack of control [ident=" + ident +
+                     ", name=" + name + "].");
+            return;
+        }   
+
+        // send the request off to the server
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
+        sendSpriteMessage2(ident, name, data, isAction);
     }
 
     /**
@@ -197,7 +241,8 @@ public class RoomController extends SceneController
      */
     public function sendSpriteSignal (name :String, arg :Object) :void
     {
-        // TODO
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
+        sendSpriteSignal2(name, data);
     }
 
     /**
@@ -630,6 +675,23 @@ public class RoomController extends SceneController
         // nada here, see subclasses
     }
 
+    /**
+     * Once a sprite message is validated and ready to go, it is sent here.
+     */
+    protected function sendSpriteMessage2 (
+        ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
+    {
+        // see subclasses
+    }
+
+    /**
+     * Once a sprite signal is validated and ready to go, it is sent here.
+     */
+    protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    {
+        // see subclasses
+    }
+
     protected function keyEvent (event :KeyboardEvent) :void
     {
         try {
@@ -700,8 +762,16 @@ public class RoomController extends SceneController
      */
     protected function checkCanRequest (ident :ItemIdent, from :String) :Boolean
     {
-        // TODO?
-        return true;
+        // make sure we are in control of this entity (or that no one has control)
+        var result :Object = hasEntityControl(ident);
+        if (result == null || result == true) {
+            // it's ok if nobody has control
+            return true;
+        }
+
+        log.info("Dropping request as we are not controller [from=" + from +
+                 ", item=" + ident + "].");
+        return false;
     }
 
     /**

@@ -17,7 +17,7 @@ public class StudioPetInfo extends PetInfo
         if (name != null) {
             username = new Name(name);
             _media = new StudioMediaDesc(petUrl);
-            _ident = new ItemIdent(Item.OCCUPANT, 0);
+            _ident = new ItemIdent(Item.OCCUPANT, RoomStudioView.PET_ID);
         }
     }
 

@@ -36,6 +36,10 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class RoomStudioView extends RoomView
 {
+    /** Used to construct ItemIdents for the things we're testing. */
+    public static const MEMBER_ID :int = 1;
+    public static const PET_ID :int = 2;
+
     public function RoomStudioView (ctx :StudioContext, ctrl :RoomStudioController)
     {
         super(ctx, ctrl);
