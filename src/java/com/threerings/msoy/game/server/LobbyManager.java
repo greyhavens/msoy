@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -16,8 +17,10 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.server.PlaceManagerDelegate;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
@@ -58,9 +61,12 @@ public class LobbyManager
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (RootDObjectManager omgr, MsoyEventLogger log, ShutdownObserver shutObs)
+    public LobbyManager (RootDObjectManager omgr, Invoker invoker, InvocationManager invmgr,
+                         PlaceRegistry plreg, MsoyEventLogger log, ShutdownObserver shutObs)
     {
         _omgr = omgr;
+        _invoker = invoker;
+        _plreg = plreg;
         _shutObs = shutObs;
         _eventLog = log;
 
@@ -68,7 +74,7 @@ public class LobbyManager
         _lobj.subscriberListener = this;
         _lobj.addListener(_tableWatcher);
 
-        _tableMgr = new MsoyTableManager(this);
+        _tableMgr = new MsoyTableManager(omgr, invmgr, plreg, this);
 
         // since we start empty, we need to immediately assume shutdown
         recheckShutdownInterval();
@@ -255,8 +261,8 @@ public class LobbyManager
     {
         List<PlaceManagerDelegate> delegates = Lists.newArrayList();
         delegates.add(new MsoyGameLoggingDelegate(_content, _eventLog));
-        delegates.add(new MsoyGameManagerDelegate(_content));
-        return (GameManager) MsoyGameServer.plreg.createPlace(config, delegates);
+        delegates.add(new MsoyGameManagerDelegate(_invoker, _content));
+        return (GameManager) _plreg.createPlace(config, delegates);
     }
 
     /**
@@ -309,6 +315,12 @@ public class LobbyManager
 
     /** Our distributed object manager. */
     protected RootDObjectManager _omgr;
+
+    /** Our database invoker thread. */
+    protected Invoker _invoker;
+
+    /** Used to create places. */
+    protected PlaceRegistry _plreg;
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;

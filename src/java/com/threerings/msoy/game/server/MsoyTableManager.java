@@ -9,9 +9,12 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
@@ -31,9 +34,10 @@ import com.threerings.msoy.data.all.MemberName;
 @EventThread
 public class MsoyTableManager extends TableManager
 {
-    public MsoyTableManager (LobbyManager lmgr)
+    public MsoyTableManager (RootDObjectManager omgr, InvocationManager invmgr, PlaceRegistry plreg,
+                             LobbyManager lmgr)
     {
-        super(lmgr.getLobbyObject());
+        super(omgr, invmgr, plreg, lmgr.getLobbyObject());
 
         _lmgr = lmgr;
         _lobj = lmgr.getLobbyObject();
@@ -113,7 +117,7 @@ public class MsoyTableManager extends TableManager
 
     protected OidListListener _playerUpdater = new OidListListener() {
         public void objectAdded (ObjectAddedEvent event) {
-            PlayerObject plobj = (PlayerObject) MsoyGameServer.omgr.getObject(event.getOid());
+            PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
             int memberId = plobj.getMemberId();
             if (!_membersPlaying.contains(memberId)) {
                 MsoyGameServer.worldClient.updatePlayer(memberId, _lobj.game);
@@ -122,7 +126,7 @@ public class MsoyTableManager extends TableManager
         }
 
         public void objectRemoved (ObjectRemovedEvent event) {
-            PlayerObject plobj = (PlayerObject) MsoyGameServer.omgr.getObject(event.getOid());
+            PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
             int memberId = plobj.getMemberId();
             MsoyGameServer.worldClient.updatePlayer(memberId, null);
             _membersPlaying.remove(memberId);

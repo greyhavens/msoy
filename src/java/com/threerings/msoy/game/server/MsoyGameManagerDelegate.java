@@ -74,8 +74,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public MsoyGameManagerDelegate (GameContent content)
+    public MsoyGameManagerDelegate (Invoker invoker, GameContent content)
     {
+        super(invoker);
         // keep our game content around for later
         _content = content;
     }
