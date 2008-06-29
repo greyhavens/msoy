@@ -6,13 +6,16 @@ package com.threerings.msoy.server;
 import com.google.inject.Inject;
 import com.samskivert.util.Invoker;
 
-import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.BootstrapData;
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
+import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.whirled.server.WhirledClient;
 
@@ -25,6 +28,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -71,7 +75,7 @@ public class MsoyClient extends WhirledClient
         _memobj.metrics.idle.init(true);
         
         // let our various server entities know that this member logged on
-        MsoyServer.memberLoggedOn(_memobj);
+        _locator.memberLoggedOn(_memobj);
     }
 
     @Override // from PresentsClient
@@ -96,7 +100,7 @@ public class MsoyClient extends WhirledClient
         }
 
         // let our various server entities know that this member logged off
-        MsoyServer.memberLoggedOff(_memobj);
+        _locator.memberLoggedOff(_memobj);
         final int idleSeconds = _idleTracker.getIdleTime();
         final int activeSeconds = _connectTime - idleSeconds;
 
@@ -121,14 +125,14 @@ public class MsoyClient extends WhirledClient
         final MemberName name = _memobj.memberName;
         final StatSet stats = _memobj.stats;
         final int activeMins = Math.round(activeSeconds / 60f);
-        MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
+        _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
             public boolean invoke () {
                 try {
                     // write out any modified stats
                     Stat[] statArr = new Stat[stats.size()];
                     stats.toArray(statArr);
-                    MsoyServer.statRepo.writeModified(name.getMemberId(), statArr);
-                    MsoyServer.memberRepo.noteSessionEnded(
+                    _statRepo.writeModified(name.getMemberId(), statArr);
+                    _memberRepo.noteSessionEnded(
                         name.getMemberId(), activeMins, RuntimeConfig.server.humanityReassessment);
                 } catch (Exception e) {
                     log.warning("Failed to note ended session [member=" + name + "].", e);
@@ -189,10 +193,14 @@ public class MsoyClient extends WhirledClient
     /** Tracks the time this client spends being idle. */
     protected IdleTracker _idleTracker = new IdleTracker();
 
-    /** We generate events to this fellow. */
-    @Inject protected MsoyEventLogger _eventLog;
-
     /** Only valid in {@link #sessionDidEnd}, lets us know if the session is truly over or if the
      * member just went to another server. */
     protected boolean _sessionForwarded;
+
+    // dependent services
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MemberLocator _locator;
+    @Inject protected StatRepository _statRepo;
+    @Inject protected MemberRepository _memberRepo;
 }

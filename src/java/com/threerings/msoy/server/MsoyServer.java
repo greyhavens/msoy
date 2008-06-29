@@ -44,12 +44,12 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.server.BodyLocator;
 import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.spot.data.SpotCodes;
-import com.threerings.whirled.spot.server.SpotDispatcher;
-import com.threerings.whirled.spot.server.SpotProvider;
+import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
@@ -72,6 +72,7 @@ import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
+import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
@@ -98,6 +99,11 @@ public class MsoyServer extends MsoyBaseServer
             bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
             bind(PeerManager.class).to(MsoyPeerManager.class);
+            bind(SceneRepository.class).to(MsoySceneRepository.class);
+            bind(SceneRegistry.class).to(MsoySceneRegistry.class);
+            bind(SceneFactory.class).to(MsoySceneFactory.class);
+            bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
+            bind(BodyLocator.class).to(MemberLocator.class);
         }
     }
 
@@ -117,13 +123,13 @@ public class MsoyServer extends MsoyBaseServer
     public static MemberManager memberMan;
 
     /** Handles management of member's friends lists. */
-    public static FriendManager friendMan = new FriendManager();
+    public static FriendManager friendMan;
 
     /** Our runtime chat channel manager. */
-    public static ChatChannelManager channelMan = new ChatChannelManager();
+    public static ChatChannelManager channelMan;
 
     /** Our runtime support manager. */
-    public static MsoyUnderwireManager supportMan = new MsoyUnderwireManager();
+    public static MsoyUnderwireManager supportMan;
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
@@ -149,9 +155,6 @@ public class MsoyServer extends MsoyBaseServer
     /** The Msoy item manager. */
     public static ItemManager itemMan;
 
-    /** Provides spot-related services. */
-    public static SpotProvider spotProv;
-
     /** Our runtime swiftly editor manager. */
     public static SwiftlyManager swiftlyMan;
 
@@ -159,69 +162,10 @@ public class MsoyServer extends MsoyBaseServer
     public static MsoyGameRegistry gameReg;
 
     /** Handles our cuddly little pets. */
-    public static PetManager petMan = new PetManager();
+    public static PetManager petMan;
 
     /** Handles notifications to clients. */
-    public static NotificationManager notifyMan = new NotificationManager();
-
-    /**
-     * Returns the member object for the user identified by the given ID if they are online
-     * currently, null otherwise. This should only be called from the dobjmgr thread.
-     */
-    @EventThread
-    public static MemberObject lookupMember (int memberId)
-    {
-        requireDObjThread(omgr);
-        return _online.get(memberId);
-    }
-
-    /**
-     * Returns the member object for the user identified by the given name if they are online
-     * currently, null otherwise. This should only be called from the dobjmgr thread.
-     */
-    @EventThread
-    public static MemberObject lookupMember (MemberName name)
-    {
-        return lookupMember(name.getMemberId());
-    }
-
-    /**
-     * Returns an <i>unmodifiable</i> collection of members currently online.
-     * This should only be called from the dobjmgr thread.
-     */
-    @EventThread
-    public static Collection<MemberObject> getMembersOnline ()
-    {
-        requireDObjThread(omgr);
-        return Collections.unmodifiableCollection(_online.values());
-    }
-
-    /**
-     * Called when a member starts their session to associate the name with the member's
-     * distributed object.
-     */
-    @EventThread
-    public static void memberLoggedOn (MemberObject memobj)
-    {
-        _online.put(memobj.memberName.getMemberId(), memobj);
-        memberMan.memberLoggedOn(memobj);
-        friendMan.memberLoggedOn(memobj);
-
-        // update our members online count in the status object
-        adminMan.statObj.setMembersOnline(clmgr.getClientCount());
-    }
-
-    /**
-     * Called when a member ends their session to clear their name to member object mapping.
-     */
-    public static void memberLoggedOff (MemberObject memobj)
-    {
-        _online.remove(memobj.memberName.getMemberId());
-        friendMan.memberLoggedOff(memobj);
-
-        // update our members online count in the status object
-        adminMan.statObj.setMembersOnline(clmgr.getClientCount());
-    }
+    public static NotificationManager notifyMan;
 
     /**
      * Returns true if we are running in a World server.
@@ -280,7 +224,12 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan = _swiftlyMan;
         adminMan = _adminMan;
         itemMan = _itemMan;
+        channelMan = _channelMan;
         memberMan = _memberMan;
+        friendMan = _friendMan;
+        petMan = _petMan;
+        notifyMan = _notifyMan;
+        supportMan = _supportMan;
         sceneRepo = _sceneRepo;
         mailRepo = _mailRepo;
         groupRepo = _groupRepo;
@@ -303,12 +252,12 @@ public class MsoyServer extends MsoyBaseServer
         });
 
         // initialize the swiftly invoker
-        swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
+        swiftlyInvoker = new Invoker("swiftly_invoker", _omgr);
         swiftlyInvoker.setDaemon(true);
         swiftlyInvoker.start();
 
         // initialize the mail invoker
-        mailInvoker = new Invoker("mail_invoker", omgr);
+        mailInvoker = new Invoker("mail_invoker", _omgr);
         mailInvoker.setDaemon(true);
         mailInvoker.start();
 
@@ -326,24 +275,7 @@ public class MsoyServer extends MsoyBaseServer
     protected ConfigRegistry createConfigRegistry ()
         throws Exception
     {
-        return new PeeredDatabaseConfigRegistry(_perCtx, invoker, _peerMan);
-    }
-
-    @Override // from WhirledServer
-    protected SceneRegistry createSceneRegistry ()
-        throws Exception
-    {
-        return new MsoySceneRegistry(invmgr, _sceneRepo, _eventLog);
-    }
-
-    @Override // from CrowdServer
-    protected BodyLocator createBodyLocator ()
-    {
-        return new BodyLocator() {
-            public BodyObject get (Name visibleName) {
-                return _online.get(((MemberName) visibleName).getMemberId());
-            }
-        };
+        return new PeeredDatabaseConfigRegistry(_perCtx, _invoker, _peerMan);
     }
 
     @Override // from PresentsServer
@@ -360,22 +292,20 @@ public class MsoyServer extends MsoyBaseServer
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        _peerMan.init(_perCtx, invoker, ServerConfig.nodeName, ServerConfig.sharedSecret,
+        _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // intialize various services
-        spotProv = new SpotProvider(omgr, plreg, screg);
-        invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         _adminMan.init();
         _memberMan.init();
-        friendMan.init();
-        channelMan.init(invmgr);
+        _friendMan.init();
+        _channelMan.init(_invmgr);
         _jabberMan.init();
         _itemMan.init();
-        swiftlyMan.init();
-        petMan.init(invmgr);
-        gameReg.init(itemMan.getGameRepository());
-        supportMan.init(_perCtx);
+        swiftlyMan.init(_invmgr);
+        _petMan.init(injector);
+        _gameReg.init(itemMan.getGameRepository());
+        _supportMan.init(_perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -402,7 +332,7 @@ public class MsoyServer extends MsoyBaseServer
             new Interval() { // Note well: this interval does not run on the dobj thread
                 public void expired () {
                     // ...we simply post a LongRunnable to do the job
-                    omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
+                    _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
                         public void run () {
                             checkAutoRestart();
                         }
@@ -455,7 +385,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // if someone is online, give 'em two minutes, otherwise reboot immediately
         boolean playersOnline = false;
-        for (Iterator<ClientObject> iter = clmgr.enumerateClientObjects(); iter.hasNext(); ) {
+        for (Iterator<ClientObject> iter = _clmgr.enumerateClientObjects(); iter.hasNext(); ) {
             if (iter.next() instanceof MemberObject) {
                 playersOnline = true;
                 break;
@@ -488,8 +418,23 @@ public class MsoyServer extends MsoyBaseServer
     /** Our runtime member manager. */
     @Inject protected MemberManager _memberMan;
 
+    /** Handles management of member's friends lists. */
+    @Inject protected FriendManager _friendMan;
+
     /** Handles item-related services. */
     @Inject protected ItemManager _itemMan;
+
+    /** Handles chat channel-related services. */
+    @Inject protected ChatChannelManager _channelMan;
+
+    /** Handles our cuddly little pets. */
+    @Inject protected PetManager _petMan;
+
+    /** Handles notifications to clients. */
+    @Inject protected NotificationManager _notifyMan;
+
+    /** Our runtime support manager. */
+    @Inject protected MsoyUnderwireManager _supportMan;
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
@@ -517,9 +462,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** A policy server used on dev deployments. */
     protected IoAcceptor _policyServer;
-
-    /** A mapping from member name to member object for all online members. */
-    protected static HashIntMap<MemberObject> _online = new HashIntMap<MemberObject>();
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

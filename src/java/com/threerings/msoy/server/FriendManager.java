@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.EventThread;
@@ -22,7 +24,7 @@ import static com.threerings.msoy.Log.log;
  * Handles management of member's friends, including their online status and adding and removing
  * friends.
  */
-@EventThread
+@Singleton @EventThread
 public class FriendManager
     implements MsoyPeerManager.RemoteMemberObserver
 {
@@ -30,21 +32,21 @@ public class FriendManager
      * Called to report that a friendship request was accepted.
      */
     @AnyThread
-    public static void friendshipEstablished (MemberName acceptor, MemberName friend)
+    public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
         // add them to the friends list of both parties if/whereever they are online
-        MsoyServer.peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
-        MsoyServer.peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
+        _peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
+        _peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
     }
 
     /**
      * Called to report that a friendship was removed. May be called from any thread.
      */
-    public static void friendshipCleared (int removerId, int friendId)
+    public void friendshipCleared (int removerId, int friendId)
     {
         // remove them from the friends list of both parties, wherever they are online
-        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
-        MsoyServer.peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
+        _peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
+        _peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
     }
 
     /**
@@ -53,7 +55,7 @@ public class FriendManager
     public void init ()
     {
         // register to hear when members log on and off of remote peers
-        MsoyServer.peerMan.addRemoteMemberObserver(this);
+        _peerMan.addRemoteMemberObserver(this);
     }
 
     /**
@@ -70,7 +72,7 @@ public class FriendManager
         try {
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
-                if (MsoyServer.peerMan.locateClient(entry.name) != null) {
+                if (_peerMan.locateClient(entry.name) != null) {
                     memobj.updateFriends(new FriendEntry(entry.name, true, entry.photo));
                 }
                 registerFriendInterest(memobj, entry.name.getMemberId());
@@ -175,4 +177,6 @@ public class FriendManager
     /** A mapping from member id to the member objects of members on this server that are friends
      * of the member in question. */
     protected Multimap<Integer,MemberObject> _friendMap = new HashMultimap<Integer,MemberObject>();
+
+    @Inject protected MsoyPeerManager _peerMan;
 }

@@ -20,12 +20,14 @@ import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
@@ -158,7 +160,7 @@ public class MemberManager
     public void getHomeId (final byte ownerType, final int ownerId,
                            ResultListener<Integer> listener)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
+        _invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
             public Integer invokePersistResult () throws PersistenceException {
                 switch (ownerType) {
                 case MsoySceneModel.OWNER_TYPE_MEMBER:
@@ -301,7 +303,7 @@ public class MemberManager
         // if they want to clear their followers, do that
         if (memberId == 0) {
             for (MemberName follower : user.followers) {
-                MemberObject fmo = MsoyServer.lookupMember(follower.getMemberId());
+                MemberObject fmo = _locator.lookupMember(follower.getMemberId());
                 if (fmo != null) {
                     fmo.setFollowing(null);
                 }
@@ -312,7 +314,7 @@ public class MemberManager
         }
 
         // make sure the target member is online and in the same room as the requester
-        MemberObject target = MsoyServer.lookupMember(memberId);
+        MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !ObjectUtil.equals(user.location, target.location)) {
             throw new InvocationException("m.follow_not_in_room");
         }
@@ -346,7 +348,7 @@ public class MemberManager
         // if the caller is requesting to clear their follow, do so
         if (memberId == 0) {
             if (user.following != null) {
-                MemberObject followee = MsoyServer.lookupMember(user.following.getMemberId());
+                MemberObject followee = _locator.lookupMember(user.following.getMemberId());
                 if (followee != null) {
                     followee.removeFromFollowers(user.getMemberId());
                 }
@@ -357,7 +359,7 @@ public class MemberManager
         }
 
         // otherwise they're accepting a follow request, make sure it's still valid
-        MemberObject target = MsoyServer.lookupMember(memberId);
+        MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !target.followers.containsKey(user.getMemberId())) {
             throw new InvocationException("m.follow_invite_expired");
         }
@@ -422,7 +424,7 @@ public class MemberManager
         // TODO: verify entered string
 
         String uname = "setDisplayName(" + user.who() + ", " + name + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
@@ -439,7 +441,7 @@ public class MemberManager
         throws InvocationException
     {
         String uname = "getDisplayName(" + memberId + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 _displayName = String.valueOf(_memberRepo.loadMemberName(memberId));
             }
@@ -454,7 +456,7 @@ public class MemberManager
     public void getGroupName (ClientObject caller, final int groupId,
                               InvocationService.ResultListener listener)
     {
-        MsoyServer.invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
+        _invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
             public void invokePersistent () throws Exception {
                 GroupRecord rec = _groupRepo.loadGroup(groupId);
                 _groupName = (rec == null) ? "" : rec.name;
@@ -470,7 +472,7 @@ public class MemberManager
     public void acknowledgeWarning (ClientObject caller)
     {
         final MemberObject user = (MemberObject) caller;
-        MsoyServer.invoker.postUnit(new Invoker.Unit("acknowledgeWarning") {
+        _invoker.postUnit(new Invoker.Unit("acknowledgeWarning") {
             public boolean invoke () {
                 try {
                     _memberRepo.clearMemberWarning(user.getMemberId());
@@ -492,7 +494,7 @@ public class MemberManager
         ensureNotGuest(member);
 
         String uname = "setHomeSceneId(" + member.getMemberId() + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 int memberId = member.getMemberId();
                 SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
@@ -529,7 +531,7 @@ public class MemberManager
         throws InvocationException
     {
         String uname = "getHomeSceneId(" + groupId + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 _homeSceneId = MsoyServer.groupRepo.getHomeSceneId(groupId);
             }
@@ -553,7 +555,7 @@ public class MemberManager
      */
     public void grantFlow (final UserActionDetails info, final int amount)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
+        _invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
                 _flowRec = _memberRepo.getFlowRepository().grantFlow(info, amount);
             }
@@ -576,7 +578,7 @@ public class MemberManager
      */
     public void spendFlow (final UserActionDetails info, final int amount)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
+        _invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
                 _flowRec = _memberRepo.getFlowRepository().spendFlow(info, amount);
             }
@@ -598,7 +600,7 @@ public class MemberManager
      */
     public void logUserAction (final UserActionDetails info)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
+        _invoker.postUnit(new RepositoryUnit("takeAction") {
             public void invokePersist () throws PersistenceException {
                 // record that that took the action
                 _flowRec = _memberRepo.getFlowRepository().logUserAction(info);
@@ -650,7 +652,7 @@ public class MemberManager
             member.setLevel(level);
 
             final int newLevel = level;
-            MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
+            _invoker.postUnit(new RepositoryUnit("updateLevel") {
                 public void invokePersist () throws PersistenceException {
                     int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
@@ -678,9 +680,9 @@ public class MemberManager
      */
     public boolean bootMember (int memberId)
     {
-        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        MemberObject mobj = _locator.lookupMember(memberId);
         if (mobj != null) {
-            PresentsClient pclient = MsoyServer.clmgr.getClient(mobj.username);
+            PresentsClient pclient = _clmgr.getClient(mobj.username);
             if (pclient != null) {
                 pclient.endSession();
                 return true;
@@ -709,7 +711,7 @@ public class MemberManager
         final MemberObject user, final Avatar avatar, final float newScale,
         final InvocationService.ConfirmListener listener)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
+        _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
@@ -795,14 +797,23 @@ public class MemberManager
      * rest are calculated according to the equation in calculateLevelsForFlow() */
     protected int[] _levelForFlow;
 
+    /** Handles Presents client-related services. */
+    @Inject protected ClientManager _clmgr;
+
     /** Handles mail-related services. */
     @Inject protected MailManager _mailMan;
+
+    /** Used to look up member objects. */
+    @Inject protected MemberLocator _locator;
 
     /** Provides access to persistent member data. */
     @Inject protected MemberRepository _memberRepo;
 
     /** Provides access to persistent group data. */
     @Inject protected GroupRepository _groupRepo;
+
+    /** The invoker on which we do our database business. */
+    @Inject protected @MainInvoker Invoker _invoker;
 
     /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
