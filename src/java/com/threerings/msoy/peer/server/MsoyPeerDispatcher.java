@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link MsoyPeerProvider}.
  */
-public class MsoyPeerDispatcher extends InvocationDispatcher
+public class MsoyPeerDispatcher extends InvocationDispatcher<MsoyPeerMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class MsoyPeerDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public MsoyPeerMarshaller createMarshaller ()
     {
         return new MsoyPeerMarshaller();
     }

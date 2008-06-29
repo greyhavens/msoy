@@ -22,6 +22,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.ShutdownManager;
 
@@ -477,8 +478,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         client.getClientObject().addListener(new LocationTracker());
 
         // register our custom invocation service
-        _mnobj.setMsoyPeerService(
-            (MsoyPeerMarshaller)MsoyServer.invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
+        _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
     }
 
     @Override // from PeerManager
@@ -569,14 +569,16 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected MsoyNodeObject _mnobj;
 
     /** Our remote member observers. */
-    protected ObserverList<RemoteMemberObserver> _remobs =
-        new ObserverList<RemoteMemberObserver>(ObserverList.FAST_UNSAFE_NOTIFY);
+    protected ObserverList<RemoteMemberObserver> _remobs = ObserverList.newFastUnsafe();
 
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
 
     /** A list of participants in the member forwarding process. */
     protected List<MemberForwarder> _mforwarders = Lists.newArrayList();
+
+    /** Provides invocation services. */
+    @Inject protected InvocationManager _invmgr;
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;

@@ -14,7 +14,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PeerProjectProvider}.
  */
-public class PeerProjectDispatcher extends InvocationDispatcher
+public class PeerProjectDispatcher extends InvocationDispatcher<PeerProjectMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -26,7 +26,7 @@ public class PeerProjectDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public PeerProjectMarshaller createMarshaller ()
     {
         return new PeerProjectMarshaller();
     }

@@ -16,7 +16,7 @@ import com.threerings.util.Name;
 /**
  * Dispatches requests to the {@link PeerChatProvider}.
  */
-public class PeerChatDispatcher extends InvocationDispatcher
+public class PeerChatDispatcher extends InvocationDispatcher<PeerChatMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -28,7 +28,7 @@ public class PeerChatDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public PeerChatMarshaller createMarshaller ()
     {
         return new PeerChatMarshaller();
     }
