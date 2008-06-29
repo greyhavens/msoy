@@ -15,7 +15,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link ChatChannelProvider}.
  */
-public class ChatChannelDispatcher extends InvocationDispatcher
+public class ChatChannelDispatcher extends InvocationDispatcher<ChatChannelMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -27,7 +27,7 @@ public class ChatChannelDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public ChatChannelMarshaller createMarshaller ()
     {
         return new ChatChannelMarshaller();
     }

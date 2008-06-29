@@ -7,14 +7,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-
+import com.samskivert.util.Invoker;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.ClientManager;
@@ -26,10 +28,11 @@ import com.threerings.presents.util.PersistingUnit;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.whirled.server.SceneManager;
+import com.threerings.whirled.server.SceneRegistry;
+import com.threerings.whirled.server.persist.SceneRepository;
 
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.PeerChatMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerChatDispatcher;
 import com.threerings.msoy.peer.server.PeerChatProvider;
@@ -37,6 +40,7 @@ import com.threerings.msoy.peer.server.PeerChatProvider;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -45,7 +49,6 @@ import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
@@ -61,25 +64,17 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the server side of our chat channel services.
  */
-@EventThread
+@Singleton @EventThread
 public class ChatChannelManager
     implements ChatChannelProvider, PeerChatProvider
 {
-    /**
-     * Initializes this manager during server startup.
-     */
-    public void init (InvocationManager invmgr)
+    @Inject public ChatChannelManager (InvocationManager invmgr, ClientManager clmgr)
     {
-        // register our chat channel service
+        // register our global invocation service
         invmgr.registerDispatcher(new ChatChannelDispatcher(this), MsoyCodes.WORLD_GROUP);
 
-        // register and initialize our peer chat service
-        InvocationMarshaller marshaller = invmgr.registerDispatcher(new PeerChatDispatcher(this));
-        MsoyNodeObject me = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
-        me.setPeerChatService((PeerChatMarshaller)marshaller);
-
         // monitor player disconnects
-        MsoyServer.clmgr.addClientObserver(new ClientManager.ClientObserver() {
+        clmgr.addClientObserver(new ClientManager.ClientObserver() {
             public void clientSessionDidEnd (PresentsClient client) {
                 ClientObject cobj = client.getClientObject();
                 if (cobj instanceof MemberObject) {
@@ -91,6 +86,16 @@ public class ChatChannelManager
                 // no op. perhaps reinstate recently disconnected clients?
             }
         });
+    }
+
+    /**
+     * Initializes this manager during server startup.
+     */
+    public void init (InvocationManager invmgr)
+    {
+        // register and initialize our peer chat service
+        MsoyNodeObject me = (MsoyNodeObject)_peerMan.getNodeObject();
+        me.setPeerChatService(invmgr.registerDispatcher(new PeerChatDispatcher(this)));
     }
 
     // from interface ChatChannelProvider
@@ -111,9 +116,9 @@ public class ChatChannelManager
             }
 
             // else check that the group is public
-            MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
+            _invoker.postUnit(new PersistingUnit("joinChannel", listener) {
                 public void invokePersistent () throws PersistenceException {
-                    GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gName.getGroupId());
+                    GroupRecord gRec = _groupRepo.loadGroup(gName.getGroupId());
                     _policy = (gRec == null) ? 0 : gRec.policy;
                 }
                 public void handleSuccess () {
@@ -140,7 +145,7 @@ public class ChatChannelManager
             final int sceneId = ((RoomName) channel.ident).getSceneId();
             // in most cases, the channel and the scene will be hosted on the same server, so
             // we can just pull the scene out of the scene manager and ask it about permissions
-            RoomManager roomMgr = (RoomManager) MsoyServer.screg.getSceneManager(sceneId);
+            RoomManager roomMgr = (RoomManager)_sceneReg.getSceneManager(sceneId);
             if (roomMgr != null) {
                 String error = roomMgr.ratifyBodyEntry(member);
                 if (error != null) {
@@ -152,10 +157,9 @@ public class ChatChannelManager
                 // scene isn't resolved here, need to load up the MsoySceneModel and ask it
                 // TODO: if the channel is on a different server than the room, the user
                 // may now be circumventing a boot. This needs to be looked into.
-                MsoyServer.invoker.postUnit(new PersistingUnit("joinChannel", listener) {
+                _invoker.postUnit(new PersistingUnit("joinChannel", listener) {
                     public void invokePersistent () throws Exception {
-                        MsoySceneModel model =
-                            (MsoySceneModel) MsoyServer.sceneRepo.loadSceneModel(sceneId);
+                        MsoySceneModel model = (MsoySceneModel)_sceneRepo.loadSceneModel(sceneId);
                         if (model != null) {
                             _hasRights = member.canEnterScene(
                                 model.sceneId, model.ownerId, model.ownerType, model.accessControl);
@@ -372,7 +376,7 @@ public class ChatChannelManager
         }
 
         // we don't have the channel. is it already hosted on another server?
-        MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(channel);
+        MsoyNodeObject host = _peerMan.getChannelHost(channel);
         if (host != null) {
             log.info("Subscribing to another host peer: " + host.nodeName);
             SubscriptionWrapper ch = new SubscriptionWrapper(ChatChannelManager.this, channel);
@@ -395,7 +399,7 @@ public class ChatChannelManager
                 }
             }
         };
-        MsoyServer.peerMan.performWithLock(lock, createOp);
+        _peerMan.performWithLock(lock, createOp);
     }
 
     /**
@@ -473,4 +477,10 @@ public class ChatChannelManager
 
     /** Contains a mapping of all chat channels we know about, hosted or subscribed. */
     protected Map<ChatChannel, ChannelWrapper> _wrappers = Maps.newHashMap();
+
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected SceneRepository _sceneRepo;
+    @Inject protected SceneRegistry _sceneReg;
 }

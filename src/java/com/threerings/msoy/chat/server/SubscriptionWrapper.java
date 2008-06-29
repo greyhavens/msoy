@@ -60,7 +60,7 @@ public class SubscriptionWrapper extends ChannelWrapper
                 // instead of the service initialized by the host. (todo: move this out of dobj?)
                 SubscriptionWrapper superthis = SubscriptionWrapper.this;
                 SpeakDispatcher sd = new SpeakDispatcher(new SubscriptionSpeakHandler(superthis));
-                _ccobj.speakService = (SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd);
+                _ccobj.speakService = MsoyServer.invmgr.registerDispatcher(sd);
                 _ccobj.addListener(superthis);
                 // we're so done.
                 cccont.creationSucceeded(superthis);

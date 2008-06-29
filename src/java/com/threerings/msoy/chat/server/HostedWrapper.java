@@ -44,7 +44,7 @@ public class HostedWrapper extends ChannelWrapper
 
         // initialize speak service
         SpeakDispatcher sd = new SpeakDispatcher(new HostedSpeakHandler(this, _mgr));
-        _ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
+        _ccobj.setSpeakService(MsoyServer.invmgr.registerDispatcher(sd));
         _ccobj.addListener(this);
         
         cccont.creationSucceeded(this);

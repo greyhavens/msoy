@@ -14,7 +14,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link JabberProvider}.
  */
-public class JabberDispatcher extends InvocationDispatcher
+public class JabberDispatcher extends InvocationDispatcher<JabberMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -26,7 +26,7 @@ public class JabberDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public JabberMarshaller createMarshaller ()
     {
         return new JabberMarshaller();
     }
