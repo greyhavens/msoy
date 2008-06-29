@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
+import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
@@ -23,8 +24,8 @@ import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.data.ServerConfigObject;
@@ -62,7 +63,7 @@ public class MsoyAdminManager
                 // iterate over the list of members, adding up a total, as well as counting up
                 // subsets of active users and guest users
                 int total = 0, active = 0, guests = 0, viewers = 0;
-                for (MemberObject memobj : MsoyServer.getMembersOnline()) {
+                for (MemberObject memobj : _locator.getMembersOnline()) {
                     total++;
                     active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
                     if (memobj.isGuest()) {
@@ -145,7 +146,7 @@ public class MsoyAdminManager
         }
 
         protected void broadcast (String message) {
-            MsoyServer.chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true, false);
+            _chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true, false);
         }
 
         protected int getDayFrequency () {
@@ -183,6 +184,8 @@ public class MsoyAdminManager
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ConnectionManager _conmgr;
+    @Inject protected MemberLocator _locator;
+    @Inject protected ChatProvider _chatprov;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

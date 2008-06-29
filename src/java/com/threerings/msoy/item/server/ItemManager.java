@@ -1015,28 +1015,26 @@ public class ItemManager
                 final byte type = result.getType();
                 if (type == Item.DECOR || type == Item.AUDIO ||
                     result.used == Item.USED_AS_FURNITURE) {
-                    MsoyServer.screg.resolveScene(result.location,
-                        new SceneRegistry.ResolutionListener() {
-                            public void sceneWasResolved (SceneManager scmgr) {
-                                if (type == Item.DECOR) {
-                                    ((RoomManager)scmgr).reclaimDecor(user);
-                                } else if (type == Item.AUDIO) {
-                                    ((RoomManager)scmgr).reclaimAudio(user);
-                                } else {
-                                    ((RoomManager)scmgr).reclaimItem(item, user);
-                                }
-                                lner.requestProcessed();
+                    _sceneReg.resolveScene(result.location, new SceneRegistry.ResolutionListener() {
+                        public void sceneWasResolved (SceneManager scmgr) {
+                            if (type == Item.DECOR) {
+                                ((RoomManager)scmgr).reclaimDecor(user);
+                            } else if (type == Item.AUDIO) {
+                                ((RoomManager)scmgr).reclaimAudio(user);
+                            } else {
+                                ((RoomManager)scmgr).reclaimItem(item, user);
                             }
-                            public void sceneFailedToResolve (int sceneId, Exception reason) {
-                                log.warning("Scene failed to resolve. [id=" + sceneId +
-                                    "]", reason);
-                                lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
-                            }
-                        });
+                            lner.requestProcessed();
+                        }
+                        public void sceneFailedToResolve (int sceneId, Exception reason) {
+                            log.warning("Scene failed to resolve. [id=" + sceneId + "]", reason);
+                            lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                        }
+                    });
                 } else {
                     // TODO: avatar reclamation will be possible
                     log.warning("Item to be reclaimed is neither decor nor furni " +
-                        "[type=" + result.getType() + ", id=" + result.itemId + "]");
+                                "[type=" + result.getType() + ", id=" + result.itemId + "]");
                     lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                     return;
                 }
@@ -1234,6 +1232,9 @@ public class ItemManager
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
+
+    /** Our scene registry. */
+    @Inject protected SceneRegistry _sceneReg;
 
     // our various repositories
     @Inject protected AudioRepository _audioRepo;

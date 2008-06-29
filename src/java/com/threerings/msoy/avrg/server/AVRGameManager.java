@@ -11,6 +11,7 @@ import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
@@ -64,9 +65,10 @@ public class AVRGameManager
     /**
      * Creates a new {@link AVRGameManager} for the given game.
      */
-    public AVRGameManager (int gameId, AVRGameRepository repo)
+    public AVRGameManager (int gameId, Invoker invoker, AVRGameRepository repo)
     {
         _gameId = gameId;
+        _invoker = invoker;
         _repo = repo;
     }
 
@@ -97,10 +99,9 @@ public class AVRGameManager
         // listen for gameObj.playerOids removals
         gameObj.addListener(this);
 
-        gameObj.setAvrgService((AVRGameMarshaller) MsoyGameServer.invmgr.registerDispatcher(
-            new AVRGameDispatcher(this)));
-
         gameObj.startTransaction();
+        gameObj.setAvrgService(
+            MsoyGameServer.invmgr.registerDispatcher(new AVRGameDispatcher(this)));
         gameObj.setGameMedia(_content.game.gameMedia);
         try {
             for (GameStateRecord rec : stateRecords) {
@@ -135,7 +136,7 @@ public class AVRGameManager
         }
 
         final int totalMins = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
-        MsoyGameServer.invoker.postUnit(new WriteOnlyUnit("shutdown") {
+        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
             public void invokePersist () throws Exception {
                 for (GameStateRecord rec : recs) {
                     _repo.storeState(rec);
@@ -195,7 +196,7 @@ public class AVRGameManager
         }
 
         final int sceneId = ScenePlace.getSceneId(player);
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("startQuest(" + questId + ")", listener) {
+        _invoker.postUnit(new PersistingUnit("startQuest(" + questId + ")", listener) {
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.setQuestState(_gameId, player.getMemberId(), questId,
@@ -226,7 +227,7 @@ public class AVRGameManager
 
         final int sceneId = ScenePlace.getSceneId(player);
 
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("updateQuest", listener) {
+        _invoker.postUnit(new PersistingUnit("updateQuest", listener) {
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.setQuestState(_gameId, player.getMemberId(), questId, step,
@@ -311,7 +312,7 @@ public class AVRGameManager
             }
         }
 
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("completeQuest", listener) {
+        _invoker.postUnit(new PersistingUnit("completeQuest", listener) {
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
@@ -382,7 +383,7 @@ public class AVRGameManager
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("cancelQuest", listener) {
+        _invoker.postUnit(new PersistingUnit("cancelQuest", listener) {
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
@@ -590,7 +591,7 @@ public class AVRGameManager
         }
 
         // else flush them to the database
-        MsoyGameServer.invoker.postUnit(new WriteOnlyUnit("removePlayer(" + player + ")") {
+        _invoker.postUnit(new WriteOnlyUnit("removePlayer(" + player + ")") {
             public void invokePersist () throws Exception {
                 for (PlayerGameStateRecord rec : recs) {
                     _repo.storePlayerState(rec);
@@ -744,8 +745,8 @@ public class AVRGameManager
 
     protected AVRGameObject _gameObj;
 
+    protected Invoker _invoker;
     protected AVRGameRepository _repo;
-
     protected GameRepository _gameRepo = MsoyGameServer.gameReg.getGameRepository();
 
     protected IntMap<Player> _players = new HashIntMap<Player>();

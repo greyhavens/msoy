@@ -3,13 +3,16 @@
 
 package com.threerings.msoy.peer.server;
 
+import com.google.inject.Inject;
+
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocator;
+
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.MsoyServer;
 
 /**
  * An action to be invoked on every server on which a member is logged in. You must read {@link
@@ -31,7 +34,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     protected void execute ()
     {
-        MemberObject memobj = MsoyServer.lookupMember(_memberId);
+        MemberObject memobj = _locator.lookupMember(_memberId);
         if (memobj != null) {
             execute(memobj);
         } // if not, oh well, they went away
@@ -40,4 +43,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     protected abstract void execute (MemberObject memobj);
 
     protected int _memberId;
+
+    /** Used to look up member objects. */
+    @Inject protected MemberLocator _locator;
 }

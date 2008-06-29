@@ -7,6 +7,7 @@ import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.server.InvocationException;
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.server.SceneManager;
@@ -22,10 +23,10 @@ import com.threerings.msoy.world.data.MsoyPortal;
  */
 public class MsoySceneMoveHandler extends SceneMoveHandler
 {
-    public MsoySceneMoveHandler (BodyObject body, int sceneVer, MsoyLocation dest,
-                                 SceneService.SceneMoveListener listener)
+    public MsoySceneMoveHandler (LocationManager locman, BodyObject body, int sceneVer,
+                                 MsoyLocation dest, SceneService.SceneMoveListener listener)
     {
-        super(body, sceneVer, listener);
+        super(locman, body, sceneVer, listener);
         _dest = dest;
     }
 
