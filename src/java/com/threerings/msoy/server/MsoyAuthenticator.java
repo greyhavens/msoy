@@ -324,7 +324,7 @@ public class MsoyAuthenticator extends Authenticator
                 log.info("Refusing wrong version [creds=" + req.getCredentials() +
                          ", cvers=" + cvers + ", svers=" + svers + "].");
                 throw new ServiceException(
-                    (cvers.compareTo(svers) > 0) ? MsoyAuthCodes.NEWER_VERSION :
+                    (svers.compareTo(cvers) < 0) ? MsoyAuthCodes.NEWER_VERSION :
                     MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
             }
 
