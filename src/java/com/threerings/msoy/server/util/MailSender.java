@@ -94,7 +94,7 @@ public class MailSender
     @BlockingThread
     public static String sendEmail (String recip, String sender, String template, Parameters params)
     {
-        MsoyBaseServer.refuseDObjThread(); // avoid unhappy accidents
+        MsoyBaseServer.refuseDObjThread(MsoyBaseServer.omgr); // avoid unhappy accidents
 
         // skip emails to placeholder addresses
         if (isPlaceholderAddress(recip)) {
