@@ -4,12 +4,16 @@
 package com.threerings.msoy.world.server;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -18,18 +22,21 @@ import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneManager;
-import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.Portal;
+import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MsoyEventLogger;
+
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.PetObject;
@@ -40,16 +47,13 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles some custom Whirled scene traversal business.
  */
-public class MsoySceneRegistry extends SceneRegistry
+@Singleton
+public class MsoySceneRegistry extends SpotSceneRegistry
     implements MsoySceneProvider
 {
-    public MsoySceneRegistry (InvocationManager invmgr, SceneRepository screp,
-                              MsoyEventLogger eventLog)
+    @Inject public MsoySceneRegistry (InvocationManager invmgr)
     {
-        super(invmgr, screp, new MsoySceneFactory(), new MsoySceneFactory());
-        _eventLog = eventLog;
-
-        // register our extra scene service
+        super(invmgr);
         invmgr.registerDispatcher(new MsoySceneDispatcher(this), SceneCodes.WHIRLED_GROUP);
     }
 
@@ -61,9 +65,9 @@ public class MsoySceneRegistry extends SceneRegistry
         // publish to this member's feed that they updated their room
         final int memId = user.getMemberId();
         String uname = "publishRoomUpdate[id=" + memId + ", scid=" + scene.getId() + "]";
-        MsoyServer.invoker.postUnit(new RepositoryUnit(uname) {
+        _invoker.postUnit(new RepositoryUnit(uname) {
             public void invokePersist () throws PersistenceException {
-                MsoyServer.feedRepo.publishMemberMessage(
+                _feedRepo.publishMemberMessage(
                     memId, FeedMessageType.FRIEND_UPDATED_ROOM,
                     String.valueOf(scene.getId()) + "\t" + scene.getName());
             }
@@ -102,7 +106,7 @@ public class MsoySceneRegistry extends SceneRegistry
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
         if (memobj != null) {
             for (MemberName follower : Lists.newArrayList(memobj.followers)) {
-                MemberObject folobj = MsoyServer.lookupMember(follower.getMemberId());
+                MemberObject folobj = _locator.lookupMember(follower.getMemberId());
                 // if they've logged off or are no longer following us, remove them from our set
                 if (folobj == null || folobj.following == null ||
                     !folobj.following.equals(memobj.memberName)) {
@@ -116,12 +120,12 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // this fellow will handle the nitty gritty of our scene switch
         final MsoySceneMoveHandler handler =
-            new MsoySceneMoveHandler(mover, version, destLoc, listener) {
+            new MsoySceneMoveHandler(_locman, mover, version, destLoc, listener) {
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
                 super.effectSceneMove(scmgr);
                 // if we're a member and we have a pet following us, we need to move the pet
                 if (memobj != null) {
-                    PetObject petobj = MsoyServer.petMan.getPetObject(memobj.walkingId);
+                    PetObject petobj = _petMan.getPetObject(memobj.walkingId);
                     if (petobj != null) {
                         moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
                                new SceneMoveAdapter());
@@ -131,10 +135,10 @@ public class MsoySceneRegistry extends SceneRegistry
         };
 
         // now check to see if the destination scene is already hosted on a server
-        Tuple<String, HostedRoom> nodeInfo = MsoyServer.peerMan.getSceneHost(sceneId);
+        Tuple<String, HostedRoom> nodeInfo = _peerMan.getSceneHost(sceneId);
 
         // if it's hosted on this server, then send the client directly to the scene
-        if (nodeInfo != null && MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
+        if (nodeInfo != null && _peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
             log.info("Going directly to resolved local scene " + sceneId + ".");
             resolveScene(sceneId, handler);
             return;
@@ -162,10 +166,9 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // otherwise the scene is not resolved here nor there; so we claim the scene by acquiring a
         // distributed lock and then resolve it locally
-        MsoyServer.peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId),
-                                       new ResultListener<String>() {
+        _peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
-                if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
+                if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + sceneId + ".");
                     resolveScene(sceneId, handler);
                 } else if (nodeName != null) {
@@ -189,8 +192,8 @@ public class MsoySceneRegistry extends SceneRegistry
     protected void sendClientToNode (String nodeName, MemberObject memobj,
                                      SceneService.SceneMoveListener listener)
     {
-        String hostname = MsoyServer.peerMan.getPeerPublicHostName(nodeName);
-        int port = MsoyServer.peerMan.getPeerPort(nodeName);
+        String hostname = _peerMan.getPeerPublicHostName(nodeName);
+        int port = _peerMan.getPeerPort(nodeName);
         if (hostname == null || port == -1) {
             log.warning("Lost contact with peer during scene move [node=" + nodeName + "].");
             // freak out and let the user try again at which point we will hopefully have cleaned
@@ -203,8 +206,13 @@ public class MsoySceneRegistry extends SceneRegistry
         listener.moveRequiresServerSwitch(hostname, new int[] { port });
 
         // forward this client's member object to the node to which they will shortly connect
-        MsoyServer.peerMan.forwardMemberObject(nodeName, memobj);
+        _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
-    protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MemberLocator _locator;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PetManager _petMan;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected FeedRepository _feedRepo;
 }
