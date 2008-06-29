@@ -42,7 +42,7 @@ public class PopularPlacesSnapshot
     @EventThread
     public static PopularPlacesSnapshot takeSnapshot ()
     {
-        MsoyServer.requireDObjThread();
+        MsoyServer.requireDObjThread(MsoyServer.omgr);
         return new PopularPlacesSnapshot();
     }
 
