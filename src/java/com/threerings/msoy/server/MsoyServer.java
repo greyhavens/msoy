@@ -51,8 +51,6 @@ import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 
-import com.whirled.game.server.DictionaryManager;
-
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.chat.server.JabberManager;
@@ -173,7 +171,7 @@ public class MsoyServer extends MsoyBaseServer
     @EventThread
     public static MemberObject lookupMember (int memberId)
     {
-        requireDObjThread();
+        requireDObjThread(omgr);
         return _online.get(memberId);
     }
 
@@ -194,7 +192,7 @@ public class MsoyServer extends MsoyBaseServer
     @EventThread
     public static Collection<MemberObject> getMembersOnline ()
     {
-        requireDObjThread();
+        requireDObjThread(omgr);
         return Collections.unmodifiableCollection(_online.values());
     }
 
@@ -355,10 +353,10 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    protected void finishInit ()
+    protected void finishInit (Injector injector)
         throws Exception
     {
-        super.finishInit();
+        super.finishInit(injector);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
@@ -384,7 +382,6 @@ public class MsoyServer extends MsoyBaseServer
                 return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
-        DictionaryManager.init("data/dictionary");
 
         sceneRepo.init(itemMan.getDecorRepository());
 
