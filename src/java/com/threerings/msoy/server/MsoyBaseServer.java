@@ -28,6 +28,7 @@ import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
+import com.whirled.game.server.DictionaryManager;
 import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -93,14 +94,11 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
 
-    /** The container for our bureaus (server-side processes for user code). */
-    public static BureauRegistry breg;
-
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
      * {@link IllegalStateException} if it is not.
      */
-    public static void requireDObjThread ()
+    public static void requireDObjThread (PresentsDObjectMgr omgr)
     {
         if (!omgr.isDispatchThread()) {
             String errmsg = "This method must be called on the distributed object thread.";
@@ -112,7 +110,7 @@ public abstract class MsoyBaseServer extends WhirledServer
      * Ensures that the calling thread <em>is not</em> the distributed object event dispatch
      * thread, throwing an {@link IllegalStateException} if it is.
      */
-    public static void refuseDObjThread ()
+    public static void refuseDObjThread (PresentsDObjectMgr omgr)
     {
         if (omgr.isDispatchThread()) {
             String errmsg = "This method must not be called on the distributed object thread.";
@@ -121,7 +119,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     }
 
     @Override // from WhirledServer
-    public void init (Injector injector)
+    public void init (final Injector injector)
         throws Exception
     {
         // before doing anything else, let's ensure that we don't cache DNS queries forever -- this
@@ -143,23 +141,25 @@ public abstract class MsoyBaseServer extends WhirledServer
         super.init(injector);
 
         // set up our default object access controller
-        omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
+        _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create and set up our configuration registry and admin service
         confReg = createConfigRegistry();
-        AdminProvider.init(invmgr, confReg);
+        AdminProvider.init(_invmgr, confReg);
 
-        // create the bureau registry (subclasses will enable specific bureau types)
-        breg = new BureauRegistry(
-            "localhost:" + getListenPorts()[0], invmgr, omgr, invoker);
+        // initialize the bureau registry (subclasses will enable specific bureau types)
+        _bureauReg.init("localhost:" + getListenPorts()[0]);
+
+        // initialize our dictionary services
+        _dictMan.init("data/dictionary");
 
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
-        RuntimeConfig.init(omgr, confReg);
-        omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
+        RuntimeConfig.init(_omgr, confReg);
+        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
             public void run () {
                 try {
-                    finishInit();
+                    finishInit(injector);
                 } catch (Exception e) {
                     log.warning("Server initialization failed.", e);
                     System.exit(-1);
@@ -180,7 +180,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     /**
      * Called once our runtime configuration information is loaded and ready.
      */
-    protected void finishInit ()
+    protected void finishInit (Injector injector)
         throws Exception
     {
     }
@@ -210,6 +210,12 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Sends event information to an external log database. */
     @Inject protected MsoyEventLogger _eventLog;
+
+    /** The container for our bureaus (server-side processes for user code). */
+    @Inject protected BureauRegistry _bureauReg;
+
+    /** Handles dictionary services for games. */
+    @Inject protected DictionaryManager _dictMan;
 
     /** Contains information on our members. */
     @Inject protected MemberRepository _memberRepo;
