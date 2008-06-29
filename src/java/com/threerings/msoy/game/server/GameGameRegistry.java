@@ -19,6 +19,7 @@ import com.samskivert.util.Invoker;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -38,6 +39,8 @@ import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserActionDetails;
+
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -137,7 +140,7 @@ public class GameGameRegistry
 
         // add our "already resolved" marker and then start resolving
         plobj.addToGameContent(new GameContentOwnership(gameId, GameData.RESOLVED_MARKER, ""));
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
+        _invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
             public void invokePersist () throws Exception {
                 // TODO: load level and item pack ownership
                 _trophies = _trophyRepo.loadTrophyOwnership(gameId, plobj.getMemberId());
@@ -177,7 +180,7 @@ public class GameGameRegistry
         // is this a lobbied game?
         final LobbyManager lmgr = _lobbies.get(gameId);
         if (lmgr != null) {
-            MsoyGameServer.invoker.postUnit(new RepositoryUnit("reloadLobby") {
+            _invoker.postUnit(new RepositoryUnit("reloadLobby") {
                 public void invokePersist () throws PersistenceException {
                     // if so, recompile the game content from all its various sources
                     _content = assembleGameContent(gameId);
@@ -216,7 +219,7 @@ public class GameGameRegistry
         // else is it an AVRG?
         final AVRGameManager amgr = _avrgManagers.get(gameId);
         if (amgr != null) {
-            MsoyGameServer.invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
+            _invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
                 public void invokePersist () throws Exception {
                     if (gameId == Game.TUTORIAL_GAME_ID) {
                         log.warning("Asked to reload the tutorial. That makes no sense.");
@@ -268,18 +271,18 @@ public class GameGameRegistry
         // fill in the description so that we can report that in the award email
         trec.description = description;
 
-        MsoyGameServer.invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
+        _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             public void invokePersistent () throws PersistenceException {
                 // store the trophy in the database
                 _trophyRepo.storeTrophy(trophy);
                 // publish the trophy earning event to the member's feed
-                MsoyGameServer.feedRepo.publishMemberMessage(
+                _feedRepo.publishMemberMessage(
                     trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
                     trophy.name + "\t" + trophy.gameId +
                     "\t" + MediaDesc.mdToString(trec.trophyMedia));
             }
             public void handleSuccess () {
-                MsoyGameServer.worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
+                _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
                 _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
                 ((InvocationService.ResultListener)_listener).requestProcessed(trec);
             }
@@ -324,10 +327,10 @@ public class GameGameRegistry
         _loadingAVRGames.put(gameId, list = new ResultListenerList());
         list.add(joinListener);
 
-        final AVRGameManager fmgr = new AVRGameManager(gameId, _avrgRepo);
+        final AVRGameManager fmgr = new AVRGameManager(gameId, _invoker, _avrgRepo);
         final AVRGameObject gameObj = fmgr.createGameObject();
 
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("activateAVRGame") {
+        _invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
                     _content = new GameContent();
@@ -406,7 +409,7 @@ public class GameGameRegistry
         AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             mgr.removePlayer(player);
-            MsoyGameServer.worldClient.leaveAVRGame(playerId);
+            _worldClient.leaveAVRGame(playerId);
 
         } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
@@ -439,7 +442,7 @@ public class GameGameRegistry
         _loadingLobbies.put(gameId, list = new ResultListenerList());
         list.add(listener);
 
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("loadLobby") {
+        _invoker.postUnit(new RepositoryUnit("loadLobby") {
             public void invokePersist () throws PersistenceException {
                 _content = assembleGameContent(gameId);
                 // load up the score distribution information for this game as well
@@ -454,7 +457,7 @@ public class GameGameRegistry
                 }
 
                 LobbyManager lmgr = new LobbyManager(
-                    _omgr, MsoyGameServer.invoker, _invmgr, _plreg, _eventLog, GameGameRegistry.this);
+                    _omgr, _invoker, _invmgr, _plreg, _eventLog, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
                 _lobbies.put(gameId, lmgr);
 
@@ -481,7 +484,7 @@ public class GameGameRegistry
 
                 // clear out the hosting record that our world server assigned to us when it sent
                 // this client our way to resolve this game
-                MsoyGameServer.worldClient.stoppedHostingGame(gameId);
+                _worldClient.stoppedHostingGame(gameId);
             }
 
             protected GameContent _content;
@@ -537,7 +540,7 @@ public class GameGameRegistry
                                 InvocationService.ResultListener listener)
         throws InvocationException
     {
-        PlayerObject player = MsoyGameServer.lookupPlayer(playerId);
+        PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
             listener.requestFailed("e.player_not_found");
             return;
@@ -551,7 +554,7 @@ public class GameGameRegistry
         }
 
         // Check to make sure the game that they're in is watchable
-        PlaceManager plman = MsoyBaseServer.plreg.getPlaceManager(placeOid);
+        PlaceManager plman = _plreg.getPlaceManager(placeOid);
         if (plman == null) {
             log.warning(
                 "Fetched null PlaceManager for player's current gameOid [" + placeOid + "]");
@@ -609,7 +612,7 @@ public class GameGameRegistry
         _loadingLobbies.remove(game.gameId); // just in case
 
         // let our world server know we're audi
-        MsoyGameServer.worldClient.stoppedHostingGame(game.gameId);
+        _worldClient.stoppedHostingGame(game.gameId);
 
         // flush any modified percentile distributions
         flushPercentiler(-Math.abs(game.gameId)); // single-player
@@ -650,13 +653,13 @@ public class GameGameRegistry
     protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
                                 final InvocationService.ResultListener listener)
     {
-        final PlayerObject player = MsoyGameServer.lookupPlayer(playerId);
+        final PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
             // they left while we were resolving the game, oh well
             return;
         }
 
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("joinAVRGame") {
+        _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
                 _questRecs = _avrgRepo.getQuests(mgr.getGameId(), playerId);
                 _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
@@ -681,7 +684,7 @@ public class GameGameRegistry
             return;
         }
 
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit("flushPercentiler") {
+        _invoker.postUnit(new Invoker.Unit("flushPercentiler") {
             public boolean invoke () {
                 try {
                     _ratingRepo.updatePercentile(gameId, tiler);
@@ -720,12 +723,6 @@ public class GameGameRegistry
         protected final InvocationService.ResultListener _listener;
     }
 
-    // various and sundry dependent services
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected InvocationManager _invmgr;
-    @Inject protected PlaceRegistry _plreg;
-    @Inject protected MsoyEventLogger _eventLog;
-
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
@@ -741,10 +738,20 @@ public class GameGameRegistry
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
 
+    // various and sundry dependent services
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected PlaceRegistry _plreg;
+    @Inject protected WorldServerClient _worldClient;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected PlayerLocator _locator;
+
     // various and sundry repositories for loading persistent data
     @Inject protected GameRepository _gameRepo;
     @Inject protected AVRGameRepository _avrgRepo;
     @Inject protected RatingRepository _ratingRepo;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected ItemPackRepository _ipackRepo;

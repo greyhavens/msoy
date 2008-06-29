@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
 import com.threerings.crowd.server.CrowdClient;
 
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -26,7 +28,7 @@ public class MsoyGameClient extends CrowdClient
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
         // let our various server entities know that this member logged on
-        MsoyGameServer.playerLoggedOn(_plobj);
+        _locator.playerLoggedOn(_plobj);
     }
 
     @Override // from PresentsClient
@@ -50,7 +52,7 @@ public class MsoyGameClient extends CrowdClient
         }
 
         // let our various server entities know that this member logged off
-        MsoyGameServer.playerLoggedOff(_plobj);
+        _locator.playerLoggedOff(_plobj);
 
         // nothing more needs doing for guests
         if (_plobj.isGuest()) {
@@ -63,13 +65,13 @@ public class MsoyGameClient extends CrowdClient
         _plobj = null;
 
 //         // update the member record in the database
-//         MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
+//         _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
 //             public boolean invoke () {
 //                 try {
 //                     // write out any modified stats
 //                     Stat[] statArr = new Stat[stats.size()];
 //                     stats.toArray(statArr);
-//                     MsoyServer.statRepo.writeModified(name.getMemberId(), statArr);
+//                     _statRepo.writeModified(name.getMemberId(), statArr);
 
 //                 } catch (Exception e) {
 //                     log.warning("Failed to note ended session [member=" + name + "].", e);
@@ -81,4 +83,6 @@ public class MsoyGameClient extends CrowdClient
 
     /** A casted reference to the userobject. */
     protected PlayerObject _plobj;
+
+    @Inject protected PlayerLocator _locator;
 }

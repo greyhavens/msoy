@@ -34,6 +34,7 @@ import com.threerings.bureau.server.BureauAuthenticator;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
@@ -41,6 +42,9 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
+
+import com.whirled.game.server.GameCookieManager;
+import com.whirled.game.server.RepoCookieManager;
 
 import com.whirled.game.server.WhirledGameManager;
 
@@ -66,11 +70,10 @@ public class MsoyGameServer extends MsoyBaseServer
             super.configure();
             bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
+            bind(GameCookieManager.class).to(RepoCookieManager.class);
+            bind(BodyLocator.class).to(PlayerLocator.class);
         }
     }
-
-    /** The parlor manager in operation on this server. */
-    public static ParlorManager parlorMan = new ParlorManager();
 
     /** Manages lobbies and other game bits on this server. */
     public static GameGameRegistry gameReg;
@@ -80,25 +83,6 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** Manages our connection back to our parent world server. */
     public static WorldServerClient worldClient;
-
-    /**
-     * Called when a player starts their session to associate the name with the player's
-     * distributed object.
-     */
-    @EventThread
-    public static void playerLoggedOn (PlayerObject plobj)
-    {
-        _online.put(plobj.memberName.getMemberId(), plobj);
-    }
-
-    /**
-     * Called when a player ends their session to clear their name to player object mapping.
-     */
-    @EventThread
-    public static void playerLoggedOff (PlayerObject plobj)
-    {
-        _online.remove(plobj.memberName.getMemberId());
-    }
 
     /**
      * Returns true if this server is running, false if not.
@@ -132,27 +116,6 @@ public class MsoyGameServer extends MsoyBaseServer
         }
     }
 
-    /**
-     * Returns the player object for the user identified by the given ID if they are resolved on
-     * this game server currently, null otherwise.
-     */
-    @EventThread
-    public static PlayerObject lookupPlayer (int playerId)
-    {
-        requireDObjThread(omgr);
-        return _online.get(playerId);
-    }
-
-    /**
-     * Returns the player object for the user identified by the given name if they are resolved
-     * on this game server currently, null otherwise.
-     */
-    @EventThread
-    public static PlayerObject lookupPlayer (MemberName name)
-    {
-        return lookupPlayer(name.getMemberId());
-    }
-
     @Override
     public void init (Injector injector)
         throws Exception
@@ -182,9 +145,6 @@ public class MsoyGameServer extends MsoyBaseServer
             }
         });
 
-        // intialize various services
-        parlorMan.init(invmgr, plreg);
-
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
                 return ((PlayerObject) bodyObj).getMemberId(); // will return 0 for guests
@@ -196,7 +156,6 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // hook up thane
         _bureauReg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
-
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
         log.info("Game server initialized.");
@@ -214,23 +173,6 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         // TODO: the game servers probably need to hear about changes to runtime config bits
         return new DatabaseConfigRegistry(_perCtx, invoker);
-    }
-
-    @Override // from WhirledServer
-    protected SceneRegistry createSceneRegistry ()
-        throws Exception
-    {
-        return null; // not used
-    }
-
-    @Override // from CrowdServer
-    protected BodyLocator createBodyLocator ()
-    {
-        return new BodyLocator() {
-            public BodyObject get (Name visibleName) {
-                return _online.get(((MemberName) visibleName).getMemberId());
-            }
-        };
     }
 
     @Override // from PresentsServer
@@ -277,7 +219,10 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     /** Manages lobbies and other game bits on this server. */
-    @Inject GameGameRegistry _gameReg;
+    @Inject protected GameGameRegistry _gameReg;
+
+    /** Provides parlor game services. */
+    @Inject protected ParlorManager _parlorMan;
 
     /** Manages our connection back to our parent world server. */
     @Inject protected WorldServerClient _worldClient;
@@ -287,7 +232,4 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** The port on which we connect back to our parent server. */
     protected int _connectPort;
-
-    /** A mapping from member name to member object for all online members. */
-    protected static HashIntMap<PlayerObject> _online = new HashIntMap<PlayerObject>();
 }
