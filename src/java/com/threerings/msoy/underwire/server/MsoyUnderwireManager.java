@@ -7,19 +7,26 @@ import java.lang.StringBuilder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.util.StringUtil;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.OOOUserRecord;
 
 import com.threerings.msoy.data.MemberObject;
@@ -38,7 +45,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles generating events for underwire.
  */
-@EventThread
+@Singleton
 public class MsoyUnderwireManager
 {
     /**
@@ -50,13 +57,13 @@ public class MsoyUnderwireManager
     }
 
     /**
-     * Adds an auto-ban event record to the user.  This is used by the authentication domain and
-     * should only be called when on the auth or invoker thread.
+     * Adds an auto-ban event record to the user.
      */
+    @BlockingThread
     public void reportAutoBan (OOOUserRecord user, String reason)
         throws PersistenceException
     {
-        MemberName name = MsoyServer.memberRepo.loadMemberName(user.email);
+        MemberName name = _memberRepo.loadMemberName(user.email);
         EventRecord event = new EventRecord();
         event.source = Integer.toString(name.getMemberId());
         event.sourceHandle = name.toString();
@@ -68,6 +75,7 @@ public class MsoyUnderwireManager
     /**
      * Adds a complaint record to the underwire event queue.
      */
+    @EventThread
     public void addComplaint (final MemberObject source, final int targetId, String complaint)
     {
         final EventRecord event = new EventRecord();
@@ -98,18 +106,18 @@ public class MsoyUnderwireManager
         event.chatHistory = chatHistory.toString();
 
         // if the target is online, get thir name from their member object
-        MemberObject target = MsoyServer.lookupMember(targetId);
+        MemberObject target = _locator.lookupMember(targetId);
         if (target != null) {
             event.targetHandle = target.memberName.toString();
             event.target = Integer.toString(target.memberName.getMemberId());
         }
 
-        MsoyServer.invoker.postUnit(new Invoker.Unit("addComplaint") {
+        _invoker.postUnit(new Invoker.Unit("addComplaint") {
             public boolean invoke () {
                 try {
                     // load the target information if necessary
                     if (event.target == null) {
-                        MemberName targetName = MsoyServer.memberRepo.loadMemberName(targetId);
+                        MemberName targetName = _memberRepo.loadMemberName(targetId);
                         if (targetName == null) {
                             log.warning("Unable to locate target of complaint [event=" + event +
                                 ", targetId=" + targetId + "].");
@@ -136,11 +144,11 @@ public class MsoyUnderwireManager
     }
 
     /**
-     * Adds a mesasge complaint to the even queue.  This should only be called on the invoker
-     * thread or from a servlet.
+     * Adds a mesasge complaint to the even queue.
      */
-    public void addMessageComplaint (
-            MemberName source, int targetId, String message, String subject, String link)
+    @BlockingThread
+    public void addMessageComplaint (MemberName source, int targetId, String message,
+                                     String subject, String link)
         throws PersistenceException
     {
         final EventRecord event = new EventRecord();
@@ -151,7 +159,7 @@ public class MsoyUnderwireManager
         event.link = link;
         event.chatHistory = message.replaceAll("<br/>", "");
         event.target = Integer.toString(targetId);
-        MemberName target = MsoyServer.memberRepo.loadMemberName(targetId);
+        MemberName target = _memberRepo.loadMemberName(targetId);
         if (target == null) {
             log.warning("Unable to locate target of complaint [event=" + event +
                     ", targetId=" + targetId+ "].");
@@ -162,4 +170,8 @@ public class MsoyUnderwireManager
     }
 
     protected UnderwireRepository _underrepo;
+
+    @Inject protected MemberLocator _locator;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected @MainInvoker Invoker _invoker;
 }

@@ -21,6 +21,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -30,8 +31,9 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.ShutdownManager;
 
+import com.threerings.crowd.server.PlaceRegistry;
+
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.PeerProjectMarshaller;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerProjectDispatcher;
 import com.threerings.msoy.peer.server.PeerProjectProvider;
@@ -69,20 +71,19 @@ public class SwiftlyManager
     {
         shutmgr.registerShutdowner(this);
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
-        _ppservice = (PeerProjectMarshaller)
-            invmgr.registerDispatcher(new PeerProjectDispatcher(this));
     }
 
     /**
-     * Configures us with our repository.
+     * Initializes the manager and prepares it for operation.
      */
-    public void init ()
+    public void init (InvocationManager invmgr)
     {
         // create our build thread pool
         buildExecutor = Executors.newFixedThreadPool(MAX_BUILD_THREADS);
 
         // register and initialize our peer project service
-        ((MsoyNodeObject)MsoyServer.peerMan.getNodeObject()).setPeerProjectService(_ppservice);
+        ((MsoyNodeObject)_peerMan.getNodeObject()).setPeerProjectService(
+            invmgr.registerDispatcher(new PeerProjectDispatcher(this)));
     }
 
     /**
@@ -101,7 +102,7 @@ public class SwiftlyManager
         }
 
         // we don't have the project resolved. is it already hosted on another node?
-        ConnectConfig config = MsoyServer.peerMan.getProjectConnectConfig(project.projectId);
+        ConnectConfig config = _peerMan.getProjectConnectConfig(project.projectId);
         if (config != null) {
             log.info(
                 "Redirecting Swiftly connection to another node. [server=" + config.server + "].");
@@ -121,9 +122,9 @@ public class SwiftlyManager
             public void fail (String peerName) {
                 if (peerName != null) {
                     ConnectConfig config = new ConnectConfig();
-                    config.server = MsoyServer.peerMan.getPeerPublicHostName(peerName);
-                    config.port = MsoyServer.peerMan.getPeerPort(peerName);
-                    config.httpPort = MsoyServer.peerMan.getPeerHttpPort(peerName);
+                    config.server = _peerMan.getPeerPublicHostName(peerName);
+                    config.port = _peerMan.getPeerPort(peerName);
+                    config.httpPort = _peerMan.getPeerHttpPort(peerName);
                     log.info("Sending Swiftly user to " + config.server + ":" + config.port + ".");
                     waiter.requestCompleted(config);
                     return;
@@ -135,7 +136,7 @@ public class SwiftlyManager
                 }
             }
         };
-        MsoyServer.peerMan.performWithLock(lock, createOp);
+        _peerMan.performWithLock(lock, createOp);
     }
 
     // from interface SwiftlyProvider
@@ -174,7 +175,7 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the project update there
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
                 MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
                 if (msnobj.hostedProjects.containsKey(project.projectId)) {
@@ -199,7 +200,7 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the collaborator update there
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
                 MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
                 if (msnobj.hostedProjects.containsKey(projectId)) {
@@ -226,7 +227,7 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the collaborator update there
-        MsoyServer.peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
+        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
             public void invoke (Client client, NodeObject nodeobj) {
                 MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
                 if (msnobj.hostedProjects.containsKey(projectId)) {
@@ -307,7 +308,7 @@ public class SwiftlyManager
         ProjectRoomConfig config = (ProjectRoomConfig)mgr.getConfig();
 
         // remove this node as the project host from the peer manager
-        MsoyServer.peerMan.projectDidShutdown(config.projectId);
+        _peerMan.projectDidShutdown(config.projectId);
 
         // clear the manager from our mapping
         _managers.remove(config.projectId);
@@ -360,14 +361,14 @@ public class SwiftlyManager
         ProjectRoomConfig config = new ProjectRoomConfig();
         try {
             config.projectId = project.projectId;
-            mgr = (ProjectRoomManager)MsoyServer.plreg.createPlace(config);
+            mgr = (ProjectRoomManager)_plreg.createPlace(config);
             _managers.put(project.projectId, mgr);
 
             log.info("Created project room [project=" + project.projectId +
                 ", room=" + mgr.getPlaceObject().getOid() + "].");
 
             // Load the project storage on the invoker thread, initialize the ProjectRoomManager
-            MsoyServer.invoker.postUnit(new Invoker.Unit("loadProjectStorage") {
+            _invoker.postUnit(new Invoker.Unit("loadProjectStorage") {
                 public boolean invoke () {
                     try {
                         _project = project;
@@ -448,8 +449,14 @@ public class SwiftlyManager
     /** Repository of Swiftly data. */
     @Inject protected SwiftlyRepository _swiftlyRepo;
 
-    /** We need to keep this around between construction and initialization. */
-    protected PeerProjectMarshaller _ppservice;
+    /** The invoker on which we do our database business. */
+    @Inject protected @MainInvoker Invoker _invoker;
+
+    /** Provides peer related services. */
+    @Inject protected MsoyPeerManager _peerMan;
+
+    /** Used to create rooms. */
+    @Inject protected PlaceRegistry _plreg;
 
     /** Maximum number of concurrent builds. */
     protected static final int MAX_BUILD_THREADS = 5;

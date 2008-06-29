@@ -44,7 +44,6 @@ import com.threerings.msoy.web.server.UploadFile;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
@@ -534,8 +533,7 @@ public class ProjectRoomManager extends PlaceManager
         _roomObj = (ProjectRoomObject)_plobj;
 
         // wire up our invocation service
-        _roomObj.setService((ProjectRoomMarshaller)
-                            MsoyServer.invmgr.registerDispatcher(new ProjectRoomDispatcher(this)));
+        _roomObj.setService(_invmgr.registerDispatcher(new ProjectRoomDispatcher(this)));
     }
 
     @Override // from PlaceManager
