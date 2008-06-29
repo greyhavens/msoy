@@ -17,6 +17,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -452,7 +453,8 @@ public class GameGameRegistry
                     return;
                 }
 
-                LobbyManager lmgr = new LobbyManager(_omgr, _eventLog, GameGameRegistry.this);
+                LobbyManager lmgr = new LobbyManager(
+                    _omgr, MsoyGameServer.invoker, _invmgr, _plreg, _eventLog, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
                 _lobbies.put(gameId, lmgr);
 
@@ -718,10 +720,10 @@ public class GameGameRegistry
         protected final InvocationService.ResultListener _listener;
     }
 
-    /** The distributed object manager that we work with. */
+    // various and sundry dependent services
     @Inject protected RootDObjectManager _omgr;
-
-    /** We record metrics events to this fellow. */
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected PlaceRegistry _plreg;
     @Inject protected MsoyEventLogger _eventLog;
 
     /** Maps game id -> lobby. */
