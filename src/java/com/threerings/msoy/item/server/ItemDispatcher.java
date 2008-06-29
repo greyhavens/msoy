@@ -14,7 +14,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link ItemProvider}.
  */
-public class ItemDispatcher extends InvocationDispatcher
+public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -26,7 +26,7 @@ public class ItemDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public ItemMarshaller createMarshaller ()
     {
         return new ItemMarshaller();
     }

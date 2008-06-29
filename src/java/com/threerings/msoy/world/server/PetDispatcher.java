@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PetProvider}.
  */
-public class PetDispatcher extends InvocationDispatcher
+public class PetDispatcher extends InvocationDispatcher<PetMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class PetDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public PetMarshaller createMarshaller ()
     {
         return new PetMarshaller();
     }

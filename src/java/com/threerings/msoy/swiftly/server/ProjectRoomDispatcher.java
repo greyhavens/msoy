@@ -14,7 +14,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link ProjectRoomProvider}.
  */
-public class ProjectRoomDispatcher extends InvocationDispatcher
+public class ProjectRoomDispatcher extends InvocationDispatcher<ProjectRoomMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -26,7 +26,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public ProjectRoomMarshaller createMarshaller ()
     {
         return new ProjectRoomMarshaller();
     }

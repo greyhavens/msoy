@@ -18,7 +18,7 @@ import com.threerings.whirled.spot.data.Location;
 /**
  * Dispatches requests to the {@link RoomProvider}.
  */
-public class RoomDispatcher extends InvocationDispatcher
+public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -30,7 +30,7 @@ public class RoomDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public RoomMarshaller createMarshaller ()
     {
         return new RoomMarshaller();
     }

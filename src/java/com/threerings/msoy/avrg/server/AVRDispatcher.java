@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link AVRProvider}.
  */
-public class AVRDispatcher extends InvocationDispatcher
+public class AVRDispatcher extends InvocationDispatcher<AVRMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class AVRDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public AVRMarshaller createMarshaller ()
     {
         return new AVRMarshaller();
     }

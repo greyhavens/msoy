@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link MemberProvider}.
  */
-public class MemberDispatcher extends InvocationDispatcher
+public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class MemberDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public MemberMarshaller createMarshaller ()
     {
         return new MemberMarshaller();
     }

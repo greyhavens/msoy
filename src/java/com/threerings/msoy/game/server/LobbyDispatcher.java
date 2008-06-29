@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link LobbyProvider}.
  */
-public class LobbyDispatcher extends InvocationDispatcher
+public class LobbyDispatcher extends InvocationDispatcher<LobbyMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class LobbyDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public LobbyMarshaller createMarshaller ()
     {
         return new LobbyMarshaller();
     }

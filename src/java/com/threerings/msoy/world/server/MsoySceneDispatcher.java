@@ -14,7 +14,7 @@ import com.threerings.whirled.client.SceneService;
 /**
  * Dispatches requests to the {@link MsoySceneProvider}.
  */
-public class MsoySceneDispatcher extends InvocationDispatcher
+public class MsoySceneDispatcher extends InvocationDispatcher<MsoySceneMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -26,7 +26,7 @@ public class MsoySceneDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public MsoySceneMarshaller createMarshaller ()
     {
         return new MsoySceneMarshaller();
     }

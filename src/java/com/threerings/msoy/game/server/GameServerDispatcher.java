@@ -16,7 +16,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link GameServerProvider}.
  */
-public class GameServerDispatcher extends InvocationDispatcher
+public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -28,7 +28,7 @@ public class GameServerDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public GameServerMarshaller createMarshaller ()
     {
         return new GameServerMarshaller();
     }

@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link SwiftlyProvider}.
  */
-public class SwiftlyDispatcher extends InvocationDispatcher
+public class SwiftlyDispatcher extends InvocationDispatcher<SwiftlyMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class SwiftlyDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public SwiftlyMarshaller createMarshaller ()
     {
         return new SwiftlyMarshaller();
     }

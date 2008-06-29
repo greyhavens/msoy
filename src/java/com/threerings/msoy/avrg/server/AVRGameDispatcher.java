@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link AVRGameProvider}.
  */
-public class AVRGameDispatcher extends InvocationDispatcher
+public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
@@ -25,7 +25,7 @@ public class AVRGameDispatcher extends InvocationDispatcher
     }
 
     @Override // documentation inherited
-    public InvocationMarshaller createMarshaller ()
+    public AVRGameMarshaller createMarshaller ()
     {
         return new AVRGameMarshaller();
     }
