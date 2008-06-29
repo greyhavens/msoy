@@ -180,7 +180,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 }
 
                 // update the two friends' runtime objects if they are online
-                FriendManager.friendshipEstablished(mrec.getName(), inviter.getName());
+                _friendMan.friendshipEstablished(mrec.getName(), inviter.getName());
 
                 // publish a notification to the inviter's feed
                 try {
@@ -562,17 +562,11 @@ public class WebUserServlet extends MsoyServiceServlet
         protected int _toMemberId;
     }
 
-    /** Handles our authentication services. */
     @Inject protected MsoyAuthenticator _author;
-
-    /** Handles distriuted object stuff. */
     @Inject protected PresentsDObjectMgr _omgr;
-
-    /** Handles mail-related services. */
     @Inject protected MailManager _mailMan;
-
-    /** Provides access to persistent mail-related data. */
     @Inject protected MailRepository _mailRepo;
+    @Inject protected FriendManager _friendMan;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[A-Za-z][_A-Za-z0-9]*$";

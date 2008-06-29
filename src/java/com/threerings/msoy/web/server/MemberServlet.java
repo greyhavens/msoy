@@ -54,7 +54,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
                      Collections.singleton(memberId))) {
                 return mcr.toMemberCard();
             }
@@ -72,7 +72,7 @@ public class MemberServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
-            return MsoyServer.memberRepo.getFriendStatus(memrec.memberId, memberId);
+            return _memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
             log.warning("getFriendStatus failed [for=" + memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -85,14 +85,14 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
-            MemberName friendName = MsoyServer.memberRepo.noteFriendship(memrec.memberId, friendId);
+            MemberName friendName = _memberRepo.noteFriendship(memrec.memberId, friendId);
             if (friendName == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
             MsoyServer.feedRepo.publishMemberMessage(
                 memrec.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
                 friendName.toString() + "\t" + friendId);
-            FriendManager.friendshipEstablished(memrec.getName(), friendName);
+            _friendMan.friendshipEstablished(memrec.getName(), friendName);
 
         } catch (PersistenceException pe) {
             log.warning("addFriend failed [for=" + memrec.memberId +
@@ -107,8 +107,8 @@ public class MemberServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
-            MsoyServer.memberRepo.clearFriendship(memrec.memberId, friendId);
-            FriendManager.friendshipCleared(memrec.memberId, friendId);
+            _memberRepo.clearFriendship(memrec.memberId, friendId);
+            _friendMan.friendshipCleared(memrec.memberId, friendId);
 
         } catch (PersistenceException pe) {
             log.warning("removeFriend failed [for=" + memrec.memberId +
@@ -162,9 +162,9 @@ public class MemberServlet extends MsoyServiceServlet
 
         try {
             MemberInvites result = new MemberInvites();
-            result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
+            result.availableInvitations = _memberRepo.getInvitesGranted(mrec.memberId);
             List<Invitation> pending = Lists.newArrayList();
-            for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(mrec.memberId)) {
+            for (InvitationRecord iRec : _memberRepo.loadPendingInvites(mrec.memberId)) {
                 // we issued these invites so we are the inviter
                 pending.add(iRec.toInvitation(mrec.getName()));
             }
@@ -194,7 +194,7 @@ public class MemberServlet extends MsoyServiceServlet
 //         try {
 //             // make sure this user still has available invites; we already check this value in GWT
 //             // land, and deal with it sensibly there
-//             int availInvites = MsoyServer.memberRepo.getInvitesGranted(mrec.memberId);
+//             int availInvites = _memberRepo.getInvitesGranted(mrec.memberId);
 //             if (availInvites < addresses.size()) {
 //                 log.warning("Member requested to grant more invites than they have " +
 //                             "[who=" + mrec.who() + ", tried=" + addresses.size() +
@@ -235,7 +235,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, viewing);
+            InvitationRecord invRec = _memberRepo.loadInvite(inviteId, viewing);
             if (invRec == null) {
                 return null;
             }
@@ -247,7 +247,7 @@ public class MemberServlet extends MsoyServiceServlet
 
             MemberName inviter = null;
             if (invRec.inviterId > 0) {
-                inviter = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
+                inviter = _memberRepo.loadMemberName(invRec.inviterId);
             }
             return invRec.toInvitation(inviter);
 
@@ -264,7 +264,7 @@ public class MemberServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
-            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, false);
+            InvitationRecord invRec = _memberRepo.loadInvite(inviteId, false);
             if (invRec == null) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
@@ -272,7 +272,7 @@ public class MemberServlet extends MsoyServiceServlet
             if (invRec.inviterId != mrec.memberId || invRec.inviteeId != 0) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
-            MsoyServer.memberRepo.deleteInvite(inviteId);
+            _memberRepo.deleteInvite(inviteId);
 
         } catch (PersistenceException pe) {
             log.warning("removeInvitation failed [inviteId=" + inviteId + "]", pe);
@@ -285,8 +285,8 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            if (MsoyServer.memberRepo.inviteAvailable(inviteId) != null) {
-                MsoyServer.memberRepo.optOutInvite(inviteId);
+            if (_memberRepo.inviteAvailable(inviteId) != null) {
+                _memberRepo.optOutInvite(inviteId);
             }
         } catch (PersistenceException pe) {
             log.warning("optOut failed [inviteId=" + inviteId + "]", pe);
@@ -301,7 +301,7 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             // locate the members that match the supplied search
             IntSet mids = new ArrayIntSet();
-            mids.addAll(MsoyServer.memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
+            mids.addAll(_memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
 
             // resolve cards for these members
             List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, null);
@@ -313,7 +313,7 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /**
      * Helper function for {@link #sendInvites}.
      */
@@ -328,9 +328,9 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this address isn't already registered
-            MemberRecord invitee = MsoyServer.memberRepo.loadMember(email);
+            MemberRecord invitee = _memberRepo.loadMember(email);
             if (invitee != null) {
-                if (MsoyServer.memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
+                if (_memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
                     throw new ServiceException(InvitationResults.ALREADY_FRIEND);
                 }
                 throw new NameServiceException(
@@ -338,17 +338,17 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this address isn't on the opt-out list
-            if (MsoyServer.memberRepo.hasOptedOut(email)) {
+            if (_memberRepo.hasOptedOut(email)) {
                 throw new ServiceException(InvitationResults.OPTED_OUT);
             }
 
             // make sure this user hasn't already invited this address
             int inviterId = (inviter == null) ? 0 : inviter.memberId;
-            if (MsoyServer.memberRepo.loadInvite(email, inviterId) != null) {
+            if (_memberRepo.loadInvite(email, inviterId) != null) {
                 throw new ServiceException(InvitationResults.ALREADY_INVITED);
             }
 
-            String inviteId = MsoyServer.memberRepo.generateInviteId();
+            String inviteId = _memberRepo.generateInviteId();
 
             // create and send the invitation email
             MailSender.Parameters params = new MailSender.Parameters();
@@ -372,7 +372,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // record the invite and that we sent it
-            MsoyServer.memberRepo.addInvite(email, inviterId, inviteId);
+            _memberRepo.addInvite(email, inviterId, inviteId);
             _eventLog.inviteSent(inviteId, inviterId, email);
 
             Invitation invite = new Invitation();
@@ -399,9 +399,9 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    /** Repository of Whirled players */
     @Inject protected ProfileRepository _profileRepo;
-    
+    @Inject protected FriendManager _friendMan;
+
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
 }
