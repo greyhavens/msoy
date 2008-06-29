@@ -5,29 +5,38 @@ package com.threerings.msoy.world.server;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.Invoker;
 import com.samskivert.text.MessageUtil;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
+import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.server.MemberLocator;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.item.server.persist.PetRepository;
 
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.PetObject;
+import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -36,13 +45,12 @@ import static com.threerings.msoy.Log.log;
  */
 public class PetHandler
 {
-    public PetHandler (PetManager petmgr, Pet pet, List<EntityMemoryEntry> memories)
+    public void init (Pet pet, List<EntityMemoryEntry> memories)
     {
-        _petobj = MsoyServer.omgr.registerObject(new PetObject());
+        _petobj = _omgr.registerObject(new PetObject());
         _petobj.memories = memories;
         _petobj.setUsername(new Name(pet.name));
         _petobj.pet = pet;
-        _petmgr = petmgr;
         _petmgr.mapHandler(pet.itemId, this);
     }
 
@@ -86,16 +94,16 @@ public class PetHandler
         // if we're not shutting down because our room shutdown...
         if (!roomDidShutdown) {
             // leave our current location (which will extract our memories)
-            MsoyServer.screg.leaveOccupiedScene(_petobj);
+            _sceneReg.leaveOccupiedScene(_petobj);
             // and save them
-            RoomManager.flushMemories(_petobj.memories);
+            RoomManager.flushMemories(_invoker, _memoryRepo, _petobj.memories);
         }
 
         // if we're following a member, clear that out
         stopFollowing();
 
         // finally, destroy our pet object
-        MsoyServer.omgr.destroyObject(_petobj.getOid());
+        _omgr.destroyObject(_petobj.getOid());
     }
 
     /**
@@ -106,7 +114,7 @@ public class PetHandler
         log.info("Entering room [pet=" + this + ", sceneId=" + sceneId + "].");
 
         // then enter the scene like a proper scene entity
-        MsoyServer.screg.moveTo(_petobj, sceneId, Integer.MAX_VALUE, new SceneMoveAdapter() {
+        _sceneReg.moveTo(_petobj, sceneId, Integer.MAX_VALUE, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("Pet failed to enter scene [pet=" + this + ", scene=" + sceneId +
                             ", reason=" + reason + "].");
@@ -146,7 +154,7 @@ public class PetHandler
         case Pet.ORDER_SLEEP:
             if (_petobj.pet.ownerId != owner.getMemberId()) {
                 // a non-owner sent the pet to sleep, let's report that
-                MemberObject realOwner = MsoyServer.lookupMember(_petobj.pet.ownerId);
+                MemberObject realOwner = _locator.lookupMember(_petobj.pet.ownerId);
                 if (realOwner != null) {
                     SpeakUtil.sendInfo(realOwner, MsoyCodes.GENERAL_MSGS,
                         MessageUtil.tcompose("m.pet_ordered4_room_mgr", owner.getVisibleName()));
@@ -166,7 +174,7 @@ public class PetHandler
             updateUsage(Item.USED_AS_PET, owner.homeSceneId);
             if (_petobj.getSceneId() == owner.homeSceneId) {
                 // we're already home, yay!
-            } else if (MsoyServer.screg.getSceneManager(owner.homeSceneId) != null) {
+            } else if (_sceneReg.getSceneManager(owner.homeSceneId) != null) {
                 enterRoom(owner.homeSceneId);
             } else {
                 // TODO: if home room is resolved (on any server), instruct it to resolve pet
@@ -176,7 +184,7 @@ public class PetHandler
 
         case Pet.ORDER_STAY:
             // make sure the requester is in a room that they own
-            PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(owner.getPlaceOid());
+            PlaceManager plmgr = _placeReg.getPlaceManager(owner.getPlaceOid());
             if (!(plmgr instanceof RoomManager)) {
                 log.info("Owner no longer in a room? [who=" + owner.who() + ", in=" + plmgr + "].");
                 throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
@@ -224,7 +232,7 @@ public class PetHandler
     {
         // normally I always do the cheap compare first, but I'd rather not duplicate
         // the code from validateOwnership.
-        PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(owner.getPlaceOid());
+        PlaceManager plmgr = _placeReg.getPlaceManager(owner.getPlaceOid());
         if ((plmgr instanceof RoomManager) && ((RoomManager) plmgr).canManage(owner)) {
             return; // they check out, they're room owners
         }
@@ -280,17 +288,23 @@ public class PetHandler
     protected void updateUsage (final byte usageType, final int location)
     {
         final int itemId = _petobj.pet.itemId;
-        MsoyServer.invoker.postUnit(new WriteOnlyUnit("updatePetUsage(" + itemId + ")") {
+        _invoker.postUnit(new WriteOnlyUnit("updatePetUsage(" + itemId + ")") {
             public void invokePersist () throws Exception {
-                MsoyServer.itemMan.getPetRepository().markItemUsage(
-                    new int[] { itemId }, usageType, location);
+                _petRepo.markItemUsage(new int[] { itemId }, usageType, location);
             }
         });
     }
 
-    protected PetManager _petmgr;
     protected PetObject _petobj;
-
     protected MemberObject _follow;
     protected ObjectDeathListener _follist;
+
+    @Inject protected PetManager _petmgr;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected SceneRegistry _sceneReg;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MemberLocator _locator;
 }

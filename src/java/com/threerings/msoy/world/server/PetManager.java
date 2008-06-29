@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -21,17 +27,19 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.RoomName;
-import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.server.persist.PetRecord;
+import com.threerings.msoy.item.server.persist.PetRepository;
 
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
@@ -41,31 +49,37 @@ import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.PetObject;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
+import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
 /**
  * Takes care of loading, unloading and handling of Pets.
  */
-@EventThread
+@Singleton @EventThread
 public class PetManager
     implements PetProvider
 {
-    /**
-     * Initializes the pet manager and prepares it for operation.
-     */
-    public void init (InvocationManager invmgr)
+    @Inject public PetManager (InvocationManager invmgr)
     {
         // register our pet invocation services
         invmgr.registerDispatcher(new PetDispatcher(this), MsoyCodes.WORLD_GROUP);
+    }
 
-        // register a member forward participant that handles wallked pets
-        MsoyServer.peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
+    /**
+     * Initializes the pet manager and prepares it for operation.
+     */
+    public void init (Injector injector)
+    {
+        _injector = injector;
+
+        // register a member forward participant that handles walked pets
+        _peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
             public void packMember (MemberObject memobj, Map<String,Object> data) {
                 PetObject petobj = getPetObject(memobj.walkingId);
                 if (petobj != null) {
                     // extract our memories from the room we're in
-                    MsoyServer.screg.leaveOccupiedScene(petobj);
+                    _sceneReg.leaveOccupiedScene(petobj);
                     data.put("PO.pet", petobj.pet);
                     data.put("PO.memories", petobj.memories);
                     // the pet will shutdown later when the walking member is destroyed
@@ -101,19 +115,18 @@ public class PetManager
      */
     public void loadRoomPets (final RoomObject roomObj, final int sceneId)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("loadRoomPets(" + sceneId + ")") {
+        _invoker.postUnit(new RepositoryUnit("loadRoomPets(" + sceneId + ")") {
             public void invokePersist () throws Exception {
                 // load up our pets, collect their memory ids and convert them to runtime objs
                 ArrayIntSet mids = new ArrayIntSet();
-                for (PetRecord petrec :
-                         MsoyServer.itemMan.getPetRepository().loadItemsByLocation(sceneId)) {
+                for (PetRecord petrec : _petRepo.loadItemsByLocation(sceneId)) {
                     _pets.add((Pet)petrec.toItem());
                     mids.add(petrec.itemId);
                 }
 
                 // next load up their memories
                 if (mids.size() > 0) {
-                    for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemories(Pet.PET, mids)) {
+                    for (MemoryRecord memrec : _memoryRepo.loadMemories(Pet.PET, mids)) {
                         List<EntityMemoryEntry> mems = _memories.get(memrec.itemId);
                         if (mems == null) {
                             _memories.put(memrec.itemId, mems = Lists.newArrayList());
@@ -174,10 +187,10 @@ public class PetManager
         }
 
         // resolve the pet, then move them to their owner
-        MsoyServer.invoker.postUnit(new RepositoryUnit("callPet(" + petId + ")") {
+        _invoker.postUnit(new RepositoryUnit("callPet(" + petId + ")") {
             public void invokePersist () throws Exception {
                 // load up the pet's record
-                PetRecord petrec = MsoyServer.itemMan.getPetRepository().loadItem(petId);
+                PetRecord petrec = _petRepo.loadItem(petId);
                 if (petrec == null) {
                     throw new Exception("callPet() on non-existent pet");
                 }
@@ -187,7 +200,7 @@ public class PetManager
                 _pet = (Pet)petrec.toItem();
 
                 // load up its memory
-                for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemory(Pet.PET, petId)) {
+                for (MemoryRecord memrec : _memoryRepo.loadMemory(Pet.PET, petId)) {
                     _memory.add(memrec.toEntry());
                 }
             }
@@ -233,7 +246,7 @@ public class PetManager
         final MemberObject user = (MemberObject)caller;
 
         // get the manager of the room where we're chatting
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
+        PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
         if (!(pmgr instanceof RoomManager)) {
             log.warning("sendChat() on invalid location [location=" + user.location + "]");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
@@ -265,7 +278,7 @@ public class PetManager
             MsoyScene scene = (MsoyScene) mgr.getScene();
             ChatChannel channel = ChatChannel.makeRoomChannel(
                 new RoomName(scene.getName(), scene.getId()));
-            MsoyServer.channelMan.forwardSpeak(
+            _channelMan.forwardSpeak(
                 caller, petInfo.username, channel, message, ChatCodes.DEFAULT_MODE, listener);
             return;
         }
@@ -287,8 +300,10 @@ public class PetManager
                 continue;
             }
 
-            // create a handler for this pet and start them in this room
-            new PetHandler(this, pet, memories.get(pet.itemId)).enterRoom(sceneId);
+            // create and initialize a handler for this pet and start them in this room
+            PetHandler handler = _injector.getInstance(PetHandler.class);
+            handler.init(pet, memories.get(pet.itemId));
+            handler.enterRoom(sceneId);
         }
     }
 
@@ -305,8 +320,9 @@ public class PetManager
             return;
         }
 
-        // create a handler for this pet (which will register itself with us)
-        PetHandler handler = new PetHandler(this, pet, memories);
+        // create and initialize a handler for this pet
+        PetHandler handler = _injector.getInstance(PetHandler.class);
+        handler.init(pet, memories);
 
         try {
             if (moveToOwner) {
@@ -336,4 +352,15 @@ public class PetManager
 
     /** Maintains a mapping of all pet handlers by item id. */
     protected IntMap<PetHandler> _handlers = IntMaps.newHashIntMap();
+
+    /** Used to resolve dependencies for PetHandler. */
+    protected Injector _injector;
+
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected ChatChannelManager _channelMan;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected SceneRegistry _sceneReg;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected @MainInvoker Invoker _invoker;
 }
