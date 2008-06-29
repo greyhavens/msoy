@@ -7,9 +7,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
@@ -55,7 +57,7 @@ public class MailManager
                                   InvocationService.ConfirmListener listener)
     {
         String uname = "sendInviteMail(" + inviterId + ", " + friendId + ")";
-        MsoyServer.invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 MemberRecord sender = _memberRepo.loadMember(inviterId);
                 MemberRecord recip = _memberRepo.loadMember(friendId);
@@ -220,4 +222,5 @@ public class MailManager
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemManager _itemMan;
+    @Inject protected @MainInvoker Invoker _invoker;
 }

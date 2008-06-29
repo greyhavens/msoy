@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.notify.server;
 
+import com.google.inject.Singleton;
+
 import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
@@ -18,7 +19,7 @@ import com.threerings.msoy.notify.data.GameInviteNotification;
 /**
  * Manages most notifications to users.
  */
-@EventThread
+@Singleton @EventThread
 public class NotificationManager
 {
     public void notify (MemberObject target, Notification note)
