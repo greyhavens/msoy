@@ -11,6 +11,8 @@ import java.util.TreeSet;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.text.MessageUtil;
@@ -24,6 +26,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -42,25 +45,30 @@ import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
+//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.RoomName;
-//import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.server.ChatChannelManager;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.server.ItemManager;
+
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
@@ -79,11 +87,12 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
-import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
+import com.threerings.msoy.world.server.persist.MemoryRepository;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -97,7 +106,8 @@ public class RoomManager extends SpotSceneManager
     /**
      * Flush any modified memories contained within the specified Iterable.
      */
-    public static void flushMemories (Iterable<EntityMemoryEntry> entries)
+    public static void flushMemories (Invoker invoker, final MemoryRepository memoryRepo,
+                                      Iterable<EntityMemoryEntry> entries)
     {
         final List<MemoryRecord> memrecs = Lists.newArrayList();
         for (EntityMemoryEntry entry : entries) {
@@ -106,10 +116,10 @@ public class RoomManager extends SpotSceneManager
             }
         }
         if (memrecs.size() > 0) {
-            MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     try {
-                        MsoyServer.memoryRepo.storeMemories(memrecs);
+                        memoryRepo.storeMemories(memrecs);
                     } catch (PersistenceException pe) {
                         log.warning("Failed to update memories " + memrecs + ".", pe);
                     }
@@ -240,7 +250,7 @@ public class RoomManager extends SpotSceneManager
         }
 
         // let's look up the user they want to boot
-        MemberObject bootee = MsoyServer.lookupMember(booteeId);
+        MemberObject bootee = _locator.lookupMember(booteeId);
         if ((bootee == null) || (bootee.location == null) ||
                 (bootee.location.placeOid != _plobj.getOid())) {
             return "e.user_not_present";
@@ -268,13 +278,13 @@ public class RoomManager extends SpotSceneManager
         // and boot them right now.
         SpeakUtil.sendInfo(bootee, MsoyCodes.GENERAL_MSGS,
             MessageUtil.tcompose("m.booted", _scene.getName()));
-        MsoyServer.screg.moveBody(bootee, bootSceneId);
+        _screg.moveBody(bootee, bootSceneId);
         SpeakUtil.sendFeedback(user, MsoyCodes.GENERAL_MSGS, "m.boot_success");
 
         // and from the chat channel
 // TODO: this doesn't work. It ends up removing the user from the list of chatters, but they
 // are still subscribed to the channel. Fuck if I know.
-//        MsoyServer.channelMan.leaveChannel(bootee,
+//        _channelMan.leaveChannel(bootee,
 //            ChatChannel.makeRoomChannel(new RoomName(_scene.getName(), _scene.getId())));
 
         return null; // indicates success
@@ -383,7 +393,7 @@ public class RoomManager extends SpotSceneManager
                     ", item=" + item + ", state=" + state + "].");
                 return;
             }
-            actor = (MsoyBodyObject) MsoyServer.omgr.getObject(actorOid);
+            actor = (MsoyBodyObject) _omgr.getObject(actorOid);
 
         } else {
             // the actor is the caller
@@ -451,9 +461,9 @@ public class RoomManager extends SpotSceneManager
 
         // TODO: charge some flow
 
-        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
+        _invoker.postUnit(new RepositoryUnit("purchaseRoom") {
             public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(
+                _newRoomId = _sceneRepo.createBlankRoom(
                     ownerType, ownerId, roomName, portalAction, false);
             }
             public void handleSuccess () {
@@ -610,14 +620,14 @@ public class RoomManager extends SpotSceneManager
                 "Mob spawn request without name [gameId=" + gameId + ", mobId=" + mobId + "]");
         }
 
-        final MobObject mobObj = MsoyServer.omgr.registerObject(new MobObject());
+        final MobObject mobObj = _omgr.registerObject(new MobObject());
         mobObj.setGameId(gameId);
         mobObj.setIdent(mobId);
         mobObj.setUsername(new Name(mobName));
         _mobs.put(key, mobObj);
 
         // then enter the scene like a proper scene entity
-        MsoyServer.screg.moveTo(mobObj, getScene().getId(), -1, new SceneMoveAdapter() {
+        _screg.moveTo(mobObj, getScene().getId(), -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("MOB failed to enter scene [mob=" + mobObj + ", scene=" +
                            getScene().getId() + ", reason=" + reason + "].");
@@ -641,8 +651,8 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        MsoyServer.screg.leaveOccupiedScene(mobObj);
-        MsoyServer.omgr.destroyObject(mobObj.getOid());
+        _screg.leaveOccupiedScene(mobObj);
+        _omgr.destroyObject(mobObj.getOid());
         _mobs.remove(key);
     }
 
@@ -706,13 +716,12 @@ public class RoomManager extends SpotSceneManager
 
         // set up our room object
         _roomObj = (RoomObject) _plobj;
-        _roomObj.setRoomService((RoomMarshaller)
-                                MsoyServer.invmgr.registerDispatcher(new RoomDispatcher(this)));
+        _roomObj.setRoomService(_invmgr.registerDispatcher(new RoomDispatcher(this)));
         _roomObj.addListener(_roomListener);
 
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        MsoyServer.peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
+        _peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
         // determine which (if any) items in this room have memories and load them up
@@ -727,7 +736,7 @@ public class RoomManager extends SpotSceneManager
         }
 
         // load up any pets that are "let out" in this room scene
-        MsoyServer.petMan.loadRoomPets(_roomObj, _scene.getId());
+        _petMan.loadRoomPets(_roomObj, _scene.getId());
     }
 
     @Override // from PlaceManager
@@ -735,7 +744,7 @@ public class RoomManager extends SpotSceneManager
     {
         super.bodyEntered(bodyOid);
 
-        DObject body = MsoyServer.omgr.getObject(bodyOid);
+        DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             ensureAVRGameControl(member);
@@ -760,7 +769,7 @@ public class RoomManager extends SpotSceneManager
     protected void bodyLeft (int bodyOid)
     {
         // start metrics
-        DObject body = MsoyServer.omgr.getObject(bodyOid);
+        DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             member.metrics.room.save(member);
@@ -776,18 +785,18 @@ public class RoomManager extends SpotSceneManager
     protected void didShutdown ()
     {
         _roomObj.removeListener(_roomListener);
-        MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
+        _invmgr.clearDispatcher(_roomObj.roomService);
 
         super.didShutdown();
 
         // clear out our peer hosting information
-        MsoyServer.peerMan.roomDidShutdown(_scene.getId());
+        _peerMan.roomDidShutdown(_scene.getId());
 
         // shut our pets down
-        MsoyServer.petMan.shutdownRoomPets(_roomObj);
+        _petMan.shutdownRoomPets(_roomObj);
 
         // flush any modified memory records to the database
-        flushMemories(_roomObj.memories);
+        flushMemories(_invoker, _memoryRepo, _roomObj.memories);
     }
 
     // if the given member is playing an AVRG, make sure it's controlled; if not, control it
@@ -842,7 +851,7 @@ public class RoomManager extends SpotSceneManager
             // if decor was modified, we should mark new decor as used, and clear the old one
             Decor decor = msoyScene.getDecor();
             if (decor != null && decor.itemId != up.decor.itemId) { // modified?
-                MsoyServer.itemMan.updateItemUsage(
+                _itemMan.updateItemUsage(
                     Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
                     decor.itemId, up.decor.itemId, new ComplainingListener<Object>(
                         log, "Unable to update decor usage"));
@@ -851,7 +860,7 @@ public class RoomManager extends SpotSceneManager
             // same with background audio - mark new one as used, unmark old one
             AudioData audioData = msoyScene.getAudioData();
             if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
-                MsoyServer.itemMan.updateItemUsage(
+                _itemMan.updateItemUsage(
                     Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
                     audioData.itemId, up.audioData.itemId, new ComplainingListener<Object>(
                         log, "Unable to update audio usage"));
@@ -860,7 +869,7 @@ public class RoomManager extends SpotSceneManager
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);
             if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
-                MsoyServer.peerMan.roomUpdated(msoyScene.getId(), up.name,
+                _peerMan.roomUpdated(msoyScene.getId(), up.name,
                                                msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                                                up.accessControl);
             }
@@ -868,7 +877,7 @@ public class RoomManager extends SpotSceneManager
             // if the name was modified, we need to notify the chat channel manager so it can
             // update the channel name.
             if (nameChange) {
-                MsoyServer.channelMan.updateRoomChannelName(
+                _channelMan.updateRoomChannelName(
                     new RoomName(up.name, msoyScene.getId()));
             }
         }
@@ -877,7 +886,7 @@ public class RoomManager extends SpotSceneManager
         if (update instanceof FurniUpdate.Remove) {
             // mark this item as no longer in use
             FurniData data = ((FurniUpdate)update).data;
-            MsoyServer.itemMan.updateItemUsage(
+            _itemMan.updateItemUsage(
                 data.itemType, Item.UNUSED, user.getMemberId(), _scene.getId(),
                 data.itemId, 0, new ComplainingListener<Object>(
                     log, "Unable to clear furni item usage"));
@@ -902,13 +911,13 @@ public class RoomManager extends SpotSceneManager
                     _roomObj.commitTransaction();
                 }
                 // persist any of the old memories that were modified
-                flushMemories(toRemove);
+                flushMemories(_invoker, _memoryRepo, toRemove);
             }
 
         } else if (update instanceof FurniUpdate.Add) {
             // mark this item as in use
             FurniData data = ((FurniUpdate)update).data;
-            MsoyServer.itemMan.updateItemUsage(
+            _itemMan.updateItemUsage(
                 data.itemType, Item.USED_AS_FURNITURE, user.getMemberId(), _scene.getId(),
                 0, data.itemId, new ComplainingListener<Object>(
                     log, "Unable to set furni item usage"));
@@ -924,7 +933,7 @@ public class RoomManager extends SpotSceneManager
 
         // let the registry know that rooms be gettin' updated (TODO: don't do this on every
         // fucking update, it's super expensive)
-        ((MsoySceneRegistry)MsoyServer.screg).memberUpdatedRoom(user, (MsoyScene)_scene);
+        ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
     }
 
     /**
@@ -1042,10 +1051,10 @@ public class RoomManager extends SpotSceneManager
      */
     protected void resolveMemories (final Collection<ItemIdent> idents)
     {
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+        _invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _mems = MsoyServer.memoryRepo.loadMemories(idents);
+                    _mems = _memoryRepo.loadMemories(idents);
                     return !_mems.isEmpty();
                 } catch (PersistenceException pe) {
                     log.warning("Failed to load memories [where=" + where() +
@@ -1168,4 +1177,14 @@ public class RoomManager extends SpotSceneManager
 
     /** The maximum size of a room's properties, including all keys and values. */
     protected static final int MAX_ROOM_PROPERTY_SIZE = 4096;
+
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected ChatChannelManager _channelMan;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected PetManager _petMan;
+    @Inject protected SceneRegistry _screg;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected MemberLocator _locator;
 }
