@@ -155,7 +155,8 @@ public class MsoyGameServer extends MsoyBaseServer
         _worldClient.init(_listenPort, _connectPort);
 
         // hook up thane
-        _bureauReg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
+        _bureauReg.setCommandGenerator(
+            WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
         log.info("Game server initialized.");
