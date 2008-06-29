@@ -42,8 +42,6 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
-import com.whirled.game.server.DictionaryManager;
-
 import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -141,7 +139,7 @@ public class MsoyGameServer extends MsoyBaseServer
     @EventThread
     public static PlayerObject lookupPlayer (int playerId)
     {
-        requireDObjThread();
+        requireDObjThread(omgr);
         return _online.get(playerId);
     }
 
@@ -192,15 +190,14 @@ public class MsoyGameServer extends MsoyBaseServer
                 return ((PlayerObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
-        DictionaryManager.init("data/dictionary");
 
         // connect back to our parent world server
         _worldClient.init(_listenPort, _connectPort);
 
         // hook up thane
-        breg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
+        _bureauReg.setCommandGenerator(WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
 
-        _conmgr.addChainedAuthenticator(new BureauAuthenticator(breg));
+        _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
         log.info("Game server initialized.");
     }
