@@ -94,8 +94,8 @@ public class MemberLocator extends BodyLocator
     /** A mapping from member name to member object for all online members. */
     protected IntMap<MemberObject> _online = IntMaps.newHashIntMap();
 
-    @Inject PresentsDObjectMgr _omgr;
-    @Inject MemberManager _memberMan;
-    @Inject FriendManager _friendMan;
-    @Inject MsoyAdminManager _adminMan;
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected FriendManager _friendMan;
+    @Inject protected MsoyAdminManager _adminMan;
 }
