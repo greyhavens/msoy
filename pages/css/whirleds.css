@@ -444,7 +444,7 @@
   min-height: 100%;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  width: 700px;
+  width: 685px;
 }
 
 .myWhirleds .WhirledsGrid {
@@ -487,22 +487,22 @@
 }
 
 .myWhirleds .WhirledsGrid .Headers div.LatestPostHeader {
-  width: 345px;
+  width: 340px;
 }
 
 .myWhirleds .WhirledsGrid .Headers div.ThreadsHeader {
-  width: 54px;
+  width: 50px;
 }
 
 .myWhirleds .WhirledsGrid .Headers div.PostsHeader {
-  width: 51px;
+  width: 45px;
 }
 
 .myWhirleds .WhirledWidget {
   height: 80px;
   text-align: left;
   background: transparent url(/images/group/mywhirleds_row_bg.png) repeat-y top left;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 .myWhirleds .WhirledWidget,
 .myWhirleds .WhirledWidget a {
@@ -550,7 +550,7 @@
   position: absolute;
   top: 10px;
   left: 235px;
-  width: 325px;
+  width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-decoration: none;
@@ -569,7 +569,7 @@
 .myWhirleds .Date {
   position: absolute;
   top: 60px;
-  left: 365px;
+  left: 360px;
   width: 200px;
   text-align: right;
 }
@@ -602,11 +602,11 @@
 }
 
 .myWhirleds .NumThreads {
-  left: 575px;
+  left: 570px;
 }
 
 .myWhirleds .NumPosts {
-  left: 630px;
+  left: 617px;
 }
 
 .myWhirleds .ManagerStar {
