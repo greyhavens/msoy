@@ -442,13 +442,14 @@
 .myWhirleds {
   background-color: #1d5884;
   min-height: 100%;
+  width: 100%;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  width: 685px;
 }
 
 .myWhirleds .WhirledsGrid {
-  margin: 10px;
+  width: 665px;
+  margin: 10px 0 0 10px;
 }
 
 .myWhirleds .WhirledsGrid .Header {
