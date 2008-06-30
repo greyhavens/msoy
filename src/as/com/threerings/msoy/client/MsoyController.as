@@ -195,10 +195,11 @@ public class MsoyController extends Controller
             // either way, we're not idle anymore
             _idle = false;
 
-            if (nowAway) {
+            // Disabled -- Bruno
+            /*if (nowAway) {
                 // throw up a modal dialog with a "back" button
                 new BackFromAwayDialog(_mctx, message);
-            }
+            }*/
         }
     }
 

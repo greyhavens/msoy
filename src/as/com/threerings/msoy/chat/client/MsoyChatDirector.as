@@ -68,7 +68,8 @@ public class MsoyChatDirector extends ChatDirector
         c = JabberMarshaller;
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
-        registerCommandHandler(msg, "away", new AwayHandler());
+        registerCommandHandler(msg, "away", new AwayHandler(true));
+        registerCommandHandler(msg, "back", new AwayHandler(false));
 
         addChatDisplay(_chatHistory = new HistoryList());
     }

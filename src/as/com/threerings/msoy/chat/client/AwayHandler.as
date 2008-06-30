@@ -15,16 +15,23 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 /**
- * Sets the user as being away.
+ * Sets the user's away status.
  */
 public class AwayHandler extends CommandHandler
 {
+    public function AwayHandler (away :Boolean = true)
+    {
+        _away = away;
+    }
+
     override public function handleCommand (
         ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
-        (ctx as MsoyContext).getMsoyController().setAway(true, args);
+        (ctx as MsoyContext).getMsoyController().setAway(_away, args);
         return ChatCodes.SUCCESS;
     }
+
+    protected var _away :Boolean;
 }
 }
