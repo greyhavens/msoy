@@ -242,7 +242,7 @@ public class MsoyServer extends MsoyBaseServer
         _shutmgr.registerShutdowner(this);
 
         // set up the right client factory
-        clmgr.setClientFactory(new ClientFactory() {
+        _clmgr.setClientFactory(new ClientFactory() {
             public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
                 return MsoyClient.class;
             }

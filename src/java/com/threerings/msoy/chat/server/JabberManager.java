@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.chat.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -43,12 +45,14 @@ import com.threerings.util.Name;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.msoy.data.MemberObject;
@@ -56,7 +60,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.JabberName;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.chat.client.JabberService;
@@ -92,7 +95,7 @@ public class JabberManager
         String gatewayList = ServerConfig.config.getValue("jabber.gateways", "");
 
         ConnectionConfiguration config = new ConnectionConfiguration(host, port);
-        _conn = new XMPPConnection(config, MsoyServer.omgr);
+        _conn = new XMPPConnection(config, _omgr);
 
         // For now, only try and connect to the Jabber server if we're on a development server
         // and have at least one gateway configured
@@ -201,7 +204,7 @@ public class JabberManager
         String uJID = getJID(user);
         reg.setFrom(uJID);
         reg.setType(IQ.Type.SET);
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = Maps.newHashMap();
         map.put("username", username);
         map.put("password", password);
         log.info("Jabber register [uJID=" + uJID +
@@ -268,7 +271,7 @@ public class JabberManager
         if (_conn.isConnected() || !_conn.getConfiguration().isReconnectionAllowed()) {
             return;
         }
-        _reconnectInterval = new Interval(MsoyServer.omgr) {
+        _reconnectInterval = new Interval(_omgr) {
             public void expired () {
                 try {
                     _conn.reconnect();
@@ -334,7 +337,7 @@ public class JabberManager
                     return;
                 }
                 if (juser.chats == null) {
-                    juser.chats = new HashMap<JabberName, Chat>();
+                    juser.chats = Maps.newHashMap();
                 }
                 if (juser.messageListener == null) {
                     juser.messageListener = new UserMessageListener(juser);
@@ -414,7 +417,7 @@ public class JabberManager
             reg.setTo(gateway + "." + _conn.getServiceName());
             reg.setFrom(uJID);
             reg.setType(IQ.Type.SET);
-            HashMap<String, String> map = new HashMap<String, String>();
+            Map<String, String> map = Maps.newHashMap();
             map.put("remove", "");
             reg.setAttributes(map);
             _conn.packetWriter.sendPacket(reg);
@@ -466,7 +469,7 @@ public class JabberManager
     {
         JabberUser juser = getJabberUser(user, true);
         if (juser.chats == null) {
-            juser.chats = new HashMap<JabberName, Chat>();
+            juser.chats = Maps.newHashMap();
         }
         Chat chat = juser.chats.get(name);
         if (chat == null) {
@@ -593,7 +596,7 @@ public class JabberManager
             if (entry != null) {
                 jname = entry.name;
             }
-            MsoyServer.chatprov.deliverTell(_user, new UserMessage(jname, message.getBody()));
+            _chatprov.deliverTell(_user, new UserMessage(jname, message.getBody()));
         }
 
         protected MemberObject _user;
@@ -604,7 +607,7 @@ public class JabberManager
         public MemberObject user;
         public UserPacketResponder packetResponder;
         public UserMessageListener messageListener;
-        public HashMap<JabberName, Chat> chats;
+        public Map<JabberName, Chat> chats;
 
         public JabberUser (MemberObject user)
         {
@@ -622,10 +625,14 @@ public class JabberManager
     protected Interval _reconnectInterval;
 
     /** Mapping of username to runtime jabber information for that user. */
-    protected HashMap<Name, JabberUser> _users = new HashMap<Name, JabberUser>();
+    protected Map<Name, JabberUser> _users = Maps.newHashMap();
 
     /** The available gateways. */
-    protected ArrayList<String> _gateways = new ArrayList<String>();
+    protected List<String> _gateways = Lists.newArrayList();
+
+    // dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected ChatProvider _chatprov;
 
     /** The time between reconnection attempts. */
     protected static final long RECONNECT_TIMEOUT = 60 * 1000L;

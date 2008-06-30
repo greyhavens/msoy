@@ -13,9 +13,11 @@ import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.util.Invoker;
 
 import com.threerings.util.MessageManager;
 
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.bureau.server.BureauRegistry;
@@ -94,6 +96,11 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** The Msoy feed repository. */
     public static FeedRepository feedRepo;
 
+    // legacy static references
+    public static Invoker invoker;
+    public static PresentsDObjectMgr omgr;
+    public static InvocationManager invmgr;
+
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
      * {@link IllegalStateException} if it is not.
@@ -130,6 +137,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         _eventLog.init(getIdent());
 
         // TEMP: set up our legacy static references
+        invoker = _invoker;
+        omgr = _omgr;
+        invmgr = _invmgr;
         memberRepo = _memberRepo;
         ratingRepo = _ratingRepo;
         memoryRepo = _memoryRepo;

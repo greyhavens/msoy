@@ -22,6 +22,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.ShutdownManager;
@@ -403,7 +404,7 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         // let our client handler know that the session is not over but rather is being forwarded
         // to another server
-        MsoyClient mclient = (MsoyClient)MsoyServer.clmgr.getClient(memobj.username);
+        MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
         if (mclient != null) {
             mclient.setSessionForwarded(true);
         }
@@ -577,8 +578,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     /** A list of participants in the member forwarding process. */
     protected List<MemberForwarder> _mforwarders = Lists.newArrayList();
 
-    /** Provides invocation services. */
+    // dependencies
     @Inject protected InvocationManager _invmgr;
+    @Inject protected ClientManager _clmgr;
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;

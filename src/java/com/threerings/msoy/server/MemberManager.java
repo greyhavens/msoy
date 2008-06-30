@@ -33,9 +33,11 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.util.PersistingUnit;
 
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.stats.data.StatSet;
 
@@ -148,7 +150,7 @@ public class MemberManager
      */
     public void updateOccupantInfo (MemberObject user)
     {
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
+        PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
         if (pmgr != null) {
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }
@@ -237,7 +239,7 @@ public class MemberManager
 //            return;
         }
 
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location.placeOid);
+        PlaceManager pmgr = _placeReg.getPlaceManager(user.location.placeOid);
         if (!(pmgr instanceof BootablePlaceManager)) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
@@ -375,7 +377,7 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         user.setAwayMessage(away ? message : null);
-        MsoyServer.bodyman.updateOccupantStatus(
+        _bodyMan.updateOccupantStatus(
             user, user.location, away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
     }
 
@@ -797,22 +799,14 @@ public class MemberManager
      * rest are calculated according to the equation in calculateLevelsForFlow() */
     protected int[] _levelForFlow;
 
-    /** Handles Presents client-related services. */
+    // dependencies
     @Inject protected ClientManager _clmgr;
-
-    /** Handles mail-related services. */
+    @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailManager _mailMan;
-
-    /** Used to look up member objects. */
+    @Inject protected BodyManager _bodyMan;
     @Inject protected MemberLocator _locator;
-
-    /** Provides access to persistent member data. */
     @Inject protected MemberRepository _memberRepo;
-
-    /** Provides access to persistent group data. */
     @Inject protected GroupRepository _groupRepo;
-
-    /** The invoker on which we do our database business. */
     @Inject protected @MainInvoker Invoker _invoker;
 
     /** The required flow for the first few levels is hard-coded */

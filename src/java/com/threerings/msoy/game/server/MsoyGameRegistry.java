@@ -16,6 +16,7 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -262,7 +263,7 @@ public class MsoyGameRegistry
 
             // see if we need to do some extra AVRG bits
             if (avrGameId != 0 || (game != null && game.avrGame)) {
-                PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memObj.getPlaceOid());
+                PlaceManager pmgr = _placeReg.getPlaceManager(memObj.getPlaceOid());
                 RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
 
                 // if we left an AVRG, let the room know
@@ -579,6 +580,9 @@ public class MsoyGameRegistry
 
     /** Contains a mapping from gameId to handler for all game servers hosted on this machine. */
     protected HashIntMap<GameServerHandler> _handmap = new HashIntMap<GameServerHandler>();
+
+    // dependencies
+    @Inject protected PlaceRegistry _placeReg;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
