@@ -91,9 +91,9 @@ public class ItemRemixer extends FlexTable
      */
     protected void pickPhoto ()
     {
-        ImageChooserPopup.displayImageChooser(false, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setPhotoUrl(((MediaDesc) result).getMediaPath());
+        ImageChooserPopup.displayImageChooser(false, new MsoyCallback<MediaDesc>() {
+            public void onSuccess (MediaDesc photo) {
+                setPhotoUrl(photo.getMediaPath());
             }
         });
     }
@@ -113,10 +113,10 @@ public class ItemRemixer extends FlexTable
 
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
-        CShell.itemsvc.remixItem(CShell.ident, _item, new MsoyCallback() {
-            public void onSuccess (Object result) {
+        CShell.itemsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
+            public void onSuccess (Item item) {
                 MsoyUI.info(CShell.emsgs.msgItemUpdated());
-                _parent.editComplete((Item) result);
+                _parent.editComplete(item);
             }
         });
     }

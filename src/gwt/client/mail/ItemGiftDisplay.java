@@ -78,8 +78,8 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 // click
                 return;
             }
-            CMail.itemsvc.wrapItem(CMail.ident, _giftPayload.item, false, new MsoyCallback() {
-                public void onSuccess (Object result) {
+            CMail.itemsvc.wrapItem(CMail.ident, _giftPayload.item, false, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
                     // the item is unwrapped, just update the payload
                     _giftPayload.item = null;
                     updateState(_giftPayload, new MsoyCallback<Void>() {

@@ -28,7 +28,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.MsoyCallback;
+import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
@@ -206,20 +206,22 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.add(shim);
                 final NumberTextBox numInvites = new NumberTextBox(false, 2);
                 buttons.add(numInvites);
-                buttons.add(new Button("Grant Invites", new ClickListener() {
-                    public void onClick (Widget sender) {
+                Button grantInvites = new Button(CAdmin.msgs.browserGrantInv());
+                new ClickCallback<Void>(grantInvites) {
+                    public boolean callService () {
                         CAdmin.adminsvc.grantInvitations(
-                            CAdmin.ident, numInvites.getValue().intValue(), _result.memberId,
-                            new MsoyCallback() {
-                            public void onSuccess (Object result) {
-                                MsoyUI.info(CAdmin.msgs.browserAddInvites(
-                                                "" + numInvites.getValue(), _result.name));
-                                PlayerBrowserPanel.this.addToAvailable(
-                                    _result.memberId, numInvites.getValue().intValue());
-                            }
-                        });
+                            CAdmin.ident, numInvites.getValue().intValue(), _result.memberId, this);
+                        return true;
                     }
-                }));
+                    public boolean gotResult (Void result) {
+                        MsoyUI.info(CAdmin.msgs.browserAddInvites("" + numInvites.getValue(), 
+                                    _result.name));
+                        PlayerBrowserPanel.this.addToAvailable(
+                            _result.memberId, numInvites.getValue().intValue());
+                        return true;
+                    }
+                };
+                buttons.add(grantInvites);
                 setWidget(row++, 0, buttons);
             }
 

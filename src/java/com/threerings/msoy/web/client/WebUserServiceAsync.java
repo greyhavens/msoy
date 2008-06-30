@@ -6,7 +6,9 @@ package com.threerings.msoy.web.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -37,7 +39,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#getConnectConfig}.
      */
-    public void getConnectConfig (AsyncCallback callback);
+    public void getConnectConfig (AsyncCallback<ConnectConfig> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
@@ -74,7 +76,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#getAccountInfo}.
      */
-    public void getAccountInfo (WebIdent ident, AsyncCallback callback);
+    public void getAccountInfo (WebIdent ident, AsyncCallback<AccountInfo> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateAccountInfo}.

@@ -34,9 +34,9 @@ public class PhotoChoiceBox extends FlexTable
 
         setWidget(0, 1, MsoyUI.createTinyButton("Choose...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(thumbnail, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        setMedia((MediaDesc)result);
+                ImageChooserPopup.displayImageChooser(thumbnail, new MsoyCallback<MediaDesc>() {
+                    public void onSuccess (MediaDesc media) {
+                        setMedia(media);
                     }
                 });
             }

@@ -53,9 +53,9 @@ public class GameDetailPanel extends SmartTable
         if (_gameId == gameId) {
             selectTab(tab);
         } else {
-            CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    setGameDetail(gameId, (GameDetail)result);
+            CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new MsoyCallback<GameDetail>() {
+                public void onSuccess (GameDetail detail) {
+                    setGameDetail(gameId, detail);
                     selectTab(tab);
                 }
             });

@@ -559,16 +559,16 @@ public abstract class ItemEditor extends FlexTable
         }
 
         if (_item.itemId == 0) {
-            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback() {
-                public void onSuccess (Object result) {
+            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
+                public void onSuccess (Item item) {
                     MsoyUI.info(CShell.emsgs.msgItemCreated());
-                    _parent.editComplete((Item)result);
+                    _parent.editComplete(item);
                 }
             });
 
         } else {
-            CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback() {
-                public void onSuccess (Object result) {
+            CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
                     MsoyUI.info(CShell.emsgs.msgItemUpdated());
                     _parent.editComplete(_item);
                 }

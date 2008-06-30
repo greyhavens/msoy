@@ -37,7 +37,8 @@ public class ImageChooserPopup extends VerticalPanel
      * Displays an image chooser which will select either the main or thumbnail image of a photo
      * from the user's inventory, or allow them to upload an image directly.
      */
-    public static void displayImageChooser (final boolean thumbnail, final AsyncCallback callback)
+    public static void displayImageChooser (
+        final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
         CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -50,7 +51,7 @@ public class ImageChooserPopup extends VerticalPanel
         });
     }
 
-    protected ImageChooserPopup (List images, boolean thumbnail, AsyncCallback callback)
+    protected ImageChooserPopup (List images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
     {
         _callback = callback;
         _thumbnail = thumbnail;
@@ -160,5 +161,5 @@ public class ImageChooserPopup extends VerticalPanel
     }
 
     protected boolean _thumbnail;
-    protected AsyncCallback _callback;
+    protected AsyncCallback<MediaDesc> _callback;
 }

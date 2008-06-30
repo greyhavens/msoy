@@ -45,11 +45,11 @@ public class WhirledMembersPanel extends PagedGrid
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         CWhirleds.groupsvc.getGroupMembers(
-            CWhirleds.ident, _detail.group.groupId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setModel(new SimpleDataModel(((GroupService.MembersResult)result).members), 0);
-            }
-        });
+            CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
+                public void onSuccess (GroupService.MembersResult result) {
+                    setModel(new SimpleDataModel(result.members), 0);
+                }
+            });
     }
 
     @Override // from PagedGrid
@@ -88,14 +88,14 @@ public class WhirledMembersPanel extends PagedGrid
             public void execute () {
                 CWhirleds.groupsvc.updateMemberRank(
                     CWhirleds.ident, _detail.group.groupId, card.name.getMemberId(), rank,
-                    new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        card.rank = rank;
-                        card.rankAssigned = System.currentTimeMillis();
-                        // force a page refresh so we see the new rank...
-                        displayPage(_page, true);
-                    }
-                });
+                    new MsoyCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            card.rank = rank;
+                            card.rankAssigned = System.currentTimeMillis();
+                            // force a page refresh so we see the new rank...
+                            displayPage(_page, true);
+                        }
+                    });
             }
         };
     }

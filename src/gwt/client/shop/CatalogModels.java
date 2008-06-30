@@ -39,15 +39,15 @@ public class CatalogModels
 
         public void doFetchRows (int start, int count, final AsyncCallback callback) {
             CShop.catalogsvc.loadCatalog(
-                CShop.ident, _query, start, count, _listingCount == -1, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    CatalogService.CatalogResult data = (CatalogService.CatalogResult)result;
-                    if (_listingCount == -1) {
-                        _listingCount = data.listingCount;
+                CShop.ident, _query, start, count, _listingCount == -1, 
+                new MsoyCallback<CatalogService.CatalogResult>() {
+                    public void onSuccess (CatalogService.CatalogResult data) {
+                        if (_listingCount == -1) {
+                            _listingCount = data.listingCount;
+                        }
+                        callback.onSuccess(data.listings);
                     }
-                    callback.onSuccess(data.listings);
-                }
-            });
+                });
         }
 
         public void removeItem (Object item) {

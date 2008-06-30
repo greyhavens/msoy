@@ -458,9 +458,9 @@ public class RichTextToolbar extends Composite
             } else if (sender == justifyRight) {
                 basic.setJustification(RichTextArea.Justification.RIGHT);
             } else if (sender == insertImage) {
-                ImageChooserPopup.displayImageChooser(false, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        extended.insertImage(((MediaDesc)result).getMediaPath());
+                ImageChooserPopup.displayImageChooser(false, new AsyncCallback<MediaDesc>() {
+                    public void onSuccess (MediaDesc image) {
+                        extended.insertImage(image.getMediaPath());
                     }
                     public void onFailure (Throwable t) {
                         // not used

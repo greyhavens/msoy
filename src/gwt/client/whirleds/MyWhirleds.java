@@ -8,14 +8,6 @@ import java.util.List;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import client.shell.Application;
-import client.shell.Args;
-import client.shell.Page;
-import client.shop.CShop;
-import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
-
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -28,11 +20,25 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+
 import com.threerings.gwt.util.SimpleDataModel;
+
 import com.threerings.msoy.group.data.GroupMembership;
+
 import com.threerings.msoy.web.data.MyGroupCard;
+
+import client.shell.Application;
+import client.shell.Args;
+import client.shell.Page;
+
+import client.shop.CShop;
+
+import client.util.MsoyCallback;
+import client.util.MsoyUI;
+import client.util.ThumbBox;
 
 /**
  * Displays a list of threads.
@@ -57,22 +63,22 @@ public class MyWhirleds extends AbsolutePanel
             }
         });
 
-        CWhirleds.groupsvc.getMyGroups(CWhirleds.ident, sortMethod, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                gotData((List)result);
-            }
-        });
+        CWhirleds.groupsvc.getMyGroups(
+            CWhirleds.ident, sortMethod, new MsoyCallback<List<MyGroupCard>>() {
+                public void onSuccess (List<MyGroupCard> whirleds) {
+                    gotData(whirleds);
+                }
+            });
     }
 
     /**
      * When data for this page is received, create a new WhirledsGrid to display it.
      */
-    protected void gotData (List whirleds)
+    protected void gotData (List<MyGroupCard> whirleds)
     {
-        _whirleds = whirleds;
-        _whirledsGrid = new WhirledsGrid();
-        add(MsoyUI.createSimplePanel("WhirledsGrid", _whirledsGrid));
-        _whirledsGrid.setModel(new SimpleDataModel(whirleds), 0);
+        WhirledsGrid grid = new WhirledsGrid();
+        add(MsoyUI.createSimplePanel("WhirledsGrid", grid));
+        grid.setModel(new SimpleDataModel(whirleds), 0);
     }
     
     /**
@@ -237,11 +243,6 @@ public class MyWhirleds extends AbsolutePanel
 
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
-    
-    /** List of MyGroupCard objects */
-    protected List _whirleds;
-    
-    protected WhirledsGrid _whirledsGrid;
     
     /** Used to format the most recent post date. */
     protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yy");

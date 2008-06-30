@@ -85,9 +85,9 @@ public class index extends Page
 
         } else {
             // load up the information needed to launch the applet
-            CSwiftly.swiftlysvc.getConnectConfig(CSwiftly.ident, projectId, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    SwiftlyConnectConfig config = (SwiftlyConnectConfig)result;
+            CSwiftly.swiftlysvc.getConnectConfig(
+                CSwiftly.ident, projectId, new MsoyCallback<SwiftlyConnectConfig>() {
+                public void onSuccess (SwiftlyConnectConfig config) {
                     setContent(config.project.projectName, new SwiftlyPanel(config, projectId));
                 }
             });

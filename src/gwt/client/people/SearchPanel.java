@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.web.data.MemberCard;
+
 import client.shell.Args;
 import client.util.HeaderBox;
 import client.util.MsoyCallback;
@@ -42,11 +44,12 @@ public class SearchPanel extends FlowPanel
         clearResults();
 
         if (query.length() > 0) {
-            CPeople.profilesvc.findProfiles(CPeople.ident, query, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    setResults((List) result, page, query);
-                }
-            });
+            CPeople.profilesvc.findProfiles(
+                CPeople.ident, query, new MsoyCallback<List<MemberCard>>() {
+                    public void onSuccess (List<MemberCard> members) {
+                        setResults(members, page, query);
+                    }
+                });
         }
     }
 
@@ -59,7 +62,7 @@ public class SearchPanel extends FlowPanel
         _searchString = null;
     }
 
-    public void setResults (List cards, int page, String search)
+    public void setResults (List<MemberCard> cards, int page, String search)
     {
         _searchString = search;
         _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));

@@ -25,7 +25,10 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
+
 import com.threerings.msoy.item.data.all.Item;
+
+import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.CShell;
 
@@ -40,10 +43,10 @@ public class TagDetailPanel extends VerticalPanel
      */
     public interface TagService 
     {
-        public void tag (String tag, AsyncCallback callback);
-        public void untag (String tag, AsyncCallback callback);
-        public void getRecentTags (AsyncCallback callback);
-        public void getTags (AsyncCallback callback);
+        public void tag (String tag, AsyncCallback<TagHistory> callback);
+        public void untag (String tag, AsyncCallback<TagHistory> callback);
+        public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
+        public void getTags (AsyncCallback<Collection<String>> callback);
         public boolean supportFlags ();
 
         /** 
@@ -84,8 +87,8 @@ public class TagDetailPanel extends VerticalPanel
 //                 public void onChange (Widget sender) {
 //                     ListBox box = (ListBox) sender;
 //                     String value = box.getValue(box.getSelectedIndex());
-//                     _service.tag(value, new AsyncCallback() {
-//                         public void onSuccess (Object result) {
+//                     _service.tag(value, new AsyncCallback<TagHistory>() {
+//                         public void onSuccess (TagHistory result) {
 //                             refreshTags();
 //                         }
 //                         public void onFailure (Throwable caught) {
@@ -191,9 +194,9 @@ public class TagDetailPanel extends VerticalPanel
 
     protected void refreshTags ()
     {
-        _service.getTags(new AsyncCallback() {
-            public void onSuccess (Object result) {
-                gotTags((Collection)result);
+        _service.getTags(new AsyncCallback<Collection<String>>() {
+            public void onSuccess (Collection<String> tags) {
+                gotTags(tags);
             }
             public void onFailure (Throwable caught) {
                 _tags.clear();
@@ -202,20 +205,20 @@ public class TagDetailPanel extends VerticalPanel
         });
     }
 
-    protected void gotTags (Collection tags)
+    protected void gotTags (Collection<String> tags)
     {
         _tags.clear();
         _tags.add(new InlineLabel("Tags:", false, false, true));
 
-        final ArrayList addedTags = new ArrayList();
-        for (Iterator iter = tags.iterator(); iter.hasNext() ; ) {
-            final String tag = (String) iter.next();
+        final ArrayList<String> addedTags = new ArrayList<String>();
+        for (Iterator<String> iter = tags.iterator(); iter.hasNext() ; ) {
+            final String tag = iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
             if (_canEdit) {
                 final Command remove = new Command() {
                     public void execute () {
-                        _service.untag(tag, new MsoyCallback() {
-                            public void onSuccess (Object result) {
+                        _service.untag(tag, new MsoyCallback<TagHistory>() {
+                            public void onSuccess (TagHistory result) {
                                 refreshTags();
                             }
                         });
@@ -241,13 +244,11 @@ public class TagDetailPanel extends VerticalPanel
         }
 
 //         if (CShell.ident != null) {
-//             _service.getRecentTags(new MsoyCallback() {
-//                 public void onSuccess (Object result) {
+//             _service.getRecentTags(new MsoyCallback<Collection<TagHistory>>() {
+//                 public void onSuccess (Collection<TagHistory> result) {
 //                     _quickTags.clear();
 //                     _quickTags.addItem(CShell.cmsgs.tagSelectOne());
-//                     Iterator i = ((Collection) result).iterator();
-//                     while (i.hasNext()) {
-//                         TagHistory history = (TagHistory) i.next();
+//                     for (TagHistory history : result) {
 //                         String tag = history.tag;
 //                         if (tag != null && !addedTags.contains(tag) && 
 //                             history.member.getMemberId() == CShell.getMemberId()) {
@@ -293,8 +294,8 @@ public class TagDetailPanel extends VerticalPanel
                 MsoyUI.error(CShell.cmsgs.errTagInvalidCharacters());
                 return;
             }
-            _service.tag(tagName, new MsoyCallback() {
-                public void onSuccess (Object result) {
+            _service.tag(tagName, new MsoyCallback<TagHistory>() {
+                public void onSuccess (TagHistory result) {
                     refreshTags();
                 }
             });

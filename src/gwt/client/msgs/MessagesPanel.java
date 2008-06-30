@@ -167,12 +167,13 @@ public class MessagesPanel extends PagedGrid
             public void execute () {
                 // TODO: if forum admin, make them send a mail to the poster explaining why their
                 // post was deleted?
-                CMsgs.forumsvc.deleteMessage(CMsgs.ident, message.messageId, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        removeItem(message);
-                        MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
-                    }
-                });
+                CMsgs.forumsvc.deleteMessage(
+                    CMsgs.ident, message.messageId, new MsoyCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            removeItem(message);
+                            MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
+                        }
+                    });
             }
         };
     }
@@ -238,9 +239,9 @@ public class MessagesPanel extends PagedGrid
                 info.add(makeInfoImage(_images.edit_post(),
                                                 CMsgs.mmsgs.inlineEdit(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        _parent.editPost(_message, new MsoyCallback() {
-                            public void onSuccess (Object result) {
-                                setMessage((ForumMessage)result);
+                        _parent.editPost(_message, new MsoyCallback<ForumMessage>() {
+                            public void onSuccess (ForumMessage message) {
+                                setMessage(message);
                             }
                         });
                     }

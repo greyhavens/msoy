@@ -50,23 +50,22 @@ public class ReviewPanel extends FlowPanel
             remove(_contents);
         }
         add(_contents = new FlexTable());
-        CAdmin.itemsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                populateUI((List) result);
+        CAdmin.itemsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
+            public void onSuccess (List<ItemDetail> items) {
+                populateUI(items);
             }
         });
     }
 
     // builds the UI from the given list
-    protected void populateUI (List list)
+    protected void populateUI (List<ItemDetail> items)
     {
-        if (list.size() == 0) {
+        if (items.size() == 0) {
             _contents.setText(0, 0, CAdmin.msgs.reviewNoItems());
             return;
         }
 
-        for (Iterator iter = list.iterator(); iter.hasNext(); ) {
-            ItemDetail detail = (ItemDetail) iter.next();
+        for (ItemDetail detail : items) {
             int row = _contents.getRowCount();
             _contents.setWidget(row, 0, new ThumbBox(detail.item.getThumbnailMedia(), null));
             _contents.setWidget(row, 1, new ReviewItem(this, detail));

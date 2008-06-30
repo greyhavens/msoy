@@ -35,11 +35,12 @@ public class index extends Page
         if (action.equals("l")) {
             byte type = (byte)args.get(1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
-            CShop.catalogsvc.loadListing(CShop.ident, type, catalogId, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    setContent(new ListingDetailPanel(_models, (CatalogListing)result));
-                }
-            });
+            CShop.catalogsvc.loadListing(
+                CShop.ident, type, catalogId, new MsoyCallback<CatalogListing>() {
+                    public void onSuccess (CatalogListing listing) {
+                        setContent(new ListingDetailPanel(_models, listing));
+                    }
+                });
 
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);

@@ -17,11 +17,16 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.GroupName;
+
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
+
 import com.threerings.msoy.item.data.all.Item;
+
+import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -133,16 +138,16 @@ public class GroupEdit extends FlexTable
         // TODO integrate tags into the main form
         if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
-                public void tag (String tag, AsyncCallback cback) {
+                public void tag (String tag, AsyncCallback<TagHistory> cback) {
                     CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
                 }
-                public void untag (String tag, AsyncCallback cback) {
+                public void untag (String tag, AsyncCallback<TagHistory> cback) {
                     CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
                 }
-                public void getRecentTags (AsyncCallback cback) {
+                public void getRecentTags (AsyncCallback<Collection<TagHistory>> cback) {
                     CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, cback);
                 }
-                public void getTags (AsyncCallback cback) {
+                public void getTags (AsyncCallback<Collection<String>> cback) {
                     CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
                 }
                 public boolean supportFlags () {
@@ -197,32 +202,39 @@ public class GroupEdit extends FlexTable
             return;
         }
 
-        final MsoyCallback updateCallback = new MsoyCallback() {
-            public void onSuccess (Object result) {
-                int groupId = (result == null) ? _group.groupId : ((Group)result).groupId;
-                Application.go(Page.WHIRLEDS, Args.compose("d", String.valueOf(groupId), "r"));
+        final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
+            public void onSuccess (Void result) {
+                Application.go(
+                    Page.WHIRLEDS, Args.compose("d", String.valueOf(_group.groupId), "r"));
+            }
+        };
+        final MsoyCallback<Group> createCallback = new MsoyCallback<Group>() {
+            public void onSuccess (Group group) {
+                Application.go(
+                    Page.WHIRLEDS, Args.compose("d", String.valueOf(group.groupId), "r"));
             }
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, new MsoyCallback () {
-                public void onSuccess (Object result) {
-                    if (((Collection)result).size() > 0) {
-                        MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
-                    } else if (_group.groupId > 0) {
-                        CWhirleds.groupsvc.updateGroup(
-                            CWhirleds.ident, _group, _extras, updateCallback);
-                    } else {
-                        CWhirleds.groupsvc.createGroup(
-                            CWhirleds.ident, _group, _extras, updateCallback);
-                    }
-                } 
-            });
+            CWhirleds.groupsvc.getTags(
+                CWhirleds.ident, _group.groupId, new MsoyCallback<Collection<String>>() {
+                    public void onSuccess (Collection<String> tags) {
+                        if (tags.size() > 0) {
+                            MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
+                        } else if (_group.groupId > 0) {
+                            CWhirleds.groupsvc.updateGroup( 
+                                CWhirleds.ident, _group, _extras, updateCallback);
+                        } else {
+                            CWhirleds.groupsvc.createGroup(
+                                CWhirleds.ident, _group, _extras, createCallback);
+                        }
+                    } 
+                });
         } else {
             if (_group.groupId > 0) {
                 CWhirleds.groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
             } else {
-                CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, updateCallback);
+                CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
             }
         }
     }

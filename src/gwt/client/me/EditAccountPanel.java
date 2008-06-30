@@ -37,9 +37,9 @@ public class EditAccountPanel extends SmartTable
         setCellSpacing(10);
         setStyleName("editAccount");
 
-        CMe.usersvc.getAccountInfo(CMe.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((AccountInfo)result);
+        CMe.usersvc.getAccountInfo(CMe.ident, new MsoyCallback<AccountInfo>() {
+            public void onSuccess (AccountInfo info) {
+                init(info);
             }
         });
     }

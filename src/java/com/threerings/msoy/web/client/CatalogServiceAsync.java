@@ -8,7 +8,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.item.data.gwt.CatalogListing;
+
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -19,13 +22,14 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadShopData}.
      */
-    public void loadShopData (WebIdent ident, AsyncCallback callback);
+    public void loadShopData (WebIdent ident, AsyncCallback<ShopData> callback);
     
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
-                             boolean includeCount, AsyncCallback callback);
+    public void loadCatalog (
+        WebIdent ident, CatalogQuery query, int offset, int rows, boolean includeCount, 
+        AsyncCallback<CatalogService.CatalogResult> callback);
     
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
@@ -43,7 +47,8 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
      */
-    public void loadListing (WebIdent ident, byte itemType, int catalogId, AsyncCallback callback);
+    public void loadListing (
+        WebIdent ident, byte itemType, int catalogId, AsyncCallback<CatalogListing> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}

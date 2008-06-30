@@ -91,9 +91,9 @@ public class ItemRating extends FlexTable
 
         _playerStars.setRating(_memberRating = newRating);
         ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-        CShell.itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                _averageStars.setRating(_item.rating = ((Float)result).floatValue());
+        CShell.itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback<Float>() {
+            public void onSuccess (Float result) {
+                _averageStars.setRating(_item.rating = result);
 
                 if (isFirstRating) {
                     _item.ratingCount += 1;

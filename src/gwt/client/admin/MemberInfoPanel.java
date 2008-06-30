@@ -28,9 +28,9 @@ public class MemberInfoPanel extends SmartTable
     {
         super("memberInfo", 0, 5);
 
-        CAdmin.adminsvc.getMemberInfo(CAdmin.ident, memberId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((MemberAdminInfo)result);
+        CAdmin.adminsvc.getMemberInfo(CAdmin.ident, memberId, new MsoyCallback<MemberAdminInfo>() {
+            public void onSuccess (MemberAdminInfo info) {
+                init(info);
             }
         });
     }

@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.util.DataModel;
+
+import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.MsoyCallback;
 
@@ -41,9 +42,9 @@ public class SubItemPanel extends PagedGrid
             return;
         }
 
-        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setModel((DataModel)result, 0);
+        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback<SimpleDataModel>() {
+            public void onSuccess (SimpleDataModel data) {
+                setModel(data, 0);
             }
         });
     }

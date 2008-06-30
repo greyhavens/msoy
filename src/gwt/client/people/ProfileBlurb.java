@@ -212,9 +212,9 @@ public class ProfileBlurb extends Blurb
 
         panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(true, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        _profile.photo = (MediaDesc)result;
+                ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
+                    public void onSuccess (MediaDesc photo) {
+                        _profile.photo = photo;
                         _ephoto.setWidget(MediaUtil.createMediaView(
                                               _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
                     }
@@ -307,8 +307,8 @@ public class ProfileBlurb extends Blurb
             _profile.age = 0;
         }
 
-        CPeople.profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback() {
-            public void onSuccess (Object result) {
+        CPeople.profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback<Void>() {
+            public void onSuccess (Void result) {
                 displayProfile();
                 if (!name.equals(CPeople.creds.name.toString())) {
                     FlashEvents.dispatchEvent(new NameChangeEvent(name));

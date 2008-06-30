@@ -29,7 +29,6 @@ import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.ItemUtil;
-import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -139,8 +138,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         RowPanel buttons = new RowPanel();
         // add a button for deleting this item
-        _deleteBtn = MsoyUI.createButton(
-            MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
+        _deleteBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
         createDeleteCallback(_deleteBtn);
         buttons.add(_deleteBtn);
 
@@ -203,17 +201,19 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             if (catalogOriginal && salable) {
                 // add a button for repricing the listing
                 butlbl = CStuff.msgs.detailUpprice();
-                buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
-                    public void onClick (Widget sender) {
+                PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, null);
+                new ClickCallback<CatalogListing>(button) {
+                    public boolean callService () {
                         CStuff.catalogsvc.loadListing(
-                            CStuff.ident, _item.getType(), _item.catalogId, new MsoyCallback() {
-                            public void onSuccess (Object result) {
-                                DoListItemPopup.show(
-                                    _item, (CatalogListing)result, ItemDetailPanel.this);
-                            }
-                        });
+                            CStuff.ident, _item.getType(), _item.catalogId, this);
+                        return true;
                     }
-                }));
+                    public boolean gotResult (CatalogListing listing) {
+                        DoListItemPopup.show(_item, listing, ItemDetailPanel.this);
+                        return true;
+                    }
+                };
+                buttons.add(button);
             }
             _details.add(WidgetUtil.makeShim(10, 5));
             _details.add(buttons);

@@ -199,9 +199,8 @@ public class ItemPanel extends VerticalPanel
         }
 
         // otherwise we have to load
-        _models.loadModel(_type, 0, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                SimpleDataModel model = (SimpleDataModel)result;
+        _models.loadModel(_type, 0, new MsoyCallback<SimpleDataModel>() {
+            public void onSuccess (SimpleDataModel model) {
                 if (pred != null) {
                     model = model.filter(pred);
                 }

@@ -28,9 +28,9 @@ public class RoomPanel extends SmartTable
     {
         super("roomPanel", 0, 5);
 
-        CWorld.worldsvc.loadRoomInfo(sceneId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((RoomInfo)result);
+        CWorld.worldsvc.loadRoomInfo(sceneId, new MsoyCallback<RoomInfo>() {
+            public void onSuccess (RoomInfo info) {
+                init(info);
             }
         });
     }

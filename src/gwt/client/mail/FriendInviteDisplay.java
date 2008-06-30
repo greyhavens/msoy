@@ -35,9 +35,9 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void refreshUI (final boolean roundtrip)
         {
             int friendId = _message.author.name.getMemberId();
-            CMail.membersvc.getFriendStatus(CMail.ident, friendId, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    buildUI(((Boolean) result).booleanValue(), roundtrip);
+            CMail.membersvc.getFriendStatus(CMail.ident, friendId, new MsoyCallback<Boolean>() {
+                public void onSuccess (Boolean result) {
+                    buildUI(result, roundtrip);
                 }
             });
         }

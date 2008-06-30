@@ -87,9 +87,9 @@ public class GameGenrePanel extends FlowPanel
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
         
         CGames.gamesvc.loadGameGenre(
-            CGames.ident, genre, sortMethod, query, new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    init(genre, (List)result);
+            CGames.ident, genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
+                public void onSuccess (List<GameInfo> games) {
+                    init(genre, games);
                 }
         });
     }
@@ -97,7 +97,7 @@ public class GameGenrePanel extends FlowPanel
     /**
      * After data is received, display the genre header and the data grid
      */
-    protected void init (byte genre, List games)
+    protected void init (byte genre, List<GameInfo> games)
     {
         // set the dropdown list of all games
         _header.init(games);
@@ -111,7 +111,7 @@ public class GameGenrePanel extends FlowPanel
      */
     protected class GameGenreGrid extends PagedGrid
     {
-        public GameGenreGrid (List games) {
+        public GameGenreGrid (List<GameInfo> games) {
             super(GAMES_PER_PAGE, 1, PagedGrid.NAV_ON_TOP);
             addStyleName("Games");
             setModel(new SimpleDataModel(games), 0);

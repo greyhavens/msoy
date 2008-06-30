@@ -29,7 +29,8 @@ import client.util.MsoyUI;
  */
 public class GameHeaderPanel extends FlowPanel
 {
-    public GameHeaderPanel (final byte genre, final byte sortMethod, final String query, String titleText)
+    public GameHeaderPanel (
+        final byte genre, final byte sortMethod, final String query, String titleText)
     {       
         setStyleName("gameHeaderPanel");
         _genre = genre;
@@ -79,24 +80,23 @@ public class GameHeaderPanel extends FlowPanel
     /**
      * After data is received, display the genre header and the data grid
      */
-    protected void init (List games)
+    protected void init (List<GameInfo> games)
     {
         // make a copy of the list of games sorted by name for the dropdown
-        List gamesByName = (List)((ArrayList) games).clone();
+        List<GameInfo> gamesByName = new ArrayList<GameInfo>();
+        gamesByName.addAll(games);
         Collections.sort(gamesByName, SORT_GAMEINFO_BY_NAME);
-        for (Object gameObject : gamesByName) {
-            GameInfo gameInfo = (GameInfo) gameObject;
+        for (GameInfo gameInfo : gamesByName) {
             String gameName = gameInfo.name;
             _findGameBox.addItem(gameName, gameInfo.gameId+"");
         }
     }
 
     /** Compartor for sorting {@link GameInfo}, by name. */
-    protected static Comparator SORT_GAMEINFO_BY_NAME = new Comparator() {
-        public int compare (Object object1, Object object2) {
-            GameInfo game1 = (GameInfo)object1;
-            GameInfo game2 = (GameInfo)object2;
-            return game1.name.toString().toLowerCase().compareTo(game2.name.toString().toLowerCase());
+    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_NAME = new Comparator<GameInfo>() {
+        public int compare (GameInfo info1, GameInfo info2) {
+            return info1.name.toString().toLowerCase().compareTo(
+                info2.name.toString().toLowerCase());
         }
     };
 

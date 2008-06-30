@@ -61,8 +61,8 @@ public class MemberList extends PagedGrid
         return new Command() {
             public void execute () {
                 CPeople.membersvc.removeFriend(
-                    CPeople.ident, card.name.getMemberId(), new MsoyCallback() {
-                    public void onSuccess (Object result) {
+                    CPeople.ident, card.name.getMemberId(), new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
                         MsoyUI.info(CPeople.msgs.mlRemoved(card.name.toString()));
                         removeItem(card);
                     }
@@ -79,7 +79,8 @@ public class MemberList extends PagedGrid
 
             setWidget(0, 0, MediaUtil.createMediaView(
                           card.photo, MediaDesc.THUMBNAIL_SIZE,
-                          Application.createLinkListener(Page.PEOPLE, "" + card.name.getMemberId())),
+                          Application.createLinkListener(
+                            Page.PEOPLE, "" + card.name.getMemberId())),
                       1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 

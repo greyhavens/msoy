@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -17,19 +18,20 @@ public interface AdminServiceAsync
     /** 
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince,
-                                  AsyncCallback callback);
+    public void grantInvitations (
+        WebIdent ident, int numberInvitations, Date activeSince, AsyncCallback<Void> callback);
 
     /** 
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId,
-                                  AsyncCallback callback);
+    public void grantInvitations (
+        WebIdent ident, int numberInvitations, int memberId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getMemberInfo}.
      */
-    public void getMemberInfo (WebIdent ident, int memberId, AsyncCallback callback);
+    public void getMemberInfo (
+        WebIdent ident, int memberId, AsyncCallback<MemberAdminInfo> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getPlayerList}.

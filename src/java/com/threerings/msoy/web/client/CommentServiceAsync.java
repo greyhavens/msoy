@@ -29,8 +29,8 @@ public interface CommentServiceAsync
     /**
      * The asynchronous version of {@link CommentService#deleteComment}.
      */
-    public void deleteComment (WebIdent ident, int entityType, int entityId, long when,
-                               AsyncCallback callback);
+    public void deleteComment (
+        WebIdent ident, int entityType, int entityId, long when, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link CommentService#complainComment}.

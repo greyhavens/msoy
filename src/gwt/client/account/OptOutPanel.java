@@ -22,9 +22,9 @@ public class OptOutPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("invitation"); // mimic the styles on InvitationPanel
-        CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback () {
-            public void onSuccess (Object result) {
-                init((Invitation)result);
+        CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback<Invitation>() {
+            public void onSuccess (Invitation invite) {
+                init(invite);
             }
         });
     }
@@ -42,8 +42,8 @@ public class OptOutPanel extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CAccount.msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                CAccount.membersvc.optOut(invite.inviteId, new MsoyCallback() {
-                    public void onSuccess (Object result) {
+                CAccount.membersvc.optOut(invite.inviteId, new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
                         clear();
                         setText(1, 0, CAccount.msgs.optOutSuccessful(invite.inviteeEmail));
                     }

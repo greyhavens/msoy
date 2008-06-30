@@ -123,7 +123,8 @@ public class LandingPanel extends SimplePanel
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(makeLink("http://www.threerings.net", CMe.msgs.landingAbout()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://wiki.whirled.com/Terms_of_Service", CMe.msgs.landingTerms()));
+        copyright.add(makeLink(
+            "http://wiki.whirled.com/Terms_of_Service", CMe.msgs.landingTerms()));
         copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         copyright.add(makeLink("http://www.threerings.net/about/privacy.html",
                                CMe.msgs.landingPrivacy()));
@@ -132,9 +133,8 @@ public class LandingPanel extends SimplePanel
         content.add(copyright, 48, 970);
 
         // collect the data for this page
-        CMe.worldsvc.getLandingData(new MsoyCallback() {
-            public void onSuccess (Object result) {
-                LandingData data = (LandingData)result;
+        CMe.worldsvc.getLandingData(new MsoyCallback<LandingData>() {
+            public void onSuccess (LandingData data) {
                 topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
                 _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
                 _avatarPanel.setAvatars((ListingCard[])data.topAvatars);

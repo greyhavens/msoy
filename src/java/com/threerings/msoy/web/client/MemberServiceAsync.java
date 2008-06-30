@@ -7,7 +7,10 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -23,7 +26,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
-    public void getFriendStatus (WebIdent ident, int memberId, AsyncCallback callback);
+    public void getFriendStatus (WebIdent ident, int memberId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
@@ -33,7 +36,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
-    public void removeFriend (WebIdent ident, int friendId, AsyncCallback callback);
+    public void removeFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
@@ -43,28 +46,29 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getInvitationsStatus}.
      */
-    public void getInvitationsStatus (WebIdent ident, AsyncCallback callback);
+    public void getInvitationsStatus (WebIdent ident, AsyncCallback<MemberInvites> callback);
 
     /**
      * The asynchronous version of {@link MemberService#sendInvites}.
      */
     public void sendInvites (WebIdent ident, List addresses, String fromName, String customMessage,
-                             boolean anonymous, AsyncCallback callback);
+                             boolean anonymous, AsyncCallback<InvitationResults> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.
      */
-    public void getInvitation (String inviteId, boolean viewing, AsyncCallback callback);
+    public void getInvitation (
+        String inviteId, boolean viewing, AsyncCallback<Invitation> callback);
 
     /**
      * The asynchronous version of {@link MemberService#removeInvitation}.
      */
-    public void removeInvitation (WebIdent ident, String inviteId, AsyncCallback callback);
+    public void removeInvitation (WebIdent ident, String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#optOut}.
      */
-    public void optOut (String inviteId, AsyncCallback callback);
+    public void optOut (String inviteId, AsyncCallback<Void> callback);
     
     /**
      * The asynchronous version of {@link MemberService#getLeaderList}.

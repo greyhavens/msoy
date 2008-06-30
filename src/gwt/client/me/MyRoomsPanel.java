@@ -31,20 +31,20 @@ public class MyRoomsPanel extends VerticalPanel
     {
         setStyleName("myRooms");
 
-        CMe.worldsvc.loadMyRooms(CMe.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((List)result);
+        CMe.worldsvc.loadMyRooms(CMe.ident, new MsoyCallback<List<WorldService.Room>>() {
+            public void onSuccess (List<WorldService.Room> rooms) {
+                init(rooms);
             }
         });
     }
 
-    protected void init (List rooms)
+    protected void init (List<WorldService.Room> rooms)
     {
         add(new TongueBox(null, CMe.msgs.roomsIntro(), false));
         SmartTable grid = new SmartTable(0, 0);
         for (int ii = 0; ii < rooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
-            grid.setWidget(row, col, new RoomWidget((WorldService.Room)rooms.get(ii)));
+            grid.setWidget(row, col, new RoomWidget(rooms.get(ii)));
         }
         add(new TongueBox(CMe.msgs.titleRooms(), grid));
     }

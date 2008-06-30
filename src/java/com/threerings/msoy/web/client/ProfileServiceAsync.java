@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.person.data.Profile;
 
 import com.threerings.msoy.web.data.EmailContact;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -26,7 +27,7 @@ public interface ProfileServiceAsync
      * The asynchronous version of {@link ProfileService#updateProfile}.
      */
     public void updateProfile (WebIdent ident, String displayName, Profile profile,
-                               AsyncCallback callback);
+                               AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#updateInterests}.
@@ -36,7 +37,8 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.
      */
-    public void findProfiles (WebIdent ident, String search, AsyncCallback callback);
+    public void findProfiles (
+        WebIdent ident, String search, AsyncCallback<List<MemberCard>> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadFriends}.

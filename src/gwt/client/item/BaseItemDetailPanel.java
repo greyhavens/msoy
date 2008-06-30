@@ -3,6 +3,8 @@
 
 package client.item;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,6 +26,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -125,16 +128,16 @@ public abstract class BaseItemDetailPanel extends SmartTable
         // add our tag business at the bottom
         getFlexCellFormatter().setHeight(1, 0, "10px");
         setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
-            public void tag (String tag, AsyncCallback callback) {
+            public void tag (String tag, AsyncCallback<TagHistory> callback) {
                 CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
             } 
-            public void untag (String tag, AsyncCallback callback) {
+            public void untag (String tag, AsyncCallback<TagHistory> callback) {
                 CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
             }
-            public void getRecentTags (AsyncCallback callback) {
+            public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback) {
                 CShell.itemsvc.getRecentTags(CShell.ident, callback);
             }
-            public void getTags (AsyncCallback callback) {
+            public void getTags (AsyncCallback<Collection<String>> callback) {
                 CShell.itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
             }
             public boolean supportFlags () {
@@ -229,8 +232,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
         // persist our new scale to the server
         if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
             CShell.itemsvc.scaleAvatar(
-                CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback() {
-                public void onSuccess (Object result) {
+                CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
                     // nada
                 }
             });

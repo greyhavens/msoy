@@ -155,11 +155,15 @@ public class CommentsPanel extends PagedGrid
         return new Command() {
             public void execute () {
                 CShell.commentsvc.deleteComment(
-                    CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        MsoyUI.info(CShell.cmsgs.commentDeleted());
-                        _commentCount = -1;
-                        removeItem(comment);
+                    CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
+                    public void onSuccess (Boolean deleted) {
+                        if (deleted) {
+                            MsoyUI.info(CShell.cmsgs.commentDeleted());
+                            _commentCount = -1;
+                            removeItem(comment);
+                        } else {
+                            MsoyUI.error(CShell.cmsgs.commentDeletionNotAllowed());
+                        }
                     }
                 });
             }

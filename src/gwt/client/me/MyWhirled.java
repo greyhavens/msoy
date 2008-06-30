@@ -21,9 +21,9 @@ public class MyWhirled extends VerticalPanel
     {
         setStyleName("myWhirled");
 
-        CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((MyWhirledData)result);
+        CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback<MyWhirledData>() {
+            public void onSuccess (MyWhirledData data) {
+                init(data);
             }
         });
     }

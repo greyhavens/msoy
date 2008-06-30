@@ -4,7 +4,10 @@
 package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -16,7 +19,8 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getConnectConfig}.
      */
-    public void getConnectConfig (WebIdent ident, int projectId, AsyncCallback callback);
+    public void getConnectConfig (
+        WebIdent ident, int projectId, AsyncCallback<SwiftlyConnectConfig> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
@@ -48,12 +52,12 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectOwner}.
      */
-    public void getProjectOwner (WebIdent ident, int projectId, AsyncCallback callback);
+    public void getProjectOwner (WebIdent ident, int projectId, AsyncCallback<MemberName> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#deleteProject}.
      */
-    public void deleteProject (WebIdent ident, int projectId, AsyncCallback callback);
+    public void deleteProject (WebIdent ident, int projectId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.

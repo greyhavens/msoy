@@ -96,7 +96,7 @@ public class ThreadPanel extends TitledListPanel
                     new ReplyPanel(inReplyTo, quote));
     }
 
-    public void editPost (ForumMessage message, AsyncCallback callback)
+    public void editPost (ForumMessage message, AsyncCallback<ForumMessage> callback)
     {
         setContents(_thread.subject, new PostEditorPanel(message, callback));
     }
@@ -109,9 +109,10 @@ public class ThreadPanel extends TitledListPanel
     // from interface SearchBox.Listener
     public void search (String query)
     {
-        CMsgs.forumsvc.findMessages(CMsgs.ident, _threadId, query, MAX_RESULTS, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                _mpanel.setModel(new SimpleDataModel((List)result), 0);
+        CMsgs.forumsvc.findMessages(
+            CMsgs.ident, _threadId, query, MAX_RESULTS, new MsoyCallback<List<ForumMessage>>() {
+            public void onSuccess (List<ForumMessage> messages) {
+                _mpanel.setModel(new SimpleDataModel(messages), 0);
             }
         });
     }
@@ -206,7 +207,7 @@ public class ThreadPanel extends TitledListPanel
 
     protected class PostEditorPanel extends TableFooterPanel
     {
-        public PostEditorPanel (ForumMessage message, AsyncCallback callback)
+        public PostEditorPanel (ForumMessage message, AsyncCallback<ForumMessage> callback)
         {
             _message = message;
             _callback = callback;

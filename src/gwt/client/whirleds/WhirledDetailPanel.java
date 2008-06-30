@@ -99,11 +99,12 @@ public class WhirledDetailPanel extends FlowPanel
      */
     protected void loadGroup (int groupId)
     {
-        CWhirleds.groupsvc.getGroupDetail(CWhirleds.ident, groupId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setGroupDetail((GroupDetail) result);
-            }
-        });
+        CWhirleds.groupsvc.getGroupDetail(
+            CWhirleds.ident, groupId, new MsoyCallback<GroupDetail>() {
+                public void onSuccess (GroupDetail detail) {
+                    setGroupDetail(detail);
+                }
+            });
     }
 
     /**

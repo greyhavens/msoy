@@ -57,9 +57,9 @@ public class index extends MsgsEntryPoint
                 Application.activeInvite.inviteId.equals(inviteId)) {
                 Application.go(Page.ME, "");
             } else {
-                CMe.membersvc.getInvitation(inviteId, true, new MsoyCallback() {
-                    public void onSuccess (Object result) {
-                        Application.activeInvite = (Invitation)result;
+                CMe.membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
+                    public void onSuccess (Invitation invite) {
+                        Application.activeInvite = invite;
                         Application.go(Page.ME, "");
                     }
                 });

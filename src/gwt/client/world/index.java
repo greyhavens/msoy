@@ -132,9 +132,9 @@ public class index extends Page
 
     protected void displayHotSpots ()
     {
-        CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setFlashContent(null, FlashClients.createPopularPlacesDefinition((String) result));
+        CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback<String>() {
+            public void onSuccess (String result) {
+                setFlashContent(null, FlashClients.createPopularPlacesDefinition(result));
             }
         });
     }
@@ -142,9 +142,9 @@ public class index extends Page
     protected void displayGame (final String action, int gameId, final int gameOid)
     {
         // load up the information needed to launch the game
-        CWorld.worldsvc.loadLaunchConfig(CWorld.ident, gameId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                launchGame((LaunchConfig)result, gameOid, action);
+        CWorld.worldsvc.loadLaunchConfig(CWorld.ident, gameId, new MsoyCallback<LaunchConfig>() {
+            public void onSuccess (LaunchConfig result) {
+                launchGame(result, gameOid, action);
             }
         });
     }

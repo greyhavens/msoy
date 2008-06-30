@@ -36,7 +36,7 @@ public class InventoryModels
         FlashEvents.removeListener(this);
     }
 
-    public void loadModel (byte type, int suiteId, final AsyncCallback cb)
+    public void loadModel (byte type, int suiteId, final AsyncCallback<SimpleDataModel> cb)
     {
         final Key key = new Key(type, suiteId);
         SimpleDataModel model = (SimpleDataModel)_models.get(key);

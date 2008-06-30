@@ -129,8 +129,8 @@ public class InstructionsPanel extends VerticalPanel
             return;
         }
         CGames.gamesvc.updateGameInstructions(
-            CGames.ident, _detail.gameId, instructions, new MsoyCallback() {
-            public void onSuccess (Object result) {
+            CGames.ident, _detail.gameId, instructions, new MsoyCallback<Void>() {
+            public void onSuccess (Void result) {
                 _detail.instructions = instructions;
                 showInstructions();
             }

@@ -101,9 +101,9 @@ public class GalaxyPanel extends VerticalPanel
             add(create);
         }
 
-        CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((GalaxyData)result);
+        CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
+            public void onSuccess (GalaxyData galaxy) {
+                init(galaxy);
             }
         });
     }
@@ -129,7 +129,7 @@ public class GalaxyPanel extends VerticalPanel
 
         // group-p_NN or group
         setModel("p", "", page, new ModelLoader() {
-            public void loadModel (MsoyCallback callback) {
+            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
                 // TODO: this eventually needs to be a ServiceBackedDataModel
                 CWhirleds.groupsvc.getGroupsList(CWhirleds.ident, callback);
             }
@@ -171,7 +171,7 @@ public class GalaxyPanel extends VerticalPanel
         _currentTag.add(new InlineLabel(")"));
 
         setModel("tag", tag, page, new ModelLoader() {
-            public void loadModel (MsoyCallback callback) {
+            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
                 CWhirleds.groupsvc.searchForTag(CWhirleds.ident, tag, callback);
             }
         });
@@ -185,7 +185,7 @@ public class GalaxyPanel extends VerticalPanel
         }
         _searchInput.setText(query);
         setModel("search", query, page, new ModelLoader() {
-            public void loadModel (MsoyCallback callback) {
+            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
                 CWhirleds.groupsvc.searchGroups(CWhirleds.ident, query, callback);
             }
         });
@@ -198,11 +198,11 @@ public class GalaxyPanel extends VerticalPanel
         if (action.equals(_action) && arg.equals(_arg)) {
             _groupGrid.displayPage(page, false);
         } else {
-            loader.loadModel(new MsoyCallback() {
-                public void onSuccess (Object result) {
+            loader.loadModel(new MsoyCallback<List<GroupCard>>() {
+                public void onSuccess (List<GroupCard> list) {
                     _action = action;
                     _arg = arg;
-                    _groupGrid.setModel(new SimpleDataModel((List)result), page);
+                    _groupGrid.setModel(new SimpleDataModel(list), page);
                 }
             });
         }
@@ -210,7 +210,7 @@ public class GalaxyPanel extends VerticalPanel
 
     protected static interface ModelLoader
     {
-        public void loadModel (MsoyCallback callback);
+        public void loadModel (MsoyCallback<List<GroupCard>> callback);
     }
 
     protected class GroupWidget extends ItemBox

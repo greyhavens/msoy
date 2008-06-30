@@ -3,10 +3,17 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
+import com.threerings.msoy.item.data.gwt.ItemDetail;
+
+import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -17,17 +24,18 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#createItem}.
      */
-    public void createItem (WebIdent ident, Item item, ItemIdent parent, AsyncCallback callback);
+    public void createItem (
+        WebIdent ident, Item item, ItemIdent parent, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#updateItem}.
      */
-    public void updateItem (WebIdent ident, Item item, AsyncCallback callback);
+    public void updateItem (WebIdent ident, Item item, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#remixItem}.
      */
-    public void remixItem (WebIdent ident, Item item, AsyncCallback callback);
+    public void remixItem (WebIdent ident, Item item, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#revertRemixClone}.
@@ -55,7 +63,8 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#scaleAvatar}.
      */
-    public void scaleAvatar (WebIdent ident, int avatarId, float newScale, AsyncCallback callback);
+    public void scaleAvatar (
+        WebIdent ident, int avatarId, float newScale, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#deleteItem}.
@@ -65,12 +74,14 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */
-    public void rateItem (WebIdent ident, ItemIdent item, byte rating, AsyncCallback callback);
+    public void rateItem (
+        WebIdent ident, ItemIdent item, byte rating, AsyncCallback<Float> callback);
 
     /**
      * The asynchronous version of {@link ItemService#getTags}.
      */
-    public void getTags (WebIdent ident, ItemIdent item, AsyncCallback callback);
+    public void getTags (
+        WebIdent ident, ItemIdent item, AsyncCallback<Collection<String>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getTagHistory}.
@@ -80,18 +91,19 @@ public interface ItemServiceAsync
     /**
      * The asynchronous versions of {@link ItemService#getRecentTags}.
      */
-    public void getRecentTags (WebIdent ident, AsyncCallback callback);
+    public void getRecentTags (WebIdent ident, AsyncCallback<Collection<TagHistory>> callback);
 
     /**
      * The asynchronous version of {@link ItemService#tagItem}.
      */
-    public void tagItem (WebIdent ident, ItemIdent item, String tag, boolean set,
-                         AsyncCallback callback);
+    public void tagItem (WebIdent ident, ItemIdent item, String tag, boolean set, 
+                         AsyncCallback<TagHistory> callback);
 
     /**
      * The asynchronous version of {@link ItemService.wrapItem}.
      */
-    public void wrapItem (WebIdent ident, ItemIdent item, boolean wrap, AsyncCallback callback);
+    public void wrapItem (
+        WebIdent ident, ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setFlags}.
@@ -108,7 +120,8 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService.getFlaggedItems}.
      */
-    public void getFlaggedItems (WebIdent ident, int count, AsyncCallback callback);
+    public void getFlaggedItems (
+        WebIdent ident, int count, AsyncCallback<List<ItemDetail>> callback);
 
     /**
      * The asynchronous version of {@link ItemService.deleteItemAdmin}.

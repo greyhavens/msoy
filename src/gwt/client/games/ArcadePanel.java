@@ -27,9 +27,9 @@ public class ArcadePanel extends VerticalPanel
     {
         setStyleName("arcade");
 
-        CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((ArcadeData)result);
+        CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback<ArcadeData>() {
+            public void onSuccess (ArcadeData data) {
+                init(data);
             }
         });
     }

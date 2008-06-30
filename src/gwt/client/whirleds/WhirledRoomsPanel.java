@@ -39,11 +39,11 @@ public class WhirledRoomsPanel extends VerticalPanel
         _detail = detail;
 
         CWhirleds.groupsvc.getGroupRooms(
-            CWhirleds.ident, _detail.group.groupId, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((GroupService.RoomsResult)result);
-            }
-        });
+            CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.RoomsResult>() {
+                public void onSuccess (GroupService.RoomsResult result) {
+                    init(result);
+                }
+            });
     }
 
     protected void init (GroupService.RoomsResult rooms)
@@ -85,8 +85,8 @@ public class WhirledRoomsPanel extends VerticalPanel
         }
         GroupService.Room room = _roomsResult.callerRooms.get(index);
         CWhirleds.groupsvc.transferRoom(CWhirleds.ident, _detail.group.groupId, room.sceneId,
-            new MsoyCallback() {
-                public void onSuccess (Object result) {
+            new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
                     moveSceneToGrid(index);
                 }
             });

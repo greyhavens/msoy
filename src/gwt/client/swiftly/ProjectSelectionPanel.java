@@ -240,8 +240,8 @@ public class ProjectSelectionPanel extends FlexTable
         public void execute ()
         {
             CSwiftly.swiftlysvc.deleteProject(
-                CSwiftly.ident, _project.projectId, new MsoyCallback() {
-                public void onSuccess (Object result) {
+                CSwiftly.ident, _project.projectId, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
                     _panel.projectWasRemoved(_project);
                 }
             });

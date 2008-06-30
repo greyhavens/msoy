@@ -65,9 +65,10 @@ public class ThreadListPanel extends PagedGrid
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        CMsgs.forumsvc.findThreads(CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                setModel(new SimpleDataModel((List)result), 0);
+        CMsgs.forumsvc.findThreads(
+            CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+            public void onSuccess (List<ForumThread> threads) {
+                setModel(new SimpleDataModel(threads), 0);
             }
         });
     }

@@ -26,9 +26,9 @@ public class WorldClient extends Widget
     public static void displayFeaturedPlace (final int sceneId, final Panel container)
     {
         if (_defaultServer == null) {
-            CShell.usersvc.getConnectConfig(new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _defaultServer = (ConnectConfig)result;
+            CShell.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+                public void onSuccess (ConnectConfig config) {
+                    _defaultServer = config;
                     displayFeaturedPlace(sceneId, container);
                 }
             });
@@ -57,9 +57,9 @@ public class WorldClient extends Widget
         // if we have not yet determined our default server, find that out now
         if (_defaultServer == null) {
             final String savedArgs = flashArgs;
-            CShell.usersvc.getConnectConfig(new MsoyCallback() {
-                public void onSuccess (Object result) {
-                    _defaultServer = (ConnectConfig)result;
+            CShell.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+                public void onSuccess (ConnectConfig config) {
+                    _defaultServer = config;
                     displayFlash(savedArgs, pageToken);
                 }
             });

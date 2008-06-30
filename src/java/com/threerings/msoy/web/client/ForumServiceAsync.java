@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
@@ -29,8 +31,9 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#findThreads}.
      */
-    public void findThreads (WebIdent ident, int groupId, String query, int limit,
-                             AsyncCallback callback);
+    public void findThreads (
+        WebIdent ident, int groupId, String query, int limit, 
+        AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadMessages}.
@@ -41,8 +44,9 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#findMessages}.
      */
-    public void findMessages (WebIdent ident, int threadId, String search, int limit,
-                              AsyncCallback callback);
+    public void findMessages (
+        WebIdent ident, int threadId, String search, int limit, 
+        AsyncCallback<List<ForumMessage>> callback);
 
     /**
      * The asynchronous version of {@link ForumService#createThread}.
@@ -78,7 +82,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#deleteMessage}.
      */
-    public void deleteMessage (WebIdent ident, int messageId, AsyncCallback callback);
+    public void deleteMessage (WebIdent ident, int messageId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#complainMessage}.

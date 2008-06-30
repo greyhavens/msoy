@@ -52,9 +52,9 @@ public class ShopPanel extends HorizontalPanel
         _contents.add(WidgetUtil.makeShim(10, 10));
 
         // now load up our shop data
-        CShop.catalogsvc.loadShopData(CShop.ident, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init((ShopData)result);
+        CShop.catalogsvc.loadShopData(CShop.ident, new MsoyCallback<ShopData>() {
+            public void onSuccess (ShopData data) {
+                init(data);
             }
         });
     }
@@ -68,11 +68,13 @@ public class ShopPanel extends HorizontalPanel
         boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
         if (data.featuredPet != null) {
-            boxes.setWidget(0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
+            boxes.setWidget(
+                0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
         }
         boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
         if (data.featuredToy != null) {
-            boxes.setWidget(2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
+            boxes.setWidget(
+                2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
         }
         boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);

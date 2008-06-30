@@ -37,11 +37,12 @@ public class TrophyComparePanel extends SmartTable
         setText(0, 0, CGames.msgs.compareLoading());
 
         int[] memberIds = new int[] { targetId, CGames.getMemberId() };
-        CGames.gamesvc.compareTrophies(CGames.ident, gameId, memberIds, new MsoyCallback() {
-            public void onSuccess (Object result) {
-                init(gameId, (GameService.CompareResult)result);
-            }
-        });
+        CGames.gamesvc.compareTrophies(
+            CGames.ident, gameId, memberIds, new MsoyCallback<GameService.CompareResult>() {
+                public void onSuccess (GameService.CompareResult result) {
+                    init(gameId, result);
+                }
+            });
     }
 
     protected void init (int gameId, GameService.CompareResult result)
