@@ -15,6 +15,7 @@ import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -58,6 +59,7 @@ public class PlayerObject extends BodyObject
      * status is not filled in and this set is *not* updated if friendship is made or broken during
      * a game. */
     public var friends :DSet /* FriendEntry */;
+    FriendEntry; // reference to force compilation
 
     /** Game state entries for the world game we're currently on. */
     public var gameState :DSet;
