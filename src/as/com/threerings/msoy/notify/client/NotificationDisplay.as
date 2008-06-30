@@ -69,23 +69,21 @@ public class NotificationDisplay extends HBox
         _pendingNotifications.push(notification);
         checkPendingNotifications();
 
-        if (_notificationHistory != null) {
-            if (_notificationHistory.verticalScrollPosition == 
-                _notificationHistory.maxVerticalScrollPosition) {
+        if (_nHistory != null) {
+            if (_nHistory.verticalScrollPosition == _nHistory.maxVerticalScrollPosition) {
                 callLater(function () :void {
-                    _notificationHistory.verticalScrollPosition = 
-                        _notificationHistory.maxVerticalScrollPosition;
+                    _nHistory.verticalScrollPosition = _nHistory.maxVerticalScrollPosition;
                 });
             }
-            _notificationHistory.addChild(createDisplay(notification, true));
+            _nHistory.addChild(createDisplay(notification, true));
         }
     }
 
     public function updatePopupLocation () :void
     {
-        if (_notificationHistory != null) {
+        if (_nHistory != null) {
             var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
-            _notificationHistory.x = buttonPos.x;
+            _nHistory.x = buttonPos.x;
         }
     }
 
@@ -173,18 +171,18 @@ public class NotificationDisplay extends HBox
 
     protected function displayNotificationHistory (...ignored) :void
     {
-        if (_notificationHistory != null) {
+        if (_nHistory != null) {
             return; 
         }
 
         _popupBtn.styleName = "notificationOpenBtn";
-        _notificationHistory = new NotificationHistoryDisplay(prepareNotifications(
+        _nHistory = new NotificationHistoryDisplay(prepareNotifications(
             _ctx.getNotificationDirector().getCurrentNotifications()));
-        _notificationHistory.addEventListener(TextEvent.LINK, linkClicked);
-        PopUpManager.addPopUp(_notificationHistory, _ctx.getTopPanel(), false);
+        _nHistory.addEventListener(TextEvent.LINK, linkClicked);
+        PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
         var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
-        _notificationHistory.x = buttonPos.x;
-        _notificationHistory.y = buttonPos.y - _notificationHistory.height;
+        _nHistory.x = buttonPos.x;
+        _nHistory.y = buttonPos.y - _nHistory.height;
 
         // prevent the hide logic from firing off of this mouse click
         _opening = true;
@@ -195,13 +193,13 @@ public class NotificationDisplay extends HBox
 
     protected function hideNotificationHistory (...ignored) :void
     {
-        if (_opening || _notificationHistory == null) {
+        if (_opening || _nHistory == null) {
             return;
         }
 
         _popupBtn.styleName = "notificationClosedBtn";
-        PopUpManager.removePopUp(_notificationHistory);
-        _notificationHistory = null;
+        PopUpManager.removePopUp(_nHistory);
+        _nHistory = null;
     }
 
     protected function linkClicked (event :TextEvent) :void
@@ -251,7 +249,7 @@ public class NotificationDisplay extends HBox
     protected var _popupBtn :Button;
     protected var _pendingNotifications :Array = [];
     protected var _currentlyAnimating :Boolean = false;
-    protected var _notificationHistory :NotificationHistoryDisplay;
+    protected var _nHistory :NotificationHistoryDisplay;
     protected var _opening :Boolean = false;
 }
 }
