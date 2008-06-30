@@ -6,6 +6,7 @@ package client.util;
 import java.util.ArrayList;
 
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.samskivert.util.StringUtil;
 
 import client.shell.Args;
 
@@ -48,7 +49,7 @@ public class ShopUtil
         args.add(new Byte(query.sortBy));
         if (query.tag != null) {
             args.add("t" + query.tag);
-        } else if (query.search != null) {
+        } else if (query.search != null && query.search.length() > 0) {
             args.add("s" + query.search);
         } else if (query.creatorId != 0) {
             args.add("c" + query.creatorId);
