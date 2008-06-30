@@ -36,6 +36,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -65,11 +66,13 @@ public class AVRGameManager
     /**
      * Creates a new {@link AVRGameManager} for the given game.
      */
-    public AVRGameManager (int gameId, Invoker invoker, AVRGameRepository repo)
+    public AVRGameManager (
+        int gameId, Invoker invoker, AVRGameRepository repo, MsoyEventLogger eventLog)
     {
         _gameId = gameId;
         _invoker = invoker;
         _repo = repo;
+        _eventLog = eventLog;
     }
 
     public AVRGameObject createGameObject ()
@@ -172,7 +175,11 @@ public class AVRGameManager
                 return;
             }
 
-            _totalTrackedSeconds += player.getPlayTime(now());
+            int playTime = player.getPlayTime(now());
+            _eventLog.avrgLeft(
+                player.playerObject.getMemberId(), _gameId, playTime, _gameObj.players.size());
+            
+            _totalTrackedSeconds += playTime;
             flushPlayerGameState(player.playerObject);
             MsoyGameServer.worldClient.updatePlayer(player.playerObject.getMemberId(), null);
         }
@@ -747,6 +754,8 @@ public class AVRGameManager
 
     protected Invoker _invoker;
     protected AVRGameRepository _repo;
+    protected MsoyEventLogger _eventLog;
+    
     protected GameRepository _gameRepo = MsoyGameServer.gameReg.getGameRepository();
 
     protected IntMap<Player> _players = new HashIntMap<Player>();

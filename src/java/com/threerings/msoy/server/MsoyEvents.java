@@ -228,6 +228,26 @@ public class MsoyEvents
         }
     }
     
+    @Event(name="AVRGExit")
+    public static class AVRGExit implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp; 
+        @Index @Field final public int gameId;
+        @Field final public int playerId;
+        @Field final public int secondsInGame;
+        @Field final public int playersLeft;
+        
+        public AVRGExit (
+            int playerId, int gameId, int seconds, int playersLeft)
+        {
+            this.timestamp = new Date();
+            this.playerId = playerId;
+            this.gameId = gameId;
+            this.secondsInGame = seconds;
+            this.playersLeft = playersLeft;
+        }
+    }
+
     @Event(name="GameExit")
     public static class GameExit implements MsoyEvent
     {

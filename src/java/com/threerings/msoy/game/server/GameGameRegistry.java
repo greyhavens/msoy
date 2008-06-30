@@ -327,7 +327,7 @@ public class GameGameRegistry
         _loadingAVRGames.put(gameId, list = new ResultListenerList());
         list.add(joinListener);
 
-        final AVRGameManager fmgr = new AVRGameManager(gameId, _invoker, _avrgRepo);
+        final AVRGameManager fmgr = new AVRGameManager(gameId, _invoker, _avrgRepo, _eventLog);
         final AVRGameObject gameObj = fmgr.createGameObject();
 
         _invoker.postUnit(new RepositoryUnit("activateAVRGame") {

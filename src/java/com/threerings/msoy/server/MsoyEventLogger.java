@@ -150,6 +150,12 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
+    public void avrgLeft (
+        int playerId, int gameId, int seconds, int playersLeft) 
+    {
+        post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft));
+    }
+        
     public void gameLeft (
         int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer) 
     {
