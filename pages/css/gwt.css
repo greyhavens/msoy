@@ -336,11 +336,10 @@ img, embed, applet, object {
   font-weight: bold;
   height: 34px;
   color: white;
-  padding: 0px 0px 0px 15px;
+  padding: 0px 15px 0px 15px;
   white-space: nowrap;
   opacity: 0.6; /* Firefox and Safari */
   filter: alpha(opacity=60); /* IE */
-  width: 300px;
   white-space: nowrap;
   overflow: hidden;
 }

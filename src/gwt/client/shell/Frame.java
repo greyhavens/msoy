@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
@@ -518,10 +519,20 @@ public class Frame
             super("pageTitle", 0, 0);
 
             setWidget(0, 0, createImage(pageId), 3, null);
+
             _titleLabel = new Label(title);
             _titleLabel.setStyleName("Title");
-            setWidget(1, 0, _titleLabel);
-            setWidget(1, 1, _subnavi = subnavi, 1, "SubNavi");
+
+            Image back = MsoyUI.createBackArrow();
+            back.setTitle("Back");
+
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.add(_titleLabel);
+            panel.add(back);
+            panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
+
+            setWidget(1, 0, panel);
+            setWidget(1, 2, _subnavi = subnavi, 1, "SubNavi");
             getFlexCellFormatter().setVerticalAlignment(1, 1, HasAlignment.ALIGN_BOTTOM);
 
             _closeBox = MsoyUI.createActionImage("/images/ui/close.png", new ClickListener() {
