@@ -3,12 +3,10 @@
 
 package com.threerings.msoy.web.data;
 
-import com.google.gwt.user.client.rpc.SerializableException;
-
 /**
  * Thrown to indicate a failure during logon.
  */
-public class LogonException extends SerializableException
+public class LogonException extends Exception
 {
     /**
      * Creates a logon exception with the supplied translatable string
