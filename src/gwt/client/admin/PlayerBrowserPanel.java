@@ -12,7 +12,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -28,7 +27,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+
 import client.util.ClickCallback;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
@@ -114,25 +115,22 @@ public class PlayerBrowserPanel extends HorizontalPanel
             _playerLists = new ArrayList();
         }
 
-        CAdmin.adminsvc.getPlayerList(CAdmin.ident, memberIdToFetch, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                MemberInviteResult res = (MemberInviteResult) result;
-                PlayerList newList = new PlayerList(res);
-                if (res.memberId != memberId) {
-                    // we're fetching a new parent.
-                    _playerLists.add(0, newList);
-                    PlayerList list = _parentList != null ? _parentList : _childList;
-                    newList.highlight(list.getResult().memberId);
-                    displayLists(1);
-                } else {
-                    _playerLists.add(newList);
-                    displayLists(_playerLists.size() - 1);
+        CAdmin.adminsvc.getPlayerList(
+            CAdmin.ident, memberIdToFetch, new MsoyCallback<MemberInviteResult>() {
+                public void onSuccess (MemberInviteResult res) {
+                    PlayerList newList = new PlayerList(res);
+                    if (res.memberId != memberId) {
+                        // we're fetching a new parent.
+                        _playerLists.add(0, newList);
+                        PlayerList list = _parentList != null ? _parentList : _childList;
+                        newList.highlight(list.getResult().memberId);
+                        displayLists(1);
+                    } else {
+                        _playerLists.add(newList);
+                        displayLists(_playerLists.size() - 1);
+                    }
                 }
-            }
-            public void onFailure (Throwable cause) {
-                add(new Label(CAdmin.serverError(cause)));
-            }
-        });
+            });
     }
 
     protected void clearLists ()

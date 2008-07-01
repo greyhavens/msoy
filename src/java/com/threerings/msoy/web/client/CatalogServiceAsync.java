@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -77,5 +79,5 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#getPopularTags}.
      */
-    public void getPopularTags (byte type, int count, AsyncCallback callback);
+    public void getPopularTags (byte type, int count, AsyncCallback<Map<String, Integer>> callback);
 }

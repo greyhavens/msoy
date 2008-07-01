@@ -21,6 +21,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.data.SessionData;
+
 import client.shell.CShell;
 import client.shell.LogonPanel;
 
@@ -385,7 +387,7 @@ public class MsoyUI
 
         content.add(MsoyUI.createLabel(message, "Content"));
         content.add(new LogonPanel(true) {
-                    @Override public void onSuccess(Object result) {
+                    @Override public void onSuccess(SessionData result) {
                         popup.hide();
                         super.onSuccess(result);
                     }

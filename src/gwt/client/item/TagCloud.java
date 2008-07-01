@@ -5,6 +5,7 @@ package client.item;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,7 +19,7 @@ import client.util.MsoyUI;
  * Fetches and displays the tag cloud for a given item type.
  */
 public class TagCloud extends FlowPanel
-    implements AsyncCallback
+    implements AsyncCallback<Map<String, Integer>>
 {
     public interface TagListener
     {
@@ -35,9 +36,8 @@ public class TagCloud extends FlowPanel
     }
 
     // from AsyncCallback
-    public void onSuccess (Object result)
+    public void onSuccess (Map<String, Integer> tagMap)
     {
-        HashMap tagMap = (HashMap) result;
         if (tagMap.size() == 0) {
             add(MsoyUI.createLabel(CShell.imsgs.msgNoTags(), "Link"));
             return;

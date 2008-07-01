@@ -9,6 +9,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -20,21 +21,21 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#login}.
      */
     public void login (String clientVersion, String username, String password, int expireDays,
-                       AsyncCallback callback);
+                       AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#register}.
      */
-    public void register (String clientVersion, String username, String password, String displayName,
-                          int[] birthday, MediaDesc photo, AccountInfo info, int expireDays,
-                          String inviteId, int guestId, String captchaChallenge,
-                          String captchaResponse, AsyncCallback callback);
+    public void register (
+        String clientVersion, String username, String password, String displayName, int[] birthday, 
+        MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId, 
+        String captchaChallenge, String captchaResponse, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.
      */
-    public void validateSession (String clientVersion, String authtok, int expireDays,
-                                 AsyncCallback callback);
+    public void validateSession (
+        String clientVersion, String authtok, int expireDays, AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#getConnectConfig}.
@@ -49,18 +50,18 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.
      */
-    public void updateEmail (WebIdent ident, String newEmail, AsyncCallback callback);
+    public void updateEmail (WebIdent ident, String newEmail, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmailPrefs}.
      */
     public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
-                                  boolean emailAnnouncements, AsyncCallback callback);
+                                  boolean emailAnnouncements, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updatePassword}.
      */
-    public void updatePassword (WebIdent ident, String newPassword, AsyncCallback callback);
+    public void updatePassword (WebIdent ident, String newPassword, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#resetPassword}.
@@ -71,7 +72,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
-    public void configurePermaName (WebIdent ident, String permaName, AsyncCallback callback);
+    public void configurePermaName (WebIdent ident, String permaName, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#getAccountInfo}.
@@ -81,5 +82,5 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#updateAccountInfo}.
      */
-    public void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback callback);
+    public void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback<Void> callback);
 }

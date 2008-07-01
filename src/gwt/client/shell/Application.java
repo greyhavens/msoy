@@ -375,18 +375,19 @@ public class Application
     protected void validateSession (String token)
     {
         if (token != null) {
-            CShell.usersvc.validateSession(DeploymentConfig.version, token, 1, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    if (result == null) {
-                        didLogoff();
-                    } else {
-                        didLogon((SessionData)result);
+            CShell.usersvc.validateSession(
+                DeploymentConfig.version, token, 1, new AsyncCallback<SessionData>() {
+                    public void onSuccess (SessionData data) {
+                        if (data == null) {
+                            didLogoff();
+                        } else {
+                            didLogon(data);
+                        }
                     }
-                }
-                public void onFailure (Throwable t) {
-                    didLogoff();
-                }
-            });
+                    public void onFailure (Throwable t) {
+                        didLogoff();
+                    }
+                });
         } else {
             didLogoff();
         }

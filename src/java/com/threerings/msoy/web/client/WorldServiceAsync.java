@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.client.WorldService;
 
+import com.threerings.msoy.person.data.FeedMessage;
+
 import com.threerings.msoy.web.data.LandingData;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
@@ -48,7 +50,8 @@ public interface WorldServiceAsync
     /**
      * The asynchronous version of {@link WorldService#loadFeed}.
      */
-    public void loadFeed (WebIdent ident, int cutoffDays, AsyncCallback callback);
+    public void loadFeed (
+        WebIdent ident, int cutoffDays, AsyncCallback<List<FeedMessage>> callback);
 
     /**
      * The asynchronous version of {@link WorldService#loadLaunchConfig}.

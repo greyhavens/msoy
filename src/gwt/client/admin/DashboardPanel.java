@@ -3,7 +3,6 @@
 
 package client.admin;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,6 +18,8 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
+
+import client.util.MsoyCallback;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -79,12 +80,9 @@ public class DashboardPanel extends FlexTable
     protected void displayDashboard ()
     {
         // load up the information needed to display the dashboard applet
-        CAdmin.usersvc.getConnectConfig(new AsyncCallback() {
-            public void onSuccess (Object result) {
-                finishDisplayDashboard((ConnectConfig)result);
-            }
-            public void onFailure (Throwable cause) {
-                setText(getRowCount(), 0, CAdmin.serverError(cause));
+        CAdmin.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+            public void onSuccess (ConnectConfig config) {
+                finishDisplayDashboard(config);
             }
         });
     }

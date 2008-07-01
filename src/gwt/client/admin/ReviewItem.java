@@ -184,8 +184,8 @@ public class ReviewItem extends FlowPanel
             CAdmin.itemsvc.deleteItemAdmin(
                 CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
                 CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
-                new AsyncCallback() {
-                    public void onSuccess (Object result) {
+                new AsyncCallback<Integer>() {
+                    public void onSuccess (Integer result) {
                         MsoyUI.info(CAdmin.msgs.reviewDeletionSuccess(result.toString()));
                         if (_mark != null) {
                             _mark.setEnabled(false);

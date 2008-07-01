@@ -19,7 +19,7 @@ import client.util.MsoyUI;
  * Displays a popup for complaining about a message.
  */
 public abstract class ComplainPopup extends BorderedDialog
-    implements AsyncCallback
+    implements AsyncCallback<Void>
 {
     public ComplainPopup ()
     {
@@ -60,7 +60,7 @@ public abstract class ComplainPopup extends BorderedDialog
     }
 
     // from interface AsyncCallback
-    public void onSuccess (Object result)
+    public void onSuccess (Void result)
     {
         if (!hideOnSend()) {
             hide();

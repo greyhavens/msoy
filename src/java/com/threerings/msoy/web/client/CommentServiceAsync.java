@@ -36,5 +36,5 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#complainComment}.
      */
     public void complainComment (WebIdent ident, String subject, int entityType, int entityId,
-                                 long when, AsyncCallback callback);
+                                 long when, AsyncCallback<Void> callback);
 }

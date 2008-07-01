@@ -29,7 +29,7 @@ import client.util.MsoyUI;
  * Displays a logon user interface.
  */
 public class LogonPanel extends SmartTable
-        implements AsyncCallback
+        implements AsyncCallback<SessionData>
 {
     public LogonPanel (boolean headerMode)
     {
@@ -128,10 +128,10 @@ public class LogonPanel extends SmartTable
             DeploymentConfig.version, account, CShell.md5hex(password), 1, this);
     }
 
-    public void onSuccess (Object result)
+    public void onSuccess (SessionData data)
     {
         _password.setText("");
-        CShell.app.didLogon((SessionData)result);
+        CShell.app.didLogon(data);
     }
 
     public void onFailure (Throwable caught)

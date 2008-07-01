@@ -127,6 +127,6 @@ public interface ItemServiceAsync
      * The asynchronous version of {@link ItemService.deleteItemAdmin}.
      */
     public void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
-                                 AsyncCallback callback);
+                                 AsyncCallback<Integer> callback);
 
 }

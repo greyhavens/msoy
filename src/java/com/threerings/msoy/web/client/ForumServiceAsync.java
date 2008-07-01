@@ -88,5 +88,5 @@ public interface ForumServiceAsync
      * The asynchronous version of {@link ForumService#complainMessage}.
      */
     public void complainMessage (
-            WebIdent ident, String complaint, int messageId, AsyncCallback callback);
+        WebIdent ident, String complaint, int messageId, AsyncCallback<Void> callback);
 }

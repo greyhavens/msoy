@@ -30,11 +30,14 @@ import com.threerings.msoy.person.data.GroupFeedMessage;
 import com.threerings.msoy.person.data.SelfFeedMessage;
 
 import client.games.GameDetailPanel;
+
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
+
 import client.util.MediaUtil;
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.TongueBox;
 
@@ -42,7 +45,7 @@ public class FeedPanel extends TongueBox
 {
     public static interface FeedLoader
     {
-        public void loadFeed (int feedDays, AsyncCallback callback);
+        public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
     }
 
     public FeedPanel (String emptyMessage, boolean setHeader, FeedLoader feedLoader)
@@ -71,12 +74,9 @@ public class FeedPanel extends TongueBox
     protected void loadFeed (final boolean fullPage)
     {
         int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        _feedLoader.loadFeed(feedDays, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                setFeed((List)result, fullPage);
-            }
-            public void onFailure(Throwable caught) {
-                MsoyUI.error(CMsgs.serverError(caught));
+        _feedLoader.loadFeed(feedDays, new MsoyCallback<List<FeedMessage>>() {
+            public void onSuccess (List<FeedMessage> messages) {
+                setFeed(messages, fullPage);
             }
         });
     }

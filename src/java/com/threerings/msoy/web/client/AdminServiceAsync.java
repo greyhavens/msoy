@@ -8,6 +8,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.MemberAdminInfo;
+import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -36,7 +37,8 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#getPlayerList}.
      */
-    public void getPlayerList (WebIdent ident, int inviterId, AsyncCallback callback);
+    public void getPlayerList (
+        WebIdent ident, int inviterId, AsyncCallback<MemberInviteResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#spamPlayers}.

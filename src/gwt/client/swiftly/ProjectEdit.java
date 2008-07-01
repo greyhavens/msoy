@@ -56,17 +56,18 @@ public class ProjectEdit extends FlexTable
 
     protected void loadProject (final int projectId)
     {
-        CSwiftly.swiftlysvc.loadProject(CSwiftly.ident, projectId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _project = (SwiftlyProject)result;
-                // now that we have our project, load our collaborators.
-                loadCollaborators();
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.log("Loadling project failed projectId=[" + projectId + "]", caught);
-                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
-            }
-        });
+        CSwiftly.swiftlysvc.loadProject(
+            CSwiftly.ident, projectId, new AsyncCallback<SwiftlyProject>() {
+                public void onSuccess (SwiftlyProject project) {
+                    _project = project;
+                    // now that we have our project, load our collaborators.
+                    loadCollaborators();
+                }
+                public void onFailure (Throwable caught) {
+                    CSwiftly.log("Loadling project failed projectId=[" + projectId + "]", caught);
+                    SwiftlyPanel.displayError(CSwiftly.serverError(caught));
+                }
+            });
     }
 
     protected void displayProject ()
@@ -109,8 +110,7 @@ public class ProjectEdit extends FlexTable
                 if (tx == -1) {
                     return;
                 }
-                MemberName name =
-                    (MemberName)_collaborators.get(new Integer(_collaboratorsList.getValue(tx)));
+                MemberName name = _collaborators.get(new Integer(_collaboratorsList.getValue(tx)));
                 if (name != null) {
                     removeCollaborator(name);
                 }
@@ -130,8 +130,7 @@ public class ProjectEdit extends FlexTable
                     return;
                 }
 
-                FriendEntry friend =
-                    (FriendEntry)_friends.get(new Integer(_friendList.getValue(tx)));
+                FriendEntry friend = _friends.get(new Integer(_friendList.getValue(tx)));
                 if (friend != null) {
                     addCollaborator(friend.name);
                 }
@@ -167,35 +166,30 @@ public class ProjectEdit extends FlexTable
 
     protected void loadCollaborators ()
     {
-        _collaborators = new HashMap();
+        _collaborators = new HashMap<Integer, MemberName>();
         CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.ident, _project.projectId,
-            new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                while (iter.hasNext()) {
-                    MemberName name = (MemberName)iter.next();
-                    _collaborators.put(new Integer(name.getMemberId()), name);
+            new AsyncCallback<List<MemberName>>() {
+                public void onSuccess (List<MemberName> collaborators) {
+                    for (MemberName name : collaborators) {
+                        _collaborators.put(new Integer(name.getMemberId()), name);
+                    }
+                    // now that we have our collaborators, load our friends.
+                    loadFriends();
                 }
-                // now that we have our collaborators, load our friends.
-                loadFriends();
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.log("Listing collaborators failed memberId=[" + CSwiftly.getMemberId() +
-                    "]", caught);
-                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
-            }
-        });
+                public void onFailure (Throwable caught) {
+                    CSwiftly.log("Listing collaborators failed memberId=[" + 
+                        CSwiftly.getMemberId() + "]", caught);
+                    SwiftlyPanel.displayError(CSwiftly.serverError(caught));
+                }
+            });
     }
 
     protected void updateCollaboratorsList ()
     {
         _collaboratorsList.clear();
-        Iterator iter = _collaborators.values().iterator();
 
         boolean foundCollaborator = false;
-        while (iter.hasNext()) {
-            MemberName name = (MemberName)iter.next();
-            // don't display the owner in the collaborators list since they cannot be removed
+        for (MemberName name : _collaborators.values()) {
             if (name.getMemberId() == _project.ownerId) {
                 continue;
             }
@@ -216,12 +210,10 @@ public class ProjectEdit extends FlexTable
      */
     protected void loadFriends ()
     {
-        _friends = new HashMap();
-        CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                while (iter.hasNext()) {
-                    FriendEntry friend = (FriendEntry)iter.next();
+        _friends = new HashMap<Integer, FriendEntry>();
+        CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback<List<FriendEntry>>() {
+            public void onSuccess (List<FriendEntry> friends) {
+                for (FriendEntry friend : friends) {
                     _friends.put(new Integer(friend.getMemberId()), friend);
                 }
                 // we now have our collaborators and friends, so display them both. displaying of
@@ -245,11 +237,12 @@ public class ProjectEdit extends FlexTable
     protected void updateFriendList ()
     {
         _friendList.clear();
-        Iterator iter = _friends.values().iterator();
+
+        Iterator<FriendEntry> iter = _friends.values().iterator();
 
         boolean foundFriend = false;
         while (iter.hasNext()) {
-            final FriendEntry friend = (FriendEntry)iter.next();
+            final FriendEntry friend = iter.next();
             // do not display friends who are already collaborators
             if (_collaborators.containsKey(new Integer(friend.name.getMemberId()))) {
                 continue;
@@ -274,8 +267,8 @@ public class ProjectEdit extends FlexTable
     protected void addCollaborator (final MemberName name)
     {
         CSwiftly.swiftlysvc.joinCollaborators(
-            CSwiftly.ident, _project.projectId, name, new AsyncCallback() {
-            public void onSuccess (Object result) {
+            CSwiftly.ident, _project.projectId, name, new AsyncCallback<Void>() {
+            public void onSuccess (Void result) {
                 _collaborators.put(new Integer(name.getMemberId()), name);
                 updateCollaboratorsList();
                 updateFriendList();
@@ -296,8 +289,8 @@ public class ProjectEdit extends FlexTable
     protected void removeCollaborator (final MemberName name)
     {
         CSwiftly.swiftlysvc.leaveCollaborators(
-            CSwiftly.ident, _project.projectId, name, new AsyncCallback() {
-            public void onSuccess (Object result) {
+            CSwiftly.ident, _project.projectId, name, new AsyncCallback<Void>() {
+            public void onSuccess (Void result) {
                 _collaborators.remove(new Integer(name.getMemberId()));
                 updateCollaboratorsList();
                 updateFriendList();
@@ -312,8 +305,8 @@ public class ProjectEdit extends FlexTable
 
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
-    protected HashMap _collaborators;
-    protected HashMap _friends;
+    protected HashMap<Integer, MemberName> _collaborators;
+    protected HashMap<Integer, FriendEntry> _friends;
     protected Button _addFriendButton;
     protected Button _removeCollaboratorButton;
 

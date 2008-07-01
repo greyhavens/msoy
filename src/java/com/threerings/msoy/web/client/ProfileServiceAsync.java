@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.Profile;
 
 import com.threerings.msoy.web.data.EmailContact;
@@ -55,6 +56,6 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#loadSelfFeed}.
      */
-    public void loadSelfFeed (int profileMemberId, int cutoffDays, 
-        AsyncCallback callback);
+    public void loadSelfFeed (
+        int profileMemberId, int cutoffDays, AsyncCallback<List<FeedMessage>> callback);
 }

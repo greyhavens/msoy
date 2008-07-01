@@ -3,9 +3,13 @@
 
 package client.people;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.client.ProfileService;
+
+import com.threerings.msoy.person.data.FeedMessage;
 
 import client.msgs.FeedPanel;
 
@@ -28,7 +32,7 @@ public class FeedBlurb extends Blurb
         setHeader(CPeople.msgs.feedTitle());
         String empty = CPeople.msgs.emptySelfFeed(pdata.name.toString());
         FeedPanel feed = new FeedPanel(empty, false, new FeedPanel.FeedLoader() {
-            public void loadFeed (int feedDays, AsyncCallback callback) {
+            public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
                 CPeople.profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
             }
         });
