@@ -18,7 +18,7 @@ public class ArcadeData
         implements IsSerializable
     {
         /** The number of games we highlight in each genre. */
-        public static final int HIGHLIGHTED_GAMES = 2;
+        public static final int HIGHLIGHTED_GAMES = 3;
 
         /** This genre's code. */
         public byte genre;
@@ -33,6 +33,9 @@ public class ArcadeData
     /** The number of featured games we show on the Arcade page. */
     public static int FEATURED_GAME_COUNT = 5;
 
+    /** The number of top games to show on the arcade page */
+    public static int TOP_GAME_COUNT = 20;
+    
     /** Info on the featured games. */
     public FeaturedGameInfo[] featuredGames;
 
@@ -40,9 +43,16 @@ public class ArcadeData
      * Information about each game genre.
      */
     public List<Genre> genres;
-
-    /** 
-     * Info for this player's favorite games or null if they're a guest or have none.
+    
+    /**
+     * List of all games ordered by name
+     * Only need name and id
      */
-    public List<GameInfo> favorites;
+    public List<GameInfo> allGames;
+    
+    /**
+     * List of top X games ordered by rank
+     * TOnly need name, id and media
+     */
+    public List<GameInfo> topGames;
 }

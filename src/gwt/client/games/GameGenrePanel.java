@@ -3,12 +3,8 @@
 
 package client.games;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,10 +13,8 @@ import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
@@ -186,7 +180,7 @@ public class GameGenrePanel extends FlowPanel
                 
                 FlowPanel name = new FlowPanel();
                 name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));
-                name.add(MsoyUI.createLabel(truncateParagraph(game.description, 80), "Description"));
+                name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80), "Description"));
                 setWidget(0, col++, name, 1, "NameDesc");
                 
                 FlowPanel ratingPanel = new FlowPanel();
@@ -231,24 +225,6 @@ public class GameGenrePanel extends FlowPanel
         }
     }
     
-    /**
-     * Truncate a paragraph to the maximum number of full sentences, or to the
-     * max number of characters followed by "..."
-     */
-    protected static String truncateParagraph (String text, int maxLen)
-    {
-        if (text.length() <= maxLen) {
-            return text;
-        }
-        for (int ii = maxLen-1; ii >= 0; ii--) {
-            char c = text.charAt(ii);
-            if (c == '.' || c == '!') {
-                return text.substring(0, ii+1);
-            }
-        }
-        return text.substring(0, maxLen-3) + "...";
-    }
-
     protected static final String[] SORT_LABELS = new String[] {
         CGames.msgs.genreSortByRating(),
         CGames.msgs.genreSortByNewest(),

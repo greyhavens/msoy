@@ -24,6 +24,7 @@ public class CreatorLabel extends FlowPanel
 
     public CreatorLabel (MemberName name)
     {
+        addStyleName("creator");
         if (name != null) {
             setMember(name);
         }

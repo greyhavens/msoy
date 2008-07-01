@@ -142,7 +142,7 @@ public class TopGamesPanel extends AbsolutePanel
             }
         }
 
-        SmartTable gameInfoTable = new SmartTable("featuredGame", 0, 0);
+        SmartTable gameInfoTable = new SmartTable("FeaturedGame", 0, 0);
 
         ClickListener onClick = Application.createLinkListener(
             Page.GAMES, Args.compose("d", game.gameId));

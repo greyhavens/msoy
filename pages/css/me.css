@@ -201,6 +201,8 @@
   position: absolute;
   top: 0;
   left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
 }
 
 /* Spans the width of the page to position a flourish that trails off to the right */
@@ -375,36 +377,40 @@
   padding-left: 10px;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .gameBits {
+.LandingPanel .TopGamesPanel .FeaturedGame .gameBits {
   color: #FFFFFF;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .RightPanel {
+.LandingPanel .TopGamesPanel .FeaturedGame .RightPanel {
   width: 235px;
   height: 255px;
   color: #0b4a6d;
 }
-.LandingPanel .TopGamesPanel .featuredGame .RightPanel a {
+.LandingPanel .TopGamesPanel .FeaturedGame .RightPanel a {
   color: #0b4a6d;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .Genre {
+.LandingPanel .TopGamesPanel .FeaturedGame .Genre {
   font-size: 14px;
   height: 14px;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .Descrip {
+.LandingPanel .TopGamesPanel .FeaturedGame .creator {
+  font-size: 14px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .Descrip {
   width: 230px;
   height: 95px;
   padding-top: 3px;
   line-height: 15px;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .Name {
+.LandingPanel .TopGamesPanel .FeaturedGame .Name {
   width: 230px;
 }
 
-.LandingPanel .TopGamesPanel .featuredGame .Online {
+.LandingPanel .TopGamesPanel .FeaturedGame .Online {
   background: url(/images/game/players_bg.png) no-repeat;
   color: #FFFFFF;
   width: 134px;

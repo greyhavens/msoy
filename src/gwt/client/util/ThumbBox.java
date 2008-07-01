@@ -26,6 +26,7 @@ public class ThumbBox extends SimplePanel
 
     public ThumbBox (MediaDesc desc, int width, int height, ClickListener onClick)
     {
+        addStyleName("thumbBox");
         setWidth(width + "px");
         setHeight(height + "px");
         DOM.setStyleAttribute(getElement(), "overflow", "hidden");

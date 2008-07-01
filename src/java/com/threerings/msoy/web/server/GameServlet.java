@@ -443,6 +443,26 @@ public class GameServlet extends MsoyServiceServlet
             }
             data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
+            // list of all games alphabetically (only include name and id)
+            data.allGames = Lists.newArrayList();
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, -1)) {
+                GameInfo gameInfo = new GameInfo();
+                gameInfo.gameId = game.gameId;
+                gameInfo.name = game.name;
+                data.allGames.add(gameInfo);
+            }
+            Collections.sort(data.allGames, SORT_GAMEINFO_BY_NAME);
+            
+            // list of top 10 games by ranking (include name, id & media)
+            data.topGames = Lists.newArrayList();
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.TOP_GAME_COUNT)) {
+                GameInfo gameInfo = new GameInfo();
+                gameInfo.gameId = game.gameId;
+                gameInfo.name = game.name;
+                gameInfo.thumbMedia = game.getThumbMediaDesc();
+                data.topGames.add(gameInfo);
+            }
+            
             // load information about the genres
             List<ArcadeData.Genre> genres = Lists.newArrayList();
             for (byte gcode : Game.GENRES) {
@@ -453,27 +473,33 @@ public class GameServlet extends MsoyServiceServlet
                 if (genre.gameCount == 0) {
                     continue;
                 }
-
-                // we want to show N games, take the top 3*N and shuffle them
-                games = games.subList(
-                    0, Math.min(games.size(), 3*ArcadeData.Genre.HIGHLIGHTED_GAMES));
-                Collections.shuffle(games);
+                
+                // select random N from the top 3N games ranked 3+ after at least 10 votes
+                List<GameRecord> goodGames = Lists.newArrayList();
+                for (GameRecord game : games) {
+                    if (game.rating >= 3 || game.ratingCount < 10) {
+                        goodGames.add(game);
+                        if (goodGames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
+                            break;
+                        }
+                    }
+                }
+                Collections.shuffle(goodGames);
 
                 // then take N from that shuffled list as the games to show
-                games = games.subList(0, Math.min(games.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
-                genre.games = new GameInfo[games.size()];
+                goodGames = goodGames.subList(0, Math.min(games.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
+                genre.games = new GameInfo[goodGames.size()];
                 for (int ii = 0; ii < genre.games.length; ii++) {
-                    genre.games[ii] = games.get(ii).toGameInfo();
+                    genre.games[ii] = goodGames.get(ii).toGameInfo();
                     PlaceCard ppg = pps.getGame(genre.games[ii].gameId);
                     if (ppg != null) {
                         genre.games[ii].playersOnline = ppg.population;
                     }
                 }
+                
                 genres.add(genre);
             }
             data.genres = genres;
-
-            // TODO: load mrec and favorite games
 
             return data;
 

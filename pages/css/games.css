@@ -237,33 +237,6 @@
   width: 100%;
 }
 
-.arcade, .gameGenre {
-  width: 100%;
-}
-
-.arcade .Features, .gameGenre .Features {
-  background: url(/images/game/featured_bg.png) no-repeat top left;
-}
-
-.arcade .Genre {
-  width: 220px;
-}
-
-.arcade .Genre .More {
-  width: 100%;
-  text-align: right;
-  border-bottom: 1px solid #DADADA;
-  border-left: 1px solid #DADADA;
-  border-right: 1px solid #DADADA;
-}
-
-.arcade .Genre .More a {
-  color: #6499AE;
-  font-size: 10px;
-  font-weight: bold;
-  padding-right: 5px;
-}
-
 .whyPlay {
   width: 152px;
   font-size: 14px;
@@ -372,69 +345,250 @@
 
 
 /* ------------------------------------
-   GAMES PAGES HEADER
+   ARCADE / MAIN GAMES PAGE
 -------------------------------------*/
 
-.gameHeaderPanel {
-  height: 65px;
+.arcade {
+  background: #61abd0 url(/images/game/gradient_bg.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #407a9f;
+  width: 100%;
+  height: 1185px;
 }
 
-.gameHeaderPanel .GenreTitle {
+.arcade .GenreLinks {
+  width: 100%;
+  text-align: center;
+  color: #b4ddf9;
+  font-size: 13px;
+}
+
+.arcade .GenreLinks a {
+  color: #b4ddf9;
+  margin: 0 5px 0 5px;
+}
+
+.arcade .featuredGame {
+  left: 225px;
+  top: 20px;
+}
+
+.arcade .BrowseGenresTitle {
   position: absolute;
-  top: 0;
-  left: 10px;
-  width: 324px; /* plus padding */
-  height: 59px;
+  left: 225px;
+  top: 340px;
+  width: 450px;
+  text-align: right;
+  background: url(/images/game/browse_genres_title_bg.png) repeat-x bottom center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #FFFFFF;
+  padding-bottom: 5px;
+}
+
+.arcade .BrowseGenres {
+  background: #bee1f5 url(/images/game/browse_genres_bg.png) no-repeat top center;
+  position: absolute;
+  left: 225px;
+  top: 380px;
+  width: 450px;
+  padding-bottom: 10px;
+}
+
+.arcade .GenreBox {
+  width: 210px;
+  height: 185px;
+  float: left;
+  margin: 10px 0 0 10px;
+  background-color: #FFFFFF;
+}
+
+.arcade .GenreBox .Header {
+  background-color: #5cace7;
+  height: 25px;
+}
+
+.arcade .GenreBox .Header img {
+  float: left;
+  margin: 2px 5px 0 5px;
+}
+
+.arcade .GenreBox .Header .actionLabel {
+  text-decoration: none;
+  color: #FFFFFF;
+  font-size: 16px;
+  float: left;
+  margin: 3px 0 0 0;
+}
+
+.arcade .GenreBox .GenreGame {
+  height: 35px;
+}
+
+.arcade .GenreBox .GenreGame .thumbBox {
+  margin: 0 5px 5px 5px;
+  float: left;
+}
+
+.arcade .GenreBox .GenreGame .Name {
+  color: #1a5984;
+  width: 150px;
+  float: left;
   white-space: nowrap;
   overflow: hidden;
-  background: transparent url(/images/game/genre_title.png) no-repeat top center;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 26px;
-  color: #FFFFFF;
-  text-align: center;
-  padding-top: 5px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.arcade .GenreBox .First {
+  height: 70px;
+}
+
+.arcade .GenreBox .First  .thumbBox {
+  margin-top: 5px;
+}
+
+.arcade .GenreBox .First  .Name {
+  margin-top: 5px;
+  width: 115px;
+  color: #000000;
+}
+
+.arcade .GenreBox .First .Description {
+  font-size: 11px;
+  float: left;
+  overflow: hidden;
+  width: 115px;
+  height: 45px;
+  color: #acbdc7;
+}
+
+.arcade .BrowseGenres .ViewAll {
+  font-size: 11px;
+  text-align: right;
   padding-right: 10px;
 }
 
-.gameHeaderPanel .FindGame {
+.arcade .BrowseGenres .ViewAll a {
+  color: #1a5984;
+}
+
+/* ------------------------------------
+   ARCADE - TOP GAMES
+-------------------------------------*/
+
+.arcade .TopGames {
+  width: 200px;
   position: absolute;
-  top: 5px;
-  left: 360px;
+  left: 10px;
+  top: 100px;
 }
 
-.gameHeaderPanel .FindGame .Title,
-.gameHeaderPanel .Search .Title {
-  width: 120px;
-  color: #a6cae2;
-  margin-bottom: 3px;
+.arcade .TopGames .TopGameWidget {
+  border-bottom: solid #5d8db1 1px;
+  background-color: white;
+  width: 200px;
+  height: 45px;
 }
 
-.gameHeaderPanel .FindGame select {
-  width: 150px;
+.arcade .TopGames .Number {
+  background: url(/images/game/top_games_num_bg.png) repeat-x top center;
+  color: #84b0d3;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  width: 25px;
+  height: 30px;
+  float: left;
+  border-left: solid #5d8db1 1px;
+  border-right: solid #5d8db1 1px;
+  padding-top: 15px;
 }
 
-.gameHeaderPanel .Search {
-  position: absolute;
-  top: 5px;
-  left: 520px;
+.arcade .TopGames .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding: 7px;
 }
 
-.gameHeaderPanel .Search input {
+.arcade .TopGames .Name {
+  float: left;
   width: 110px;
+  color: #1c5988;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 15px;
 }
 
-.gameHeaderPanel .Search .GoButton {
+.arcade .TopGames .Name .actionLabel {
+  text-decoration: none;
+}
+
+/* ------------------------------------
+   FEATURED GAME PANEL
+-------------------------------------*/
+
+.featuredGame {
+  background: url(/images/game/featured_game_bg.png) no-repeat top center;
+  height: 225px;
+  width: 450px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.featuredGame .Online {
+  background: url(/images/game/featured_game_online_bg.png) no-repeat top center;
+  width: 170px;
+  height: 20px;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 1px;
+}
+
+.featuredGame .PrevButton {
   position: absolute;
-  bottom: 1px;
-  left: 120px;
-  width: 32px;
-  height: 17px;
-  background: url(/images/game/go_button.png) no-repeat top center;
-  border: none;
-  cursor: pointer;
+  left: 20px;
+  top: 198px;
 }
 
+.featuredGame .NextButton {
+  position: absolute;
+  left: 120px;
+  top: 198px;
+}
 
+.featuredGame .Name {
+  width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.featuredGame .Genre {
+  color: #90b8d1;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.featuredGame .creator,
+.featuredGame .creator a {
+  color: #90b8d1;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.featuredGame .Description {
+  width: 230px;
+  height: 50px;
+  overflow: hidden;
+}
 
 /* ------------------------------------
    GENRE GAMES LIST / ALL GAMES PAGE
@@ -569,4 +723,96 @@
 .gameGenre .GameInfoPanel .PlayButtons .PlayMultiButton .html-face {
   font-size: 10px;
   padding-top: 5px;
+}
+
+/* ------------------------------------
+   GAMES PAGES HEADER
+-------------------------------------*/
+
+.gameHeaderPanel {
+  height: 65px;
+}
+
+.gameHeaderPanel .GenreTitle {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 324px; /* plus padding */
+  height: 59px;
+  white-space: nowrap;
+  overflow: hidden;
+  background: transparent url(/images/game/genre_title.png) no-repeat top center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+  padding-right: 10px;
+}
+
+.gameHeaderPanel .FindGame {
+  position: absolute;
+  top: 5px;
+  left: 360px;
+}
+
+.gameHeaderPanel .FindGame .Title,
+.gameHeaderPanel .Search .Title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 120px;
+  color: #a6cae2;
+  margin-bottom: 3px;
+}
+
+.gameHeaderPanel .FindGame select {
+  width: 150px;
+}
+
+.gameHeaderPanel .Search {
+  position: absolute;
+  top: 5px;
+  left: 520px;
+}
+
+.gameHeaderPanel .Search input {
+  width: 110px;
+}
+
+.gameHeaderPanel .Search .GoButton {
+  position: absolute;
+  bottom: 1px;
+  left: 120px;
+  width: 32px;
+  height: 17px;
+  background: url(/images/game/go_button.png) no-repeat top center;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+/* ------------------------------------
+   PLAY BUTTON
+-------------------------------------*/
+
+.playButton .Button {
+  width: 126px;
+  height: 50px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.playButton .SinglePlay {
+  background: transparent url(/images/game/play_alone.png);
+}
+.playButton .FriendPlay {
+  background: transparent url(/images/game/play_friends.png);
+}
+.playButton .SinglePlay-up-hovering {
+  background: transparent url(/images/game/play_alone_over.png);
+}
+.playButton .FriendPlay-up-hovering {
+  background: transparent url(/images/game/play_friends_over.png);
 }

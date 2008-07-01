@@ -415,4 +415,22 @@ public class MsoyUI
         // TODO: style this differently than info feedback
         new InfoPopup(message).showNear(source);
     }
+
+    /**
+     * Truncate a paragraph to the maximum number of full sentences, or to the
+     * max number of characters followed by "..."
+     */
+    public static String truncateParagraph (String text, int maxLen)
+    {
+        if (text.length() <= maxLen) {
+            return text;
+        }
+        for (int ii = maxLen-1; ii >= 0; ii--) {
+            char c = text.charAt(ii);
+            if (c == '.' || c == '!') {
+                return text.substring(0, ii+1);
+            }
+        }
+        return text.substring(0, maxLen-3) + "...";
+    }
 }
