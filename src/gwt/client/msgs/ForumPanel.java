@@ -15,13 +15,18 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
+import com.threerings.msoy.data.all.GroupName;
+
 import client.images.msgs.MsgsImages;
+
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+
 import client.util.MsoyUI;
 import client.util.SearchBox;
+
 import client.whirleds.CWhirleds;
 
 /**
@@ -44,8 +49,8 @@ public class ForumPanel extends TitledListPanel
         setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(""), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
-        _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback() {
-            public void onSuccess (Object result) {
+        _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
+            public void onSuccess (GroupName result) {
                 Frame.setTitle(result.toString());
                 setGroupTitle(groupId, result.toString());
             }

@@ -49,11 +49,11 @@ public class FlashEvents
      */
     public static void dispatchEvent (final FlashEvent event)
     {
-        ListenerList listeners = (ListenerList)_eventListeners.get(event.getEventName());
+        ListenerList<FlashEventListener> listeners = _eventListeners.get(event.getEventName());
         if (listeners != null) {
-            listeners.notify(new ListenerList.Op() {
-                public void notify (Object listener) {
-                    event.notifyListener((FlashEventListener)listener);
+            listeners.notify(new ListenerList.Op<FlashEventListener>() {
+                public void notify (FlashEventListener listener) {
+                    event.notifyListener(listener);
                 }
             });
         }
@@ -116,5 +116,6 @@ public class FlashEvents
         }
     }-*/;
 
-    protected static Map _eventListeners = new HashMap();
+    protected static Map<String, ListenerList<FlashEventListener>> _eventListeners = 
+        new HashMap<String, ListenerList<FlashEventListener>>();
 }

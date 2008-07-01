@@ -49,7 +49,7 @@ public class ForumModels
          * we learn it. {@link AsyncCallback#onFailure} will never be called but this interface is
          * more convenient than Command which does not allow us to pass an argument.
          */
-        public void addGotNameListener (AsyncCallback onGotGroupName) {
+        public void addGotNameListener (AsyncCallback<GroupName> onGotGroupName) {
             _gotNameListeners = ListenerList.addListener(_gotNameListeners, onGotGroupName);
             // if we already have our group name, fire the callback immediately
             if (!_group.toString().equals("")) {
@@ -115,9 +115,9 @@ public class ForumModels
         protected void gotGroupName (GroupName group) {
             _group = group;
             if (_gotNameListeners != null) {
-                _gotNameListeners.notify(new ListenerList.Op() {
-                    public void notify (Object listener) {
-                        ((AsyncCallback)listener).onSuccess(_group);
+                _gotNameListeners.notify(new ListenerList.Op<AsyncCallback<GroupName>>() {
+                    public void notify (AsyncCallback<GroupName> listener) {
+                        listener.onSuccess(_group);
                     }
                 });
                 _gotNameListeners = null;
@@ -128,7 +128,7 @@ public class ForumModels
         protected GroupName _group;
         protected boolean _canStartThread, _isManager;
 
-        protected ListenerList _gotNameListeners;
+        protected ListenerList<AsyncCallback<GroupName>> _gotNameListeners;
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
