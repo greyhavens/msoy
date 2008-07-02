@@ -15,7 +15,8 @@ public class InviteAcceptedNotification extends Notification
     // from Notification
     override public function getAnnouncement () :String
     {
-        return MessageBundle.tcompose("m.invite_accepted", _inviteeEmail, _inviteeDisplayName);
+        return MessageBundle.tcompose(
+            "m.invite_accepted", _inviteeEmail, _inviteeDisplayName, _inviteeId);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -23,9 +24,11 @@ public class InviteAcceptedNotification extends Notification
         super.readObject(ins);
         _inviteeEmail = ins.readField(String) as String;
         _inviteeDisplayName = ins.readField(String) as String;
+        _inviteeId = ins.readInt();
     }
 
     protected var _inviteeEmail :String;
     protected var _inviteeDisplayName :String;
+    protected var _inviteeId :int;
 }
 }

@@ -212,7 +212,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
                         // and possibly send a runtime notification as well
                         MsoyServer.notifyMan.notifyInvitationAccepted(
-                            finvite.inviterId, displayName, finvite.inviteeEmail);
+                            finvite.inviterId, displayName, mrec.memberId, finvite.inviteeEmail);
                     }
                 });
             }

@@ -123,7 +123,8 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            addNotification(Msgs.NOTIFY.get("m.friend_removed", oldEntry.name));
+            addNotification(
+                Msgs.NOTIFY.get("m.friend_removed", oldEntry.name, oldEntry.name.getMemberId()));
         }
     }
 
