@@ -74,6 +74,8 @@ public class ArcadePanel extends FlowPanel
             }
             browseGenres.add(new GenreBox(genre));
         }
+        browseGenres.add(MsoyUI.createActionLabel(
+            "View all games", "ViewAllGames", Application.createLinkListener(Page.GAMES, "g")));
     }
 
     /**

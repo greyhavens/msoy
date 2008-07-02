@@ -354,7 +354,7 @@
   font-size: 12px;
   color: #407a9f;
   width: 100%;
-  height: 1185px;
+  height: 1200px;
 }
 
 .arcade .GenreLinks {
@@ -393,7 +393,21 @@
   left: 225px;
   top: 380px;
   width: 450px;
-  padding-bottom: 10px;
+}
+
+.arcade .BrowseGenres .ViewAllGames {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #1d5884;
+  background: url(/images/game/view_all_games_bg.png) no-repeat center right;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-right: 10px;
+  text-align: right;
+  clear: both;
 }
 
 .arcade .GenreBox {
@@ -518,7 +532,8 @@
   float: left;
   width: 110px;
   color: #1c5988;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   margin-top: 15px;
@@ -526,6 +541,10 @@
 
 .arcade .TopGames .Name .actionLabel {
   text-decoration: none;
+}
+
+.arcade .TopGames .TopGameWidget:hover .Name .actionLabel {
+  text-decoration: underline;
 }
 
 /* ------------------------------------
@@ -737,7 +756,7 @@
   position: absolute;
   top: 0;
   left: 10px;
-  width: 324px; /* plus padding */
+  width: 233px; /* plus padding */
   height: 59px;
   white-space: nowrap;
   overflow: hidden;
@@ -747,13 +766,13 @@
   color: #FFFFFF;
   text-align: center;
   padding-top: 5px;
-  padding-right: 10px;
+  padding-right: 55px;
 }
 
 .gameHeaderPanel .FindGame {
   position: absolute;
   top: 5px;
-  left: 360px;
+  left: 310px;
 }
 
 .gameHeaderPanel .FindGame .Title,
@@ -766,23 +785,23 @@
 }
 
 .gameHeaderPanel .FindGame select {
-  width: 150px;
+  width: 160px;
 }
 
 .gameHeaderPanel .Search {
   position: absolute;
   top: 5px;
-  left: 520px;
+  left: 480px;
 }
 
 .gameHeaderPanel .Search input {
-  width: 110px;
+  width: 150px;
 }
 
 .gameHeaderPanel .Search .GoButton {
   position: absolute;
   bottom: 1px;
-  left: 120px;
+  left: 160px;
   width: 32px;
   height: 17px;
   background: url(/images/game/go_button.png) no-repeat top center;
