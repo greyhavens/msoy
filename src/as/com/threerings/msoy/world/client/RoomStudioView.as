@@ -5,6 +5,9 @@ package com.threerings.msoy.world.client {
 
 import flash.external.ExternalInterface;
 
+import flash.system.Capabilities;
+import flash.system.Security;
+
 import flash.utils.ByteArray;
 
 import mx.binding.utils.BindingUtils;
@@ -219,12 +222,21 @@ public class RoomStudioView extends RoomView
 
     protected function addDefaultAvatar () :void
     {
-        // TODO: when this is sorted out so that we can test decor in the SDK with this,
-        // we'll need to re-enable the built-in avatar
-        //_avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx));
-        //_avatar.setMediaBytes(new DEFAULT_AVATAR());
-        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx,
-            Avatar.getDefaultMemberAvatarMedia().getMediaPath()));
+        var avatarPath :String;
+        if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
+            avatarPath = Avatar.getDefaultMemberAvatarMedia().getMediaPath();
+        } else {
+            var url :String = this.root.loaderInfo.url;
+            var fileSep :String = (-1 != Capabilities.os.indexOf("Windows")) ? "\\" : "/";
+            var dex :int = url.lastIndexOf(fileSep);
+            if (dex == -1) {
+                avatarPath = "file:";
+            } else {
+                avatarPath = url.substring(0, dex + 1);
+            }
+            avatarPath += "default-avatar.swf";
+        }
+        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx, avatarPath));
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
