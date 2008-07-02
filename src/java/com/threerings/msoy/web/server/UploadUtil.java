@@ -25,7 +25,6 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.SnapshotMediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.s3.client.S3Connection;
 import com.threerings.s3.client.S3Exception;
@@ -161,10 +160,11 @@ public class UploadUtil
     public static void publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
     {
-        String name =SnapshotMediaDesc.sceneToName(uploadFile.getSceneId()) +
-            SnapshotMediaDesc.mimeTypeToSuffix(uploadFile.getMimeType());
-        publishStream(uploadFile.getInputStream(), SnapshotMediaDesc.SNAPSHOT_DIRECTORY,
-                      name, SnapshotMediaDesc.mimeTypeToString(uploadFile.getMimeType()));
+        // the snapshot gets uploaded to /snapshot/<
+        String name = String.valueOf(uploadFile.getSceneId()) +
+            MediaDesc.mimeTypeToSuffix(uploadFile.getMimeType());
+        publishStream(uploadFile.getInputStream(), SNAPSHOT_DIRECTORY,
+            name, MediaDesc.mimeTypeToString(uploadFile.getMimeType()));
     }
 
     /**
@@ -256,4 +256,6 @@ public class UploadUtil
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
+
+    protected static final String SNAPSHOT_DIRECTORY = "snapshot";
 }
