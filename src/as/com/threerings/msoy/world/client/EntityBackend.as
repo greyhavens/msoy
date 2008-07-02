@@ -66,7 +66,6 @@ public class EntityBackend extends ControlBackend
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityType_v1"] = getEntityType_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
-        o["registerPropertyProvider_v1"] = registerPropertyProvider_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
@@ -96,11 +95,6 @@ public class EntityBackend extends ControlBackend
     protected function getEntityProperty_v1 (entityId :String, key :String) :Object
     {
         return _sprite == null ? null : _sprite.getEntityProperty(entityId, key);
-    }
-
-    protected function registerPropertyProvider_v1 (provider :Function) :void
-    {
-        // TODO
     }
 
     protected function getCamera_v1 (index :String = null) :Camera
