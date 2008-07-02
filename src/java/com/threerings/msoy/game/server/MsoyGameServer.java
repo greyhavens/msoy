@@ -198,24 +198,15 @@ public class MsoyGameServer extends MsoyBaseServer
         }
     }
 
-    protected static class ThaneCommandGenerator
+    protected class ThaneCommandGenerator
         implements BureauRegistry.CommandGenerator
     {
         public String[] createCommand (
-            String serverNameAndPort,
             String bureauId,
             String token) {
-
-            String localhostPrefix = "localhost:";
-            if (!serverNameAndPort.startsWith(localhostPrefix)) {
-                log.warning("bin/runthaneclient cannot connect to " +
-                    serverNameAndPort);
-            }
-            String port = serverNameAndPort.substring(localhostPrefix.length());
-            Integer.parseInt(port);
             return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient",
-                bureauId, token, port};
+                bureauId, token, String.valueOf(getListenPorts()[0])};
         }
     }
 

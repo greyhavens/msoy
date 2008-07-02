@@ -158,7 +158,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         AdminProvider.init(_invmgr, confReg);
 
         // initialize the bureau registry (subclasses will enable specific bureau types)
-        _bureauReg.init("localhost:" + getListenPorts()[0]);
+        _bureauReg.init();
 
         // initialize our dictionary services
         _dictMan.init("data/dictionary");
