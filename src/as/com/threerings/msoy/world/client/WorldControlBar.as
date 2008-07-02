@@ -108,14 +108,7 @@ public class WorldControlBar extends ControlBar
     {
         super.setActualSize(uw, uh);
 
-        // display the notification display in mini mode if we have enough room for it to show fully
-        if (getMode() == UI_MINI) {
-            if (!_notificationDisplay.visible && _rightSpacer.width > _notificationDisplay.width) {
-                _notificationDisplay.visible = _notificationDisplay.includeInLayout = true;
-            } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
-                _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
-            }
-        }
+        checkNotificationDisplay();
 
         if (_notificationDisplay != null && _notificationDisplay.visible) {
             callLater(function () :void {
@@ -187,7 +180,7 @@ public class WorldControlBar extends ControlBar
         }
 
         if (_friendBtnBox != null) {
-            addGroupChild(_friendBtnBox, [ UI_STD, UI_MINI, UI_EDIT ]);
+            addGroupChild(_friendBtnBox, [ UI_STD, UI_EDIT ]);
         }
         
         return retVal;
@@ -214,6 +207,32 @@ public class WorldControlBar extends ControlBar
 
         var mode :String = super.getMode();
         return (mode == UI_STD && _isEditing) ? UI_EDIT : mode;
+    }
+
+    // from ControlBar
+    override protected function updateGroup (groupName :String, value :Boolean) :void
+    {
+        super.updateGroup(groupName, value);
+
+        if (groupName == UI_MINI && value) {
+            checkNotificationDisplay();
+        }
+    }
+
+    protected function checkNotificationDisplay () :void
+    {
+        if (getMode() != UI_MINI || _notificationDisplay == null) {
+            return;
+        }
+
+        callLater(function () :void {
+            // if we're mini, make sure we have room for the display
+            if (!_notificationDisplay.visible && _rightSpacer.width > _notificationDisplay.width) {
+                _notificationDisplay.visible = _notificationDisplay.includeInLayout = true;
+            } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
+                _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
+            }
+        });
     }
 
     protected function maybeDisplayChatTip () :void
