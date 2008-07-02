@@ -1,0 +1,99 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# A script to respawn the MetaSOY bureau launcher over and over again, assuming that
+# it exits cleanly each time.
+
+my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
+my $procid = shift or usage();
+
+# figure out what user as which to run the server
+my $msoy_user = read_prop("$root/dist/server.conf", "MSOY_USER");
+die "Unable to determine server user from $root/dist/server.conf\n" unless (defined $msoy_user);
+
+my $LOG;
+if (!open($LOG, ">$root/log/respawn-$procid.log")) {
+    warn "Unable to log to $root/log/respawn-$procid.log: $!\n";
+    $LOG = STDERR;
+}
+
+my $pidfile = shift or usage();
+my $server_pidfile = shift or usage();
+if (defined $pidfile) {
+    if (open(OUT, ">$pidfile")) {
+        print OUT "$$\n";
+        close(OUT);
+        print $LOG "Wrote pid ($$) to $pidfile.\n";
+    } else {
+        print $LOG "Unable to write PID to '$pidfile': $!\n";
+    }
+}
+
+while (1) {
+    # note the time
+    my $start = time();
+    my $now = localtime($start);
+
+    # update the code to the latest version
+    if (read_prop("$root/dist/server.properties", "dev_deployment") ne "true") {
+        check_system("apt-get update");
+        check_system("apt-get install msoy-bureaulauncher");
+    }
+
+    # now run the server
+    print $LOG "$now Running msoy bureau launcher: $root/bin/runmsoybureaulauncher $procid $server_pidfile\n";
+    my $rcode = system("su -m $msoy_user -c \"$root/bin/runmsoybureaulauncher $procid $server_pidfile\"");
+
+    # note the time again
+    my $finish = time();
+    my $duration = $finish-$start;
+    my $fnow = localtime($finish);
+
+    # report and deal with the server's exit code
+    if ($rcode != 0) {
+        print $LOG "$fnow MetaSOY bureau launcher failed (return code: $rcode) after $duration seconds.\n";
+    } else {
+	print $LOG "$fnow MetaSOY bureau launcher exited healthily after $duration seconds.\n";
+    }
+
+    # don't spiral out of control; only restart once per minute
+    if ($duration < 60) {
+        print $LOG "$fnow MetaSOY bureau launcher exited too quickly. Taking a breather.\n";
+        sleep(60-$duration);
+    }
+}
+
+sub check_system {
+    my ($command) = @_;
+    my $rcode = system($command);
+    die "'$command' failed: $rcode\n" unless ($rcode == 0);
+}
+
+sub read_prop {
+    my ($file, $key) = @_;
+    my $value;
+    open(CONFIG, $file) or die "Can't read $file: $!\n";
+    while (<CONFIG>) {
+        chomp;
+        my @bits = split(/=/);
+        if (@bits && trim($bits[0]) eq $key) {
+            $value = trim($bits[1]);
+            last;
+        }
+    }
+    close(CONFIG);
+    return $value;
+}
+
+sub trim {
+    my ($value) = @_;
+    $value =~ s/^\s+//;
+    $value =~ s/\s+$//;
+    return $value;
+}
+
+sub usage {
+    die "Usage: $0 procid pidfile launcher-pidfile\n";
+}
+
