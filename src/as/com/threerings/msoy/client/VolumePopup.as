@@ -32,7 +32,7 @@ public class VolumePopup extends Canvas
     /** Constructor. */
     public function VolumePopup (trigger : DisplayObject)
     {
-        owner = DisplayObjectContainer(Application.application);
+        owner = DisplayObjectContainer(Application.application.systemManager);
 
         styleName = "volumeControl";
 
@@ -56,16 +56,14 @@ public class VolumePopup extends Canvas
         _slider.value = Prefs.getSoundVolume();
         BindingUtils.bindSetter(Prefs.setSoundVolume, _slider, "value");
 
-        addChild (_slider);
+        addChild(_slider);
     }
 
     /** Show the popup, by adding it to the application's display list,
      *  and register for appropriate events. */
     public function show () : void
     {
-        if (_currentInstance != null) {
-            _currentInstance.destroy();
-        }            
+        destroyCurrentInstance();
         
         owner.addChild(this);
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
@@ -117,7 +115,7 @@ public class VolumePopup extends Canvas
             // We rolled out into room view, or other element - close up,
             // but don't delete the object, in case there are still events
             // queued up for it.
-            hide ();
+            hide();
         }
     }
 
@@ -129,8 +127,5 @@ public class VolumePopup extends Canvas
         very well - instead, we just hold on to a reference, and hide any
         previous instance before displaying a new one. */
     protected static var _currentInstance : VolumePopup;
-
 }
-   
-
 }

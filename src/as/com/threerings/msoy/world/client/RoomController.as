@@ -445,7 +445,7 @@ public class RoomController extends SceneController
         var disp :DisplayObject;
         for (ii = smgr.numChildren - 1; ii >= 0; ii--) {
             disp = smgr.getChildAt(ii)
-            if (disp is Application) {
+            if ((disp is Application) || (disp is UIComponent && !UIComponent(disp).visible)) {
                 continue;
             }
             if (disp.hitTestPoint(stageX, stageY)) {
