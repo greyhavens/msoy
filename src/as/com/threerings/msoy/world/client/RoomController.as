@@ -311,6 +311,13 @@ public class RoomController extends SceneController
         return true;
     }
 
+    public function getEntityProperty (ident :ItemIdent, key :String) :Object
+    {
+        var sprite :MsoySprite = _roomView.getEntity(ident);
+
+        return (sprite == null ? null : sprite.lookupEntityProperty(key));
+    }
+
     /**
      * Handles a request by an actor to change its location. Returns true if the request was
      * dispatched, false if funny business prevented it.

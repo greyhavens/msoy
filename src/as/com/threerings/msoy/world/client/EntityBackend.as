@@ -63,6 +63,11 @@ public class EntityBackend extends ControlBackend
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
 
+        o["getEntityIds_v1"] = getEntityIds_v1;
+        o["getEntityType_v1"] = getEntityType_v1;
+        o["getEntityProperty_v1"] = getEntityProperty_v1;
+        o["registerPropertyProvider_v1"] = registerPropertyProvider_v1;
+
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
     }
@@ -74,6 +79,28 @@ public class EntityBackend extends ControlBackend
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
         o["datapack"] = _sprite.getAndClearDataPack();
+    }
+
+    protected function getEntityIds_v1 (type :String) :Array
+    {
+        // TODO
+        return [];
+    }
+
+    protected function getEntityType_v1 (type :String) :String
+    {
+        // TODO
+        return "muffin";
+    }
+
+    protected function getEntityProperty_v1 (entityId :String, key :String) :Object
+    {
+        return _sprite == null ? null : _sprite.getEntityProperty(entityId, key);
+    }
+
+    protected function registerPropertyProvider_v1 (provider :Function) :void
+    {
+        // TODO
     }
 
     protected function getCamera_v1 (index :String = null) :Camera

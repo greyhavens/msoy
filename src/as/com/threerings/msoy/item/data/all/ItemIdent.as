@@ -31,6 +31,13 @@ public class ItemIdent
         this.itemId = itemId;
     }
 
+    public static function fromString (entityId :String) :ItemIdent
+    {
+        var tokens :Array = entityId.split(":");
+
+        return new ItemIdent(tokens[0], tokens[1]);
+    }
+
     // from Equalable
     public function hashCode () :int
     {

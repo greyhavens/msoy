@@ -460,6 +460,11 @@ public class RoomView extends Sprite
         }
     }
 
+    public function getEntity (ident :ItemIdent) :MsoySprite
+    {
+        return _entities.get(ident) as MsoySprite;
+    }
+
     /**
      * Called when control of an entity is assigned to us.
      */

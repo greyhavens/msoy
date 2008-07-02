@@ -754,6 +754,14 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Fetch a property using this sprite's property provider.
+     */
+    public function lookupEntityProperty (key :String) :Object
+    {
+        return "todo";
+    }
+
+    /**
      * Return all room properties in an associative hash.
      */
     internal function getRoomProperties () :Object
@@ -784,6 +792,18 @@ public class MsoySprite extends DataPackMediaContainer
         }
         var ctrl :RoomController = getController(true);
         return (ctrl != null) && ctrl.setRoomProperty(key, value); // false if ctrl is null
+    }
+
+    public function getEntityProperty (entityId :String, key :String) :Object
+    {
+        // TODO: Check for entityId = ME
+        var ctrl :RoomController = getController();
+
+        if (ctrl != null) {
+            return ctrl.getEntityProperty(ItemIdent.fromString(entityId), key);
+        } else {
+            return null;
+        }
     }
 
     /**
