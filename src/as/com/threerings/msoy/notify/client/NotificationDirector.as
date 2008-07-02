@@ -59,8 +59,6 @@ public class NotificationDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
-        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
-        _membersLoggingOff.addEventListener(ExpiringSet.ELEMENT_EXPIRED, memberExpired);
         _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
         _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
 
@@ -112,16 +110,8 @@ public class NotificationDirector extends BasicDirector
             if (entry.online != oldEntry.online) {
                 // show friends logging on in the notification area
                 if (entry.online) {
-                    // FriendEntry implements Equalable.equals() on member id, so this contains()
-                    // check will come up positive for FriendEntrys on the same member.
-                    if (_membersLoggingOff.contains(entry)) {
-                        _membersLoggingOff.remove(entry);
-                    } else {
-                        var memberId :int = entry.name.getMemberId();
-                        addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
-                    }
-                } else {
-                    _membersLoggingOff.add(entry);
+                    var memberId :int = entry.name.getMemberId();
+                    addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
                 }
             }
         }
@@ -152,13 +142,6 @@ public class NotificationDirector extends BasicDirector
     public function getCurrentNotifications () :Array
     {
         return _notifications;
-    }
-
-    protected function memberExpired (event :ValueEvent) :void
-    {
-        var entry :FriendEntry = event.value as FriendEntry;
-        var memberId :int = entry.name.getMemberId();
-        addNotification(Msgs.NOTIFY.get("m.friend_offline", entry.name, memberId));
     }
 
     // from BasicDirector
@@ -217,9 +200,6 @@ public class NotificationDirector extends BasicDirector
 
     protected var _wctx :WorldContext;
     protected var _notificationDisplay :NotificationDisplay;
-
-    /** An ExpiringSet to track members that may only be switching servers. */
-    protected var _membersLoggingOff :ExpiringSet;
 
     /** An ExpiringSet to track which notifications are relevant */
     protected var _currentNotifications :ExpiringSet;
