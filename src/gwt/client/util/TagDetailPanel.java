@@ -146,17 +146,18 @@ public class TagDetailPanel extends VerticalPanel
 //             return;
 //         }
 
-//         CShell.itemsvc.getTagHistory(CShell.ident, _itemId, new AsyncCallback() {
-//             public void onSuccess (Object result) {
+//         CShell.itemsvc.getTagHistory(
+//             CShell.ident, _itemId, new AsyncCallback<Collection<TagHistory>>() {
+//             public void onSuccess (Collection<TagHistory> result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);
 //                 _tagHistory.setCellSpacing(0);
 //                 _tagHistory.setCellPadding(2);
 
 //                 int tRow = 0;
-//                 Iterator iterator = ((Collection) result).iterator();
+//                 Iterator<TagHistory> iterator = result.iterator();
 //                 while (iterator.hasNext()) {
-//                     TagHistory history = (TagHistory) iterator.next();
+//                     TagHistory history = iterator.next();
 //                     String date = history.time.toGMTString();
 //                     // Fri Sep 29 2006 12:46:12
 //                     date = date.substring(0, 23);

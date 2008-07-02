@@ -10,7 +10,6 @@ import client.util.MsoyUI;
 
 import client.shell.Page;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -27,6 +26,8 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.Issue;
 
 import client.shell.Page;
+
+import client.util.MsoyCallback;
 
 /**
  * Displays an issue and allows it to be edited if the user is authorized.
@@ -72,16 +73,14 @@ public class EditIssuePanel extends TableFooterPanel
         } else {
             fillViewPanel();
         }
-        CMsgs.issuesvc.loadMessages(CMsgs.ident, _issue.issueId, messageId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                if (result != null) {
-                    setMessages((List)result);
+        CMsgs.issuesvc.loadMessages(
+            CMsgs.ident, _issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
+                public void onSuccess (List<ForumMessage> messages) {
+                    if (messages != null) {
+                        setMessages(messages);
+                    }
                 }
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CMsgs.serverError(caught));
-            }
-        });
+            });
     }
 
     protected void buildPanel ()
@@ -143,14 +142,11 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row++, 1, _issue.creator.toString());
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(CMsgs.mmsgs.iNoOwner());
-        CMsgs.issuesvc.loadOwners(CMsgs.ident, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                if (result != null) {
-                    setOwners((List)result);
+        CMsgs.issuesvc.loadOwners(CMsgs.ident, new MsoyCallback<List<MemberName>>() {
+            public void onSuccess (List<MemberName> owners) {
+                if (owners != null) {
+                    setOwners(owners);
                 }
-            }
-            public void onFailure (Throwable caught) {
-                MsoyUI.error(CMsgs.serverError(caught));
             }
         });
         _table.setWidget(row++, 1, _description = MsoyUI.createTextArea(_issue.description, 50, 3));
@@ -223,11 +219,11 @@ public class EditIssuePanel extends TableFooterPanel
         _messagesRow = row;
     }
 
-    protected void setOwners (List owners)
+    protected void setOwners (List<MemberName> owners)
     {
         _ownerNames = owners;
         for (int ii = 0, nn = owners.size(); ii < nn; ii++) {
-            MemberName name = (MemberName)owners.get(ii);
+            MemberName name = owners.get(ii);
             _ownerBox.addItem(name.toString());
             if (name.equals(_issue.owner)) {
                 _ownerBox.setSelectedIndex(ii + 1);
@@ -235,13 +231,13 @@ public class EditIssuePanel extends TableFooterPanel
         }
     }
 
-    protected void setMessages (List messages)
+    protected void setMessages (List<ForumMessage> messages)
     {
-        for (int ii = 0, nn = messages.size(); ii < nn; ii++) {
-            addMessage((ForumMessage)messages.get(ii));
+        for (ForumMessage message : messages) {
+            addMessage(message);
         }
         if (_messageId > 0) {
-            _message = (ForumMessage)messages.get(0);
+            _message = messages.get(0);
         }
     }
 
@@ -254,7 +250,7 @@ public class EditIssuePanel extends TableFooterPanel
     protected boolean commitEdit (boolean create, ClickCallback<Issue> callback)
     {
         _issue.owner = (_ownerBox.getSelectedIndex() > 0) ?
-            (MemberName)_ownerNames.get(_ownerBox.getSelectedIndex() - 1) : null;
+                        _ownerNames.get(_ownerBox.getSelectedIndex() - 1) : null;
         _issue.description = _description.getText();
         if (_issue.description.length() == 0) {
             MsoyUI.error(CMsgs.mmsgs.errINoDescription());
@@ -306,7 +302,7 @@ public class EditIssuePanel extends TableFooterPanel
     protected ListBox _priorityBox;
     protected ListBox _categoryBox;
     protected TextArea _comment;
-    protected List _ownerNames;
+    protected List<MemberName> _ownerNames;
     protected Hyperlink _threadLink;
 
     protected int _messagesRow;

@@ -40,7 +40,7 @@ public interface WorldServiceAsync
     /**
      * The asynchronous version of {@link WorldService#updateWhirledNews}.
      */
-    public void updateWhirledNews (WebIdent ident, String newsHtml, AsyncCallback callback);
+    public void updateWhirledNews (WebIdent ident, String newsHtml, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WorldService#loadMyRooms}.
@@ -50,8 +50,8 @@ public interface WorldServiceAsync
     /**
      * The asynchronous version of {@link WorldService#loadFeed}.
      */
-    public void loadFeed (
-        WebIdent ident, int cutoffDays, AsyncCallback<List<FeedMessage>> callback);
+    public void loadFeed (WebIdent ident, int cutoffDays, 
+                          AsyncCallback<List<FeedMessage>> callback);
 
     /**
      * The asynchronous version of {@link WorldService#loadLaunchConfig}.

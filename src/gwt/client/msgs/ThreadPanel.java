@@ -252,7 +252,7 @@ public class ThreadPanel extends TitledListPanel
         }
 
         protected ForumMessage _message;
-        protected AsyncCallback _callback;
+        protected AsyncCallback<ForumMessage> _callback;
         protected MessageEditor _editor;
     }
 

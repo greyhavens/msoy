@@ -22,8 +22,8 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getConnectConfig}.
      */
-    public void getConnectConfig (
-        WebIdent ident, int projectId, AsyncCallback<SwiftlyConnectConfig> callback);
+    public void getConnectConfig (WebIdent ident, int projectId, 
+                                  AsyncCallback<SwiftlyConnectConfig> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
@@ -39,13 +39,13 @@ public interface SwiftlyServiceAsync
      * The asynchronous version of {@link SwiftlyService#createProject}.
      */
     public void createProject (WebIdent ident, String projectName, byte projectType,
-                               boolean remixable, AsyncCallback callback);
+                               boolean remixable, AsyncCallback<SwiftlyProject> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#updateProject}.
      */
-    public void updateProject (
-        WebIdent ident, SwiftlyProject project, AsyncCallback<Void> callback);
+    public void updateProject (WebIdent ident, SwiftlyProject project, 
+                               AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#loadProject}.
@@ -65,8 +65,8 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.
      */
-    public void getProjectCollaborators (
-        WebIdent ident, int projectId, AsyncCallback<List<MemberName>> callback);
+    public void getProjectCollaborators (WebIdent ident, int projectId, 
+                                         AsyncCallback<List<MemberName>> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getFriends}.
@@ -76,12 +76,12 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.
      */
-    public void leaveCollaborators (
-        WebIdent ident, int projectId, MemberName name, AsyncCallback<Void> callback);
+    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name, 
+                                    AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#joinCollaborators}.
      */
-    public void joinCollaborators (
-        WebIdent ident, int projectId, MemberName name, AsyncCallback<Void> callback);
+    public void joinCollaborators (WebIdent ident, int projectId, MemberName name, 
+                                   AsyncCallback<Void> callback);
 }

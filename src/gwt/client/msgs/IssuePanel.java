@@ -81,9 +81,8 @@ public class IssuePanel extends TitledListPanel
             setContents(CMsgs.mmsgs.viewIssue(issue.description), _ipanel, true);
 
         } else {
-            CMsgs.issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    Issue issue = (Issue)result;
+            CMsgs.issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback<Issue>() {
+                public void onSuccess (Issue issue) {
                     _state = issue.state;
                     _type = issue.type;
                     _ipanel.setIssue(issue, messageId, page);

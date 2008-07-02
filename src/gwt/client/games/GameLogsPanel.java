@@ -44,9 +44,9 @@ public class GameLogsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(CGames.msgs.gmpLoading(), "Header"));
-        CGames.gamesvc.loadGameLogs(CGames.ident, _detail.gameId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                gotLogs((GameLogs)result);
+        CGames.gamesvc.loadGameLogs(CGames.ident, _detail.gameId, new AsyncCallback<GameLogs>() {
+            public void onSuccess (GameLogs logs) {
+                gotLogs(logs);
             }
             public void onFailure (Throwable caught) {
                 CGames.log("loadGameLogs failed", caught);

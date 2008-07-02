@@ -5,7 +5,6 @@ package client.account;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 import client.shell.Args;
+
+import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
 /**
@@ -104,16 +105,13 @@ public class ResetPasswordPanel extends FlexTable
     protected void sendResetRequest ()
     {
         String password = CAccount.md5hex(_password.getText().trim());
-        CAccount.usersvc.resetPassword(_memberId, _code, password, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                if (((Boolean)result).booleanValue()) {
+        CAccount.usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
+            public void onSuccess (Boolean result) {
+                if (result) {
                     MsoyUI.info(CAccount.msgs.resetReset());
                 } else {
                     MsoyUI.error(CAccount.msgs.resetInvalid());
                 }
-            }
-            public void onFailure (Throwable caught) {
-                _status.setText(CAccount.serverError(caught));
             }
         });
     }

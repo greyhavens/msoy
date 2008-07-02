@@ -19,13 +19,13 @@ public interface MailServiceAsync
      * The asynchronous version of {@link MailService#loadConversations}
      */
     public void loadConversations (WebIdent ident, int offset, int count, boolean needCount,
-                                   AsyncCallback callback);
+                                   AsyncCallback<MailService.ConvosResult> callback);
 
     /**
      * The asynchronous version of {@link MailService#loadConversation}
      */
-    public void loadConversation (
-        WebIdent ident, int convoId, AsyncCallback<MailService.ConvoResult> callback);
+    public void loadConversation (WebIdent ident, int convoId, 
+                                  AsyncCallback<MailService.ConvoResult> callback);
 
     /**
      * The asynchronous version of {@link MailService#startConversation}
@@ -36,9 +36,8 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#continueConversation}
      */
-    public void continueConversation (
-        WebIdent ident, int convoId, String text, MailPayload attachment, 
-        AsyncCallback<ConvMessage> callback);
+    public void continueConversation (WebIdent ident, int convoId, String text, 
+                                      MailPayload attachment, AsyncCallback<ConvMessage> callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteConversation}

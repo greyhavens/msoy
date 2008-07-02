@@ -41,15 +41,16 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(CGames.msgs.gmpLoading(), "Header"));
-        CGames.gamesvc.loadGameMetrics(CGames.ident, _detail.gameId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                gotMetrics((GameMetrics)result);
-            }
-            public void onFailure (Throwable caught) {
-                CGames.log("loadGameMetrics failed", caught);
-                add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
-            }
-        });
+        CGames.gamesvc.loadGameMetrics(
+            CGames.ident, _detail.gameId, new AsyncCallback<GameMetrics>() {
+                public void onSuccess (GameMetrics metrics) {
+                    gotMetrics(metrics);
+                }
+                public void onFailure (Throwable caught) {
+                    CGames.log("loadGameMetrics failed", caught);
+                    add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
+                }
+            });
     }
 
     protected void gotMetrics (GameMetrics metrics)

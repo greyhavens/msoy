@@ -267,25 +267,25 @@ public class CreateAccountPanel extends VerticalPanel
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, 
             _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge, 
-            response, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                // notify our registration listener
-                _regListener.didRegister();
-                // clear our current token otherwise didLogon() will try to load it
-                Application.setCurrentToken(null);
-                // pass our credentials into the application (which will trigger a redirect)
-                CAccount.app.didLogon((SessionData)result);
-            }
-            public void onFailure (Throwable caught) {
-                if (hasRecaptchaKey()) {
-                    reloadRecaptcha();
-                    if (caught instanceof CaptchaException) {
-                        focusRecaptcha();
-                    }
+            response, new AsyncCallback<SessionData>() {
+                public void onSuccess (SessionData result) {
+                    // notify our registration listener
+                    _regListener.didRegister();
+                    // clear our current token otherwise didLogon() will try to load it
+                    Application.setCurrentToken(null);
+                    // pass our credentials into the application (which will trigger a redirect)
+                    CAccount.app.didLogon(result);
                 }
-                setStatus(CAccount.serverError(caught));
-            }
-        });
+                public void onFailure (Throwable caught) {
+                if (hasRecaptchaKey()) {
+                        reloadRecaptcha();
+                        if (caught instanceof CaptchaException) {
+                        focusRecaptcha();
+                        }
+                    }
+                    setStatus(CAccount.serverError(caught));
+                }
+            });
     }
 
     protected void setStatus (String text)

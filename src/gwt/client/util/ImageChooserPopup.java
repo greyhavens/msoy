@@ -40,18 +40,20 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Frame.showDialog(CShell.cmsgs.icTitle(),
-                                 new ImageChooserPopup((List)result, thumbnail, callback));
-            }
-            public void onFailure (Throwable caught) {
-                callback.onFailure(caught);
-            }
-        });
+        CShell.membersvc.loadInventory(
+            CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
+                public void onSuccess (List<Item> items) {
+                    Frame.showDialog(CShell.cmsgs.icTitle(),
+                                    new ImageChooserPopup(items, thumbnail, callback));
+                }
+                public void onFailure (Throwable caught) {
+                    callback.onFailure(caught);
+                }
+            });
     }
 
-    protected ImageChooserPopup (List images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
+    protected ImageChooserPopup (
+        List<Item> images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
     {
         _callback = callback;
         _thumbnail = thumbnail;
@@ -76,7 +78,7 @@ public class ImageChooserPopup extends VerticalPanel
     protected class PhotoGrid extends PagedGrid
         implements EditorHost
     {
-        public PhotoGrid (List images) {
+        public PhotoGrid (List<Item> images) {
             super(2, 7, NAV_ON_BOTTOM);
             setWidth("100%");
             setModel(new SimpleDataModel(images), 0);

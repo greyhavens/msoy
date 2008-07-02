@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
@@ -41,7 +43,8 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
      */
-    public void loadInventory (WebIdent ident, byte type, int suiteId, AsyncCallback callback);
+    public void loadInventory (WebIdent ident, byte type, int suiteId, 
+                               AsyncCallback<List<Item>> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitationsStatus}.
@@ -57,8 +60,8 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.
      */
-    public void getInvitation (
-        String inviteId, boolean viewing, AsyncCallback<Invitation> callback);
+    public void getInvitation (String inviteId, boolean viewing, 
+                               AsyncCallback<Invitation> callback);
 
     /**
      * The asynchronous version of {@link MemberService#removeInvitation}.
@@ -73,5 +76,5 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getLeaderList}.
      */
-    public void getLeaderList (AsyncCallback callback);
+    public void getLeaderList (AsyncCallback<List<MemberCard>> callback);
 }

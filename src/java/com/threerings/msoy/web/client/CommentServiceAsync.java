@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.fora.data.Comment;
 
+import com.threerings.msoy.web.client.CommentService;
+
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -18,7 +20,8 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#loadComments}.
      */
     public void loadComments (int entityType, int entityId, int offset, int count,
-                              boolean needCount, AsyncCallback callback);
+                              boolean needCount, 
+                              AsyncCallback<CommentService.CommentResult> callback);
 
     /**
      * The asynchronous version of {@link CommentService#postComment}.
@@ -29,8 +32,8 @@ public interface CommentServiceAsync
     /**
      * The asynchronous version of {@link CommentService#deleteComment}.
      */
-    public void deleteComment (
-        WebIdent ident, int entityType, int entityId, long when, AsyncCallback<Boolean> callback);
+    public void deleteComment (WebIdent ident, int entityType, int entityId, long when, 
+                               AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link CommentService#complainComment}.
