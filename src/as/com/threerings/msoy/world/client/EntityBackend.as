@@ -82,8 +82,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getEntityIds_v1 (type :String) :Array
     {
-        // TODO
-        return [];
+        return (_sprite == null) ? null : _sprite.getEntityIds(type);
     }
 
     protected function getEntityType_v1 (type :String) :String
@@ -94,7 +93,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getEntityProperty_v1 (entityId :String, key :String) :Object
     {
-        return _sprite == null ? null : _sprite.getEntityProperty(entityId, key);
+        return (_sprite == null) ? null : _sprite.getEntityProperty(entityId, key);
     }
 
     protected function getCamera_v1 (index :String = null) :Camera

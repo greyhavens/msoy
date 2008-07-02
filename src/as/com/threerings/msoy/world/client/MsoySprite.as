@@ -758,7 +758,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function lookupEntityProperty (key :String) :Object
     {
-        callUserCode("lookupEntityProperty_v1", key);
+        return callUserCode("lookupEntityProperty_v1", key);
     }
 
     /**
@@ -792,6 +792,13 @@ public class MsoySprite extends DataPackMediaContainer
         }
         var ctrl :RoomController = getController(true);
         return (ctrl != null) && ctrl.setRoomProperty(key, value); // false if ctrl is null
+    }
+
+    public function getEntityIds (type :String) :Array
+    {
+        var ctrl :RoomController = getController();
+
+        return null; // TODO
     }
 
     public function getEntityProperty (entityId :String, key :String) :Object
