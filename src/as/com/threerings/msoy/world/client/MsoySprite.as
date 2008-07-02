@@ -758,7 +758,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function lookupEntityProperty (key :String) :Object
     {
-        return "todo";
+        callUserCode("lookupEntityProperty_v1", key);
     }
 
     /**
@@ -796,7 +796,11 @@ public class MsoySprite extends DataPackMediaContainer
 
     public function getEntityProperty (entityId :String, key :String) :Object
     {
-        // TODO: Check for entityId = ME
+        // If the entityId is ME, take the shortcut
+        if (entityId == null) {
+            return lookupEntityProperty(key);
+        }
+
         var ctrl :RoomController = getController();
 
         if (ctrl != null) {
