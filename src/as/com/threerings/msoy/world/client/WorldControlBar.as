@@ -17,6 +17,9 @@ import flash.text.TextField;
 import flash.utils.Timer;
 
 import mx.core.UIComponent;
+import mx.core.ScrollPolicy;
+
+import mx.containers.HBox;
 
 import com.threerings.flex.CommandButton;
 
@@ -32,6 +35,7 @@ import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.data.MemberObject;
@@ -151,6 +155,20 @@ public class WorldControlBar extends ControlBar
         _snapBtn.setCommand(MsoyController.SNAPSHOT);
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
+
+        // TODO: this is temporarily only for dev deployments
+        if (DeploymentConfig.devDeployment) {
+            _friendBtnBox = new HBox();
+            _friendBtnBox.styleName = "controlBarFriendButtonBox";
+            _friendBtnBox.verticalScrollPolicy = ScrollPolicy.OFF;
+            _friendBtnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+            var friendBtn :CommandButton = new CommandButton();
+            friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
+            friendBtn.setCommand(MsoyController.POP_FRIENDS_LIST);
+            friendBtn.styleName = "controlBarFriendButton";
+            friendBtn.enabled = true;
+            _friendBtnBox.addChild(friendBtn);
+        }
     }
 
     // from ControlBar
@@ -166,6 +184,10 @@ public class WorldControlBar extends ControlBar
 
         if (_notificationDisplay != null) {
             addGroupChild(_notificationDisplay, [ UI_STD, UI_EDIT ]);
+        }
+
+        if (_friendBtnBox != null) {
+            addGroupChild(_friendBtnBox, [ UI_STD, UI_MINI, UI_EDIT ]);
         }
         
         return retVal;
@@ -308,6 +330,9 @@ public class WorldControlBar extends ControlBar
 
     /** The little gray area that displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;
+
+    /** A button for popping up the friend list. */
+    protected var _friendBtnBox :HBox;
 
     /** We stop showing the "type here to chat" tip after the user reaches level 5. */
     protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;

@@ -995,6 +995,20 @@ public class WorldController extends MsoyController
         handleGoScene(int(_backstack[_backstackIdx = idx].id));
     }
 
+    /** 
+     * Handles the POP_FRIENDS_LIST command.
+     */
+    public function handlePopFriendsList (...ignored) :void
+    {
+        if (_friendsList != null) {
+            _friendsList.shutdown();
+            _friendsList = null;
+        } else {
+            _friendsList = new FriendsListPanel(_wctx);
+            _friendsList.show();
+        }
+    }
+
     // from MsoyController
     override public function handleLogon (creds :Credentials) :void
     {
@@ -1020,6 +1034,10 @@ public class WorldController extends MsoyController
                 Prefs.setUsername(name.toString());
             }
 
+            if (_friendsList != null) {
+                _friendsList.memberObjectUpdated(memberObj);
+            }
+
         } else {
             // if we are a guest, let the GWT application know the guest id as whom we're
             // authenticated so that it can pass that guest id along to the server if we register
@@ -1031,6 +1049,11 @@ public class WorldController extends MsoyController
             } catch (e :Error) {
                 log.warning("Unable to inform GWT of our guest id " +
                             "[id=" + memberObj.getMemberId() + "]: " + e);
+            }
+
+            if (_friendsList != null) {
+                // force closed if we're a guest.
+                handlePopFriendsList();
             }
         }
 
@@ -1280,6 +1303,9 @@ public class WorldController extends MsoyController
 
     /** Our room history menu. */
     protected var _historyMenu :CommandMenu;
+
+    /** Our friends list. */
+    protected var _friendsList :FriendsListPanel;
 
     private static const log :Log = Log.getLog(WorldController);
 }

@@ -434,14 +434,20 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_disabled.png");
 }
 
-.controlBarButtonNotify {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_disabled.png");
+.controlBarFriendButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_up.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_down.png");
+}
+
+.controlBarFriendButtonBox {
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
+  borderStyle: "none";
+  paddingTop: 1;
+  paddingRight: 4;
+  horizontalGap: 0;
+  verticalGap: 0;
 }
 
 .controlBarSpacer { 
@@ -451,29 +457,6 @@ TabNavigator, TabBar {
   horizontalAlign: "right";
   paddingRight: 10;
 }
-
-.notificationDisplay { 
-  borderStyle: "solid";
-  borderThickness: 1;
-  paddingLeft: 0;
-  paddingRight: 0;
-  paddingTop: 0;
-  paddingBottom: 0;
-}
-
-.notificationBox {
-  paddingLeft: 0;
-  paddingRight: 0;
-  paddingTop: 0;
-  paddingBottom: 0;
-}
-
-.notificationButton {
-  paddingLeft: 0;
-  paddingRight: 0;
-  paddingTop: 0;
-  paddingBottom: 0;
-}  
 
 .roomEditPanel {  
   paddingBottom: 0;
@@ -1177,7 +1160,7 @@ BasePanel {
   backgroundSize: "100%";
   borderStyle: none;
   paddingTop: 3px;
-  paddingRight: 5px;
+  paddingRight: 4px;
 }
 
 .notificationCanvas {
@@ -1221,4 +1204,26 @@ BasePanel {
   paddingRight: 3;
   paddingTop: 3;
   paddingBottom: 3;
+}
+
+.friendsListPanel {
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/friends_popup_header.png",
+          scaleGridTop="8", scaleGridBottom="28",
+          scaleGridLeft="8", scaleGridRight="211");
+  headerHeight: 36;
+  backgroundColor: black;
+  backgroundAlpha: 0.8;
+  backgroundImage: null;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+}
+
+.friendList {
+  borderColor: #408fd9;
+  borderSides: "left bottom right";
+  borderStyle: "solid";
+  borderThickness: 2;
+  backgroundAlpha: 0;
 }
