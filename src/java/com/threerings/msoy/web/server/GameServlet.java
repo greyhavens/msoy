@@ -449,7 +449,7 @@ public class GameServlet extends MsoyServiceServlet
                 gameInfo.name = game.name;
                 data.allGames.add(gameInfo);
             }
-            Collections.sort(data.allGames, SORT__BY_NAME);
+            Collections.sort(data.allGames, SORT_BY_NAME);
 
             // list of top 10 games by ranking (include name, id & media)
             data.topGames = Lists.newArrayList();
