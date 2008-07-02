@@ -43,6 +43,7 @@ public class FriendsListPanel extends TitleWindow
 
     public function shutdown () :void
     {
+        _ctx.getMemberObject().removeListener(this);
         PopUpManager.removePopUp(this);
     }
 
