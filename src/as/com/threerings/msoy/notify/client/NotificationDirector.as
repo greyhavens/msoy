@@ -59,6 +59,7 @@ public class NotificationDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
         _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
         _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
 
@@ -110,8 +111,13 @@ public class NotificationDirector extends BasicDirector
             if (entry.online != oldEntry.online) {
                 // show friends logging on in the notification area
                 if (entry.online) {
-                    var memberId :int = entry.name.getMemberId();
-                    addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
+                    // if they weren't listed in the set, report them as newly coming online
+                    if (!_membersLoggingOff.remove(entry)) {
+                        var memberId :int = entry.name.getMemberId();
+                        addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
+                    }
+                } else {
+                    _membersLoggingOff.add(entry);
                 }
             }
         }
@@ -201,6 +207,9 @@ public class NotificationDirector extends BasicDirector
 
     protected var _wctx :WorldContext;
     protected var _notificationDisplay :NotificationDisplay;
+
+    /** An ExpiringSet to track members that may only be switching servers. */
+    protected var _membersLoggingOff :ExpiringSet;
 
     /** An ExpiringSet to track which notifications are relevant */
     protected var _currentNotifications :ExpiringSet;
