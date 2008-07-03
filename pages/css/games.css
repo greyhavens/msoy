@@ -500,7 +500,7 @@
 }
 
 .arcade .TopGames .TopGameWidget {
-  border-bottom: solid #5d8db1 1px;
+  border-bottom: solid #bfdaef 1px;
   background-color: white;
   width: 200px;
   height: 45px;
@@ -517,6 +517,7 @@
   float: left;
   border-left: solid #5d8db1 1px;
   border-right: solid #5d8db1 1px;
+  border-bottom: solid #5d8db1 1px;
   padding-top: 15px;
 }
 
