@@ -47,6 +47,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemTypes;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.layout.RoomLayout;
@@ -470,9 +471,11 @@ public class RoomView extends Sprite
         var keys :Array = _entities.keys();
 
         if (type != null) {
+            var valid :Array = ENTITY_TYPES[type];
             keys = keys.filter(
-                function (id :ItemIdent) :Boolean {
-                    return String(id.type) == type; // TODO: convert from readable string to int
+                function (id :ItemIdent, ... etc) :Boolean {
+                    // Is the entity a valid item of this type?
+                    return valid.indexOf(id.type) != -1;
                 });
         }
         return keys;
@@ -946,5 +949,12 @@ public class RoomView extends Sprite
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
+
+    /** The entity type groupings for querying for property owners. */
+    protected static const ENTITY_TYPES :Object = {
+        furni: [ ItemTypes.FURNITURE, ItemTypes.TOY, ItemTypes.DECOR ],
+        avatar: [ ItemTypes.AVATAR ],
+        pet: [ ItemTypes.PET ]
+    };
 }
 }
