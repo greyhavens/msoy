@@ -39,7 +39,7 @@ if [ "$WHOAMI" != "$MSOY_USER" ]; then
     exit 255
 fi
 
-CLASS=com.threerings.msoy.client.MsoyBureauLauncherClient
+CLASS=com.threerings.msoy.game.client.MsoyBureauLauncherClient
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dhostname=$HOSTNAME \
     -Dis_node=true \

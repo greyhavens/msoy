@@ -7,10 +7,12 @@ import com.threerings.presents.peer.net.PeerCreds;
  */
 public class MsoyBureauLauncherCredentials extends PeerCreds
 {
+    public static final String PREFIX = "bureaulauncher:";
+
     /** Creates a new bureau launcher credentials for a node. */
     public MsoyBureauLauncherCredentials (String nodeName, String sharedSecret)
     {
-        super(nodeName, sharedSecret);
+        super(PREFIX + nodeName, sharedSecret);
     }
 
     /** Creates a new bureau launcher credentials that will be deserialized into. */

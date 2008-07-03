@@ -193,6 +193,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void finishInit (Injector injector)
         throws Exception
     {
+        // prepare the bureaus
+        _bureauReg.addClientFactory(_clmgr);
     }
 
     /**

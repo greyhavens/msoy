@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client;
+package com.threerings.msoy.game.client;
 
 import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;
@@ -118,8 +118,11 @@ public class MsoyBureauLauncherClient extends Client
      */
     public MsoyBureauLauncherClient (Runner queue)
     {
-        super(new MsoyBureauLauncherCredentials("bureaulauncher", 
+        super(new MsoyBureauLauncherCredentials(
+            ServerConfig.serverHost, 
             ServerConfig.bureauSharedSecret), queue);
+
+        log.info("Created credentials: " + _creds);
         addClientObserver(new Observer());
     }
 

@@ -129,21 +129,16 @@ public class MsoyGameServer extends MsoyBaseServer
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
             public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
-                // Bureaus don't have or need access to all the stuff in a full msoy game client,
-                // so just give them a vanilla PresentsClient client for now.
-                // TODO: will bureaus need a more tailored client & resolver?
-                if (areq.getCredentials() instanceof BureauCredentials) {
-                    return PresentsClient.class;
-                }
                 return MsoyGameClient.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (Name username) {
-                if (BureauCredentials.isBureau(username)) {
-                    return ClientResolver.class;
-                }
                 return MsoyGameClientResolver.class;
             }
         });
+
+        // prepare for bureau launcher clients
+        _clmgr.setClientFactory(
+            new MsoyBureauLauncherClientFactory(_clmgr.getClientFactory()));
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
