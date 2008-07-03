@@ -63,14 +63,14 @@ public class MsoyBureauLauncherClient extends Client
             notify();
         }
 
-        @Override // from RunQueue
+        // from RunQueue
         synchronized public void postRunnable (Runnable r)
         {
             _queue.add(r);
             notify();
         }
 
-        @Override // from RunQueue
+        // from RunQueue
         public boolean isDispatchThread ()
         {
             return Thread.currentThread() == _dispatcher;
