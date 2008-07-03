@@ -18,6 +18,9 @@ import com.samskivert.util.OneLineLogFormatter;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
@@ -55,6 +58,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.MsoyBureauLauncherCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,6 +66,7 @@ import static com.threerings.msoy.Log.log;
  * A server that does nothing but host games.
  */
 public class MsoyGameServer extends MsoyBaseServer
+    implements MsoyBureauLauncherProvider
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -155,7 +160,34 @@ public class MsoyGameServer extends MsoyBaseServer
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
         _conmgr.addChainedAuthenticator(new MsoyBureauLauncherAuthenticator());
 
+        _invmgr.registerDispatcher(new MsoyBureauLauncherDispatcher(this),
+            MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+
         log.info("Game server initialized.");
+    }
+
+    // from MsoyBureauLauncherProvider
+    public void launcherInitialized (ClientObject launcher)
+    {
+        // this launcher is now available to take sender requests
+        // TODO: notify our world server that we are now a bureau-enabled game server
+        log.info("Launcher initialized", "client", launcher);
+        _launchers.put(launcher.getOid(), launcher);
+        launcher.addListener(new ObjectDeathListener () {
+            public void objectDestroyed (ObjectDestroyedEvent event) {
+                launcherDestroyed(event.getTargetOid());
+            }
+        });
+    }
+
+    /**
+     * Called internally when a launcher connection is terminated. The specific launcher may no
+     * longer be used to fulfill bureau requests.
+     */
+    protected void launcherDestroyed (int oid)
+    {
+        log.info("Launcher destroyed", "oid", oid);
+        _launchers.remove(oid);
     }
 
     @Override // from MsoyBaseServer
@@ -221,4 +253,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** The port on which we connect back to our parent server. */
     protected int _connectPort;
+
+    protected HashIntMap<ClientObject> _launchers = 
+        new HashIntMap<ClientObject>();
 }

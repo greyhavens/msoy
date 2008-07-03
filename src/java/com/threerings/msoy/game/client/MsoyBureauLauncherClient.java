@@ -7,6 +7,7 @@ import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.game.data.MsoyBureauLauncherCredentials;
+import com.threerings.msoy.game.data.MsoyBureauLauncherCodes;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
@@ -124,6 +125,7 @@ public class MsoyBureauLauncherClient extends Client
 
         log.info("Created credentials: " + _creds);
         addClientObserver(new Observer());
+        addServiceGroup(MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
     }
 
     /**
@@ -161,6 +163,8 @@ public class MsoyBureauLauncherClient extends Client
         public void clientDidLogon (Client client)
         {
             _loggedOn = true;
+            _service = getService(MsoyBureauLauncherService.class);
+            _service.launcherInitialized(MsoyBureauLauncherClient.this);
         }
 
         public void clientFailedToLogon (Client client, Exception cause)
@@ -181,4 +185,5 @@ public class MsoyBureauLauncherClient extends Client
     }
 
     protected boolean _loggedOn;
+    protected MsoyBureauLauncherService _service;
 }
