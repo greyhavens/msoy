@@ -19,8 +19,8 @@ public class MsoyBureauClient extends WhirledBureauClient
     {
         var bureauId :String = args[0];
         var token :String = args[1];
-        var server :String = "localhost";
-        var port :int = parseInt(args[2]);
+        var server :String = args[2];
+        var port :int = parseInt(args[3]);
 
         // create the client and log on
         var client :MsoyBureauClient = new MsoyBureauClient(

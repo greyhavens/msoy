@@ -11,15 +11,16 @@ MSOY_HOME=`dirname $0 | sed s:/bin$::`
 HOSTNAME=`hostname`
 
 # Make sure our bureau id and port were properly supplied.
-if [ -z "$1" -o -z "$2" -o -z "$3" ]; then
-    echo "Usage: $0 bureauId connectToken connectPort"
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ]; then
+    echo "Usage: $0 bureauId connectToken server port"
     echo "Parameters: $@"
     exit 255
 fi
 
 BUREAU_ID=$1
 CONNECT_TOKEN=$2
-CONNECT_PORT=$3
+CONNECT_SERVER=$3
+CONNECT_PORT=$4
 
 LOGFILE=$MSOY_HOME/log/stdout-b$BUREAU_ID.log
 LOG_EMAIL=nightly-logs@threerings.net
@@ -63,13 +64,15 @@ echo "      Bureau ID: $BUREAU_ID"
 echo "    Interpreter: $THANE_INTERPRETER"
 echo "Deployment root: $MSOY_HOME"
 echo "          Token: $CONNECT_TOKEN"
+echo "         Server: $CONNECT_SERVER"
 echo "           Port: $CONNECT_PORT"
 echo "           Libs: $LIBS"
 echo "           Main: $MAIN"
 echo "------------------------------------------------------------------------------";
 } >>$LOGFILE
 
-$THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN $CONNECT_PORT >>$LOGFILE 2>&1
+$THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
+    $CONNECT_SERVER $CONNECT_PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs

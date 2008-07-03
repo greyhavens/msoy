@@ -207,7 +207,8 @@ public class MsoyGameServer extends MsoyBaseServer
             String token) {
             return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient",
-                bureauId, token, String.valueOf(getListenPorts()[0])};
+                bureauId, token, "localhost", 
+                String.valueOf(getListenPorts()[0])};
         }
     }
 
