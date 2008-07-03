@@ -102,6 +102,15 @@ public class ServerConfig
     /** Provides access to our config properties. */
     public static Config config = new Config("server");
 
+    /** The secret used to authenticate the bureau launching client. */
+    public static String bureauSharedSecret;
+
+    /** Comma-separated game server list the bureau launcher will connect to */
+    public static String bureauGameServers;
+
+    /** True if the game server kicks off local proceses for bureaus. */
+    public static boolean localBureaus;
+
     /**
      * Returns a provider of JDBC connections.
      */
@@ -286,5 +295,8 @@ public class ServerConfig
         eventLogSpoolDir = config.getValue("event_log_spool_dir", "");
         recaptchaPublicKey = config.getValue("recaptcha_public", "");
         recaptchaPrivateKey = config.getValue("recaptcha_private", "");
+        bureauSharedSecret = config.getValue("bureau_secret", "");
+        bureauGameServers = config.getValue("bureau_game_servers", "localhost:47625");
+        localBureaus = config.getValue("local_bureaus", true);
     }
 }

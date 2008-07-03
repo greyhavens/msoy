@@ -158,6 +158,7 @@ public class MsoyGameServer extends MsoyBaseServer
         _bureauReg.setCommandGenerator(
             WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
+        _conmgr.addChainedAuthenticator(new MsoyBureauLauncherAuthenticator());
 
         log.info("Game server initialized.");
     }
