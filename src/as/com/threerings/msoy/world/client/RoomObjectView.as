@@ -740,6 +740,8 @@ public class RoomObjectView extends RoomView
         }
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         sprite.moveTo(sloc.loc as MsoyLocation, _scene);
+
+        dispatchEntityMoved(sprite.getItemIdent());
     }
 
     protected function updateBody (newInfo :OccupantInfo, oldInfo :OccupantInfo) :void
