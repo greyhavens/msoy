@@ -465,6 +465,19 @@ public class RoomView extends Sprite
         return _entities.get(ident) as MsoySprite;
     }
 
+    public function getItemIdents (type :String) :Array
+    {
+        var keys :Array = _entities.keys();
+
+        if (type != null) {
+            keys = keys.filter(
+                function (id :ItemIdent) :Boolean {
+                    return String(id.type) == type; // TODO: convert from readable string to int
+                });
+        }
+        return keys;
+    }
+
     /**
      * Called when control of an entity is assigned to us.
      */

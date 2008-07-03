@@ -798,7 +798,7 @@ public class MsoySprite extends DataPackMediaContainer
     {
         var ctrl :RoomController = getController();
 
-        return null; // TODO
+        return (ctrl == null) ? [] : ctrl.getEntityIds(type);
     }
 
     public function getEntityProperty (entityId :String, key :String) :Object

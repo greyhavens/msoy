@@ -311,11 +311,29 @@ public class RoomController extends SceneController
         return true;
     }
 
+    /**
+     * Retrieves a published property of a given entity.
+     */
     public function getEntityProperty (ident :ItemIdent, key :String) :Object
     {
         var sprite :MsoySprite = _roomView.getEntity(ident);
 
         return (sprite == null ? null : sprite.lookupEntityProperty(key));
+    }
+
+    /**
+     * Get the ID strings of all entities of the specified type, or all if type is null.
+     */
+    public function getEntityIds (type :String) :Array
+    {
+        var idents :Array = _roomView.getItemIdents(type);
+
+        // Convert from ItemIdents to entityId Strings
+        return idents.map(
+                function (id :ItemIdent, ... etc) :String {
+                    return id.toString();
+                }
+            );
     }
 
     /**

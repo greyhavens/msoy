@@ -82,7 +82,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getEntityIds_v1 (type :String) :Array
     {
-        return (_sprite == null) ? null : _sprite.getEntityIds(type);
+        return (_sprite == null) ? [] : _sprite.getEntityIds(type);
     }
 
     protected function getEntityType_v1 (type :String) :String
