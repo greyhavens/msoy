@@ -895,6 +895,7 @@ public class RoomView extends Sprite
     protected function spriteWillUpdate (sprite :MsoySprite) :void
     {
         removeFromEntityMap(sprite);
+        dispatchEntityLeft(sprite.getItemIdent());
     }
 
     /**
@@ -902,6 +903,7 @@ public class RoomView extends Sprite
      */
     protected function spriteDidUpdate (sprite :MsoySprite) :void
     {
+        dispatchEntityEntered(sprite.getItemIdent());
         addToEntityMap(sprite);
     }
 
