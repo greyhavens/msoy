@@ -10,6 +10,7 @@ import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import flash.text.AntiAliasType;
 import flash.text.TextField;
@@ -100,7 +101,7 @@ public class NotificationDisplay extends HBox
         _popupBtn.buttonMode = true;
         _popupBtn.enabled = false;
         _popupBtn.addEventListener(MouseEvent.CLICK, displayNotificationHistory);
-        systemManager.addEventListener(MouseEvent.CLICK, hideNotificationHistory);
+        systemManager.addEventListener(MouseEvent.CLICK, checkMouseClick);
         
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
@@ -108,6 +109,18 @@ public class NotificationDisplay extends HBox
         _canvas.height = 19;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
+    }
+
+    protected function checkMouseClick (event :MouseEvent) :void
+    {
+        if (_nHistory == null) {
+            return;
+        }
+
+        var bounds :Rectangle = _nHistory.getStageScrollBounds();
+        if (bounds != null && !bounds.contains(event.stageX, event.stageY)) {
+            hideNotificationHistory();
+        }
     }
 
     protected function checkPendingNotifications () :void

@@ -3,9 +3,13 @@
 
 package com.threerings.msoy.notify.client {
 
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
 import mx.containers.VBox;
 
 import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -21,6 +25,16 @@ public class NotificationHistoryDisplay extends VBox
 
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.ON;
+    }
+
+    public function getStageScrollBounds () :Rectangle
+    {
+        var scroll :ScrollBar = verticalScrollBar; // this is a getter function
+        if (scroll == null) {
+            return null;
+        }
+        var pos :Point = localToGlobal(new Point(scroll.x, scroll.y));
+        return new Rectangle(pos.x, pos.y, scroll.width, scroll.height);
     }
 
     override protected function createChildren () :void
