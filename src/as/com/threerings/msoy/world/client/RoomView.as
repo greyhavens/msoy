@@ -478,6 +478,7 @@ public class RoomView extends Sprite
                     return valid.indexOf(id.type) != -1;
                 });
         }
+
         return keys;
     }
 
@@ -558,6 +559,45 @@ public class RoomView extends Sprite
         _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
                 MsoySprite(sprite).roomPropertyChanged(key, ObjectMarshaller.decode(data));
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+            }
+        });
+    }
+
+    public function dispatchEntityEntered (item :ItemIdent) :void
+    {
+        var entityId :String = item.toString();
+
+        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).entityEntered(entityId);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+            }
+        });
+    }
+
+    public function dispatchEntityLeft (item :ItemIdent) :void
+    {
+        var entityId :String = item.toString();
+
+        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).entityLeft(entityId);
+            } else {
+                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+            }
+        });
+    }
+
+    public function dispatchEntityMoved (item :ItemIdent) :void
+    {
+        var entityId :String = item.toString();
+
+        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
+            if (sprite is MsoySprite) {
+                MsoySprite(sprite).entityMoved(entityId);
             } else {
                 log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
             }

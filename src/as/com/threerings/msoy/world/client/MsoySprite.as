@@ -460,6 +460,30 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Called when an entity has been added to this sprite's room.
+     */
+    public function entityEntered (entityId :String) :void
+    {
+        callUserCode("entityEntered_v1", entityId);
+    }
+
+    /**
+     * Called when an entity has been removed from this sprite's room.
+     */
+    public function entityLeft (entityId :String) :void
+    {
+        callUserCode("entityLeft_v1", entityId);
+    }
+
+    /**
+     * Called when an entity has moved within the room.
+     */
+    public function entityMoved (entityId :String) :void
+    {
+        callUserCode("entityMoved_v1", entityId);
+    }
+
+    /**
      * Called when this client is assigned control of this entity.
      */
     public function gotControl () :void
