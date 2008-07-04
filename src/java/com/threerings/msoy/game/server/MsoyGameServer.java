@@ -154,14 +154,22 @@ public class MsoyGameServer extends MsoyBaseServer
         // connect back to our parent world server
         _worldClient.init(_listenPort, _connectPort);
 
-        // hook up thane
-        _bureauReg.setCommandGenerator(
-            WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
-        _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
-        _conmgr.addChainedAuthenticator(new MsoyBureauLauncherAuthenticator());
+        if (ServerConfig.localBureaus) {
+            // hook up thane as a local command
+            log.info("Running thane bureaus locally");
+            _bureauReg.setCommandGenerator(
+                WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
 
-        _invmgr.registerDispatcher(new MsoyBureauLauncherDispatcher(this),
-            MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+        } else {
+            // hook up bureau launching system for thane
+            log.info("Running thane bureaus remotely");
+            _bureauReg.setLauncher(
+                WhirledGameManager.THANE_BUREAU, new RemoteBureauLauncher());
+            _conmgr.addChainedAuthenticator(new MsoyBureauLauncherAuthenticator());
+            _invmgr.registerDispatcher(new MsoyBureauLauncherDispatcher(this),
+                MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+        }
+        _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
         log.info("Game server initialized.");
     }
@@ -186,8 +194,22 @@ public class MsoyGameServer extends MsoyBaseServer
      */
     protected void launcherDestroyed (int oid)
     {
+        // TODO: if this is the last launcher, notify our world server
         log.info("Launcher destroyed", "oid", oid);
         _launchers.remove(oid);
+    }
+
+    /** Selects a registered launcher for the next bureau. */
+    protected ClientObject selectLauncher ()
+    {
+        // select one at random
+        // TODO: select the one with the lowest current load. this should involve some measure
+        // of the actual machine load since some bureaus may have more game instances than others
+        // and some instances may produce more load than others.
+        int size = _launchers.size();
+        ClientObject[] launchers = new ClientObject[size];
+        _launchers.values().toArray(launchers);
+        return launchers[(new java.util.Random()).nextInt(size)];
     }
 
     @Override // from MsoyBaseServer
@@ -236,6 +258,19 @@ public class MsoyGameServer extends MsoyBaseServer
                 ServerConfig.serverRoot + "/bin/runthaneclient",
                 bureauId, token, "localhost", 
                 String.valueOf(getListenPorts()[0])};
+        }
+    }
+
+    protected class RemoteBureauLauncher
+        implements BureauRegistry.Launcher
+    {
+        public void launchBureau (
+            String bureauId,
+            String token) {
+            ClientObject launcher = selectLauncher();
+            MsoyBureauLauncherSender.launchThane(
+                launcher, bureauId, token, ServerConfig.serverHost, 
+                getListenPorts()[0]);
         }
     }
 

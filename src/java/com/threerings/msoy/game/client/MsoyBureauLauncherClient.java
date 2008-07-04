@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client;
 
 import com.samskivert.util.Logger;
+import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.game.data.MsoyBureauLauncherCredentials;
@@ -126,6 +127,20 @@ public class MsoyBureauLauncherClient extends Client
         log.info("Created credentials: " + _creds);
         addClientObserver(new Observer());
         addServiceGroup(MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+
+        MsoyBureauLauncherReceiver receiver = new MsoyBureauLauncherReceiver () {
+            public void launchThane (
+                String bureauId,
+                String token,
+                String server,
+                int port) {
+                MsoyBureauLauncherClient.this.launchThane(
+                    bureauId, token, server, port);
+            }
+        };
+
+        getInvocationDirector().
+            registerReceiver(new MsoyBureauLauncherDecoder(receiver));
     }
 
     /**
@@ -156,6 +171,34 @@ public class MsoyBureauLauncherClient extends Client
         return new BlockingCommunicator(this);
     }
 
+    /**
+     * Launches a thane bureau client.
+     */
+    protected void launchThane (
+        String bureauId,
+        String token,
+        String server,
+        int port)
+    {
+        // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be 
+        // called when the first instance of a game is played since the last server restart, so it
+        // is debatable.
+        String [] command = {
+            ServerConfig.serverRoot + "/bin/runthaneclient",
+            bureauId, token, server, String.valueOf(port)};
+        log.info("Attempting to launch thane", "command", command);
+        ProcessBuilder builder = new ProcessBuilder(command);
+        builder.redirectErrorStream(true);
+        try {
+            Process process = builder.start();
+            // log the output of the process and prefix with bureau id
+            ProcessLogger.copyMergedOutput(log, bureauId, process);
+
+        } catch (java.io.IOException ioe) {
+            log.warning("Could not launch thane", "bureauId", bureauId, ioe);
+        }
+    }
+
     // Observe the connection progress, stopping the run queue
     // on failure or logoff
     protected class Observer extends ClientAdapter
@@ -164,6 +207,7 @@ public class MsoyBureauLauncherClient extends Client
         {
             _loggedOn = true;
             _service = getService(MsoyBureauLauncherService.class);
+            log.info("Retrieved service " + _service);
             _service.launcherInitialized(MsoyBureauLauncherClient.this);
         }
 
