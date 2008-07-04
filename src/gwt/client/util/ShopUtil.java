@@ -44,9 +44,9 @@ public class ShopUtil
      */
     public static String composeArgs (CatalogQuery query, int page)
     {
-        ArrayList args = new ArrayList();
-        args.add(new Byte(query.itemType));
-        args.add(new Byte(query.sortBy));
+        ArrayList<String> args = new ArrayList<String>();
+        args.add(String.valueOf(query.itemType));
+        args.add(String.valueOf(query.sortBy));
         if (query.tag != null) {
             args.add("t" + query.tag);
         } else if (query.search != null && query.search.length() > 0) {
@@ -57,7 +57,7 @@ public class ShopUtil
             args.add("");
         }
         if (page > 0) {
-            args.add(new Integer(page));
+            args.add(String.valueOf(page));
         }
         return Args.compose(args);
     }

@@ -3,6 +3,7 @@
 
 package client.help;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.HTML;
@@ -13,21 +14,21 @@ import com.threerings.gwt.ui.SmartTable;
  */
 public class ColumnList extends SmartTable
 {
-    public ColumnList (List htmlList, int numColumns)
+    public ColumnList (List<String> htmlList, int numColumns)
     {
         super(0, 0);
         if (htmlList == null || htmlList.size() == 0 || numColumns == 0) {
             return;
         }
-        int itemsPerColumn = new Double(Math.ceil(new Double(htmlList.size()).doubleValue() / new Double(numColumns).doubleValue())).intValue();
-        int listIndex = 0;
-        for (int i = 0; i < numColumns; i++) {
-            for (int j = 0; j < itemsPerColumn; j++) {
-                if (listIndex >= htmlList.size()) {
+        int itemsPerColumn = new Double(Math.ceil(new Double(htmlList.size()).doubleValue() / 
+                             new Double(numColumns).doubleValue())).intValue();
+        Iterator<String> iter = htmlList.iterator();
+        for (int ii = 0; ii < numColumns; ii++) {
+            for (int jj = 0; jj < itemsPerColumn; jj++) {
+                if (!iter.hasNext()) {
                     break;
                 }
-                setWidget(j, i, new HTML((String)htmlList.get(listIndex)));
-                listIndex++;
+                setWidget(jj, ii, new HTML(iter.next()));
             }
         }
     }

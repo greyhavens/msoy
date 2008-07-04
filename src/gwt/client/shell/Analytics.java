@@ -29,8 +29,8 @@ public class Analytics
             }.schedule(500);
 
         } else {
-            for (int ii = 0; ii < _pending.size(); ii++) {
-                report((String)_pending.get(ii));
+            for (String pend : _pending) {
+                report(pend);
             }
             _pending.clear();
         }
@@ -69,5 +69,5 @@ public class Analytics
     }-*/;
 
     protected boolean _initialized;
-    protected List _pending = new ArrayList();
+    protected List<String> _pending = new ArrayList<String>();
 }

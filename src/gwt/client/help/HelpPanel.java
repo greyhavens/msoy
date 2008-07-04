@@ -64,25 +64,27 @@ public class HelpPanel extends VerticalPanel
         team.setStyleName("helpTeam");
         
         team.add(new HTML(CHelp.msgs.helpTeamEngineers()));
-        List helpTeamEngineersList = Arrays.asList(CHelp.msgs.helpTeamEngineersList().split(",")); 
+        List<String> helpTeamEngineersList = 
+            Arrays.asList(CHelp.msgs.helpTeamEngineersList().split(",")); 
         ColumnList helpTeamEngineers = new ColumnList(helpTeamEngineersList, 2);
         team.add(helpTeamEngineers);
         team.add(WidgetUtil.makeShim(10, 10));
         
         team.add(new HTML(CHelp.msgs.helpTeamArtists()));
-        List helpTeamArtistsList = Arrays.asList(CHelp.msgs.helpTeamArtistsList().split(","));    
+        List<String> helpTeamArtistsList = 
+            Arrays.asList(CHelp.msgs.helpTeamArtistsList().split(","));    
         ColumnList helpTeamArtists = new ColumnList(helpTeamArtistsList, 2);
         team.add(helpTeamArtists);
         team.add(WidgetUtil.makeShim(10, 10));
         
         team.add(new HTML(CHelp.msgs.helpTeamInfra()));
-        List helpTeamInfraList = Arrays.asList(CHelp.msgs.helpTeamInfraList().split(","));
+        List<String> helpTeamInfraList = Arrays.asList(CHelp.msgs.helpTeamInfraList().split(","));
         ColumnList helpTeamInfra = new ColumnList(helpTeamInfraList, 2);
         team.add(helpTeamInfra);
         team.add(WidgetUtil.makeShim(10, 10));
         
         team.add(new HTML(CHelp.msgs.helpTeamWaving()));
-        List helpTeamWavingList = Arrays.asList(CHelp.msgs.helpTeamWavingList().split(","));
+        List<String> helpTeamWavingList = Arrays.asList(CHelp.msgs.helpTeamWavingList().split(","));
         ColumnList helpTeamWaving = new ColumnList(helpTeamWavingList, 2);
         team.add(helpTeamWaving);
         

@@ -311,7 +311,7 @@ public class InvitePanel extends VerticalPanel
         rp.show();
     }
 
-    protected void webmailResults (List contacts)
+    protected void webmailResults (List<EmailContact> contacts)
     {
         ResultsPopup rp = new ResultsPopup(CPeople.msgs.webmailResults());
         boolean showResults = false;
@@ -319,8 +319,7 @@ public class InvitePanel extends VerticalPanel
         SmartTable contents = rp.getContents();
 
         contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
-        for (int ii = 0; ii < contacts.size(); ii++) {
-            EmailContact ec = (EmailContact)contacts.get(ii);
+        for (EmailContact ec : contacts) {
             if (ec.mname != null) {
                 showResults = true;
                 contents.setText(row, 0, CPeople.msgs.inviteMember(ec.name, ec.email));

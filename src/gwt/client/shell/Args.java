@@ -31,7 +31,7 @@ public class Args
      * Composes multiple arguments into a single string argument that can be properly handled by
      * the Args class.
      */
-    public static String compose (List args)
+    public static String compose (List<String> args)
     {
         StringBuffer builder = new StringBuffer();
         for (int ii = 0; ii < args.size(); ii++) {
@@ -85,7 +85,7 @@ public class Args
             return defval;
         }
         try {
-            return Integer.parseInt((String)_args.get(index));
+            return Integer.parseInt(_args.get(index));
         } catch (Exception e) {
             return defval;
         }
@@ -100,7 +100,7 @@ public class Args
         if (index >= _args.size()) {
             return defval;
         }
-        return (String)_args.get(index);
+        return _args.get(index);
     }
 
     /**
@@ -111,7 +111,7 @@ public class Args
     {
         String[] args = new String[_args.size()-fromIndex];
         for (int ii = 0; ii < args.length; ii++) {
-            args[ii] = (String)_args.get(ii + fromIndex);
+            args[ii] = _args.get(ii + fromIndex);
         }
         return args;
     }
@@ -139,9 +139,8 @@ public class Args
     public String toPath (String page)
     {
         StringBuffer buf = new StringBuffer("/").append(page);
-        for (int ii = 0, ll = _args.size(); ii < ll; ii++) {
-            buf.append("/");
-            buf.append(_args.get(ii));
+        for (String arg : _args) {
+            buf.append("/").append(arg);
         }
         return buf.toString();
     }
@@ -163,7 +162,7 @@ public class Args
         return str.replaceAll(ARG_ESC_SEP, ARG_SEP).replaceAll(ARG_ESC_ESC, ARG_ESC);
     }
 
-    protected List _args = new ArrayList();
+    protected List<String> _args = new ArrayList<String>();
 
     protected static final String ARG_SEP = "_";
     protected static final String ARG_ESC = "%";

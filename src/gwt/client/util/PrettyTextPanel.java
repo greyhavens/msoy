@@ -59,7 +59,7 @@ public class PrettyTextPanel extends Widget
         new Parser() {
             public void parse (String plainText, Element parent, int stage) 
             {
-                ArrayList lists = new ArrayList();
+                ArrayList<Element> lists = new ArrayList<Element>();
                 int depth = 0;
                 String[] paragraphs = plainText.split("\n");
                 for (int ii = 0; ii < paragraphs.length; ii++) {
@@ -76,7 +76,7 @@ public class PrettyTextPanel extends Widget
                         while (depth > lists.size()) {
                             Element newList = DOM.createElement("ul");
                             if (lists.size() > 0) {
-                                Element list = (Element)lists.get(lists.size() - 1);
+                                Element list = lists.get(lists.size() - 1);
                                 Element item = null;
                                 if (DOM.getChildCount(list) == 0) {
                                     item = DOM.createElement("li");
@@ -94,7 +94,7 @@ public class PrettyTextPanel extends Widget
                     // if we're in a list, add to it - otherwise treat this as a paragraph
                     if (depth != 0) {
                         Element item = DOM.createElement("li");
-                        DOM.appendChild((Element)lists.get(lists.size() - 1), item);
+                        DOM.appendChild(lists.get(lists.size() - 1), item);
                         passDownPipe(paragraphs[ii], item, stage);
                     } else if (paragraphs[ii].length() > 0) {
                         Element p = DOM.createElement("p");

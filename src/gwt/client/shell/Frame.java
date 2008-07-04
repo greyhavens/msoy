@@ -611,8 +611,7 @@ public class Frame
         }
 
         public void selectTab (String pageId) {
-            for (int ii = 0; ii < _buttons.size(); ii++) {
-                NaviButton button = (NaviButton)_buttons.get(ii);
+            for (NaviButton button : _buttons) {
                 button.setSelected(button.pageId.equals(pageId));
             }
         }
@@ -638,7 +637,7 @@ public class Frame
         }
 
         protected int _statusCol;
-        protected ArrayList _buttons = new ArrayList();
+        protected ArrayList<NaviButton> _buttons = new ArrayList<NaviButton>();
     }
 
     protected static class SignOrLogonPanel extends SmartTable

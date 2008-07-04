@@ -70,7 +70,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     // nothing to do
                     return;
                 }
-                int memberId = ((PlayerList) _playerLists.get(index + 1)).getResult().memberId;
+                int memberId = _playerLists.get(index +1).getResult().memberId;
                 Application.go(Page.ADMIN, Args.compose("browser", memberId));
             }
         }));
@@ -82,7 +82,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         int childList = -1;
         int parentList = -1;
         for (int ii = 0; _playerLists != null && ii < _playerLists.size(); ii++) {
-            PlayerList list = (PlayerList) _playerLists.get(ii);
+            PlayerList list = _playerLists.get(ii);
             if (list.highlight(memberId)) {
                 parentList = ii;
             } else if (list.getResult().memberId == memberId) {
@@ -95,8 +95,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         if (childList > 0 || 
                 // special case only invoked if we have a populated list, and the person goes back
                 // to the root admin console and clicks "player browser" again.
-                (childList == 0 && 
-                 ((PlayerList) _playerLists.get(childList)).getResult().memberId == 0)) {
+                (childList == 0 && _playerLists.get(childList).getResult().memberId == 0)) {
             // we already have everything the caller wants, just display it
             displayLists(childList);
             return;
@@ -112,7 +111,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
         } else {
             clearLists();
-            _playerLists = new ArrayList();
+            _playerLists = new ArrayList<PlayerList>();
         }
 
         CAdmin.adminsvc.getPlayerList(
@@ -152,10 +151,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
     protected void displayLists (int childIndex)
     {
         clearLists();
-        insert(_childList = (PlayerList) _playerLists.get(childIndex), 1);
+        insert(_childList = _playerLists.get(childIndex), 1);
         _forwardButton.setEnabled(childIndex != _playerLists.size() - 1);
         if (childIndex != 0) {
-            insert(_parentList = (PlayerList) _playerLists.get(childIndex - 1), 1);
+            insert(_parentList = _playerLists.get(childIndex - 1), 1);
             _backButton.setEnabled(_parentList.getResult().memberId != 0);
         } else {
             _backButton.setEnabled(_childList.getResult().memberId != 0);
@@ -427,8 +426,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected Map _memberIds = new HashMap(); // Map<Integer, Label>
     }
 
-    // ArrayList<PlayerList>
-    protected ArrayList _playerLists;
+    protected ArrayList<PlayerList> _playerLists;
     protected PlayerList _parentList, _childList;
     protected Button _backButton, _forwardButton;
 }
