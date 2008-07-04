@@ -234,7 +234,8 @@ public class RoomView extends Sprite
             portalTraversed(sprite.getLocation(), false);
             // and remove the sprite
             removeSprite(sprite);
-            dispatchEntityLeft(sprite.getItemIdent());
+        } else {
+            dispatchEntityMoved(sprite.getItemIdent());
         }
     }
 
@@ -896,7 +897,6 @@ public class RoomView extends Sprite
     protected function spriteWillUpdate (sprite :MsoySprite) :void
     {
         removeFromEntityMap(sprite);
-        dispatchEntityLeft(sprite.getItemIdent());
     }
 
     /**
@@ -904,7 +904,6 @@ public class RoomView extends Sprite
      */
     protected function spriteDidUpdate (sprite :MsoySprite) :void
     {
-        dispatchEntityEntered(sprite.getItemIdent());
         addToEntityMap(sprite);
     }
 

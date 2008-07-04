@@ -676,9 +676,9 @@ public class RoomObjectView extends RoomView
             if (overlay != null) {
                 occupant.setChatOverlay(overlay as ComicOverlay);
             }
-            dispatchEntityEntered(occupant.getItemIdent());
             _occupants.put(bodyOid, occupant);
             addSprite(occupant);
+            dispatchEntityEntered(occupant.getItemIdent());
             occupant.setEntering(loc);
             occupant.roomScaleUpdated();
 
@@ -718,12 +718,11 @@ public class RoomObjectView extends RoomView
             return;
         }
 
+        dispatchEntityLeft(sprite.getItemIdent());
         if (sprite.isMoving()) {
             _pendingRemovals.put(bodyOid, sprite);
-            // Don't dispatch an entityLeft event until the sprite is removed
         } else {
             removeSprite(sprite);
-            dispatchEntityLeft(sprite.getItemIdent());
         }
 
         // if this occupant is a pet, notify GWT that we've removed a pet from the room.
@@ -743,8 +742,6 @@ public class RoomObjectView extends RoomView
         }
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         sprite.moveTo(sloc.loc as MsoyLocation, _scene);
-
-        dispatchEntityMoved(sprite.getItemIdent());
     }
 
     protected function updateBody (newInfo :OccupantInfo, oldInfo :OccupantInfo) :void
