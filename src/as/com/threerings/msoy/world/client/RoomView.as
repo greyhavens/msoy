@@ -234,6 +234,7 @@ public class RoomView extends Sprite
             portalTraversed(sprite.getLocation(), false);
             // and remove the sprite
             removeSprite(sprite);
+            dispatchEntityLeft(sprite.getItemIdent());
         }
     }
 
