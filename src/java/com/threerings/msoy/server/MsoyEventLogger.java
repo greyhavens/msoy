@@ -149,6 +149,12 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
+    
+    public void roomLeft (
+        int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft)
+    {
+        post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft));
+    }
 
     public void avrgLeft (
         int playerId, int gameId, int seconds, int playersLeft) 

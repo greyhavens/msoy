@@ -12,7 +12,9 @@ public class PlayerMetrics
     /** Interface for all components of PlayerMetrics; enforces implementation of Streamable. */
     public interface Entry extends Streamable
     {
-        /** Called to update current metrics when switching servers. */
+        /** 
+         * Called to update current metrics when leaving the room or switching servers.
+         */
         public void save (MemberObject player);
     };
 
@@ -32,7 +34,7 @@ public class PlayerMetrics
             _timestamp = System.currentTimeMillis();
         }
 
-        /** Computes the delta, and adds to the appropriate field. */
+        // from interface Entry
         public void save (MemberObject player)
         {
             if (_timestamp == 0L) {
@@ -79,7 +81,7 @@ public class PlayerMetrics
             _currentSceneEntryTime = System.currentTimeMillis();
         }
 
-        /** Finishes counting the current scene and updates the metrics. */
+        // from interface Entry
         public void save (MemberObject player)
         {
             if (_currentSceneEntryTime == 0L) {
@@ -107,9 +109,20 @@ public class PlayerMetrics
             }
 
             // we're done with this scene
+            _lastMeasuredSeconds = seconds;
             _currentSceneEntryTime = 0L;
         }
 
+        /** 
+         * Returns the last known occupancy length. Useful when dealing with server switches,
+         * when PlayerMetrics get forcibly serialized and sent over before the player object
+         * leaves its scene.
+         */
+        public int getLastOccupancyLength () 
+        {
+            return _lastMeasuredSeconds;
+        }
+        
         /** Non-streamable data about the current scene. */
         protected transient boolean _currentSceneIsMember;
 
@@ -118,6 +131,9 @@ public class PlayerMetrics
 
         /** Non-streamable timestamp when we entered the current scene. */
         protected transient long _currentSceneEntryTime;
+        
+        /** Non-streamable number that stores the last known scene occupancy length. */
+        protected transient int _lastMeasuredSeconds;
     }
 
     /** Reference to the room visit metrics. */
@@ -126,7 +142,7 @@ public class PlayerMetrics
     /** Keeps track of the player's active/idle times across different server sessions. */
     public Idle idle = new Idle();
 
-    /** Flush all metrics before a server switch. */
+    /** Flush all metrics before a server switch. Ignore double-saves. */
     public void save (MemberObject player)
     {
         room.save(player);

@@ -59,6 +59,7 @@ import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.server.ChatChannelManager;
@@ -773,6 +774,15 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             member.metrics.room.save(member);
+            
+            // get the last known occupancy length - this might have been measured above,
+            // or by the peer serialization code if we're moving across servers
+            int secondsInRoom = member.metrics.room.getLastOccupancyLength();
+            MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
+            boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+            _eventLog.roomLeft(
+                member.getMemberId(), model.sceneId, isWhirled, 
+                secondsInRoom, _roomObj.occupants.size());
         }
 
         super.bodyLeft(bodyOid);
@@ -1187,4 +1197,5 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MemberLocator _locator;
+    @Inject protected MsoyEventLogger _eventLog;
 }

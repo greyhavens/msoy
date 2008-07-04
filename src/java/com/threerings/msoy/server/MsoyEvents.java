@@ -228,6 +228,28 @@ public class MsoyEvents
         }
     }
     
+    @Event(name="RoomExit")
+    public static class RoomExit implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int playerId;
+        @Field final public int sceneId;
+        @Field final public boolean isWhirled;
+        @Field final public int secondsInRoom;
+        @Field final public int occupantsLeft;
+        
+        public RoomExit (
+            int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft) 
+        {
+            this.timestamp = new Date();
+            this.playerId = playerId;
+            this.sceneId = sceneId;
+            this.isWhirled = isWhirled;
+            this.secondsInRoom = secondsInRoom;
+            this.occupantsLeft = occupantsLeft;
+        }
+    }
+    
     @Event(name="AVRGExit")
     public static class AVRGExit implements MsoyEvent
     {
@@ -237,8 +259,7 @@ public class MsoyEvents
         @Field final public int secondsInGame;
         @Field final public int playersLeft;
         
-        public AVRGExit (
-            int playerId, int gameId, int seconds, int playersLeft)
+        public AVRGExit (int playerId, int gameId, int seconds, int playersLeft)
         {
             this.timestamp = new Date();
             this.playerId = playerId;
