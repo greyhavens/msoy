@@ -184,6 +184,6 @@ oooauth.access_denied_url = /register/access_denied.wm
 
 # Keys for operating bureaus on an msoy game server
 
-local_bureaus = false
-bureau_game_server = game.whirled.com
-bureau_secret = La la la
+local_bureaus = true
+# bureau_game_servers = whirled1.whirled.com:47625, whirled2.whirled.com:47625
+# bureau_secret = you can't guess this
