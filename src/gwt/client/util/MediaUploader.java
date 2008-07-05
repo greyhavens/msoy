@@ -122,7 +122,7 @@ public class MediaUploader extends FormPanel
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
         // variety); so we convert them hackily to GWT strings here
-        MediaUploader uploader = (MediaUploader)_uploaders.get(""+id);
+        MediaUploader uploader = _uploaders.get(""+id);
         if (uploader == null) {
             CShell.log("No uploader registered for uploaded media [id=" + id +
                        ", hash=" + mediaHash + ", type=" + mimeType + "].");
@@ -171,5 +171,6 @@ public class MediaUploader extends FormPanel
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected static HashMap _uploaders = new HashMap();
+    protected static HashMap<String, MediaUploader> _uploaders = 
+        new HashMap<String, MediaUploader>();
 }

@@ -187,16 +187,14 @@ public class index extends Page
 
     protected ItemPanel getItemPanel (byte itemType)
     {
-        Byte key = new Byte(itemType);
-        ItemPanel panel = (ItemPanel) _itemPanels.get(key);
+        ItemPanel panel = _itemPanels.get(itemType);
         if (panel == null) {
-            panel = new ItemPanel(_models, itemType);
-            _itemPanels.put(key, panel);
+            _itemPanels.put(itemType, panel = new ItemPanel(_models, itemType));
         }
         return panel;
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected HashMap _itemPanels = new HashMap();
+    protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
 }

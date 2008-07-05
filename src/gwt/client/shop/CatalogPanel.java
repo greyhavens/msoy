@@ -167,10 +167,9 @@ public class CatalogPanel extends SmartTable
         _items.setModel(model, pageNo);
 
         // configure the appropriate tab cloud
-        Byte tabKey = new Byte(_query.itemType);
-        TagCloud cloud = (TagCloud) _clouds.get(tabKey);
+        TagCloud cloud = _clouds.get(_query.itemType);
         if (cloud == null) {
-            _clouds.put(tabKey, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
+            _clouds.put(_query.itemType, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
         }
         setWidget(0, 0, new SideBar(_query, cloud));
 
@@ -204,7 +203,7 @@ public class CatalogPanel extends SmartTable
 
     protected CatalogQuery _query;
     protected CatalogModels _models;
-    protected Map _clouds = new HashMap(); /* Byte, TagCloud */
+    protected Map<Byte, TagCloud> _clouds = new HashMap<Byte, TagCloud>();
 
     protected SmartTable _listings;
     protected TextBox _searchBox;

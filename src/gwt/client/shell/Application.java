@@ -322,10 +322,10 @@ public class Application
             }
 
             // locate the creator for this page
-            Page.Creator creator = (Page.Creator)_creators.get(page);
+            Page.Creator creator = _creators.get(page);
             if (creator == null) {
                 CShell.log("Page unknown, redirecting to me [page=" + page + "].");
-                creator = (Page.Creator)_creators.get(Page.ME);
+                creator = _creators.get(Page.ME);
                 args = new Args();
             }
 
@@ -473,7 +473,7 @@ public class Application
     }-*/;
 
     protected Page _page;
-    protected HashMap _creators = new HashMap();
+    protected HashMap<String, Page.Creator> _creators = new HashMap<String, Page.Creator>();
     protected Analytics _analytics = new Analytics();
 
     protected StatusPanel _status;

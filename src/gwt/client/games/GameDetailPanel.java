@@ -147,12 +147,12 @@ public class GameDetailPanel extends SmartTable
     protected void addTab (String ident, String title, Widget tab)
     {
         _tabs.add(tab, title);
-        _tabmap.put(ident, new Integer(_tabs.getWidgetCount()-1));
+        _tabmap.put(ident, _tabs.getWidgetCount() - 1);
     }
 
     protected void selectTab (String tab)
     {
-        Integer tosel = (Integer)_tabmap.get(tab);
+        Integer tosel = _tabmap.get(tab);
         if (tosel == null) {
             _seltab = getTabCode(0);
             _tabs.selectTab(0);
@@ -164,10 +164,9 @@ public class GameDetailPanel extends SmartTable
 
     protected String getTabCode (int tabIndex)
     {
-        for (Iterator iter = _tabmap.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            if (((Integer)entry.getValue()).intValue() == tabIndex) {
-                return (String)entry.getKey();
+        for (Map.Entry<String, Integer> entry : _tabmap.entrySet()) {
+            if (entry.getValue() == tabIndex) {
+                return entry.getKey();
             }
         }
         return "";
@@ -176,5 +175,5 @@ public class GameDetailPanel extends SmartTable
     protected StyledTabPanel _tabs;
     protected int _gameId;
     protected String _seltab;
-    protected HashMap _tabmap = new HashMap();
+    protected HashMap<String, Integer> _tabmap = new HashMap<String, Integer>();
 }

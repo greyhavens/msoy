@@ -144,8 +144,8 @@ public class WhatsNextPanel extends SmartTable
             MediaDesc.QUARTER_THUMBNAIL_SIZE : MediaDesc.HALF_THUMBNAIL_SIZE;
 
         // group our friends by location (in rooms or games)
-        Map games = new HashMap();
-        Map rooms = new HashMap();
+        Map<Integer, FlowPanel> games = new HashMap<Integer, FlowPanel>();
+        Map<Integer, FlowPanel> rooms = new HashMap<Integer, FlowPanel>();
         for (MemberCard card : data.friends) {
             if (card.status instanceof MemberCard.InScene) {
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
@@ -169,11 +169,11 @@ public class WhatsNextPanel extends SmartTable
         }
 
         // now add the rooms and games to our scrolling contents (rooms first)
-        for (Iterator iter = rooms.values().iterator(); iter.hasNext(); ) {
-            friends.add((FlowPanel)iter.next());
+        for (FlowPanel panel : rooms.values()) {
+            friends.add(panel);
         }
-        for (Iterator iter = games.values().iterator(); iter.hasNext(); ) {
-            friends.add((FlowPanel)iter.next());
+        for (FlowPanel panel : games.values()) {
+            friends.add(panel);
         }
 
         ScrollPanel scroller = new ScrollPanel(friends);
@@ -181,12 +181,12 @@ public class WhatsNextPanel extends SmartTable
         return scroller;
     }
 
-    protected FlowPanel getPlacePanel (Map places, int placeId, String placeName)
+    protected FlowPanel getPlacePanel (
+        Map<Integer, FlowPanel> places, int placeId, String placeName)
     {
-        Integer key = new Integer(placeId);
-        FlowPanel place = (FlowPanel)places.get(key);
+        FlowPanel place = places.get(placeId);
         if (place == null) {
-            places.put(key, place = new FlowPanel());
+            places.put(placeId, place = new FlowPanel());
             place.add(MsoyUI.createLabel(placeName, "PlaceName"));
         }
         return place;

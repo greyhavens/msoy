@@ -242,7 +242,7 @@ public abstract class ItemEditor extends FlexTable
     {
         addFurniUploader();
         addThumbUploader();
-        getUploader(Item.THUMB_MEDIA).setHint(getThumbnailHint());
+        _uploaders.get(Item.THUMB_MEDIA).setHint(getThumbnailHint());
     }
 
     /**
@@ -410,19 +410,11 @@ public abstract class ItemEditor extends FlexTable
     }
 
     /**
-     * Get the MediaUploader with the specified id.
-     */
-    protected MediaUploader getUploader (String id)
-    {
-        return (MediaUploader)_uploaders.get(id);
-    }
-
-    /**
      * Updates the media displayed by the specified uploader if it exists.
      */
     protected void setUploaderMedia (String id, MediaDesc desc)
     {
-        MediaUploader uploader = getUploader(id);
+        MediaUploader uploader = _uploaders.get(id);
         if (uploader != null) {
             uploader.setMedia(desc);
         }
@@ -472,7 +464,7 @@ public abstract class ItemEditor extends FlexTable
     protected void setHash (String id, String mediaHash, int mimeType, int constraint,
                             int width, int height)
     {
-        MediaUploader mu = getUploader(id);
+        MediaUploader mu = _uploaders.get(id);
         if (mu == null) {
             CShell.log("Got setHash() request for unknown uploader [id=" + id + "].");
             return;
@@ -659,7 +651,7 @@ public abstract class ItemEditor extends FlexTable
     protected LimitedTextArea _description;
     protected Button _esubmit;
 
-    protected HashMap _uploaders = new HashMap();
+    protected HashMap<String, MediaUploader> _uploaders = new HashMap<String, MediaUploader>();
 
     protected static ItemEditor _singleton;
 

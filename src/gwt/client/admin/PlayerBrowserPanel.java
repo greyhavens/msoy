@@ -276,7 +276,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     }
                 });
                 nameLabel.addStyleName("Clickable");
-                _memberIds.put(new Integer(member.memberId), nameLabel);
+                _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);
                 setText(row, AVAILABLE_INVITES_COLUMN, "" + member.invitesGranted);
                 setText(row, USED_INVITES_COLUMN, "" + member.invitesSent);
@@ -290,7 +290,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
         public boolean addToAvailable (int memberId, int amount) 
         {
-            Label label = (Label) _memberIds.get(new Integer(memberId));
+            Label label = _memberIds.get(memberId);
             if (label == null) {
                 return false;
             }
@@ -310,7 +310,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
         public boolean highlight (int memberId) 
         {
-            Label label = (Label) _memberIds.get(new Integer(memberId));
+            Label label = _memberIds.get(memberId);
             if (label == null) {
                 return false;
             }
@@ -423,7 +423,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected Object[] _rows;
         protected MemberInviteResult _result;
         protected Label _activeLabel, _activeHeader;
-        protected Map _memberIds = new HashMap(); // Map<Integer, Label>
+        protected Map<Integer, Label> _memberIds = new HashMap<Integer, Label>();
     }
 
     protected ArrayList<PlayerList> _playerLists;

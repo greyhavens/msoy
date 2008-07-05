@@ -61,7 +61,7 @@ public class CatalogModels
 
     public Listings getModel (CatalogQuery query)
     {
-        Listings model = (Listings)_models.get(query);
+        Listings model = _models.get(query);
         if (model == null) {
             _models.put(query, model = new Listings(query));
         }
@@ -76,15 +76,14 @@ public class CatalogModels
         card.catalogId = listing.catalogId;
 
         // now scan through our models and remove that listing from any that might contain it
-        for (Iterator iter = _models.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            CatalogQuery query = (CatalogQuery)entry.getKey();
-            if (query.itemType != listing.detail.item.getType()) {
+        for (Map.Entry<CatalogQuery, Listings> entry : _models.entrySet()) {
+            CatalogQuery query = entry.getKey();
+            if (entry.getKey().itemType != listing.detail.item.getType()) {
                 continue;
             }
-            ((Listings)entry.getValue()).removeItem(card);
+            entry.getValue().removeItem(card);
         }
     }
 
-    protected Map _models = new HashMap(); /* CatalogQuery, Listings */
+    protected Map<CatalogQuery, Listings> _models = new HashMap<CatalogQuery, Listings>();
 }
