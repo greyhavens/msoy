@@ -19,7 +19,7 @@ import client.util.MsoyCallback;
 /**
  * Displays a set of sub-items on an item's detail page.
  */
-public class SubItemPanel extends PagedGrid
+public class SubItemPanel extends PagedGrid<Item>
 {
     public SubItemPanel (InventoryModels models, byte type, Item parent)
     {
@@ -42,17 +42,17 @@ public class SubItemPanel extends PagedGrid
             return;
         }
 
-        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback<SimpleDataModel>() {
-            public void onSuccess (SimpleDataModel data) {
+        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback<SimpleDataModel<Item>>() {
+            public void onSuccess (SimpleDataModel<Item> data) {
                 setModel(data, 0);
             }
         });
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (Item item)
     {
-        return new SubItemEntry((Item)item);
+        return new SubItemEntry(item);
     }
 
     @Override // from PagedGrid

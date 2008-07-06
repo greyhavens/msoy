@@ -54,7 +54,7 @@ public class MailPanel extends VerticalPanel
         grid.setModel(model, page);
     }
 
-    protected static class ConvosGrid extends PagedGrid
+    protected static class ConvosGrid extends PagedGrid<Conversation>
     {
         public ConvosGrid ()
         {
@@ -63,9 +63,9 @@ public class MailPanel extends VerticalPanel
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Object item)
+        protected Widget createWidget (Conversation convo)
         {
-            return new ConvoWidget(this, (Conversation)item);
+            return new ConvoWidget(this, convo);
         }
 
         @Override // from PagedGrid
@@ -75,17 +75,17 @@ public class MailPanel extends VerticalPanel
         }
 
         @Override // from PagedGrid
-        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, Object item)
+        protected void formatCell (
+            HTMLTable.CellFormatter formatter, int row, int col, Conversation convo)
         {
-            super.formatCell(formatter, row, col, item);
-            Conversation convo = (Conversation)item;
+            super.formatCell(formatter, row, col, convo);
             if (convo.hasUnread) {
                 formatter.addStyleName(row, col, "Unread");
             }
         }
 
         @Override // from PagedGrid
-        protected void displayResults (int start, int count, List list)
+        protected void displayResults (int start, int count, List<Conversation> list)
         {
             super.displayResults(start, count, list);
 

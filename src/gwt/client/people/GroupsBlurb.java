@@ -49,11 +49,11 @@ public class GroupsBlurb extends Blurb
         return bits;
     }
 
-    protected class GroupsGrid extends PagedGrid
+    protected class GroupsGrid extends PagedGrid<GroupCard>
     {
         public GroupsGrid (List<GroupCard> groups) {
             super(GROUP_ROWS, GROUP_COLUMNS, PagedGrid.NAV_ON_BOTTOM);
-            setModel(new SimpleDataModel(groups), 0);
+            setModel(new SimpleDataModel<GroupCard>(groups), 0);
         }
 
         @Override // from PagedGrid
@@ -79,9 +79,9 @@ public class GroupsBlurb extends Blurb
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Object item)
+        protected Widget createWidget (GroupCard card)
         {
-            return new GroupWidget((GroupCard)item);
+            return new GroupWidget(card);
         }
 
 //         @Override // from PagedGrid

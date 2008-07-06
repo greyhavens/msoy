@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Displays a list of issues.
  */
-public class IssueListPanel extends PagedGrid
+public class IssueListPanel extends PagedGrid<Issue>
 {
     public IssueListPanel (IssuePanel parent)
     {
@@ -37,7 +37,7 @@ public class IssueListPanel extends PagedGrid
     }
 
     public void displayIssues (
-            int type, int state, boolean owned, IssueModels imodels, boolean refresh)
+        int type, int state, boolean owned, IssueModels imodels, boolean refresh)
     {
         _linkPrefix = "i_";
         if (owned) {
@@ -49,16 +49,16 @@ public class IssueListPanel extends PagedGrid
     }
 
     public void displayAssignIssues (
-            int type, int state, IssueModels imodels, int messageId, int page)
+        int type, int state, IssueModels imodels, int messageId, int page)
     {
         _linkPrefix = "a_" + messageId + "_" + page + "_";
         setModel(imodels.getIssues(type, state, false), 0);
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (Issue item)
     {
-        return new IssueSummaryPanel((Issue)item);
+        return new IssueSummaryPanel(item);
     }
 
     @Override // from PagedGrid
@@ -104,7 +104,7 @@ public class IssueListPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected void displayResults (int start, int count, List list)
+    protected void displayResults (int start, int count, List<Issue> list)
     {
         super.displayResults(start, count, list);
         _refresh.setVisible(true);

@@ -98,9 +98,9 @@ public class Frame
         _header.didLogon();
 
         // clear out the logon dialog
-        clearDialog(new Predicate() {
-            public boolean isMatch (Object o) {
-                return (o instanceof LogonPanel);
+        clearDialog(new Predicate<Widget>() {
+            public boolean isMatch (Widget w) {
+                return (w instanceof LogonPanel);
             }
         });
     }
@@ -260,9 +260,9 @@ public class Frame
      */
     public static boolean clearDialog (final Widget dialog)
     {
-        return clearDialog(new Predicate() {
-            public boolean isMatch (Object o) {
-                return (o == dialog);
+        return clearDialog(new Predicate<Widget>() {
+            public boolean isMatch (Widget w) {
+                return (w == dialog);
             }
         }) > 0;
     }
@@ -271,7 +271,7 @@ public class Frame
      * Clears all dialogs that match the specified predicate. Returns the number of dialogs
      * cleared.
      */
-    public static int clearDialog (Predicate pred)
+    public static int clearDialog (Predicate<Widget> pred)
     {
         int removed = clearDialog(RootPanel.get(HEADER), pred);
         if (_contlist != null) {
@@ -306,7 +306,7 @@ public class Frame
         _bar = null;
 
         // clear out any lingering dialogs
-        clearDialog(Predicate.TRUE);
+        clearDialog(new Predicate.TRUE<Widget>());
 
         // note that this is our current content
         _contlist = new FlowPanel();
@@ -358,7 +358,7 @@ public class Frame
         }
     }
 
-    protected static int clearDialog (ComplexPanel panel, Predicate pred)
+    protected static int clearDialog (ComplexPanel panel, Predicate<Widget> pred)
     {
         if (panel == null) {
             return 0; // cope with stale index.html files
@@ -469,7 +469,8 @@ public class Frame
                 }
             }), 1, "Close");
             _innerTable.setWidget(1, 0, content, 2, null);
-            _innerTable.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
+            _innerTable.getFlexCellFormatter().setHorizontalAlignment(
+                1, 0, HasAlignment.ALIGN_CENTER);
             _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }
 

@@ -74,12 +74,12 @@ public class GalaxyPanel extends VerticalPanel
         contents.setWidget(0, 0, _popularTags = new FlowPanel(), 1, "tagCloud");
         contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         contents.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        contents.setWidget(0, 2, _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
+        contents.setWidget(0, 2, _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Application.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
-            protected Widget createWidget (Object item) {
-                return new GroupWidget((GroupCard)item);
+            protected Widget createWidget (GroupCard card) {
+                return new GroupWidget(card);
             }
             protected String getEmptyMessage () {
                 return CWhirleds.msgs.galaxyNoGroups();
@@ -202,7 +202,7 @@ public class GalaxyPanel extends VerticalPanel
                 public void onSuccess (List<GroupCard> list) {
                     _action = action;
                     _arg = arg;
-                    _groupGrid.setModel(new SimpleDataModel(list), page);
+                    _groupGrid.setModel(new SimpleDataModel<GroupCard>(list), page);
                 }
             });
         }
@@ -233,7 +233,7 @@ public class GalaxyPanel extends VerticalPanel
     protected FeaturedWhirledPanel _featured;
     protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
-    protected PagedGrid _groupGrid;
+    protected PagedGrid<GroupCard> _groupGrid;
 
     protected static final int POP_TAG_COUNT = 9;
     protected static final int GRID_ROWS = 2;

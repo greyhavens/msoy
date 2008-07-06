@@ -29,7 +29,7 @@ import client.util.ServiceBackedDataModel;
 /**
  * Displays comments on a particular entity and allows posting.
  */
-public class CommentsPanel extends PagedGrid
+public class CommentsPanel extends PagedGrid<Comment>
 {
     public CommentsPanel (int entityType, int entityId)
     {
@@ -58,9 +58,9 @@ public class CommentsPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (Comment comment)
     {
-        return new CommentPanel(this, (Comment)item);
+        return new CommentPanel(this, comment);
     }
 
     @Override // from PagedGrid
@@ -175,19 +175,20 @@ public class CommentsPanel extends PagedGrid
         new CommentComplainPopup(comment, _etype, _entityId).show();
     }
 
-    protected class CommentModel extends ServiceBackedDataModel
+    protected class CommentModel 
+        extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount) {
             CShell.commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
         }
         @Override
-        protected int getCount (Object result) {
-            return ((CommentService.CommentResult)result).commentCount;
+        protected int getCount (CommentService.CommentResult result) {
+            return result.commentCount;
         }
         @Override
-        protected List getRows (Object result) {
-            return ((CommentService.CommentResult)result).comments;
+        protected List<Comment> getRows (CommentService.CommentResult result) {
+            return result.comments;
         }
     }
 

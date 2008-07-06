@@ -32,7 +32,7 @@ import client.util.ThumbBox;
 /**
  * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.
  */
-public class WhirledMembersPanel extends PagedGrid
+public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
 {
    public WhirledMembersPanel (GroupDetail detail)
     {
@@ -47,15 +47,15 @@ public class WhirledMembersPanel extends PagedGrid
         CWhirleds.groupsvc.getGroupMembers(
             CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
                 public void onSuccess (GroupService.MembersResult result) {
-                    setModel(new SimpleDataModel(result.members), 0);
+                    setModel(new SimpleDataModel<GroupMemberCard>(result.members), 0);
                 }
             });
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (GroupMemberCard card)
     {
-        return new MemberWidget((GroupMemberCard)item);
+        return new MemberWidget(card);
     }
 
     @Override // from PagedGrid

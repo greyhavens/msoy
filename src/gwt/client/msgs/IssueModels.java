@@ -17,7 +17,7 @@ import client.util.ServiceBackedDataModel;
 public class IssueModels
 {
     /** A data model that provides issues. */
-    public static class Issues extends ServiceBackedDataModel
+    public static class Issues extends ServiceBackedDataModel<Issue, IssueService.IssueResult>
     {
         public Issues (int type, int state)
         {
@@ -34,22 +34,21 @@ public class IssueModels
         }
 
         @Override // from ServieBackedDataModel
-        public void prependItem (Object item) {
+        public void prependItem (Issue item) {
             super.prependItem(item);
-            mapIssue((Issue)item);
+            mapIssue(item);
         }
 
         @Override // from ServiceBackedDataModel
-        public void appendItem (Object item) {
+        public void appendItem (Issue item) {
             super.appendItem(item);
-            mapIssue((Issue)item);
+            mapIssue(item);
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (Object result) {
-            IssueService.IssueResult iresult = (IssueService.IssueResult)result;
-            _isManager = iresult.isManager;
-            for (Issue issue : iresult.issues) {
+        public void onSuccess (IssueService.IssueResult result) {
+            _isManager = result.isManager;
+            for (Issue issue : result.issues) {
                 mapIssue(issue);
             }
             super.onSuccess(result);
@@ -61,13 +60,13 @@ public class IssueModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected int getCount (Object result) {
-            return ((IssueService.IssueResult)result).issueCount;
+        protected int getCount (IssueService.IssueResult result) {
+            return result.issueCount;
         }
 
         @Override // from ServiceBackedDataModel
-        protected List getRows (Object result) {
-            return ((IssueService.IssueResult)result).issues;
+        protected List<Issue> getRows (IssueService.IssueResult result) {
+            return result.issues;
         }
 
         protected void mapIssue (Issue issue) {

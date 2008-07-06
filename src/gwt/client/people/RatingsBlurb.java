@@ -42,12 +42,12 @@ public class RatingsBlurb extends Blurb
         setContent(new RatingGrid(pdata.ratings));
     }
 
-    protected class RatingGrid extends PagedGrid
+    protected class RatingGrid extends PagedGrid<GameRating>
     {
         public RatingGrid (List<GameRating> ratings)
         {
             super(RATING_ROWS, 2, NAV_ON_BOTTOM);
-            setModel(new SimpleDataModel(ratings), 0);
+            setModel(new SimpleDataModel<GameRating>(ratings), 0);
         }
 
         @Override // from PagedGrid
@@ -63,9 +63,9 @@ public class RatingsBlurb extends Blurb
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Object item)
+        protected Widget createWidget (GameRating rating)
         {
-            return new RatingWidget((GameRating)item);
+            return new RatingWidget(rating);
         }
     }
 

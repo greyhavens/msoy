@@ -17,15 +17,17 @@ import client.util.MsoyUI;
 
 /**
  * A data model that can be customized for components that obtain their data by calling a service
- * method to fetch a range of items.
+ * method to fetch a range of items.  Type T is from DataModel, and must be the type that is 
+ * return in a list from DataModel.doFetchRows.  Type R is for the AsyncCallback, and can be 
+ * anything - it is passed into getCount() and getRows() from the service call.
  */
-public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
+public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>, AsyncCallback<R>
 {
     /**
      * Prepends an item to an already loaded model. The model must have at least been asked to
      * display its first page (and hence have it's total count).
      */
-    public void prependItem (Object item)
+    public void prependItem (T item)
     {
         // if we're on the first page, this new item will show up, so add it
         if (_pageOffset == 0) {
@@ -38,7 +40,7 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
      * Appends an item to an already loaded model. The model must have at least been asked to
      * display its first page (and hence have it's total count).
      */
-    public void appendItem (Object item)
+    public void appendItem (T item)
     {
         // if we're on the last page and there are fewer than a full page of items, this new item
         // will show up on this page so add it
@@ -56,7 +58,7 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
         _count = -1;
         _pageOffset = 0;
         _pageCount = -1;
-        _pageItems = Collections.EMPTY_LIST;
+        _pageItems = Collections.emptyList();
     }
 
     // from interface DataModel
@@ -66,14 +68,14 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
     }
 
     // from interface DataModel
-    public void removeItem (Object item)
+    public void removeItem (T item)
     {
         _pageItems.remove(item);
         _count--;
     }
 
     // from interface DataModel
-    public void doFetchRows (int start, int count, AsyncCallback callback)
+    public void doFetchRows (int start, int count, AsyncCallback<List<T>> callback)
     {
         if (_pageOffset == start && _pageCount == count) {
             callback.onSuccess(_pageItems);
@@ -84,7 +86,7 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
     }
 
     // from interface AsyncCallback
-    public void onSuccess (Object result)
+    public void onSuccess (R result)
     {
         if (_count < 0) {
             _count = getCount(result);
@@ -113,10 +115,10 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
     protected abstract void callFetchService (int start, int count, boolean needCount);
 
     /** Returns the count from the service result. */
-    protected abstract int getCount (Object result);
+    protected abstract int getCount (R result);
 
     /** Returns the list of row items from the service result. */
-    protected abstract List getRows (Object result);
+    protected abstract List<T> getRows (R result);
 
     /** The count of items in our model, filled in by the first call to {@link #doFetchRows}. */
     protected int _count = -1;
@@ -128,8 +130,8 @@ public abstract class ServiceBackedDataModel implements DataModel, AsyncCallback
     protected int _pageCount = -1;
 
     /** The items we got back for the page we're currently displaying. */
-    protected List _pageItems = Collections.EMPTY_LIST;
+    protected List<T> _pageItems = Collections.emptyList();
 
     /** A pending callback stored while we're making our service call. */
-    protected AsyncCallback _callback;
+    protected AsyncCallback<List<T>> _callback;
 }

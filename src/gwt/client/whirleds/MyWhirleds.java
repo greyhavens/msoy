@@ -78,13 +78,13 @@ public class MyWhirleds extends AbsolutePanel
     {
         WhirledsGrid grid = new WhirledsGrid();
         add(MsoyUI.createSimplePanel("WhirledsGrid", grid));
-        grid.setModel(new SimpleDataModel(whirleds), 0);
+        grid.setModel(new SimpleDataModel<MyGroupCard>(whirleds), 0);
     }
     
     /**
      * Displays a list of whirleds in a paged grid.
      */
-    protected class WhirledsGrid extends PagedGrid
+    protected class WhirledsGrid extends PagedGrid<MyGroupCard>
     {       
         public static final int WHIRLEDS_PER_PAGE = 10;
 
@@ -95,9 +95,9 @@ public class MyWhirleds extends AbsolutePanel
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Object item)
+        protected Widget createWidget (MyGroupCard card)
         {
-            return new WhirledWidget((MyGroupCard) item);
+            return new WhirledWidget(card);
         }
 
         @Override // from PagedGrid

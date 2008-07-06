@@ -34,7 +34,7 @@ import client.util.PromptPopup;
 /**
  * Displays the messages in a particular thread.
  */
-public class MessagesPanel extends PagedGrid
+public class MessagesPanel extends PagedGrid<ForumMessage>
 {
     public MessagesPanel (ThreadPanel parent, ForumModels.ThreadMessages model,
                           int page, int scrollToId)
@@ -114,7 +114,7 @@ public class MessagesPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected void displayResults (int start, int count, List list)
+    protected void displayResults (int start, int count, List<ForumMessage> list)
     {
         // if we're displaying results from our main thread model, update our ephemera; this must
         // be done before the call to super because super creates our widgets and those check our
@@ -138,11 +138,10 @@ public class MessagesPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (ForumMessage message)
     {
-        ForumMessage msg = (ForumMessage)item;
-        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), msg);
-        if (msg.messageId == _scrollToId) {
+        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), message);
+        if (message.messageId == _scrollToId) {
             _scrollToId = 0;
             _scrollToPanel = panel;
         } else if (_scrollToPanel == null) {
@@ -203,6 +202,7 @@ public class MessagesPanel extends PagedGrid
             setMessage(message);
         }
 
+        @Override // from MessagePanel
         public void setMessage (ForumMessage message)
         {
             _message = message;
@@ -338,7 +338,7 @@ public class MessagesPanel extends PagedGrid
     protected Button _editFlags;
 
     /** Our action icon images. */
-    protected static MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
+    protected static MsgsImages _images = GWT.create(MsgsImages.class);
 
     protected static final int MESSAGES_PER_PAGE = 10;
 }

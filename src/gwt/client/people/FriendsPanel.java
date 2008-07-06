@@ -9,6 +9,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.client.ProfileService;
 
+import com.threerings.msoy.web.data.MemberCard;
+
 import client.shell.Frame;
 import client.util.HeaderBox;
 import client.util.MsoyCallback;
@@ -52,7 +54,7 @@ public class FriendsPanel extends FlowPanel
             self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
         String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());
         add(new HeaderBox(title, _friends));
-        _friends.setModel(new SimpleDataModel(data.friends), 0);
+        _friends.setModel(new SimpleDataModel<MemberCard>(data.friends), 0);
     }
 
     protected int _memberId;

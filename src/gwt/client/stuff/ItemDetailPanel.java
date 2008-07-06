@@ -296,7 +296,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             public boolean gotResult (Void result) {
                 // remove the item from our cached models
                 int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
-                DataModel model = _models.getModel(_item.getType(), suiteId);
+                DataModel<Item> model = _models.getModel(_item.getType(), suiteId);
                 if (model != null) {
                     model.removeItem(_item);
                 }

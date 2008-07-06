@@ -25,7 +25,7 @@ import client.util.MediaUtil;
 /**
  * Displays the trophies 
  */
-public class GameTrophyPanel extends PagedGrid
+public class GameTrophyPanel extends PagedGrid<Trophy>
 {
     public GameTrophyPanel (int gameId)
     {
@@ -48,20 +48,20 @@ public class GameTrophyPanel extends PagedGrid
         CGames.gamesvc.loadGameTrophies(
             CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
                 public void onSuccess (List<Trophy> result) {
-                    setModel(new SimpleDataModel(result), 0);
+                    setModel(new SimpleDataModel<Trophy>(result), 0);
                 }
                 public void onFailure (Throwable caught) {
                     CGames.log("loadGameTrophies failed", caught);
-                add(new Label(CGames.serverError(caught)));
+                    add(new Label(CGames.serverError(caught)));
                 }
             });
         _gameId = 0; // note that we've asked for our data
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (Trophy item)
     {
-        return new TrophyDetail((Trophy)item);
+        return new TrophyDetail(item);
     }
 
     @Override // from PagedGrid

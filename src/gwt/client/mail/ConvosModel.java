@@ -16,7 +16,7 @@ import com.threerings.msoy.web.client.MailService;
 /**
  * A data model that provides a member's conversations.
  */
-public class ConvosModel extends ServiceBackedDataModel
+public class ConvosModel extends ServiceBackedDataModel<Conversation, MailService.ConvosResult>
 {
     /**
      * Notes that we've read the specified conversation.
@@ -24,8 +24,7 @@ public class ConvosModel extends ServiceBackedDataModel
     public void markConversationRead (int convoId)
     {
         int unread = 0;
-        for (int ii = 0, ll = _pageItems.size(); ii < ll; ii++) {
-            Conversation convo = (Conversation)_pageItems.get(ii);
+        for (Conversation convo : _pageItems) {
             if (convo.conversationId == convoId) {
                 convo.hasUnread = false;
             } else if (convo.hasUnread) {
@@ -63,8 +62,7 @@ public class ConvosModel extends ServiceBackedDataModel
 
     protected Conversation findConversation (int convoId)
     {
-        for (int ii = 0, ll = _pageItems.size(); ii < ll; ii++) {
-            Conversation convo = (Conversation)_pageItems.get(ii);
+        for (Conversation convo : _pageItems) {
             if (convo.conversationId == convoId) {
                 return convo;
             }
@@ -78,12 +76,12 @@ public class ConvosModel extends ServiceBackedDataModel
     }
 
     @Override // from ServiceBackedDataModel
-    protected int getCount (Object result) {
-        return ((MailService.ConvosResult)result).totalConvoCount;
+    protected int getCount (MailService.ConvosResult result) {
+        return result.totalConvoCount;
     }
 
     @Override // from ServiceBackedDataModel
-    protected List getRows (Object result) {
-        return ((MailService.ConvosResult)result).convos;
+    protected List<Conversation> getRows (MailService.ConvosResult result) {
+        return result.convos;
     }
 }

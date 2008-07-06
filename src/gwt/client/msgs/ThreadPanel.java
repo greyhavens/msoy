@@ -112,7 +112,7 @@ public class ThreadPanel extends TitledListPanel
         CMsgs.forumsvc.findMessages(
             CMsgs.ident, _threadId, query, MAX_RESULTS, new MsoyCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
-                _mpanel.setModel(new SimpleDataModel(messages), 0);
+                _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);
             }
         });
     }

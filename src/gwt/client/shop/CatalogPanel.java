@@ -77,8 +77,8 @@ public class CatalogPanel extends SmartTable
         _listings.setWidget(1, 0, search);
 
         _sortBox = new ListBox();
-        for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
-            _sortBox.addItem(SORT_LABELS[ii]);
+        for (String label : SORT_LABELS) {
+            _sortBox.addItem(label);
         }
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
@@ -89,12 +89,12 @@ public class CatalogPanel extends SmartTable
 
         int rows = Math.max(1, (Window.getClientHeight() - Frame.HEADER_HEIGHT -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
-        _items = new PagedGrid(rows, COLUMNS) {
+        _items = new PagedGrid<ListingCard>(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Application.go(Page.SHOP, ShopUtil.composeArgs(_query, page));
             }
-            protected Widget createWidget (Object item) {
-                return new ListingBox((ListingCard)item);
+            protected Widget createWidget (ListingCard card) {
+                return new ListingBox(card);
             }
             protected String getEmptyMessage () {
                 String name = CShop.dmsgs.getString("itemType" + _query.itemType);
@@ -208,7 +208,7 @@ public class CatalogPanel extends SmartTable
     protected SmartTable _listings;
     protected TextBox _searchBox;
     protected ListBox _sortBox;
-    protected PagedGrid _items;
+    protected PagedGrid<ListingCard> _items;
 
     /** The number of columns of items to display. */
     protected static final int COLUMNS = 4;

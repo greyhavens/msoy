@@ -36,10 +36,10 @@ public class InventoryModels
         FlashEvents.removeListener(this);
     }
 
-    public void loadModel (byte type, int suiteId, final AsyncCallback<SimpleDataModel> cb)
+    public void loadModel (byte type, int suiteId, final AsyncCallback<SimpleDataModel<Item>> cb)
     {
         final Key key = new Key(type, suiteId);
-        SimpleDataModel model = _models.get(key);
+        SimpleDataModel<Item> model = _models.get(key);
         if (model != null) {
             cb.onSuccess(model);
             return;
@@ -48,7 +48,7 @@ public class InventoryModels
         CStuff.membersvc.loadInventory(
             CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
                 public void onSuccess (List<Item> result) {
-                    SimpleDataModel model = new SimpleDataModel(result);
+                    SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
                     _models.put(key, model);
                     cb.onSuccess(model);
                 }
@@ -58,23 +58,23 @@ public class InventoryModels
             });
     }
 
-    public SimpleDataModel getModel (byte type, int suiteId)
+    public SimpleDataModel<Item> getModel (byte type, int suiteId)
     {
         return _models.get(new Key(type, suiteId));
     }
 
     public Item findItem (byte type, final int itemId)
     {
-        Predicate itemP = new Predicate() {
-            public boolean isMatch (Object object) {
-                return ((Item)object).itemId == itemId;
+        Predicate<Item> itemP = new Predicate<Item>() {
+            public boolean isMatch (Item item) {
+                return item.itemId == itemId;
             }
         };
-        for (Map.Entry<Key, SimpleDataModel> entry : _models.entrySet()) {
+        for (Map.Entry<Key, SimpleDataModel<Item>> entry : _models.entrySet()) {
             Key key = entry.getKey();
             if (key.type == type) {
-                SimpleDataModel model = entry.getValue();
-                Item item = (Item)model.findItem(itemP);
+                SimpleDataModel<Item> model = entry.getValue();
+                Item item = model.findItem(itemP);
                 if (item != null) {
                     return item;
                 }
@@ -85,7 +85,7 @@ public class InventoryModels
 
     public void updateItem (Item item)
     {
-        for (Map.Entry<Key, SimpleDataModel> entry : _models.entrySet()) {
+        for (Map.Entry<Key, SimpleDataModel<Item>> entry : _models.entrySet()) {
             Key key = entry.getKey();
             if (key.matches(item)) {
                 entry.getValue().updateItem(item);
@@ -132,5 +132,5 @@ public class InventoryModels
         }
     }
 
-    protected Map<Key, SimpleDataModel> _models = new HashMap<Key, SimpleDataModel>();
+    protected Map<Key, SimpleDataModel<Item>> _models = new HashMap<Key, SimpleDataModel<Item>>();
 }

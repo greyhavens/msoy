@@ -4,6 +4,7 @@
 package client.people;
 
 import com.google.gwt.user.client.Command;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,11 +13,13 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+
 import client.util.MediaUtil;
 import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
@@ -26,7 +29,7 @@ import client.util.PromptPopup;
 /**
  * Displays a list of members.
  */
-public class MemberList extends PagedGrid
+public class MemberList extends PagedGrid<MemberCard>
 {
     public static final int PEOPLE_PER_PAGE = 20;
 
@@ -39,9 +42,9 @@ public class MemberList extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (MemberCard member)
     {
-        return new MemberWidget((MemberCard) item);
+        return new MemberWidget(member);
     }
 
     @Override // from PagedGrid
@@ -77,10 +80,9 @@ public class MemberList extends PagedGrid
         {
             super("memberWidget", 0, 5);
 
-            setWidget(0, 0, MediaUtil.createMediaView(
-                          card.photo, MediaDesc.THUMBNAIL_SIZE,
-                          Application.createLinkListener(
-                            Page.PEOPLE, "" + card.name.getMemberId())),
+            setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE,
+                                                      Application.createLinkListener(
+                                                      Page.PEOPLE, "" + card.name.getMemberId())),
                       1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 
@@ -114,27 +116,27 @@ public class MemberList extends PagedGrid
             if (isNotMe && !CPeople.isGuest()) {
                 onClick = Application.createLinkListener(
                     Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
-                extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                     "/images/profile/sendmail.png", onClick));
-                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlSendMail(), onClick));
+                extras.setWidget(row, 0, 
+                    MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
+                extras.setWidget(row++, 1, 
+                    MsoyUI.createActionLabel(CPeople.msgs.mlSendMail(), onClick));
             }
 
             // always show the visit home button
             onClick = Application.createLinkListener(Page.WORLD, "m" + card.name.getMemberId());
-            extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                 "/images/profile/visithome.png", onClick));
-            extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                 CPeople.msgs.mlVisitHome(), onClick));
+            extras.setWidget(row, 0, 
+                MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
+            extras.setWidget(row++, 1, 
+                MsoyUI.createActionLabel(CPeople.msgs.mlVisitHome(), onClick));
 
             // if they are our friend, show the remove friend button
             if (isNotMe && card.isFriend) {
                 onClick = new PromptPopup(
                     CPeople.msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
-                extras.setWidget(row, 0, MsoyUI.createActionImage(
-                                     "/images/profile/remove.png", onClick));
-                extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlRemoveFriend(), onClick));
+                extras.setWidget(row, 0, 
+                    MsoyUI.createActionImage("/images/profile/remove.png", onClick));
+                extras.setWidget(row++, 1, 
+                    MsoyUI.createActionLabel(CPeople.msgs.mlRemoveFriend(), onClick));
             }
 
             setWidget(0, 2, extras);

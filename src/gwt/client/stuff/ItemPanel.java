@@ -85,13 +85,13 @@ public class ItemPanel extends VerticalPanel
         int rows = Math.max(1, (Window.getClientHeight() - used) / boxHeight);
 
         // now create our grid of items
-        _contents = new PagedGrid(rows, COLUMNS) {
+        _contents = new PagedGrid<Item>(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
                 Application.go(Page.STUFF, Args.compose(new String[] { ""+_type, ""+page }));
             }
-            protected Widget createWidget (Object item) {
-                return new ItemEntry((Item)item);
+            protected Widget createWidget (Item item) {
+                return new ItemEntry(item);
             }
             protected String getEmptyMessage () {
                 return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
@@ -171,7 +171,7 @@ public class ItemPanel extends VerticalPanel
      * Requests that the current inventory page be displayed (clearing out any currently displayed
      * item detail view).
      */
-    protected void showInventory (final int page, final Predicate pred)
+    protected void showInventory (final int page, final Predicate<Item> pred)
     {
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
@@ -188,7 +188,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // maybe we're changing our predicate or changing page on an already loaded model
-        SimpleDataModel model = _models.getModel(_type, 0);
+        SimpleDataModel<Item>  model = _models.getModel(_type, 0);
         if (model != null) {
             if (pred == null) {
                 _contents.displayPage(page, true);
@@ -199,8 +199,8 @@ public class ItemPanel extends VerticalPanel
         }
 
         // otherwise we have to load
-        _models.loadModel(_type, 0, new MsoyCallback<SimpleDataModel>() {
-            public void onSuccess (SimpleDataModel model) {
+        _models.loadModel(_type, 0, new MsoyCallback<SimpleDataModel<Item>>() {
+            public void onSuccess (SimpleDataModel<Item> model) {
                 if (pred != null) {
                     model = model.filter(pred);
                 }
@@ -227,25 +227,25 @@ public class ItemPanel extends VerticalPanel
     };
 
     protected static final Predicate[] FILTERS = {
-        Predicate.TRUE,   // show all
-        new Predicate() { // uploaded
-            public boolean isMatch (Object o) {
-                return ((Item)o).sourceId == 0;
+        new Predicate.TRUE<Item>(), // show all
+        new Predicate<Item>() { // uploaded
+            public boolean isMatch (Item item) {
+                return item.sourceId == 0;
             }
         },
-        new Predicate() { // purchased
-            public boolean isMatch (Object o) {
-                return ((Item)o).sourceId != 0;
+        new Predicate<Item>() { // purchased
+            public boolean isMatch (Item item) {
+                return item.sourceId != 0;
             }
         },
-        new Predicate() { // unused
-            public boolean isMatch (Object o) {
-                return !((Item)o).isUsed();
+        new Predicate<Item>() { // unused
+            public boolean isMatch (Item item) {
+                return !item.isUsed();
             }
         },
-        new Predicate() { // used
-            public boolean isMatch (Object o) {
-                return ((Item)o).isUsed();
+        new Predicate<Item>() { // used
+            public boolean isMatch (Item item) {
+                return item.isUsed();
             }
         }
     };

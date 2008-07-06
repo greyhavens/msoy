@@ -103,18 +103,20 @@ public class GameGenrePanel extends FlowPanel
     /**
      * Displays a grid of games with paging and sort
      */
-    protected class GameGenreGrid extends PagedGrid
+    protected class GameGenreGrid extends PagedGrid<GameInfo>
     {
         public GameGenreGrid (List<GameInfo> games) {
             super(GAMES_PER_PAGE, 1, PagedGrid.NAV_ON_TOP);
             addStyleName("Games");
-            setModel(new SimpleDataModel(games), 0);
+            setModel(new SimpleDataModel<GameInfo>(games), 0);
         }
         
-        protected Widget createWidget (Object item) {
-            return new GameInfoPanel((GameInfo)item);
+        @Override
+        protected Widget createWidget (GameInfo item) {
+            return new GameInfoPanel(item);
         }
         
+        @Override
         protected String getEmptyMessage () {
             return CGames.msgs.genreNoGames();
         }
@@ -122,6 +124,7 @@ public class GameGenrePanel extends FlowPanel
         /**
          * Add the sort box and header row
          */
+        @Override
         protected void addCustomControls (FlexTable controls) {           
             controls.setWidget(
                 0, 0, new InlineLabel(CGames.msgs.genreSortBy(), false, false, false));
@@ -137,7 +140,8 @@ public class GameGenrePanel extends FlowPanel
             headers.add(createTitle("Name", "NameTitle", GameInfo.SORT_BY_RATING));
             headers.add(createTitle("Rating", "RatingTitle", GameInfo.SORT_BY_NAME));
             headers.add(createTitle("Category", "CategoryTitle", GameInfo.SORT_BY_GENRE));
-            headers.add(createTitle("Now Playing", "NowPlayingTitle", GameInfo.SORT_BY_PLAYERS_ONLINE));
+            headers.add(createTitle("Now Playing", "NowPlayingTitle", 
+                GameInfo.SORT_BY_PLAYERS_ONLINE));
         }
         
         /**
@@ -153,6 +157,7 @@ public class GameGenrePanel extends FlowPanel
         /**
          * Alternate row styles
          */
+        @Override
         protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit)
         {
             if (row % 2 == 1) {
@@ -180,16 +185,16 @@ public class GameGenrePanel extends FlowPanel
                 
                 FlowPanel name = new FlowPanel();
                 name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));
-                name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80), "Description"));
+                name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80), 
+                         "Description"));
                 setWidget(0, col++, name, 1, "NameDesc");
                 
                 FlowPanel ratingPanel = new FlowPanel();
                 ratingPanel.add(new Stars(game.rating, true, false, null));
-                ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""), "NumRatings"));
+                ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""),
+                                "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
-                
                 setText(0, col++, CGames.dmsgs.getString("genre" + game.genre), 1, "Category");
-                
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
                 FlowPanel playButtonsPanel = new FlowPanel();
@@ -201,7 +206,8 @@ public class GameGenrePanel extends FlowPanel
                             Application.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
                         }
                     };
-                    PushButton single = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
+                    PushButton single = MsoyUI.createButton(
+                        MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
                     single.addStyleName("PlaySingleButton");
                     playButtonsPanel.add(single);
                     if (game.maxPlayers > 1) {
@@ -215,12 +221,12 @@ public class GameGenrePanel extends FlowPanel
                             Application.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
                         }
                     };
-                    PushButton multi = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
+                    PushButton multi = MsoyUI.createButton(
+                        MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
                     multi.addStyleName("PlayMultiButton");
                     playButtonsPanel.add(multi);
                 }
                 setWidget(0, col++, playButtonsPanel, 1, "PlayButtons");
-                
             }
         }
     }

@@ -24,7 +24,8 @@ import client.util.ServiceBackedDataModel;
 public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
-    public static class GroupThreads extends ServiceBackedDataModel
+    public static class GroupThreads 
+        extends ServiceBackedDataModel<ForumThread, ForumService.ThreadResult>
     {
         public GroupThreads (int groupId) {
             _groupId = groupId;
@@ -66,29 +67,28 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        public void prependItem (Object item) {
-            super.prependItem(item);
-            mapThread((ForumThread)item);
+        public void prependItem (ForumThread thread) {
+            super.prependItem(thread);
+            mapThread(thread);
         }
 
         @Override // from ServiceBackedDataModel
-        public void appendItem (Object item) {
-            super.appendItem(item);
-            mapThread((ForumThread)item);
+        public void appendItem (ForumThread thread) {
+            super.appendItem(thread);
+            mapThread(thread);
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (Object result) {
-            ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
-            _canStartThread = tresult.canStartThread;
-            _isManager = tresult.isManager;
+        public void onSuccess (ForumService.ThreadResult result) {
+            _canStartThread = result.canStartThread;
+            _isManager = result.isManager;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
-            for (int ii = 0; ii < tresult.threads.size(); ii++) {
-                mapThread((ForumThread)tresult.threads.get(ii));
+            for (ForumThread thread : result.threads) {
+                mapThread(thread);
             }
             // grab our real group name from one of our thread records
-            if (tresult.threads.size() > 0) {
-                gotGroupName(((ForumThread)tresult.threads.get(0)).group);
+            if (result.threads.size() > 0) {
+                gotGroupName(result.threads.get(0).group);
             }
             super.onSuccess(result);
         }
@@ -99,13 +99,13 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected int getCount (Object result) {
-            return ((ForumService.ThreadResult)result).threadCount;
+        protected int getCount (ForumService.ThreadResult result) {
+            return result.threadCount;
         }
 
         @Override // from ServiceBackedDataModel
-        protected List getRows (Object result) {
-            return ((ForumService.ThreadResult)result).threads;
+        protected List<ForumThread> getRows (ForumService.ThreadResult result) {
+            return result.threads;
         }
 
         protected void mapThread (ForumThread thread) {
@@ -133,7 +133,7 @@ public class ForumModels
     }
 
     /** A data model that provides all threads unread by the authenticated user. */
-    public static class UnreadThreads extends SimpleDataModel
+    public static class UnreadThreads extends SimpleDataModel<ForumThread>
     {
         public UnreadThreads ()
         {
@@ -149,41 +149,42 @@ public class ForumModels
         }
 
         // from interface DataModel
-        public void removeItem (Object item)
+        public void removeItem (ForumThread thread)
         {
-            ForumThread thread = (ForumThread)item;
             _threads.remove(thread.threadId);
-            super.removeItem(item);
+            super.removeItem(thread);
         }
 
         // from interface DataModel
-        public void doFetchRows (final int start, final int count, final AsyncCallback callback)
+        public void doFetchRows (
+            final int start, final int count, final AsyncCallback<List<ForumThread>> callback)
         {
             if (_items != null) {
                 super.doFetchRows(start, count, callback);
                 return;
             }
 
-            CMsgs.forumsvc.loadUnreadThreads(CMsgs.ident, MAX_UNREAD_THREADS, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    ForumService.ThreadResult tresult = (ForumService.ThreadResult)result;
-                    _items = tresult.threads;
-                    for (ForumThread thread : tresult.threads) {
-                        _threads.put(thread.threadId, thread);
+            CMsgs.forumsvc.loadUnreadThreads(
+                CMsgs.ident, MAX_UNREAD_THREADS, new AsyncCallback<ForumService.ThreadResult>() {
+                    public void onSuccess (ForumService.ThreadResult result) {
+                        _items = result.threads;
+                        for (ForumThread thread : result.threads) {
+                            _threads.put(thread.threadId, thread);
+                        }
+                        doFetchRows(start, count, callback);
                     }
-                    doFetchRows(start, count, callback);
-                }
-                public void onFailure (Throwable failure) {
-                    callback.onFailure(failure);
-                }
-            }); 
+                    public void onFailure (Throwable failure) {
+                        callback.onFailure(failure);
+                    }
+                }); 
         }
 
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
     /** A data model that provides a particular thread's messages. */
-    public static class ThreadMessages extends ServiceBackedDataModel
+    public static class ThreadMessages 
+        extends ServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
     {
         public ThreadMessages (int threadId, ForumThread thread) {
             _threadId = threadId;
@@ -206,51 +207,49 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        public void appendItem (Object item) {
-            super.appendItem(item);
+        public void appendItem (ForumMessage message) {
+            super.appendItem(message);
             _thread.posts++;
             // mark our thread as read up to this message
-            _thread.lastReadPostId = ((ForumMessage)item).messageId;
+            _thread.lastReadPostId = message.messageId;
             _thread.lastReadPostIndex = _thread.posts;
         }
 
         @Override // from ServiceBackedDataModel
-        public void removeItem (Object item) {
+        public void removeItem (ForumMessage message) {
             // if we're deleting the last message in this thread...
-            ForumMessage msg = (ForumMessage)item;
-            if (_thread.mostRecentPostId == msg.messageId) {
+            if (_thread.mostRecentPostId == message.messageId) {
                 // ...locate the new last message and update our thread with its info
-                int idx = _pageItems.indexOf(item);
+                int idx = _pageItems.indexOf(message);
                 if (idx > 0) { // it's in the list and not the first item
-                    ForumMessage prev = (ForumMessage)_pageItems.get(idx-1);
+                    ForumMessage prev = _pageItems.get(idx-1);
                     _thread.mostRecentPostId = prev.messageId;
                     _thread.mostRecentPoster = prev.poster.name;
                     _thread.mostRecentPostTime = prev.created;
                 }
             }
 
-            super.removeItem(item);
+            super.removeItem(message);
             _thread.posts--;
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (Object result) {
+        public void onSuccess (ForumService.MessageResult result) {
             // note some bits
-            ForumService.MessageResult mresult = (ForumService.MessageResult)result;
-            if (mresult.thread != null) {
-                _thread = mresult.thread;
+            if (result.thread != null) {
+                _thread = result.thread;
             }
-            _canPostReply = mresult.canPostReply;
-            _isManager = mresult.isManager;
+            _canPostReply = result.canPostReply;
+            _isManager = result.isManager;
 
             // let the PagedGrid know that we're good and to render the items
             super.onSuccess(result);
 
             // finally update our thread's last read post id so that subsequent renders will show
             // messages as having been read
-            if (mresult.messages.size() > 0) {
-                int lastReadIndex = mresult.messages.size()-1;
-                int highestPostId = (mresult.messages.get(lastReadIndex)).messageId;
+            if (result.messages.size() > 0) {
+                int lastReadIndex = result.messages.size()-1;
+                int highestPostId = (result.messages.get(lastReadIndex)).messageId;
                 if (highestPostId > _thread.lastReadPostId) {
                     _thread.lastReadPostId = highestPostId;
                     _thread.lastReadPostIndex = _pageOffset + lastReadIndex;
@@ -265,13 +264,13 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected int getCount (Object result) {
-            return ((ForumService.MessageResult)result).thread.posts;
+        protected int getCount (ForumService.MessageResult result) {
+            return result.thread.posts;
         }
 
         @Override // from ServiceBackedDataModel
-        protected List getRows (Object result) {
-            return ((ForumService.MessageResult)result).messages;
+        protected List<ForumMessage> getRows (ForumService.MessageResult result) {
+            return result.messages;
         }
 
         protected int _threadId;

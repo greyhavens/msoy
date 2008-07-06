@@ -5,6 +5,7 @@ package client.shop;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,7 +24,7 @@ import client.util.MsoyCallback;
  */
 public class CatalogModels
 {
-    public static class Listings implements DataModel
+    public static class Listings implements DataModel<ListingCard>
     {
         public Listings (CatalogQuery query) {
             _query = query;
@@ -37,7 +38,8 @@ public class CatalogModels
             return _listingCount;
         }
 
-        public void doFetchRows (int start, int count, final AsyncCallback callback) {
+        public void doFetchRows (
+            int start, int count, final AsyncCallback<List<ListingCard>> callback) {
             CShop.catalogsvc.loadCatalog(
                 CShop.ident, _query, start, count, _listingCount == -1, 
                 new MsoyCallback<CatalogService.CatalogResult>() {
@@ -50,7 +52,7 @@ public class CatalogModels
                 });
         }
 
-        public void removeItem (Object item) {
+        public void removeItem (ListingCard item) {
             // currently we do no internal caching, so just decrement our listing count
             _listingCount--;
         }

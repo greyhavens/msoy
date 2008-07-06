@@ -3,9 +3,11 @@
 
 package client.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -15,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -22,7 +25,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
 import client.editem.EditorHost;
+
 import client.util.MediaUtil;
+
 import client.shell.CShell;
 import client.shell.Frame;
 
@@ -75,13 +80,20 @@ public class ImageChooserPopup extends VerticalPanel
         Frame.clearDialog(this);
     }
 
-    protected class PhotoGrid extends PagedGrid
+    protected class PhotoGrid extends PagedGrid<Photo>
         implements EditorHost
     {
         public PhotoGrid (List<Item> images) {
             super(2, 7, NAV_ON_BOTTOM);
             setWidth("100%");
-            setModel(new SimpleDataModel(images), 0);
+            // for checking and strong typing
+            List<Photo> photos = new ArrayList<Photo>();
+            for (Item potentialPhoto : images) {
+                if (potentialPhoto instanceof Photo) {
+                    photos.add((Photo)potentialPhoto);
+                }
+            }
+            setModel(new SimpleDataModel<Photo>(photos), 0);
         }
 
         // from interface EditorHost
@@ -96,8 +108,7 @@ public class ImageChooserPopup extends VerticalPanel
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Object item) {
-            Photo photo = (Photo)item;
+        protected Widget createWidget (Photo photo) {
             final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {

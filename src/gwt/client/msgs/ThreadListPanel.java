@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
+
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -28,6 +29,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -37,7 +39,7 @@ import client.util.SearchBox;
 /**
  * Displays a list of threads.
  */
-public class ThreadListPanel extends PagedGrid
+public class ThreadListPanel extends PagedGrid<ForumThread>
     implements SearchBox.Listener
 {
     public ThreadListPanel (ForumPanel parent)
@@ -68,7 +70,7 @@ public class ThreadListPanel extends PagedGrid
         CMsgs.forumsvc.findThreads(
             CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
-                setModel(new SimpleDataModel(threads), 0);
+                setModel(new SimpleDataModel<ForumThread>(threads), 0);
             }
         });
     }
@@ -80,9 +82,9 @@ public class ThreadListPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Object item)
+    protected Widget createWidget (ForumThread thread)
     {
-        return new ThreadSummaryPanel((ForumThread)item);
+        return new ThreadSummaryPanel(thread);
     }
 
     @Override // from PagedGrid
@@ -133,7 +135,7 @@ public class ThreadListPanel extends PagedGrid
     }
 
     @Override // from PagedGrid
-    protected void displayResults (int start, int count, List list)
+    protected void displayResults (int start, int count, List<ForumThread> list)
     {
         super.displayResults(start, count, list);
 
@@ -165,8 +167,7 @@ public class ThreadListPanel extends PagedGrid
             if (thread.hasUnreadMessages()) {
                 statusImage.setUrl("/images/msgs/unread.png");
                 statusImage.setTitle(CMsgs.mmsgs.tlpStatusUnreadTip());
-            }
-            else {
+            } else {
                 statusImage.setUrl("/images/msgs/read.png");
                 statusImage.setTitle(CMsgs.mmsgs.tlpStatusReadTip());
             }
@@ -261,9 +262,6 @@ public class ThreadListPanel extends PagedGrid
 
     /** Contains the id of the group whose threads we are displaying or zero. */
     protected int _groupId;
-
-    /** Our unread threads data model. */
-    protected DataModel _unreadModel;
 
     /** A button for starting a new thread. */
     protected Button _startThread;
