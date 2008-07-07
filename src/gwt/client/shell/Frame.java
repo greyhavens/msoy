@@ -82,12 +82,31 @@ public class Frame
         // create our header
         _header = new Header();
 
-        // clear out the loading HTML because we're about to show the Whirled
-        DOM.setInnerHTML(RootPanel.get(HEADER).getElement(), "");
-
         // default to scrolling off.  In the rare case where a page wants scrolling, it gets enabled
         // explicitly.
         Window.enableScrolling(false);
+        
+        // clear out the loading HTML so we can display a browser warning or load Whirled
+        DOM.setInnerHTML(RootPanel.get(LOADING_AND_TESTS).getElement(), "");
+        
+        // If the browser is unsupported, hide the page (still being built) and show a warning.
+        ClickListener continueClicked = new ClickListener() {
+            public void onClick (Widget widget) {
+                // close the warning and show the page if the visitor choose to continue
+                RootPanel.get(LOADING_AND_TESTS).clear();
+                RootPanel.get(LOADING_AND_TESTS).setVisible(false);
+                RootPanel.get(SITE_CONTAINER).setVisible(true);
+            } 
+        };
+        Widget warningDialog = BrowserTest.getWarningDialog(continueClicked);
+        if (warningDialog != null) {
+            RootPanel.get(SITE_CONTAINER).setVisible(false);
+            RootPanel.get(LOADING_AND_TESTS).add(warningDialog);
+        }
+        else {
+            RootPanel.get(LOADING_AND_TESTS).clear();
+            RootPanel.get(LOADING_AND_TESTS).setVisible(false);
+        }
     }
 
     /**
@@ -751,4 +770,6 @@ public class Frame
     protected static final String HEADER = "header";
     protected static final String CONTENT = "content";
     protected static final String CLIENT = "client";
+    protected static final String SITE_CONTAINER = "ctable";
+    protected static final String LOADING_AND_TESTS = "loadingAndTests";
 }

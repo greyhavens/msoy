@@ -9,7 +9,28 @@
     if (document.location.host != "@SERVER_URL_HOST_PORT@") {
        document.location = "@SERVER_URL@";
     }
+    
+      /** Animate the loading message ellipsis until it is cleared */
+      function animateDots() {
+        var dots = document.getElementById('loadingDots');
+        if (dots == undefined) {
+            return;
+        }
+        
+        if (dots.innerHTML == '.') { 
+           dots.innerHTML = '..'; 
+        }
+        else if (dots.innerHTML == '..') { 
+           dots.innerHTML = '...'; 
+        }
+        else{ 
+           dots.innerHTML = '.';
+        }
+        
+        setTimeout("animateDots();", 500);
+      }
   </script>
+  
   <link rel="stylesheet" href="/css/global.css" type="text/css"/>
   <link rel="stylesheet" href="/css/gwt.css" type="text/css"/>
   <link rel="stylesheet" href="/css/account.css" type="text/css"/>
@@ -30,12 +51,19 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
 </head>
 
-<body>
+<body onLoad="animateDots();">
+  <div id="loadingAndTests" class="loading">
+      <h2>Whirled is loading<span id="loadingDots">...</span></h2>    
+      <noscript><blockquote>
+          Whirled requires JavaScript to operate. Please turn it on in your browser.
+          <p>If you would like more information, please read our instructions on
+          <a href="http://wiki.whirled.com/How_To_Enable_JavaScript">how to turn on JavaScript</a>.
+      </blockquote></noscript>
+  </div>
+  
   <table id="ctable" width="100%" height="100%" cellpadding="0" cellspacing="0"
          style="padding: 0; margin: 0;">
-  <tr><td colspan="3" id="header">
-      <div class="loading">Whirled is loading...</div>
-  </td></tr>
+  <tr><td colspan="3" id="header"></td></tr>
   <tr><td valign="top" id="content" style="background: #FFFFFF; display: none"></td>
       <td valign="top" id="client" height="100%"></td></tr>
   </table>
@@ -50,11 +78,5 @@
     var recaptchaPublicKey = "@RECAPTCHA_KEY@";
   </script>
   @RECAPTCHA_OUT@
-  <noscript><blockquote>
-    Whirled requires JavaScript to operate. Please turn it on in your browser.
-
-    <p>If you would like more information, please read our instructions on
-    <a href="http://wiki.whirled.com/How_To_Enable_JavaScript">how to turn on JavaScript</a>.
-  </blockquote></noscript>
 </body>
 </html>

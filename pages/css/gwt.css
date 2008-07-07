@@ -14,11 +14,16 @@ img, embed, applet, object {
 
 /** Our top-level loading indicator. */
 .loading {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   text-align: center;
-  padding-top: 25px;
+}
+.loading h2 {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  padding: 25px 0 10px 0;
   font-size: 18px;
   color: #FFFFFF;
+  width: 190px;
+  margin: auto;
+  text-align: left;
 }
 
 /** Make GWT display some sensible defaults. */
@@ -1147,3 +1152,47 @@ img, embed, applet, object {
     font-size: 12px;
     font-style: italic;
 }
+
+
+/* ------------------------------------
+   BROWSER TEST DIALOG
+-------------------------------------*/
+
+.browserTest {
+  z-index: 10;
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.browserTest .Message {
+  background: url(/images/landing/browser_test_bg.png) no-repeat top center;
+  width: 576px;
+  height: 138px; /* 218 minus 80 padding */
+  margin: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  padding: 40px;
+  color: #000000;
+}
+
+.browserTest .Message .Center {
+  padding: 15px;
+}
+
+.browserTest .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #3e6f98;
+}
+
+.browserTest .actionLabel {
+  float: left;
+  margin-top: 15px;
+  margin-right: 10px;
+}
+
