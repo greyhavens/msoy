@@ -991,6 +991,16 @@ public class ItemManager
     }
 
     // from ItemProvider
+    public void deleteItem (ClientObject caller, ItemIdent ident,
+            InvocationService.ConfirmListener cl)
+        throws InvocationException
+    {
+        // TODO
+        reclaimItem(caller, ident, cl);
+        log.info("Server got a delete item request");
+    }
+
+    // from ItemProvider
     public void reclaimItem (ClientObject caller, final ItemIdent item,
                              final InvocationService.ConfirmListener lner)
         throws InvocationException

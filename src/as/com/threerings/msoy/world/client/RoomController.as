@@ -219,6 +219,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Requests that an item be removed from the owner's inventory.
+     */
+    public function deleteItem (ident :ItemIdent) :void
+    {
+        // see subclasses
+    }
+
+    /**
      * Handles a request by an item in our room to send an "action" (requires control) or a
      * "message" (doesn't require control).
      */

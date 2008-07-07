@@ -837,6 +837,18 @@ public class MsoySprite extends DataPackMediaContainer
         return (ctrl != null) && ctrl.setRoomProperty(key, value); // false if ctrl is null
     }
 
+    /**
+     * Requests the item this sprite represents be deleted from its owner's inventory
+     * and removed from the room.
+     */
+    public function selfDestruct () :void
+    {
+        var ctrl :RoomController = getController(true);
+        if (ctrl != null) {
+            ctrl.deleteItem(_ident);
+        }
+    }
+
     public function getEntityIds (type :String) :Array
     {
         var ctrl :RoomController = getController();

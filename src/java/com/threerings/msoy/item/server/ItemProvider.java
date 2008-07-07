@@ -15,6 +15,12 @@ import com.threerings.presents.server.InvocationProvider;
 public interface ItemProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link ItemService#deleteItem} request.
+     */
+    public void deleteItem (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link ItemService#getCatalogId} request.
      */
     public void getCatalogId (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)

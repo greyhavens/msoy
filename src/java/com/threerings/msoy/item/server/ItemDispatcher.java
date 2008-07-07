@@ -38,6 +38,13 @@ public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case ItemMarshaller.DELETE_ITEM:
+            ((ItemProvider)provider).deleteItem(
+                source,
+                (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case ItemMarshaller.GET_CATALOG_ID:
             ((ItemProvider)provider).getCatalogId(
                 source,

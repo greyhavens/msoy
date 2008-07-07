@@ -526,9 +526,22 @@ public class RoomObjectController extends RoomController
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
-    override public function canManageRoom () : Boolean
+    override public function canManageRoom () :Boolean
     {
         return (_scene != null && _scene.canManage(_wdctx.getMemberObject()));
+    }
+
+    override public function deleteItem (ident :ItemIdent) :void
+    {
+        var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
+
+        svc.deleteItem(_wdctx.getClient(), ident, new ConfirmAdapter(
+            function (cause :String) :void {
+                Log.getLog(this).debug(
+                    "Failed to delete item " +
+                    "[type=" + ident.type + ", itemId=" + ident.itemId +
+                    ", cause=" + cause + "]");
+            }));
     }
 
     /**

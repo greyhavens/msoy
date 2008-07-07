@@ -16,6 +16,9 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface ItemService extends InvocationService
 {
     // from Java interface ItemService
+    function deleteItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface ItemService
     function getCatalogId (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface ItemService

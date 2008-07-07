@@ -40,4 +40,9 @@ public interface ItemService extends InvocationService
      * any other Integer - the catalog id.
      */
     public void getCatalogId (Client client, ItemIdent item, ResultListener listener);
+
+    /**
+     * Cause this item to be removed from the user's inventory.
+     */
+    public void deleteItem (Client client, ItemIdent item, ConfirmListener listener);
 }

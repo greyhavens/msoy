@@ -62,6 +62,7 @@ public class EntityBackend extends ControlBackend
         o["getRoomProperties_v1"] = getRoomProperties_v1;
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
+        o["selfDestruct_v1"] = selfDestruct_v1;
 
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityType_v1"] = getEntityType_v1;
@@ -78,6 +79,13 @@ public class EntityBackend extends ControlBackend
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
         o["datapack"] = _sprite.getAndClearDataPack();
+    }
+
+    protected function selfDestruct_v1 () :void
+    {
+        if (_sprite != null) {
+            _sprite.selfDestruct();
+        }
     }
 
     protected function getEntityIds_v1 (type :String) :Array
