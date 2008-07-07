@@ -47,7 +47,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemTypes;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.layout.RoomLayout;
@@ -468,21 +467,22 @@ public class RoomView extends Sprite
         return _entities.get(ident) as MsoySprite;
     }
 
-    public function getItemIdents (type :String) :Array
+    public function getItemIdents () :Array
+    {
+        return _entities.keys();
+    }
+
+    /*public function getItemIdents (type :String) :Array
     {
         var keys :Array = _entities.keys();
 
         if (type != null) {
             var valid :Array = ENTITY_TYPES[type];
             keys = keys.filter(
-                function (id :ItemIdent, ... etc) :Boolean {
-                    // Is the entity a valid item of this type?
-                    return valid.indexOf(id.type) != -1;
-                });
         }
 
         return keys;
-    }
+    }*/
 
     /**
      * Called when control of an entity is assigned to us.
@@ -991,12 +991,5 @@ public class RoomView extends Sprite
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
-
-    /** The entity type groupings for querying for property owners. */
-    protected static const ENTITY_TYPES :Object = {
-        furni: [ ItemTypes.FURNITURE, ItemTypes.TOY, ItemTypes.DECOR ],
-        avatar: [ ItemTypes.AVATAR ],
-        pet: [ ItemTypes.PET ]
-    };
 }
 }

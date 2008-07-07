@@ -825,6 +825,14 @@ public class MsoySprite extends DataPackMediaContainer
         return (ctrl == null) ? [] : ctrl.getEntityIds(type);
     }
 
+    public function getEntityType (entityId :String) :String
+    {
+        var ctrl :RoomController = getController();
+
+        return (ctrl == null) ? null :
+            ctrl.getEntityType(ItemIdent.fromString(entityId));
+    }
+
     public function getEntityProperty (entityId :String, key :String) :Object
     {
         // If the entityId is ME, take the shortcut
@@ -834,11 +842,8 @@ public class MsoySprite extends DataPackMediaContainer
 
         var ctrl :RoomController = getController();
 
-        if (ctrl != null) {
-            return ctrl.getEntityProperty(ItemIdent.fromString(entityId), key);
-        } else {
-            return null;
-        }
+        return (ctrl == null) ? null :
+            ctrl.getEntityProperty(ItemIdent.fromString(entityId), key);
     }
 
     /**

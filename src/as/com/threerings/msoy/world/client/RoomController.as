@@ -74,6 +74,7 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemTypes;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 
@@ -312,28 +313,58 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Get the user friendly type of an entity. Returns null if the item
+     * is not in the room or is of an unhandled type.
+     * @see ENTITY_TYPES
+     */
+    public function getEntityType (ident :ItemIdent) :String
+    {
+        var sprite :MsoySprite = _roomView.getEntity(ident);
+
+        if (sprite != null) {
+            for (var type :String in ENTITY_TYPES) {
+                if (ENTITY_TYPES[type].indexOf(ident.type) != -1) {
+                    return type;
+                }
+            }
+        }
+
+        // The item doesn't exist in this room, or was an unknown type
+        return null;
+    }
+
+    /**
      * Retrieves a published property of a given entity.
      */
     public function getEntityProperty (ident :ItemIdent, key :String) :Object
     {
         var sprite :MsoySprite = _roomView.getEntity(ident);
 
-        return (sprite == null ? null : sprite.lookupEntityProperty(key));
+        return (sprite == null) ? null : sprite.lookupEntityProperty(key);
     }
 
     /**
      * Get the ID strings of all entities of the specified type, or all if type is null.
+     * @see ENTITY_TYPES
      */
-    public function getEntityIds (type :String) :Array
+    public function getEntityIds (type :String = null) :Array
     {
-        var idents :Array = _roomView.getItemIdents(type);
+        var idents :Array = _roomView.getItemIdents();
+
+        // Filter for items of the correct type, if necessary
+        if (type != null) {
+            idents = idents.filter(
+                function (id :ItemIdent, ... etc) :Boolean {
+                    // Is the entity a valid item of this type?
+                    return ENTITY_TYPES[type].indexOf(id.type) != -1;
+                });
+        }
 
         // Convert from ItemIdents to entityId Strings
         return idents.map(
-                function (id :ItemIdent, ... etc) :String {
-                    return id.toString();
-                }
-            );
+            function (id :ItemIdent, ... etc) :String {
+                return id.toString();
+            });
     }
 
     /**
@@ -949,6 +980,13 @@ public class RoomController extends SceneController
 
     /** The amount we alter the y coordinate of tooltips generated under the mouse. */
     protected static const MOUSE_TOOLTIP_Y_OFFSET :int = 50;
+
+    /** The entity type groupings for querying for property owners. */
+    protected static const ENTITY_TYPES :Object = {
+        furni: [ ItemTypes.FURNITURE, ItemTypes.TOY, ItemTypes.DECOR ],
+        avatar: [ ItemTypes.AVATAR ],
+        pet: [ ItemTypes.PET ]
+    };
 
     /** The life-force of the client. */
     protected var _wdctx :WorldContext;

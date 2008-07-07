@@ -85,10 +85,9 @@ public class EntityBackend extends ControlBackend
         return (_sprite == null) ? [] : _sprite.getEntityIds(type);
     }
 
-    protected function getEntityType_v1 (type :String) :String
+    protected function getEntityType_v1 (entityId :String) :String
     {
-        // TODO
-        return "muffin";
+        return (_sprite == null) ? null : _sprite.getEntityType(entityId);
     }
 
     protected function getEntityProperty_v1 (entityId :String, key :String) :Object
