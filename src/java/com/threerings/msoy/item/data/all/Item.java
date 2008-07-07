@@ -194,7 +194,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public static Class getClassForType (byte itemType)
     {
-        return (Class) _mapping.get(new Byte(itemType));
+        return _mapping.get(new Byte(itemType));
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public static byte getTypeForClass (Class iclass)
     {
-        Byte val = (Byte) _reverseMapping.get(iclass);
+        Byte val = _reverseMapping.get(iclass);
         return (val != null) ? val.byteValue() : NOT_A_TYPE;
     }
 
