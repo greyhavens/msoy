@@ -3,6 +3,7 @@
 
 package client.me;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -105,7 +106,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         SimplePanel thumbnail = new SimplePanel();
         Widget thumbnailImage = MediaUtil.createMediaView(
-            game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
+            game.getThumbMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
         thumbnail.setStyleName("Thumbnail");
         thumbnail.add(thumbnailImage);
         gamePanelInner.setWidget(0, 0, thumbnail);
