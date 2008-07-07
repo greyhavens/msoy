@@ -45,16 +45,15 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
             return;
         }
 
-        CGames.gamesvc.loadGameTrophies(
-            CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
-                public void onSuccess (List<Trophy> result) {
-                    setModel(new SimpleDataModel<Trophy>(result), 0);
-                }
-                public void onFailure (Throwable caught) {
-                    CGames.log("loadGameTrophies failed", caught);
-                    add(new Label(CGames.serverError(caught)));
-                }
-            });
+        CGames.gamesvc.loadGameTrophies(CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
+            public void onSuccess (List<Trophy> result) {
+                setModel(new SimpleDataModel<Trophy>(result), 0);
+            }
+            public void onFailure (Throwable caught) {
+                CGames.log("loadGameTrophies failed", caught);
+                add(new Label(CGames.serverError(caught)));
+            }
+        });
         _gameId = 0; // note that we've asked for our data
     }
 
