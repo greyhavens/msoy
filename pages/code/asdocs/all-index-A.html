@@ -114,6 +114,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <td width="20"></td><td> Returns a new vector that is the summation of this vector with vector v.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html#add()">add</a>(o) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html">ExpiringSet</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Note that if you add an object that the list already contains, this method will return 
+     false, but it will also update the expire time on that object to be this sets ttl from now, 
+     as if the item really were being added to the list now.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#add()">add</a>(o) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
 </tr>
 <tr>
@@ -211,6 +220,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <tr>
 <td width="20"></td><td>
      Add values to an existing bag.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#ALL">ALL</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/AlphaFade.html">AlphaFade</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/package-detail.html">com.threerings.flash</a></td>
@@ -408,6 +423,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#AVATAR">AVATAR</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#event:avatarChanged">avatarChanged</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
 </tr>
 <tr>
@@ -483,18 +504,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
      Create a new AVRGameControlEvent.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardPrize()">awardPrize</a>(ident) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardPrize()">awardPrize</a>(ident, playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Awards the specified prize item to this client's player.</td>
+     Awards the specified prize item to this client's player (the default) or a specified player.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardTrophy()">awardTrophy</a>(ident) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardTrophy()">awardTrophy</a>(ident, playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Awards the specified trophy to this client's player.</td>
+     Awards the specified trophy to this client's player (the default) or a specified player.</td>
 </tr>
 <tr>
 <td style="padding-bottom:20px" colspan="2"></td>

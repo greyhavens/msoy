@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,awardPrize,awardTrophy,getPlayerItemPacks,getUserCookie,holdsTrophy,setUserCookie" name="keywords">
+<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,CURRENT_USER,awardPrize,awardTrophy,getCookie,getPlayerItemPacks,holdsTrophy,setCookie" name="keywords">
 <title>com.whirled.game.PlayerSubControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/PlayerSubControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;PlayerSubControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;PlayerSubControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class PlayerSubControl"); titleBar_setSubNav(false,false,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class PlayerSubControl"); titleBar_setSubNav(true,false,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -74,17 +74,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#awardPrize()">awardPrize</a>(ident:String):void</div>
+<a class="signatureLink" href="#awardPrize()">awardPrize</a>(ident:String, playerId:int):void</div>
 <div class="summaryTableDescription">
-     Awards the specified prize item to this client's player.</div>
+     Awards the specified prize item to this client's player (the default) or a specified player.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#awardTrophy()">awardTrophy</a>(ident:String):Boolean</div>
+<a class="signatureLink" href="#awardTrophy()">awardTrophy</a>(ident:String, playerId:int):Boolean</div>
 <div class="summaryTableDescription">
-     Awards the specified trophy to this client's player.</div>
+     Awards the specified trophy to this client's player (the default) or a specified player.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -100,25 +100,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>():Array</div>
+<a class="signatureLink" href="#getCookie()">getCookie</a>(callback:Function, occupantId:int):void</div>
 <div class="summaryTableDescription">
-     Returns all item packs owned by this client's player.</div>
+     Get the user-specific game data for the specified occupant.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getUserCookie()">getUserCookie</a>(occupantId:int, callback:Function):void</div>
+<a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>(playerId:int):Array</div>
 <div class="summaryTableDescription">
-     Get the user-specific game data for the specified user.</div>
+     Returns all item packs owned by this client's player (the default) or a specified player.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#holdsTrophy()">holdsTrophy</a>(ident:String):Boolean</div>
+<a class="signatureLink" href="#holdsTrophy()">holdsTrophy</a>(ident:String, playerId:int):Boolean</div>
 <div class="summaryTableDescription">
-     Returns true if this client's player has the trophy with the specified identifier.</div>
+     Returns true if this client's player (the default) or a specified player has the trophy
+     with the specified identifier.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -143,7 +144,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setUserCookie()">setUserCookie</a>(cookie:Object):Boolean</div>
+<a class="signatureLink" href="#setCookie()">setCookie</a>(cookie:Object, occupantId:int):Boolean</div>
 <div class="summaryTableDescription">
      Store persistent data that can later be retrieved by an instance of this game.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControl</td>
@@ -184,6 +185,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CURRENT_USER">CURRENT_USER</a> : int = 0<div class="summaryTableDescription">[static] ID constant passed to cookie, prize and trophy functions to refer to the current player.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
+</tr>
+</table>
+</div>
 <script type="text/javascript" language="javascript">
 <!--
 showHideInherited();
@@ -198,11 +212,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function awardPrize(ident:String):void</code><p>
-     Awards the specified prize item to this client's player. If the supplied prize identifier is
-     not valid, this will not be known until the request is processed on the server, so the
-     method will return successfully but no prize will have been awarded. Thus you should be
-     careful not to misspell your prize identifier in your code or in the associated prize item.
+<code>public function awardPrize(ident:String, playerId:int):void</code><p>
+     Awards the specified prize item to this client's player (the default) or a specified player.
+     If the supplied prize identifier is not valid, this will not be known until the request is
+     processed on the server, so the method will return successfully but no prize will have been
+     awarded. Thus you should be careful not to misspell your prize identifier in your code or in
+     the associated prize item.
           </p><p> Note: a game is only allowed to award a prize once per game session. This is to guard
      against bugs that might try to award many hundreds of the same prize to a user while playing
      a game. If you eallywant to award multiple instances of a prize, you will need to make
@@ -220,10 +235,19 @@ showHideInherited();
      trophy and the prize. Subsequently, awardTrophy() will return false indicating that the
      player already has the trophy in question and the prize will not be awarded. Alternatively
      the game could store whether or not the player has earned the prize in a user cookie. </p>
-     <span class="label">Parameters</span>
+          <p>Note thirdly: Clients may only award prized to the current player. Server agents do not
+     have a current player and therefore must pass in a valid player id.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the id of the player to award the prize to
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -234,16 +258,25 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function awardTrophy(ident:String):Boolean</code><p>
-     Awards the specified trophy to this client's player. If the supplied trophy identifier is
-     not valid, this will not be known until the request is processed on the server, so the
-     method will return succcessfully but no trophy will have been awarded. Thus, you should be
-     careful not to misspell your trophy identifier in your code or in the associated trophy
-     source item.
-          </p><span class="label">Parameters</span>
+<code>public function awardTrophy(ident:String, playerId:int):Boolean</code><p>
+     Awards the specified trophy to this client's player (the default) or a specified player.
+     If the supplied trophy identifier is not valid, this will not be known until the request is
+     processed on the server, so the method will return succcessfully but no trophy will have
+     been awarded. Thus, you should be careful not to misspell your trophy identifier in your
+     code or in the associated trophy source item.
+          </p><p>Note: Clients may award trophies to the current player. Server agents do not
+     have a current player and therefore must pass in a valid player id.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the id of the player to award the trophy to
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 <p></p>
@@ -255,6 +288,38 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getCookie()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getCookie(callback:Function, occupantId:int):void</code><p>
+     Get the user-specific game data for the specified occupant. The first time this is requested 
+     per game instance it will be retrieved from the database. After that, it will be returned 
+     from memory.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; the function that will be called when the cookie has loaded.
+     The callback should be of the form:
+     <div class='listing'><pre>
+      function onGotUserCookie (cookie :Object, occupantId :int) :void
+      {
+          // read cookie
+      }
+     </pre></div>
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
+</tr>
+</table>
+</div>
 <a name="getPlayerItemPacks()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -262,37 +327,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getPlayerItemPacks():Array</code><p>
-     Returns all item packs owned by this client's player.
-     </p><p></p>
+<code>public function getPlayerItemPacks(playerId:int):Array</code><p>
+     Returns all item packs owned by this client's player (the default) or a specified player.
+          </p><p>Note: Clients may only get the item packs of the current player. Server agents do not
+     have a current player and therefore must pass in a valid player id.</p>
+          <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; the id of the player whose item packs to get
+     </td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
-</tr>
-</table>
-</div>
-<a name="getUserCookie()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getUserCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getUserCookie(occupantId:int, callback:Function):void</code><p>
-     Get the user-specific game data for the specified user. The first time this is requested per
-     game instance it will be retrieved from the database. After that, it will be returned from
-     memory. 
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
 </tr>
 </table>
 </div>
@@ -303,12 +353,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function holdsTrophy(ident:String):Boolean</code><p>
-     Returns true if this client's player has the trophy with the specified identifier.
-     </p><span class="label">Parameters</span>
+<code>public function holdsTrophy(ident:String, playerId:int):Boolean</code><p>
+     Returns true if this client's player (the default) or a specified player has the trophy
+     with the specified identifier.
+          </p><p>Note: Clients may only test the trophies of the current player. Server agents do not
+     have a current player and therefore must pass in a valid player id.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the id of the player whose trophies to test
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 <p></p>
@@ -319,21 +379,29 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="setUserCookie()"></a>
+<a name="setCookie()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">setUserCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">setCookie</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setUserCookie(cookie:Object):Boolean</code><p>
+<code>public function setCookie(cookie:Object, occupantId:int):Boolean</code><p>
      Store persistent data that can later be retrieved by an instance of this game. The maximum
-     size of this data is 4096 bytes AFTER AMF3 encoding.  Note: there is no playerId parameter
-     because a cookie may only be stored for the current player.
-          </p><span class="label">Parameters</span>
+     size of this data is 4096 bytes AFTER AMF3 encoding.
+          </p><p>Note: Clients may only set the cookie of the current player. Server agents do not
+     have a current player and therefore must pass in a valid player id.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">cookie</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">cookie</span>:Object</code> &mdash; the id of the player whose cookie to get
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
 </tr>
 </table>
 <p></p>
@@ -361,11 +429,37 @@ showHideInherited();
 <span class="label">CoinsAwardedEvent.type property = </span><a href="../game/CoinsAwardedEvent.html#COINS_AWARDED"><code>com.whirled.game.CoinsAwardedEvent.COINS_AWARDED</code></a>
 <br><p>
  Dispatched when this player has been awarded coins.
- 
- </p><p>
+  </p><p>
      An event type dispatched at the end of a game (before GAME_ENDED) to inform the game that
      the player has earned coins.
           </p></div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="CURRENT_USER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CURRENT_USER</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const CURRENT_USER:int = 0</code><p> ID constant passed to cookie, prize and trophy functions to refer to the current player.
+     On normal flash clients, this is used as a default value and should not be changed. On
+     server agents, a valid playerId must be provided since there is no current player.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/PlayerSubControl.html#awardTrophy()" target="">awardTrophy()</a>
+<br>
+<a href="../game/PlayerSubControl.html#holdsTrophy()" target="">holdsTrophy()</a>
+<br>
+<a href="../game/PlayerSubControl.html#setCookie()" target="">setCookie()</a>
+<br>
+<a href="../game/PlayerSubControl.html#getCookie()" target="">getCookie()</a>
+<br>
+<a href="../game/PlayerSubControl.html#awardPrize()" target="">awardPrize()</a>
+</div>
+</div>
 <br>
 <br>
 <hr>
