@@ -782,7 +782,26 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function lookupEntityProperty (key :String) :Object
     {
-        return callUserCode("lookupEntityProperty_v1", key);
+        var specialProperties :Object = {
+            // TODO: Bring these name constants in from somewhere
+            "std:hotspot": function () :Array {
+                var hotspot :Point = getMediaHotSpot();
+                return [hotspot.x, hotspot.y];
+            },
+            "std:location_logical": function () :Array {
+                var loc :MsoyLocation = getLocation();
+                return [loc.x, loc.y, loc.z];
+            },
+            "std:orientation": function () :Number {
+                return getLocation().orient;
+            }
+        };
+
+        if (key in specialProperties) {
+            return (specialProperties[key] as Function)();
+        } else {
+            return callUserCode("lookupEntityProperty_v1", key);
+        }
     }
 
     /**
