@@ -41,7 +41,16 @@ public class MemberName extends Name
     public static final int MAXIMUM_PERMANAME_LENGTH = 12;
 
     /**
-     * Returns true if the supplied member id represents a guest rather than a registered user.
+     * Returns true if the supplied member id represents an anonymous viewer.
+     */
+    public static boolean isViewer (int memberId) 
+    {
+        return memberId == 0;
+    }
+    
+    /**
+     * Returns true if the supplied member id represents a guest or a viewer, 
+     * rather than a registered user.
      */
     public static boolean isGuest (int memberId)
     {
@@ -73,11 +82,19 @@ public class MemberName extends Name
     }
 
     /**
-     * Returns true if this name represents a guest member.
+     * Returns true if this name represents a guest member or a viewer.
      */
     public boolean isGuest ()
     {
         return isGuest(_memberId);
+    }
+
+    /**
+     * Returns true if this name represents an anonymous viewer.
+     */
+    public boolean isViewer ()
+    {
+        return isViewer(_memberId);
     }
 
     // from DSet.Entry
