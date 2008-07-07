@@ -24,10 +24,15 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
+import com.threerings.user.OOOUser;
+
+import com.threerings.underwire.server.persist.EventRecord;
+import com.threerings.underwire.server.persist.UnderwireRepository;
+import com.threerings.underwire.web.data.Event;
+
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.persist.OOOUserRecord;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -35,10 +40,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-
-import com.threerings.underwire.server.persist.EventRecord;
-import com.threerings.underwire.server.persist.UnderwireRepository;
-import com.threerings.underwire.web.data.Event;
 
 import static com.threerings.msoy.Log.log;
 
@@ -60,7 +61,7 @@ public class MsoyUnderwireManager
      * Adds an auto-ban event record to the user.
      */
     @BlockingThread
-    public void reportAutoBan (OOOUserRecord user, String reason)
+    public void reportAutoBan (OOOUser user, String reason)
         throws PersistenceException
     {
         MemberName name = _memberRepo.loadMemberName(user.email);

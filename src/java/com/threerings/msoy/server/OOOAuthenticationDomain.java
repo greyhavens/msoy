@@ -23,7 +23,6 @@ import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.server.persist.OOODatabase;
-import com.threerings.msoy.server.persist.OOOUserRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -38,7 +37,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // make sure this account is not already in use
-        if (_authrep.loadUserRecordByEmail(accountName) != null) {
+        if (_authrep.loadUserByEmail(accountName, false) != null) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
 
@@ -53,7 +52,7 @@ public class OOOAuthenticationDomain
         }
 
         // load up our newly created record
-        OOOUserRecord user = _authrep.loadUserRecord(userId);
+        OOOUser user = _authrep.loadUser(userId);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
@@ -62,7 +61,7 @@ public class OOOAuthenticationDomain
         OOOAccount account = new OOOAccount();
         account.accountName = user.email;
         account.tokens = new MsoyTokenRing();
-        account.record = user;
+        account.user = user;
         return account;
     }
 
@@ -72,7 +71,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -103,7 +102,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -126,7 +125,7 @@ public class OOOAuthenticationDomain
         OOOAccount account = new OOOAccount();
         account.accountName = user.email;
         account.tokens = new MsoyTokenRing(tokens);
-        account.record = user;
+        account.user = user;
         return account;
     }
 
@@ -136,7 +135,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        OOOUserRecord user = oooacc.record;
+        OOOUser user = oooacc.user;
 
         // if they gave us an invalid machIdent, ban them
         if (!newIdent && !StringUtil.isBlank(machIdent) &&
@@ -184,7 +183,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        if (oooacc.record.holdsToken(OOOUser.MSOY_BANNED)) {
+        if (oooacc.user.holdsToken(OOOUser.MSOY_BANNED)) {
             throw new ServiceException(MsoyAuthCodes.BANNED);
         }
         // TODO: do we care about other badness like DEADBEAT?
@@ -194,7 +193,7 @@ public class OOOAuthenticationDomain
     public String generatePasswordResetCode (String accountName)
         throws ServiceException, PersistenceException
     {
-        OOOUserRecord user = _authrep.loadUserRecordByEmail(accountName);
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
     }
 
@@ -214,7 +213,7 @@ public class OOOAuthenticationDomain
 
     protected static class OOOAccount extends MsoyAuthenticator.Account
     {
-        public OOOUserRecord record;
+        public OOOUser user;
     }
 
     protected static class MsoyUsername extends Username
