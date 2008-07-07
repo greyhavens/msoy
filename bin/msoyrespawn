@@ -12,8 +12,10 @@ my $procid = shift or die "Usage: $0 procid [pidfile]\n";
 my $msoy_user = read_prop("$root/dist/server.conf", "MSOY_USER");
 die "Unable to determine server user from $root/dist/server.conf\n" unless (defined $msoy_user);
 
-my $LOG;
-if (!open($LOG, ">$root/log/respawn-$procid.log")) {
+# This script is only kicked off by 'msoy start' which already redirects. Just write to STDERR
+my $LOG = STDERR;
+my $redirect_output = 0;
+if ($redirect_output && !open($LOG, ">$root/log/respawn-$procid.log")) {
     warn "Unable to log to $root/log/respawn-$procid.log: $!\n";
     $LOG = STDERR;
 }
