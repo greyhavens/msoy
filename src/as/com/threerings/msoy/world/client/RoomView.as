@@ -433,9 +433,13 @@ public class RoomView extends Sprite
     {
         var decor :Decor = _scene.getDecor();
         if (_bg != null && decor != null) {
+            dispatchEntityLeft(_bg.getItemIdent());
+
             spriteWillUpdate(_bg);
             _bg.updateFromDecor(decor);
             spriteDidUpdate(_bg);
+
+            dispatchEntityEntered(_bg.getItemIdent());
         }
     }
 
@@ -837,9 +841,13 @@ public class RoomView extends Sprite
     {
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
+            dispatchEntityLeft(sprite.getItemIdent());
+
             spriteWillUpdate(sprite);
             sprite.update(furni);
             spriteDidUpdate(sprite);
+
+            dispatchEntityEntered(sprite.getItemIdent());
         } else {
             addFurni(furni);
         }
