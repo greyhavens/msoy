@@ -853,7 +853,7 @@ public class MsoySprite extends DataPackMediaContainer
     {
         var ctrl :RoomController = getController();
 
-        return (ctrl == null) ? [] : ctrl.getEntityIds(type);
+        return (ctrl == null) ? null : ctrl.getEntityIds(type);
     }
 
     public function getEntityType (entityId :String) :String

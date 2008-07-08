@@ -90,7 +90,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getEntityIds_v1 (type :String) :Array
     {
-        return (_sprite == null) ? [] : _sprite.getEntityIds(type);
+        return (_sprite == null) ? null : _sprite.getEntityIds(type);
     }
 
     protected function getEntityType_v1 (entityId :String) :String
@@ -132,7 +132,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getMemories_v1 () :Object
     {
-        return (_sprite == null) ? {} : _sprite.getMemories();
+        return (_sprite == null) ? null : _sprite.getMemories();
     }
 
     protected function lookupMemory_v1 (key :String) :Object
@@ -147,7 +147,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getRoomProperties_v1 () :Object
     {
-        return (_sprite == null) ? {} : _sprite.getRoomProperties();
+        return (_sprite == null) ? null : _sprite.getRoomProperties();
     }
 
     protected function getRoomProperty_v1 (key :String) :Object
