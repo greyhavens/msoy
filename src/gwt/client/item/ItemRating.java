@@ -30,24 +30,29 @@ public class ItemRating extends FlexTable
         _averageStars = new Stars(_item.rating, true, false, null);
 
         // if we're not logged in, force read-only mode
-        if (CShell.isGuest() || !item.isRatable()) {
-            setWidget(0, 0, _averageStars);
-            return;
-        }
-
-        _memberRating = memberRating;
-        _playerStars = new Stars(_memberRating, false, false, this);
+        boolean writable = (item.isRatable() && ! CShell.isGuest());
 
         _ratingCount = new Label();
+        _ratingCount.setStyleName(STYLE_COUNT);
         updateRatingCount();
 
-        _ratingTip = new Label();
-        _ratingDesc = new Label();
+        if (writable) {
+            _memberRating = memberRating;
+            _playerStars = new Stars(_memberRating, false, false, this);
 
-        // Initialize the default context tips
-        starMouseOff();
+            _ratingTip = new Label();
+            _ratingDesc = new Label();
+
+            _ratingTip.setStyleName(STYLE_RATING);
+            _ratingDesc.setStyleName(STYLE_RATING);
+
+            // Initialize the default context tips
+            starMouseOff();
+        }
 
         Label ratingAverage = new Label(CShell.cmsgs.averageRating());
+        ratingAverage.setStyleName(STYLE_RATING);
+
         HTML nbsp = new HTML("&#160;");
         if (_horiz) {
             HorizontalPanel panel = new HorizontalPanel();
@@ -58,30 +63,28 @@ public class ItemRating extends FlexTable
             setWidget(0, 0, ratingAverage);
             setWidget(1, 0, panel);
 
-            setWidget(0, 1, WidgetUtil.makeShim(35, 5));
+            if (writable) {
+                setWidget(0, 1, WidgetUtil.makeShim(35, 5));
 
-            setWidget(0, 2, _ratingTip);
-            setWidget(0, 3, _ratingDesc);
-            setWidget(1, 2, _playerStars);
-            getFlexCellFormatter().setColSpan(1, 2, 2);
-
+                setWidget(0, 2, _ratingTip);
+                setWidget(0, 3, _ratingDesc);
+                setWidget(1, 2, _playerStars);
+                getFlexCellFormatter().setColSpan(1, 2, 2);
+            }
         } else {
             setWidget(0, 0, ratingAverage);
             setWidget(0, 1, _averageStars);
             setWidget(1, 0, _ratingCount);
-            setWidget(2, 0, _ratingTip);
-            setWidget(2, 1, _playerStars);
 
-            setWidget(3, 0, _ratingDesc);
-            setWidget(3, 1, nbsp);
-            getFlexCellFormatter().setColSpan(3, 0, 2);
+            if (writable) {
+                setWidget(2, 0, _ratingTip);
+                setWidget(2, 1, _playerStars);
+
+                setWidget(3, 0, _ratingDesc);
+                setWidget(3, 1, nbsp);
+                getFlexCellFormatter().setColSpan(3, 0, 2);
+            }
         }
-
-        ratingAverage.setStyleName(STYLE_RATING);
-        _ratingTip.setStyleName(STYLE_RATING);
-        _ratingDesc.setStyleName(STYLE_RATING);
-
-        _ratingCount.setStyleName(STYLE_COUNT);
     }
 
     // from interface Stars.StarMouseListener
