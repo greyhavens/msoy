@@ -1,20 +1,20 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.client;
+package com.threerings.msoy.bureau.client;
 
-import com.threerings.msoy.game.client.MsoyBureauLauncherReceiver;
+import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
 import com.threerings.presents.client.InvocationDecoder;
 
 /**
- * Dispatches calls to a {@link MsoyBureauLauncherReceiver} instance.
+ * Dispatches calls to a {@link BureauLauncherReceiver} instance.
  */
-public class MsoyBureauLauncherDecoder extends InvocationDecoder
+public class BureauLauncherDecoder extends InvocationDecoder
 {
     /** The generated hash code used to identify this receiver class. */
     public static final String RECEIVER_CODE = "f8fde6d3f7a50bb8043549bf1f5b9cb4";
 
-    /** The method id used to dispatch {@link MsoyBureauLauncherReceiver#launchThane}
+    /** The method id used to dispatch {@link BureauLauncherReceiver#launchThane}
      * notifications. */
     public static final int LAUNCH_THANE = 1;
 
@@ -22,7 +22,7 @@ public class MsoyBureauLauncherDecoder extends InvocationDecoder
      * Creates a decoder that may be registered to dispatch invocation
      * service notifications to the specified receiver.
      */
-    public MsoyBureauLauncherDecoder (MsoyBureauLauncherReceiver receiver)
+    public BureauLauncherDecoder (BureauLauncherReceiver receiver)
     {
         this.receiver = receiver;
     }
@@ -38,7 +38,7 @@ public class MsoyBureauLauncherDecoder extends InvocationDecoder
     {
         switch (methodId) {
         case LAUNCH_THANE:
-            ((MsoyBureauLauncherReceiver)receiver).launchThane(
+            ((BureauLauncherReceiver)receiver).launchThane(
                 (String)args[0], (String)args[1], (String)args[2], ((Integer)args[3]).intValue()
             );
             return;

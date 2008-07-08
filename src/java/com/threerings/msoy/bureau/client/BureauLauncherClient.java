@@ -1,14 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.client;
+package com.threerings.msoy.bureau.client;
 
 import com.samskivert.util.Logger;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.game.data.MsoyBureauLauncherCredentials;
-import com.threerings.msoy.game.data.MsoyBureauLauncherCodes;
+import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
+import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
@@ -21,7 +21,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Connects to the msoy game server and receives requests to launch bureaus.
  */
-public class MsoyBureauLauncherClient extends Client
+public class BureauLauncherClient extends Client
 {
     /**
      * Basic queue of runnables.
@@ -93,14 +93,14 @@ public class MsoyBureauLauncherClient extends Client
      */
     public static void main (String[] args)
     {
-        MsoyBureauLauncherClient client;
+        BureauLauncherClient client;
 
         String[] serverList = ServerConfig.bureauGameServers.split(",");
         for (int ii = 0; ii < serverList.length; ii++) {
             serverList[ii] = serverList[ii].trim();
             log.info("Connecting to " + serverList[ii]);
             Runner queue = new Runner();
-            client = new MsoyBureauLauncherClient(queue);
+            client = new BureauLauncherClient(queue);
             client.setServer(serverList[ii]);
             client.logon();
             queue.run();
@@ -115,33 +115,33 @@ public class MsoyBureauLauncherClient extends Client
 
     /**
      * Creates a new bureau launcher client, setting up bureau launcher authentation.
-     * @see MsoyBureauLauncherCredentials
-     * @see MsoyBureauLauncherAuthenticator
+     * @see BureauLauncherCredentials
+     * @see BureauLauncherAuthenticator
      * @see ServerConfig#bureauSharedSecret
      */
-    public MsoyBureauLauncherClient (Runner queue)
+    public BureauLauncherClient (Runner queue)
     {
-        super(new MsoyBureauLauncherCredentials(
+        super(new BureauLauncherCredentials(
             ServerConfig.serverHost, 
             ServerConfig.bureauSharedSecret), queue);
 
         log.info("Created credentials: " + _creds);
         addClientObserver(new Observer());
-        addServiceGroup(MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+        addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
 
-        MsoyBureauLauncherReceiver receiver = new MsoyBureauLauncherReceiver () {
+        BureauLauncherReceiver receiver = new BureauLauncherReceiver () {
             public void launchThane (
                 String bureauId,
                 String token,
                 String server,
                 int port) {
-                MsoyBureauLauncherClient.this.launchThane(
+                BureauLauncherClient.this.launchThane(
                     bureauId, token, server, port);
             }
         };
 
         getInvocationDirector().
-            registerReceiver(new MsoyBureauLauncherDecoder(receiver));
+            registerReceiver(new BureauLauncherDecoder(receiver));
     }
 
     /**
@@ -207,9 +207,9 @@ public class MsoyBureauLauncherClient extends Client
         public void clientDidLogon (Client client)
         {
             _loggedOn = true;
-            _service = getService(MsoyBureauLauncherService.class);
+            _service = getService(BureauLauncherService.class);
             log.info("Retrieved service " + _service);
-            _service.launcherInitialized(MsoyBureauLauncherClient.this);
+            _service.launcherInitialized(BureauLauncherClient.this);
         }
 
         public void clientFailedToLogon (Client client, Exception cause)
@@ -230,5 +230,5 @@ public class MsoyBureauLauncherClient extends Client
     }
 
     protected boolean _loggedOn;
-    protected MsoyBureauLauncherService _service;
+    protected BureauLauncherService _service;
 }

@@ -58,7 +58,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.MsoyBureauLauncherCodes;
+import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -66,7 +66,7 @@ import static com.threerings.msoy.Log.log;
  * A server that does nothing but host games.
  */
 public class MsoyGameServer extends MsoyBaseServer
-    implements MsoyBureauLauncherProvider
+    implements BureauLauncherProvider
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -143,7 +143,7 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // prepare for bureau launcher clients
         _clmgr.setClientFactory(
-            new MsoyBureauLauncherClientFactory(_clmgr.getClientFactory()));
+            new BureauLauncherClientFactory(_clmgr.getClientFactory()));
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -165,16 +165,16 @@ public class MsoyGameServer extends MsoyBaseServer
             log.info("Running thane bureaus remotely");
             _bureauReg.setLauncher(
                 WhirledGameManager.THANE_BUREAU, new RemoteBureauLauncher());
-            _conmgr.addChainedAuthenticator(new MsoyBureauLauncherAuthenticator());
-            _invmgr.registerDispatcher(new MsoyBureauLauncherDispatcher(this),
-                MsoyBureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+            _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
+            _invmgr.registerDispatcher(new BureauLauncherDispatcher(this),
+                BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
         }
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
         log.info("Game server initialized.");
     }
 
-    // from MsoyBureauLauncherProvider
+    // from BureauLauncherProvider
     public void launcherInitialized (ClientObject launcher)
     {
         // this launcher is now available to take sender requests
@@ -268,7 +268,7 @@ public class MsoyGameServer extends MsoyBaseServer
             String bureauId,
             String token) {
             ClientObject launcher = selectLauncher();
-            MsoyBureauLauncherSender.launchThane(
+            BureauLauncherSender.launchThane(
                 launcher, bureauId, token, ServerConfig.serverHost, 
                 getListenPorts()[0]);
         }

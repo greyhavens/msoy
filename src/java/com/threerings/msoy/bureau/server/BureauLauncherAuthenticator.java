@@ -1,7 +1,7 @@
 package com.threerings.msoy.game.server;
 
 import com.samskivert.io.PersistenceException;
-import com.threerings.msoy.game.data.MsoyBureauLauncherCredentials;
+import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.presents.data.AuthCodes;
 import com.threerings.presents.net.AuthRequest;
@@ -16,10 +16,10 @@ import static com.threerings.msoy.Log.log;
  * Authenticator for incoming connections from a bureau launcher.
  * This is expected to be used by msoy game servers.
  */
-public class MsoyBureauLauncherAuthenticator extends ChainedAuthenticator
+public class BureauLauncherAuthenticator extends ChainedAuthenticator
 {
     /** Creates a new bureau launcher authenticator. */
-    public MsoyBureauLauncherAuthenticator ()
+    public BureauLauncherAuthenticator ()
     {
     }
 
@@ -27,7 +27,7 @@ public class MsoyBureauLauncherAuthenticator extends ChainedAuthenticator
     protected boolean shouldHandleConnection (AuthingConnection conn)
     {
         return (conn.getAuthRequest().getCredentials() 
-                instanceof MsoyBureauLauncherCredentials);
+                instanceof BureauLauncherCredentials);
     }
 
     @Override // from abstract Authenticator
@@ -36,10 +36,10 @@ public class MsoyBureauLauncherAuthenticator extends ChainedAuthenticator
     {
         // here, we are ONLY authenticating bureau launchers
         AuthRequest req = conn.getAuthRequest();
-        MsoyBureauLauncherCredentials launcherCreds = 
-            (MsoyBureauLauncherCredentials) req.getCredentials();
+        BureauLauncherCredentials launcherCreds = 
+            (BureauLauncherCredentials) req.getCredentials();
 
-        String password = MsoyBureauLauncherCredentials.createPassword(
+        String password = BureauLauncherCredentials.createPassword(
             launcherCreds.getNodeName(), ServerConfig.bureauSharedSecret);
 
         if (password.equals(launcherCreds.getPassword())) {

@@ -3,30 +3,30 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.game.data.MsoyBureauLauncherMarshaller;
+import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 
 /**
- * Dispatches requests to the {@link MsoyBureauLauncherProvider}.
+ * Dispatches requests to the {@link BureauLauncherProvider}.
  */
-public class MsoyBureauLauncherDispatcher extends InvocationDispatcher<MsoyBureauLauncherMarshaller>
+public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLauncherMarshaller>
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
      * service requests for the specified provider.
      */
-    public MsoyBureauLauncherDispatcher (MsoyBureauLauncherProvider provider)
+    public BureauLauncherDispatcher (BureauLauncherProvider provider)
     {
         this.provider = provider;
     }
 
     @Override // documentation inherited
-    public MsoyBureauLauncherMarshaller createMarshaller ()
+    public BureauLauncherMarshaller createMarshaller ()
     {
-        return new MsoyBureauLauncherMarshaller();
+        return new BureauLauncherMarshaller();
     }
 
     @SuppressWarnings("unchecked")
@@ -36,8 +36,8 @@ public class MsoyBureauLauncherDispatcher extends InvocationDispatcher<MsoyBurea
         throws InvocationException
     {
         switch (methodId) {
-        case MsoyBureauLauncherMarshaller.LAUNCHER_INITIALIZED:
-            ((MsoyBureauLauncherProvider)provider).launcherInitialized(
+        case BureauLauncherMarshaller.LAUNCHER_INITIALIZED:
+            ((BureauLauncherProvider)provider).launcherInitialized(
                 source                
             );
             return;
