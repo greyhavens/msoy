@@ -262,6 +262,7 @@
     <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
     <copy tofile="${deploy.dir}/log4j-game.properties" file="${basedir}/${log4j_game_config}"/>
     <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
+    <copy tofile="${deploy.dir}/log4j-bureaulauncher.properties" file="${basedir}/${log4j_bureau_config}"/>
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
     <!-- generate our index.html and crossdomain.xml -->
@@ -1087,6 +1088,10 @@
         <file name="runcommon"/>
         <file name="runpolicy"/>
         <file name="runthaneclient"/>
+        <file name="msoyb"/>
+        <file name="msoybureaulauncher"/>
+        <file name="msoybureaulauncherrespawn"/>
+        <file name="runmsoybureaulauncher"/>
       </filelist>
     </copyfilelist>
     <copyfilelist dest="${approot.server}/tools/bin">
@@ -1152,6 +1157,15 @@
                    pidfile="${app.prefix}/run/policy-server.pid"
                    output="${approot.server}/etc/rc.d/policy-server.sh">
       <command cmd="/usr/sbin/daemon" args="-f ${app.prefix}/bin/runpolicy" procname="*java*"/>
+    </startupscript>
+
+    <!-- create out bureau launcher startup script -->
+    <startupscript name="msoy_bureau" runas="${msoy.user}"
+                   output="${approot.server}/etc/rc.d/${app.name}-bureau.sh">
+      <commands>
+        <start cmdline="${app.prefix}/bin/msoyb start"/>
+        <stop cmdline="${app.prefix}/bin/msoyb stop"/>
+      </commands>
     </startupscript>
 
     <!-- build the actual Debian package -->

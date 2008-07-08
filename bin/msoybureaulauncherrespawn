@@ -15,8 +15,8 @@ die "Unable to determine server user from $root/dist/server.conf\n" unless (defi
 # This script is only kicked off by 'msoy start' which already redirects. Just write to STDERR
 my $LOG = STDERR;
 my $redirect_output = 0;
-if ($redirect_output && !open($LOG, ">$root/log/respawn-$procid.log")) {
-    warn "Unable to log to $root/log/respawn-$procid.log: $!\n";
+if ($redirect_output && !open($LOG, ">$root/log/brespawn-$procid.log")) {
+    warn "Unable to log to $root/log/brespawn-$procid.log: $!\n";
     $LOG = STDERR;
 }
 
@@ -40,7 +40,7 @@ while (1) {
     # update the code to the latest version
     if (read_prop("$root/dist/server.properties", "dev_deployment") ne "true") {
         check_system("apt-get update");
-        check_system("apt-get install msoy-bureaulauncher");
+        check_system("apt-get install msoy-server");
     }
 
     # now run the server
@@ -59,11 +59,21 @@ while (1) {
 	print $LOG "$fnow MetaSOY bureau launcher exited healthily after $duration seconds.\n";
     }
 
+    # sleep a minimum of 15 seconds since the bureau launcher normally only exits if the 
+    # main server has restarted for some reason, in which case we want to give it some time
+    # to start accepting connections
+    my $sleep = 15;
+
     # don't spiral out of control; only restart once per minute
     if ($duration < 60) {
         print $LOG "$fnow MetaSOY bureau launcher exited too quickly. Taking a breather.\n";
-        sleep(60-$duration);
+        if (60-$duration > $sleep) {
+            $sleep = 60-$duration;
+        }
     }
+
+    print $LOG "$fnow Sleeping for $sleep seconds.\n";
+    sleep($sleep);
 }
 
 sub check_system {

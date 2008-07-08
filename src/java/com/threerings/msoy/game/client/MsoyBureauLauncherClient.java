@@ -105,11 +105,12 @@ public class MsoyBureauLauncherClient extends Client
             client.logon();
             queue.run();
             if (client.wasLoggedOn()) {
-                log.info("Logon successful, exiting");
+                log.info("Logon was successful");
                 break;
             }
             log.info("Logon failed");
         }
+        log.info("Exiting");
     }
 
     /**
