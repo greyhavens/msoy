@@ -313,6 +313,20 @@ public class Application
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
 
+        // pull the affiliate id out of the URL
+        int aidIdx = args.indexOf("aid");
+        if (aidIdx != -1) {
+            String aid = args.get(aidIdx + 1, "");  // get the affiliate id string
+
+            // remove the affiliate ID
+            token = Args.compose(args.remove(aidIdx, aidIdx + 2));
+            args = new Args();
+            args.setToken(token);
+
+            // let someone know
+            AffiliateCookie.put(aid);
+        }            
+
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(page)) {
             // tell any existing page that it's being unloaded
