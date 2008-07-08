@@ -104,6 +104,21 @@ public class Args
     }
 
     /**
+     * If this args list contains the specified string, returns its index.
+     * Otherwise returns the value -1.
+     */
+    public int indexOf (String value)
+    {
+        for (int ii = 0, count = _args.size(); ii < count; ii++) {
+            String element = _args.get(ii);
+            if ((element == null && value == null) || element.equals(value)) {
+                return ii;
+            }
+        }
+        return -1;
+    }
+    
+    /**
      * Splices off the arguments from the specified index onward and returns them as an array for
      * recomposition with {@link #compose}.
      */
@@ -116,6 +131,31 @@ public class Args
         return args;
     }
 
+    /**
+     * Removes arguments between the start index, up to but not including the end index,
+     * and returns the result as a new array for recomposition with {@link #compose}.
+     *
+     * <p>For example, suppose your Args holds elements { "a", "b", "c", "d", "e" }.
+     * Calling <code>remove(1, 3)</code> will return an array of strings
+     * containing elements { "a", "d", "e" }.
+     */
+    public String[] remove (int start, int end)
+    {
+        int total = _args.size();
+        String[] args = new String[total - (end - start)];
+
+        int from = 0;
+        int to = 0;
+        while (from < total) {
+            if (from < start || from >= end) {
+                args[to] = _args.get(from);
+                to++;
+            }
+            from++;
+        }
+        return args;
+    }
+    
     /**
      * Called by {@link Application} when configuring our arguments.
      */
