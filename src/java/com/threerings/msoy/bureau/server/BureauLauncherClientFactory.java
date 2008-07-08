@@ -1,4 +1,7 @@
-package com.threerings.msoy.game.server;
+//
+// $Id$
+
+package com.threerings.msoy.bureau.server;
 
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.presents.net.AuthRequest;

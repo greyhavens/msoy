@@ -1,4 +1,7 @@
-package com.threerings.msoy.game.server;
+//
+// $Id$
+
+package com.threerings.msoy.bureau.server;
 
 import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;

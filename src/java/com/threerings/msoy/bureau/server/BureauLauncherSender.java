@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.server;
+package com.threerings.msoy.bureau.server;
 
 import com.threerings.msoy.bureau.client.BureauLauncherDecoder;
 import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
