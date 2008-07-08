@@ -30,6 +30,6 @@ while [ ! -z "$1" ]; do
     shift
 done
 
-CLASS=com.threerings.msoy.bureau.client.BureauLauncherClient
+CLASS=com.threerings.msoy.bureau.client.BureauLauncher
 `dirname $0`/msoyjava -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
     $JAVA_ARGS $CLASS $*

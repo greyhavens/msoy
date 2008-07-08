@@ -39,7 +39,7 @@ if [ "$WHOAMI" != "$MSOY_USER" ]; then
     exit 255
 fi
 
-CLASS=com.threerings.msoy.bureau.client.BureauLauncherClient
+CLASS=com.threerings.msoy.bureau.client.BureauLauncher
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy \
     -Djava.rmi.server.hostname=$HOSTNAME \

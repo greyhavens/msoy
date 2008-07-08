@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.bureau.client;
 
-import com.samskivert.util.Logger;
-import com.samskivert.util.ProcessLogger;
-import com.samskivert.util.RunQueue;
-import com.samskivert.util.StringUtil;
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.server.ServerConfig;
@@ -14,7 +10,7 @@ import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
-import com.threerings.presents.net.Credentials;
+import com.threerings.presents.data.ClientObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -24,132 +20,19 @@ import static com.threerings.msoy.Log.log;
 public class BureauLauncherClient extends Client
 {
     /**
-     * Basic queue of runnables.
-     */
-    public static class Runner implements RunQueue
-    {
-        /**
-         * Execute until {@link #stop} is called and the queue is empty.
-         */
-        public void run ()
-        {
-            while (true) {
-                if (_queue.isEmpty()) {
-                    if (_stopped) {
-                        break;
-                    }
-                    try {
-                        synchronized (this) {
-                            wait();
-                        }
-                    } catch (InterruptedException ie) {
-                        // what to do?
-                    }
-                }
-
-                Runnable r = _queue.remove(0);
-                try {
-                    r.run();
-                } catch (Throwable t) {
-                    log.warning("Runnable " + r + " threw", t);
-                }
-            }
-        }
-
-        /**
-         * Stop the run method once the queue has been depleted.
-         */
-        synchronized public void stop ()
-        {
-            _stopped = true;
-            notify();
-        }
-
-        // from RunQueue
-        synchronized public void postRunnable (Runnable r)
-        {
-            _queue.add(r);
-            notify();
-        }
-
-        // from RunQueue
-        public boolean isDispatchThread ()
-        {
-            return Thread.currentThread() == _dispatcher;
-        }
-
-        protected Thread _dispatcher = Thread.currentThread();
-        protected java.util.List<Runnable> _queue = 
-            java.util.Collections.synchronizedList(
-                new java.util.LinkedList<Runnable>());
-        protected boolean _stopped;
-    }
-
-    /** 
-     * Runs the client program. The arguments are not used and all data is read from 
-     * server.properties. The servers declared in {@link ServerConfig#bureauGameServers} are 
-     * connected to in turn until one of them succeeds. The successful connection is kept open 
-     * indefinitely, after which the method exits.
-     */
-    public static void main (String[] args)
-    {
-        BureauLauncherClient client;
-
-        String[] serverList = ServerConfig.bureauGameServers.split(",");
-        for (int ii = 0; ii < serverList.length; ii++) {
-            serverList[ii] = serverList[ii].trim();
-            log.info("Connecting to " + serverList[ii]);
-            Runner queue = new Runner();
-            client = new BureauLauncherClient(queue);
-            client.setServer(serverList[ii]);
-            client.logon();
-            queue.run();
-            if (client.wasLoggedOn()) {
-                log.info("Logon was successful");
-                break;
-            }
-            log.info("Logon failed");
-        }
-        log.info("Exiting");
-    }
-
-    /**
      * Creates a new bureau launcher client, setting up bureau launcher authentation.
      * @see BureauLauncherCredentials
      * @see BureauLauncherAuthenticator
      * @see ServerConfig#bureauSharedSecret
      */
-    public BureauLauncherClient (Runner queue)
+    public BureauLauncherClient (BureauLauncher launcher)
     {
         super(new BureauLauncherCredentials(
             ServerConfig.serverHost, 
-            ServerConfig.bureauSharedSecret), queue);
+            ServerConfig.bureauSharedSecret), launcher.getRunner());
 
-        log.info("Created credentials: " + _creds);
-        addClientObserver(new Observer());
         addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
-
-        BureauLauncherReceiver receiver = new BureauLauncherReceiver () {
-            public void launchThane (
-                String bureauId,
-                String token,
-                String server,
-                int port) {
-                BureauLauncherClient.this.launchThane(
-                    bureauId, token, server, port);
-            }
-        };
-
-        getInvocationDirector().
-            registerReceiver(new BureauLauncherDecoder(receiver));
-    }
-
-    /**
-     * Returns true if the client ever succeeded in logging on.
-     */
-    public boolean wasLoggedOn ()
-    {
-        return _loggedOn;
+        getInvocationDirector().registerReceiver(new BureauLauncherDecoder(launcher));
     }
 
     /**
@@ -166,69 +49,19 @@ public class BureauLauncherClient extends Client
         setServer(server, new int [] {Integer.parseInt(port)});
     }
 
-    @Override
+    @Override // from Client
     protected Communicator createCommunicator ()
     {
         return new BlockingCommunicator(this);
     }
 
-    /**
-     * Launches a thane bureau client.
-     */
-    protected void launchThane (
-        String bureauId,
-        String token,
-        String server,
-        int port)
+    @Override // from Client
+    protected void gotClientObject (ClientObject clobj)
     {
-        // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be 
-        // called when the first instance of a game is played since the last server restart, so it
-        // is debatable.
-        String [] command = {
-            ServerConfig.serverRoot + "/bin/runthaneclient",
-            bureauId, token, server, String.valueOf(port)};
-        log.info("Attempting to launch thane", "command", command);
-        ProcessBuilder builder = new ProcessBuilder(command);
-        builder.redirectErrorStream(true);
-        try {
-            Process process = builder.start();
-            // log the output of the process and prefix with bureau id
-            ProcessLogger.copyMergedOutput(log, bureauId, process);
-
-        } catch (java.io.IOException ioe) {
-            log.warning("Could not launch thane", "bureauId", bureauId, ioe);
-        }
+        super.gotClientObject(clobj);
+        _service = getService(BureauLauncherService.class);
+        _service.launcherInitialized(BureauLauncherClient.this);
     }
 
-    // Observe the connection progress, stopping the run queue
-    // on failure or logoff
-    protected class Observer extends ClientAdapter
-    {
-        public void clientDidLogon (Client client)
-        {
-            _loggedOn = true;
-            _service = getService(BureauLauncherService.class);
-            log.info("Retrieved service " + _service);
-            _service.launcherInitialized(BureauLauncherClient.this);
-        }
-
-        public void clientFailedToLogon (Client client, Exception cause)
-        {
-            log.warning("failed to logon", cause);
-            stop();
-        }
-
-        public void clientDidLogoff (Client client)
-        {
-            stop();
-        }
-
-        public void stop ()
-        {
-            ((Runner)_runQueue).stop();
-        }
-    }
-
-    protected boolean _loggedOn;
     protected BureauLauncherService _service;
 }
