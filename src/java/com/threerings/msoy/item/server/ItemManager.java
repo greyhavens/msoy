@@ -991,13 +991,62 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void deleteItem (ClientObject caller, ItemIdent ident,
-            InvocationService.ConfirmListener cl)
+    public void deleteItem (ClientObject caller, final ItemIdent ident,
+                            final InvocationService.ConfirmListener cl)
         throws InvocationException
     {
-        // TODO
-        reclaimItem(caller, ident, cl);
-        log.info("Server got a delete item request");
+        final MemberObject user = (MemberObject) caller;
+
+        getItem(ident, new ResultListener<Item>() {
+            public void requestCompleted (final Item result) {
+                final byte type = result.getType();
+                if (type == Item.DECOR || type == Item.PET || result.used == Item.USED_AS_FURNITURE) {
+                    _sceneReg.resolveScene(result.location, new SceneRegistry.ResolutionListener() {
+                        public void sceneWasResolved (SceneManager scene) {
+                            RoomManager room = (RoomManager)scene;
+                            if ( ! room.ensureEntityControl(user, ident, "selfDestruct")) {
+                                cl.requestFailed(ItemCodes.E_ACCESS_DENIED);
+                                return;
+                            }
+
+                            if (type == Item.DECOR) {
+                                room.reclaimDecor(user);
+                            } else if (type == Item.PET) {
+                                // TODO
+                                //room.reclaimPet(ident, user);
+                            } else {
+                                room.reclaimItem(ident, user);
+                            }
+
+                            ResultListener<Void> rl = new ResultListener.NOOP<Void>();
+                            MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", rl) {
+                                public Void invokePersistResult () throws Exception {
+                                    ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type);
+                                    repo.deleteItem(ident.itemId);
+                                    cl.requestProcessed();
+                                    return null;
+                                }
+                            });
+                        }
+
+                        public void sceneFailedToResolve (int sceneId, Exception reason) {
+                            log.warning("Scene failed to resolve. [id=" + sceneId + "]", reason);
+                            cl.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                        }
+                    });
+                } else {
+                    log.warning("Tried to reclaim invalid item type [type=" + ident.type +
+                        ", id=" + ident.itemId + "]");
+                    cl.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                }
+            }
+
+            public void requestFailed (Exception cause) {
+                log.warning("Failed to resolve item for deletion. [type=" + ident.type +
+                    ", id=" + ident.itemId + "].");
+                cl.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
     }
 
     // from ItemProvider
