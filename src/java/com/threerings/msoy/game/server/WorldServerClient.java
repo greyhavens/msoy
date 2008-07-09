@@ -20,6 +20,9 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.world.client.WatcherDecoder;
+import com.threerings.msoy.world.client.WatcherReceiver;
+import com.threerings.msoy.world.client.WatcherService;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
@@ -63,9 +66,28 @@ public class WorldServerClient
         _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(MsoyGameRegistry.GAME_SERVER_GROUP);
         _client.addClientObserver(_clientObs);
+        _client.getInvocationDirector().registerReceiver(new WatcherDecoder(_watchRec));
         _client.logon();
     }
 
+    public void addWatch (int playerId)
+    {
+        if (_wsvc == null) {
+            log.warning("Dropping watch request [id=" + playerId + "]");
+        } else {
+            _wsvc.addWatch(_client, playerId);
+        }
+    }
+    
+    public void clearWatch (int playerId)
+    {
+        if (_wsvc == null) {
+            log.warning("Dropping watch clear request [id=" + playerId + "]");
+        } else {
+            _wsvc.clearWatch(_client, playerId);
+        }
+    }
+    
     public void leaveAVRGame (int playerId)
     {
         if (_gssvc == null) {
@@ -142,6 +164,12 @@ public class WorldServerClient
         }
     }
 
+    protected WatcherReceiver _watchRec = new WatcherReceiver() {
+        public void memberMoved (int memberId, int sceneId, String hostname, int port) {
+            _watchmgr.memberMoved(memberId, sceneId, hostname, port);
+        }
+    };
+    
     protected ClientAdapter _clientObs = new ClientAdapter() {
         public void clientFailedToLogon (Client client, Exception cause) {
             log.warning("Failed to connect to world server.", cause);
@@ -152,11 +180,14 @@ public class WorldServerClient
             _gssvc = _client.requireService(GameServerService.class);
             _gssvc.sayHello(client, _port);
             client.getClientObject().addListener(WorldServerClient.this);
+            
+            _wsvc = _client.requireService(WatcherService.class);
         }
 
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
+            _wsvc = null;
             _shutmgr.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
         }
     };
@@ -164,8 +195,10 @@ public class WorldServerClient
     protected int _port;
     protected Client _client;
     protected GameServerService _gssvc;
+    protected WatcherService _wsvc;
 
     @Inject protected ShutdownManager _shutmgr;
     @Inject protected GameGameRegistry _gameReg;
+    @Inject protected GameWatcherManager _watchmgr;
     @Inject protected RootDObjectManager _omgr;
 }
