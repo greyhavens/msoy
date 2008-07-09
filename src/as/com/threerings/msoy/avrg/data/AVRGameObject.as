@@ -43,6 +43,9 @@ public class AVRGameObject extends DObject
     /** The field name of the <code>players</code> field. */
     public static const PLAYERS :String = "players";
 
+    /** The field name of the <code>playerLocs</code> field. */
+    public static const PLAYER_LOCS :String = "playerLocs";
+
     /** The field name of the <code>avrgService</code> field. */
     public static const AVRG_SERVICE :String = "avrgService";
 
@@ -59,6 +62,13 @@ public class AVRGameObject extends DObject
 
     /** Contains an {@link OccupantInfo} record for each player of this game. */
     public var players :DSet;
+
+    /**
+     * Tracks the (scene) location of each player. This data is only updated when the agent
+     * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
+     * requests.
+     */
+    public var playerLocs :DSet = new DSet();
 
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
@@ -89,6 +99,7 @@ public class AVRGameObject extends DObject
         state = (ins.readObject() as DSet);
         playerOids = (ins.readObject() as OidList);
         players = (ins.readObject() as DSet);
+        playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
     }
 }
