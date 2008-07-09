@@ -486,7 +486,7 @@ public class GameServlet extends MsoyServiceServlet
 
                 // then take N from that shuffled list as the games to show
                 goodGames = goodGames.subList(
-                    0, Math.min(games.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
+                    0, Math.min(goodGames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
                 genre.games = new GameInfo[goodGames.size()];
                 for (int ii = 0; ii < genre.games.length; ii++) {
                     genre.games[ii] = goodGames.get(ii).toGameInfo();
