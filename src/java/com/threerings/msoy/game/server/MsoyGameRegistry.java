@@ -34,6 +34,8 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.bureau.data.ServerRegistryObject;
+
 import com.threerings.msoy.person.data.GameAwardPayload;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -79,17 +81,6 @@ public class MsoyGameRegistry
         }
     };
 
-    /**
-     * Receives notification when a game server's client logs in.
-     */
-    public static interface HelloListener
-    {
-        /**
-         * Called when a game servers's client logs in.
-         */
-        void gotHello (ClientObject caller, int port);
-    }
-
     @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         shutmgr.registerShutdowner(this);
@@ -104,9 +95,12 @@ public class MsoyGameRegistry
     {
         _gameRepo = gameRepo;
 
+        _serverRegObj = new ServerRegistryObject();
+        _omgr.registerObject(_serverRegObj);
+
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
-        MsoyServer.omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
+        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
             public void run () {
                 // start up our game server handlers (and hence our game servers)
                 for (int ii = 0; ii < _handlers.length; ii++) {
@@ -120,11 +114,7 @@ public class MsoyGameRegistry
                 }
             }
         });
-    }
 
-    public void setHelloListener (HelloListener helloListener)
-    {
-        _helloListener = helloListener;
     }
 
     // from interface MsoyGameProvider
@@ -211,9 +201,8 @@ public class MsoyGameRegistry
         for (GameServerHandler handler : _handlers) {
             if (handler != null && handler.port == port) {
                 handler.setClientObject(caller);
-                if (_helloListener != null) {
-                    _helloListener.gotHello(caller, port);
-                }
+                _serverRegObj.addToServers(new ServerRegistryObject.ServerInfo(
+                    ServerConfig.serverHost, port));
                 return;
             }
         }
@@ -383,16 +372,9 @@ public class MsoyGameRegistry
         }
     }
 
-    /**
-     * Retrieve the ports of registered game servers (running on this host).
-     */
-    public int[] getGameServerPorts ()
+    public ServerRegistryObject getServerRegistryObject ()
     {
-        int[] ports = new int[_handlers.length];
-        for (int ii = 0; ii < ports.length; ++ii) {
-            ports[ii] = _handlers[ii].port;
-        }
-        return ports;
+        return _serverRegObj;
     }
 
     protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
@@ -606,8 +588,8 @@ public class MsoyGameRegistry
     /** Used to load metadata for games. */
     protected GameRepository _gameRepo;
 
-    /** Called when a game server's client logs in. */
-    protected HelloListener _helloListener;
+    /** Hold distributed information about our game servers. */
+    protected ServerRegistryObject _serverRegObj;
 
     /** Handlers for our delegate game servers. */
     protected GameServerHandler[] _handlers = new GameServerHandler[DELEGATE_GAME_SERVERS];
@@ -617,6 +599,7 @@ public class MsoyGameRegistry
 
     // dependencies
     @Inject protected PlaceRegistry _placeReg;
+    @Inject protected PresentsDObjectMgr _omgr;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;

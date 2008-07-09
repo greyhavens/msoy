@@ -141,7 +141,7 @@ public class BureauLauncher
     {
         try {
             for (NodeRecord node : _nodeRepo.loadNodes()) {
-                _worldConnections.add(node.publicHostName, node.port);
+                _connections.add(node.publicHostName, node.port);
             }
             
         } catch (PersistenceException pe) {
@@ -188,12 +188,11 @@ public class BureauLauncher
     // from BureauLauncherReceiver
     public void addGameServer (String host, int port)
     {
-        _gameConnections.add(host, port);
+        _connections.add(host, port);
     }
 
     protected Runner _runner = new Runner();
     @Inject protected NodeRepository _nodeRepo;
-    protected Connections _worldConnections = new Connections(this);
-    protected Connections _gameConnections = new Connections(this);
+    protected Connections _connections = new Connections(this);
     protected static long PEER_POLL_INTERVAL = 60000;
 }

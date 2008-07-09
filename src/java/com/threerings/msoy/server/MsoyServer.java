@@ -34,11 +34,13 @@ import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.client.InvocationService;
 
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
@@ -71,8 +73,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
-
-import com.threerings.msoy.bureau.server.BureauLauncherSender;
 
 import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
@@ -269,13 +269,12 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from BureauLauncherProvider
-    public void launcherInitialized (ClientObject launcher)
+    public void getGameServerRegistryOid (
+        ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException
     {
-        super.launcherInitialized(launcher);
-
-        for (int port : gameReg.getGameServerPorts()) {
-            BureauLauncherSender.addGameServer(launcher, ServerConfig.serverHost, port);
-        }
+        int oid = _gameReg.getServerRegistryObject().getOid();
+        arg1.requestProcessed(oid);
     }
 
     @Override // from MsoyBaseServer
@@ -319,12 +318,6 @@ public class MsoyServer extends MsoyBaseServer
         _petMan.init(injector);
         _gameReg.init(itemMan.getGameRepository());
         _supportMan.init(_perCtx);
-
-        _gameReg.setHelloListener(new MsoyGameRegistry.HelloListener () {
-            public void gotHello (ClientObject caller, int port) {
-                addGameServerToBureauLaunchers(port);
-            }
-        });
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -411,16 +404,6 @@ public class MsoyServer extends MsoyBaseServer
             }
         }
         _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
-    }
-
-    /**
-     * When a new game server logs in, this adds it to all of our bureau launchers.
-     */
-    protected void addGameServerToBureauLaunchers (int port)
-    {
-        for (ClientObject launcher : _launchers.values()) {
-            BureauLauncherSender.addGameServer(launcher, ServerConfig.serverHost, port);
-        }
     }
 
     /** Our runtime jabber manager. */

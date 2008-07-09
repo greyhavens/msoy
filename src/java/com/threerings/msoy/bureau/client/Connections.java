@@ -154,7 +154,7 @@ class Connections
          */
         public Entry (String host, int port)
         {
-            _client = new BureauLauncherClient(_launcher);
+            _client = new BureauLauncherClient(_launcher, Connections.this);
             _client.setServer(host, new int[]{port});
             _client.addClientObserver(_observer);
             setState(State.PENDING);
