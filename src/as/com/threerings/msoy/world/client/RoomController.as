@@ -992,7 +992,7 @@ public class RoomController extends SceneController
     /** The entity type groupings for querying for property owners. */
     protected static const ENTITY_TYPES :Object = {
         furni: [ ItemTypes.FURNITURE, ItemTypes.TOY, ItemTypes.DECOR ],
-        avatar: [ ItemTypes.AVATAR ],
+        avatar: [ ItemTypes.AVATAR, ItemTypes.OCCUPANT ],
         pet: [ ItemTypes.PET ]
     };
 
