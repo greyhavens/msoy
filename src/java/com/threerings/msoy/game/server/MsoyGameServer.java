@@ -59,6 +59,11 @@ import com.threerings.msoy.item.server.persist.AvatarRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
+import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
+import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
+import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
+import com.threerings.msoy.bureau.server.BureauLauncherProvider;
+import com.threerings.msoy.bureau.server.BureauLauncherSender;
 
 import static com.threerings.msoy.Log.log;
 
