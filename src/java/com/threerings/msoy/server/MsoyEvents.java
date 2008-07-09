@@ -424,6 +424,28 @@ public class MsoyEvents
         }
     }
     
+    @Event(name="ForumMessagePosted")
+    public static class ForumMessagePosted implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp; 
+        @Field final public int memberId;
+        @Field final public int threadId;
+        /** 
+         * The number of posts that have been added to the related discussion thread.
+         * If this is 1, it indicates that this is the first post of a new thread.
+         */
+        @Field final public int postNumber;
+       
+        public ForumMessagePosted (int memberId, int threadId, int postNumber)
+        {
+            this.timestamp = new Date();
+            this.memberId = memberId;
+            this.threadId = threadId;
+            this.postNumber = postNumber;
+        }
+        
+    }
+    
     protected static String toValue (String input) {
         return (input != null) ? input : "";
     }

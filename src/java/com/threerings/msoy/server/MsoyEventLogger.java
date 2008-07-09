@@ -209,6 +209,16 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.ProfileUpdated(memberId));
     }
+    
+    /**
+     * @param memberId who posted the message.
+     * @param threadId the ID for the discussion thread.
+     * @param postCount the current total number of posts to the thread.
+     */
+    public void forumMessagePosted (int memberId, int threadId, int postCount)
+    {
+    	post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
+    }
 
     /** Posts a log message to the appropriate place. */
     protected void post (MsoyEvent message)

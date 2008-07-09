@@ -20,6 +20,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -303,11 +304,14 @@ public class ForumServlet extends MsoyServiceServlet
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
                     Collections.singletonMap(mrec.memberId, mrec.getName()),
                     Collections.singletonMap(group.groupId, group.getName()));
-
+            
+            // log this event for metrics purposes
+            _eventLog.forumMessagePosted(mrec.memberId, thread.threadId, thread.posts);
+            
             // mark this thread as read by the poster
             _forumRepo.noteLastReadPostId(
                 mrec.memberId, thread.threadId, thread.mostRecentPostId, 1);
-
+            
             // if we're posting to the announcement group, add a global feed post about it
             if (groupId == ServerConfig.getAnnounceGroupId()) {
                 MsoyServer.feedRepo.publishGlobalMessage(
@@ -392,7 +396,10 @@ public class ForumServlet extends MsoyServiceServlet
 
             // create the message in the database and return its runtime form
             ForumMessageRecord fmr = _forumRepo.postMessage(
-                threadId, mrec.memberId, inReplyTo, message);
+            		ftr, mrec.memberId, inReplyTo, message);
+            
+            // log event for metrics purposes
+            _eventLog.forumMessagePosted(fmr.posterId, fmr.threadId, ftr.posts);
 
             // load up the member card for the poster
             IntMap<MemberCard> cards = IntMaps.newHashIntMap();
@@ -562,4 +569,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     @Inject protected ForumRepository _forumRepo;
+    
+    /** Logs events for later metrics generation about forum activity. */
+    @Inject protected MsoyEventLogger _eventLog;
 }

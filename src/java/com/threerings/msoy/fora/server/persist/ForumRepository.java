@@ -196,13 +196,7 @@ public class ForumRepository extends DepotRepository
 
         try {
             // post the first message to the thread (this will update the thread's last posted info)
-            ForumMessageRecord fmr = postMessage(ftr.threadId, creatorId, 0, message);
-
-            // fill the last post values into the thread record by hand so that we can return it
-            ftr.mostRecentPostId = fmr.messageId;
-            ftr.mostRecentPostTime = fmr.created;
-            ftr.mostRecentPosterId = creatorId;
-            ftr.posts = 1;
+            postMessage(ftr, creatorId, 0, message);
             return ftr;
 
         } catch (PersistenceException pe) {
@@ -229,28 +223,34 @@ public class ForumRepository extends DepotRepository
     /**
      * Posts a message to the specified thread.
      */
-    public ForumMessageRecord postMessage (int threadId, int posterId, int inReplyTo, String message)
+    public ForumMessageRecord postMessage (ForumThreadRecord thread, int posterId, int inReplyTo, String message)
         throws PersistenceException
     {
         // insert a record in the database for the message
         ForumMessageRecord fmr = new ForumMessageRecord();
-        fmr.threadId = threadId;
+        fmr.threadId = thread.threadId;
         fmr.posterId = posterId;
         fmr.inReplyTo = inReplyTo;
         fmr.created = fmr.lastEdited = new Timestamp(System.currentTimeMillis());
         fmr.message = message;
         insert(fmr);
 
-        // update the post count and last post information for the thread
-        updatePartial(ForumThreadRecord.class, threadId,
+        // update the post count and last post information for the thread        
+        updatePartial(ForumThreadRecord.class, thread.threadId,
                       ForumThreadRecord.MOST_RECENT_POST_ID, fmr.messageId,
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
 
         Map<String, SQLExpression> updates = Maps.newHashMap();
         updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS_C, 1));
-        updateLiteral(ForumThreadRecord.class, threadId, updates);
+        updateLiteral(ForumThreadRecord.class, thread.threadId, updates);
 
+        // update thread object to match its persistent record
+        thread.posts++;
+        thread.mostRecentPostId = fmr.messageId;
+        thread.mostRecentPostTime = fmr.created;
+        thread.mostRecentPosterId = posterId;
+        
         return fmr;
     }
 
