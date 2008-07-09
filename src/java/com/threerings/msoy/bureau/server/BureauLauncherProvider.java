@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 
 /**
@@ -11,6 +13,12 @@ import com.threerings.presents.server.InvocationProvider;
  */
 public interface BureauLauncherProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link BureauLauncherService#getGameServerRegistryOid} request.
+     */
+    public void getGameServerRegistryOid (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
     /**
      * Handles a {@link BureauLauncherService#launcherInitialized} request.
      */

@@ -18,9 +18,11 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.util.MessageManager;
 
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
@@ -221,6 +223,13 @@ public abstract class MsoyBaseServer extends WhirledServer
                 launcherDestroyed(event.getTargetOid());
             }
         });
+    }
+
+    // from BureauLauncherProvider
+    public void getGameServerRegistryOid (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException
+    {
+        arg1.requestProcessed(0);
     }
 
     /**
