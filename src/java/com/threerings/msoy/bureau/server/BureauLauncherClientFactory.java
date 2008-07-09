@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
@@ -31,7 +33,7 @@ public class BureauLauncherClientFactory implements ClientFactory
     {
         // Just give bureau launchers a vanilla PresentsClient client.
         if (areq.getCredentials() instanceof BureauLauncherCredentials) {
-            return PresentsClient.class;
+            return BureauLauncherServerClient.class;
         } else {
             return _delegate.getClientClass(areq);
         }
@@ -40,15 +42,21 @@ public class BureauLauncherClientFactory implements ClientFactory
     // from interface ClientFactory
     public Class<? extends ClientResolver> getClientResolverClass (Name username)
     {
-        String prefix = 
-            BureauLauncherCredentials.PEER_PREFIX +
-            BureauLauncherCredentials.PREFIX;
+        String prefix = BureauLauncherCredentials.PREFIX;
 
         // Just give bureau launchers a vanilla ClientResolver.
         if (username.toString().startsWith(prefix)) {
-            return ClientResolver.class;
+            return Resolver.class;
         } else {
             return _delegate.getClientResolverClass(username);
+        }
+    }
+
+    protected static class Resolver extends ClientResolver
+    {
+        public ClientObject createClientObject ()
+        {
+            return new BureauLauncherClientObject();
         }
     }
 

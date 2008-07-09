@@ -40,6 +40,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
+import com.threerings.msoy.bureau.server.BureauLauncherServerClient;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -505,7 +506,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected boolean ignoreClient (PresentsClient client)
     {
         // don't publish information about anonymous lurkers to our peers
-        return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName);
+        return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) || 
+            (client instanceof BureauLauncherServerClient);
     }
 
     @Override // from PeerManager
