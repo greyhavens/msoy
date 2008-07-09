@@ -14,6 +14,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -34,7 +35,7 @@ public class FriendManager
     @AnyThread
     public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
-        // add them to the friends list of both parties if/whereever they are online
+        // add them to the friends list of both parties if/wherever they are online
         _peerMan.invokeNodeAction(new AddFriend(acceptor.getMemberId(), friend));
         _peerMan.invokeNodeAction(new AddFriend(friend.getMemberId(), acceptor));
     }
@@ -109,6 +110,11 @@ public class FriendManager
     public void remoteMemberLoggedOff (MemberName member)
     {
         updateOnlineStatus(member.getMemberId(), false);
+    }
+
+    public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port)
+    {
+        // nada
     }
 
     protected void registerFriendInterest (MemberObject memobj, int friendId)

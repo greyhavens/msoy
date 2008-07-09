@@ -30,7 +30,6 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
-import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 
@@ -55,7 +54,6 @@ import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 
 import static com.threerings.msoy.Log.log;
 
@@ -74,6 +72,9 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         /** Called when this member has logged off of another server. */
         public void remoteMemberLoggedOff (MemberName member);
+
+        /** Called when this member has entered a new scene within a world server. */
+        public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port);
     }
 
     /** Used to participate in the member object forwarding process. */
@@ -175,6 +176,8 @@ public class MsoyPeerManager extends CrowdPeerManager
             log.info("Hosting member " + newloc + ".");
             _mnobj.addToMemberLocs(newloc);
         }
+        
+        memberEnteredScene(newloc, _self.hostName, _self.port);
     }
 
     /**
@@ -458,6 +461,14 @@ public class MsoyPeerManager extends CrowdPeerManager
         });
     }
 
+    /**
+     * Called by the {@link MsoyPeerNode} when a member changes scene on their server.
+     */
+    public void remoteMemberEnteredScene (final MsoyPeerNode node, final MemberLocation loc)
+    {
+        memberEnteredScene(loc, node.getPublicHostName(), node.getPort());
+    }
+
     @Override // from CrowdPeerManager
     protected NodeObject createNodeObject ()
     {
@@ -534,6 +545,19 @@ public class MsoyPeerManager extends CrowdPeerManager
                 _guestIdCounter = Math.max(_guestIdCounter, maxGuestId);
             }
         }
+    }
+
+    // internal method for notifying observers of a member scene change - this is called
+    // both for genuinely remote movement and for movement on this server
+    protected void memberEnteredScene (
+        final MemberLocation loc, final String hostname, final int port)
+    {
+        _remobs.apply(new ObserverList.ObserverOp<RemoteMemberObserver>() {
+            public boolean apply (RemoteMemberObserver observer) {
+                observer.remoteMemberEnteredScene(loc, hostname, port);
+                return true;
+            }
+        });        
     }
 
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */

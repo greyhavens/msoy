@@ -16,7 +16,9 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
 
 /**
@@ -56,6 +58,10 @@ public class MsoyPeerNode extends PeerNode
     // from interface SetListener
     public void entryAdded (EntryAddedEvent event)
     {
+        if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
+            ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
+                this, (MemberLocation)event.getEntry());
+        }
         if (event.getName().equals(NodeObject.CLIENTS)) {
             ((MsoyPeerManager)_peermgr).remoteMemberLoggedOn(
                 this, (MsoyClientInfo)event.getEntry());
@@ -65,7 +71,10 @@ public class MsoyPeerNode extends PeerNode
     // from interface SetListener
     public void entryUpdated (EntryUpdatedEvent event)
     {
-        // nada
+        if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
+            ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
+                this, (MemberLocation)event.getEntry());
+        }
     }
 
     // from interface SetListener
