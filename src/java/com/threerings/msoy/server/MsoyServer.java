@@ -77,6 +77,7 @@ import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
+import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.MemberObject;
@@ -463,6 +464,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime support manager. */
     @Inject protected MsoyUnderwireManager _supportMan;
+    
+    /** The member movement observation manager. */
+    @Inject protected WorldWatcherManager _watcherMan;
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
