@@ -543,7 +543,7 @@ public class Frame
             _titleLabel = new Label(title);
             _titleLabel.setStyleName("Title");
 
-            Widget back = MsoyUI.createHoverButton("backButton", new ClickListener() {
+            Widget back = MsoyUI.createImageButton("backButton", new ClickListener() {
                 public void onClick (Widget sender) {
                     History.back();
                 }

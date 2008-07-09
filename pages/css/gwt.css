@@ -108,6 +108,10 @@ img, embed, applet, object {
   background-image: url(/images/ui/back_over.png);
 }
 
+.backButton-down {
+  background-image: url(/images/ui/back_down.png);
+}
+
 .shortThinOrangeButton, .mediumThinOrangeButton, .longThinOrangeButton {
   font-size: 15px;
   height: 25px;

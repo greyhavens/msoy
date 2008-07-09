@@ -216,9 +216,9 @@ public class MsoyUI
     }
 
     /**
-     * Creates an image button that changes appearance when you hover over it.
+     * Creates an image button that changes appearance when you click and hover over it.
      */
-    public static Widget createHoverButton (String style, ClickListener listener)
+    public static Widget createImageButton (String style, ClickListener listener)
     {
         final Label widget = createActionLabel("", style, listener);
         widget.addMouseListener(new MouseListenerAdapter() {
@@ -227,6 +227,13 @@ public class MsoyUI
             }
             public void onMouseLeave (Widget sender) {
                 widget.removeStyleDependentName("hovering");
+                widget.removeStyleDependentName("down");
+            }
+            public void onMouseDown (Widget sender, int x, int y) {
+                widget.addStyleDependentName("down");
+            }
+            public void onMouseUp (Widget sender, int x, int y) {
+                widget.removeStyleDependentName("down");
             }
         });
         return widget;
@@ -237,7 +244,7 @@ public class MsoyUI
      */
     public static Widget createCloseButton (ClickListener listener)
     {
-        return createHoverButton("closeButton", listener);
+        return createImageButton("closeButton", listener);
     }
 
     /**
