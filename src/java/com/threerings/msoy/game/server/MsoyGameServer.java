@@ -11,16 +11,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
@@ -30,10 +26,6 @@ import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.DatabaseConfigRegistry;
-
-import com.threerings.bureau.data.BureauCredentials;
-import com.threerings.bureau.server.BureauRegistry;
-import com.threerings.bureau.server.BureauAuthenticator;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
@@ -58,12 +50,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
-import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
-import com.threerings.msoy.bureau.server.BureauLauncherProvider;
-import com.threerings.msoy.bureau.server.BureauLauncherSender;
 
 import static com.threerings.msoy.Log.log;
 
@@ -71,7 +57,6 @@ import static com.threerings.msoy.Log.log;
  * A server that does nothing but host games.
  */
 public class MsoyGameServer extends MsoyBaseServer
-    implements BureauLauncherProvider
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -146,10 +131,6 @@ public class MsoyGameServer extends MsoyBaseServer
             }
         });
 
-        // prepare for bureau launcher clients
-        _clmgr.setClientFactory(
-            new BureauLauncherClientFactory(_clmgr.getClientFactory()));
-
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
                 return ((PlayerObject) bodyObj).getMemberId(); // will return 0 for guests
@@ -159,62 +140,7 @@ public class MsoyGameServer extends MsoyBaseServer
         // connect back to our parent world server
         _worldClient.init(_listenPort, _connectPort);
 
-        if (ServerConfig.localBureaus) {
-            // hook up thane as a local command
-            log.info("Running thane bureaus locally");
-            _bureauReg.setCommandGenerator(
-                WhirledGameManager.THANE_BUREAU, new ThaneCommandGenerator());
-
-        } else {
-            // hook up bureau launching system for thane
-            log.info("Running thane bureaus remotely");
-            _bureauReg.setLauncher(
-                WhirledGameManager.THANE_BUREAU, new RemoteBureauLauncher());
-            _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
-            _invmgr.registerDispatcher(new BureauLauncherDispatcher(this),
-                BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
-        }
-        _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
-
         log.info("Game server initialized.");
-    }
-
-    // from BureauLauncherProvider
-    public void launcherInitialized (ClientObject launcher)
-    {
-        // this launcher is now available to take sender requests
-        // TODO: notify our world server that we are now a bureau-enabled game server
-        log.info("Launcher initialized", "client", launcher);
-        _launchers.put(launcher.getOid(), launcher);
-        launcher.addListener(new ObjectDeathListener () {
-            public void objectDestroyed (ObjectDestroyedEvent event) {
-                launcherDestroyed(event.getTargetOid());
-            }
-        });
-    }
-
-    /**
-     * Called internally when a launcher connection is terminated. The specific launcher may no
-     * longer be used to fulfill bureau requests.
-     */
-    protected void launcherDestroyed (int oid)
-    {
-        // TODO: if this is the last launcher, notify our world server
-        log.info("Launcher destroyed", "oid", oid);
-        _launchers.remove(oid);
-    }
-
-    /** Selects a registered launcher for the next bureau. */
-    protected ClientObject selectLauncher ()
-    {
-        // select one at random
-        // TODO: select the one with the lowest current load. this should involve some measure
-        // of the actual machine load since some bureaus may have more game instances than others
-        // and some instances may produce more load than others.
-        int size = _launchers.size();
-        ClientObject[] launchers = new ClientObject[size];
-        _launchers.values().toArray(launchers);
-        return launchers[(new java.util.Random()).nextInt(size)];
     }
 
     @Override // from MsoyBaseServer
@@ -253,32 +179,6 @@ public class MsoyGameServer extends MsoyBaseServer
         }
     }
 
-    protected class ThaneCommandGenerator
-        implements BureauRegistry.CommandGenerator
-    {
-        public String[] createCommand (
-            String bureauId,
-            String token) {
-            return new String[] {
-                ServerConfig.serverRoot + "/bin/runthaneclient",
-                bureauId, token, "localhost", 
-                String.valueOf(getListenPorts()[0])};
-        }
-    }
-
-    protected class RemoteBureauLauncher
-        implements BureauRegistry.Launcher
-    {
-        public void launchBureau (
-            String bureauId,
-            String token) {
-            ClientObject launcher = selectLauncher();
-            BureauLauncherSender.launchThane(
-                launcher, bureauId, token, ServerConfig.serverHost, 
-                getListenPorts()[0]);
-        }
-    }
-
     /** Manages lobbies and other game bits on this server. */
     @Inject protected GameGameRegistry _gameReg;
 
@@ -293,7 +193,4 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** The port on which we connect back to our parent server. */
     protected int _connectPort;
-
-    protected HashIntMap<ClientObject> _launchers = 
-        new HashIntMap<ClientObject>();
 }
