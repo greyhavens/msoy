@@ -182,6 +182,9 @@ public class MsoyGameServer extends MsoyBaseServer
     /** Manages lobbies and other game bits on this server. */
     @Inject protected GameGameRegistry _gameReg;
 
+    /** Provides the game-side API for watching member movements on the world server. */
+    @Inject protected GameWatcherManager _watchMan;
+    
     /** Provides parlor game services. */
     @Inject protected ParlorManager _parlorMan;
 
