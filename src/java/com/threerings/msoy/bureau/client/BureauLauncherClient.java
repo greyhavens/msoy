@@ -35,20 +35,6 @@ public class BureauLauncherClient extends Client
         getInvocationDirector().registerReceiver(new BureauLauncherDecoder(launcher));
     }
 
-    /**
-     * Set the server to connect to to the given server:port.
-     */
-    public void setServer (String serverNameAndPort)
-    {
-        int colon = serverNameAndPort.indexOf(':');
-        if (colon == -1) {
-            throw new Error("invalid config, no port number on " + serverNameAndPort);
-        }
-        String server = serverNameAndPort.substring(0, colon);
-        String port = serverNameAndPort.substring(colon + 1);
-        setServer(server, new int [] {Integer.parseInt(port)});
-    }
-
     @Override // from Client
     protected Communicator createCommunicator ()
     {

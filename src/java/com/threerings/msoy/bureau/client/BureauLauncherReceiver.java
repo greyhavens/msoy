@@ -9,9 +9,8 @@ import com.threerings.presents.client.InvocationReceiver;
 public interface BureauLauncherReceiver extends InvocationReceiver
 {
     /** Requests to launch a thane bureau with the given connect-back information. */
-    public void launchThane (
-        String bureauId,
-        String token,
-        String server,
-        int port);
+    public void launchThane (String bureauId, String token, String server, int port);
+
+    /** Adds a server to the launcher's connections. */
+    public void addGameServer (String host, int port);
 }

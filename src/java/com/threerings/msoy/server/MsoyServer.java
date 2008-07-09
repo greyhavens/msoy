@@ -72,6 +72,8 @@ import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
+import com.threerings.msoy.bureau.server.BureauLauncherSender;
+
 import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
@@ -265,6 +267,16 @@ public class MsoyServer extends MsoyBaseServer
         _httpServer.init(injector, _logdir);
     }
 
+    @Override // from BureauLauncherProvider
+    public void launcherInitialized (ClientObject launcher)
+    {
+        super.launcherInitialized(launcher);
+
+        for (int port : gameReg.getGameServerPorts()) {
+            BureauLauncherSender.addGameServer(launcher, ServerConfig.serverHost, port);
+        }
+    }
+
     @Override // from MsoyBaseServer
     protected String getIdent ()
     {
@@ -306,6 +318,12 @@ public class MsoyServer extends MsoyBaseServer
         _petMan.init(injector);
         _gameReg.init(itemMan.getGameRepository());
         _supportMan.init(_perCtx);
+
+        _gameReg.setHelloListener(new MsoyGameRegistry.HelloListener () {
+            public void gotHello (ClientObject caller, int port) {
+                addGameServerToBureauLaunchers(port);
+            }
+        });
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -392,6 +410,16 @@ public class MsoyServer extends MsoyBaseServer
             }
         }
         _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
+    }
+
+    /**
+     * When a new game server logs in, this adds it to all of our bureau launchers.
+     */
+    protected void addGameServerToBureauLaunchers (int port)
+    {
+        for (ClientObject launcher : _launchers.values()) {
+            BureauLauncherSender.addGameServer(launcher, ServerConfig.serverHost, port);
+        }
     }
 
     /** Our runtime jabber manager. */

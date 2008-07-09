@@ -182,8 +182,7 @@ oooauth.access_denied_url = /register/access_denied.wm
 # recaptcha_public = RECAPTCHA_PUBLIC_KEY
 # recaptcha_private = RECAPTCHA_PRIVATE_KEY
 
-# Keys for operating bureaus on an msoy game server
+# Keys for operating bureau launchers
 
 local_bureaus = true
-# bureau_game_servers = whirled1.whirled.com:47625, whirled2.whirled.com:47625
 # bureau_secret = you can't guess this

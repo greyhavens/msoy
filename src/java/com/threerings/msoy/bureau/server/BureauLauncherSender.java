@@ -17,6 +17,18 @@ public class BureauLauncherSender extends InvocationSender
 {
     /**
      * Issues a notification that will result in a call to {@link
+     * BureauLauncherReceiver#addGameServer} on a client.
+     */
+    public static void addGameServer (
+        ClientObject target, String arg1, int arg2)
+    {
+        sendNotification(
+            target, BureauLauncherDecoder.RECEIVER_CODE, BureauLauncherDecoder.ADD_GAME_SERVER,
+            new Object[] { arg1, Integer.valueOf(arg2) });
+    }
+
+    /**
+     * Issues a notification that will result in a call to {@link
      * BureauLauncherReceiver#launchThane} on a client.
      */
     public static void launchThane (

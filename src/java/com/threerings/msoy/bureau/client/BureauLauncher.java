@@ -1,16 +1,43 @@
 package com.threerings.msoy.bureau.client;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.util.Interval;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
+import com.samskivert.util.StringUtil;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.peer.server.persist.NodeRecord;
+import com.threerings.presents.peer.server.persist.NodeRepository;
 
 import static com.threerings.msoy.Log.log;
 
 public class BureauLauncher
     implements BureauLauncherReceiver
 {
+    /** Guice module for bureau launcher. */
+    public static class Module extends AbstractModule
+    {
+        @Override protected void configure () {
+            ConnectionProvider provider = null;
+            try {
+                provider = ServerConfig.createConnectionProvider();
+            } catch (Exception e) {
+                addError(e);
+            }
+
+            // TODO: what is "userdb" and should we change it?
+            bind(PersistenceContext.class).toInstance(
+                new PersistenceContext("userdb", provider));
+        }
+    }
+
     /**
      * Basic queue of runnables.
      */
@@ -39,7 +66,7 @@ public class BureauLauncher
                 try {
                     r.run();
                 } catch (Throwable t) {
-                    log.warning("Runnable " + r + " threw", t);
+                    log.warning("Error executing run queue item", "runnable", r, t);
                 }
             }
         }
@@ -81,43 +108,45 @@ public class BureauLauncher
      */
     public static void main (String[] args)
     {
-        BureauLauncher launcher = new BureauLauncher();
+        Injector injector = Guice.createInjector(new Module());
+        BureauLauncher launcher = injector.getInstance(BureauLauncher.class);
         launcher.run();
     }
 
     /**
      * Creates a new bureau launcher.
      */
-    public BureauLauncher ()
+    @Inject public BureauLauncher ()
     {
-        _runner = new Runner();
     }
 
     /**
-     * Runs the bueau launcher.
+     * Runs the bureau launcher.
      */
     public void run ()
     {
-        BureauLauncherClient client;
-
-        String[] serverList = ServerConfig.bureauGameServers.split(",");
-        for (int ii = 0; ii < serverList.length; ii++) {
-            serverList[ii] = serverList[ii].trim();
-            log.info("Connecting to " + serverList[ii]);
-            _runner = new Runner();
-            client = new BureauLauncherClient(this);
-            client.setServer(serverList[ii]);
-            client.addClientObserver(new Observer());
-            _loggedOn = false;
-            client.logon();
-            _runner.run();
-            if (_loggedOn) {
-                log.info("Logon was successful");
-                break;
+        // TODO: db access should be on a separate thread
+        new Interval(_runner) {
+            public void expired () {
+                pollForNewHosts();
             }
-            log.info("Logon failed");
-        }
+        }.schedule(0, PEER_POLL_INTERVAL);
+
+        _runner.run();
+
         log.info("Exiting");
+    }
+
+    public void pollForNewHosts ()
+    {
+        try {
+            for (NodeRecord node : _nodeRepo.loadNodes()) {
+                _worldConnections.add(node.publicHostName, node.port);
+            }
+            
+        } catch (PersistenceException pe) {
+            log.warning("Could not load nodes", pe);
+        }
     }
 
     /**
@@ -156,27 +185,15 @@ public class BureauLauncher
         }
     }
 
-    // Observe the connection progress, stopping the run queue
-    // on failure or logoff
-    protected class Observer extends ClientAdapter
+    // from BureauLauncherReceiver
+    public void addGameServer (String host, int port)
     {
-        public void clientDidLogon (Client client)
-        {
-            _loggedOn = true;
-        }
-
-        public void clientFailedToLogon (Client client, Exception cause)
-        {
-            log.warning("failed to logon", cause);
-            _runner.stop();
-        }
-
-        public void clientDidLogoff (Client client)
-        {
-            _runner.stop();
-        }
+        _gameConnections.add(host, port);
     }
 
-    protected Runner _runner;
-    protected boolean _loggedOn;
+    protected Runner _runner = new Runner();
+    @Inject protected NodeRepository _nodeRepo;
+    protected Connections _worldConnections = new Connections(this);
+    protected Connections _gameConnections = new Connections(this);
+    protected static long PEER_POLL_INTERVAL = 60000;
 }

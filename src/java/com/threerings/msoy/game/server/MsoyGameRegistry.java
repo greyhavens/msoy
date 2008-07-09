@@ -79,6 +79,17 @@ public class MsoyGameRegistry
         }
     };
 
+    /**
+     * Receives notification when a game server's client logs in.
+     */
+    public static interface HelloListener
+    {
+        /**
+         * Called when a game servers's client logs in.
+         */
+        void gotHello (ClientObject caller, int port);
+    }
+
     @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         shutmgr.registerShutdowner(this);
@@ -109,6 +120,11 @@ public class MsoyGameRegistry
                 }
             }
         });
+    }
+
+    public void setHelloListener (HelloListener helloListener)
+    {
+        _helloListener = helloListener;
     }
 
     // from interface MsoyGameProvider
@@ -195,6 +211,9 @@ public class MsoyGameRegistry
         for (GameServerHandler handler : _handlers) {
             if (handler != null && handler.port == port) {
                 handler.setClientObject(caller);
+                if (_helloListener != null) {
+                    _helloListener.gotHello(caller, port);
+                }
                 return;
             }
         }
@@ -362,6 +381,18 @@ public class MsoyGameRegistry
                 handler.shutdown();
             }
         }
+    }
+
+    /**
+     * Retrieve the ports of registered game servers (running on this host).
+     */
+    public int[] getGameServerPorts ()
+    {
+        int[] ports = new int[_handlers.length];
+        for (int ii = 0; ii < ports.length; ++ii) {
+            ports[ii] = _handlers[ii].port;
+        }
+        return ports;
     }
 
     protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
@@ -574,6 +605,9 @@ public class MsoyGameRegistry
 
     /** Used to load metadata for games. */
     protected GameRepository _gameRepo;
+
+    /** Called when a game server's client logs in. */
+    protected HelloListener _helloListener;
 
     /** Handlers for our delegate game servers. */
     protected GameServerHandler[] _handlers = new GameServerHandler[DELEGATE_GAME_SERVERS];
