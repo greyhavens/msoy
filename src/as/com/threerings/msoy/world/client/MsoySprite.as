@@ -792,6 +792,17 @@ public class MsoySprite extends DataPackMediaContainer
                 var loc :MsoyLocation = getLocation();
                 return [loc.x, loc.y, loc.z];
             },
+            "std:location_pixel": function () :Array {
+                var loc :MsoyLocation = getLocation();
+                var bounds :Array = getRoomBounds();
+                bounds[0] *= loc.x;
+                bounds[1] *= loc.y;
+                bounds[2] *= loc.z;
+                return bounds;
+            },
+            "std:dimensions": function () :Array {
+                return [ getContentWidth(), getContentHeight() ];
+            },
             "std:orientation": function () :Number {
                 return getLocation().orient;
             }
