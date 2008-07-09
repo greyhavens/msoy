@@ -995,6 +995,9 @@ public class ItemManager
                             final InvocationService.ConfirmListener cl)
         throws InvocationException
     {
+        // Disabled until this feature can be further considered
+        // There are security concerns with allowing any user to destroy another user's item
+        /*
         final MemberObject user = (MemberObject) caller;
 
         getItem(ident, new ResultListener<Item>() {
@@ -1047,6 +1050,7 @@ public class ItemManager
                 cl.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
+        */
     }
 
     // from ItemProvider
