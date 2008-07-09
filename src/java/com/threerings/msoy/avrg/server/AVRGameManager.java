@@ -8,10 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.IntIntMap.IntIntEntry;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;
@@ -42,11 +46,15 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.GameContent;
+import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.MsoyGameServer;
+import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.avrg.data.AVRGameMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
@@ -67,17 +75,24 @@ public class AVRGameManager
      * Creates a new {@link AVRGameManager} for the given game.
      */
     public AVRGameManager (
-        int gameId, Invoker invoker, AVRGameRepository repo, MsoyEventLogger eventLog)
+        int gameId, Invoker invoker, AVRGameRepository repo, MsoyEventLogger eventLog,
+        GameWatcherManager watchmgr)
     {
         _gameId = gameId;
         _invoker = invoker;
         _repo = repo;
         _eventLog = eventLog;
+        _watchmgr = watchmgr;
     }
 
     public AVRGameObject createGameObject ()
     {
         return new AVRGameObject();
+    }
+
+    public AVRGameAgentObject createGameAgentObject ()
+    {
+        return new AVRGameAgentObject();
     }
 
     public AVRGameObject getGameObject ()
@@ -92,11 +107,13 @@ public class AVRGameManager
 
     /**
      * Called with our hosted game's data once it's finished loading from the database.
+     * @param gameAgentObj 
      */
-    public void startup (AVRGameObject gameObj, GameContent content,
-                         List<GameStateRecord> stateRecords)
+    public void startup (AVRGameObject gameObj, AVRGameAgentObject gameAgentObj,
+                         GameContent content, List<GameStateRecord> stateRecords)
     {
         _gameObj = gameObj;
+        _gameAgentObj = gameAgentObj;
         _content = content;
 
         // listen for gameObj.playerOids removals
@@ -174,14 +191,20 @@ public class AVRGameManager
                             "playerOid=" + playerOid + "]");
                 return;
             }
+            
+            int memberId = player.playerObject.getMemberId();
+            // stop watching this player's movements
+            _watchmgr.clearWatch(memberId);
+
+            // clear out any pending move information
+            _pendingMoves.remove(memberId);
 
             int playTime = player.getPlayTime(now());
-            _eventLog.avrgLeft(
-                player.playerObject.getMemberId(), _gameId, playTime, _gameObj.players.size());
+            _eventLog.avrgLeft(memberId, _gameId, playTime, _gameObj.players.size());
             
             _totalTrackedSeconds += playTime;
             flushPlayerGameState(player.playerObject);
-            MsoyGameServer.worldClient.updatePlayer(player.playerObject.getMemberId(), null);
+            MsoyGameServer.worldClient.updatePlayer(memberId, null);
         }
     }
 
@@ -556,6 +579,9 @@ public class AVRGameManager
         } finally {
             player.commitTransaction();
         }
+        
+        _watchmgr.addWatch(player.getMemberId(), _observer);
+        // TODO: make sure the AVRG does not initialize for this player until Room Subscription
 
         MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _content.game);
     }
@@ -574,6 +600,62 @@ public class AVRGameManager
         _gameObj.removeFromPlayerOids(player.getOid());
     }
 
+    /**
+     * This method is called when the agent completes the subscription of a scene's RoomObject.
+     * TODO: wire up
+     */
+    public void roomSubscriptionComplete (int sceneId)
+    {
+        IntSet removes = new ArrayIntSet();
+
+        for (IntIntEntry entry : _pendingMoves.entrySet()) {
+            if (entry.getValue() == sceneId) {
+                int memberId = entry.getKey();
+                removes.add(memberId);
+                
+                PlayerLocation loc = new PlayerLocation(memberId, sceneId);
+                if (_gameObj.playerLocs.contains(loc)) {
+                    _gameObj.updatePlayerLocs(loc);
+                    
+                } else {
+                    _gameObj.addToPlayerLocs(loc);
+                }
+            }
+        }
+        
+        for (int memberId : removes) {
+            _pendingMoves.remove(memberId);
+        }
+    }
+
+    protected void playerEnteredScene (int memberId, int sceneId, String hostname, int port)
+    {
+        log.debug(
+            "Player entered scene [memberId=" + memberId + ", sceneId=" + sceneId +
+            ", hostname=" + hostname + ", port=" + port + "]");
+        
+        // TODO: this is incomplete, we need to keep a set of rooms that we've added to 'scenes'
+        // TODO: but which have not yet completed subscription; we should obviously not add
+        // TODO: players to _pendingMoves when they're moving into rooms we already know of
+        
+        // until room subscription completes, just make a note that this player is in this scene
+        _pendingMoves.put(memberId, sceneId);
+
+        SceneInfo info = new SceneInfo(sceneId, hostname, port);
+        if (_gameAgentObj.scenes.contains(info)) {
+            // there might be old scene data lingering, with the scene now being hosted elsewhere
+            if (!info.equals(_gameAgentObj.scenes.get(sceneId))) {
+                _gameAgentObj.updateScenes(info);
+            }
+            
+        } else {
+            _gameAgentObj.addToScenes(info);
+        }
+        
+        // TODO: this is only for debugging
+        roomSubscriptionComplete(sceneId);
+    }
+    
     protected void flushPlayerGameState (final PlayerObject player)
     {
         // find any modified memory records
@@ -739,8 +821,30 @@ public class AVRGameManager
         protected int _value;
     } // End: static class Ticker
 
+    protected Observer _observer = new Observer() {
+        public void memberMoved (int memberId, int sceneId, String hostname, int port) {
+            playerEnteredScene(memberId, sceneId, hostname, port);
+        }
+    };
+    
+    /** The gameId of this particular AVRG. */
     protected int _gameId;
+    
+    /** The distributed object that both clients and the agent sees. */
+    protected AVRGameObject _gameObj;
+    
+    /** The distributed object that only our agent sees. */
+    AVRGameAgentObject _gameAgentObj;
 
+    /** The metadata for the game being played. */
+    protected GameContent _content;
+
+    /** A map to track current AVRG player data, per PlayerObject Oid. */
+    protected IntMap<Player> _players = new HashIntMap<Player>();
+
+    /** Tracks player that've moved to a scene not yet subscribed to by the agent. */
+    protected IntIntMap _pendingMoves = new IntIntMap();
+    
     /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
      * tracked member that is no longer present with a Player object. */
     protected int _totalTrackedSeconds = 0;
@@ -748,17 +852,11 @@ public class AVRGameManager
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;
 
-    protected GameContent _content;
-
-    protected AVRGameObject _gameObj;
-
-    protected Invoker _invoker;
     protected AVRGameRepository _repo;
+    protected GameRepository _gameRepo;
+    protected GameWatcherManager _watchmgr;
     protected MsoyEventLogger _eventLog;
-    
-    protected GameRepository _gameRepo = MsoyGameServer.gameReg.getGameRepository();
-
-    protected IntMap<Player> _players = new HashIntMap<Player>();
+    protected Invoker _invoker;
 
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;

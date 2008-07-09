@@ -42,7 +42,6 @@ import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -62,6 +61,7 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
@@ -327,8 +327,10 @@ public class GameGameRegistry
         _loadingAVRGames.put(gameId, list = new ResultListenerList());
         list.add(joinListener);
 
-        final AVRGameManager fmgr = new AVRGameManager(gameId, _invoker, _avrgRepo, _eventLog);
+        final AVRGameManager fmgr = new AVRGameManager(
+            gameId, _invoker, _avrgRepo, _eventLog, _watchmgr);
         final AVRGameObject gameObj = fmgr.createGameObject();
+        final AVRGameAgentObject gameAgentObj = fmgr.createGameAgentObject();
 
         _invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
@@ -351,7 +353,8 @@ public class GameGameRegistry
                 }
 
                 _omgr.registerObject(gameObj);
-                fmgr.startup(gameObj, _content, _recs);
+                _omgr.registerObject(gameAgentObj);
+                fmgr.startup(gameObj, gameAgentObj, _content, _recs);
 
                 _avrgManagers.put(gameId, fmgr);
 
@@ -742,6 +745,7 @@ public class GameGameRegistry
     @Inject protected RootDObjectManager _omgr;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected InvocationManager _invmgr;
+    @Inject protected GameWatcherManager _watchmgr;
     @Inject protected PlaceRegistry _plreg;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
