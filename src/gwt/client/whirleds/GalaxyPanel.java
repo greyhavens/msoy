@@ -89,17 +89,15 @@ public class GalaxyPanel extends VerticalPanel
         contents.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         add(contents);
 
-        // if they're high level, add info on creating a Whirled
-        if (CWhirleds.isSupport() || CWhirleds.level >= MIN_WHIRLED_CREATE_LEVEL) {
-            add(WidgetUtil.makeShim(10, 10));
-            SmartTable create = new SmartTable("Create", 0, 0);
-            create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");
-            create.setText(1, 0, CWhirleds.msgs.galaxyCreateBlurb(), 1, "Pitch");
-            create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
-            ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "edit");
-            create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
-            add(create);
-        }
+        // add info on creating a Whirled
+        add(WidgetUtil.makeShim(10, 10));
+        SmartTable create = new SmartTable("Create", 0, 0);
+        create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");
+        create.setText(1, 0, CWhirleds.msgs.galaxyCreateBlurb(), 1, "Pitch");
+        create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
+        ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "edit");
+        create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
+        add(create);
 
         CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
@@ -238,6 +236,4 @@ public class GalaxyPanel extends VerticalPanel
     protected static final int POP_TAG_COUNT = 9;
     protected static final int GRID_ROWS = 2;
     protected static final int GRID_COLUMNS = 4;
-
-    protected static final int MIN_WHIRLED_CREATE_LEVEL = 10;
 }
