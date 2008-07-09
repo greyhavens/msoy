@@ -543,12 +543,17 @@ public class Frame
             _titleLabel = new Label(title);
             _titleLabel.setStyleName("Title");
 
-            Image back = MsoyUI.createBackArrow();
-            back.setTitle("Back");
+            Widget back = MsoyUI.createHoverButton("backButton", new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.back();
+                }
+            });
 
             HorizontalPanel panel = new HorizontalPanel();
-            panel.add(_titleLabel);
+            panel.add(WidgetUtil.makeShim(10, 1));
             panel.add(back);
+            panel.add(WidgetUtil.makeShim(12, 1));
+            panel.add(_titleLabel);
             panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
 
             setWidget(1, 0, panel);

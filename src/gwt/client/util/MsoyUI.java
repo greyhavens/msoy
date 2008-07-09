@@ -216,20 +216,28 @@ public class MsoyUI
     }
 
     /**
+     * Creates an image button that changes appearance when you hover over it.
+     */
+    public static Widget createHoverButton (String style, ClickListener listener)
+    {
+        final Label widget = createActionLabel("", style, listener);
+        widget.addMouseListener(new MouseListenerAdapter() {
+            public void onMouseEnter (Widget sender) {
+                widget.addStyleDependentName("hovering");
+            }
+            public void onMouseLeave (Widget sender) {
+                widget.removeStyleDependentName("hovering");
+            }
+        });
+        return widget;
+    }
+
+    /**
      * Creates a button for closing things (a square with an x in it).
      */
     public static Widget createCloseButton (ClickListener listener)
     {
-        final Label close = createActionLabel("", "closeButton", listener);
-        close.addMouseListener(new MouseListenerAdapter() {
-            public void onMouseEnter (Widget sender) {
-                close.addStyleDependentName("hovering");
-            }
-            public void onMouseLeave (Widget sender) {
-                close.removeStyleDependentName("hovering");
-            }
-        });
-        return close;
+        return createHoverButton("closeButton", listener);
     }
 
     /**
