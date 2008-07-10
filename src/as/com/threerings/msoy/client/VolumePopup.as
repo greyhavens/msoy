@@ -14,6 +14,7 @@ import mx.controls.VSlider;
 import mx.core.Application;
 import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
+import mx.events.SliderEvent;
 
 
 /** Background skin to be loaded from the style sheet. */
@@ -67,6 +68,8 @@ public class VolumePopup extends Canvas
         
         owner.addChild(this);
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
+        addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
+        _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
         
         // Setting the skin happens after adding to the parent's draw list -
         // this ensures styles are properly loaded
@@ -109,18 +112,36 @@ public class VolumePopup extends Canvas
     // EVENT HANDLERS
 
     /** Watch for the mouse leaving the area. */
-    private function mouseOutHandler (event : MouseEvent) : void
+    protected function mouseOutHandler (event : MouseEvent) : void
     {
         if (event.relatedObject != null) {
-            // We rolled out into room view, or other element - close up,
-            // but don't delete the object, in case there are still events
-            // queued up for it.
+            _cursorOffCanvas = true;
+
+            if ( ! event.buttonDown) {
+                // We rolled out into room view, or other element - close up,
+                // but don't delete the object, in case there are still events
+                // queued up for it.
+                hide();
+            }
+        }
+    }
+
+    protected function mouseOverHandler (event :MouseEvent) :void
+    {
+        _cursorOffCanvas = false;
+    }
+
+    protected function thumbReleaseHandler (event :SliderEvent): void
+    {
+        if (_cursorOffCanvas) {
             hide();
         }
     }
 
     /** The actual volume slider. */
     protected var _slider : VSlider;
+
+    protected var _cursorOffCanvas :Boolean;
 
     /** Pointer to any other instance of the popup being currently displayed.
         Unfortunately, ActionScript doesn't support singleton semantics
