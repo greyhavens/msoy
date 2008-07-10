@@ -147,6 +147,10 @@ HSlider {
   fillColors: #d5dcdf, #9eabb2, #9eabb2, #d5dcdf;
 }
 
+VSlider {
+  showTrackHighlight: true;
+}
+
 Button {
   paddingBottom: 3;
   fillAlphas: 1, 1, 1, 1;
