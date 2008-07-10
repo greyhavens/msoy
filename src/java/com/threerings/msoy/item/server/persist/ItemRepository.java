@@ -816,10 +816,10 @@ public abstract class ItemRepository<
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);
-
-            // delete any entity memory for this item as well
-            _memRepo.deleteMemories(_itemType, itemId);
         }
+
+        // delete any entity memory for this item as well
+        _memRepo.deleteMemories(_itemType, itemId);
     }
 
     /**
