@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;    
@@ -13,11 +13,11 @@ import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
 
+import com.threerings.util.Util;
 
 /** Background skin to be loaded from the style sheet. */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
-    
 /**
  * Helper UI element for generic popup slider controls, such as volume and zoom.
  *
@@ -27,7 +27,9 @@ import mx.events.SliderEvent;
  */
 public class SliderPopup extends Canvas
 {
-    public function SliderPopup (trigger :DisplayObject, startValue :Number, bindTo :Function)
+    public function SliderPopup (
+        trigger :DisplayObject, startValue :Number, bindTo :Function,
+        sliderInitProps :Object = null)
     {
         _trigger = trigger;
         owner = DisplayObjectContainer(Application.application.systemManager);
@@ -48,11 +50,9 @@ public class SliderPopup extends Canvas
         _slider.x = 4;
         _slider.y = 10;
         _slider.height = 80;
-        _slider.minimum = 0;
-        _slider.maximum = 1;
-        _slider.liveDragging = true;
-
+        Util.init(_slider, sliderInitProps, { minimum: 0, maximum: 1, liveDragging: true });
         _slider.value = startValue;
+
         BindingUtils.bindSetter(bindTo, _slider, "value");
 
         addChild(_slider);
@@ -97,12 +97,14 @@ public class SliderPopup extends Canvas
      * Helper method to either close the currently displayed SliderPopup and show this one,
      * or untoggle this one if it was already being displayed.
      */
-    public static function toggle (trigger :DisplayObject, startValue :Number, bindTo :Function) :void
+    public static function toggle (
+        trigger :DisplayObject, startValue :Number, bindTo :Function,
+        sliderInitProps :Object = null) :void
     {
         if (popupExists() && _currentInstance._trigger == trigger) {
             destroyCurrentInstance();
         } else {
-            new SliderPopup(trigger, startValue, bindTo).show();
+            new SliderPopup(trigger, startValue, bindTo, sliderInitProps).show();
         }
     }
 

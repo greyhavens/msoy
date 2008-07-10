@@ -34,6 +34,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SkinnableImage;
+import com.threerings.msoy.ui.SliderPopup;
 
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 

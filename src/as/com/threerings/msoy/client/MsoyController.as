@@ -21,6 +21,8 @@ import flash.net.URLRequest;
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
+import mx.controls.Button;
+
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -48,7 +50,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 
-import mx.controls.Button;
+import com.threerings.msoy.ui.SliderPopup;
 
 public class MsoyController extends Controller
     implements ClientObserver
