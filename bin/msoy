@@ -76,7 +76,7 @@ case "$1" in
             echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
         else
             echo -n "Shutting down msoy $PROCID, "
-            kill -INT `cat $SERVER_PIDFILE`
+            kill `cat $SERVER_PIDFILE`
             echo -n "msoyrespawn: "
             kill `cat $RESPAWN_PIDFILE`
             echo "stopped."
@@ -97,8 +97,15 @@ case "$1" in
         ;;
 
   restart)
-        echo -n "Restart the server using the etc/rc.d script." 
-        exit 1
+        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
+        if [ ! -f $SERVER_PIDFILE ]; then
+            echo "No $SERVER_PIDFILE exists. Is the server running?"
+        else
+            echo -n "Shutting down msoy $PROCID: "
+            kill `cat $SERVER_PIDFILE`
+            echo "stopped. Check to be sure that it automatically restarts."
+            rm -f $SERVER_PIDFILE
+        fi
         ;;
 
   *)
