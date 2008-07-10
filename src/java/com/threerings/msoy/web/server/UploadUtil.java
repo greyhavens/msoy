@@ -15,12 +15,15 @@ import java.io.InputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.data.all.Item;
@@ -90,7 +93,7 @@ public class UploadUtil
     {
         // name it using the hash value and the suffix
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
-        publishStream (input, null, name, MediaDesc.mimeTypeToString(mimeType));
+        publishStream (input, null, name, MediaDesc.mimeTypeToString(mimeType), EXPIRES_2038);
     }
 
     /**
@@ -110,6 +113,19 @@ public class UploadUtil
      */
     public static void publishStream (
         InputStream input, String subdirectory, String name, String mimeType)
+        throws IOException
+	{
+		publishStream(input, subdirectory, name, mimeType, null);
+	}
+
+    /**
+     * Publishes an InputStream to the media store at the specified subdirectory location,
+     * using name of the stream (usually its hash) and a supplied mime type.
+     * Currently this is to the filesystem first, and then s3 if enabled. A map of headers
+     * to be added to the s3 object may be supplied.
+     */
+    public static void publishStream (
+        InputStream input, String subdirectory, String name, String mimeType, Map<String,String> headers)
         throws IOException
     {
         // copy the uploaded file data to the local file system media store. eventually we will
@@ -136,8 +152,14 @@ public class UploadUtil
                 S3Connection conn = new S3Connection(
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
                 S3FileObject uploadTarget = new S3FileObject(name, target, mimeType);
-                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
-                               AccessControlList.StandardPolicy.PUBLIC_READ);
+
+				if (headers != null) {
+	                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
+	                               AccessControlList.StandardPolicy.PUBLIC_READ);
+				} else {
+	                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
+	                               AccessControlList.StandardPolicy.PUBLIC_READ, headers);					
+				}
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
                          ", name=" + name + "].");
 
@@ -256,6 +278,9 @@ public class UploadUtil
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
-
     protected static final String SNAPSHOT_DIRECTORY = "snapshot";
+
+	// Effectively 'never' expire date.
+	protected static final Map<String,String> EXPIRES_2038 = 
+		ImmutableMap.of("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
 }

@@ -16,6 +16,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -279,7 +280,7 @@ public class GameRepository extends ItemRepository<
         SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
         SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
         updateLiteral(GameDetailRecord.class, Math.abs(gameId),
-                      Maps.immutableMap(GameDetailRecord.GAMES_PLAYED, add,
+					  ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
                                         GameDetailRecord.FLOW_TO_NEXT_RECALC, sub));
     }
 

@@ -298,7 +298,7 @@ public abstract class ItemRepository<
             OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED)), limit);
         int size = originals.size() + clones.size();
 
-        List<T> list = Lists.newArrayListWithCapacity(size);
+        List<T> list = Lists.newArrayListWithExpectedSize(size);
         list.addAll(originals);
         list.addAll(clones);
 

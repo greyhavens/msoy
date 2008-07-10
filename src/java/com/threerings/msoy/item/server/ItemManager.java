@@ -298,7 +298,7 @@ public class ItemManager
         List<ItemListInfoRecord> records = _listRepo.loadInfos(memberId);
 
         int nn = records.size();
-        List<ItemListInfo> list = Lists.newArrayListWithCapacity(nn);
+        List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
         for (int ii = 0; ii < nn; ii++) {
             list.add(records.get(ii).toItemListInfo());
         }
@@ -350,7 +350,7 @@ public class ItemManager
 
                 // then, if we're missing any items, we need to re-save the list
                 if (idents.length != items.size()) {
-                    List<ItemIdent> newIdents = Lists.newArrayListWithCapacity(items.size());
+                    List<ItemIdent> newIdents = Lists.newArrayListWithExpectedSize(items.size());
                     for (ItemIdent ident : idents) {
                         if (items.containsKey(ident)) {
                             newIdents.add(ident);
@@ -364,7 +364,7 @@ public class ItemManager
                 }
 
                 // finally, return all the items in list order
-                List<Item> list = Lists.newArrayListWithCapacity(idents.length);
+                List<Item> list = Lists.newArrayListWithExpectedSize(idents.length);
                 for (ItemIdent ident : idents) {
                     list.add(items.get(ident));
                 }
@@ -701,7 +701,7 @@ public class ItemManager
             new RepositoryListenerUnit<List<Item>>("loadRecentlyTouched", lner) {
             public List<Item> invokePersistResult () throws Exception {
                 List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
-                List<Item> returnList = Lists.newArrayListWithCapacity(list.size());
+                List<Item> returnList = Lists.newArrayListWithExpectedSize(list.size());
                 for (int ii = 0, nn = list.size(); ii < nn; ii++) {
                     returnList.add(list.get(ii).toItem());
                 }
