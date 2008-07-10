@@ -579,7 +579,7 @@ public class MsoySprite extends DataPackMediaContainer
 
     protected function scaleUpdated () :void
     {
-        if (!(_media is Perspectivizer)) {
+        if (_media != null && !(_media is Perspectivizer)) {
             var scalex :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
             var scaley :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
 
@@ -608,11 +608,13 @@ public class MsoySprite extends DataPackMediaContainer
      */
     protected function updateMediaPosition () :void
     {
-        // if scale is negative, the image is flipped and we need to move the origin
-        var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
-        var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
-        _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
-        _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
+        if (_media != null) {
+            // if scale is negative, the image is flipped and we need to move the origin
+            var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
+            var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
+            _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
+            _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
+        }
 
         updateMediaAfterRotation();
         
@@ -626,7 +628,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     protected function updateMediaAfterRotation () :void
     {
-        if (_media.rotation == 0) {
+        if (_media == null || _media.rotation == 0) {
             return; // nothing to adjust
         }
 
