@@ -10,9 +10,7 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
-import mx.binding.utils.BindingUtils;
 import mx.containers.HBox;
-import mx.controls.HSlider;
 
 import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
@@ -29,6 +27,8 @@ import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UberClient;
+
+import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
@@ -179,8 +179,8 @@ public class RoomStudioView extends RoomView
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
 
         _saveScaling = ("true" == String(params["scaling"]));
-        createScaleControls(scale);
-        _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        createScaleControls();
+        _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleAvatarSizeKnown);
     }
 
     protected function initViewPet (params :Object) :void
@@ -241,28 +241,24 @@ public class RoomStudioView extends RoomView
         setCenterSprite(_avatar);
     }
 
-    protected function createScaleControls (scale :Number) :void
+    protected function createScaleControls () :void
     {
-        _scaleReset = new CommandButton(Msgs.GENERAL.get("b.resetScale"), function () :void {
-            _scaleSlider.value = 1;
-        });
+        _scaleButton = new CommandButton("", showAvatarScaler);
+        _scaleButton.styleName = "controlBarButtonZoom";
+        _scaleButton.toolTip = Msgs.GENERAL.get("i.avatarScale");
+        _scaleButton.enabled = false;
+        _scaleReset = new CommandButton(Msgs.GENERAL.get("b.resetScale"), updateAvatarScale, 1);
 
-        _scaleSlider = new HSlider();
-        _scaleSlider.width = 140; // TODO: This is tiny! The scale slider mayhap needs a new UI?
-        _scaleSlider.liveDragging = true;
-        _scaleSlider.minimum = 0;
-        _scaleSlider.maximum = int.MAX_VALUE;
-        _scaleSlider.value = scale;
-        _scaleSlider.enabled = false;
-        _scaleSlider.tickValues = [ 1 ];
-        BindingUtils.bindSetter(scaleUpdated, _scaleSlider, "value");
+        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
 
-        var box :HBox = new HBox();
-        box.percentHeight = 100;
-        box.styleName = "controlBarSpacer";
-        box.addChild(_scaleSlider);
-        box.addChild(_scaleReset);
-        _ctx.getTopPanel().getControlBar().addCustomComponent(box);
+        bar.addCustomComponent(_scaleButton);
+        bar.addCustomComponent(_scaleReset);
+    }
+
+    protected function showAvatarScaler () :void
+    {
+        SliderPopup.toggle(_scaleButton, (_avatar.getActorInfo() as StudioMemberInfo).getScale(),
+            updateAvatarScale, _scaleProperties);
     }
 
     /**
@@ -292,7 +288,7 @@ public class RoomStudioView extends RoomView
     /**
      * Handles the event when our viewer avatar's size is known.
      */
-    protected function handleSizeKnown (event :ValueEvent) :void
+    protected function handleAvatarSizeKnown (event :ValueEvent) :void
     {
         var width :int = int(event.value[0]);
         var height :int = int(event.value[1]);
@@ -304,27 +300,25 @@ public class RoomStudioView extends RoomView
                                         OccupantSprite.MAX_HEIGHT / height);
 
         // but we always ensure that scale 1.0 is selectable, even if it seems it shouldn't be.
-        _scaleSlider.minimum = Math.min(1, minScale);
-        _scaleSlider.maximum = Math.max(1, maxScale);
+        _scaleProperties.minimum = Math.min(1, minScale);
+        _scaleProperties.maximum = Math.max(1, maxScale);
 
         // enable everything
-        _scaleSlider.enabled = true;
-        scaleUpdated();
+        _scaleButton.enabled = true;
     }
 
     /**
      * Callback when the scale is updated in some way.
      */
-    protected function scaleUpdated (... ignored) :void
+    protected function updateAvatarScale (newScale :Number) :void
     {
-        var scale :Number = _scaleSlider.value;
-        _scaleReset.enabled = (scale != 1);
+        _scaleReset.enabled = (newScale != 1);
 
-        setAvatarScale(scale);
+        setAvatarScale(newScale);
 
         if (_saveScaling && ExternalInterface.available) {
             try {
-                ExternalInterface.call("updateAvatarScale", scale);
+                ExternalInterface.call("updateAvatarScale", newScale);
             } catch (e :Error) {
                 trace(e);
             }
@@ -344,12 +338,10 @@ public class RoomStudioView extends RoomView
     protected var _pet :PetSprite;
 
     /** Used for sizing our own avatar. */
+    protected var _scaleButton :CommandButton;
     protected var _scaleReset :CommandButton;
-    protected var _scaleSlider :HSlider;
     protected var _saveScaling :Boolean;
 
-//    [Embed(source="../../../../../../../pages/media/static/avatar/member.swf",
-//        mimeType="application/octet-stream")]
-//    protected static const DEFAULT_AVATAR :Class;
+    protected var _scaleProperties :Object = { tickValues: [ 1 ] };
 }
 }
