@@ -125,12 +125,17 @@ public class BureauLauncher
      */
     public void run ()
     {
-        // TODO: db access should be on a separate thread
-        new Interval(_runner) {
+        new Interval(_dbrunner) {
             public void expired () {
                 pollForNewHosts();
             }
         }.schedule(0, PEER_POLL_INTERVAL);
+
+        new Thread() {
+            public void run () {
+                _dbrunner.run();
+            }
+        }.start();
 
         _runner.run();
 
@@ -140,9 +145,15 @@ public class BureauLauncher
     public void pollForNewHosts ()
     {
         try {
-            for (NodeRecord node : _nodeRepo.loadNodes()) {
-                _connections.add(node.publicHostName, node.port);
-            }
+            final java.util.Collection<NodeRecord> nodes = _nodeRepo.loadNodes();
+
+            _runner.postRunnable(new Runnable() {
+                public void run() {
+                    for (NodeRecord node : nodes) {
+                        _connections.add(node.publicHostName, node.port);
+                    }
+                }
+            });
             
         } catch (PersistenceException pe) {
             log.warning("Could not load nodes", pe);
@@ -186,6 +197,7 @@ public class BureauLauncher
     }
 
     protected Runner _runner = new Runner();
+    protected Runner _dbrunner = new Runner();
     @Inject protected NodeRepository _nodeRepo;
     protected Connections _connections = new Connections(this);
     protected static long PEER_POLL_INTERVAL = 60000;
