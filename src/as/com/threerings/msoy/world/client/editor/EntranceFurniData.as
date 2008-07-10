@@ -26,15 +26,6 @@ public class EntranceFurniData extends FurniData
     }
 
     // @Override from FurniData
-    override public function clone () :Object
-    {
-        // just a shallow copy at present
-        var that :EntranceFurniData = (ClassUtil.newInstance(this) as EntranceFurniData);
-        that.copyFrom(this);
-        return that;
-    }
-
-    // @Override from FurniData
     override public function toString () :String
     {
         return "Entrance" + super.toString();
