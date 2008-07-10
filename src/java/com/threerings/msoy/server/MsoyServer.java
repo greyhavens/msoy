@@ -184,7 +184,7 @@ public class MsoyServer extends MsoyBaseServer
     public static void main (String[] args)
     {
         // if we're on the dev server, up our long invoker warning to 3 seconds
-        if (ServerConfig.config.getValue("auto_restart", false)) {
+        if (ServerConfig.autoRestart) {
             Invoker.setDefaultLongThreshold(3000L);
         }
 
@@ -339,7 +339,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has
-        if (ServerConfig.config.getValue("auto_restart", false)) {
+        if (ServerConfig.autoRestart) {
             _codeModified = codeModifiedTime();
             new Interval() { // Note well: this interval does not run on the dobj thread
                 public void expired () {

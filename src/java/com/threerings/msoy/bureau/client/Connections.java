@@ -30,11 +30,13 @@ class Connections
     {
         _launcher = launcher;
         
-        new Interval(_launcher.getRunner()) {
+        _purge = new Interval(_launcher.getRunner()) {
             public void expired () {
                 purgeFailedConnections();
             }
-        }.schedule(CLIENT_RENEW_INTERVAL, true);
+        };
+
+        _purge.schedule(CLIENT_RENEW_INTERVAL, true);
     }
 
     /**
@@ -45,6 +47,10 @@ class Connections
      */
     public void add (String host, int port)
     {
+        if (_shutdown) {
+            return;
+        }
+
         String key = host + ":" + port;
         Entry entry = _clients.get(key);
         if (entry != null) {
@@ -56,23 +62,37 @@ class Connections
         _clients.put(key, entry);
     }
 
+    public void shutdown ()
+    {
+        _shutdown = true;
+        _purge.cancel();
+        java.util.List<Entry> entries = new java.util.ArrayList<Entry>();
+        entries.addAll(_clients.values());
+        for (Entry entry : entries) {
+            if (entry.getState() == State.CONNECTED ||
+                entry.getState() == State.PENDING) {
+                entry.logoff();
+            }
+        }
+    }
+
     /**
      * Remove blacklisted connections that have waited long enough.
      */
     protected void purgeFailedConnections ()
     {
         long now = System.currentTimeMillis();
-        java.util.List<String> hosts = new java.util.ArrayList<String>();
-        hosts.addAll(_clients.keySet());
-        for (String host : hosts) {
-            Entry entry = _clients.get(host);
+        java.util.List<String> keys = new java.util.ArrayList<String>();
+        keys.addAll(_clients.keySet());
+        for (String key : keys) {
+            Entry entry = _clients.get(key);
             if (entry.getState() != State.FAILED) {
                 continue;
             }
             long age = now - entry.getLastUpdateTime();
             if (age >= CLIENT_RENEW_TIME) {
                 log.info("Clearing previously failed connection", "entry", entry);
-                _clients.remove(host);
+                _clients.remove(key);
             }
         }
     }
@@ -105,23 +125,26 @@ class Connections
         @Override // from ClientAdapter
         public void clientDidLogoff (Client client)
         {
-            Entry entry = getEntry(client, "logoff", State.PENDING);
+            Entry entry = getEntry(client, "logoff", State.CONNECTED);
             if (entry != null) {
                 log.info("Client logged off, removing", "entry", entry);
-                _clients.remove(client.getHostname());
+                Entry verify = _clients.remove(key(client));
+                if (verify == null) {
+                    log.info("Client not in map", "client", client);
+                }
             }
+            _launcher.clientLoggedOff();
         }
-
+        
         /**
          * Retrieves an entry that should be in a certain state. Uses the caller in warning 
          * messages.
          */
         protected Entry getEntry (Client client, String caller, State expected)
         {
-            String host = client.getHostname() + ":" + client.getPorts()[0];
-            Entry entry = _clients.get(host);
+            Entry entry = _clients.get(key(client));
             if (entry == null) {
-                log.warning(caller + " observed for unknown client", "host", host);
+                log.warning(caller + " observed for unknown client", "client", client);
                 return null;
 
             } else if (entry.getState() != expected) {
@@ -199,12 +222,27 @@ class Connections
             return _updateTime;
         }
 
+        /**
+         * Logs off the client.
+         */
+        public void logoff ()
+        {
+            _client.logoff(false);
+        }
+
         protected State _state;
         protected long _updateTime;
         protected BureauLauncherClient _client;
     }
 
+    protected static String key (Client client)
+    {
+        return client.getHostname() + ":" + client.getPorts()[0];
+    }
+
     protected BureauLauncher _launcher;
     protected Observer _observer =  new Observer();
     protected java.util.Map<String, Entry> _clients = Maps.newHashMap();
+    protected Interval _purge;
+    protected boolean _shutdown;
 }

@@ -26,6 +26,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
+import com.threerings.presents.server.ShutdownManager;
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.bureau.server.BureauAuthenticator;
 
@@ -207,6 +208,12 @@ public abstract class MsoyBaseServer extends WhirledServer
             _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
             _invmgr.registerDispatcher(new BureauLauncherDispatcher(this),
                 BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+
+            _shutmgr.registerShutdowner(new ShutdownManager.Shutdowner() {
+                public void shutdown () {
+                    shutdownLaunchers();
+                }
+            });
         }
 
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
@@ -240,6 +247,17 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         log.info("Launcher destroyed", "oid", oid);
         _launchers.remove(oid);
+    }
+
+    /**
+     * Tells all connected bureau launchers to shutdown.
+     */
+    protected void shutdownLaunchers ()
+    {
+        for (ClientObject launcher : _launchers.values()) {
+            log.info("Shutting down launcher", "launcher", launcher);
+            BureauLauncherSender.shutdownLauncher(launcher);
+        }
     }
 
     @Override // from PresentsServer

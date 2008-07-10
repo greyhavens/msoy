@@ -111,6 +111,9 @@ public class ServerConfig
     /** True if the game server kicks off local proceses for bureaus. */
     public static boolean localBureaus;
 
+    /** True if the server should restart when code changes. */
+    public static boolean autoRestart;
+
     /**
      * Returns a provider of JDBC connections.
      */
@@ -298,5 +301,6 @@ public class ServerConfig
         bureauSharedSecret = config.getValue("bureau_secret", "");
         bureauGameServers = config.getValue("bureau_game_servers", "localhost:47625");
         localBureaus = config.getValue("local_bureaus", true);
+        autoRestart = config.getValue("auto_restart", false);
     }
 }

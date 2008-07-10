@@ -27,4 +27,16 @@ public class BureauLauncherSender extends InvocationSender
             new Object[] { arg1, arg2, arg3, Integer.valueOf(arg4) });
     }
 
+    /**
+     * Issues a notification that will result in a call to {@link
+     * BureauLauncherReceiver#shutdownLauncher} on a client.
+     */
+    public static void shutdownLauncher (
+        ClientObject target)
+    {
+        sendNotification(
+            target, BureauLauncherDecoder.RECEIVER_CODE, BureauLauncherDecoder.SHUTDOWN_LAUNCHER,
+            new Object[] {  });
+    }
+
 }
