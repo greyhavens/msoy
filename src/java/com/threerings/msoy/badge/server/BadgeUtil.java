@@ -1,9 +1,9 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.badge.server;
 
-import com.threerings.msoy.badge.data.Badge;
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.data.MemberObject;
 
 public class BadgeUtil
@@ -14,7 +14,7 @@ public class BadgeUtil
      * b. record to the member's feed that they earned the stamp in question
      * c. calls MemberNodeActions.badgeAwarded
      */
-    public static void awardBadge (MemberObject user, Badge.Type type)
+    public static void awardBadge (MemberObject user, BadgeType type)
     {
         // TODO
     }

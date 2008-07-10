@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.badge.server;
 
-import com.threerings.msoy.badge.data.Badge;
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.data.MemberObject;
 
 public class BadgeManager
@@ -14,7 +14,7 @@ public class BadgeManager
      */
     public static void updateBadges (MemberObject user)
     {
-        for (Badge.Type badgeType : Badge.Type.values()) {
+        for (BadgeType badgeType : BadgeType.values()) {
             // TODO if badge has been completed and has not yet been awarded, award it
         }
     }
