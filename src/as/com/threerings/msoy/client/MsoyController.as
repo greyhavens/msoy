@@ -292,12 +292,7 @@ public class MsoyController extends Controller
      */
     public function handlePopVolume (trigger :Button) :void
     {
-        if (VolumePopup.popupExists()) {
-            VolumePopup.destroyCurrentInstance();
-        } else {
-            var popup :VolumePopup = new VolumePopup(trigger);
-            popup.show();
-        }
+        SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume);
     }
 
     /**

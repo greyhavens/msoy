@@ -304,12 +304,7 @@ public class ControlBar extends HBox
      */
     protected function handlePopZoom () :void
     {
-        if (ZoomPopup.popupExists()) {
-            ZoomPopup.destroyCurrentInstance();
-        } else {
-            var popup :ZoomPopup = new ZoomPopup(_zoomBtn);
-            popup.show();
-        }
+        SliderPopup.toggle(_zoomBtn, Prefs.getZoom(), Prefs.setZoom);
     }
 
     /** Our clientside context. */

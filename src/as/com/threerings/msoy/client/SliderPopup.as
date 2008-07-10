@@ -1,6 +1,3 @@
-//
-// $Id$
-
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
@@ -14,6 +11,7 @@ import mx.controls.VSlider;
 import mx.core.Application;
 import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
+import mx.events.SliderEvent;
 
 
 /** Background skin to be loaded from the style sheet. */
@@ -21,23 +19,24 @@ import mx.core.ScrollPolicy;
 
     
 /**
- * Helper UI element for the volume control.
+ * Helper UI element for generic popup slider controls, such as volume and zoom.
  *
- * Volume control has "weak singleton" semantics - an instance can be created with
+ * Slider control has "weak singleton" semantics - an instance can be created with
  * the 'new' keyword, but if any other instance previously existed, it will be closed
  * and removed from display prior to displaying the new one.
  */
-public class ZoomPopup extends Canvas
+public class SliderPopup extends Canvas
 {
-    /** Constructor. */
-    public function ZoomPopup (trigger :DisplayObject)
+    public function SliderPopup (trigger :DisplayObject, startValue :Number, bindTo :Function)
     {
+        _trigger = trigger;
         owner = DisplayObjectContainer(Application.application.systemManager);
 
-        styleName = "zoomControl";
+        // TODO: parameterize
+        styleName = "volumeControl";
 
         // Initialize the window
-        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var r : Rectangle = _trigger.getBounds(trigger.stage);
         width = 29;
         height = 100;
         x = r.x - 1;
@@ -53,20 +52,22 @@ public class ZoomPopup extends Canvas
         _slider.maximum = 1;
         _slider.liveDragging = true;
 
-        _slider.value = Prefs.getZoom();
-        BindingUtils.bindSetter(Prefs.setZoom, _slider, "value");
+        _slider.value = startValue;
+        BindingUtils.bindSetter(bindTo, _slider, "value");
 
         addChild(_slider);
     }
 
     /** Show the popup, by adding it to the application's display list,
      *  and register for appropriate events. */
-    public function show () :void
+    public function show () : void
     {
         destroyCurrentInstance();
-
+        
         owner.addChild(this);
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
+        addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
+        _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
         
         // Setting the skin happens after adding to the parent's draw list -
         // this ensures styles are properly loaded
@@ -92,6 +93,19 @@ public class ZoomPopup extends Canvas
         _currentInstance = null;
     }
 
+    /**
+     * Helper method to either close the currently displayed SliderPopup and show this one,
+     * or untoggle this one if it was already being displayed.
+     */
+    public static function toggle (trigger :DisplayObject, startValue :Number, bindTo :Function) :void
+    {
+        if (popupExists() && _currentInstance._trigger == trigger) {
+            destroyCurrentInstance();
+        } else {
+            new SliderPopup(trigger, startValue, bindTo).show();
+        }
+    }
+
     /** If an instance exists, hide it. */
     public static function destroyCurrentInstance () :void
     {
@@ -109,26 +123,45 @@ public class ZoomPopup extends Canvas
     // EVENT HANDLERS
 
     /** Watch for the mouse leaving the area. */
-    private function mouseOutHandler (event :MouseEvent) : void
+    protected function mouseOutHandler (event : MouseEvent) : void
     {
         if (event.relatedObject != null) {
-            // We rolled out into room view, or other element - close up,
-            // but don't delete the object, in case there are still events
-            // queued up for it.
+            _cursorOffCanvas = true;
+
+            if ( ! event.buttonDown) {
+                // We rolled out into room view, or other element - close up,
+                // but don't delete the object, in case there are still events
+                // queued up for it.
+                hide();
+            }
+        }
+    }
+
+    protected function mouseOverHandler (event :MouseEvent) :void
+    {
+        _cursorOffCanvas = false;
+    }
+
+    protected function thumbReleaseHandler (event :SliderEvent): void
+    {
+        if (_cursorOffCanvas) {
             hide();
         }
     }
 
-    /** The actual volume slider. */
+    /** The actual slider. */
     protected var _slider : VSlider;
+
+    /** True if the mouse cursor has left the canvas area. */
+    protected var _cursorOffCanvas :Boolean;
+
+    /** The object that triggered this popup. */
+    protected var _trigger :DisplayObject;
 
     /** Pointer to any other instance of the popup being currently displayed.
         Unfortunately, ActionScript doesn't support singleton semantics
         very well - instead, we just hold on to a reference, and hide any
         previous instance before displaying a new one. */
-    protected static var _currentInstance :ZoomPopup;
-
+    protected static var _currentInstance : SliderPopup;
 }
-   
-
 }
