@@ -33,7 +33,7 @@ http_port = 8080
 # The lowest port on which to host game server instances; ports above this port
 # may also be used if multiple game servers are running at the same time
 
-game_server_port = 47625
+game_server_port = 47630
 
 #
 # A regular expression used to extract the node id from our hostname. In
