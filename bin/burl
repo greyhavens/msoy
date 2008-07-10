@@ -33,20 +33,20 @@ ulimit -d 1572864
 case "$1" in
   start)
         # Make sure msoyrespawn is not currently running
-        if [ -f $MSOY_HOME/run/brespawn-$PROCID.pid ]; then
-            echo "msoybureaulauncherrespawn appears to be already running for $PROCID."
+        if [ -f $MSOY_HOME/run/burlrespawn-$PROCID.pid ]; then
+            echo "burlrespawn appears to be already running for $PROCID."
             echo "Run '$0 stop' to stop it first."
             exit 1
         fi
 
         # Make sure there are no hung MetaSOY server processes
-        SERVER_PIDFILE=$MSOY_HOME/run/bserver-$PROCID.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/burlserver-$PROCID.pid
         if [ -f $SERVER_PIDFILE ]; then
             PID=`cat $SERVER_PIDFILE`
             RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | \
                 sort -n | head -1`
             if [ ! -z "$RPIDS" ]; then
-                echo "WARNING: A $PROCID MsoyServer process is currently running."
+                echo "WARNING: A $PROCID burl server process is currently running."
                 echo "If it has failed and you wish to forcibly restart it, please"
                 echo "execute the following commands:"
                 echo ""
@@ -59,10 +59,10 @@ case "$1" in
         fi
 
         # Go ahead and start things up
-        DAEMON=$MSOY_HOME/bin/msoybureaulauncherrespawn
-        RESPAWN_PIDFILE=$MSOY_HOME/run/brespawn-$PROCID.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/bserver-$PROCID.pid
-        LOGFILE=$MSOY_HOME/log/brespawn-$PROCID.log
+        DAEMON=$MSOY_HOME/bin/burlrespawn
+        RESPAWN_PIDFILE=$MSOY_HOME/run/burlrespawn-$PROCID.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/burlserver-$PROCID.pid
+        LOGFILE=$MSOY_HOME/log/burlrespawn-$PROCID.log
         echo -n "Starting $DAEMON: "
         touch $RESPAWN_PIDFILE $LOGFILE
         $DAEMON $PROCID $RESPAWN_PIDFILE $SERVER_PIDFILE >>$LOGFILE 2>&1 </dev/null &
@@ -70,14 +70,14 @@ case "$1" in
         ;;
 
   stop)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/brespawn-$PROCID.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/bserver-$PROCID.pid
+        RESPAWN_PIDFILE=$MSOY_HOME/run/burlrespawn-$PROCID.pid
+        SERVER_PIDFILE=$MSOY_HOME/run/burlserver-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
-            echo "No $RESPAWN_PIDFILE exists. Is msoybureaulauncherrespawn running?"
+            echo "No $RESPAWN_PIDFILE exists. Is burlrespawn running?"
         else
             echo -n "Shutting down bureau launcher $PROCID, "
             kill -INT `cat $SERVER_PIDFILE`
-            echo -n "msoybureaulauncherrespawn: "
+            echo -n "burlrespawn: "
             kill `cat $RESPAWN_PIDFILE`
             echo "stopped."
             rm -f $RESPAWN_PIDFILE $SERVER_PIDFILE
@@ -85,11 +85,11 @@ case "$1" in
         ;;
 
   unspawn)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/brespawn-$PROCID.pid
+        RESPAWN_PIDFILE=$MSOY_HOME/run/burlrespawn-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
-            echo "No $RESPAWN_PIDFILE exists. Is msoybureaulauncherrespawn running?"
+            echo "No $RESPAWN_PIDFILE exists. Is burlrespawn running?"
         else
-            echo -n "Shutting down msoybureaulauncherrespawn: "
+            echo -n "Shutting down burlrespawn: "
             kill `cat $RESPAWN_PIDFILE`
             echo "stopped."
             rm -f $RESPAWN_PIDFILE

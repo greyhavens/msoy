@@ -1079,7 +1079,6 @@
       <filelist dir="bin">
         <file name="msoy"/>
         <file name="msoyrespawn"/>
-        <file name="msoyserver"/>
         <file name="msoyjava"/>
         <file name="runmsoy"/>
         <file name="rungame"/>
@@ -1088,10 +1087,9 @@
         <file name="runcommon"/>
         <file name="runpolicy"/>
         <file name="runthaneclient"/>
-        <file name="msoyb"/>
-        <file name="msoybureaulauncher"/>
-        <file name="msoybureaulauncherrespawn"/>
-        <file name="runmsoybureaulauncher"/>
+        <file name="burl"/>
+        <file name="burlrespawn"/>
+        <file name="runburl"/>
       </filelist>
     </copyfilelist>
     <copyfilelist dest="${approot.server}/tools/bin">
@@ -1163,8 +1161,8 @@
     <startupscript name="msoy_bureau" runas="${msoy.user}"
                    output="${approot.server}/etc/rc.d/${app.name}-bureau.sh">
       <commands>
-        <start cmdline="${app.prefix}/bin/msoyb start"/>
-        <stop cmdline="${app.prefix}/bin/msoyb stop"/>
+        <start cmdline="${app.prefix}/bin/burl start"/>
+        <stop cmdline="${app.prefix}/bin/burl stop"/>
       </commands>
     </startupscript>
 

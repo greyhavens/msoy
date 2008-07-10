@@ -37,8 +37,8 @@ while (1) {
     }
 
     # now run the server
-    print $LOG "$now Running msoy bureau launcher: $root/bin/runmsoybureaulauncher $procid $server_pidfile\n";
-    my $rcode = system("su -m $msoy_user -c \"$root/bin/runmsoybureaulauncher $procid $server_pidfile\"");
+    print $LOG "$now Running msoy bureau launcher: $root/bin/runburl $procid $server_pidfile\n";
+    my $rcode = system("su -m $msoy_user -c \"$root/bin/runburl $procid $server_pidfile\"");
 
     # note the time again
     my $finish = time();
@@ -53,7 +53,7 @@ while (1) {
     }
 
     # sleep a minimum of 15 seconds since the bureau launcher normally only exits if the 
-    # main server has restarted for some reason, in which case we want to give it some time
+    # main servers have restarted for some reason, in which case we want to give it some time
     # to start accepting connections
     my $sleep = 15;
 

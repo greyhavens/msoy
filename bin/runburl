@@ -20,9 +20,9 @@ fi
 PROCID=$1
 PIDFILE=$2
 
-LOGFILE=$MSOY_HOME/log/bstdout-$PROCID.log
+LOGFILE=$MSOY_HOME/log/burl-stdout-$PROCID.log
 LOG_EMAIL=nightly-logs@threerings.net
-SERVER_MEMORY=8M
+SERVER_MEMORY=32M
 
 # Override settings with those from MSOY_HOME/dist/server.conf
 if [ -f $MSOY_HOME/dist/server.conf ]; then
