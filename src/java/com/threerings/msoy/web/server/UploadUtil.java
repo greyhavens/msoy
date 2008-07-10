@@ -16,6 +16,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
@@ -114,9 +115,9 @@ public class UploadUtil
     public static void publishStream (
         InputStream input, String subdirectory, String name, String mimeType)
         throws IOException
-	{
-		publishStream(input, subdirectory, name, mimeType, null);
-	}
+    {
+        publishStream(input, subdirectory, name, mimeType, null);
+    }
 
     /**
      * Publishes an InputStream to the media store at the specified subdirectory location,
@@ -153,13 +154,13 @@ public class UploadUtil
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
                 S3FileObject uploadTarget = new S3FileObject(name, target, mimeType);
 
-				if (headers != null) {
-	                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
-	                               AccessControlList.StandardPolicy.PUBLIC_READ);
-				} else {
-	                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
-	                               AccessControlList.StandardPolicy.PUBLIC_READ, headers);					
-				}
+                if (headers == null ) {
+                    headers = Collections.emptyMap();
+                }
+                
+                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
+                               AccessControlList.StandardPolicy.PUBLIC_READ, headers);
+
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
                          ", name=" + name + "].");
 
@@ -280,7 +281,7 @@ public class UploadUtil
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
     protected static final String SNAPSHOT_DIRECTORY = "snapshot";
 
-	// Effectively 'never' expire date.
-	protected static final Map<String,String> EXPIRES_2038 = 
-		ImmutableMap.of("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
+    // Effectively 'never' expire date.
+    protected static final Map<String,String> EXPIRES_2038 = 
+        ImmutableMap.of("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
 }
