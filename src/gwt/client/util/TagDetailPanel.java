@@ -68,7 +68,7 @@ public class TagDetailPanel extends VerticalPanel
     {
         setStyleName("tagDetailPanel");
         _service = service;
-        _canEdit = CShell.getMemberId() > 0 && showAddUI;
+        _canEdit = !CShell.isGuest() && showAddUI;
 
         _tags = new FlowPanel();
         _tags.setStyleName("Tags");

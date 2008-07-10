@@ -151,7 +151,8 @@ public class WhirledDetailPanel extends FlowPanel
         established.add(new InlineLabel(
             CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
         established.add(new InlineLabel(CShell.cmsgs.creatorBy(), false, false, true));
-        Hyperlink creator = Application.memberViewLink(_detail.creator.toString(), _detail.creator.getMemberId());
+        Hyperlink creator = Application.memberViewLink(
+            _detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
         established.add(creator);
         titleBox.add(established);
@@ -187,7 +188,7 @@ public class WhirledDetailPanel extends FlowPanel
         
         // join this whirled
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            if (Group.canJoin(_group.policy) && CWhirleds.getMemberId() > 0) {
+            if (Group.canJoin(_group.policy) && !CWhirleds.isGuest()) {
                 actions.add(MsoyUI.createActionLabel(
                                CWhirleds.msgs.detailJoin(), new PromptPopup(
                                    CWhirleds.msgs.detailJoinPrompt(), joinGroup()).setContext(
@@ -209,7 +210,8 @@ public class WhirledDetailPanel extends FlowPanel
         
         // shop
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
-            String args = ShopUtil.composeArgs(_extras.catalogItemType, _extras.catalogTag, null, 0);
+            String args = ShopUtil.composeArgs(
+                _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
                 CWhirleds.msgs.detailShop(), Application.createLinkListener(Page.SHOP, args)));
         }

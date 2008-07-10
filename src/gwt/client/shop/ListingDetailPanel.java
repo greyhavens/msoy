@@ -58,12 +58,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
         new ClickCallback<Item>(purchase) {
             public boolean callService () {
-                if (CShop.getMemberId() > 0) {
-                    CShop.catalogsvc.purchaseItem(
-                        CShop.ident, _item.getType(), _listing.catalogId, this);
-                } else {
+                if (CShop.isGuest()) {
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
                                       Application.createLinkListener(Page.ACCOUNT, "create"));
+                } else {
+                    CShop.catalogsvc.purchaseItem(
+                        CShop.ident, _item.getType(), _listing.catalogId, this);
                 }
                 return true;
             }

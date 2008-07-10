@@ -87,7 +87,7 @@ public class GroupsBlurb extends Blurb
 //         @Override // from PagedGrid
 //         protected void addCustomControls (FlexTable controls)
 //         {
-//             if (CPeople.getMemberId() > 0 && CPeople.getMemberId() != _name.getMemberId()) {
+//             if (!CPeople.isGuest() && CPeople.getMemberId() != _name.getMemberId()) {
 //                 Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
 //                 new ClickCallback<List<GroupMembership>>(inviteButton) {
 //                     public boolean callService () {
