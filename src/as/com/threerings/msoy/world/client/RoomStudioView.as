@@ -178,10 +178,9 @@ public class RoomStudioView extends RoomView
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
 
-        if ("true" == String(params["scaling"])) {
-            createScaleControls(scale);
-            _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-        }
+        _saveScaling = ("true" == String(params["scaling"]));
+        createScaleControls(scale);
+        _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
     }
 
     protected function initViewPet (params :Object) :void
@@ -323,7 +322,7 @@ public class RoomStudioView extends RoomView
 
         setAvatarScale(scale);
 
-        if (ExternalInterface.available) {
+        if (_saveScaling && ExternalInterface.available) {
             try {
                 ExternalInterface.call("updateAvatarScale", scale);
             } catch (e :Error) {
@@ -347,6 +346,7 @@ public class RoomStudioView extends RoomView
     /** Used for sizing our own avatar. */
     protected var _scaleReset :CommandButton;
     protected var _scaleSlider :HSlider;
+    protected var _saveScaling :Boolean;
 
 //    [Embed(source="../../../../../../../pages/media/static/avatar/member.swf",
 //        mimeType="application/octet-stream")]
