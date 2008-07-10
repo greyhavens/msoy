@@ -74,7 +74,7 @@ public class CShell
      */
     public static int getMemberId ()
     {
-        return (creds != null) ? creds.getMemberId() : 0;
+        return (ident == null) ? 0 : ident.memberId;
     }
 
     /**
