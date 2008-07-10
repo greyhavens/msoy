@@ -14,13 +14,9 @@ public class BureauLauncherDecoder extends InvocationDecoder
     /** The generated hash code used to identify this receiver class. */
     public static final String RECEIVER_CODE = "e594037aadf57c8011c9ecbb0c28050a";
 
-    /** The method id used to dispatch {@link BureauLauncherReceiver#addGameServer}
-     * notifications. */
-    public static final int ADD_GAME_SERVER = 1;
-
     /** The method id used to dispatch {@link BureauLauncherReceiver#launchThane}
      * notifications. */
-    public static final int LAUNCH_THANE = 2;
+    public static final int LAUNCH_THANE = 1;
 
     /**
      * Creates a decoder that may be registered to dispatch invocation
@@ -41,12 +37,6 @@ public class BureauLauncherDecoder extends InvocationDecoder
     public void dispatchNotification (int methodId, Object[] args)
     {
         switch (methodId) {
-        case ADD_GAME_SERVER:
-            ((BureauLauncherReceiver)receiver).addGameServer(
-                (String)args[0], ((Integer)args[1]).intValue()
-            );
-            return;
-
         case LAUNCH_THANE:
             ((BureauLauncherReceiver)receiver).launchThane(
                 (String)args[0], (String)args[1], (String)args[2], ((Integer)args[3]).intValue()

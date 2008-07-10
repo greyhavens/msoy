@@ -185,12 +185,6 @@ public class BureauLauncher
         }
     }
 
-    // from BureauLauncherReceiver
-    public void addGameServer (String host, int port)
-    {
-        _connections.add(host, port);
-    }
-
     protected Runner _runner = new Runner();
     @Inject protected NodeRepository _nodeRepo;
     protected Connections _connections = new Connections(this);
