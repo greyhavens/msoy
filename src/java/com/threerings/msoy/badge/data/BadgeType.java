@@ -61,7 +61,7 @@ public enum BadgeType
      */
     public boolean getProgress (MemberObject user)
     {
-        return false.
+        return false;
     }
 
     /**
