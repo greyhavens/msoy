@@ -72,6 +72,7 @@ import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneFactory;
@@ -151,6 +152,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to our trophy metadata. */
     public static TrophyRepository trophyRepo;
+
+    /** Provides access to the badge repository. */
+    public static BadgeRepository badgeRepo;
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
@@ -240,6 +244,7 @@ public class MsoyServer extends MsoyBaseServer
         issueRepo = _issueRepo;
         commentRepo = _commentRepo;
         trophyRepo = _trophyRepo;
+        badgeRepo = _badgeRepo;
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
@@ -447,7 +452,7 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime support manager. */
     @Inject protected MsoyUnderwireManager _supportMan;
-    
+
     /** The member movement observation manager. */
     @Inject protected WorldWatcherManager _watcherMan;
 
@@ -471,6 +476,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to our trophy metadata. */
     @Inject protected TrophyRepository _trophyRepo;
+
+    /** Provides access to the badge repository. */
+    @Inject protected BadgeRepository _badgeRepo;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

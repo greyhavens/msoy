@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 
@@ -101,6 +102,14 @@ public class MemberNodeActions
     public static void sendNotification (int memberId, Notification notification)
     {
         MsoyServer.peerMan.invokeNodeAction(new SendNotification(memberId, notification));
+    }
+
+    /**
+     * Dispatches a notification that a member has won a badge.
+     */
+    public static void badgeAwarded (BadgeRecord record)
+    {
+        MsoyServer.peerMan.invokeNodeAction(new BadgeAwarded(record));
     }
 
     protected static class DisplayNameChanged extends MemberNodeAction
@@ -243,5 +252,16 @@ public class MemberNodeActions
         }
 
         protected Notification _notification;
+    }
+
+    protected static class BadgeAwarded extends MemberNodeAction
+    {
+        public BadgeAwarded (BadgeRecord record) {
+            super(record.memberId);
+        }
+
+        protected void execute (MemberObject memobj) {
+            // TODO something magical happens here
+        }
     }
 }
