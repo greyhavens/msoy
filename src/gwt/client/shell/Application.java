@@ -313,20 +313,27 @@ public class Application
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
 
-        // pull the affiliate id out of the URL
+        // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting
+        //   of three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
         int aidIdx = args.indexOf("aid");
-        if (aidIdx != -1) {
-            String aid = args.get(aidIdx + 1, "");  // get the affiliate id string
+        int lastIdx = aidIdx + 3;
+        if (aidIdx != -1 && args.getArgCount() > lastIdx) {
+            String affiliate = args.get(aidIdx + 1, "");
+            String vector = args.get(aidIdx + 2, "");
+            String creative = args.get(aidIdx + 3, "");
 
-            // remove the affiliate ID
-            token = Args.compose(args.remove(aidIdx, aidIdx + 2));
+            // remove the "aid" tag and its three values
+            token = Args.compose(args.remove(aidIdx, aidIdx + 4));
             args = new Args();
             args.setToken(token);
 
-            // let someone know
-            AffiliateCookie.put(aid);
-        }            
+            // save our tracking info, but don't overwrite old values
+            TrackingInfo.saveReferral(affiliate, vector, creative, false);
+        }
 
+        // add a new tracking number, if necessary
+        TrackingInfo.addTracker();
+        
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(page)) {
             // tell any existing page that it's being unloaded
@@ -358,7 +365,7 @@ public class Application
         // convert the page to GA format and report it to Google Analytics
         reportEvent(args.toPath(page));
     }
-
+        
     protected void initContext ()
     {
         CShell.app = this;
