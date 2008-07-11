@@ -24,11 +24,11 @@ LOGFILE=$MSOY_HOME/log/stdout-$PROCID.log
 LOG_EMAIL=nightly-logs@threerings.net
 SERVER_MEMORY=384M
 
-# Override settings with those from MSOY_HOME/dist/server.conf
-if [ -f $MSOY_HOME/dist/server.conf ]; then
-    . $MSOY_HOME/dist/server.conf
+# Override settings with those from MSOY_HOME/dist/msoy-server.conf
+if [ -f $MSOY_HOME/dist/msoy-server.conf ]; then
+    . $MSOY_HOME/dist/msoy-server.conf
 else
-    echo "Can't load $MSOY_HOME/dist/server.conf; can't run server."
+    echo "Can't load $MSOY_HOME/dist/msoy-server.conf; can't run server."
     exit 255
 fi
 

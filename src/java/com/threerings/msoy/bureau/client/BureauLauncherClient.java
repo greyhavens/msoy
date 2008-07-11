@@ -6,7 +6,7 @@ package com.threerings.msoy.bureau.client;
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -36,14 +36,14 @@ public class BureauLauncherClient extends Client
      * object and connect to all the servers therein
      * @see BureauLauncherCredentials
      * @see BureauLauncherAuthenticator
-     * @see ServerConfig#bureauSharedSecret
+     * @see BureauLauncherConfig#bureauSharedSecret
      * @see ServerRegistryObject
      */
     public BureauLauncherClient (BureauLauncher launcher, Connections target)
     {
         super(new BureauLauncherCredentials(
-            ServerConfig.serverHost, 
-            ServerConfig.bureauSharedSecret), launcher.getRunner());
+            BureauLauncherConfig.serverHost, 
+            BureauLauncherConfig.bureauSharedSecret), launcher.getRunner());
 
         _target = target;
         addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);

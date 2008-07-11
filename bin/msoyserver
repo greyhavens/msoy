@@ -31,5 +31,5 @@ while [ ! -z "$1" ]; do
 done
 
 CLASS=com.threerings.msoy.server.MsoyServer
-`dirname $0`/msoyjava -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
+`dirname $0`/msoyjava msoy -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
     $JAVA_ARGS $CLASS $*

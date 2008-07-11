@@ -8,7 +8,7 @@
 #   msoyclient [-nodebug] [parameters for game client] [build version]
 
 BINDIR=`dirname $0`
-HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
+HOST=`egrep ^server_host $BINDIR/../msoy-server.properties | awk '{print $3}'`
 
 PLAYER="flashplayer-debug"
 if [ "$1" = "-nodebug" ]; then
@@ -22,7 +22,7 @@ if [ -z "$1" ]; then
 fi
 
 # try to figure out which port the game server is running on
-PROPS=$BINDIR/../server.properties
+PROPS=$BINDIR/../msoy-server.properties
 PORT=`egrep "^msoy1.game_server_port" $PROPS | awk -F= '{ print $2 }' | sed 's: ::g'`
 if [ -z "$PORT" ]; then
     PORT=`egrep "^game_server_port" $PROPS | awk -F= '{ print $2 }' | sed 's: ::g'`

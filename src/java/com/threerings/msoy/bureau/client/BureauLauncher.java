@@ -11,7 +11,7 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.peer.server.persist.NodeRepository;
@@ -30,7 +30,7 @@ public class BureauLauncher
         @Override protected void configure () {
             ConnectionProvider provider = null;
             try {
-                provider = ServerConfig.createConnectionProvider();
+                provider = BureauLauncherConfig.createConnectionProvider();
             } catch (Exception e) {
                 addError(e);
             }
@@ -105,15 +105,16 @@ public class BureauLauncher
 
     /** 
      * Runs the bureau launcher program. The arguments are not used and all data is read from 
-     * server.properties. The launcher operates as follows:<br/>
+     * burl-server.properties. The launcher operates as follows:<br/>
      * <li>On startup and at intervals, connects to all world servers read from the 
      * <code>NODES</code> table that are not already connected.</li>
      * <li>If there are 0 nodes in the node table, exits.</li>
      * <li>When a world server is successfully connected, subscribes to the game server registry 
      * and connects to each server in the registry (as well as ones added later) that is not 
      * already connected.</li>
-     * <li>When {@link ServerConfig#autoRestart} is set and any logoff occurs, enters a faster 
-     * polling mode to try and make sure we exit, thereby picking up new code.</li>
+     * <li>When {@link BureauLauncherConfig#worldServerWillAutoRestart} is set and any logoff 
+     * occurs, enters a faster polling mode to try and make sure we exit, thereby picking up new 
+     * code.</li>
      * @see NodeRepository
      * @see #PEER_POLL_INTERVAL
      * @see #clientLoggedOff
@@ -169,8 +170,8 @@ public class BureauLauncher
         // called when the first instance of a game is played since the last server restart, so it
         // is debatable.
         String [] command = {
-            ServerConfig.serverRoot + "/bin/runthaneclient",
-            bureauId, token, server, String.valueOf(port)};
+            BureauLauncherConfig.serverRoot + "/bin/runthaneclient",
+            "burl", bureauId, token, server, String.valueOf(port)};
         log.info("Attempting to launch thane", "command", command);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
@@ -201,7 +202,7 @@ public class BureauLauncher
         // to make sure we get shut down. We just increase the frequency of the node poll so that 
         // the main servers do not stop and restart before we get a chance to see that the number 
         // of entries has gone to zero.
-        if (ServerConfig.autoRestart) {
+        if (BureauLauncherConfig.worldServerWillAutoRestart) {
             startHyperPoll();
             _lastLogoffTime = System.currentTimeMillis();
         }

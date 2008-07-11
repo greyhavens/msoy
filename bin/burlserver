@@ -31,5 +31,5 @@ while [ ! -z "$1" ]; do
 done
 
 CLASS=com.threerings.msoy.bureau.client.BureauLauncher
-`dirname $0`/msoyjava -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
+`dirname $0`/msoyjava burl -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
     $JAVA_ARGS $CLASS $*

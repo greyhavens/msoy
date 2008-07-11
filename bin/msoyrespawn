@@ -9,8 +9,8 @@ my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
 my $procid = shift or die "Usage: $0 procid [pidfile]\n";
 
 # figure out what user as which to run the server
-my $msoy_user = read_prop("$root/dist/server.conf", "MSOY_USER");
-die "Unable to determine server user from $root/dist/server.conf\n" unless (defined $msoy_user);
+my $msoy_user = read_prop("$root/dist/msoy-server.conf", "MSOY_USER");
+die "Unable to determine server user from $root/dist/msoy-server.conf\n" unless (defined $msoy_user);
 
 my $LOG = STDERR;
 my $pidfile = shift;
@@ -31,7 +31,7 @@ while (1) {
     my $now = localtime($start);
 
     # update the code to the latest version
-    if (read_prop("$root/dist/server.properties", "dev_deployment") ne "true") {
+    if (read_prop("$root/dist/msoy-server.properties", "dev_deployment") ne "true") {
         check_system("apt-get update");
         check_system("apt-get install msoy-server");
     }

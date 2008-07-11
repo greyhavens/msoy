@@ -12,13 +12,13 @@ fi
 
 MSOY_HOME=`dirname $0`/..
 MSOY_HOME=`cd $MSOY_HOME ; pwd`
-if [ ! -f $MSOY_HOME/dist/server.conf ]; then
-    echo "Unable to infer MSOY_HOME. No server.conf file?"
+if [ ! -f $MSOY_HOME/dist/burl-server.conf ]; then
+    echo "Unable to infer MSOY_HOME. No burl-server.conf file?"
     exit 1
 fi
 
 # Read in our configuration
-. $MSOY_HOME/dist/server.conf
+. $MSOY_HOME/dist/burl-server.conf
 
 # Use our hostname to compute an identifier for log files and such
 PROCID=`hostname | sed 's:\..*::'`

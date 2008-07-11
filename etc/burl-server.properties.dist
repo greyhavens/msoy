@@ -1,0 +1,39 @@
+#
+# $Id$
+#
+# Configuration for a MetaSOY! burl server installation
+
+#
+# Is this a development deployment?
+
+dev_deployment = true
+
+#
+# The hostname used by the client to connect to the game server
+
+server_host = game.whirled.com
+
+#
+# The directory from which the server is run. Used to put log files in the
+# proper location and things like that.
+
+server_root = /export/msoy
+
+#
+# The world and game servers will auto restart if code changes (used on dev server)
+
+world_server_will_auto_restart = false
+
+#
+# The default database mapping; all other definitions will inherit from
+# this and need only be specified in cases where they differ from the
+# defaults
+
+db.default.driver = com.mysql.jdbc.Driver
+db.default.url = jdbc:mysql://DBHOST:3306/msoy?useServerPrepStmts=false
+db.default.username = USERNAME
+db.default.password = PASSWORD
+
+# Keys for operating bureau launchers
+
+# bureau_secret = you can't guess this

@@ -219,14 +219,16 @@
       <sources refid="ooo.buildserver.source"/>
       <sources><directory path="${basedir}/etc"/></sources>
       <files>
-        <file name="server.properties"/>
-        <file name="server.conf"/>
+        <file name="msoy-server.properties"/>
+        <file name="msoy-server.conf"/>
+        <file name="burl-server.properties"/>
+        <file name="burl-server.conf"/>
         <file name="build_settings.properties"/>
       </files>
     </gatherconfiguration>
 
     <!-- Read in all the deployment & build configuration bits. -->
-    <property file="${deploy.dir}/server.properties"/>
+    <property file="${deploy.dir}/msoy-server.properties"/>
     <property file="${deploy.dir}/build_settings.properties"/>
   </target>
 
@@ -247,10 +249,10 @@
       <filelist refid="dist.libs"/>
     </copyfilelist>
 
-    <!-- create our toybox propertis from server.properties -->
+    <!-- create our toybox propertis from msoy-server.properties -->
     <exec executable="egrep">
       <arg line="^toybox\."/>
-      <arg line="${deploy.dir}/server.properties"/>
+      <arg line="${deploy.dir}/msoy-server.properties"/>
       <redirector output="${classes.dir}/toybox.properties">
         <outputfilterchain>
           <replacestring from="toybox." to=""/>
@@ -380,7 +382,7 @@
     </tstamp>
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
-    <!-- then overwrite with values read from server.properties -->
+    <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java.tmpl"
           tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
       <filterset>
@@ -460,7 +462,7 @@
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
     <property name="socket_policy_port" value="47623"/>
-    <!-- then overwrite with values read from server.properties -->
+    <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
           overwrite="true">

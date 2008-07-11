@@ -8,9 +8,12 @@
 MSOY_HOME=`dirname $0`
 MSOY_HOME=`cd $MSOY_HOME/..; pwd`
 
+CONF_PREFIX=$1
+shift
+
 # read in the server configuration
-if [ -f $MSOY_HOME/dist/server.conf ]; then
-    . $MSOY_HOME/dist/server.conf
+if [ -f $MSOY_HOME/dist/${CONF_PREFIX}-server.conf ]; then
+    . $MSOY_HOME/dist/${CONF_PREFIX}-server.conf
 fi
 
 NOW=`date "+%F-%H:%M"`

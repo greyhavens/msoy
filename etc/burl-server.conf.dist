@@ -1,0 +1,26 @@
+# -*- mode: sh -*-
+#
+# $Id$
+#
+# Local configuration for this MetaSOY installation.
+
+# General configurations
+MSOY_USER=burl
+LOG_EMAIL=msoy-logs@DOMAIN
+
+# These are passed to the various JVMs
+SERVER_MEMORY=384M
+TOOL_MEMORY=384M
+
+# The host via which to send mail
+SMTP_HOST=localhost
+
+# Locate the mail program
+MAIL=/usr/bin/mail
+if [ ! -f $MAIL ]; then
+    MAIL=/bin/mail
+fi
+
+#
+# Path for launching a thane interpreter
+THANE_INTERPRETER=dist/lib/avmthane

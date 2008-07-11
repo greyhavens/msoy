@@ -8,4 +8,4 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin
 0 1 * * * @PREFIX@/bin/process_stats
 
 # msoy logs rolling 
-5 0 * * * @PREFIX@/bin/roll_logs
+5 0 * * * @PREFIX@/bin/roll_logs msoy

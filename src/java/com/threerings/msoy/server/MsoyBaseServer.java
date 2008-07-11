@@ -324,7 +324,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             String token) {
             return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient",
-                bureauId, token, "localhost", 
+                "msoy", bureauId, token, "localhost", 
                 String.valueOf(getListenPorts()[0])};
         }
     }

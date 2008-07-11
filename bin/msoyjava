@@ -15,9 +15,12 @@ if [ ! -e $JAVA_VM ]; then
     exit 255
 fi
 
-# Obtain settings from MSOY_HOME/dist/server.conf
-if [ -f $MSOY_HOME/dist/server.conf ]; then
-    . $MSOY_HOME/dist/server.conf
+CONF_PREFIX="$1"
+shift
+
+# Obtain settings from MSOY_HOME/dist/${CONF_PREFIX}-server.conf
+if [ -f $MSOY_HOME/dist/${CONF_PREFIX}-server.conf ]; then
+    . $MSOY_HOME/dist/${CONF_PREFIX}-server.conf
 fi
 
 # set up our java arguments
