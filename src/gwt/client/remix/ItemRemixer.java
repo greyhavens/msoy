@@ -7,8 +7,11 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.http.client.URL;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -20,9 +23,14 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import com.threerings.msoy.web.data.CostUpdatedException;
+
 import client.shell.CShell;
 
 import client.editem.EditorHost;
+
+import client.shop.CShop;
+import client.shop.PriceLabel;
 
 import client.util.ImageChooserPopup;
 import client.util.FlashClients;
@@ -43,6 +51,16 @@ public class ItemRemixer extends FlexTable
         configureBridges();
     }
 
+    /**
+     * Set the price of the item, for use when we're remixing a listed item.
+     */
+    public void setCatalogInfo (int catalogId, int flowCost, int goldCost)
+    {
+        _catalogId = catalogId;
+        _flowCost = flowCost;
+        _goldCost = goldCost;
+    }
+
     public void setItem (byte type, int itemId)
     {
         CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), 
@@ -56,9 +74,19 @@ public class ItemRemixer extends FlexTable
     public void setItem (Item item)
     {
         _item = item;
-        HorizontalPanel hpan = new HorizontalPanel();
-        hpan.add(createRemixControls(item));
-        setWidget(0, 0, hpan);
+        VerticalPanel vpan = new VerticalPanel();
+        vpan.add(createRemixControls(item));
+
+        if (_catalogId != 0) {
+            HorizontalPanel hpan = new HorizontalPanel();
+            hpan.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
+            _priceLabel = new PriceLabel(_flowCost, _goldCost);
+            hpan.add(_priceLabel);
+            hpan.setCellWidth(_priceLabel, WIDTH + "px");
+            vpan.add(hpan);
+        }
+
+        setWidget(0, 0, vpan);
     }
 
     protected Widget createRemixControls (Item item)
@@ -77,10 +105,13 @@ public class ItemRemixer extends FlexTable
         if (item instanceof Decor) {
             flashVars += "&" + FlashClients.createDecorViewerParams((Decor) item);
         }
+        if (_catalogId != 0) {
+            flashVars += "&mustBuy=true";
+        }
 
         return WidgetUtil.createFlashContainer("remixControls",
             "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
-            680, 550, flashVars);
+            WIDTH, 550, flashVars);
     }
 
     /**
@@ -104,10 +135,39 @@ public class ItemRemixer extends FlexTable
     }
 
     protected void setHash (
-        String id, String mediaHash, int mimeType, int constraint, int width, int height)
+        final String id, final String mediaHash, final int mimeType, final int constraint,
+        final int width, final int height)
     {
         if (id != Item.MAIN_MEDIA) {
             CShell.log("setHash() called on remixer for non-main media: " + id);
+            return;
+        }
+
+        if (_catalogId != 0) {
+            CShop.catalogsvc.purchaseItem(
+                CShop.ident, _item.getType(), _catalogId, _flowCost, _goldCost,
+                new AsyncCallback<Item>() {
+                    public void onSuccess (Item result) {
+                        _item = result;
+                        _catalogId = 0;
+
+                        // re-enter, to save our remix
+                        setHash(id, mediaHash, mimeType, constraint, width, height);
+                    }
+
+                    public void onFailure (Throwable cause) {
+                        MsoyUI.error(CShell.serverError(cause));
+
+                        if (cause instanceof CostUpdatedException) {
+                            CostUpdatedException cue = (CostUpdatedException) cause;
+                            _flowCost = cue.getFlowCost();
+                            _goldCost = cue.getGoldCost();
+                            _priceLabel.updatePrice(_flowCost, _goldCost);
+
+                            enableBuyButton();
+                        }
+                    }
+                });
             return;
         }
 
@@ -129,6 +189,17 @@ public class ItemRemixer extends FlexTable
         if (controls) {
             try {
                 controls.setPhotoUrl(url);
+            } catch (e) {
+                // nada
+            }
+        }
+    }-*/;
+
+    protected static native void enableBuyButton () /*-{
+        var controls = $doc.getElementById("remixControls");
+        if (controls) {
+            try {
+                controls.enableBuyButton();
             } catch (e) {
                 // nada
             }
@@ -167,10 +238,17 @@ public class ItemRemixer extends FlexTable
         };
     }-*/;
 
+    protected static final int WIDTH = 680;
+
     protected static ItemRemixer _singleton;
 
     protected EditorHost _parent;
 
     /** The item we're remixing. */
     protected Item _item;
+
+    protected int _catalogId;
+    protected int _flowCost, _goldCost;
+
+    protected PriceLabel _priceLabel;
 }

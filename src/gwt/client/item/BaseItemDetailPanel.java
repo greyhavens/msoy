@@ -108,9 +108,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
-        MediaDesc prim = _item.getPrimaryMedia();
-        boolean remixable = (prim != null) && prim.isRemixable();
-        if (remixable) {
+        if (isRemixable()) {
             HorizontalPanel panel = new HorizontalPanel();
             panel.add(new Image("images/item/remixable_icon.png"));
             panel.add(WidgetUtil.makeShim(10, 10));
@@ -194,6 +192,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected boolean userOwnsItem ()
     {
         return false; // overrideable in subclasses
+    }
+
+    /**
+     * Returns true if the item we're displaying is remixable.
+     */
+    protected boolean isRemixable ()
+    {
+        return (_item != null) && _item.getPrimaryMedia().isRemixable();
     }
 
     /**

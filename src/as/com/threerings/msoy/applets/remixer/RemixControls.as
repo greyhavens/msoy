@@ -116,15 +116,24 @@ public class RemixControls extends HBox
         _cancelBtn.styleName = "longThinOrangeButton";
         butBox.addChild(_cancelBtn);
 
-        butBox.addChild(_saveBtn = new CommandButton(_ctx.REMIX.get("b.save_all"), commit));
+        butBox.addChild(_saveBtn = new CommandButton("", commit));
         _saveBtn.styleName = "longThinOrangeButton";
         _saveBtn.enabled = false;
+
+        try {
+            ExternalInterface.addCallback("enableBuyButton", enableBuyButton);
+        } catch (err :Error) {
+            // whatever
+        }
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
             var media :String = params["media"] as String;
 
             createPreviewer(params["type"] as String);
+
+            const mustBuy :Boolean = ("true" == params["mustBuy"]);
+            _saveBtn.label = _ctx.REMIX.get(mustBuy ? "b.save_and_buy" : "b.save_all");
 
             _ctx.pack = new EditableDataPack(media);
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
@@ -144,6 +153,12 @@ public class RemixControls extends HBox
             }
         }
         return copy.toString();
+    }
+
+    protected function enableBuyButton () :void
+    {
+        _saveBtn.enabled = true;
+        _cancelBtn.enabled = true;
     }
 
     protected function createControlsHeader () :UIComponent

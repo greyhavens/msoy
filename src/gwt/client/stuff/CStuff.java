@@ -44,6 +44,13 @@ public class CStuff extends CShell
         Application.go(Page.STUFF, Args.compose("r", ""+type, ""+itemId));
     }
 
+    public static void remixCatalogItem (
+        byte type, int itemId, int catalogId, int flowCost, int goldCost)
+    {
+        Application.go(Page.STUFF, Args.compose(
+            new String[] { "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
+    }
+
     public static void createItem (byte type, byte ptype, int pitemId)
     {
         Application.go(Page.STUFF, Args.compose(

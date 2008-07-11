@@ -138,6 +138,9 @@ public class index extends Page
                 remixer.setItem(type, itemId);
             }
             setContent(remixer);
+            if (args.getArgCount() > 3) {
+                remixer.setCatalogInfo(args.get(3, 0), args.get(4, 0), args.get(5, 0));
+            }
 
         } else {
             // otherwise we're viewing our inventory

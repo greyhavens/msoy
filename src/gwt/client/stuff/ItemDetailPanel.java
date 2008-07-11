@@ -121,8 +121,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         boolean original = (_item.sourceId == 0);
         boolean catalogOriginal = _item.isCatalogOriginal();
         boolean canEditAndList = memberId == _item.creatorId || CShell.isSupport();
-        MediaDesc primaryMedia = _item.getPrimaryMedia();
-        boolean remixable = (primaryMedia != null) && primaryMedia.isRemixable();
+        boolean remixable = isRemixable();
         boolean used = (_item.used != Item.UNUSED);
 
         if (_item.ownerId == memberId && FlashClients.clientExists()) {

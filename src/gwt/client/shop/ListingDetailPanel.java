@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -91,15 +92,17 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel = new FlowPanel();
         _buyPanel.add(purchase);
 
-//        if (_item.getPrimaryMedia().isRemixable()) {
-//            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CStuff.msgs.detailRemix(),
-//                new ClickListener() {
-//                    public void onClick (Widget sender) {
-//                        CStuff.remixItem(_item.getType(), _item.itemId);
-//                    }
-//                });
-//            _buyPanel.add(remix);
-//        }
+        if (!CShop.isGuest() && isRemixable()) {
+            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CStuff.msgs.detailRemix(),
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CStuff.remixCatalogItem(
+                            _item.getType(), _item.itemId, _listing.catalogId,
+                            _listing.flowCost, _listing.goldCost);
+                    }
+                });
+            _buyPanel.add(remix);
+        }
 
         _details.add(_buyPanel);
 
