@@ -19,6 +19,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
+import com.threerings.msoy.web.data.CostUpdatedException;
+
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
 import client.shell.Application;
@@ -26,6 +28,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.CShell;
 import client.shell.Page;
+import client.stuff.CStuff;
 import client.stuff.DoListItemPopup;
 import client.util.ClickCallback;
 import client.util.FlashClients;
@@ -51,7 +54,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
-        _indeets.add(new PriceLabel(_listing.flowCost, _listing.goldCost));
+        _indeets.add(_priceLabel = new PriceLabel(_listing.flowCost, _listing.goldCost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
         PushButton purchase = 
@@ -63,7 +66,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                                       Application.createLinkListener(Page.ACCOUNT, "create"));
                 } else {
                     CShop.catalogsvc.purchaseItem(
-                        CShop.ident, _item.getType(), _listing.catalogId, this);
+                        CShop.ident, _item.getType(), _listing.catalogId,
+                        _listing.flowCost, _listing.goldCost, this);
                 }
                 return true;
             }
@@ -71,9 +75,32 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 itemPurchased(item);
                 return false; // don't reenable buy button
             }
+
+            public void onFailure (Throwable cause)
+            {
+                super.onFailure(cause);
+
+                if (cause instanceof CostUpdatedException) {
+                    CostUpdatedException cue = (CostUpdatedException) cause;
+                    _listing.flowCost = cue.getFlowCost();
+                    _listing.goldCost = cue.getGoldCost();
+                    _priceLabel.updatePrice(cue.getFlowCost(), cue.getGoldCost());
+                }
+            }
         };
         _buyPanel = new FlowPanel();
         _buyPanel.add(purchase);
+
+//        if (_item.getPrimaryMedia().isRemixable()) {
+//            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CStuff.msgs.detailRemix(),
+//                new ClickListener() {
+//                    public void onClick (Widget sender) {
+//                        CStuff.remixItem(_item.getType(), _item.itemId);
+//                    }
+//                });
+//            _buyPanel.add(remix);
+//        }
+
         _details.add(_buyPanel);
 
         // create a table to display miscellaneous info and admin/owner actions
@@ -202,6 +229,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected CatalogListing _listing;
 
     protected FlowPanel _buyPanel;
+
+    protected PriceLabel _priceLabel;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

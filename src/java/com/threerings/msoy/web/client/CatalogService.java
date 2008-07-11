@@ -55,7 +55,8 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    public Item purchaseItem (WebIdent ident, byte itemType, int catalogId)
+    public Item purchaseItem (
+        WebIdent ident, byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
         throws ServiceException;
 
     /**

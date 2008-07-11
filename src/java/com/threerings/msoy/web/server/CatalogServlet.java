@@ -43,6 +43,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.web.data.CostUpdatedException;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.ShopData;
@@ -140,7 +141,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (WebIdent ident, byte itemType, int catalogId)
+    public Item purchaseItem (
+        WebIdent ident, byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
@@ -152,6 +154,11 @@ public class CatalogServlet extends MsoyServiceServlet
             CatalogRecord<ItemRecord> listing = repo.loadListing(catalogId, true);
             if (listing == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            // double-check against the price that the user thinks they're spending
+            if (authedFlowCost < listing.flowCost || authedGoldCost < listing.goldCost) {
+                throw new CostUpdatedException(listing.flowCost, listing.goldCost);
             }
 
             // determine the flow cost for this item

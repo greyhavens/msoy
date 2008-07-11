@@ -17,6 +17,12 @@ public class PriceLabel extends FlowPanel
     public PriceLabel (int flowCost, int goldCost)
     {
         setStyleName("Price");
+        updatePrice(flowCost, goldCost);
+    }
+
+    public void updatePrice (int flowCost, int goldCost)
+    {
+        clear();
         add(new InlineLabel(CShop.msgs.price(), false, false, true));
         if (goldCost > 0) {
             add(MsoyUI.createInlineImage("/images/ui/gold.png"));

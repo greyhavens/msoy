@@ -36,8 +36,9 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (WebIdent ident, byte itemType, int catalogId, 
-                              AsyncCallback<Item> callback);
+    public void purchaseItem (
+        WebIdent ident, byte itemType, int catalogId, int authedFlowCost, int authedGoldCost,
+        AsyncCallback<Item> callback);
     
     /**
      * The asynchronous version of {@link CatalogService#listItem}

@@ -21,7 +21,7 @@ public interface ItemCodes extends InvocationCodes
 
     /** An error code returned by the item services. */
     public static final String E_HIT_SALES_LIMIT = "e.hit_sales_limit";
-    
+
     /** An error code for any operation that needs to debit a member's flow. */
     public static final String INSUFFICIENT_FLOW = "m.insufficient_flow";
 
