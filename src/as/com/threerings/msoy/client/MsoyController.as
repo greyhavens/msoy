@@ -294,7 +294,8 @@ public class MsoyController extends Controller
      */
     public function handlePopVolume (trigger :Button) :void
     {
-        SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume);
+        SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume,
+            { styleName: "volumeSlider" });
     }
 
     /**

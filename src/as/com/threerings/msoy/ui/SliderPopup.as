@@ -31,11 +31,10 @@ public class SliderPopup extends Canvas
         trigger :DisplayObject, startValue :Number, bindTo :Function,
         sliderInitProps :Object = null)
     {
+        styleName = "sliderPopup";
+
         _trigger = trigger;
         owner = DisplayObjectContainer(Application.application.systemManager);
-
-        // TODO: parameterize
-        styleName = "volumeControl";
 
         // Initialize the window
         var r : Rectangle = _trigger.getBounds(trigger.stage);

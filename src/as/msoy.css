@@ -147,10 +147,6 @@ HSlider {
   fillColors: #d5dcdf, #9eabb2, #9eabb2, #d5dcdf;
 }
 
-VSlider {
-  showTrackHighlight: true;
-}
-
 Button {
   paddingBottom: 3;
   fillAlphas: 1, 1, 1, 1;
@@ -777,7 +773,7 @@ BasePanel {
   paddingRight: 2;
 }
 
-.volumeControl {
+.sliderPopup {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
           scaleGridTop="1", scaleGridBottom="23",
           scaleGridLeft="1", scaleGridRight="31");
@@ -785,12 +781,8 @@ BasePanel {
   dropShadowEnabled: "true";
 }
 
-.zoomControl {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
-          scaleGridTop="1", scaleGridBottom="23",
-          scaleGridLeft="1", scaleGridRight="31");
-  backgroundSize: "100%";
-  dropShadowEnabled: "true";
+.volumeSlider {
+  showTrackHighlight: true;
 }
 
 .avatarCellSelected { 
