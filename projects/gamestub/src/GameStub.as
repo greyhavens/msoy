@@ -20,7 +20,17 @@ import com.threerings.flash.TextFieldUtil;
 
 // On Kongregate, the width limit is 700, but there appears to be
 // no height limit.
-[SWF(width="700", height="600")]
+
+// On newgrounds, width limit is 800, height limit 700
+
+// miniclip- ? (new user registration was broken)
+
+// addicting games: ?
+
+// armorgames: dunno, submissions are reviewed, 1000 wide x 700 tall
+// was submit-able
+
+[SWF(width="700", height="700")]
 public class GameStub extends Sprite
 {
     /** The id of the game we'd like to load. */
@@ -33,9 +43,9 @@ public class GameStub extends Sprite
             stage.align = StageAlign.TOP_LEFT;
         }
 
-        _label = TextFieldUtil.createField("Loading...", {
-                autoSize: TextFieldAutoSize.LEFT,
-                selectable: false
+        _label = TextFieldUtil.createField("Loading...",
+            {
+                autoSize: TextFieldAutoSize.LEFT, selectable: false
             }, {
                 size: 18, bold: true, color: 0xFFFFFF
             });
