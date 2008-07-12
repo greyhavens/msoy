@@ -13,6 +13,10 @@ import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.server.SunSignalHandler;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.NativeSignalHandler;
+import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.peer.server.persist.NodeRepository;
 
@@ -22,7 +26,7 @@ import static com.threerings.msoy.Log.log;
  * Operates a bureau launcher client for an msoy server.
  */
 public class BureauLauncher
-    implements BureauLauncherReceiver
+    implements BureauLauncherReceiver, ShutdownManager.Shutdowner
 {
     /** Guice module for bureau launcher. */
     public static class Module extends AbstractModule
@@ -36,9 +40,13 @@ public class BureauLauncher
             }
 
             // TODO: what is "userdb" and should we change it?
-            bind(PersistenceContext.class).toInstance(
-                new PersistenceContext("userdb", provider));
+            bind(PersistenceContext.class).toInstance(new PersistenceContext("userdb", provider));
+            bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
+            bind(Runner.class).toInstance(_runner);
         }
+        
+        @EventQueue
+        protected Runner _runner = new Runner();
     }
 
     /**
@@ -52,24 +60,25 @@ public class BureauLauncher
         public void run ()
         {
             while (true) {
-                if (_queue.isEmpty()) {
-                    if (_stopped) {
-                        break;
+                if (!_queue.isEmpty()) {
+                    Runnable r = _queue.remove(0);
+                    try {
+                        r.run();
+                    } catch (Throwable t) {
+                        log.warning("Error executing run queue item", "runnable", r, t);
                     }
+
+                } else if (_stopped) {
+                    break;
+
+                } else {
                     try {
                         synchronized (this) {
                             wait();
                         }
                     } catch (InterruptedException ie) {
-                        // what to do?
+                        continue;
                     }
-                }
-
-                Runnable r = _queue.remove(0);
-                try {
-                    r.run();
-                } catch (Throwable t) {
-                    log.warning("Error executing run queue item", "runnable", r, t);
                 }
             }
         }
@@ -122,6 +131,18 @@ public class BureauLauncher
     public static void main (String[] args)
     {
         Injector injector = Guice.createInjector(new Module());
+
+        // register SIGTERM, SIGINT (ctrl-c) and a SIGHUP handlers
+        boolean registered = false;
+        try {
+            registered = injector.getInstance(SunSignalHandler.class).init();
+        } catch (Throwable t) {
+            log.warning("Unable to register signal handlers", t);
+        }
+        if (!registered) {
+            injector.getInstance(NativeSignalHandler.class).init();
+        }
+
         BureauLauncher launcher = injector.getInstance(BureauLauncher.class);
         launcher.run();
     }
@@ -129,8 +150,9 @@ public class BureauLauncher
     /**
      * Creates a new bureau launcher.
      */
-    @Inject public BureauLauncher ()
+    @Inject public BureauLauncher (ShutdownManager shutmgr)
     {
+        shutmgr.registerShutdowner(this);
     }
 
     /**
@@ -189,6 +211,16 @@ public class BureauLauncher
     public void shutdownLauncher ()
     {
         shutdown();
+    }
+
+    // from ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        log.info("Shutting down bureau launcher");
+        _connections.shutdown();
+        _pollNodes.cancel();
+        _runner.stop();
+        _dbrunner.stop();
     }
 
     /**
@@ -265,20 +297,8 @@ public class BureauLauncher
         }
     }
 
-    /**
-     * Logoff all clients and stop our run queues.
-     */
-    protected void shutdown ()
-    {
-        log.info("Shutting down bureau launcher");
-        _connections.shutdown();
-        _pollNodes.cancel();
-        _runner.stop();
-        _dbrunner.stop();
-    }
-
     /** Presents run queue. */
-    protected Runner _runner = new Runner();
+    @Inject protected Runner _runner;
 
     /** Database run queue. */
     protected Runner _dbrunner = new Runner();

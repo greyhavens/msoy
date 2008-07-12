@@ -76,7 +76,7 @@ case "$1" in
             echo "No $RESPAWN_PIDFILE exists. Is burlrespawn running?"
         else
             echo -n "Shutting down bureau launcher $PROCID, "
-            kill -INT `cat $SERVER_PIDFILE`
+            kill `cat $SERVER_PIDFILE`
             echo -n "burlrespawn: "
             kill `cat $RESPAWN_PIDFILE`
             echo "stopped."
@@ -97,8 +97,15 @@ case "$1" in
         ;;
 
   restart)
-        echo -n "Restart the bureau launcher using the etc/rc.d script." 
-        exit 1
+        SERVER_PIDFILE=$MSOY_HOME/run/burlserver-$PROCID.pid
+        if [ ! -f $SERVER_PIDFILE ]; then
+            echo "No $SERVER_PIDFILE exists. Is the server running?"
+        else
+            echo -n "Shutting down burl $PROCID: "
+            kill `cat $SERVER_PIDFILE`
+            echo "stopped. Check to be sure that it automatically restarts."
+            rm -f $SERVER_PIDFILE
+        fi
         ;;
 
   *)
