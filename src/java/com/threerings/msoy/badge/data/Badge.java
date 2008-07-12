@@ -5,10 +5,10 @@ package com.threerings.msoy.badge.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.io.SimpleStreamableObject;
+import com.threerings.presents.dobj.DSet;
 
-public abstract class Badge extends SimpleStreamableObject
-    implements IsSerializable
+public abstract class Badge
+    implements DSet.Entry, IsSerializable
 {
     /** The unique code representing the type of this badge. */
     public int badgeCode;
@@ -22,11 +22,21 @@ public abstract class Badge extends SimpleStreamableObject
     public boolean isSuppressed;
 
     /** Returns the URL where the badge's image is stored */
-    //public String getImageUrl (); TODO
+    public String getImageUrl ()
+    {
+        // TODO
+        return "";
+    }
 
     /** Returns this Badge's Type */
     public BadgeType getType ()
     {
         return BadgeType.getType(badgeCode);
+    }
+
+    // from interface DSet.Entry
+    public Comparable getKey ()
+    {
+        return new Integer(badgeCode);
     }
 }

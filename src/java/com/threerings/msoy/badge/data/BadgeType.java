@@ -65,6 +65,15 @@ public enum BadgeType
     }
 
     /**
+     * Indicates whether the specified user has completed the requirements
+     * for this badge type.
+     */
+    public boolean hasEarned (MemberObject user)
+    {
+        return this.getProgress(user);
+    }
+
+    /**
      * Returns the unique code for this badge type, which is a function of its name.
      */
     public final int getCode()

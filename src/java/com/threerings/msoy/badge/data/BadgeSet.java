@@ -1,0 +1,39 @@
+//
+// $Id$
+
+package com.threerings.msoy.badge.data;
+
+import java.util.Iterator;
+
+import com.threerings.presents.dobj.DSet;
+
+/**
+ * A distributed class containing {@link EarnedBadge} objects.
+ */
+public final class BadgeSet extends DSet<EarnedBadge>
+{
+    /** Creates a BadgeSet with the specified contents. */
+    public BadgeSet (Iterator<EarnedBadge> contents)
+    {
+        super(contents);
+    }
+
+    /** Creates an empty BadgeSet. */
+    public BadgeSet ()
+    {
+    }
+
+    /** Returns true if the set contains a badge of the given type. */
+    public boolean containsBadge (BadgeType type)
+    {
+        return this.containsBadge(type.getCode());
+    }
+
+    /** Returns true if the set contains a badge of the given type. */
+    public boolean containsBadge (int badgeCode)
+    {
+        EarnedBadge badge = new EarnedBadge();
+        badge.badgeCode = badgeCode;
+        return this.contains(badge);
+    }
+}

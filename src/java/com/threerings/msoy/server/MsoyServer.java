@@ -72,6 +72,7 @@ import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
+import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
@@ -479,6 +480,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to the badge repository. */
     @Inject protected BadgeRepository _badgeRepo;
+
+    /** Handles updating a member's badges. */
+    @Inject protected BadgeManager _badgeMan;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
