@@ -1034,67 +1034,86 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,distall,prepare-package">
+  <target name="package" depends="assignversion,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
+
+    <!-- define the root of the msoy-server-code package -->
+    <property name="pkgroot.server.code" value="${pkgroot.root}/${app.name}-server-code"/>
+    <property name="approot.server.code" value="${pkgroot.server.code}/${app.prefix}"/>
+    <mkdir dir="${approot.server.code}"/>
 
     <!-- define the root of the msoy-server package -->
     <property name="pkgroot.server" value="${pkgroot.root}/${app.name}-server"/>
     <property name="approot.server" value="${pkgroot.server}/${app.prefix}"/>
     <mkdir dir="${approot.server}"/>
 
+    <!-- define the root of the burl-server package -->
+    <property name="pkgroot.burlserver" value="${pkgroot.root}/burl-server"/>
+    <property name="approot.burlserver" value="${pkgroot.burlserver}/${app.prefix}"/>
+    <mkdir dir="${approot.burlserver}"/>
+
     <!-- copy the external jars needed by the server -->
-    <copy todir="${approot.server}/${deploy.dir}/lib">
+    <copy todir="${approot.server.code}/${deploy.dir}/lib">
       <fileset dir="${deploy.dir}/lib">
         <include name="*.jar"/>
       </fileset>
     </copy>
 
     <!-- copy the thane native binaries needed by all servers -->
-    <copy todir="${approot.server}/bin/thane">
+    <copy todir="${approot.server.code}/bin/thane">
       <fileset dir="projects/thane/bin">
         <include name="*/avmthane"/>
       </fileset>
     </copy>
 
     <!-- copy this project's jar files and configuration -->
-    <copy todir="${approot.server}/${deploy.dir}">
+    <copy todir="${approot.server.code}/${deploy.dir}">
       <fileset dir="${deploy.dir}">
         <include name="*.jar"/>
         <exclude name="*-client.jar"/>
         <include name="*.properties"/>
         <include name="*.conf"/>
-        <include name="*.policy"/>
+        <!-- skip files with secure information -->
+        <exclude name="*-server.properties"/>
+        <exclude name="*-server.conf"/>
         <include name="msoylib.abc"/>
         <include name="MsoyThaneClient.abc"/>
         <!-- skip build_settings.properties since it's only needed at build time -->
         <exclude name="build_settings.properties"/>
+        <!-- skip conflicting libraries -->
+        <exclude name="**/progruard.jar"/>
       </fileset>
     </copy>
 
-    <!-- remove a few conflicting buildtime libraries from the runtime set -->
-    <delete file="${approot.server}/${deploy.dir}/lib/proguard.jar"/>
+    <!-- copy jars and configuration exclusive to msoy -->
+    <copy todir="${approot.server}/${deploy.dir}">
+      <fileset dir="${deploy.dir}">
+        <include name="msoy-server.properties"/>
+        <include name="msoy-server.conf"/>
+        <include name="*.policy"/>
+      </fileset>
+    </copy>
 
-    <!-- copy various scripts needed by the server -->
-    <copyfilelist dest="${approot.server}/bin">
+    <!-- copy libs and config exclusive to burl -->
+    <copy todir="${approot.burlserver}/${deploy.dir}">
+      <fileset dir="${deploy.dir}">
+        <include name="burl-server.properties"/>
+        <include name="burl-server.conf"/>
+      </fileset>
+    </copy>
+
+    <!-- copy various scripts needed by the all servers -->
+    <copyfilelist dest="${approot.server.code}/bin">
       <filelist dir="bin">
-        <file name="msoy"/>
-        <file name="msoyrespawn"/>
         <file name="msoyjava"/>
-        <file name="runmsoy"/>
-        <file name="rungame"/>
         <file name="roll_logs"/>
-        <file name="swiftlycompiler"/>
         <file name="runcommon"/>
-        <file name="runpolicy"/>
         <file name="runthaneclient"/>
-        <file name="burl"/>
-        <file name="burlrespawn"/>
-        <file name="runburl"/>
       </filelist>
     </copyfilelist>
-    <copyfilelist dest="${approot.server}/tools/bin">
+    <copyfilelist dest="${approot.server.code}/tools/bin">
       <filelist dir="tools/bin">
         <file name="lfilter"/>
         <file name="filter_interesting"/>
@@ -1102,24 +1121,43 @@
       </filelist>
     </copyfilelist>
 
-    <!-- copy in the swiftly build stuff -->
+    <!-- copy various scripts needed by msoy only  -->
+    <copyfilelist dest="${approot.server}/bin">
+      <filelist dir="bin">
+        <file name="msoy"/>
+        <file name="msoyrespawn"/>
+        <file name="runmsoy"/>
+        <file name="rungame"/>
+        <file name="swiftlycompiler"/>
+        <file name="runpolicy"/>
+      </filelist>
+    </copyfilelist>
+
+    <!-- copy various scripts needed by burl only -->
+    <copyfilelist dest="${approot.burlserver}/bin">
+      <filelist dir="bin">
+        <file name="burl"/>
+        <file name="burlrespawn"/>
+        <file name="runburl"/>
+      </filelist>
+    </copyfilelist>
+
+    <!-- copy in the swiftly build stuff (msoy only) -->
     <mkdir dir="${approot.server}/data"/>
     <copy todir="${approot.server}/data">
       <fileset dir="data" includes="**"/>
     </copy>
 
-    <!-- need some xml files -->
+    <!-- need some xml files (msoy only) -->
     <copy file="${deploy.dir}/ehcache.xml" todir="${approot.server}/${deploy.dir}"/>
     <copy file="${deploy.dir}/antisamy-config.xml" todir="${approot.server}/${deploy.dir}"/>
-    <!-- and logging.properties -->
-    <copy file="${deploy.dir}/logging.properties" todir="${approot.server}/${deploy.dir}"/>
-    <copy file="${deploy.dir}/log4j.properties" todir="${approot.server}/${deploy.dir}"/>
-    <!-- create some runtime directories -->
-    <mkdir dir="${approot.server}/log/lighttpd"/>
-    <mkdir dir="${approot.server}/logs"/>
-    <mkdir dir="${approot.server}/run"/>
 
-    <!-- create our production security.policy file -->
+    <!-- create some runtime directories (all servers) -->
+    <mkdir dir="${approot.server.code}/log/lighttpd"/>
+    <mkdir dir="${approot.server.code}/logs"/>
+    <mkdir dir="${approot.server.code}/run"/>
+
+    <!-- create our production security.policy files (msoy only) -->
     <copy file="etc/security.policy.in" tofile="${approot.server}/${deploy.dir}/security.policy">
       <filterset>
         <filter token="PREFIX" value="${app.prefix}"/>
@@ -1131,7 +1169,7 @@
       </filterset>
     </copy>
 
-    <!-- set up our pages/ contents -->
+    <!-- set up our pages/ contents (msoy only) -->
     <copy todir="${approot.server}/pages">
       <fileset dir="pages">
         <exclude name="**/*.in"/>
@@ -1142,7 +1180,7 @@
     </copy>
     <mkdir dir="${approot.server}/pages/buildresults"/>
 
-    <!-- create our msoy server startup script -->
+    <!-- create our msoy server startup script (msoy only) -->
     <mkdir dir="${approot.server}/etc/rc.d"/>
     <startupscript name="msoy_server" runas="${msoy.user}"
                    output="${approot.server}/etc/rc.d/${app.name}-server.sh">
@@ -1152,7 +1190,7 @@
       </commands>
     </startupscript>
 
-    <!-- create our policy server startup script -->
+    <!-- create our policy server startup script (msoy only) -->
     <startupscript name="policy_server" runas="root"
                    pidfile="${app.prefix}/run/policy-server.pid"
                    output="${approot.server}/etc/rc.d/policy-server.sh">
@@ -1160,15 +1198,46 @@
     </startupscript>
 
     <!-- create out bureau launcher startup script -->
+    <mkdir dir="${approot.burlserver}/etc/rc.d"/>
     <startupscript name="msoy_bureau" runas="${msoy.user}"
-                   output="${approot.server}/etc/rc.d/${app.name}-bureau.sh">
+                   output="${approot.burlserver}/etc/rc.d/${app.name}-bureau.sh">
       <commands>
         <start cmdline="${app.prefix}/bin/burl start"/>
         <stop cmdline="${app.prefix}/bin/burl stop"/>
       </commands>
     </startupscript>
 
-    <!-- build the actual Debian package -->
+    <!-- build the actual Debian packages -->
+
+    <!-- msoy-server-code -->
+    <dpkg output="${package.output}" prefix="${app.prefix}"
+          distribution="${ooo.distribution}">
+      <package destroot="${pkgroot.server.code}">
+        <info>
+          <name>${app.name}-server-code</name>
+          <version>${version}</version>
+          <arch>${ooo.architecture}</arch>
+          <description>Msoy Game Server Code</description>
+          <maintainer>
+            <name>${maintainer.name}</name>
+            <email>${maintainer.email}</email>
+          </maintainer>
+        </info>
+        <permissions>
+          <permission user="${msoy.user}" group="${msoy.user}" mode="755" recursive="false">
+            <path>log/</path>
+            <path>logs/</path>
+            <path>run/</path>
+          </permission>
+          <permission mode="555" recursive="true">
+            <path>bin/</path>
+            <path>etc/rc.d/</path>
+          </permission>
+        </permissions>
+      </package>
+    </dpkg>
+
+    <!-- msoy-server -->
     <dpkg output="${package.output}" prefix="${app.prefix}"
           distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server}">
@@ -1182,11 +1251,11 @@
             <email>${maintainer.email}</email>
           </maintainer>
         </info>
+        <dependencies>
+            <require package="msoy-server-code"/>
+        </dependencies>
         <permissions>
           <permission user="${msoy.user}" group="${msoy.user}" mode="755" recursive="false">
-            <path>log/</path>
-            <path>logs/</path>
-            <path>run/</path>
             <path>pages/media/</path>
             <path>pages/buildresults/</path>
             <path>data/swiftly/projects/</path>
@@ -1201,6 +1270,33 @@
         </permissions>
       </package>
     </dpkg>
+
+    <!-- burl-server -->
+    <dpkg output="${package.output}" prefix="${app.prefix}"
+          distribution="${ooo.distribution}">
+      <package destroot="${pkgroot.burlserver}">
+        <info>
+          <name>burl-server</name>
+          <version>${version}</version>
+          <arch>${ooo.architecture}</arch>
+          <description>Msoy Bureau Server</description>
+          <maintainer>
+            <name>${maintainer.name}</name>
+            <email>${maintainer.email}</email>
+          </maintainer>
+        </info>
+        <dependencies>
+            <require package="msoy-server-code"/>
+        </dependencies>
+        <permissions>
+          <permission mode="555" recursive="true">
+            <path>bin/</path>
+            <path>etc/rc.d/</path>
+          </permission>
+        </permissions>
+      </package>
+    </dpkg>
+
   </target>
 
   <!-- builds our javadocs and packages them up (TODO: add asdocs) -->
