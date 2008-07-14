@@ -410,6 +410,11 @@
   clear: both;
 }
 
+.arcade .BrowseGenres div:hover.ViewAllGames, 
+.arcade .BrowseGenres div:active.ViewAllGames  {
+  text-decoration: underline;
+}
+
 .arcade .GenreBox {
   width: 210px;
   height: 185px;
@@ -437,17 +442,18 @@
 }
 
 .arcade .GenreBox .GenreGame {
-  height: 35px;
+  height: 37px;
 }
 
 .arcade .GenreBox .GenreGame .thumbBox {
-  margin: 0 5px 5px 5px;
+  margin: 0 5px 5px 25px;
   float: left;
+  border: solid #CCCCCC 1px;
 }
 
 .arcade .GenreBox .GenreGame .Name {
   color: #1a5984;
-  width: 150px;
+  width: 115px;
   float: left;
   white-space: nowrap;
   overflow: hidden;
@@ -460,13 +466,14 @@
 }
 
 .arcade .GenreBox .First  .thumbBox {
-  margin-top: 5px;
+  margin: 5px 5px 5px 5px;
+  border: none;
 }
 
 .arcade .GenreBox .First  .Name {
   margin-top: 5px;
-  width: 115px;
   color: #000000;
+  width: 115px;
 }
 
 .arcade .GenreBox .First .Description {
