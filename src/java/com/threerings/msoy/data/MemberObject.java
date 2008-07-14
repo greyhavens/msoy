@@ -201,7 +201,7 @@ public class MemberObject extends MsoyBodyObject
     public transient PlayerMetrics metrics = new PlayerMetrics();
 
     /** The set of badges that this player owns. */
-    public BadgeSet badges = new BadgeSet();
+    public transient BadgeSet badges = new BadgeSet();
 
     /**
      * Return true if this user is a guest.
