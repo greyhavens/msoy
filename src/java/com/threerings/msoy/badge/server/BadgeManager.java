@@ -64,7 +64,7 @@ public class BadgeManager
     protected void awardBadges (final MemberObject user, final ArrayList<BadgeType> badgeTypes,
         InvocationService.ResultListener listener)
     {
-        final Long whenEarned = System.currentTimeMillis();
+        final long whenEarned = System.currentTimeMillis();
 
         // create badges and stick them in the MemberObject
         final ArrayList<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
@@ -103,7 +103,7 @@ public class BadgeManager
     }
 
     protected static ArrayList<EarnedBadge> createBadges (final ArrayList<BadgeType> badgeTypes,
-        Long whenEarned)
+        long whenEarned)
     {
         ArrayList<EarnedBadge> badges = new ArrayList<EarnedBadge>(badgeTypes.size());
         for (BadgeType type : badgeTypes) {

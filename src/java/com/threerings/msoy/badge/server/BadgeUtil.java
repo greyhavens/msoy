@@ -22,7 +22,7 @@ public class BadgeUtil
      * b. record to the member's feed that they earned the stamp in question
      * c. calls MemberNodeActions.badgeAwarded
      */
-    public static void awardBadge (MemberObject user, BadgeType type, Long whenEarned)
+    public static void awardBadge (MemberObject user, BadgeType type, long whenEarned)
         throws PersistenceException
     {
         BadgeRecord brec = new BadgeRecord();
