@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.threerings.msoy.badge.data.BadgeType;
+import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -60,28 +61,56 @@ public class BadgeManager
         }
     }
 
-    protected void awardBadges (final MemberObject user, final ArrayList<BadgeType> newBadges,
+    protected void awardBadges (final MemberObject user, final ArrayList<BadgeType> badgeTypes,
         InvocationService.ResultListener listener)
     {
+        final Long whenEarned = System.currentTimeMillis();
+
+        // create badges and stick them in the MemberObject
+        final ArrayList<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
+        for (EarnedBadge badge : badges) {
+            user.addToBadges(badge);
+        }
+
+        // stick the badges in the database
         _invoker.postUnit(new PersistingUnit("awardBadges", listener) {
             public void invokePersistent () throws PersistenceException {
-                for (BadgeType badgeType : newBadges) {
+                for (BadgeType badgeType : badgeTypes) {
                     // BadgeUtil.awardBadge handles putting the badge in the repository
                     // and publishing a member feed about the event
-                    BadgeUtil.awardBadge(user, badgeType);
+                    BadgeUtil.awardBadge(user, badgeType, whenEarned);
                 }
             }
             public void handleSuccess () {
                 // TODO something happens here?
             }
+            public void handleFailure (Exception error) {
+                // rollback the changes to the user's BadgeSet
+                for (EarnedBadge badge : badges) {
+                    user.removeFromBadges(badge.getKey());
+                }
+
+                super.handleFailure(error);
+            }
             protected String getFailureMessage () {
                 StringBuilder builder = new StringBuilder("Failed to award badges: ");
-                for (BadgeType badgeType : newBadges) {
+                for (BadgeType badgeType : badgeTypes) {
                     builder.append(badgeType.name()).append(", ");
                 }
                 return builder.toString();
             }
         });
+    }
+
+    protected static ArrayList<EarnedBadge> createBadges (final ArrayList<BadgeType> badgeTypes,
+        Long whenEarned)
+    {
+        ArrayList<EarnedBadge> badges = new ArrayList<EarnedBadge>(badgeTypes.size());
+        for (BadgeType type : badgeTypes) {
+            badges.add(new EarnedBadge(type, whenEarned));
+        }
+
+        return badges;
     }
 
 

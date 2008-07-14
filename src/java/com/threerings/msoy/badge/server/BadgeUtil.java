@@ -22,13 +22,13 @@ public class BadgeUtil
      * b. record to the member's feed that they earned the stamp in question
      * c. calls MemberNodeActions.badgeAwarded
      */
-    public static void awardBadge (MemberObject user, BadgeType type)
+    public static void awardBadge (MemberObject user, BadgeType type, Long whenEarned)
         throws PersistenceException
     {
         BadgeRecord brec = new BadgeRecord();
         brec.memberId = user.getMemberId();
         brec.badgeCode = type.getCode();
-        brec.whenEarned = new Timestamp(System.currentTimeMillis());
+        brec.whenEarned = new Timestamp(whenEarned);
         MsoyServer.badgeRepo.storeBadge(brec);
 
         MsoyServer.feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
