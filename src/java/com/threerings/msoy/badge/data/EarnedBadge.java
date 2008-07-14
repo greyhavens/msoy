@@ -8,6 +8,11 @@ public class EarnedBadge extends Badge
     /** When this badge was earned. */
     public Long whenEarned;
 
+    /** Constructs a new empty EarnedBadge. */
+    public EarnedBadge ()
+    {
+    }
+
     /** Constructs a new EarnedBadge with the specified type. */
     public EarnedBadge (BadgeType type, Long whenEarned)
     {
