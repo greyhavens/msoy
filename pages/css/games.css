@@ -357,18 +357,6 @@
   height: 1200px;
 }
 
-.arcade .GenreLinks {
-  width: 100%;
-  text-align: center;
-  color: #b4ddf9;
-  font-size: 13px;
-}
-
-.arcade .GenreLinks a {
-  color: #b4ddf9;
-  margin: 0 5px 0 5px;
-}
-
 .arcade .featuredGame {
   left: 225px;
   top: 20px;
@@ -631,7 +619,7 @@
 }
 
 .gameGenre .Games {
-  margin: 0px 10px 0 10px;
+  margin: 20px 10px 0 10px;
   width: 665px;
 }
 
@@ -757,7 +745,7 @@
 -------------------------------------*/
 
 .gameHeaderPanel {
-  height: 65px;
+  height: 80px;
 }
 
 .gameHeaderPanel .GenreTitle {
@@ -817,7 +805,20 @@
   cursor: pointer;
 }
 
+.gameHeaderPanel .GenreLinks {
+  width: 100%;
+  text-align: center;
+  color: #b4ddf9;
+  font-size: 12px;
+  position: absolute;
+  left: 0;
+  top: 65px;
+}
 
+.gameHeaderPanel .GenreLinks a {
+  color: #b4ddf9;
+  margin: 0 5px 0 5px;
+}
 
 /* ------------------------------------
    PLAY BUTTON

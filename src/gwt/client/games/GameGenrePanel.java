@@ -260,5 +260,5 @@ public class GameGenrePanel extends FlowPanel
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
     
-    protected static final int GAMES_PER_PAGE = 6;
+    protected static final int GAMES_PER_PAGE = 10;
 }

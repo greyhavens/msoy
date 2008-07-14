@@ -17,6 +17,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Application;
@@ -89,6 +91,18 @@ public class GameHeaderPanel extends FlowPanel
         for (GameInfo gameInfo : gamesByName) {
             String gameName = gameInfo.name;
             _findGameBox.addItem(gameName, gameInfo.gameId+"");
+        }
+
+        // add a link to the genre links
+        FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
+        add(genreLinks);
+        for (int i = 0; i < Game.GENRES.length; i++) {
+            byte genreCode = Game.GENRES[i];
+            genreLinks.add(Application.createLink(CGames.dmsgs.getString("genre" + genreCode),
+                Page.GAMES, Args.compose("g", genreCode)));
+            if (i+1 < Game.GENRES.length) {
+                genreLinks.add(new InlineLabel("|"));
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameInfo;
+import com.threerings.msoy.web.data.ArcadeData.Genre;
 
 import client.shell.Application;
 import client.shell.Args;
@@ -40,9 +41,6 @@ public class ArcadePanel extends FlowPanel
     {
         _header.init(data.allGames);
         
-        FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
-        add(genreLinks);
-        
         // show the top N games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
         topGames.add(MsoyUI.createImage("/images/game/top_games_title.png", "TopGamesTitle"));
@@ -60,13 +58,6 @@ public class ArcadePanel extends FlowPanel
         add(browseGenres);
         for (int ii = 0; ii < data.genres.size(); ii++) {
             ArcadeData.Genre genre = data.genres.get(ii);
-            
-            // add a link to the genre list at the top
-            genreLinks.add(Application.createLink(CGames.dmsgs.getString("genre" + genre.genre),
-                Page.GAMES, Args.compose("g", genre.genre)));
-            if (ii+1 < data.genres.size()) {
-                genreLinks.add(new InlineLabel("|"));
-            }
             
             // display top games in the genre if there are any
             if (genre.games.length == 0) {
