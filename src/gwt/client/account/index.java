@@ -39,8 +39,8 @@ public class index extends Page
             setContent(CAccount.msgs.createTitle(), 
                 new CreateAccountPanel(new CreateAccountPanel.RegisterListener() {
                     public void didRegister () {
-                        _onLogonPage = WORLD;                       
-                        _onLogonArgs = "h";
+                        _onLogonPage = ME;                       
+                        _onLogonArgs = "";
                     }
                 }));
 
