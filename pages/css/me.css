@@ -145,9 +145,10 @@
 }
 
 .FeedWidget {
-  width: 100%;
+  width: 610px;
   background-color: #FFFFFF;
   border-bottom: 1px solid #DADADA;
+  overflow: hidden;
 }
 
 .FeedBasic {
@@ -175,7 +176,7 @@
 }
 
 .FeedWidget .TextContainer div {
-  width: 580px;
+  width: 100%;
   overflow: hidden;
 }
 
