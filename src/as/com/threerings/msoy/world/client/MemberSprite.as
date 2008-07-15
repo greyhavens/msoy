@@ -104,7 +104,7 @@ public class MemberSprite extends ActorSprite
     override protected function getSpecialProperty (name :String) :Object
     {
         var specials :Object = {
-            memberId: function () :int {
+            member_id: function () :int {
                 return (_occInfo as MemberInfo).getMemberId();
             }
         };
