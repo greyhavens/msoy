@@ -7,6 +7,7 @@ import java.util.zip.CRC32;
 
 import com.samskivert.util.HashIntMap;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.StatType;
 import com.threerings.stats.Log;
 
 /** Defines the various badge types. */
