@@ -36,4 +36,24 @@ public final class BadgeSet extends DSet<EarnedBadge>
         badge.badgeCode = badgeCode;
         return this.contains(badge);
     }
+
+    /**
+     * Adds a badge to the BadgeSet.
+     *
+     * @return true if the badge was newly added, false if it already existed in the set.
+     */
+    public boolean addBadge (EarnedBadge badge)
+    {
+        return super.add(badge);
+    }
+
+    /**
+     * Removes a badge from the BadgeSet.
+     *
+     * @return true if the badge was removed, false if it wasn't in the set.
+     */
+    public boolean removeBadge (EarnedBadge badge)
+    {
+        return super.remove(badge);
+    }
 }

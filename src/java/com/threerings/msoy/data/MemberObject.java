@@ -103,9 +103,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>walkingId</code> field. */
     public static final String WALKING_ID = "walkingId";
-
-    /** The field name of the <code>badges</code> field. */
-    public static final String BADGES = "badges";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -975,54 +972,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             WALKING_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.walkingId = value;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>badges</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToBadges (EarnedBadge elem)
-    {
-        requestEntryAdd(BADGES, badges, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>badges</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromBadges (Comparable key)
-    {
-        requestEntryRemove(BADGES, badges, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>badges</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateBadges (EarnedBadge elem)
-    {
-        requestEntryUpdate(BADGES, badges, elem);
-    }
-
-    /**
-     * Requests that the <code>badges</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setBadges (BadgeSet value)
-    {
-        requestAttributeChange(BADGES, value, this.badges);
-        @SuppressWarnings("unchecked") BadgeSet clone =
-            (value == null) ? null : (BadgeSet)value.clone();
-        this.badges = clone;
     }
     // AUTO-GENERATED: METHODS END
 

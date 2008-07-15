@@ -66,7 +66,7 @@ public class BadgeManager
         // create badges and stick them in the MemberObject
         final ArrayList<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
         for (EarnedBadge badge : badges) {
-            user.addToBadges(badge);
+            user.badges.addBadge(badge);
         }
 
         // stick the badges in the database
@@ -81,7 +81,7 @@ public class BadgeManager
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet
                 for (EarnedBadge badge : badges) {
-                    user.removeFromBadges(badge.getKey());
+                    user.badges.removeBadge(badge);
                 }
 
                 super.handleFailure(error);
