@@ -211,6 +211,9 @@ public class MemberManager
 
         // check their current level now in case they got flow while they were offline
         checkCurrentLevel(member);
+
+        // update badges
+        MsoyServer.badgeMan.updateBadges(member);
     }
 
     // from interface MemberProvider
@@ -488,7 +491,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setHomeSceneId (ClientObject caller, final int ownerType, final int ownerId, 
+    public void setHomeSceneId (ClientObject caller, final int ownerType, final int ownerId,
                                 final int sceneId, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
@@ -513,7 +516,7 @@ public class MemberManager
                         throw new InvocationException("e.not_room_manager");
                     }
                 } else {
-                    log.warning("Unknown scene model owner type [sceneId=" + 
+                    log.warning("Unknown scene model owner type [sceneId=" +
                         scene.sceneId + ", ownerType=" + scene.ownerType + "]");
                     throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
@@ -529,7 +532,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void getGroupHomeSceneId (ClientObject caller, final int groupId,
-                                     InvocationService.ResultListener listener) 
+                                     InvocationService.ResultListener listener)
         throws InvocationException
     {
         String uname = "getHomeSceneId(" + groupId + ")";

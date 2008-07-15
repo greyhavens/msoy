@@ -157,6 +157,9 @@ public class MsoyServer extends MsoyBaseServer
     /** Provides access to the badge repository. */
     public static BadgeRepository badgeRepo;
 
+    /** Handles the updating of a member's badges. */
+    public static BadgeManager badgeMan;
+
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
 
@@ -246,6 +249,7 @@ public class MsoyServer extends MsoyBaseServer
         commentRepo = _commentRepo;
         trophyRepo = _trophyRepo;
         badgeRepo = _badgeRepo;
+        badgeMan = _badgeMan;
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);

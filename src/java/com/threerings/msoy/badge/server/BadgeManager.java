@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.util.PersistingUnit;
 
 @Singleton @EventThread
 public class BadgeManager
@@ -24,13 +23,12 @@ public class BadgeManager
      * Awards a badge of the specified type to the user if they don't already
      * have it.
      */
-    public void awardBadge (MemberObject user, BadgeType badgeType,
-        InvocationService.ResultListener listener)
+    public void awardBadge (MemberObject user, BadgeType badgeType)
     {
         if (!user.badges.containsBadge(badgeType)) {
             ArrayList<BadgeType> badgeList = new ArrayList<BadgeType>();
             badgeList.add(badgeType);
-            this.awardBadges(user, badgeList, listener);
+            this.awardBadges(user, badgeList);
         }
     }
 
@@ -38,7 +36,7 @@ public class BadgeManager
      * For each Badge type, awards the Badge to the user if the Badge's award conditions
      * have been met.
      */
-    public void updateBadges (MemberObject user, InvocationService.ResultListener listener)
+    public void updateBadges (MemberObject user)
     {
         // guests are not awarded badges
         if (user.isGuest()) {
@@ -57,12 +55,11 @@ public class BadgeManager
         }
 
         if (newBadges != null) {
-            this.awardBadges(user, newBadges, listener);
+            this.awardBadges(user, newBadges);
         }
     }
 
-    protected void awardBadges (final MemberObject user, final ArrayList<BadgeType> badgeTypes,
-        InvocationService.ResultListener listener)
+    protected void awardBadges (final MemberObject user, final ArrayList<BadgeType> badgeTypes)
     {
         final long whenEarned = System.currentTimeMillis();
 
@@ -73,16 +70,13 @@ public class BadgeManager
         }
 
         // stick the badges in the database
-        _invoker.postUnit(new PersistingUnit("awardBadges", listener) {
-            public void invokePersistent () throws PersistenceException {
+        _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
+            public void invokePersist () throws PersistenceException {
                 for (BadgeType badgeType : badgeTypes) {
                     // BadgeUtil.awardBadge handles putting the badge in the repository
                     // and publishing a member feed about the event
                     BadgeUtil.awardBadge(user, badgeType, whenEarned);
                 }
-            }
-            public void handleSuccess () {
-                // TODO something happens here?
             }
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet
