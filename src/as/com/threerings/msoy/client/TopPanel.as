@@ -493,8 +493,8 @@ public class TopPanel extends Canvas
         }
 
         var w :int = _ctx.getWidth() - getRightPanelWidth();
-        var h :int = _ctx.getHeight() - getHeaderBarHeight() - getTopPanelHeight();
         var top :int = getHeaderBarHeight() + getTopPanelHeight();
+        var h :int = _ctx.getHeight() - top;
         if (padVertical(_placeBox.getPlaceView())) {
             top += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT;
