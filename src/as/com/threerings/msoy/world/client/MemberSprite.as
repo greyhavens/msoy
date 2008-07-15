@@ -101,6 +101,21 @@ public class MemberSprite extends ActorSprite
         return true;
     }
 
+    override protected function getSpecialProperty (name :String) :Object
+    {
+        var specials :Object = {
+            memberId: function () :int {
+                return (_occInfo as MemberInfo).getMemberId();
+            }
+        };
+
+        if (name in specials) {
+            return (specials[name] as Function)();
+        } else {
+            return super.getSpecialProperty(name);
+        }
+    }
+
     // from ActorSprite
     override public function toString () :String
     {

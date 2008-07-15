@@ -779,22 +779,18 @@ public class MsoySprite extends DataPackMediaContainer
         return (ctrl != null) && ctrl.updateMemory(_ident, key, value); // false if ctrl is null
     }
 
-    /**
-     * Fetch a property using this sprite's property provider.
-     */
-    public function lookupEntityProperty (key :String) :Object
+    protected function getSpecialProperty (name :String) :Object
     {
-        var specialProperties :Object = {
-            // TODO: Bring these name constants in from somewhere
-            "std:hotspot": function () :Array {
+        var specials :Object = {
+            hotspot: function () :Array {
                 var hotspot :Point = getMediaHotSpot();
                 return [hotspot.x, hotspot.y];
             },
-            "std:location_logical": function () :Array {
+            location_logical: function () :Array {
                 var loc :MsoyLocation = getLocation();
                 return [loc.x, loc.y, loc.z];
             },
-            "std:location_pixel": function () :Array {
+            location_pixel: function () :Array {
                 var loc :MsoyLocation = getLocation();
                 var bounds :Array = getRoomBounds();
                 bounds[0] *= loc.x;
@@ -802,16 +798,31 @@ public class MsoySprite extends DataPackMediaContainer
                 bounds[2] *= loc.z;
                 return bounds;
             },
-            "std:dimensions": function () :Array {
+            dimensions: function () :Array {
                 return [ getContentWidth(), getContentHeight() ];
             },
-            "std:orientation": function () :Number {
+            orientation: function () :Number {
                 return getLocation().orient;
             }
         };
 
-        if (key in specialProperties) {
-            return (specialProperties[key] as Function)();
+        if (name in specials) {
+            return (specials[name] as Function)();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Fetch a property using this sprite's property provider.
+     */
+    public function lookupEntityProperty (key :String) :Object
+    {
+        var match :Array = key.match(/^std:(.*)/);
+
+        // Is this a special "std:*" property?
+        if (match != null) {
+            return getSpecialProperty(match[1]);
         } else {
             return callUserCode("lookupEntityProperty_v1", key);
         }
