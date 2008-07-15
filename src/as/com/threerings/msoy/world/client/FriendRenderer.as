@@ -28,8 +28,6 @@ public class FriendRenderer extends HBox
     {
         super();
 
-        styleName = "friendRenderer";
-
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
@@ -48,6 +46,14 @@ public class FriendRenderer extends HBox
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        // The style name for this renderer isn't getting respected, and I'm through with trying
+        // to get it to work, so lets just inline the styles here
+        setStyle("paddingTop", 0);
+        setStyle("paddingBottom", 0);
+        setStyle("paddingLeft", 3);
+        setStyle("paddingRight", 3);
+        setStyle("verticalAlign", "middle");
 
         configureUI();
     }

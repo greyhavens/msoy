@@ -98,20 +98,19 @@ public class FriendsListPanel extends TitleWindow
         width = 219; // width of the friends online header image
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
         // TODO: react to client size changes, both width and height
-        maxHeight = placeBounds.height - PADDING * 2;
+        height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        var friendList :List = new List();
-        friendList.styleName = "friendList";
-        friendList.horizontalScrollPolicy = ScrollPolicy.OFF;
-        friendList.verticalScrollPolicy = ScrollPolicy.AUTO;
-        friendList.percentHeight = 100;
-        friendList.percentWidth = 100;
-        friendList.itemRenderer = new ClassFactory(FriendRenderer);
-        friendList.dataProvider = _friends;
-        friendList.selectable = false;
-        addChild(friendList);
+        _friendsList = new List();
+        _friendsList.styleName = "friendList";
+        _friendsList.horizontalScrollPolicy = ScrollPolicy.OFF;
+        _friendsList.percentWidth = 100;
+        _friendsList.percentHeight = 100;
+        _friendsList.itemRenderer = new ClassFactory(FriendRenderer);
+        _friendsList.dataProvider = _friends;
+        _friendsList.selectable = false;
+        addChild(_friendsList);
 
         // set up the sort for the collection
         var sort :Sort = new Sort();
@@ -128,9 +127,9 @@ public class FriendsListPanel extends TitleWindow
 
         var currentEntries :Array = _friends.toArray();
         for each (var friend :FriendEntry in memObj.friends.toArray()) {
-            if (!friend.online) {
-                continue;
-            }
+//            if (!friend.online) {
+//                continue;
+//            }
 
             if (!containsFriend(friend)) {
                 addFriend(friend);
@@ -183,6 +182,7 @@ public class FriendsListPanel extends TitleWindow
     protected static const PADDING :int = 10;
 
     protected var _ctx :WorldContext;
+    protected var _friendsList :List;
     protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _originals :Dictionary = new Dictionary();
 }

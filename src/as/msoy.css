@@ -1224,10 +1224,7 @@ BasePanel {
   backgroundAlpha: 0;
 }
 
-.friendRenderer {
-  backgroundAlpha: 0;
-}
-
 .friendLabel {
   color: white;
+  fontSize: 11;
 }
