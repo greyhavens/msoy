@@ -90,7 +90,7 @@ public class MemberList extends PagedGrid<MemberCard>
                                                    ""+card.name.getMemberId()), 1, "Name");
 
             // we'll overwrite these below if we have anything to display
-            getFlexCellFormatter().setStyleName(1, 0, "Headline");
+            getFlexCellFormatter().setStyleName(1, 0, "Status");
             setHTML(1, 0, "&nbsp;");
             setHTML(2, 0, "&nbsp;");
             if (card.headline != null && card.headline.length() > 0) {

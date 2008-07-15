@@ -90,7 +90,7 @@ public class ProfileBlurb extends Blurb
         info.addText(_name.toString(), 1, "Name");
         info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         if (!isBlank(_profile.headline)) {
-            info.addText(_profile.headline, 1, "Headline");
+            info.addText(_profile.headline, 1, "Status");
         }
         String ageSex = "";
         switch (_profile.sex) {
@@ -223,9 +223,12 @@ public class ProfileBlurb extends Blurb
         }));
         econtent.setWidget(row++, 1, panel);
 
-        econtent.setText(row, 0, CPeople.msgs.headline());
-        _eheadline = MsoyUI.createTextBox(_profile.headline, Profile.MAX_HEADLINE_LENGTH, 30);
-        econtent.setWidget(row++, 1, _eheadline);
+        econtent.setText(row, 0, CPeople.msgs.status());
+        // seed the status line with a facebook-esque que, if empty
+        String status = _profile.headline == "" || _profile.headline == null ? 
+            CPeople.msgs.statusQue() : _profile.headline;
+        _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
+        econtent.setWidget(row++, 1, _estatus);
 
         econtent.setText(row, 0, CPeople.msgs.homepage());
         _ehomepage = MsoyUI.createTextBox(_profile.homePageURL, Profile.MAX_HOMEPAGE_LENGTH, 30);
@@ -290,7 +293,8 @@ public class ProfileBlurb extends Blurb
 
         // configure our profile instance with their bits
         _name = new MemberName(name, _name.getMemberId());
-        _profile.headline = _eheadline.getText().trim();
+        String status = _estatus.getText();
+        _profile.headline = status == CPeople.msgs.statusQue() ? "" : status.trim();
         _profile.homePageURL = _ehomepage.getText().trim();
         _profile.location = _elocation.getText().trim();
         _profile.sex = (byte)_esex.getSelectedIndex();
@@ -332,7 +336,7 @@ public class ProfileBlurb extends Blurb
     protected Profile _profile;
 
     protected SimplePanel _ephoto;
-    protected TextBox _ename, _eheadline, _ehomepage, _elocation;
+    protected TextBox _ename, _estatus, _ehomepage, _elocation;
     protected CheckBox _eshowAge;
     protected ListBox _esex;
     protected DateFields _ebirthday;

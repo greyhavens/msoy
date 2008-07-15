@@ -143,7 +143,7 @@ public class ProfileRecord extends PersistentRecord
     public String homePageURL = "";
 
     /** A short bit of text provided by the member. */
-    @Column(length=Profile.MAX_HEADLINE_LENGTH)
+    @Column(length=Profile.MAX_STATUS_LENGTH)
     public String headline = "";
 
     /** Whether the member identifies as male or female. */
