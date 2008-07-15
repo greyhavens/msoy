@@ -498,8 +498,9 @@ public class RoomController extends SceneController
     {
         // check to make sure we're within the bounds of the place container
         var container :PlaceBox = _wdctx.getTopPanel().getPlaceContainer();
-        if (stageX < container.x || stageX > container.x + container.width ||
-            stageY < container.y || stageY > container.y + container.height) {
+        var containerP :Point = container.localToGlobal(new Point());
+        if (stageX < containerP.x || stageX > containerP.x + container.width ||
+            stageY < containerP.y || stageY > containerP.y + container.height) {
             return undefined;
         }
 
