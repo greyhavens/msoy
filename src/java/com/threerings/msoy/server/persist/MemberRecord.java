@@ -116,6 +116,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp PERMA_NAME_C =
         new ColumnExp(MemberRecord.class, PERMA_NAME);
 
+    /** The column identifier for the {@link #normalizedPermaName} field. */
+    public static final String NORMALIZED_PERMA_NAME = "normalizedPermaName";
+
+    /** The qualified column identifier for the {@link #normalizedPermaName} field. */
+    public static final ColumnExp NORMALIZED_PERMA_NAME_C =
+        new ColumnExp(MemberRecord.class, NORMALIZED_PERMA_NAME);
+
     /** The column identifier for the {@link #flow} field. */
     public static final String FLOW = "flow";
 
@@ -220,7 +227,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 16;
+    public static final int SCHEMA_VERSION = 17;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -236,6 +243,12 @@ public class MemberRecord extends PersistentRecord
     /** This member's permanent name. Must be URL-safe; used to logon to wiki and forums. */
     @Column(nullable=true, unique=true)
     public String permaName;
+
+	/** This member's permanent name normalized, so that we don't end up with multiple names with different
+	 *  capitalization.
+	 */
+	@Column(nullable=true, unique=true)
+	public String normalizedPermaName;	
 
     /** The quantity of flow possessed by this member. */
     public int flow;
