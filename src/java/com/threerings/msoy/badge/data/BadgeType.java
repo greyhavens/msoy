@@ -111,6 +111,8 @@ public enum BadgeType
      */
     static
     {
+        _crc = new CRC32();
+
         for (BadgeType type : BadgeType.values()) {
             type._code = mapCodeForType(type);
         }
@@ -144,5 +146,5 @@ public enum BadgeType
     /** The table mapping stat codes to enumerated types. */
     protected static HashIntMap<BadgeType> _codeToType;
 
-    protected static CRC32 _crc = new CRC32();
+    protected static CRC32 _crc;
 };
