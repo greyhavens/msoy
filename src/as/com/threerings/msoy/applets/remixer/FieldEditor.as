@@ -108,7 +108,7 @@ public class FieldEditor extends VBox
 
     protected function createEditButton (callback :Function) :CommandButton
     {
-        var edit :CommandButton = new CommandButton(_ctx.REMIX.get("b.edit"), callback);
+        var edit :CommandButton = new CommandButton(_ctx.REMIX.get("b.alter"), callback);
         edit.setStyle("fontSize", 9);
         edit.setStyle("fontWeight", "normal");
         return edit;
