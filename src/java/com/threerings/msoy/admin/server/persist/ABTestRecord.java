@@ -122,7 +122,6 @@ public class ABTestRecord extends PersistentRecord
     public int numGroups;
     
     /** Only add visitors to a/b groups if this is their first time on whirled */
-    @Column(defaultValue="1")
     public boolean onlyNewVisitors;
     
     /** Only add visitors to a/b groups if they come from this affiliate */
@@ -138,7 +137,6 @@ public class ABTestRecord extends PersistentRecord
     public String creative;
 
     /** Is this test being run on the site right now? */
-    @Column(defaultValue="0")
     public boolean enabled;
     
     /** The date on which this test was last enabled. */
