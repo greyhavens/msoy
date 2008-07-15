@@ -4,9 +4,12 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.ServiceException;
@@ -59,5 +62,23 @@ public interface AdminService extends RemoteService
      * Configures a member as support personnel or not. Only callable by admins.
      */
     public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
+        throws ServiceException;
+    
+    /**
+     * Configures a member as support personnel or not. Only callable by admins.
+     */
+    public List<ABTest> getABTests (WebIdent ident)
+        throws ServiceException;
+    
+    /**
+     * Create a new A/B Test record
+     */
+    public void createTest (WebIdent ident, ABTest test)
+        throws ServiceException;
+    
+    /**
+     * Update an existing A/B Test record
+     */
+    public void updateTest (WebIdent ident, ABTest test)
         throws ServiceException;
 }

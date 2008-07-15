@@ -4,9 +4,12 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.WebIdent;
@@ -51,4 +54,19 @@ public interface AdminServiceAsync
      */
     public void setIsSupport (WebIdent ident, int memberId, boolean isSupport, 
                               AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#getABTests}.
+     */
+    public void getABTests (WebIdent ident, AsyncCallback<List<ABTest>> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#createTest}.
+     */
+    public void createTest (WebIdent ident, ABTest test, AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#updateTest}.
+     */
+    public void updateTest (WebIdent ident, ABTest test, AsyncCallback<Void> callback);
 }

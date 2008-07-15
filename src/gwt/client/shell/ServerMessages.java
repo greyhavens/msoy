@@ -54,4 +54,6 @@ public interface ServerMessages extends ConstantsWithLookup
     public String unsupported_webmail ();
     public String user_input_required ();
     public String max_webmail_attempts ();
+
+    public String ab_test_duplicate_name ();
 }

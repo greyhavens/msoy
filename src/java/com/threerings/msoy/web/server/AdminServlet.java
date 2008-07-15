@@ -15,16 +15,19 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.admin.data.MsoyAdminCodes;
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.person.server.persist.MailRepository;
 
 import com.threerings.msoy.web.client.AdminService;
+import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.MemberInviteStatus;
@@ -245,7 +248,65 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
+    
+    /**
+     * Fetch a list of A/B test records
+     */
+    public List<ABTest> getABTests (WebIdent ident)
+        throws ServiceException
+    {
+        List<ABTestRecord> records;
+        try {
+            records = _testRepo.loadTests();
+            List<ABTest> tests = Lists.newArrayList();
+            for (ABTestRecord record : records) {
+                ABTest test = record.toABTest();
+                tests.add(test);
+            }
+            return tests; 
+        } catch (PersistenceException pe) {
+            log.warning("getABTests failed", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
 
+    /**
+     * Create a new A/B Test record
+     */
+    public void createTest (WebIdent ident, ABTest test)
+        throws ServiceException
+    {
+        try {
+            // make sure there isn't already a test with this name
+            if (_testRepo.loadTestByName(test.name) != null) {
+                throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
+            }
+            _testRepo.insertABTest(test);
+        } catch (PersistenceException pe) {
+            log.warning("Failed to create test " + test + ".", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
+    /**
+     * Update an existing A/B Test record
+     */
+    public void updateTest (WebIdent ident, ABTest test)
+        throws ServiceException
+    {
+        try {
+            // make sure there isn't already a test with this name
+            ABTestRecord existingTest = _testRepo.loadTestByName(test.name);
+            if (existingTest != null && existingTest.abTestId != test.abTestId) {
+                throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
+            }
+            _testRepo.updateABTest(test);
+        } catch (PersistenceException pe) {
+            log.warning("Failed to update test " + test + ".", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
     protected MemberRecord requireAdmin (WebIdent ident)
         throws ServiceException
     {
@@ -266,6 +327,9 @@ public class AdminServlet extends MsoyServiceServlet
 
     /** Provides access to persistent mail-related data. */
     @Inject protected MailRepository _mailRepo;
+    
+    /** Provides access to persistent test data. */
+    @Inject protected ABTestRepository _testRepo;
 
     protected static final int MEMBERS_PER_LOOP = 100;
 }

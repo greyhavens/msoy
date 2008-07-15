@@ -1,0 +1,233 @@
+//
+// $Id: IssueInvitesDialog.java 9643 2008-06-30 21:36:32Z nathan $
+
+package client.admin;
+
+import java.util.Date;
+
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.web.data.ABTest;
+
+import client.shell.Application;
+import client.shell.Page;
+import client.util.BorderedDialog;
+import client.util.MsoyCallback;
+import client.util.MsoyUI;
+
+/**
+ * Display a dialog for admins to create or edit an a/b test record
+ */
+public class ABTestEditorDialog extends BorderedDialog
+{
+    /**
+     * If test is null, display the form for creating a new test.  Otherwise, display
+     * the form for editing an existing test.
+     * @param test If supplied, edit this test, or create a new one if null
+     * @param parent If supplied, refresh the data on the parent list panel after create/update,
+     * otherwise navigate to the list of tests.
+     */
+    public ABTestEditorDialog (ABTest test, ABTestListPanel parent)
+    {
+        _parent = parent;
+        
+        if (test == null) {
+            _isNewTest = true;
+            setHeaderTitle(CAdmin.msgs.abTestCreateTitle());
+            _test = new ABTest();
+        }
+        else {
+            _isNewTest = false;
+            setHeaderTitle(CAdmin.msgs.abTestEditTitle());
+            _test = test;
+        }
+        
+        FlowPanel contents = MsoyUI.createFlowPanel("abTestEditorDialog");
+        setContents(contents);
+        
+        final TextBox name = new TextBox();
+        contents.add(new FormElement("(Unique) Name", name));
+        name.setMaxLength(ABTest.MAX_NAME_LENGTH);
+        name.setText(_test.name);
+        name.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _test.name = name.getText().trim();
+            }
+        });
+
+        final TextArea description = new TextArea();
+        contents.add(new FormElement("Description", description));
+        description.setText(_test.description);
+        description.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _test.description = description.getText().trim();
+            }
+        });
+        
+        final CheckBox enabled = new CheckBox();
+        contents.add(new FormElement("Enabled?", enabled));
+        enabled.setChecked(_test.enabled);
+        enabled.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                if (!_test.enabled && enabled.isChecked()) {
+                    if (_test.started != null) {
+                        MsoyUI.error("Test already started once, overwriting old start date.");
+                    }
+                    _test.started = new Date();
+                    _test.enabled = true;
+                }
+                else if (_test.enabled && !enabled.isChecked()) {
+                    _test.ended = new Date();
+                    _test.enabled = false;
+                }
+            }
+        });
+
+        final TextBox numGroups = new TextBox();
+        contents.add(new FormElement("Number of Groups", numGroups));
+        numGroups.setMaxLength(3);
+        numGroups.setText(_test.numGroups+"");
+        numGroups.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                try {
+                    _test.numGroups = Integer.parseInt(numGroups.getText().trim());
+                    if (_test.numGroups < 2) {
+                        MsoyUI.error("Number of Groups must be a number >= 2");
+                    }
+                }
+                catch (NumberFormatException e) {
+                    MsoyUI.error("Number of Groups must be a number >= 2");
+                }
+            }
+        });
+        
+        final CheckBox onlyNewVisitors = new CheckBox();
+        contents.add(new FormElement("Only New Visitors?", onlyNewVisitors));
+        onlyNewVisitors.setChecked(_test.onlyNewVisitors);
+        onlyNewVisitors.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _test.onlyNewVisitors = onlyNewVisitors.isChecked();
+            }
+        });
+        
+        final TextBox affiliate = new TextBox();
+        contents.add(new FormElement("Affiliate", affiliate));
+        affiliate.setMaxLength(ABTest.MAX_AFFILIATE_LENGTH);
+        affiliate.setText(_test.affiliate);
+        affiliate.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _test.affiliate = affiliate.getText().trim();
+            }
+        });
+        
+        final TextBox vector = new TextBox();
+        contents.add(new FormElement("Vector", vector));
+        vector.setMaxLength(ABTest.MAX_VECTOR_LENGTH);
+        vector.setText(_test.vector);
+        vector.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _test.vector = vector.getText().trim();
+            }
+        });
+
+        final TextBox creative = new TextBox();
+        contents.add(new FormElement("Creative", creative));
+        creative.setMaxLength(ABTest.MAX_CREATIVE_LENGTH);
+        creative.setText(_test.creative);
+        creative.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _test.creative = creative.getText().trim();
+            }
+        });
+        
+        FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
+        contents.add(buttons);
+        Button submit = new Button("save");
+        submit.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                commitEdit();
+            }
+        });
+        buttons.add(submit);
+
+        Button cancel = new Button("cancel");
+        cancel.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                ABTestEditorDialog.this.hide();
+            }
+        });
+        buttons.add(cancel);
+    }
+    
+
+    /**
+     * Called when the user clicks the "save" button to commit their edits or create a new item.
+     */
+    protected void commitEdit ()
+    {
+        // display any validation error messages
+        try {
+            _test.validate();
+        } catch (Exception e) {
+            MsoyUI.error(e.getMessage());
+            return;
+        }
+
+        if (_isNewTest) {
+            CAdmin.adminsvc.createTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
+                    MsoyUI.info("Test Created");
+                    ABTestEditorDialog.this.hide();
+                    if (_parent != null) {
+                        _parent.refresh();
+                    }
+                    else {
+                        Application.go(Page.ADMIN, "testlist");
+                    }
+                }
+            });
+
+        } 
+        
+        else {
+            CAdmin.adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
+                    MsoyUI.info("Test Updated");
+                    ABTestEditorDialog.this.hide();
+                    if (_parent != null) {
+                        _parent.refresh();
+                    }
+                    else {
+                        Application.go(Page.ADMIN, "testlist");
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Form element plus label
+     */
+    protected static class FormElement extends FlowPanel
+    {
+        public FormElement (String labelText, Widget widget) {
+            add(MsoyUI.createLabel(labelText, "Label"));
+            add(MsoyUI.createSimplePanel("Element", widget));
+        }
+    }
+    
+    /** Are we creating a new test (true), or editing an existing one (false)? */
+    protected final boolean _isNewTest;
+    
+    /** Data for the test */
+    protected final ABTest _test;
+    
+    /** Parent panel needs to have data refreshed after create/update */
+    protected final ABTestListPanel _parent;
+}

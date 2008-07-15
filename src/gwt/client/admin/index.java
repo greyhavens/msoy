@@ -51,6 +51,9 @@ public class index extends Page
         } else if (args.get(0, "").equals("info")) {
             setContent(CAdmin.msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
 
+        } else if (args.get(0, "").equals("testlist")) {
+            setContent(CAdmin.msgs.abTestListTitle(), new ABTestListPanel());
+
         } else {
             setContent(CAdmin.msgs.title(), new DashboardPanel());
         }

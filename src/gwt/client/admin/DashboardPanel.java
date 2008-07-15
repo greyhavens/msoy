@@ -75,6 +75,19 @@ public class DashboardPanel extends FlexTable
                 }
             }));
         }
+        
+        // a/b testing controls
+        controls = new HorizontalPanel();
+        controls.setSpacing(10);
+        setWidget(row++, 0, controls);
+        controls.add(new Label(CAdmin.msgs.testingControls()));
+        if (CAdmin.isAdmin()) {
+            controls.add(new Button(CAdmin.msgs.viewABTests(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Application.go(Page.ADMIN, "testlist");
+                }
+            }));
+        }
     }
 
     protected void displayDashboard ()

@@ -96,4 +96,12 @@ public interface MemberService extends RemoteService
      */
     public List<MemberCard> getLeaderList ()
         throws ServiceException;
+
+    /**
+     * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
+     */
+    public int getABTestGroup (
+        String testName, String trackingId, String affiliate, String vector, String creative, 
+        boolean newVisitor)
+        throws ServiceException;
 }

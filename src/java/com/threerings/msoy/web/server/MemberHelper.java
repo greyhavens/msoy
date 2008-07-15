@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -25,9 +24,7 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -36,16 +33,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.group.data.GroupMemberCard;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.FriendFeedMessage;
-import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.data.SelfFeedMessage;
-import com.threerings.msoy.person.server.persist.FeedMessageRecord;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
-
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;

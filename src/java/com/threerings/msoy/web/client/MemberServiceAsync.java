@@ -77,4 +77,11 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#getLeaderList}.
      */
     public void getLeaderList (AsyncCallback<List<MemberCard>> callback);
+    
+    /**
+     * The asynchronous version of {@link MemberService#getABTestGroup}.
+     */
+    public void getABTestGroup (
+        String testName, String trackingId, String affiliate, String vector, String creative, 
+        boolean newVisitor, AsyncCallback<Integer> callback);
 }

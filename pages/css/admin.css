@@ -127,3 +127,39 @@
   text-align: right;
   white-space: nowrap;
 }
+
+/* ------------------------------------
+   A/B TESTS
+-------------------------------------*/
+
+.abTestListPanel {
+  padding: 10px;
+}
+
+.abTestListPanel .Tests {
+  border: solid black 1px;
+  margin: 10px auto;
+}
+
+.abTestListPanel .Tests .Header {
+  background-color: #C8DFED;
+}
+
+.abTestEditorDialog {
+  padding: 10px;
+}
+
+.abTestEditorDialog .Label {
+  clear: both;
+  float: left;
+  width: 150px;
+}
+
+.abTestEditorDialog .Element {
+  float: left;
+  margin-bottom: 10px;
+}
+
+.abTestEditorDialog .Buttons {
+  clear: both;
+}
