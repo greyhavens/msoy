@@ -3,6 +3,7 @@ package {
 import com.threerings.bureau.data.BureauMarshaller;
 import com.threerings.crowd.data.CrowdPermissionPolicy;
 import com.threerings.msoy.bureau.client.MsoyBureauClient;
+import com.threerings.msoy.bureau.client.WindowDirector;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
@@ -29,6 +30,7 @@ public class Reference
     MsoyBureauClient;
     Item;
     Trophy;
+    WindowDirector;
 }
 }
 
