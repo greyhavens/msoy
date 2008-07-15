@@ -244,11 +244,11 @@ public class MemberRecord extends PersistentRecord
     @Column(nullable=true, unique=true)
     public String permaName;
 
-	/** This member's permanent name normalized, so that we don't end up with multiple names with different
-	 *  capitalization.
-	 */
-	@Column(nullable=true, unique=true)
-	public String normalizedPermaName;	
+    /** This member's permanent name normalized, so that we don't end up with multiple names with different
+     *  capitalization.
+     */
+    @Column(nullable=true, unique=true)
+    public String normalizedPermaName;	
 
     /** The quantity of flow possessed by this member. */
     public int flow;
