@@ -387,8 +387,8 @@ public class RoomObjectView extends RoomView
             if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
                 _ctx.getGameDirector().tutorialEvent("playerSpoke");
             }
-            var avatar :MemberSprite =
-                (getOccupantByName(umsg.getSpeakerDisplayName()) as MemberSprite);
+            var speaker :OccupantSprite = getOccupantByName(umsg.getSpeakerDisplayName());
+            var avatar :MemberSprite = (speaker as MemberSprite);
             if (avatar != null) {
                 avatar.performAvatarSpoke();
             }
@@ -396,7 +396,7 @@ public class RoomObjectView extends RoomView
             // send it to pets as well
             var petSprites :Array = getPets();
             for each (var pet :PetSprite in petSprites) {
-                pet.processChatMessage(umsg);
+                pet.processChatMessage(speaker, umsg);
             }
         }
 

@@ -33,9 +33,13 @@ public class PetSprite extends ActorSprite
     /**
      * Receives a chat message from the room, and forwards it over to user land.
      */
-    public function processChatMessage (msg :UserMessage) :void
+    public function processChatMessage (speaker :OccupantSprite, msg :UserMessage) :void
     {
-        callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().toString(), msg.message);
+        if (hasUserCode("receivedChat_v2")) {
+            callUserCode("receivedChat_v2", speaker.getItemIdent().toString(), msg.message);
+        } else {
+            callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().toString(), msg.message);
+        }
     }
 
     // from ActorSprite
