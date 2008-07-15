@@ -1223,3 +1223,11 @@ BasePanel {
   borderThickness: 2;
   backgroundAlpha: 0;
 }
+
+.friendRenderer {
+  backgroundAlpha: 0;
+}
+
+.friendLabel {
+  color: white;
+}

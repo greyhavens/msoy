@@ -5,10 +5,16 @@ package com.threerings.msoy.world.client {
 
 import flash.geom.Rectangle;
 
+import flash.utils.Dictionary;
+
+import mx.collections.ArrayCollection;
+import mx.collections.Sort;
+
 import mx.containers.TitleWindow;
 
 import mx.controls.List;
 
+import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 
 import mx.managers.PopUpManager;
@@ -25,6 +31,7 @@ import com.threerings.util.Log;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 public class FriendsListPanel extends TitleWindow
     implements SetListener
@@ -56,7 +63,7 @@ public class FriendsListPanel extends TitleWindow
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == MemberObject.FRIENDS) {
-
+            addFriend(event.getEntry() as FriendEntry);
         }
     }
 
@@ -66,9 +73,9 @@ public class FriendsListPanel extends TitleWindow
         if (event.getName() == MemberObject.FRIENDS) {
             var newEntry :FriendEntry = event.getEntry() as FriendEntry;
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            if (newEntry.online != oldEntry.online) {
-            } else if (newEntry.online) {
-                // they changed something else, like their display name or profile image
+            removeFriend(oldEntry);
+            if (newEntry.online) {
+                addFriend(newEntry);
             }
         }
     }
@@ -77,6 +84,7 @@ public class FriendsListPanel extends TitleWindow
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == MemberObject.FRIENDS) {
+            removeFriend(event.getOldEntry() as FriendEntry);
         }
     }
 
@@ -94,14 +102,22 @@ public class FriendsListPanel extends TitleWindow
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendList = new List();
-        _friendList.styleName = "friendList";
-        _friendList.horizontalScrollPolicy = ScrollPolicy.OFF;
-        _friendList.verticalScrollPolicy = ScrollPolicy.AUTO;
-        //_friendList.percentHeight = 100;
-        _friendList.height = 200;
-        _friendList.percentWidth = 100;
-        addChild(_friendList);
+        var friendList :List = new List();
+        friendList.styleName = "friendList";
+        friendList.horizontalScrollPolicy = ScrollPolicy.OFF;
+        friendList.verticalScrollPolicy = ScrollPolicy.AUTO;
+        friendList.percentHeight = 100;
+        friendList.percentWidth = 100;
+        friendList.itemRenderer = new ClassFactory(FriendRenderer);
+        friendList.dataProvider = _friends;
+        friendList.selectable = false;
+        addChild(friendList);
+
+        // set up the sort for the collection
+        var sort :Sort = new Sort();
+        sort.compareFunction = sortFunction;
+        _friends.sort = sort;
+        _friends.refresh();
 
         init(_ctx.getMemberObject());
     }
@@ -109,6 +125,57 @@ public class FriendsListPanel extends TitleWindow
     protected function init (memObj :MemberObject) :void
     {
         memObj.addListener(this);
+
+        var currentEntries :Array = _friends.toArray();
+        for each (var friend :FriendEntry in memObj.friends.toArray()) {
+            if (!friend.online) {
+                continue;
+            }
+
+            if (!containsFriend(friend)) {
+                addFriend(friend);
+            } else {
+                var original :Object = _originals[friend.name.getMemberId()];
+                currentEntries.splice(currentEntries.indexOf(original), 1);
+            }
+        }
+
+        // anything left in currentEntries wasn't found on the new MemberObject
+        for each (var entry :Array in currentEntries) {
+            removeFriend(entry[1] as FriendEntry);
+        }
+    }
+
+    protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
+    {
+        if (!(o1 is FriendEntry) || !(o2 is FriendEntry)) {
+            return 0;
+        }
+
+        var friend1 :FriendEntry = o1 as FriendEntry;
+        var friend2 :FriendEntry = o2 as FriendEntry;
+        return MemberName.BY_DISPLAY_NAME(friend1.name, friend2.name);
+    }
+
+    protected function containsFriend (friend :FriendEntry) :Boolean
+    {
+        return _originals[friend.name.getMemberId()] !== undefined;
+    }
+
+    protected function addFriend (friend :FriendEntry) :void
+    {
+        var data :Array = [ _ctx, friend ];
+        _originals[friend.name.getMemberId()] = data;
+        _friends.addItem(data);
+    }
+
+    protected function removeFriend (friend :FriendEntry) :void
+    {
+        var data :Array = _originals[friend.name.getMemberId()] as Array;
+        if (data != null) {
+            _friends.removeItemAt(_friends.getItemIndex(data));
+        }
+        delete _originals[friend.name.getMemberId()];
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
@@ -116,6 +183,7 @@ public class FriendsListPanel extends TitleWindow
     protected static const PADDING :int = 10;
 
     protected var _ctx :WorldContext;
-    protected var _friendList :List;
+    protected var _friends :ArrayCollection = new ArrayCollection();
+    protected var _originals :Dictionary = new Dictionary();
 }
 }
