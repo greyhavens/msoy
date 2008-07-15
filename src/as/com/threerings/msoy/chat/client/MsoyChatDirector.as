@@ -3,7 +3,11 @@
 
 package com.threerings.msoy.chat.client {
 
+import mx.core.Container;
 import mx.core.UIComponent;
+
+import mx.containers.HBox;
+import mx.containers.VBox;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
@@ -31,15 +35,23 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.ChatControl;
+
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
+
+import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -155,7 +167,38 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function displayGameChat (chatDtr :ChatDirector, playerList :UIComponent) :void
     {
-        _wctx.getTopPanel().setRightPanel(new GameChatContainer(_wctx, chatDtr, playerList));
+        _gameChat = new GameChatContainer(_wctx, chatDtr, playerList);
+
+        var controlBar :ControlBar = _wctx.getTopPanel().getControlBar();
+
+        // TODO: enable new gamestub-mode popper
+        if (true) {
+            _wctx.getTopPanel().setRightPanel(_gameChat);
+            controlBar.inSidebar(true);
+
+        } else {
+            // otherwise, we're going to put the chat into a TitleWindow
+            _popGameChat = new CommandButton("Chat", openGameChat);
+            _popGameChat.toggle = true;
+            controlBar.addCustomComponent(_popGameChat);
+
+            controlBar.setChatRemoved(true);
+            _gameChatHolder = new VBox();
+            _gameChatHolder.addChild(_gameChat);
+
+            var hpan :HBox = new HBox();
+            var chatBtn :CommandButton = new CommandButton();
+            chatBtn.toolTip = Msgs.GENERAL.get("i.channel");
+            chatBtn.setCommand(MsoyController.POP_CHANNEL_MENU, chatBtn);
+            chatBtn.styleName = "controlBarButtonChat";
+            hpan.addChild(chatBtn);
+
+            var chatCtrl :ChatControl = new ChatControl(_wctx, Msgs.CHAT.get("b.send"));
+            chatCtrl.setChatDirector(chatDtr);
+            hpan.addChild(chatCtrl);
+
+            _gameChatHolder.addChild(hpan);
+        }
     }
 
     /**
@@ -163,11 +206,29 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function clearGameChat () :void
     {
-        var gameChat :GameChatContainer = _wctx.getTopPanel().getRightPanel() as GameChatContainer;
-        if (gameChat != null) {
-            gameChat.shutdown();
-            _wctx.getTopPanel().clearRightPanel();
+        if (_gameChat == null) {
+            return;
         }
+
+        var controlBar :ControlBar = _wctx.getTopPanel().getControlBar();
+
+        _gameChat.shutdown();
+        if (_wctx.getTopPanel().getRightPanel() == _gameChat) {
+            _wctx.getTopPanel().clearRightPanel();
+            controlBar.inSidebar(false);
+
+        } else {
+            openGameChat(false);
+
+            if (_popGameChat != null) {
+                _popGameChat.parent.removeChild(_popGameChat);
+                _popGameChat = null;
+            }
+            controlBar.setChatRemoved(false);
+        }
+        //_wctx.getTopPanel().setFundis(false);
+
+        _gameChat = null;
     }
 
     /**
@@ -381,6 +442,24 @@ public class MsoyChatDirector extends ChatDirector
         return ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
     }
 
+    /**
+     * A callback used to open game chat in gamestub mode.
+     */
+    protected function openGameChat (open :Boolean) :void
+    {
+        trace("openGameChat(" + open + ")");
+        if (open) {
+            _gameChatPanel = new FloatingPanel(_wctx, "Game Chat");
+            _gameChat.height = 450;
+            _gameChatPanel.addChild(_gameChatHolder);
+            _gameChatPanel.open();
+
+        } else if (_gameChatPanel != null) {
+            _gameChatPanel.close();
+            _gameChatPanel = null;
+        }
+    }
+
     protected var _wctx :MsoyContext;
     protected var _chatTabs :ChatTabBar;
 
@@ -388,5 +467,12 @@ public class MsoyChatDirector extends ChatDirector
     protected var _channelControllers :HashMap = new HashMap();
 
     protected var _chatHistory :HistoryList;
+
+    protected var _gameChatHolder :Container;
+
+    /** Our game chat container, or null if not being shown. */
+    protected var _gameChat :GameChatContainer;
+    protected var _popGameChat :CommandButton;
+    protected var _gameChatPanel :FloatingPanel;
 }
 }

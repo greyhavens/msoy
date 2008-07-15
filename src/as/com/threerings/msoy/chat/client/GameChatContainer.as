@@ -54,7 +54,7 @@ public class GameChatContainer extends LayeredContainer
         addChild(_tabBar);
 
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        controlBar.inSidebar(true);
+        //controlBar.inSidebar(true);
         controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdd);
@@ -75,7 +75,7 @@ public class GameChatContainer extends LayeredContainer
         _chatDtr.removeChatDisplay(_overlay);
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        controlBar.inSidebar(false);
+        //controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
         if (_overlay != null) {
             _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
@@ -132,8 +132,6 @@ public class GameChatContainer extends LayeredContainer
         _ctx.getMsoyChatDirector().addChatDisplay(_overlay);
         // the bounds will get set via setActualSize();
     }
-
-    private static const log :Log = Log.getLog(GameChatContainer);
 
     protected var _ctx :MsoyContext;
     protected var _overlay :ChatOverlay;
