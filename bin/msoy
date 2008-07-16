@@ -73,7 +73,7 @@ case "$1" in
         else
             echo "Shutting down msoyrespawn."
             kill `cat $RESPAWN_PIDFILE`
-            rm -f $RESPAWN_PIDFILE $SERVER_PIDFILE
+            rm -f $RESPAWN_PIDFILE
         fi
         if [ ! -f $SERVER_PIDFILE ]; then
             echo "No $SERVER_PIDFILE exists. Is MsoyServer running?"
