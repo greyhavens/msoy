@@ -28,8 +28,10 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 //import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.ReferralRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -140,6 +142,17 @@ public class MsoyClientResolver extends CrowdClientResolver
                 userObj.avatar = (Avatar)avatar.toItem();
             }
         }
+        
+        // clobber any referral information with what's in the database
+        ReferralRecord refrec = MsoyServer.memberRepo.loadReferral(member.memberId);
+        if (refrec == null) {
+            // if they don't have referral info, it means they're an old user who needs to be
+            // grandfathered into the new referral-tracking order of things. give them
+            // a new entry with an empty affiliate, and a random tracking number.
+            refrec = MsoyServer.memberRepo.setReferral(member.memberId, 
+                ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
+        }
+        userObj.referral = refrec.toInfo();
     }
 
     @Override // from ClientResolver

@@ -38,13 +38,16 @@ import com.threerings.crowd.client.CrowdClient;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.client.TrackingCookie;
 
 import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -118,7 +121,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
 
         // prior to logging on to a server, set up our security policy for that server
-        addClientObserver(new ClientAdapter(clientWillLogon));
+        addClientObserver(new ClientAdapter(clientWillLogon, clientDidLogon));
 
         // configure our server and port info
         setServer(getServerHost(), getServerPorts());
@@ -249,6 +252,37 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Called just after we logon to a server.
+     */
+    protected function clientDidLogon (event :ClientEvent) :void
+    {
+        // now that we logged on, we might have gotten a different referral info back
+        // from the server. so clobber whatever we have, and tell the GWT wrapper
+        // to clobber its info as well.
+
+        var member :MemberObject = _clobj as MemberObject;
+        if (_featuredPlaceView || member == null) {
+            return;
+        }
+
+        if (member.referral == null) {
+            log.warning("Referral info was not stored on the server!");
+            return;
+        }
+
+        // update our referral cookies with authoritative versions from the server -
+        // both in the Flash client, and the browser if available
+        TrackingCookie.saveReferral(member.referral, true);
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("setReferral", member.referral);
+            }
+        } catch (e :Error) {
+            log.info("ExternalInterface.call('getReferral') failed", "error", e);
+        }
+    }
+
+    /**
      * Configure any external functions that we wish to expose to JavaScript.
      */
     protected function configureExternalFunctions () :void
@@ -332,6 +366,49 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         throw new Error("abstract");
     }
 
+    /**
+     * Returns referral info stored on the client side.
+     * First checks the Flash cookie, then the browser cookie, then embed parameters.
+     *
+     * This info will be offered to the server, which may override it with its own versions.
+     */
+    protected function getReferralInfo () :ReferralInfo                                           
+    {
+        // first, try the local cookie
+        var ref :ReferralInfo = TrackingCookie.getReferral();
+
+        // if that didn't work, see if we can read it from the browser cookie
+        if (ref == null && !isEmbedded() && ExternalInterface.available) {
+            try {
+                log.debug("Querying browser cookie for referral info");        
+                var result :Object = ExternalInterface.call("getReferral");
+                ref = ReferralInfo.makeInstance(
+                    result.affiliate as String, result.vector as String,
+                    result.creative as String, result.tracker as String);
+            } catch (e :Error) {
+                log.info("ExternalInterface.call('getReferral') failed", "error", e);
+            }
+        }
+
+        // if calling GWT didn't work either, check embed parameters
+        if (ref == null) {
+            log.debug("Checking embed parameters for referral info");        
+            var params :Object = MsoyParameters.get();
+            ref = ReferralInfo.makeInstance(
+                params["aff"], params["vec"], params["cre"], ReferralInfo.makeRandomTracker());
+        }
+
+        // finally, if nothing worked, make a blank one with empty affiliate fields,
+        // and a random tracking number
+        if (ref == null) {
+            log.debug("Queries failed - generating new group assignment");
+            ref = ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker());
+        }
+
+        log.debug("Referral info: " + ref);
+        return ref;            
+    }
+    
     /**
      * Returns the hostname of the game server to which we should connect, or null if that is not
      * configured in our parameters.

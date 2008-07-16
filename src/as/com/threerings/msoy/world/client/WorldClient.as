@@ -159,7 +159,7 @@ public class WorldClient extends MsoyClient
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier(_wctx));
         }
-
+        
         if (!_featuredPlaceView) {
             // listen for flow and gold updates
             _user = (clobj as MemberObject);
@@ -359,9 +359,12 @@ public class WorldClient extends MsoyClient
         } else {
             creds = new MsoyCredentials(null, null);
         }
+        
         creds.ident = Prefs.getMachineIdent();
         creds.sessionToken = (token == null) ? params["token"] : token;
         creds.featuredPlaceView = null != params["featuredPlace"];
+        creds.referral = getReferralInfo();
+        
         return creds;
     }
 

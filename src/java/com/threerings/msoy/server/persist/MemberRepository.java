@@ -60,6 +60,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import static com.threerings.msoy.Log.log;
@@ -846,6 +847,32 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads up a referral record by member record id.
+     * Returns null if no record exists for that member.
+     */
+    public ReferralRecord loadReferral (int memberId)
+        throws PersistenceException
+    {
+        return load(ReferralRecord.class, memberId);
+    }
+    
+    /**
+     * Adds or updates the referral record for a member with the given id. 
+     */
+    public ReferralRecord setReferral (int memberId, ReferralInfo ref)
+        throws PersistenceException
+    {
+        ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
+        if (loadReferral(memberId) == null) {
+            insert(newrec);
+        } else { 
+            update(newrec);
+        }
+        
+        return newrec;
+    }
+    
+    /**
      * Sets the reported level for the given member
      */
     public void setUserLevel (int memberId, int level)
@@ -1135,6 +1162,7 @@ public class MemberRepository extends DepotRepository
         classes.add(OptOutRecord.class);
         classes.add(ExternalMapRecord.class);
         classes.add(MemberWarningRecord.class);
+        classes.add(ReferralRecord.class);
     }
 
     @Inject protected MsoyEventLogger _eventLog;

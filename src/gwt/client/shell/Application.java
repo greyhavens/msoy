@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
@@ -328,12 +329,11 @@ public class Application
             args.setToken(token);
 
             // save our tracking info, but don't overwrite old values
-            TrackingInfo.saveReferral(affiliate, vector, creative, false);
+            ReferralInfo ref = new ReferralInfo(
+                affiliate, vector, creative, ReferralInfo.makeRandomTracker());
+            TrackingCookie.saveReferral(ref, false);
         }
 
-        // add a new tracking number, if necessary
-        TrackingInfo.addTracker();
-        
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(page)) {
             // tell any existing page that it's being unloaded
@@ -478,6 +478,12 @@ public class Application
        };
        $wnd.setGuestId = function (guestId) {
            @client.shell.Application::setGuestId(I)(guestId);
+       };           
+       $wnd.getReferral = function () {
+           return @client.shell.TrackingCookie::getReferralAsObject()();
+       };
+       $wnd.setReferral = function (ref) {
+           @client.shell.TrackingCookie::saveReferralAsObject(Ljava/lang/Object;Z)(ref, true);
        };
     }-*/;
 

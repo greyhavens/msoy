@@ -22,14 +22,13 @@ import com.threerings.msoy.world.data.ObserverInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.GroupMembership;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.badge.data.BadgeSet;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -105,6 +104,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>headline</code> field. */
     public static final String HEADLINE = "headline";
+
+    /** The field name of the <code>referral</code> field. */
+    public static final String REFERRAL = "referral";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -195,6 +197,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The headline/status of this member. */
     public String headline;
+
+    /** Player's referral information. */
+    public ReferralInfo referral;
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
@@ -993,6 +998,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             HEADLINE, value, ovalue);
         this.headline = value;
+    }
+
+    /**
+     * Requests that the <code>referral</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setReferral (ReferralInfo value)
+    {
+        ReferralInfo ovalue = this.referral;
+        requestAttributeChange(
+            REFERRAL, value, ovalue);
+        this.referral = value;
     }
     // AUTO-GENERATED: METHODS END
 

@@ -62,14 +62,22 @@ public class MsoyClient extends WhirledClient
         _memobj.addListener(_idleTracker);
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
+        MsoyCredentials credentials = (MsoyCredentials) getCredentials();
+        
         if (acct != null) {
             _memobj.setTokens(acct.tokens);
         } else {
             _memobj.setTokens(new MsoyTokenRing());
         }
 
+        // if we didn't get referral info from the database already, pull it from 
+        // our authentication credentials (ie. from the flash / browser cookies)
+        if (_memobj.referral == null) {
+            _memobj.setReferral(credentials.referral);
+        }
+
         // flag viewing-only clients that way.
-        _memobj.viewOnly = ((MsoyCredentials) getCredentials()).featuredPlaceView;
+        _memobj.viewOnly = credentials.featuredPlaceView;
 
         // start active/idle metrics on this server - the player starts out active
         _memobj.metrics.idle.init(true);
