@@ -46,6 +46,8 @@ import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -422,8 +424,7 @@ public class GameServlet extends MsoyServiceServlet
                 GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
                 GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
                 if (game != null) {
-                    featured.add(GameUtil.toFeaturedGameInfo(
-                                     _memberRepo, game, detail, card.population));
+                    featured.add(_gameLogic.toFeaturedGameInfo(game, detail, card.population));
                     have.add(game.gameId);
                 }
             }
@@ -432,7 +433,7 @@ public class GameServlet extends MsoyServiceServlet
                          _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
                     if (!have.contains(game.gameId)) {
                         GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
-                        featured.add(GameUtil.toFeaturedGameInfo(_memberRepo, game, detail, 0));
+                        featured.add(_gameLogic.toFeaturedGameInfo(game, detail, 0));
                     }
                     if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
                         break;
@@ -560,8 +561,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
-            return GameUtil.loadTopGames(_gameRepo, _memberRepo, pps);
+            return _gameLogic.loadTopGames(MsoyServer.memberMan.getPPSnapshot());
 
         } catch (PersistenceException pe) {
             log.warning("loadTopGamesData failed [for=" + ident + "].");
@@ -696,6 +696,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     @Inject protected GameRepository _gameRepo;
+    @Inject protected GameLogic _gameLogic;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected RatingRepository _ratingRepo;
 

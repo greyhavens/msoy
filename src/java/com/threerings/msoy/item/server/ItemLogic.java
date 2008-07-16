@@ -21,7 +21,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.ListingCard;
 
 /**
- * Contains item related services that are used by servlets and other blocking thread code.
+ * Contains item related services used by servlets and other blocking thread code.
  */
 @BlockingThread @Singleton
 public class ItemLogic

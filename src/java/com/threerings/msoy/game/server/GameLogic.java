@@ -1,24 +1,26 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.game.server;
 
 import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.parlor.game.data.GameConfig;
-
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -46,20 +48,21 @@ import com.threerings.msoy.web.server.ServletWaiter;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Contains game-related utility methods used by servlets.
+ * Contains game-related services used by servlets and other blocking thread code.
  */
-public class GameUtil
+@BlockingThread @Singleton
+public class GameLogic
 {
     /**
      * Loads the launch config for the specified game, resolving it on this server if necessary.
      */
-    public static LaunchConfig loadLaunchConfig (GameRepository repo, WebIdent ident, int gameId)
+    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
         // load up the metadata for this game
         GameRecord grec;
         try {
-            grec = repo.loadGameRecord(gameId);
+            grec = _gameRepo.loadGameRecord(gameId);
             if (grec == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
@@ -115,10 +118,10 @@ public class GameUtil
 
         // determine what server is hosting the game, start hosting it if necessary
         final GameLocationWaiter waiter = new GameLocationWaiter(config.gameId);
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
-                    MsoyServer.gameReg.locateGame(null, waiter.gameId, waiter);
+                    _gameReg.locateGame(null, waiter.gameId, waiter);
                 } catch (InvocationException ie) {
                     waiter.requestFailed(ie);
                 }
@@ -131,7 +134,7 @@ public class GameUtil
         // finally, if they are a guest and have not yet been assigned a guest id, do so now so
         // that they can log directly into the game server
         if (ident == null || ident.memberId == 0) {
-            config.guestId = MsoyServer.peerMan.getNextGuestId(); // this method is thread safe
+            config.guestId = _peerMan.getNextGuestId(); // this method is thread safe
         }
 
         return config;
@@ -141,29 +144,28 @@ public class GameUtil
      * Loads and returns data on the top games. Used on the landing and arcade pages.  
      * Games that do not payout flow, and those with a ranking less than 4 stars not included.
      */
-    public static FeaturedGameInfo[] loadTopGames (GameRepository repo, MemberRepository memberRepo,
-                                                   PopularPlacesSnapshot pps)
+    public FeaturedGameInfo[] loadTopGames (PopularPlacesSnapshot pps)
         throws PersistenceException
     {
         // determine the games people are playing right now
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PlaceCard card : pps.getTopGames()) {
-            GameDetailRecord detail = repo.loadGameDetail(card.placeId);
-            GameRecord game = repo.loadGameRecord(card.placeId, detail);
+            GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
+            GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
             if (game != null && game.rating >= 4 && detail.gamesPlayed > 0) {
-                featured.add(toFeaturedGameInfo(memberRepo, game, detail, card.population));
+                featured.add(toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);
             }
         }
 
         // pad the featured games with ones nobody is playing
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameRecord game : repo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
                 if (!have.contains(game.gameId) && game.rating >= 4) {
-                    GameDetailRecord detail = repo.loadGameDetail(game.gameId);
+                    GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
                     if (detail.gamesPlayed > 0) {
-                        featured.add(toFeaturedGameInfo(memberRepo, game, detail, 0));
+                        featured.add(toFeaturedGameInfo(game, detail, 0));
                     }
                 }
                 if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
@@ -177,44 +179,17 @@ public class GameUtil
     /**
      * Creates a {@link FeaturedGameInfo} record for the supplied game.
      */
-    public static FeaturedGameInfo toFeaturedGameInfo (MemberRepository repo, GameRecord game,
-                                                       GameDetailRecord detail, int pop)
+    public FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
         throws PersistenceException
     {
         FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
         info.avgDuration = detail.getAverageDuration();
-        int[] players = getMinMaxPlayers((Game)game.toItem());
+        int[] players = GameUtil.getMinMaxPlayers((Game)game.toItem());
         info.minPlayers = players[0];
         info.maxPlayers = players[1];
         info.playersOnline = pop;
-        info.creator = repo.loadMemberName(game.creatorId);
+        info.creator = _memberRepo.loadMemberName(game.creatorId);
         return info;
-    }
-
-    /**
-     * Returns the minimum and maximum players for the supplied game.
-     */
-    public static int[] getMinMaxPlayers (Game game)
-    {
-        MsoyMatchConfig match = null;
-        try {
-            if (game != null && !StringUtil.isBlank(game.config)) {
-                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
-            }
-            if (match == null) {
-                log.warning("Game missing match configuration [game=" + game + "].");
-            }
-        } catch (Exception e) {
-            log.warning("Failed to parse XML game definition [id=" + game.gameId +
-                    ", config=" + game.config + "]", e);
-        }
-        if (match != null) {
-            return new int[] {
-                match.minSeats,
-                (match.getMatchType() == GameConfig.PARTY) ? Integer.MAX_VALUE : match.maxSeats
-            };
-        }
-        return new int[] { 1, 2 }; // arbitrary defaults
     }
 
     protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
@@ -232,4 +207,10 @@ public class GameUtil
             requestFailed(new InvocationException(cause));
         }
     }
+
+    @Inject RootDObjectManager _omgr;
+    @Inject MsoyGameRegistry _gameReg;
+    @Inject MsoyPeerManager _peerMan;
+    @Inject GameRepository _gameRepo;
+    @Inject MemberRepository _memberRepo;
 }

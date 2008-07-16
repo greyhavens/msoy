@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -40,7 +41,7 @@ public class EmbedRouterServlet extends HttpServlet
         try {
             if (info.startsWith("/g")) {
                 int gameId = Integer.parseInt(info.substring(2));
-                LaunchConfig config = GameUtil.loadLaunchConfig(_gameRepo, null, gameId);
+                LaunchConfig config = _gameLogic.loadLaunchConfig(null, gameId);
                 sendResponse(rsp, config.server + ":" + config.port + ":" + config.guestId);
 
             } else if (info.startsWith("/s")) {
@@ -72,4 +73,5 @@ public class EmbedRouterServlet extends HttpServlet
     }
 
     @Inject protected GameRepository _gameRepo;
+    @Inject protected GameLogic _gameLogic;
 }

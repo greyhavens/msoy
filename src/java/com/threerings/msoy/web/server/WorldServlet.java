@@ -50,6 +50,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -125,7 +126,7 @@ public class WorldServlet extends MsoyServiceServlet
             data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
             // determine the "featured" games
-            data.topGames = GameUtil.loadTopGames(_gameRepo, _memberRepo, pps);
+            data.topGames = _gameLogic.loadTopGames(pps);
 
             // select the top rated avatars
             ItemRepository<ItemRecord, ?, ?, ?> repo = 
@@ -322,7 +323,7 @@ public class WorldServlet extends MsoyServiceServlet
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
-        return GameUtil.loadLaunchConfig(_gameRepo, ident, gameId);
+        return _gameLogic.loadLaunchConfig(ident, gameId);
     }
 
     // from interface WorldService
@@ -534,6 +535,7 @@ public class WorldServlet extends MsoyServiceServlet
     protected ExpiringReference<LandingData> _landingData;
 
     @Inject protected GameRepository _gameRepo;
+    @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
