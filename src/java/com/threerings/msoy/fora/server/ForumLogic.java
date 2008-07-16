@@ -1,37 +1,43 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.fora.server;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.data.MemberCard;
+
 import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
-import com.threerings.msoy.web.client.ForumService.ThreadResult;
-import com.threerings.msoy.web.data.MemberCard;
 
 /**
- * Contains forum-related utility methods used by servlets.
+ * Does something extraordinary.
  */
-public class ForumUtil
+@BlockingThread @Singleton
+public class ForumLogic
 {
     /**
      * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
@@ -39,8 +45,8 @@ public class ForumUtil
      * @param needLastReadPost If true, lastReadPostId/Index will be included
      * @param needFirstPost If true, includes {@link ForumMessage} of the original post
      */
-    public static List<ForumThread> resolveThreads (
-        MemberRecord mrec, List<ForumThreadRecord> thrrecs, Map<Integer, GroupName> groups, 
+    public List<ForumThread> resolveThreads (
+        MemberRecord mrec, List<ForumThreadRecord> thrrecs, Map<Integer, GroupName> groups,
         boolean needLastReadPost, boolean needFirstPost)
         throws PersistenceException
     {
@@ -51,11 +57,12 @@ public class ForumUtil
         Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
         for (ForumThreadRecord ftr : thrrecs) {
             ForumThread thread = ftr.toForumThread(names, groups);
-            
+
             // include details on the original post for each thread if required
-            if (needFirstPost) {               
-                ForumMessageRecord messageRec = _forumRepo.loadMessages(thread.threadId, 0, 1).get(0);
-                List<MemberCardRecord> memberRecords = MsoyServer.memberRepo.loadMemberCards(
+            if (needFirstPost) {
+                ForumMessageRecord messageRec =
+                    _forumRepo.loadMessages(thread.threadId, 0, 1).get(0);
+                List<MemberCardRecord> memberRecords = _memberRepo.loadMemberCards(
                     Collections.singleton(messageRec.posterId));
                 if (memberRecords.size() > 0) {
                     MemberCard memberCard = memberRecords.get(0).toMemberCard();
@@ -80,11 +87,11 @@ public class ForumUtil
 
         return Lists.newArrayList(thrmap.values());
     }
-    
+
     /**
      * Resolves the names of the posters of the supplied threads.
      */
-    protected static IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
+    protected IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
         throws PersistenceException
     {
         IntSet posters = new ArrayIntSet();
@@ -93,13 +100,13 @@ public class ForumUtil
         }
         IntMap<MemberName> names = IntMaps.newHashIntMap();
         if (posters.size() > 0) {
-            for (MemberName name : MsoyServer.memberRepo.loadMemberNames(posters)) {
+            for (MemberName name : _memberRepo.loadMemberNames(posters)) {
                 names.put(name.getMemberId(), name);
             }
         }
         return names;
     }
-    
-    /** Shortcut to forum repository */
-    protected static ForumRepository _forumRepo = MsoyServer.forumRepo;
+
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected ForumRepository _forumRepo;
 }

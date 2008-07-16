@@ -35,6 +35,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.fora.data.ForumCodes;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
@@ -78,7 +79,7 @@ public class ForumServlet extends MsoyServiceServlet
 
             // load up additional fiddly bits and create a result record
             ThreadResult result = new ThreadResult();
-            result.threads = ForumUtil.resolveThreads(mrec, thrrecs, groups, true, false);
+            result.threads = _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
 
             // we cheat on the total count here with the idea that the client basically just asks
             // for "all" of the unread threads and we give them all as long as all is not
@@ -115,7 +116,7 @@ public class ForumServlet extends MsoyServiceServlet
             // load up additional fiddly bits and create a result record
             ThreadResult result = new ThreadResult();
             Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
-            result.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, true, false);
+            result.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, true, false);
 
             // fill in this caller's new thread starting privileges
             result.canStartThread = (mrec != null) &&
@@ -154,7 +155,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
 
             Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
-            return ForumUtil.resolveThreads(
+            return _forumLogic.resolveThreads(
                 mrec, _forumRepo.findThreads(groupId, search, limit), gmap, true, false);
 
         } catch (PersistenceException pe) {
@@ -568,8 +569,8 @@ public class ForumServlet extends MsoyServiceServlet
         return sanitized;
     }
 
+    // dependencies
     @Inject protected ForumRepository _forumRepo;
-    
-    /** Logs events for later metrics generation about forum activity. */
+    @Inject protected ForumLogic _forumLogic;
     @Inject protected MsoyEventLogger _eventLog;
 }

@@ -38,7 +38,9 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
+import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupCodes;
 import com.threerings.msoy.group.data.GroupDetail;
@@ -178,7 +180,7 @@ public class GroupServlet extends MsoyServiceServlet
             List<ForumThreadRecord> thrrecs = MsoyServer.forumRepo.loadRecentThreads(groupId, 3);
             Map<Integer,GroupName> gmap =
                 Collections.singletonMap(detail.group.groupId, detail.group.getName());
-            detail.threads = ForumUtil.resolveThreads(mrec, thrrecs, gmap, false, true);
+            detail.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, false, true);
 
             // fill in the current population of the group
             PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
@@ -714,7 +716,7 @@ public class GroupServlet extends MsoyServiceServlet
                 if (threads.size() > 0) {
                     Map<Integer,GroupName> gmap =
                         Collections.singletonMap(record.groupId, card.name);
-                    card.latestThread = ForumUtil.resolveThreads(
+                    card.latestThread = _forumLogic.resolveThreads(
                         mrec, threads, gmap, false, true).get(0);
                 }
 
@@ -896,4 +898,5 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ForumLogic _forumLogic;
 }
