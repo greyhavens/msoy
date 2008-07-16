@@ -5,6 +5,10 @@ package client.shell;
 
 import java.util.ArrayList;
 
+import client.images.navi.NaviImages;
+import client.util.FlashClients;
+import client.util.MsoyUI;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -13,7 +17,6 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
-
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
@@ -25,19 +28,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.Predicate;
-
-import client.images.navi.NaviImages;
-import client.util.FlashClients;
-import client.util.MsoyUI;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
@@ -265,12 +264,8 @@ public class Frame
      */
     public static void showDialog (String title, Widget dialog, boolean floatingDialog)
     {
-        Dialog pd = new Dialog(title, dialog, floatingDialog);
-        if (_contlist != null) {
-            _contlist.insert(pd, 0); // TODO: animate this sliding down
-        } else {
-            RootPanel.get(HEADER).add(pd); // TODO: animate this sliding down
-        }
+        Dialog pd = new Dialog(title, dialog, floatingDialog);        
+        RootPanel.get(HEADER).add(pd); // TODO: animate this sliding down
     }
 
     /**
@@ -475,11 +470,8 @@ public class Frame
             if (floatingDialog) {
                 setStyleName("floatingDialogBox");
             }
-            else {
-                setStyleName("pageDialogBox");
-            }
             
-            add(_innerTable = new SmartTable("pageDialog", 0, 0));
+            setWidget(_innerTable = new SmartTable("pageDialog", 0, 0));
             
             _innerTable.setText(0, 0, title, 1, "DialogTitle");
             _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {

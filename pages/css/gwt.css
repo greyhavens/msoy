@@ -389,6 +389,7 @@ img, embed, applet, object {
   margin: 0px 0px 5px 0px;
   width: 100%;
   border-bottom: 2px solid #3F8EBA;
+  background-color: #FFFFFF;
 }
 
 .pageDialog .DialogTitle {
