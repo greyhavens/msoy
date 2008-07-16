@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.ABTest;
 
 import client.shell.Application;
+import client.shell.CShell;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.MsoyCallback;
@@ -52,7 +53,7 @@ public class ABTestEditorDialog extends BorderedDialog
         setContents(contents);
         
         final TextBox name = new TextBox();
-        contents.add(new FormElement("(Unique) Name", name));
+        contents.add(new FormElement(CAdmin.msgs.abTestNameLabel(), name));
         name.setMaxLength(ABTest.MAX_NAME_LENGTH);
         name.setText(_test.name);
         name.addChangeListener(new ChangeListener() {
@@ -62,7 +63,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
 
         final TextArea description = new TextArea();
-        contents.add(new FormElement("Description", description));
+        contents.add(new FormElement(CAdmin.msgs.abTestDescriptionLabel(), description));
         description.setText(_test.description);
         description.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -71,13 +72,13 @@ public class ABTestEditorDialog extends BorderedDialog
         });
         
         final CheckBox enabled = new CheckBox();
-        contents.add(new FormElement("Enabled?", enabled));
+        contents.add(new FormElement(CAdmin.msgs.abTestEnabledLabel(), enabled));
         enabled.setChecked(_test.enabled);
         enabled.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (!_test.enabled && enabled.isChecked()) {
                     if (_test.started != null) {
-                        MsoyUI.error("Test already started once, overwriting old start date.");
+                        MsoyUI.error(CAdmin.msgs.abTestEnabledWarning());
                     }
                     _test.started = new Date();
                     _test.enabled = true;
@@ -90,7 +91,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
 
         final TextBox numGroups = new TextBox();
-        contents.add(new FormElement("Number of Groups", numGroups));
+        contents.add(new FormElement(CAdmin.msgs.abTestNumGroupsLabel(), numGroups));
         numGroups.setMaxLength(3);
         numGroups.setText(_test.numGroups+"");
         numGroups.addChangeListener(new ChangeListener() {
@@ -98,17 +99,17 @@ public class ABTestEditorDialog extends BorderedDialog
                 try {
                     _test.numGroups = Integer.parseInt(numGroups.getText().trim());
                     if (_test.numGroups < 2) {
-                        MsoyUI.error("Number of Groups must be a number >= 2");
+                        MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
                     }
                 }
                 catch (NumberFormatException e) {
-                    MsoyUI.error("Number of Groups must be a number >= 2");
+                    MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
                 }
             }
         });
         
         final CheckBox onlyNewVisitors = new CheckBox();
-        contents.add(new FormElement("Only New Visitors?", onlyNewVisitors));
+        contents.add(new FormElement(CAdmin.msgs.abTestOnlyNewVisitorsLabel(), onlyNewVisitors));
         onlyNewVisitors.setChecked(_test.onlyNewVisitors);
         onlyNewVisitors.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -117,7 +118,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
         
         final TextBox affiliate = new TextBox();
-        contents.add(new FormElement("Affiliate", affiliate));
+        contents.add(new FormElement(CAdmin.msgs.abTestAffiliateLabel(), affiliate));
         affiliate.setMaxLength(ABTest.MAX_AFFILIATE_LENGTH);
         affiliate.setText(_test.affiliate);
         affiliate.addChangeListener(new ChangeListener() {
@@ -127,7 +128,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
         
         final TextBox vector = new TextBox();
-        contents.add(new FormElement("Vector", vector));
+        contents.add(new FormElement(CAdmin.msgs.abTestVectorLabel(), vector));
         vector.setMaxLength(ABTest.MAX_VECTOR_LENGTH);
         vector.setText(_test.vector);
         vector.addChangeListener(new ChangeListener() {
@@ -137,7 +138,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
 
         final TextBox creative = new TextBox();
-        contents.add(new FormElement("Creative", creative));
+        contents.add(new FormElement(CAdmin.msgs.abTestCreativeLabel(), creative));
         creative.setMaxLength(ABTest.MAX_CREATIVE_LENGTH);
         creative.setText(_test.creative);
         creative.addChangeListener(new ChangeListener() {
@@ -145,10 +146,18 @@ public class ABTestEditorDialog extends BorderedDialog
                 _test.creative = creative.getText().trim();
             }
         });
-        
+                
         FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
         contents.add(buttons);
-        Button submit = new Button("save");
+        
+        String submitText;
+        if (_isNewTest) {
+            submitText = CShell.cmsgs.create();
+        }
+        else {
+            submitText = CShell.cmsgs.update();
+        }
+        Button submit = new Button(submitText);
         submit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
@@ -156,7 +165,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
         buttons.add(submit);
 
-        Button cancel = new Button("cancel");
+        Button cancel = new Button(CShell.cmsgs.edit());
         cancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 ABTestEditorDialog.this.hide();
@@ -182,7 +191,7 @@ public class ABTestEditorDialog extends BorderedDialog
         if (_isNewTest) {
             CAdmin.adminsvc.createTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
-                    MsoyUI.info("Test Created");
+                    MsoyUI.info(CAdmin.msgs.abTestCreated());
                     ABTestEditorDialog.this.hide();
                     if (_parent != null) {
                         _parent.refresh();
@@ -198,7 +207,7 @@ public class ABTestEditorDialog extends BorderedDialog
         else {
             CAdmin.adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
-                    MsoyUI.info("Test Updated");
+                    MsoyUI.info(CAdmin.msgs.abTestUpdated());
                     ABTestEditorDialog.this.hide();
                     if (_parent != null) {
                         _parent.refresh();

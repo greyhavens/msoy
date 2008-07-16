@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.data.ABTest;
 
+import client.shell.CShell;
 import client.util.MsoyCallback;
 
 /**
@@ -62,11 +63,11 @@ public class ABTestListPanel extends FlowPanel
         
         // header row
         int col = 0;
-        _contents.setWidget(0, col++, new Label("Name"));
-        _contents.setWidget(0, col++, new Label("Description"));
-        _contents.setWidget(0, col++, new Label("Running"));
-        _contents.setWidget(0, col++, new Label("Started"));
-        _contents.setWidget(0, col++, new Label("Ended"));
+        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestName()));
+        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestDescription()));
+        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnabled()));
+        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestStarted()));
+        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnded()));
         _contents.setWidget(0, col++, new Label(""));
         _contents.getRowFormatter().addStyleName(0, "Header");
 
@@ -79,7 +80,7 @@ public class ABTestListPanel extends FlowPanel
             _contents.setWidget(row, col++, new Label(test.started != null ? test.started.toString() : ""));
             _contents.setWidget(row, col++, new Label(test.ended != null ? test.ended.toString() : ""));
 
-            Button editButton = new Button("edit");
+            Button editButton = new Button(CShell.cmsgs.edit());
             editButton.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
                     new ABTestEditorDialog(test, ABTestListPanel.this).show();
