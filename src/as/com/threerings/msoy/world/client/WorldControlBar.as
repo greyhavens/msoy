@@ -149,19 +149,16 @@ public class WorldControlBar extends ControlBar
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
 
-        // TODO: this is temporarily only for dev deployments
-        if (DeploymentConfig.devDeployment) {
-            _friendBtnBox = new HBox();
-            _friendBtnBox.styleName = "controlBarFriendButtonBox";
-            _friendBtnBox.verticalScrollPolicy = ScrollPolicy.OFF;
-            _friendBtnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-            var friendBtn :CommandButton = new CommandButton();
-            friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
-            friendBtn.setCommand(MsoyController.POP_FRIENDS_LIST);
-            friendBtn.styleName = "controlBarFriendButton";
-            friendBtn.enabled = true;
-            _friendBtnBox.addChild(friendBtn);
-        }
+        _friendBtnBox = new HBox();
+        _friendBtnBox.styleName = "controlBarFriendButtonBox";
+        _friendBtnBox.verticalScrollPolicy = ScrollPolicy.OFF;
+        _friendBtnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+        var friendBtn :CommandButton = new CommandButton();
+        friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
+        friendBtn.setCommand(MsoyController.POP_FRIENDS_LIST);
+        friendBtn.styleName = "controlBarFriendButton";
+        friendBtn.enabled = true;
+        _friendBtnBox.addChild(friendBtn);
     }
 
     // from ControlBar
