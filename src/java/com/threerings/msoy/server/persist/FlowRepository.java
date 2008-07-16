@@ -233,7 +233,8 @@ public class FlowRepository extends DepotRepository
         String type = (grant ? "grant" : " spend");
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + type + " [memberId=" + info.memberId + ", amount=" + amount + "]");
+                "Illegal flow " + type +
+                " [memberId=" + info.memberId + ", amount=" + amount + "]");
         }
 
         Map<String, SQLExpression> fieldMap = Maps.newHashMap();
@@ -252,7 +253,8 @@ public class FlowRepository extends DepotRepository
             mods = updateLiteral(MemberRecord.class, key, key, fieldMap);
             if (mods == 0) {
                 throw new PersistenceException(
-                    "Grant modified zero rows!? [mid=" + info.memberId + ", amount=" + amount + "]");
+                    "Grant modified zero rows!? " +
+                    "[mid=" + info.memberId + ", amount=" + amount + "]");
             }
 
         } else {
