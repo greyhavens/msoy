@@ -16,6 +16,7 @@ import mx.controls.List;
 
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
+import mx.core.mx_internal;
 
 import mx.managers.PopUpManager;
 
@@ -36,6 +37,9 @@ import com.threerings.msoy.data.all.MemberName;
 public class FriendsListPanel extends TitleWindow
     implements SetListener
 {
+    /** The width of the popup, defined by the width of the header image. */
+    public static const POPUP_WIDTH :int = 219;
+
     public function FriendsListPanel (ctx :WorldContext) :void
     {
         _ctx = ctx;
@@ -92,10 +96,15 @@ public class FriendsListPanel extends TitleWindow
     {
         super.createChildren();
 
+        // Panel provides no way to customize this, other than overriding the class and blowing
+        // away what it set these to.
+        mx_internal::closeButton.explicitWidth = 13;
+        mx_internal::closeButton.explicitHeight = 14;
+
         // styles and positioning
         styleName = "friendsListPanel";
         showCloseButton = true;
-        width = 219; // width of the friends online header image
+        width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
         // TODO: react to client size changes, both width and height
         height = placeBounds.height - PADDING * 2;
@@ -105,6 +114,9 @@ public class FriendsListPanel extends TitleWindow
         _friendsList = new List();
         _friendsList.styleName = "friendList";
         _friendsList.horizontalScrollPolicy = ScrollPolicy.OFF;
+        // I'd love to make this AUTO, but labels are stupid and can't deal with growing only
+        // up to a dynamic size, so I've got to make all the widths static.  
+        _friendsList.verticalScrollPolicy = ScrollPolicy.ON;
         _friendsList.percentWidth = 100;
         _friendsList.percentHeight = 100;
         _friendsList.itemRenderer = new ClassFactory(FriendRenderer);
@@ -119,6 +131,14 @@ public class FriendsListPanel extends TitleWindow
         _friends.refresh();
 
         init(_ctx.getMemberObject());
+    }
+
+    override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        super.layoutChrome(unscaledWidth, unscaledHeight);
+
+        mx_internal::closeButton.x = POPUP_WIDTH - mx_internal::closeButton.width - 5;
+        mx_internal::closeButton.y = 5;
     }
 
     protected function init (memObj :MemberObject) :void
@@ -147,12 +167,12 @@ public class FriendsListPanel extends TitleWindow
 
     protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
     {
-        if (!(o1 is FriendEntry) || !(o2 is FriendEntry)) {
+        if (!(o1 is Array) || !(o2 is Array)) {
             return 0;
         }
 
-        var friend1 :FriendEntry = o1 as FriendEntry;
-        var friend2 :FriendEntry = o2 as FriendEntry;
+        var friend1 :FriendEntry = (o1 as Array)[1] as FriendEntry;
+        var friend2 :FriendEntry = (o2 as Array)[1] as FriendEntry;
         return MemberName.BY_DISPLAY_NAME(friend1.name, friend2.name);
     }
 

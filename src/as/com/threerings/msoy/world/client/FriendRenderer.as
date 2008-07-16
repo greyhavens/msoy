@@ -6,8 +6,11 @@ package com.threerings.msoy.world.client {
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Label;
+
+import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;
 
@@ -54,6 +57,7 @@ public class FriendRenderer extends HBox
         setStyle("paddingLeft", 3);
         setStyle("paddingRight", 3);
         setStyle("verticalAlign", "middle");
+        setStyle("horizontalGap", 0);
 
         configureUI();
     }
@@ -81,16 +85,33 @@ public class FriendRenderer extends HBox
         var friend :FriendEntry = this.data[1] as FriendEntry;
         _name = friend.name;
 
+        var labelBox :VBox = new VBox();
+        labelBox.verticalScrollPolicy = ScrollPolicy.OFF;
+        labelBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+        labelBox.setStyle("verticalGap", 0);
+        labelBox.width = 
+            FriendsListPanel.POPUP_WIDTH - MediaDesc.THUMBNAIL_WIDTH / 2 - ScrollBar.THICKNESS -
+            4 /* list border * 2 */ - 6 /* padding */;
+        addChild(labelBox);
+
         var friendLabel :Label = new Label();
         friendLabel.styleName = "friendLabel";
         friendLabel.text = _name.toString();
-        addChild(friendLabel);
+        friendLabel.percentWidth = 100;
+        friendLabel.width = labelBox.width;
+        labelBox.addChild(friendLabel);
 
-        var spacer :HBox = new HBox();
-        spacer.percentWidth = 100;
-        addChild(spacer);
+        var statusContainer :HBox = new HBox();
+        statusContainer.setStyle("paddingLeft", 3);
+        labelBox.addChild(statusContainer);
+        var statusLabel :Label = new Label();
+        statusLabel.styleName = "friendStatusLabel";
+        statusLabel.text = friend.status;
+        statusLabel.percentWidth = 100;
+        statusLabel.width = labelBox.width - 3;
+        statusContainer.addChild(statusLabel);
 
-        addChild(MediaWrapper.createView(friend.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
     }
 
     protected function handleClick (event :MouseEvent) :void

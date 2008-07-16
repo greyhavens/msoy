@@ -1226,5 +1226,10 @@ BasePanel {
 
 .friendLabel {
   color: white;
-  fontSize: 11;
+  fontSize: 12;
+}
+
+.friendStatusLabel {
+  color: #568EAF;
+  fontSize: 10;
 }
