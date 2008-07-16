@@ -332,6 +332,12 @@ public class Application
             ReferralInfo ref = new ReferralInfo(
                 affiliate, vector, creative, ReferralInfo.makeRandomTracker());
             TrackingCookie.saveReferral(ref, false);
+            
+        } else {
+            if (! TrackingCookie.containsReferral()) {
+                TrackingCookie.saveReferral(ReferralInfo.makeInstance(
+                    "", "", "", ReferralInfo.makeRandomTracker()), false);
+            }
         }
 
         // replace the page if necessary
