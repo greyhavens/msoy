@@ -23,6 +23,8 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
+import com.threerings.msoy.badge.data.BadgeSet;
+
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
@@ -109,6 +111,9 @@ public class MsoyClientResolver extends CrowdClientResolver
         List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
 
+        // and their badges
+        userObj.badges = new BadgeSet(MsoyServer.badgeRepo.loadBadges(member.memberId));
+
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
 //        userObj.lists = new DSet<ItemListInfo>(itemLists);
@@ -142,14 +147,14 @@ public class MsoyClientResolver extends CrowdClientResolver
                 userObj.avatar = (Avatar)avatar.toItem();
             }
         }
-        
+
         // clobber any referral information with what's in the database
         ReferralRecord refrec = MsoyServer.memberRepo.loadReferral(member.memberId);
         if (refrec == null) {
             // if they don't have referral info, it means they're an old user who needs to be
             // grandfathered into the new referral-tracking order of things. give them
             // a new entry with an empty affiliate, and a random tracking number.
-            refrec = MsoyServer.memberRepo.setReferral(member.memberId, 
+            refrec = MsoyServer.memberRepo.setReferral(member.memberId,
                 ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
         }
         userObj.referral = refrec.toInfo();
