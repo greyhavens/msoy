@@ -51,6 +51,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.util.Name;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -466,7 +467,9 @@ public class MemberRepository extends DepotRepository
     public void configurePermaName (int memberId, String permaName)
         throws PersistenceException
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName);
+        Name name = new Name(permaName);
+        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName, 
+            MemberRecord.NORMALIZED_PERMA_NAME, name.getNormal());
     }
 
     /**
