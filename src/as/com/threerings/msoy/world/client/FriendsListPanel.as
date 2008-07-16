@@ -147,9 +147,9 @@ public class FriendsListPanel extends TitleWindow
 
         var currentEntries :Array = _friends.toArray();
         for each (var friend :FriendEntry in memObj.friends.toArray()) {
-//            if (!friend.online) {
-//                continue;
-//            }
+            if (!friend.online) {
+                continue;
+            }
 
             if (!containsFriend(friend)) {
                 addFriend(friend);
