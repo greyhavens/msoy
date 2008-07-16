@@ -24,17 +24,21 @@ public class FriendEntry
     /** This friend's current profile photo. */
     public MediaDesc photo;
 
+    /** This friend's current status. */
+    public String status;
+
     /** Suitable for deserialization. */
     public FriendEntry ()
     {
     }
 
     /** Mr. Constructor. */
-    public FriendEntry (MemberName name, boolean online, MediaDesc photo)
+    public FriendEntry (MemberName name, boolean online, MediaDesc photo, String status)
     {
         this.name = name;
         this.online = online;
         this.photo = photo;
+        this.status = status;
     }
 
     /**

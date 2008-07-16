@@ -936,7 +936,7 @@ public class MemberRepository extends DepotRepository
         List<FriendEntry> list = Lists.newArrayList();
         for (MemberCardRecord record : records) {
             MemberCard card = record.toMemberCard();
-            list.add(new FriendEntry(card.name, false, card.photo));
+            list.add(new FriendEntry(card.name, false, card.photo, card.headline));
         }
         return list;
     }

@@ -204,7 +204,7 @@ public class WorldServlet extends MsoyServiceServlet
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
             // we add ourselves to our friends list so that we see where we are as well
-            friends.add(new FriendEntry(name, true, null));
+            friends.add(new FriendEntry(name, true, null, ""));
         } else {
             friends = Lists.newArrayList();
         }

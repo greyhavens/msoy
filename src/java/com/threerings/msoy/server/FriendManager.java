@@ -8,6 +8,10 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.io.PersistenceException;
+
+import com.samskivert.util.Invoker;
+
 import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.EventThread;
 
@@ -16,8 +20,13 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -74,7 +83,8 @@ public class FriendManager
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
                 if (_peerMan.locateClient(entry.name) != null) {
-                    memobj.updateFriends(new FriendEntry(entry.name, true, entry.photo));
+                    memobj.updateFriends(
+                        new FriendEntry(entry.name, true, entry.photo, entry.status));
                 }
                 registerFriendInterest(memobj, entry.name.getMemberId());
             }
@@ -141,7 +151,7 @@ public class FriendManager
                             ", friend=" + memberId + "].");
                 continue;
             }
-            watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo));
+            watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo, entry.status));
         }
     }
 
@@ -153,12 +163,30 @@ public class FriendManager
             _friendName = friend.toString();
         }
 
-        protected void execute (MemberObject memobj) {
-            MemberName friend = new MemberName(_friendName, _friendId);
-            boolean online = (MsoyServer.peerMan.locateClient(friend) != null);
-            // TODO: get friend's headshot from the database
-            memobj.addToFriends(new FriendEntry(friend, online, null));
-            MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
+        protected void execute (final MemberObject memobj) {
+            final MemberName friend = new MemberName(_friendName, _friendId);
+            final boolean online = (MsoyServer.peerMan.locateClient(friend) != null);
+            MsoyServer.invoker.postUnit(new Invoker.Unit("AddFriend") {
+                public boolean invoke () {
+                    try {
+                        ProfileRecord profile = MsoyServer.profileRepo.loadProfile(_friendId);
+                        _photo = profile.getPhoto();
+                        _status = profile.headline;
+                    } catch (PersistenceException pe) {
+                        log.warning("Failed to fetch profile info for new friend", "friendId", 
+                            _friendId, "exception", pe);
+                    }
+                    // even if we hit an exception, we still want to continue back on the dobj 
+                    // thread
+                    return true;
+                }
+                public void handleResult () {
+                    memobj.addToFriends(new FriendEntry(friend, online, _photo, _status));
+                    MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
+                }
+                protected MediaDesc _photo = null;
+                protected String _status = "";
+            });
         }
 
         protected int _friendId;

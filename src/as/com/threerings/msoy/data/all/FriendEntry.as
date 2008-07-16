@@ -29,13 +29,18 @@ public class FriendEntry
     /** This friend's current profile photo. */
     public var photo :MediaDesc;
 
+    /** This friend's current status. */
+    public var status :String;
+
     /** Mr. Constructor. */
     public function FriendEntry (
-        name :MemberName = null, online :Boolean = false, photo: MediaDesc = null)
+        name :MemberName = null, online :Boolean = false, photo: MediaDesc = null, 
+        status :String = null)
     {
         this.name = name;
         this.online = online;
         this.photo = photo;
+        this.status = status;
     }
 
     /**
@@ -89,6 +94,7 @@ public class FriendEntry
         name = (ins.readObject() as MemberName);
         online = ins.readBoolean();
         photo = (ins.readObject() as MediaDesc);
+        status = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -97,6 +103,7 @@ public class FriendEntry
         out.writeObject(name);
         out.writeBoolean(online);
         out.writeObject(photo);
+        out.writeObject(status);
     }
 }
 }
