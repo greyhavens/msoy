@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.events.FocusEvent;
 import flash.events.MouseEvent;
 
 import flash.geom.Point;
@@ -39,6 +40,7 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -172,12 +174,14 @@ public class FriendsListPanel extends TitleWindow
             box.addChild(_nameLabel);
             _statusEdit = new TextInput();
             _statusEdit.editable = true;
-            _statusEdit.text = me.headline;
+            _statusEdit.text = me.headline == "" || me.headline == null ? 
+                Msgs.GENERAL.get("l.emptyStatus") : me.headline;
             _statusEdit.styleName = "statusEdit";
             _statusEdit.percentWidth = 100;
             _statusEdit.height = 17;
             _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
             _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
+            _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
             _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
             _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
             box.addChild(_statusEdit);
@@ -261,10 +265,18 @@ public class FriendsListPanel extends TitleWindow
         _statusEdit.styleName = "statusEdit";
     }
 
+    protected function editFocusIn (...ignored) :void
+    {
+        if (_statusEdit.text == Msgs.GENERAL.get("l.emptyStatus")) {
+            _statusEdit.text = "is ";
+        }
+    }
+
     protected function commitEdit (...ignored) :void
     {
+        _ctx.getTopPanel().getControlBar().giveChatFocus();
         if (_statusEdit.text != _ctx.getMemberObject().headline) {
-            _ctx.getTopPanel().getControlBar().giveChatFocus();
+            // TODO: send to server
         }
     }
 

@@ -158,6 +158,7 @@ public class WorldControlBar extends ControlBar
         friendBtn.setCommand(MsoyController.POP_FRIENDS_LIST);
         friendBtn.styleName = "controlBarFriendButton";
         friendBtn.enabled = true;
+        friendBtn.focusEnabled = false;
         _friendBtnBox.addChild(friendBtn);
     }
 
