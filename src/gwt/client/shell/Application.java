@@ -331,11 +331,11 @@ public class Application
             // save our tracking info, but don't overwrite old values
             ReferralInfo ref = new ReferralInfo(
                 affiliate, vector, creative, ReferralInfo.makeRandomTracker());
-            TrackingCookie.saveReferral(ref, false);
+            TrackingCookie.save(ref, false);
             
         } else {
-            if (! TrackingCookie.containsReferral()) {
-                TrackingCookie.saveReferral(ReferralInfo.makeInstance(
+            if (! TrackingCookie.contains()) {
+                TrackingCookie.save(ReferralInfo.makeInstance(
                     "", "", "", ReferralInfo.makeRandomTracker()), false);
             }
         }
@@ -486,10 +486,10 @@ public class Application
            @client.shell.Application::setGuestId(I)(guestId);
        };           
        $wnd.getReferral = function () {
-           return @client.shell.TrackingCookie::getReferralAsObject()();
+           return @client.shell.TrackingCookie::getAsObject()();
        };
        $wnd.setReferral = function (ref) {
-           @client.shell.TrackingCookie::saveReferralAsObject(Ljava/lang/Object;Z)(ref, true);
+           @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
        };
     }-*/;
 

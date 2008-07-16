@@ -17,7 +17,7 @@ public class TrackingCookie
     /**
      * Does the Flash cookie already contains referral information?
      */
-    public static function containsReferral () :Boolean
+    public static function contains () :Boolean
     {
         return (config.getValue(AFFILIATE_ID, null) != null);
     }
@@ -25,9 +25,9 @@ public class TrackingCookie
     /**
      * Retrieves referral information. Returns null if one has not been set.
      */
-    public static function getReferral () :ReferralInfo
+    public static function get () :ReferralInfo
     {
-        if (! containsReferral()) {
+        if (! contains()) {
             return null;
         }
         
@@ -48,9 +48,9 @@ public class TrackingCookie
      * Referral infos should only be saved if they don't already exist, or if there's
      * an authoritative version coming from the server.
      */
-    public static function saveReferral (referral :ReferralInfo, overwrite :Boolean) :void
+    public static function save (referral :ReferralInfo, overwrite :Boolean) :void
     {
-        if (containsReferral() && !overwrite) {
+        if (contains() && !overwrite) {
             return; 
         }
 
@@ -60,6 +60,19 @@ public class TrackingCookie
         config.setValue(TRACKER_ID, referral.tracker);
 
         log.debug("Saved referral info: " + referral);
+    }
+
+    /**
+     * Completely clears the Flash cookie. Used when a registered player is logging off.
+     */
+    public static function clear () :void
+    {
+        const ids :Array = [ AFFILIATE_ID, VECTOR_ID, CREATIVE_ID, TRACKER_ID ];
+        for each (var id :String in ids) {
+            config.setValue(id, null);
+        }
+
+        log.debug("Cleared referral info.");
     }
 
     /** The underlying config object used to store tracking info. */

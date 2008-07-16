@@ -121,7 +121,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
 
         // prior to logging on to a server, set up our security policy for that server
-        addClientObserver(new ClientAdapter(clientWillLogon, clientDidLogon));
+        addClientObserver(
+            new ClientAdapter(clientWillLogon, clientDidLogon, null, clientDidLogoff));
 
         // configure our server and port info
         setServer(getServerHost(), getServerPorts());
@@ -272,9 +273,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
         // update our referral cookies with authoritative versions from the server -
         // both in the Flash client, and the browser if available
-        TrackingCookie.saveReferral(member.referral, true);
+        TrackingCookie.save(member.referral, true);
         try {
-            if (ExternalInterface.available) {
+            if (!_embedded && ExternalInterface.available) {
                 ExternalInterface.call("setReferral", member.referral);
             }
         } catch (e :Error) {
@@ -282,6 +283,19 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
     }
 
+    /**
+     * Called after we log off.
+     */
+    protected function clientDidLogoff (event :ClientEvent) :void
+    {
+        // if this was a registered player, clear out their cookies,
+        // so that any guest using this browser next will be tracked fresh.
+        var member :MemberObject = _clobj as MemberObject;
+        if (member != null && ! member.isGuest()) {
+            TrackingCookie.clear();
+        }
+    }
+    
     /**
      * Configure any external functions that we wish to expose to JavaScript.
      */
@@ -375,7 +389,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function getReferralInfo () :ReferralInfo                                           
     {
         // first, try the local cookie
-        var ref :ReferralInfo = TrackingCookie.getReferral();
+        var ref :ReferralInfo = TrackingCookie.get();
 
         // if that didn't work, see if we can read it from the browser cookie
         if (ref == null && !isEmbedded() && ExternalInterface.available) {

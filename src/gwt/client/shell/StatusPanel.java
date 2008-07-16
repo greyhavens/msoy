@@ -110,6 +110,10 @@ public class StatusPanel extends SmartTable
         ClickListener doLogoff = new ClickListener() {
             public void onClick (Widget sender) {
                 CShell.app.didLogoff();
+                // this button is only visible to logged-in players, who decide to log off.
+                // let's clear out their browser-side referral info, so that any future
+                // guests are tracked afresh.
+                TrackingCookie.clear();
             }
         };
         setWidget(0, idx++, MsoyUI.createActionLabel(CShell.cmsgs.statusLogoff(), doLogoff));
