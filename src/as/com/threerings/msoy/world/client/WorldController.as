@@ -240,6 +240,26 @@ public class WorldController extends MsoyController
         }
 
         var me :MemberObject = _wctx.getMemberObject();
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        if (scene == null) {
+            // if scene is null, we're in a game, and need to add the friends to the chat menu.
+            var friends :Array = new Array();
+            for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
+                if (fe.online) {
+                    var item :Object = {
+                        label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
+                    checkChatChannelOpen(fe.name, item);
+                    friends.push(item);
+                }
+            }
+            if (friends.length == 0) {
+                friends.push({ label: Msgs.GENERAL.get("m.no_friends"),
+                            enabled: false });
+            }
+            menuData = menuData.concat(friends);
+            menuData.push({ type: "separator" });
+        }
+
         var groups :Array = (me.groups != null) ? me.groups.toArray() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
             var item :Object = { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
@@ -1271,6 +1291,11 @@ public class WorldController extends MsoyController
             headerBar.setOwnerLink("");
             headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
             headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
+        }
+
+        // if we just moved to a game, we need to close down the friend list.
+        if (_friendsList != null) {
+            handlePopFriendsList();
         }
     }
 
