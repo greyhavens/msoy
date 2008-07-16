@@ -174,8 +174,8 @@ public class RoomStudioView extends RoomView
         setCenterSprite(_avatar);
         _testingSprite = _avatar;
 
+        addTalkControl();
         var bar :ControlBar = _ctx.getTopPanel().getControlBar();
-        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
 
         _saveScaling = ("true" == String(params["scaling"]));
@@ -239,6 +239,13 @@ public class RoomStudioView extends RoomView
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
+        addTalkControl();
+    }
+
+    protected function addTalkControl () :void
+    {
+        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
     }
 
     protected function createScaleControls () :void
@@ -268,6 +275,11 @@ public class RoomStudioView extends RoomView
     {
         emulateIdle(false);
         _avatar.performAvatarSpoke();
+
+        if (_pet != null) {
+            _pet.processChatMessage(_avatar.getItemIdent().toString(),
+                _avatar.getActorInfo().username.toString(), "bla bla bla");
+        }
     }
 
     /**

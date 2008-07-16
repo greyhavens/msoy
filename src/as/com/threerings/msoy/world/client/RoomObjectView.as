@@ -393,10 +393,13 @@ public class RoomObjectView extends RoomView
                 avatar.performAvatarSpoke();
             }
 
-            // send it to pets as well
-            var petSprites :Array = getPets();
-            for each (var pet :PetSprite in petSprites) {
-                pet.processChatMessage(speaker, umsg);
+            if (speaker != null) {
+                // send it to pets as well
+                var ident :String = speaker.getItemIdent().toString();
+                var name :String = umsg.getSpeakerDisplayName().toString();
+                for each (var pet :PetSprite in getPets()) {
+                    pet.processChatMessage(ident, name, umsg.message);
+                }
             }
         }
 
