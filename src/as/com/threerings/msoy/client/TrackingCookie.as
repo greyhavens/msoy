@@ -50,7 +50,7 @@ public class TrackingCookie
      */
     public static function save (referral :ReferralInfo, overwrite :Boolean) :void
     {
-        if (contains() && !overwrite) {
+        if (!overwrite && contains()) {
             return; 
         }
 
