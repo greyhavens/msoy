@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.badge.data;
 
-import java.util.Iterator;
+import java.util.Collection;
 
+import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -13,9 +14,11 @@ import com.threerings.presents.dobj.DSet;
 public final class BadgeSet extends DSet<EarnedBadge>
 {
     /** Creates a BadgeSet with the specified contents. */
-    public BadgeSet (Iterator<EarnedBadge> contents)
+    public BadgeSet (Collection<BadgeRecord> records)
     {
-        super(contents);
+        for (BadgeRecord br : records) {
+            this.addBadge(br.toBadge());
+        }
     }
 
     /** Creates an empty BadgeSet. */
