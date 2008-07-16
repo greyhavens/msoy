@@ -268,7 +268,7 @@ public class FriendsListPanel extends TitleWindow
     protected function editFocusIn (...ignored) :void
     {
         if (_statusEdit.text == Msgs.GENERAL.get("l.emptyStatus")) {
-            _statusEdit.text = "is ";
+            _statusEdit.text = Msgs.GENERAL.get("l.statusPrompt");
         }
     }
 
