@@ -10,9 +10,12 @@ import flash.utils.Dictionary;
 import mx.collections.ArrayCollection;
 import mx.collections.Sort;
 
+import mx.containers.VBox;
 import mx.containers.TitleWindow;
 
+import mx.controls.Label;
 import mx.controls.List;
+import mx.controls.TextInput;
 
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
@@ -28,6 +31,8 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.util.Log;
+
+import com.threerings.msoy.client.DeploymentConfig;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -130,7 +135,35 @@ public class FriendsListPanel extends TitleWindow
         _friends.sort = sort;
         _friends.refresh();
 
-        init(_ctx.getMemberObject());
+        if (DeploymentConfig.devDeployment) {
+            // add a little separator
+            var separator :VBox = new VBox();
+            separator.percentWidth = 100;
+            separator.height = 1;
+            separator.styleName = "friendsListSeparator";
+            addChild(separator);
+
+            // add the little box at the bottom
+            var box :VBox = new VBox();
+            box.percentWidth = 100;
+            box.styleName = "friendsListEditorBox";
+            addChild(box);
+
+            // Create a display name label and a status editor
+            var me :MemberObject = _ctx.getMemberObject();
+            _nameLabel = new Label();
+            _nameLabel.styleName = "friendLabel";
+            _nameLabel.setStyle("fontWeight", "bold");
+            _nameLabel.text = me.memberName.toString();
+            box.addChild(_nameLabel);
+            _statusEdit = new TextInput();
+            _statusEdit.editable = false;
+            _statusEdit.text = me.headline;
+            box.addChild(_statusEdit);
+        }
+    
+        // initialize with currently online friends
+        init(me);
     }
 
     override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
@@ -205,5 +238,7 @@ public class FriendsListPanel extends TitleWindow
     protected var _friendsList :List;
     protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _originals :Dictionary = new Dictionary();
+    protected var _nameLabel :Label;
+    protected var _statusEdit :TextInput;
 }
 }

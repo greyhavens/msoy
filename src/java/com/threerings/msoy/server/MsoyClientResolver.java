@@ -95,6 +95,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
+        userObj.headline = precord.headline;
 
         // configure various bits directly from their member record
         userObj.homeSceneId = member.homeSceneId;

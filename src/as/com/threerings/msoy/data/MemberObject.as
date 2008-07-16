@@ -178,6 +178,9 @@ public class MemberObject extends MsoyBodyObject
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public var walkingId :int;
 
+    /** The headline/status of this player. */
+    public var headline :String;
+
     /**
      * Return this member's unique id.
      */
@@ -322,6 +325,7 @@ public class MemberObject extends MsoyBodyObject
         lists = (ins.readObject() as DSet);
         viewOnly = ins.readBoolean();
         walkingId = ins.readInt();
+        headline = ins.readField(String) as String;
     }
 }
 }

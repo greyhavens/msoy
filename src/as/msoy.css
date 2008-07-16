@@ -1214,11 +1214,12 @@ BasePanel {
   paddingBottom: 0;
   paddingLeft: 0;
   paddingRight: 0;
+  verticalGap: 0;
 }
 
 .friendList {
   borderColor: #408fd9;
-  borderSides: "left bottom right";
+  borderSides: "left right";
   borderStyle: "solid";
   borderThickness: 2;
   backgroundAlpha: 0;
@@ -1232,4 +1233,24 @@ BasePanel {
 .friendStatusLabel {
   color: #568EAF;
   fontSize: 10;
+}
+
+.friendsListEditorBox {
+  backgroundColor: #185B81;
+  backgroundAlpha: 0.5;
+  borderStyle: "solid";
+  borderColor: #408FD9;
+  borderSides: "left bottom right";
+  borderThickness: 2;
+  verticalGap: 0;
+  paddingLeft: 3;
+}
+
+.friendsListSeparator {
+  backgroundColor: #2E7399;
+  backgroundAlpha: 1;
+  borderStyle: "solid";
+  borderColor: #408FD9;
+  borderSides: "left right";
+  borderThickness: 2;
 }

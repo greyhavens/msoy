@@ -103,6 +103,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>walkingId</code> field. */
     public static final String WALKING_ID = "walkingId";
+
+    /** The field name of the <code>headline</code> field. */
+    public static final String HEADLINE = "headline";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -190,6 +193,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public int walkingId;
+
+    /** The headline/status of this member. */
+    public String headline;
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
@@ -972,6 +978,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             WALKING_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.walkingId = value;
+    }
+
+    /**
+     * Requests that the <code>headline</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHeadline (String value)
+    {
+        String ovalue = this.headline;
+        requestAttributeChange(
+            HEADLINE, value, ovalue);
+        this.headline = value;
     }
     // AUTO-GENERATED: METHODS END
 
