@@ -18,7 +18,7 @@ import com.samskivert.net.MailUtil;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.FriendManager;
-import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -316,14 +316,15 @@ public class MemberServlet extends MsoyServiceServlet
     }
     
     /**
-     * See {@link MemberManager#getABTestGroup}
-     * @return The a/b group the visitor has been assigned to, or < 0 for no group.
+     * See {@link MemberLogic#getABTestGroup}
+     *
+     * @return the a/b group the visitor has been assigned to, or < 0 for no group.
      */
-    public int getABTestGroup (
-        String testName, String trackingId, String affiliate, String vector, String creative, 
-        boolean newVisitor)
+    public int getABTestGroup (String testName, String trackingId, String affiliate,
+                               String vector, String creative, boolean newVisitor)
     {
-        return _memberManager.getABTestGroup (testName, trackingId, affiliate, vector, creative, newVisitor);
+        return _memLogic.getABTestGroup(
+            testName, trackingId, affiliate, vector, creative, newVisitor);
     }
 
     /**
@@ -413,7 +414,7 @@ public class MemberServlet extends MsoyServiceServlet
 
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
-    @Inject protected MemberManager _memberManager;
+    @Inject protected MemberLogic _memLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
