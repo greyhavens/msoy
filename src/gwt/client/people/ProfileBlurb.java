@@ -159,7 +159,7 @@ public class ProfileBlurb extends Blurb
 
         // display the edit button if this is our profile
         if (_name.getMemberId() == CPeople.getMemberId()) {
-            setFooterLabel("Edit Profile", new ClickListener() {
+            setFooterLabel(CPeople.msgs.profileEdit(), new ClickListener() {
                 public void onClick (Widget source) {
                     startEdit();
                 }
@@ -240,8 +240,8 @@ public class ProfileBlurb extends Blurb
         econtent.setText(row, 0, CPeople.msgs.esex());
         econtent.setWidget(row++, 1, _esex = new ListBox());
         _esex.addItem("Don't show");
-        _esex.addItem("Male");
-        _esex.addItem("Female");
+        _esex.addItem(CPeople.msgs.sexMale());
+        _esex.addItem(CPeople.msgs.sexFemale());
         _esex.setSelectedIndex(_profile.sex);
 
         econtent.setText(row, 0, CPeople.msgs.ebirthday());
