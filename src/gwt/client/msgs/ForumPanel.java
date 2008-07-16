@@ -4,10 +4,8 @@
 package client.msgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.gwt.ui.Anchor;
@@ -26,8 +24,6 @@ import client.shell.Page;
 
 import client.util.MsoyUI;
 import client.util.SearchBox;
-
-import client.whirleds.CWhirleds;
 
 /**
  * Displays forum threads and messages.

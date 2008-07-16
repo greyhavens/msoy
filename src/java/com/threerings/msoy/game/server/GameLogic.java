@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Lists;

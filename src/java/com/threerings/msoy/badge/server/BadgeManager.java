@@ -107,6 +107,5 @@ public class BadgeManager
         return badges;
     }
 
-
     @Inject protected @MainInvoker Invoker _invoker;
 }

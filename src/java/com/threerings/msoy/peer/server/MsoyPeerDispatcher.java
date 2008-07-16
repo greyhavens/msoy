@@ -6,7 +6,6 @@ package com.threerings.msoy.peer.server;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 

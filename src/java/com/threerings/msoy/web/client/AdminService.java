@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberAdminInfo;
 import com.threerings.msoy.web.data.MemberInviteResult;

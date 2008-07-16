@@ -13,8 +13,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.bureau.server.BureauRegistry;
-
 import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;

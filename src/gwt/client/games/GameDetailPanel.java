@@ -4,7 +4,6 @@
 package client.games;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.HasAlignment;

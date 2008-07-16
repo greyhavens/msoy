@@ -7,7 +7,6 @@ import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 

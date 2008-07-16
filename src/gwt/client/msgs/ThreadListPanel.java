@@ -5,7 +5,6 @@ package client.msgs;
 
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -21,7 +20,6 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.data.ForumThread;

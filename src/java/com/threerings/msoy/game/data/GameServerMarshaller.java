@@ -9,7 +9,6 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link GameServerService} interface

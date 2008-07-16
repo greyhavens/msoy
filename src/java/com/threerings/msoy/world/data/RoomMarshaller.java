@@ -8,7 +8,6 @@ import com.threerings.msoy.world.client.RoomService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.net.Transport;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 

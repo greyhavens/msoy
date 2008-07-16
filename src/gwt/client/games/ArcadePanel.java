@@ -5,7 +5,6 @@ package client.games;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameInfo;

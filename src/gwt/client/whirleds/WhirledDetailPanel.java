@@ -4,32 +4,23 @@
 package client.whirleds;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.group.data.GroupExtras;
@@ -43,19 +34,12 @@ import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
-import client.util.CreatorLabel;
-import client.util.HeaderBox;
 import client.util.MediaUtil;
-import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
-import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
 import client.util.PromptPopup;
-import client.util.RoundBox;
 import client.util.ShopUtil;
-import client.util.StyledTabPanel;
-import client.util.TagDetailPanel;
 import client.util.ThumbBox;
 
 /**

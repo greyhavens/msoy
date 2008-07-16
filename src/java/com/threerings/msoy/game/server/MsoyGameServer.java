@@ -3,20 +3,14 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.LoggingLogProvider;
-import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
-import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
@@ -33,7 +27,6 @@ import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
@@ -41,13 +34,9 @@ import com.threerings.parlor.server.ParlorManager;
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 
-import com.whirled.game.server.WhirledGameManager;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
-import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.item.server.persist.AvatarRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
 

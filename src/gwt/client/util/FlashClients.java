@@ -500,7 +500,6 @@ public class FlashClients
         }
     }-*/;
 
-
     /**
      * Checks for a minimum flash version.
      */

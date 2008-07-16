@@ -25,7 +25,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.server.MsoyServer;
 
 /**
  * Reports public information about games and whirleds as arrays of JSON objects.

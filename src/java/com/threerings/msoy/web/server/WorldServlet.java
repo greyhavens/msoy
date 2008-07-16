@@ -65,7 +65,6 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.CatalogQuery;

@@ -91,7 +91,6 @@ public class ProjectSVNStorage
         FSRepositoryFactory.setup();
     }
 
-
     /**
      * Initialize project storage for a given project record. Any .svn directories in the given
      * template directory will be silently ignored.

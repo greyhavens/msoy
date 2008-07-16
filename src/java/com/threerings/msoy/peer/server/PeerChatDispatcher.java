@@ -8,7 +8,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.data.PeerChatMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.util.Name;

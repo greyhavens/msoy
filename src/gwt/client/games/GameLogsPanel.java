@@ -6,23 +6,15 @@ package client.games;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.kisgergely.gwt.canvas.client.Canvas;
-import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
-
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.GameDetail;
 import com.threerings.msoy.web.data.GameLogs;
 
 import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * Displays the server-side logs for a particular game, if any.

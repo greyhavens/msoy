@@ -7,7 +7,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
-
 import com.threerings.msoy.web.data.WebCreds;
 
 

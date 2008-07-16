@@ -5,7 +5,6 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;

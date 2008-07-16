@@ -16,7 +16,6 @@ import com.samskivert.io.StreamUtil;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.data.LaunchConfig;

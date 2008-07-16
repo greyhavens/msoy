@@ -25,7 +25,6 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.client.InvocationService;

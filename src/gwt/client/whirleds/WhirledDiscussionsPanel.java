@@ -20,7 +20,6 @@ import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.me.CMe;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;

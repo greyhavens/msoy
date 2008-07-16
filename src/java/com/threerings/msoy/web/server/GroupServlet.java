@@ -54,7 +54,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
-import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;

@@ -35,7 +35,6 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;

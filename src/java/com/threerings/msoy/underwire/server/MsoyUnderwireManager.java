@@ -31,7 +31,6 @@ import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.data.Event;
 
 import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.data.MemberObject;

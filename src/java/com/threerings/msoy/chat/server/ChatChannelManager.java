@@ -27,7 +27,6 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 
@@ -55,7 +54,6 @@ import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 
-import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.RoomManager;
 

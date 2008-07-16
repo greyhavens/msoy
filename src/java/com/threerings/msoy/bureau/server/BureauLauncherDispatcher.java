@@ -6,7 +6,6 @@ package com.threerings.msoy.bureau.server;
 import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 

@@ -4,7 +4,6 @@
 package client.me;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;

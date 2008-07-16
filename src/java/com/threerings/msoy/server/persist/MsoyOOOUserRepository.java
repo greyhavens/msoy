@@ -3,37 +3,23 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 import java.sql.Date;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Tuple;
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.DuplicateKeyException;
-import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
-import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
-import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.user.User;
-import com.samskivert.servlet.user.UserExistsException;
-import com.samskivert.servlet.user.Username;
 import com.samskivert.servlet.user.UserUtil;
 
 import com.threerings.user.OOOUser;
@@ -45,8 +31,6 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.underwire.server.persist.SupportRepository;
 
 import com.threerings.msoy.server.persist.OOODatabase;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Whirled-specific table-compatible simulation of the parts of the user repository that we want.

@@ -77,7 +77,6 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue(storage != null);
     }
 
-
     public void testGetDocument ()
         throws Exception
     {

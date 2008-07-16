@@ -45,7 +45,6 @@ import com.threerings.msoy.web.server.UploadFile;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 

@@ -6,7 +6,6 @@ package client.util;
 import java.util.ArrayList;
 
 import com.threerings.msoy.web.data.CatalogQuery;
-import com.samskivert.util.StringUtil;
 
 import client.shell.Args;
 

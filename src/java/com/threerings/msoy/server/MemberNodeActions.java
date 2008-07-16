@@ -11,7 +11,6 @@ import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -27,8 +26,6 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Contains various member node actions.

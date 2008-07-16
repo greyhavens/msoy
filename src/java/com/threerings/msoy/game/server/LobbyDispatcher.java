@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 

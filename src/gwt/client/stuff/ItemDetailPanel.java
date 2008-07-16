@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;

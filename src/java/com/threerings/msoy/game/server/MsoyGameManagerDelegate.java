@@ -29,7 +29,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.RatingManagerDelegate;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
@@ -831,7 +830,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         int playerSecs = record.getPlayTime(now);
         float avgMins = getAverageGameDuration(playerSecs);
         float playerMins = playerSecs/60f;
-
 
 //        if (RAY_GETS_HIS_WAY) {
 //            // What the fuck?

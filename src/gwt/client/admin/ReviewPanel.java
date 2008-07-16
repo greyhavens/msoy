@@ -3,7 +3,6 @@
 
 package client.admin;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Button;

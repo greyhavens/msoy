@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.shell.CShell;
-
 /**
  * Creates a TabPanel that is styled by gwt.css to fit into our overall style.
  */

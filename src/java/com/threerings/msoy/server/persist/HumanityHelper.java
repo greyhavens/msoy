@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.MsoyCodes;

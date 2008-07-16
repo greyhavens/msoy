@@ -9,7 +9,6 @@ import com.threerings.msoy.bureau.data.ServerRegistryObject;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;

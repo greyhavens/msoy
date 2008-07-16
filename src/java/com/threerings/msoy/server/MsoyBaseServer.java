@@ -5,7 +5,6 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.security.Security;
-import java.util.Iterator;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -29,8 +28,6 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.bureau.server.BureauAuthenticator;
-
-import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.stats.server.persist.StatRepository;

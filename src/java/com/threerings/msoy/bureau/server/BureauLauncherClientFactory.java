@@ -12,8 +12,6 @@ import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.util.Name;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Creates very basic clients for bureau launcher connections, otherwise delegates.
  */

@@ -7,7 +7,6 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 

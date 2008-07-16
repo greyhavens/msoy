@@ -8,7 +8,6 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.Client;
 
-import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 
 import com.threerings.msoy.chat.data.ChatChannel;

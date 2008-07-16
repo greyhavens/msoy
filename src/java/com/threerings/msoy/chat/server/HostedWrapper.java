@@ -7,7 +7,6 @@ import com.samskivert.util.Interval;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;

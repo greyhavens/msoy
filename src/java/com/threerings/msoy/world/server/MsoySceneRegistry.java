@@ -22,7 +22,6 @@ import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneManager;
-import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 

@@ -5,7 +5,6 @@ package com.threerings.msoy.chat.server;
 
 import com.samskivert.util.ArrayUtil;
 
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 

@@ -6,7 +6,6 @@ package com.threerings.msoy.world.data;
 import com.threerings.msoy.world.client.WatcherService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.net.Transport;
 
 /**
  * Provides the implementation of the {@link WatcherService} interface

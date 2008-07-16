@@ -24,7 +24,6 @@ import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.badge.data.BadgeSet;
-import com.threerings.msoy.badge.data.EarnedBadge;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;

@@ -33,7 +33,6 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.util.PersistingUnit;
 
-import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;

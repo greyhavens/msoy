@@ -8,18 +8,12 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 
-import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 

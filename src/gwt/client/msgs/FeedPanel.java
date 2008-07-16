@@ -38,7 +38,6 @@ import client.shell.Page;
 
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.TongueBox;
 
 public class FeedPanel extends TongueBox

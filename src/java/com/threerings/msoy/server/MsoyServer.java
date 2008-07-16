@@ -4,14 +4,10 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.mina.common.IoAcceptor;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -20,14 +16,11 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.LoggingLogProvider;
 
 import com.threerings.util.Name;
 
-import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
@@ -38,7 +31,6 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
-import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.client.InvocationService;
 
@@ -70,7 +62,6 @@ import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
@@ -83,7 +74,6 @@ import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
 
