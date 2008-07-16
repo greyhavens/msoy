@@ -117,7 +117,7 @@ public class FriendRenderer extends HBox
     protected function handleClick (event :MouseEvent) :void
     {
         var menuItems :Array = [];
-        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems);
+        _mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
         CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 

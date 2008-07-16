@@ -126,6 +126,9 @@ public class WorldController extends MsoyController
     /** Command to view a member's profile, arg is [ memberId ] */
     public static const VIEW_MEMBER :String = "ViewMember";
 
+    /** Command to visit a member's current location */
+    public static const VISIT_MEMBER :String = "VisitMember";
+
     /** Command to view a groups's page, arg is [ groupId ] */
     public static const VIEW_GROUP :String = "ViewGroup";
 
@@ -411,6 +414,14 @@ public class WorldController extends MsoyController
     public function handleViewMember (memberId :int) :void
     {
         displayPage("people", "" + memberId);
+    }
+
+    /** 
+     * Handles hte VISIT_MEMBER command.
+     */
+    public function handleVisitMember (memberId :int) :void
+    {
+        _wctx.getWorldDirector().goToMemberLocation(memberId);
     }
 
     /**
@@ -920,7 +931,21 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function handleClosePlaceView () : void
+    override public function addFriendMenuItems (member :MemberName, menuItems :Array) :void
+    {
+        var memId :int = member.getMemberId();
+        menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
+                         command: OPEN_CHANNEL, arg: member });
+        if (!_wctx.getMsoyClient().isEmbedded()) {
+            menuItems.push({ label: Msgs.GENERAL.get("l.view_member"),
+                             command: VIEW_MEMBER, arg: memId });
+            menuItems.push({ label: Msgs.GENERAL.get("l.visit_member"),
+                             command: VISIT_MEMBER, arg: memId });
+        }
+    }
+
+    // from MsoyController
+    override public function handleClosePlaceView () :void
     {
         if (_wctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
             // if we're in a game, closing means closing the game and going back to our place
