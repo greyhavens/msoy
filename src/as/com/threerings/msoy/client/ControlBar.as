@@ -110,6 +110,16 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Gives the chat input focus.
+     */
+    public function giveChatFocus () :void
+    {
+        if (_chatControl != null) {
+            _chatControl.setFocus();
+        }
+    }
+
+    /**
      * Called by the TopPanel when we move to a new location. This should some day take over for
      * setLocation().
      */

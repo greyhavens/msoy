@@ -1243,7 +1243,10 @@ BasePanel {
   borderSides: "left bottom right";
   borderThickness: 2;
   verticalGap: 0;
-  paddingLeft: 3;
+  paddingLeft: 5;
+  paddingRight: 5;
+  paddingTop: 3;
+  paddingBottom: 3;
 }
 
 .friendsListSeparator {
@@ -1253,4 +1256,19 @@ BasePanel {
   borderColor: #408FD9;
   borderSides: "left right";
   borderThickness: 2;
+}
+
+.statusEdit, .statusEditHover {
+  backgroundAlpha: 0;
+  borderStyle: "none";
+  color: #568EAF;
+  fontSize: 10;
+}
+
+.statusEdit {
+  textDecoration: "none";
+}
+
+.statusEditHover {
+  textDecoration: "underline";
 }

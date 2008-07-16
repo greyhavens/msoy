@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.events.MouseEvent;
+
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.utils.Dictionary;
@@ -21,9 +24,10 @@ import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 import mx.core.mx_internal;
 
-import mx.managers.PopUpManager;
-
 import mx.events.CloseEvent;
+import mx.events.FlexEvent;
+
+import mx.managers.PopUpManager;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -167,8 +171,15 @@ public class FriendsListPanel extends TitleWindow
             _nameLabel.text = me.memberName.toString();
             box.addChild(_nameLabel);
             _statusEdit = new TextInput();
-            _statusEdit.editable = false;
+            _statusEdit.editable = true;
             _statusEdit.text = me.headline;
+            _statusEdit.styleName = "statusEdit";
+            _statusEdit.percentWidth = 100;
+            _statusEdit.height = 17;
+            _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
+            _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
+            _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
+            _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
             box.addChild(_statusEdit);
         }
     
@@ -238,6 +249,23 @@ public class FriendsListPanel extends TitleWindow
             _friends.removeItemAt(_friends.getItemIndex(data));
         }
         delete _originals[friend.name.getMemberId()];
+    }
+
+    protected function editMouseOver (...ignored) :void
+    {
+        _statusEdit.styleName = "statusEditHover";
+    }
+
+    protected function editMouseOut (...ignored) :void
+    {
+        _statusEdit.styleName = "statusEdit";
+    }
+
+    protected function commitEdit (...ignored) :void
+    {
+        if (_statusEdit.text != _ctx.getMemberObject().headline) {
+            _ctx.getTopPanel().getControlBar().giveChatFocus();
+        }
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
