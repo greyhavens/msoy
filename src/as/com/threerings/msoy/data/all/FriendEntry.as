@@ -103,7 +103,7 @@ public class FriendEntry
         out.writeObject(name);
         out.writeBoolean(online);
         out.writeObject(photo);
-        out.writeObject(status);
+        out.writeField(status);
     }
 }
 }
