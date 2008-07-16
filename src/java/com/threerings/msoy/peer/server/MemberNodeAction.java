@@ -28,7 +28,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        return ((MsoyNodeObject)nodeobj).clients.containsKey(new MemberName(null, _memberId));
+        return ((MsoyNodeObject)nodeobj).clients.containsKey(MemberName.makeKey(_memberId));
     }
 
     @Override // from PeerManager.NodeAction

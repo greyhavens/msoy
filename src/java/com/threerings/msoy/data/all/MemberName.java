@@ -30,6 +30,16 @@ public class MemberName extends Name
         return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
     }
 
+    /**
+     * Creates a member name that can be used as a key for a DSet lookup or whereever else one might
+     * need to use a {@link MemberName} instance as a key but do not have the (unneeded) member 
+     * name.
+     */
+    public static MemberName makeKey (int memberId)
+    {
+        return new MemberName(null, memberId);
+    }
+
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);

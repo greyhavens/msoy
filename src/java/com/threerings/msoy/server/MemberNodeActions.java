@@ -302,8 +302,9 @@ public class MemberNodeActions
         @Override // from PeerManager.NodeAction
         public boolean isApplicable (NodeObject nodeobj)
         {
+            MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
             for (int friendId : _friends) {
-                if (((MsoyNodeObject)nodeobj).clients.containsKey(new MemberName(null, friendId))) {
+                if (msoyNode.clients.containsKey(MemberName.makeKey(friendId))) {
                     return true;
                 }
             }
