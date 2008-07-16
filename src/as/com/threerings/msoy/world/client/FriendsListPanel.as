@@ -25,6 +25,8 @@ import mx.managers.PopUpManager;
 
 import mx.events.CloseEvent;
 
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -40,7 +42,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 public class FriendsListPanel extends TitleWindow
-    implements SetListener
+    implements SetListener, AttributeChangeListener
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
@@ -94,6 +96,14 @@ public class FriendsListPanel extends TitleWindow
     {
         if (event.getName() == MemberObject.FRIENDS) {
             removeFriend(event.getOldEntry() as FriendEntry);
+        }
+    }
+
+    // from AttributeChangeListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == MemberObject.HEADLINE) {
+            _statusEdit.text = event.getValue() as String;
         }
     }
 

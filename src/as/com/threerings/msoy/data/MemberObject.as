@@ -93,6 +93,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>walkingId</code> field. */
     public static const WALKING_ID :String = "walkingId";
+
+    /** The field name of the <code>headline</code> field. */
+    public static const HEADLINE :String = "headline";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.

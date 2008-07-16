@@ -135,6 +135,7 @@ public class MemberNodeActions
 
         protected void execute (MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
+            memobj.setHeadline(_status);
             MsoyServer.memberMan.updateOccupantInfo(memobj);
             MsoyServer.channelMan.updateMemberOnChannels(memobj.memberName);
             
