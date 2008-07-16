@@ -159,12 +159,18 @@ public class ProfileServlet extends MsoyServiceServlet
             _eventLog.profileUpdated(memrec.memberId);
 
             // handle a display name change if necessary
-            if (memrec.name == null || !memrec.name.equals(displayName) || 
-                !oprof.getPhoto().equals(nrec.getPhoto())) {
+            boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);
+            boolean photoChanged = !oprof.getPhoto().equals(nrec.getPhoto());
+            boolean statusChanged = oprof.headline != nrec.headline;
+
+            if (nameChanged) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, displayName);
-                // let the world servers know about the display name change
-                MemberNodeActions.displayNameChanged(
-                    new VizMemberName(displayName, memrec.memberId, nrec.getPhoto()));
+            }
+
+            if (statusChanged || nameChanged || photoChanged) {
+                // let the world servers know about the info change
+                MemberNodeActions.infoChanged(
+                    memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
             }
 
         } catch (PersistenceException pe) {

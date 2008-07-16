@@ -3,13 +3,22 @@
 
 package com.threerings.msoy.server;
 
+import com.google.inject.Inject;
+
+import com.threerings.presents.peer.data.NodeObject;
+
+import com.threerings.presents.peer.server.PeerManager;
+
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 
@@ -19,18 +28,21 @@ import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Contains various member node actions.
  */
 public class MemberNodeActions
 {
     /**
-     * Dispatches a notification that a member's display name has changed to whichever server they
-     * are logged into.
+     * Dispatches a notification that a member's info has changed to whichever server they are 
+     * logged into.
      */
-    public static void displayNameChanged (MemberName name)
+    public static void infoChanged (
+        int memberId, String displayName, MediaDesc photo, String status)
     {
-        MsoyServer.peerMan.invokeNodeAction(new DisplayNameChanged(name));
+        MsoyServer.peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
     }
 
     /**
@@ -112,24 +124,37 @@ public class MemberNodeActions
         MsoyServer.peerMan.invokeNodeAction(new BadgeAwarded(record));
     }
 
-    protected static class DisplayNameChanged extends MemberNodeAction
+    protected static class InfoChanged extends MemberNodeAction
     {
-        public DisplayNameChanged (MemberName name) {
-            super(name.getMemberId());
-            _name = name.toString();
-            if (name instanceof VizMemberName) {
-                _image = ((VizMemberName) name).getPhoto();
-            }
+        public InfoChanged (int memberId, String displayName, MediaDesc photo, String status) {
+            super(memberId);
+            _displayName = displayName;
+            _photo = photo;
+            _status = status;
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.updateDisplayName(_name, _image);
+            memobj.updateDisplayName(_displayName, _photo);
             MsoyServer.memberMan.updateOccupantInfo(memobj);
             MsoyServer.channelMan.updateMemberOnChannels(memobj.memberName);
+            
+            // Update FriendEntrys on friend's member objects.  Rather than preparing a 
+            // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
+            // that contain at least one friend of this member, and do all the updating on that
+            // server.  Note that we don't even take this potentially expensive step if this 
+            // member isn't logged in.
+            int[] friends = new int[memobj.friends.size()];
+            int ii = 0;
+            for (FriendEntry entry : memobj.friends) {
+                friends[ii++] = entry.name.getMemberId();
+            }
+            MsoyServer.peerMan.invokeNodeAction(new FriendEntryUpdate(
+                friends, _memberId, _displayName, _photo, _status));
         }
 
-        protected String _name;
-        protected MediaDesc _image;
+        protected String _displayName;
+        protected MediaDesc _photo;
+        protected String _status;
     }
 
     protected static class FlowUpdated extends MemberNodeAction
@@ -263,5 +288,52 @@ public class MemberNodeActions
         protected void execute (MemberObject memobj) {
             // TODO something magical happens here
         }
+    }
+
+    protected static class FriendEntryUpdate extends PeerManager.NodeAction
+    {
+        public FriendEntryUpdate (
+            int[] friends, int memberId, String displayName, MediaDesc photo, String status) {
+            _friends = friends;
+            _memberId = memberId;
+            _displayName = displayName;
+            _photo = photo;
+            _status = status;
+        }
+
+        @Override // from PeerManager.NodeAction
+        public boolean isApplicable (NodeObject nodeobj)
+        {
+            for (int friendId : _friends) {
+                if (((MsoyNodeObject)nodeobj).clients.containsKey(new MemberName(null, friendId))) {
+                    return true;
+                }
+            }
+
+            // no friends found here, move along
+            return false;
+        }
+    
+        @Override // from PeerManager.NodeAction
+        protected void execute ()
+        {
+            FriendEntry entry = new FriendEntry(
+                new MemberName(_displayName, _memberId), true, _photo, _status);
+            for (int friendId : _friends) {
+                MemberObject memobj = _locator.lookupMember(friendId);
+                if (memobj != null) {
+                    memobj.updateFriends(entry);
+                }
+            }
+        }
+
+        protected int[] _friends;
+        protected int _memberId;
+        protected String _displayName;
+        protected MediaDesc _photo;
+        protected String _status;
+
+        /** Used to look up member objects. */
+        @Inject protected MemberLocator _locator;
     }
 }
