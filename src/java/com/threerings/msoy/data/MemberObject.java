@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ObserverInfo;
@@ -202,13 +203,20 @@ public class MemberObject extends MsoyBodyObject
     public ReferralInfo referral;
 
     /** Statistics tracked for this player. */
-    public transient StatSet stats;
+    public transient StatSet stats = new StatSet();
 
     /** Metrics tracked for this player. */
     public transient PlayerMetrics metrics = new PlayerMetrics();
 
     /** The set of badges that this player owns. */
     public transient BadgeSet badges = new BadgeSet();
+
+    /** Until Passport is live, we don't want to update the player's real StatSet. */
+    private transient StatSet _dummyStats = new StatSet();
+    public StatSet getStats ()
+    {
+        return (DeploymentConfig.devDeployment ? stats : _dummyStats);
+    }
 
     /**
      * Return true if this user is a guest.

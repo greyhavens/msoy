@@ -20,6 +20,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.StatType;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -27,6 +28,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.web.client.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -173,16 +175,17 @@ public class FriendManager
                         _photo = profile.getPhoto();
                         _status = profile.headline;
                     } catch (PersistenceException pe) {
-                        log.warning("Failed to fetch profile info for new friend", "friendId", 
+                        log.warning("Failed to fetch profile info for new friend", "friendId",
                             _friendId, "exception", pe);
                     }
-                    // even if we hit an exception, we still want to continue back on the dobj 
+                    // even if we hit an exception, we still want to continue back on the dobj
                     // thread
                     return true;
                 }
                 public void handleResult () {
                     memobj.addToFriends(new FriendEntry(friend, online, _photo, _status));
                     MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
+                    memobj.getStats().incrementStat(StatType.FRIENDS_MADE, 1);
                 }
                 protected MediaDesc _photo = null;
                 protected String _status = "";
