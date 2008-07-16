@@ -104,4 +104,10 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#updateAvailability} request.
      */
     public void updateAvailability (ClientObject caller, int arg1);
+
+    /**
+     * Handles a {@link MemberService#updateStatus} request.
+     */
+    public void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
 }

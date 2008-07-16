@@ -226,5 +226,18 @@ public class MemberMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2)
         ]);
     }
+
+    /** The method id used to dispatch {@link #updateStatus} requests. */
+    public static const UPDATE_STATUS :int = 17;
+
+    // from interface MemberService
+    public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    {
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_STATUS, [
+            arg2, listener3
+        ]);
+    }
 }
 }

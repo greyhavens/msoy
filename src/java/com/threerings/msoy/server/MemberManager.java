@@ -555,6 +555,25 @@ public class MemberManager
         MsoyServer.supportMan.addComplaint((MemberObject)caller, memberId, complaint);
     }
 
+    // from interface MemberProvider
+    public void updateStatus (ClientObject caller, final String status, 
+                              InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        final MemberObject member = (MemberObject) caller;
+        ensureNotGuest(member);
+
+        String uname = "updateStatus(" + member.getMemberId() + ")";
+        _invoker.postUnit(new PersistingUnit(uname, listener) {
+            public void invokePersistent () throws Exception {
+                MsoyServer.profileRepo.updateHeadline(member.getMemberId(), status);
+            }
+            public void handleSuccess () {
+                member.setHeadline(status);
+            }
+        });
+    }
+
     /**
      * Grants flow to the member identified in the supplied user action details.
      *

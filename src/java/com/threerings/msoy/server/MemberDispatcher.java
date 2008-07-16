@@ -147,6 +147,13 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.UPDATE_STATUS:
+            ((MemberProvider)provider).updateStatus(
+                source,
+                (String)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

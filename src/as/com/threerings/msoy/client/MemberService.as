@@ -61,5 +61,8 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;
+
+    // from Java interface MemberService
+    function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
 }
 }

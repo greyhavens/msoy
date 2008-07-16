@@ -142,6 +142,12 @@ public class ProfileRepository extends DepotRepository
         return Lists.newArrayList(ids);
     }
 
+    public void updateHeadline (int memberId, String headline)
+        throws PersistenceException
+    {
+        updatePartial(ProfileRecord.class, memberId, ProfileRecord.HEADLINE, headline);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

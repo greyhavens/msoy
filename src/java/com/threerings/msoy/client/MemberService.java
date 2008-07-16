@@ -98,4 +98,9 @@ public interface MemberService extends InvocationService
      * Posts a complaint event in underwire.
      */
     public void complainMember (Client client, int memberId, String complaint);
+
+    /**
+     * Updates the status/headline for this member.
+     */
+    public void updateStatus (Client client, String status, InvocationListener listener);
 }

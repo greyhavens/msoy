@@ -30,6 +30,8 @@ import mx.events.FlexEvent;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.presents.client.InvocationAdapter;
+
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -40,6 +42,7 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MemberObject;
@@ -275,8 +278,18 @@ public class FriendsListPanel extends TitleWindow
     protected function commitEdit (...ignored) :void
     {
         _ctx.getTopPanel().getControlBar().giveChatFocus();
-        if (_statusEdit.text != _ctx.getMemberObject().headline) {
-            // TODO: send to server
+        var newStatus :String = _statusEdit.text;
+        if (newStatus != _ctx.getMemberObject().headline) {
+            var msvc :MemberService =
+                (_ctx.getClient().requireService(MemberService) as MemberService);
+            msvc.updateStatus(_ctx.getClient(), newStatus, new InvocationAdapter(
+                function (cause :String) :void {
+                    _ctx.displayFeedback(null, cause);
+                    // revert to old status
+                    var me :MemberObject = _ctx.getMemberObject();
+                    _statusEdit.text = me.headline == "" || me.headline == null ?
+                        Msgs.GENERAL.get("l.emptyStatus") : me.headline;
+                }));
         }
     }
 
