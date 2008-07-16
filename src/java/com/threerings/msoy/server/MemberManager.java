@@ -55,6 +55,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 
+import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -106,6 +107,7 @@ public class MemberManager
                 data.put("MO.actorState", memobj.actorState);
                 data.put("MO.stats", memobj.stats);
                 data.put("MO.metrics", memobj.metrics);
+                data.put("MO.badges", memobj.badges);
             }
 
             public void unpackMember (MemberObject memobj, Map<String,Object> data) {
@@ -113,6 +115,7 @@ public class MemberManager
                 memobj.actorState = (String)data.get("MO.actorState");
                 memobj.stats = (StatSet)data.get("MO.stats");
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
+                memobj.badges = (BadgeSet)data.get("MO.badges");
             }
         });
     }
@@ -694,7 +697,7 @@ public class MemberManager
         }
         return false;
     }
-    
+
     /**
      * Convenience method to ensure that the specified caller is not a guest.
      */
