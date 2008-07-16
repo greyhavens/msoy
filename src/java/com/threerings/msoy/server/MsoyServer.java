@@ -73,6 +73,9 @@ import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
+import com.threerings.msoy.bureau.server.WindowAuthenticator;
+import com.threerings.msoy.bureau.server.WindowClientFactory;
+
 import com.threerings.msoy.data.MemberObject;
 
 import static com.threerings.msoy.Log.log;
@@ -253,6 +256,11 @@ public class MsoyServer extends MsoyBaseServer
                 return MsoyClientResolver.class;
             }
         });
+
+        // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
+        // to be distinguished and connected
+        _conmgr.addChainedAuthenticator(new WindowAuthenticator());
+        _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", _omgr);

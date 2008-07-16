@@ -13,8 +13,9 @@ public class WindowDirector
     /**
      * Creates a new window director.
      */
-    public function WindowDirector ()
+    public function WindowDirector (bureauId :String)
     {
+        _bureauId = bureauId;
     }
 
     /**
@@ -41,7 +42,7 @@ public class WindowDirector
 
         if (window == null) {
             Assert.isTrue(_windows[key]==null);
-            window = new WindowImpl(host, port, _serviceGroups);
+            window = new WindowImpl(host, port, _bureauId, _serviceGroups);
             _windows[key] = window;
         }
 
@@ -77,11 +78,13 @@ public class WindowDirector
 
     protected var _windows :Dictionary = new Dictionary();
     protected var _serviceGroups :Array = [];
+    protected var _bureauId :String;
 }
 
 }
 
 import com.threerings.msoy.bureau.client.Window;
+import com.threerings.msoy.bureau.data.WindowCredentials;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService;
@@ -98,10 +101,11 @@ class WindowImpl implements Window
      * Creates a new implementation that immediately connects the the given server and port and
      * requests the given service groups.
      */
-    public function WindowImpl (host :String, port :int, serviceGroups :Array)
+    public function WindowImpl (
+        host :String, port :int, bureauId :String, serviceGroups :Array)
     {
-        // TODO: implement credentials here and authentication on server
-        _client = new Client(null);
+        var creds :WindowCredentials = new WindowCredentials(bureauId);
+        _client = new Client(creds);
         _client.setServer(host, [port]);
         _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, clientDidLogon);
         _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, clientFailedToLogon);
