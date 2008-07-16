@@ -33,6 +33,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -84,7 +86,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (data.featuredToy != null) {
                 list.add(data.featuredToy);
             }
-            ItemUtil.resolveCardNames(_memberRepo, list);
+            _itemLogic.resolveCardNames(list);
 
             return data;
 
@@ -100,7 +102,7 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(query.itemType);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
         List<ListingCard> list = Lists.newArrayList();
 
@@ -124,7 +126,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // resolve the creator names for these listings
-            ItemUtil.resolveCardNames(_memberRepo, list);
+            _itemLogic.resolveCardNames(list);
 
             // if they want the total number of matches, compute that as well
             if (includeCount) {
@@ -148,7 +150,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemType);
 
         try {
             CatalogRecord<ItemRecord> listing = repo.loadListing(catalogId, true);
@@ -225,7 +227,7 @@ public class CatalogServlet extends MsoyServiceServlet
             final Item nitem = newClone.toItem();
             MsoyServer.omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemPurchased(nitem);
+                    _itemMan.itemPurchased(nitem);
                 }
             });
 
@@ -245,7 +247,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.type);
         try {
             // load a copy of the original item
             ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
@@ -279,7 +281,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (originalItem instanceof SubItemRecord) {
                 SubItem sitem = (SubItem)originalItem.toItem();
                 ItemRepository<ItemRecord, ?, ?, ?> mrepo =
-                    MsoyServer.itemMan.getRepository(sitem.getSuiteMasterType());
+                    _itemMan.getRepository(sitem.getSuiteMasterType());
                 ItemRecord suiteMaster = mrepo.loadOriginalItem(
                     ((SubItemRecord)originalItem).suiteId);
                 if (suiteMaster == null) {
@@ -343,7 +345,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemType);
         try {
             // load up the old catalog record
             CatalogRecord record = repo.loadListing(catalogId, true);
@@ -386,7 +388,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.type);
         try {
             // load a copy of the original item
             ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
@@ -439,7 +441,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // kick off a notification that the list item was updated to e.g. reload game lobbies
             MsoyServer.omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemUpdated(listItem);
+                    _itemMan.itemUpdated(listItem);
                 }
             });
 
@@ -457,7 +459,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemType);
         try {
             // load up the listing we're updating
             CatalogRecord record = repo.loadListing(catalogId, false);
@@ -505,7 +507,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemType);
         try {
             CatalogRecord listing = repo.loadListing(catalogId, true);
             if (listing == null) {
@@ -532,8 +534,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo =
-            MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
 
         try {
             CloneRecord<ItemRecord> cRec = repo.loadCloneRecord(iident.itemId);
@@ -586,7 +587,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public Map<String, Integer> getPopularTags (byte type, int rows)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
         Map<String, Integer> result = Maps.newHashMap();
         try {
             for (TagPopularityRecord record : repo.getTagRepository().getPopularTags(rows)) {
@@ -604,7 +605,7 @@ public class CatalogServlet extends MsoyServiceServlet
     protected ListingCard[] loadTopItems (MemberRecord mrec, byte type)
         throws PersistenceException, ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
         List<ListingCard> cards = Lists.newArrayList();
         for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
                 null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
@@ -667,4 +668,7 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
+
+    @Inject ItemLogic _itemLogic;
+    @Inject ItemManager _itemMan;
 }

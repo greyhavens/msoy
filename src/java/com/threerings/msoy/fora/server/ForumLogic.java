@@ -34,7 +34,7 @@ import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
 /**
- * Does something extraordinary.
+ * Contains forum services that are used by servlets and other blocking thread code.
  */
 @BlockingThread @Singleton
 public class ForumLogic

@@ -38,6 +38,7 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -134,7 +135,7 @@ public class WorldServlet extends MsoyServiceServlet
                                                        0, null, 0, ShopData.TOP_ITEM_COUNT)) {
                 cards.add(crec.toListingCard());
             }
-            ItemUtil.resolveCardNames(_memberRepo, cards);
+            _itemLogic.resolveCardNames(cards);
             data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
 
             _landingData = ExpiringReference.create(data, LANDING_DATA_EXPIRY);
@@ -533,6 +534,7 @@ public class WorldServlet extends MsoyServiceServlet
     protected ExpiringReference<LandingData> _landingData;
 
     @Inject protected GameRepository _gameRepo;
+    @Inject protected ItemLogic _itemLogic;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;
