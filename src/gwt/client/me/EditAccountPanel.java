@@ -310,7 +310,17 @@ public class EditAccountPanel extends SmartTable
 
     protected void validatePermaName ()
     {
-        String pname = _pname.getText().trim();
+        // extract the permaname, but also show the user exactly what we're using, since
+        // we lowercase and trim it.
+        int cursor = _pname.getCursorPos();
+        String raw = _pname.getText();
+        String pname = raw.trim();
+        cursor -= raw.indexOf(pname);
+        pname = pname.toLowerCase();
+        _pname.setText(pname);
+        _pname.setCursorPos(cursor);
+
+        // now check it for legality
         for (int ii = 0; ii < pname.length(); ii++) {
             char c = pname.charAt(ii);
             if ((ii == 0 && !Character.isLetter(c)) ||
