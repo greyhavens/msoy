@@ -116,13 +116,6 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp PERMA_NAME_C =
         new ColumnExp(MemberRecord.class, PERMA_NAME);
 
-    /** The column identifier for the {@link #normalizedPermaName} field. */
-    public static final String NORMALIZED_PERMA_NAME = "normalizedPermaName";
-
-    /** The qualified column identifier for the {@link #normalizedPermaName} field. */
-    public static final ColumnExp NORMALIZED_PERMA_NAME_C =
-        new ColumnExp(MemberRecord.class, NORMALIZED_PERMA_NAME);
-
     /** The column identifier for the {@link #flow} field. */
     public static final String FLOW = "flow";
 
