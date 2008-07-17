@@ -65,9 +65,8 @@ public class MemberLogic
         }
         
         // generate the group number based on trackingID + testName
-        int seed = new String(info.getCreationTime() + testName).hashCode();
-        final Random rand = new Random(seed);
-        final int group = rand.nextInt(test.numGroups) + 1;
+        final int seed = Math.abs(new String(info.tracker + testName).hashCode());
+        final int group = (seed % test.numGroups) + 1;
         
         return group;
     }
