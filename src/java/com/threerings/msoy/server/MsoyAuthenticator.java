@@ -31,6 +31,7 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -185,8 +186,9 @@ public class MsoyAuthenticator extends Authenticator
      *
      * @return the newly created member record.
      */
-    public MemberRecord createAccount (String email, String password, String displayName,
-                                       boolean ignoreRestrict, InvitationRecord invite)
+    public MemberRecord createAccount (
+        String email, String password, String displayName, boolean ignoreRestrict,
+        InvitationRecord invite, ReferralInfo referral)
         throws ServiceException
     {
         if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
@@ -203,7 +205,7 @@ public class MsoyAuthenticator extends Authenticator
             domain.validateAccount(account);
 
             // create a new member record for the account
-            return createMember(account, displayName, invite);
+            return createMember(account, displayName, invite, referral);
 
         } catch (PersistenceException pe) {
             log.warning("Error creating new account [for=" + email + "].", pe);
@@ -283,7 +285,7 @@ public class MsoyAuthenticator extends Authenticator
             MemberRecord mrec = _memberRepo.loadMember(account.accountName);
             if (mrec == null) {
                 // if this is their first logon, insert a skeleton member record
-                mrec = createMember(account, email, null);
+                mrec = createMember(account, email, null, null);
                 account.firstLogon = true;
             } else {
                 account.firstLogon = (mrec.sessions == 0);
@@ -426,7 +428,7 @@ public class MsoyAuthenticator extends Authenticator
             member = _memberRepo.loadMember(account.accountName);
             // if this is their first logon, create them a member record
             if (member == null) {
-                member = createMember(account, account.accountName, null);
+                member = createMember(account, account.accountName, null, null);
                 account.firstLogon = true;
             } else {
                 account.firstLogon = (member.sessions == 0);
@@ -486,7 +488,7 @@ public class MsoyAuthenticator extends Authenticator
      * Called to create a starting member record for a first-time logger in.
      */
     protected MemberRecord createMember (
-        Account account, String displayName, InvitationRecord invite)
+        Account account, String displayName, InvitationRecord invite, ReferralInfo referral)
         throws PersistenceException
     {
         // create their main member record
@@ -519,6 +521,11 @@ public class MsoyAuthenticator extends Authenticator
         mrec.flow = mfr.flow;
         // mrec.gold = mfr.gold;
 
+        // if they gave us a valid referral info, store it; otherwise it'll be filled in later
+        if (referral != null) {
+            _memberRepo.setReferral(mrec.memberId, referral);
+        }
+        
         // record to the event log that we created a new account
         _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
 

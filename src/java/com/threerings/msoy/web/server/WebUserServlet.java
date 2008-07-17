@@ -33,6 +33,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -69,7 +70,8 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public SessionData login (String clientVersion, String username, String password, int expireDays)
+    public SessionData login (
+        String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -79,10 +81,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (String clientVersion, String username, String password,
-                                 final String displayName, int[] bdayvec, MediaDesc photo,
-                                 AccountInfo info, int expireDays, String inviteId, int guestId,
-                                 String captchaChallenge, String captchaResponse)
+    public SessionData register (
+        String clientVersion, String username, String password, final String displayName,
+        int[] bdayvec, MediaDesc photo, AccountInfo info, int expireDays, String inviteId,
+        int guestId, String captchaChallenge, String captchaResponse, ReferralInfo referral)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -127,7 +129,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord mrec = _author.createAccount(
-            username, password, displayName, ignoreRestrict, invite);
+            username, password, displayName, ignoreRestrict, invite, referral);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();

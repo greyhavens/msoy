@@ -39,6 +39,7 @@ import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Application;
 import client.shell.CShell;
+import client.shell.TrackingCookie;
 import client.util.DateFields;
 import client.util.MediaUploader;
 import client.util.MsoyUI;
@@ -262,7 +263,7 @@ public class CreateAccountPanel extends VerticalPanel
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name, 
             _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge, 
-            response, new AsyncCallback<SessionData>() {
+            response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {
                     // notify our registration listener
                     _regListener.didRegister();

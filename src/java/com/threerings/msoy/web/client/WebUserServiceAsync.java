@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.AccountInfo;
@@ -27,9 +28,10 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#register}.
      */
     public void register (
-        String clientVersion, String username, String password, String displayName, int[] birthday, 
+        String clientVersion, String username, String password, String displayName, int[] birthday,
         MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId, 
-        String captchaChallenge, String captchaResponse, AsyncCallback<SessionData> callback);
+        String captchaChallenge, String captchaResponse, ReferralInfo referral,
+        AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.

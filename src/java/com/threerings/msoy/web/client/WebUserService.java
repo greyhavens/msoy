@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
@@ -34,10 +35,10 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public SessionData register (String clientVersion, String email, String password,
-                                 String displayName, int[] birthday, MediaDesc photo,
-                                 AccountInfo info, int expireDays, String inviteId, int guestId,
-                                 String captchaChallenge, String captchaResponse)
+    public SessionData register (
+        String clientVersion, String email, String password, String displayName, int[] birthday,
+        MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId,
+        String captchaChallenge, String captchaResponse, ReferralInfo referral)
         throws ServiceException;
 
     /**
