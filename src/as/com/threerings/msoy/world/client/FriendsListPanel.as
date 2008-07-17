@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.events.Event;
 import flash.events.FocusEvent;
 import flash.events.MouseEvent;
 
@@ -39,6 +40,8 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
+import com.threerings.flex.PopUpUtil;
+
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
@@ -66,10 +69,12 @@ public class FriendsListPanel extends TitleWindow
     public function show () :void
     {
         PopUpManager.addPopUp(this, _ctx.getTopPanel(), false);
+        systemManager.addEventListener(Event.RESIZE, stageResized);
     }
 
     public function shutdown () :void
     {
+        systemManager.removeEventListener(Event.RESIZE, stageResized);
         _ctx.getMemberObject().removeListener(this);
         PopUpManager.removePopUp(this);
     }
@@ -130,7 +135,6 @@ public class FriendsListPanel extends TitleWindow
         showCloseButton = true;
         width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
-        // TODO: react to client size changes, both width and height
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
@@ -291,6 +295,19 @@ public class FriendsListPanel extends TitleWindow
                         Msgs.GENERAL.get("l.emptyStatus") : me.headline;
                 }));
         }
+    }
+
+    protected function stageResized (...ignored) :void
+    {
+        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
+        // fix the height
+        height = placeBounds.height - PADDING * 2;
+        // fit the popup within the new bounds, minux padding.
+        placeBounds.x += PADDING;
+        placeBounds.y += PADDING;
+        placeBounds.width -= PADDING * 2;
+        placeBounds.height -= PADDING * 2;
+        PopUpUtil.fitInRect(this, placeBounds);
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
