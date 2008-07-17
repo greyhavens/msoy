@@ -51,11 +51,14 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.person.server.MailManager;
 
+import com.threerings.msoy.person.data.Profile;
+
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.badge.data.BadgeSet;
+
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -556,20 +559,23 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void updateStatus (ClientObject caller, final String status, 
+    public void updateStatus (ClientObject caller, String status, 
                               InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
+        final String commitStatus = 
+            status.substring(0, Math.min(status.length(), Profile.MAX_STATUS_LENGTH));
+
         String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
-                MsoyServer.profileRepo.updateHeadline(member.getMemberId(), status);
+                MsoyServer.profileRepo.updateHeadline(member.getMemberId(), commitStatus);
             }
             public void handleSuccess () {
-                member.setHeadline(status);
+                member.setHeadline(commitStatus);
                 MemberNodeActions.updateFriendEntries(member);
             }
         });

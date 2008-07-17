@@ -182,6 +182,7 @@ public class FriendsListPanel extends TitleWindow
         _statusEdit.styleName = "statusEdit";
         _statusEdit.percentWidth = 100;
         _statusEdit.height = 17;
+        _statusEdit.maxChars = PROFILE_MAX_STATUS_LENGTH;
         _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
         _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
         _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
@@ -295,6 +296,9 @@ public class FriendsListPanel extends TitleWindow
     private static const log :Log = Log.getLog(FriendsListPanel);
 
     protected static const PADDING :int = 10;
+
+    /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
+    protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
     protected var _ctx :WorldContext;
     protected var _friendsList :List;
