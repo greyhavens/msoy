@@ -57,7 +57,8 @@ public class GameChatContainer extends LayeredContainer
         //controlBar.inSidebar(true);
         controlBar.setChatDirector(_chatDtr);
 
-        addEventListener(Event.ADDED_TO_STAGE, handleAdd);
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
     
     public function getChatOverlay () :ChatOverlay
@@ -72,14 +73,13 @@ public class GameChatContainer extends LayeredContainer
             removeChild(_channelOccList);
             _channelOccList = null;
         }
-        _chatDtr.removeChatDisplay(_overlay);
+
+        clearOverlay();
+
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
         //controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
-        if (_overlay != null) {
-            _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
-        }
     }
 
     public function sendChat (message :String) :void
@@ -123,14 +123,35 @@ public class GameChatContainer extends LayeredContainer
         super.setActualSize(uw, uh);
     }
 
-    protected function handleAdd (event :Event) :void
+    protected function handleAddRemove (event :Event) :void
     {
+        if (event.type == Event.ADDED_TO_STAGE) {
+            initOverlay();
+        } else {
+            clearOverlay();
+        }
+    }
+
+    protected function initOverlay () :void
+    {
+        clearOverlay();
         _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_RIGHT, false);
         _overlay.setClickableGlyphs(true);
         // this overlay needs to listen on both the msoy and game chat directors
         _chatDtr.addChatDisplay(_overlay);
         _ctx.getMsoyChatDirector().addChatDisplay(_overlay);
         // the bounds will get set via setActualSize();
+    }
+
+    protected function clearOverlay () :void
+    {
+        if (_overlay == null) {
+            return;
+        }
+
+        _chatDtr.removeChatDisplay(_overlay);
+        _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
+        _overlay = null;
     }
 
     protected var _ctx :MsoyContext;
