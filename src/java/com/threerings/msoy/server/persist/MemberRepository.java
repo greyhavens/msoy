@@ -506,8 +506,8 @@ public class MemberRepository extends DepotRepository
     public void configurePermaName (int memberId, String permaName)
         throws PersistenceException
     {
-        PermaName name = new PermaName(permaName);
-        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, name.getNormal());
+        // permaName will be a non-null lower-case string
+        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName);
     }
 
     /**
