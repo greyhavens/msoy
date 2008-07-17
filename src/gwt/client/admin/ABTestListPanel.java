@@ -15,7 +15,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.data.ABTest;
 
 import client.shell.CShell;
+import client.shell.TrackingCookie;
 import client.util.MsoyCallback;
+import client.util.MsoyUI;
 
 /**
  * Display a dialog for admins to issue invitations to the player base.
@@ -69,6 +71,7 @@ public class ABTestListPanel extends FlowPanel
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestStarted()));
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnded()));
         _contents.setWidget(0, col++, new Label(""));
+        _contents.setWidget(0, col++, new Label(""));
         _contents.getRowFormatter().addStyleName(0, "Header");
 
         for (final ABTest test : tests) {
@@ -87,6 +90,25 @@ public class ABTestListPanel extends FlowPanel
                 }
             });
             _contents.setWidget(row, col++, editButton);
+            
+            Button testButton = new Button("Test");
+            testButton.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    CAdmin.membersvc.getABTestGroup(
+                        TrackingCookie.get(), test.name, new MsoyCallback<Integer>() {
+                            public void onSuccess (Integer group) {
+                                MsoyUI.info("You are in group #" + group);
+                            }
+                    });
+                    
+                    CAdmin.membersvc.trackClientAction(
+                        TrackingCookie.get(), "ClickedTestButton_"+test.name, test.name, 
+                        new MsoyCallback<Void>() {
+                            public void onSuccess (Void result) {}
+                    });
+                }
+            });
+            _contents.setWidget(row, col++, testButton);
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.Invitation;
@@ -81,7 +82,12 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getABTestGroup}.
      */
-    public void getABTestGroup (
-        String testName, String trackingId, String affiliate, String vector, String creative, 
-        boolean newVisitor, AsyncCallback<Integer> callback);
+    public void getABTestGroup (ReferralInfo info, String testName, AsyncCallback<Integer> callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#trackClientAction}.
+     */
+    public void trackClientAction (
+        ReferralInfo info, String actionName, String testName, AsyncCallback<Void> callback);
+    
 }

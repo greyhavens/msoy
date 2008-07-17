@@ -18,6 +18,7 @@ import com.samskivert.net.MailUtil;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyServer;
@@ -315,17 +316,21 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
-    /**
-     * See {@link MemberLogic#getABTestGroup}
-     *
-     * @return the a/b group the visitor has been assigned to, or < 0 for no group.
-     */
-    public int getABTestGroup (String testName, String trackingId, String affiliate,
-                               String vector, String creative, boolean newVisitor)
+
+    // from MemberService
+    public int getABTestGroup (ReferralInfo info, String testName)
     {
-        return _memLogic.getABTestGroup(
-            testName, trackingId, affiliate, vector, creative, newVisitor);
+        return _memLogic.getABTestGroup(testName, info);
+    }
+    
+    // from MemberService
+    public void trackClientAction (ReferralInfo info, String actionName, String testName)
+    {
+        int abTestGroup = -1;
+        if (testName != null) {
+            abTestGroup = getABTestGroup(info, testName);
+        }
+        _eventLog.clientAction(info.tracker, actionName, abTestGroup);
     }
 
     /**

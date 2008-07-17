@@ -220,6 +220,17 @@ public class MsoyEventLogger
     	post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
     }
 
+    /**
+     * Generic client-side action such as clicking a particular button, for short-term testing.
+     * @param tracker Assigned to every visitor who lands in GWT or Flash
+     * @param actionName Identifier such as "LostPasswordButtonClicked"
+     * @param abTestGroup The visitor's a/b group if this is part of an a/b test, or < 0.
+     */
+    public void clientAction (String tracker, String actionName, int abTestGroup)
+    {
+        post(new MsoyEvents.ClientAction(tracker, actionName, abTestGroup));
+    }
+
     /** Posts a log message to the appropriate place. */
     protected void post (MsoyEvent message)
     {

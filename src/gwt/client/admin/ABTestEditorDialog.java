@@ -42,8 +42,7 @@ public class ABTestEditorDialog extends BorderedDialog
             _isNewTest = true;
             setHeaderTitle(CAdmin.msgs.abTestCreateTitle());
             _test = new ABTest();
-        }
-        else {
+        } else {
             _isNewTest = false;
             setHeaderTitle(CAdmin.msgs.abTestEditTitle());
             _test = test;
@@ -82,8 +81,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     }
                     _test.started = new Date();
                     _test.enabled = true;
-                }
-                else if (_test.enabled && !enabled.isChecked()) {
+                } else if (_test.enabled && !enabled.isChecked()) {
                     _test.ended = new Date();
                     _test.enabled = false;
                 }
@@ -101,8 +99,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     if (_test.numGroups < 2) {
                         MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
                     }
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
                 }
             }
@@ -151,12 +148,7 @@ public class ABTestEditorDialog extends BorderedDialog
         contents.add(buttons);
         
         String submitText;
-        if (_isNewTest) {
-            submitText = CShell.cmsgs.create();
-        }
-        else {
-            submitText = CShell.cmsgs.update();
-        }
+        submitText = _isNewTest ? CShell.cmsgs.create() : CShell.cmsgs.update();
         Button submit = new Button(submitText);
         submit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
@@ -195,8 +187,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     ABTestEditorDialog.this.hide();
                     if (_parent != null) {
                         _parent.refresh();
-                    }
-                    else {
+                    } else {
                         Application.go(Page.ADMIN, "testlist");
                     }
                 }
@@ -211,8 +202,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     ABTestEditorDialog.this.hide();
                     if (_parent != null) {
                         _parent.refresh();
-                    }
-                    else {
+                    } else {
                         Application.go(Page.ADMIN, "testlist");
                     }
                 }

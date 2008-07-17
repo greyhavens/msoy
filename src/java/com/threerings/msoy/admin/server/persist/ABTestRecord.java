@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.server.persist;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -141,15 +142,15 @@ public class ABTestRecord extends PersistentRecord
     
     /** The date on which this test was last enabled. */
     @Column(nullable=true)
-    public Date started;
+    public Timestamp started;
 
     /** The date on which this test was last disabled. */
     @Column(nullable=true)
-    public Date ended;
+    public Timestamp ended;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /**
      * Build a POJO version of this Record, for use outside the persistence system.
@@ -185,8 +186,8 @@ public class ABTestRecord extends PersistentRecord
         affiliate = test.affiliate;
         vector = test.vector;
         creative = test.creative;
-        started = (test.started != null) ? new Date(test.started.getTime()) : null;
-        ended = (test.ended != null) ? new Date(test.ended.getTime()) : null;
+        started = (test.started != null) ? new Timestamp(test.started.getTime()) : null;
+        ended = (test.ended != null) ? new Timestamp(test.ended.getTime()) : null;
         enabled = test.enabled;
     }
 

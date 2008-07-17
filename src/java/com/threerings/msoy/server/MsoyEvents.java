@@ -443,7 +443,27 @@ public class MsoyEvents
             this.threadId = threadId;
             this.postNumber = postNumber;
         }
-        
+    }
+
+    /**
+     * Generic event for a client-side action such as a button click which may not otherwise 
+     * result in a call to the server.  Used primarily for A/B Testing.
+     */
+    @Event(name="ClientAction")
+    public static class ClientAction implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp; 
+        @Field final public String tracker;
+        @Field final public String actionName;
+        @Field final public int abTestGroup;
+
+        public ClientAction (String tracker, String actionName, int abTestGroup)
+        {
+            this.timestamp = new Date();
+            this.tracker = tracker;
+            this.actionName = actionName;
+            this.abTestGroup = abTestGroup;
+        }
     }
     
     protected static String toValue (String input) {

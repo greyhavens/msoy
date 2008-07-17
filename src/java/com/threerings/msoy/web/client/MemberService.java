@@ -5,8 +5,10 @@ package com.threerings.msoy.web.client;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.EmailContact;
@@ -100,8 +102,13 @@ public interface MemberService extends RemoteService
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
-    public int getABTestGroup (
-        String testName, String trackingId, String affiliate, String vector, String creative, 
-        boolean newVisitor)
+    public int getABTestGroup (ReferralInfo info, String testName)
+        throws ServiceException;
+    
+    /**
+     * Generic method for tracking a client-side action such as clicking a button.  If testName 
+     * is supplied, the visitor's a/b test group will also be tracked.
+     */
+    public void trackClientAction (ReferralInfo info, String actionName, String testName)
         throws ServiceException;
 }

@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
-import java.lang.Math;
 import java.lang.System;
+import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -21,12 +21,7 @@ public class ReferralInfo
     /** Creates a random tracking number. */
     public static String makeRandomTracker ()
     {
-        // take current system time in milliseconds, shift left by eight bits,
-        // and fill in the newly emptied bits with a random value. return as a hex string.
-        // this gives us a resolution of 256 unique tracking numbers per millisecond.
-        long now = System.currentTimeMillis() * 256;
-        Double rand = Math.floor(Math.random() * 256);
-        return Long.toHexString(now + rand.longValue());
+        return Long.toHexString(System.currentTimeMillis());
     }
 
     /**
@@ -46,7 +41,6 @@ public class ReferralInfo
         ref.tracker = tracker;
         return ref;
     }
-    
 
     /** Identifies the affiliate who referred this player to us. */
     public String affiliate;
@@ -70,6 +64,19 @@ public class ReferralInfo
         this.vector = vector;
         this.creative = creative;
         this.tracker = tracker;
+    }
+    
+    /**
+     * Get the date and time that the tracking ID was assigned, derived from the tracker. 
+     */
+    public Date getCreationTime()
+    {
+        try {
+            long timestamp = Long.parseLong(tracker, 16);
+            return new Date(timestamp);
+        } catch (NumberFormatException e) {
+            return new Date();    
+        }
     }
 
     @Override
