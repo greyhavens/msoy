@@ -9,6 +9,8 @@ import mx.core.UIComponent;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.events.CloseEvent;
+
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultWrapper;
@@ -447,10 +449,11 @@ public class MsoyChatDirector extends ChatDirector
      */
     protected function openGameChat (open :Boolean) :void
     {
-        trace("openGameChat(" + open + ")");
         if (open) {
             _gameChatPanel = new FloatingPanel(_wctx, "Game Chat");
-            _gameChat.height = 450;
+            _gameChatPanel.addEventListener(CloseEvent.CLOSE, gameChatWasClosed);
+            _gameChatPanel.showCloseButton = true;
+            _gameChat.height = 350;
             _gameChatPanel.addChild(_gameChatHolder);
             _gameChatPanel.open();
 
@@ -458,6 +461,12 @@ public class MsoyChatDirector extends ChatDirector
             _gameChatPanel.close();
             _gameChatPanel = null;
         }
+    }
+
+    protected function gameChatWasClosed (event :CloseEvent) :void
+    {
+        _popGameChat.selected = false;
+        _gameChatPanel = null;
     }
 
     protected var _wctx :MsoyContext;
