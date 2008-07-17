@@ -382,9 +382,10 @@ public class WebUserServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        if (permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
-            permaName.length() > MemberName.MAXIMUM_PERMANAME_LENGTH ||
-            !permaName.matches(PERMANAME_REGEX)) {
+        if (permaName == null ||
+                permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
+                permaName.length() > MemberName.MAXIMUM_PERMANAME_LENGTH ||
+                !permaName.matches(PERMANAME_REGEX)) {
             throw new ServiceException("e.invalid_permaname");
         }
 
@@ -571,5 +572,5 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected FriendManager _friendMan;
 
     /** The regular expression defining valid permanames. */
-    protected static final String PERMANAME_REGEX = "^[A-Za-z][_A-Za-z0-9]*$";
+    protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
 }
