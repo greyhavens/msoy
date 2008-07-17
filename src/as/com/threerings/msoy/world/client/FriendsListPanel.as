@@ -146,6 +146,7 @@ public class FriendsListPanel extends TitleWindow
         _friendsList.itemRenderer = new ClassFactory(FriendRenderer);
         _friendsList.dataProvider = _friends;
         _friendsList.selectable = false;
+        _friendsList.variableRowHeight = true;
         addChild(_friendsList);
 
         // set up the sort for the collection
