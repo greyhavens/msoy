@@ -107,18 +107,30 @@ public class NotificationDirector extends BasicDirector
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            // display the message if the status changed
+            var memberId :int = entry.name.getMemberId();
+
+            // display a message if they just signed on
             if (entry.online != oldEntry.online) {
                 // show friends logging on in the notification area
                 if (entry.online) {
                     // if they weren't listed in the set, report them as newly coming online
                     if (!_membersLoggingOff.remove(entry)) {
-                        var memberId :int = entry.name.getMemberId();
                         addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
                     }
+
                 } else {
                     _membersLoggingOff.add(entry);
                 }
+            }
+
+            // they may have changed something else we'd like to know about.
+            if (MemberName.BY_DISPLAY_NAME(entry.name, oldEntry.name) != 0) {
+                addNotification(Msgs.NOTIFY.get(
+                    "m.friend_name_changed", entry.name, memberId, oldEntry.name));
+                                        
+            } else if (entry.status != oldEntry.status) {
+                addNotification(Msgs.NOTIFY.get(
+                    "m.friend_status_changed", entry.name, memberId, entry.status));
             }
         }
     }
