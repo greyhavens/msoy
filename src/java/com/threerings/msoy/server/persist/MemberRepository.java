@@ -159,6 +159,24 @@ public class MemberRepository extends DepotRepository
                 }
             }
         });
+        
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration(19) {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tName = liaison.tableSQL("MemberRecord");
+                String cName = liaison.columnSQL("permaName");
+
+                Statement stmt = conn.createStatement();
+                try {
+                    int rows = stmt.executeUpdate(
+                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
+                    log.info("Lowercased " + rows + " permaName rows in MemberRecord");
+                    return rows;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+        
         // END TEMP
 
         // TEMP added 2008.2.21
@@ -468,9 +486,8 @@ public class MemberRepository extends DepotRepository
     public void configurePermaName (int memberId, String permaName)
         throws PersistenceException
     {
-        Name name = new Name(permaName);
-        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName, 
-            MemberRecord.NORMALIZED_PERMA_NAME, name.getNormal());
+        PermaName name = new PermaName(permaName);
+        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, name.getNormal());
     }
 
     /**

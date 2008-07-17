@@ -227,7 +227,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 17;
+    public static final int SCHEMA_VERSION = 19;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -243,11 +243,6 @@ public class MemberRecord extends PersistentRecord
     /** This member's permanent name. Must be URL-safe; used to logon to wiki and forums. */
     @Column(nullable=true, unique=true)
     public String permaName;
-
-    /** This member's permanent name normalized, so that we don't end up with multiple names with
-     * different capitalization. */
-    @Column(nullable=true, unique=true)
-    public String normalizedPermaName;	
 
     /** The quantity of flow possessed by this member. */
     public int flow;
