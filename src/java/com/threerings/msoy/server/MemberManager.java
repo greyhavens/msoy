@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
@@ -17,6 +18,7 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.annotation.EventThread;
@@ -566,9 +568,7 @@ public class MemberManager
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        final String commitStatus = status.length() > Profile.MAX_STATUS_LENGTH ? 
-            status.substring(0, Profile.MAX_STATUS_LENGTH) : status;
-
+        final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
         String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
