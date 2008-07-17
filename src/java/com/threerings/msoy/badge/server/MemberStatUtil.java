@@ -4,6 +4,7 @@
 package com.threerings.msoy.badge.server;
 
 import com.samskivert.io.PersistenceException;
+import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.stats.data.IntStat;
 import com.threerings.stats.data.Stat;
 import com.threerings.msoy.server.MsoyServer;
@@ -13,6 +14,7 @@ import com.threerings.msoy.badge.Log;
 /**
  * Facilitates stat updating for stats that don't require the affected member to be online.
  */
+@BlockingThread
 public class MemberStatUtil
 {
     /**
