@@ -14,8 +14,7 @@ public class MsoyBureauClient extends WhirledBureauClient
 {
     /** Launch a msoy bureau client from the command line. */
     public static function main (
-        args :Array, 
-        userCodeLoader :UserCodeLoader) :void
+        args :Array, userCodeLoader :UserCodeLoader, cleanup :Function) :void
     {
         var bureauId :String = args[0];
         var token :String = args[1];
@@ -24,7 +23,7 @@ public class MsoyBureauClient extends WhirledBureauClient
 
         // create the client and log on
         var client :MsoyBureauClient = new MsoyBureauClient(
-            token, bureauId, userCodeLoader);
+            token, bureauId, userCodeLoader, cleanup);
         client.setVersion(DeploymentConfig.version);
         client.setServer(server, [port]);
         client.logon();
@@ -32,11 +31,9 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     /** Creates a new client. */
     public function MsoyBureauClient (
-        token :String, 
-        bureauId :String,
-        userCodeLoader :UserCodeLoader)
+        token :String, bureauId :String, userCodeLoader :UserCodeLoader, cleanup :Function)
     {
-        super(token, bureauId, userCodeLoader);
+        super(token, bureauId, userCodeLoader, cleanup);
     }
 
     /** @inheritDoc */
