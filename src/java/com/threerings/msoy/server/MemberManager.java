@@ -566,8 +566,8 @@ public class MemberManager
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        final String commitStatus = 
-            status.substring(0, Math.min(status.length(), Profile.MAX_STATUS_LENGTH));
+        final String commitStatus = status.length() > Profile.MAX_STATUS_LENGTH ? 
+            status.substring(0, Profile.MAX_STATUS_LENGTH) : status;
 
         String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
