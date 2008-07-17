@@ -5,6 +5,7 @@ package com.threerings.msoy.badge.server;
 
 import com.samskivert.io.PersistenceException;
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.stats.data.IntSetStat;
 import com.threerings.stats.data.IntStat;
 import com.threerings.stats.data.Stat;
 import com.threerings.msoy.server.MsoyServer;
@@ -20,17 +21,32 @@ public class MemberStatUtil
     /**
      * Increments an integer statistic for the specified player.
      *
-     * @exception ClassCastException thrown if the registered type of the specified stat is not an
+     * @exception ClassCastException thrown if the registered type of the specified stat is not a
      * {@link IntStat}.
      */
     public static void incrementStat (int playerId, Stat.Type type, final int delta)
         throws PersistenceException
     {
-        updateStat(playerId, type, new MemberStatUtil.StatUpdater() {
-            public boolean update(int playerId, Stat.Type type) throws PersistenceException {
-                IntStat stat = (IntStat) getStat(playerId, type);
-                stat.increment(delta);
-                return MsoyServer.statRepo.updateStatIfCurrent(playerId, stat);
+        updateStat(playerId, type, new StatUpdater() {
+            public boolean update (Stat stat) {
+                ((IntStat)stat).increment(delta);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Adds an integer to an IntSetStat for the specified player.
+     *
+     * @exception ClassCastException thrown if the registered type of the specified stat is not a
+     * {@link IntSetStat}.
+     */
+    public static void addToSetStat (int playerId, Stat.Type type, final int value)
+        throws PersistenceException
+    {
+        updateStat(playerId, type, new StatUpdater() {
+            public boolean update (Stat stat) {
+                return ((IntSetStat)stat).add(value);
             }
         });
     }
@@ -49,23 +65,32 @@ public class MemberStatUtil
             return true;
         }
 
-        boolean success = false;
+        boolean updateSuccessful = true;
+        boolean needsUpdate = false;
         for (int ii = 0; ii < MAX_TRIES; ii++) {
-            if (updater.update(playerId, type)) {
-                success = true;
+            Stat stat = getStat(playerId, type);
+            needsUpdate = updater.update(stat);
+            // if the stat was updated, try to commit it to the repo. otherwise, we're done.
+            if (needsUpdate) {
+                updateSuccessful = MsoyServer.statRepo.updateStatIfCurrent(playerId, stat);
+            }
+
+            if (!needsUpdate || updateSuccessful) {
                 break;
             }
         }
 
-        if (success) {
-            // TODO: post a MemberNotification so that the member's stats can be reloaded
-            // in memory if they're online
-        } else {
-            Log.log.warning("Failed to update player stat after " + MAX_TRIES + " attempts. " +
-                "(playerId: " + playerId + ", statType: " + type.name() + ")");
+        if (needsUpdate) {
+            if (updateSuccessful) {
+                // TODO: post a MemberNotification so that the member's stats can be reloaded
+                // in memory if they're online
+            } else {
+                Log.log.warning("Failed to update player stat after " + MAX_TRIES + " attempts. " +
+                    "[playerId= " + playerId + ", statType=" + type.name() + "]");
+            }
         }
 
-        return success;
+        return (!needsUpdate || updateSuccessful);
     }
 
     protected static Stat getStat (final int playerId, final Stat.Type type)
@@ -77,7 +102,11 @@ public class MemberStatUtil
 
     protected interface StatUpdater
     {
-        boolean update (int playerId, Stat.Type type) throws PersistenceException;
+        /**
+         * Updates the stat. Returns true if the stat was actually updated and needs to be
+         * updated in the repository, false otherwise.
+         */
+        boolean update (Stat stat);
     };
 
     protected static final int MAX_TRIES = 5;
