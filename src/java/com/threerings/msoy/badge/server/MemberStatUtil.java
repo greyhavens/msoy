@@ -38,6 +38,8 @@ public class MemberStatUtil
     /**
      * Attempts to apply the given stat modification. If the stat modification fails MAX_TRIES
      * times, a warning will be logged; otherwise, a MemberNodeAction will be posted.
+     *
+     * @return true if the stat was successfully updated, false otherwise.
      */
     protected static boolean updateStat (int playerId, Stat.Type type, StatUpdater updater)
         throws PersistenceException

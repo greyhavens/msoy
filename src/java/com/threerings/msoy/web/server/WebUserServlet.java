@@ -28,8 +28,10 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.badge.server.MemberStatUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
@@ -217,6 +219,14 @@ public class WebUserServlet extends MsoyServiceServlet
                             finvite.inviterId, displayName, mrec.memberId, finvite.inviteeEmail);
                     }
                 });
+
+                // increment the inviter's INVITES_ACCEPTED stat
+                try {
+                    MemberStatUtil.incrementStat(inviter.memberId, StatType.INVITES_ACCEPTED, 1);
+                } catch (PersistenceException pe) {
+                    log.warning("Failed to increment INVITES_ACCEPTED for created account " +
+                        "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", pe);
+                }
             }
         }
 
