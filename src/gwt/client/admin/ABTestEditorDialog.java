@@ -157,7 +157,7 @@ public class ABTestEditorDialog extends BorderedDialog
         });
         buttons.add(submit);
 
-        Button cancel = new Button(CShell.cmsgs.edit());
+        Button cancel = new Button(CShell.cmsgs.cancel());
         cancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 ABTestEditorDialog.this.hide();
