@@ -57,7 +57,9 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
 
+import com.threerings.msoy.badge.server.MemberStatUtil;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
@@ -159,7 +161,7 @@ public class MemberRepository extends DepotRepository
                 }
             }
         });
-        
+
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(19) {
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 String tName = liaison.tableSQL("MemberRecord");
@@ -193,10 +195,10 @@ public class MemberRepository extends DepotRepository
                 }
             }
         });
-        
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(20, 
+
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(20,
             "normalizedPermaname"));
-        
+
         // END TEMP
 
         // TEMP added 2008.2.21
@@ -365,7 +367,7 @@ public class MemberRepository extends DepotRepository
         for (MemberRecord mrec : mrecs) {
             ids.add(mrec.memberId);
         }
-        
+
         return ids;
     }
 
@@ -892,9 +894,9 @@ public class MemberRepository extends DepotRepository
     {
         return load(ReferralRecord.class, memberId);
     }
-    
+
     /**
-     * Adds or updates the referral record for a member with the given id. 
+     * Adds or updates the referral record for a member with the given id.
      */
     public ReferralRecord setReferral (int memberId, ReferralInfo ref)
         throws PersistenceException
@@ -902,13 +904,13 @@ public class MemberRepository extends DepotRepository
         ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
         if (loadReferral(memberId) == null) {
             insert(newrec);
-        } else { 
+        } else {
             update(newrec);
         }
-        
+
         return newrec;
     }
-    
+
     /**
      * Sets the reported level for the given member
      */
@@ -1049,6 +1051,10 @@ public class MemberRepository extends DepotRepository
             rec.inviteeId = otherId;
             insert(rec);
             _eventLog.friendAdded(memberId, otherId);
+
+            // update the FRIENDS_MADE statistic for both players
+            MemberStatUtil.incrementStat(memberId, StatType.FRIENDS_MADE, 1);
+            MemberStatUtil.incrementStat(otherId, StatType.FRIENDS_MADE, 1);
         }
 
         return other.getName();

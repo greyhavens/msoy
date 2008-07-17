@@ -185,7 +185,6 @@ public class FriendManager
                 public void handleResult () {
                     memobj.addToFriends(new FriendEntry(friend, online, _photo, _status));
                     MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
-                    memobj.getStats().incrementStat(StatType.FRIENDS_MADE, 1);
                 }
                 protected MediaDesc _photo = null;
                 protected String _status = "";
