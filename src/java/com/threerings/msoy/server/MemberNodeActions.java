@@ -43,6 +43,22 @@ public class MemberNodeActions
     }
 
     /**
+     * Updates the member's friends that are online with a new FriendEntry pulled out of the data
+     * on the member object.
+     */
+    public static void updateFriendEntries (MemberObject memobj)
+    {
+        int[] friends = new int[memobj.friends.size()];
+        int ii = 0;
+        for (FriendEntry entry : memobj.friends) {
+            friends[ii++] = entry.name.getMemberId();
+        }
+        MsoyServer.peerMan.invokeNodeAction(new FriendEntryUpdate(
+            friends, memobj.getMemberId(), memobj.memberName.toString(), 
+            memobj.memberName.getPhoto(), memobj.headline));
+    }
+
+    /**
      * Dispatches a notification that a member's flow count has changed to whichever server they
      * are logged into.
      */
@@ -141,13 +157,7 @@ public class MemberNodeActions
             // that contain at least one friend of this member, and do all the updating on that
             // server.  Note that we don't even take this potentially expensive step if this 
             // member isn't logged in.
-            int[] friends = new int[memobj.friends.size()];
-            int ii = 0;
-            for (FriendEntry entry : memobj.friends) {
-                friends[ii++] = entry.name.getMemberId();
-            }
-            MsoyServer.peerMan.invokeNodeAction(new FriendEntryUpdate(
-                friends, _memberId, _displayName, _photo, _status));
+            updateFriendEntries(memobj);
         }
 
         protected String _displayName;

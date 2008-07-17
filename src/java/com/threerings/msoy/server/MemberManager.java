@@ -570,6 +570,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 member.setHeadline(status);
+                MemberNodeActions.updateFriendEntries(member);
             }
         });
     }

@@ -155,41 +155,39 @@ public class FriendsListPanel extends TitleWindow
         _friends.sort = sort;
         _friends.refresh();
 
-        if (DeploymentConfig.devDeployment) {
-            // add a little separator
-            var separator :VBox = new VBox();
-            separator.percentWidth = 100;
-            separator.height = 1;
-            separator.styleName = "friendsListSeparator";
-            addChild(separator);
+        // add a little separator
+        var separator :VBox = new VBox();
+        separator.percentWidth = 100;
+        separator.height = 1;
+        separator.styleName = "friendsListSeparator";
+        addChild(separator);
 
-            // add the little box at the bottom
-            var box :VBox = new VBox();
-            box.percentWidth = 100;
-            box.styleName = "friendsListEditorBox";
-            addChild(box);
+        // add the little box at the bottom
+        var box :VBox = new VBox();
+        box.percentWidth = 100;
+        box.styleName = "friendsListEditorBox";
+        addChild(box);
 
-            // Create a display name label and a status editor
-            var me :MemberObject = _ctx.getMemberObject();
-            _nameLabel = new Label();
-            _nameLabel.styleName = "friendLabel";
-            _nameLabel.setStyle("fontWeight", "bold");
-            _nameLabel.text = me.memberName.toString();
-            box.addChild(_nameLabel);
-            _statusEdit = new TextInput();
-            _statusEdit.editable = true;
-            _statusEdit.text = me.headline == "" || me.headline == null ? 
-                Msgs.GENERAL.get("l.emptyStatus") : me.headline;
-            _statusEdit.styleName = "statusEdit";
-            _statusEdit.percentWidth = 100;
-            _statusEdit.height = 17;
-            _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
-            _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
-            _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
-            _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
-            _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
-            box.addChild(_statusEdit);
-        }
+        // Create a display name label and a status editor
+        var me :MemberObject = _ctx.getMemberObject();
+        _nameLabel = new Label();
+        _nameLabel.styleName = "friendLabel";
+        _nameLabel.setStyle("fontWeight", "bold");
+        _nameLabel.text = me.memberName.toString();
+        box.addChild(_nameLabel);
+        _statusEdit = new TextInput();
+        _statusEdit.editable = true;
+        _statusEdit.text = me.headline == "" || me.headline == null ? 
+            Msgs.GENERAL.get("l.emptyStatus") : me.headline;
+        _statusEdit.styleName = "statusEdit";
+        _statusEdit.percentWidth = 100;
+        _statusEdit.height = 17;
+        _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
+        _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
+        _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
+        _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
+        _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
+        box.addChild(_statusEdit);
     
         // initialize with currently online friends
         init(me);
