@@ -261,7 +261,6 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue("Unexpected file data: " + contents, contents.startsWith("package {"));
     }
 
-
     /**
      * Always throws an IOException when getModifiedData() is called.
      * Used to test for commit operation re-entrancy.

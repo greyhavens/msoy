@@ -183,7 +183,6 @@ public class ProjectSVNStorage
         return storage;
     }
 
-
     /**
      * Construct a new storage instance for the given project record.
      */
