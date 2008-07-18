@@ -195,13 +195,13 @@ public abstract class MsoyBaseServer extends WhirledServer
             // hook up thane as a local command
             log.info("Running thane bureaus locally");
             _bureauReg.setCommandGenerator(
-                BureauTypes.THANE, new ThaneCommandGenerator());
+                BureauTypes.THANE_BUREAU_TYPE, new ThaneCommandGenerator());
 
         } else {
             // hook up bureau launching system for thane
             log.info("Running thane bureaus remotely");
             _bureauReg.setLauncher(
-                BureauTypes.THANE, new RemoteBureauLauncher());
+                BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher());
             _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
             _invmgr.registerDispatcher(new BureauLauncherDispatcher(this),
                 BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
@@ -272,9 +272,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void finishInit (Injector injector)
         throws Exception
     {
-        // prepare for bureau connections
-        _bureauReg.addClientFactory(_clmgr);
-
         // prepare for bureau launcher connections
         _clmgr.setClientFactory(
             new BureauLauncherClientFactory(_clmgr.getClientFactory()));

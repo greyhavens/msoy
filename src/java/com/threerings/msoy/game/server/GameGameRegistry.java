@@ -16,6 +16,8 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
@@ -26,6 +28,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
@@ -80,6 +83,8 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+
+import com.whirled.bureau.data.BureauTypes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -614,6 +619,9 @@ public class GameGameRegistry
         _lobbies.remove(game.gameId);
         _loadingLobbies.remove(game.gameId); // just in case
 
+        // kill the bureau session, if any
+        killBureauSession(game.gameId);
+
         // let our world server know we're audi
         _worldClient.stoppedHostingGame(game.gameId);
 
@@ -700,6 +708,15 @@ public class GameGameRegistry
         });
     }
 
+    protected void killBureauSession (int gameId)
+    {
+        String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
+        PresentsClient bureau = _bureauReg.lookupClient(bureauId);
+        if (bureau != null) {
+            bureau.endSession();
+        }
+    }
+
     protected final class AVRGameJoinListener
         implements InvocationService.ResultListener
     {
@@ -750,6 +767,7 @@ public class GameGameRegistry
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerLocator _locator;
+    @Inject protected BureauRegistry _bureauReg;
 
     // various and sundry repositories for loading persistent data
     @Inject protected GameRepository _gameRepo;
