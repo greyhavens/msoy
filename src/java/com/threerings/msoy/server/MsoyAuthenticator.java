@@ -83,6 +83,13 @@ public class MsoyAuthenticator extends Authenticator
             throws ServiceException, PersistenceException;
 
         /**
+         * Uncreates an account that was created but needs to be deleted because of a later failure
+         * in the account creation process.
+         */
+        public void uncreateAccount (String accountName)
+            throws PersistenceException;
+
+        /**
          * Notifies the authentication domain that the supplied information was modified for the
          * specified account.
          *
@@ -195,21 +202,37 @@ public class MsoyAuthenticator extends Authenticator
             throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
 
+        // make sure we're dealing with a lower cased email
+        email = email.toLowerCase();
+
+        Domain domain = null;
+        Account account = null;
         try {
-            // make sure we're dealing with a lower cased email
-            email = email.toLowerCase();
             // create and validate the new account
-            Domain domain = getDomain(email);
-            Account account = domain.createAccount(email, password);
+            domain = getDomain(email);
+            account = domain.createAccount(email, password);
             account.firstLogon = true;
             domain.validateAccount(account);
 
             // create a new member record for the account
-            return createMember(account, displayName, invite, referral);
+            MemberRecord mrec = createMember(account, displayName, invite, referral);
+            // clear out our account reference to let the finally block know that all went well and
+            // we need not roll back the domain account creation
+            account = null;
+            return mrec;
 
         } catch (PersistenceException pe) {
-            log.warning("Error creating new account [for=" + email + "].", pe);
+            log.warning("Error creating member record", "for", email, pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+
+        } finally {
+            if (account != null) {
+                try {
+                    domain.uncreateAccount(email);
+                } catch (Exception e) {
+                    log.warning("Failed to rollback account creation", "email", email, e);
+                }
+            }
         }
     }
 

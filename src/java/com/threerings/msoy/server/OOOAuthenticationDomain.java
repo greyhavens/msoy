@@ -65,6 +65,16 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
+    public void uncreateAccount (String accountName)
+        throws PersistenceException
+    {
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
+        if (user != null) {
+            _authrep.uncreateUser(user.userId);
+        }
+    }
+
+    // from interface MsoyAuthenticator.Domain
     public void updateAccount (String accountName, String newAccountName, String newPermaName,
                                String newPassword)
         throws ServiceException, PersistenceException
@@ -89,6 +99,11 @@ public class OOOAuthenticationDomain
 
         // update their bits and store the record back to the database
         if (newAccountName != null) {
+            // if they have not yet set their permaname, change their account name to their new
+            // email address to keep things in sync
+            if (newPermaName == null && user.username.equals(user.email)) {
+                _authrep.changeUsername(user.userId, newAccountName);
+            }
             _authrep.changeEmail(user.userId, newAccountName);
         }
         if (newPassword != null) {
