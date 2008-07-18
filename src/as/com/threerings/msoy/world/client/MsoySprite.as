@@ -42,6 +42,7 @@ import flash.system.SecurityDomain;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.ObjectMarshaller;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
@@ -781,44 +782,38 @@ public class MsoySprite extends DataPackMediaContainer
 
     protected function getSpecialProperty (name :String) :Object
     {
-        var specials :Object = {
-            hotspot: function () :Array {
-                var hotspot :Point = getMediaHotSpot();
-                return [hotspot.x, hotspot.y];
-            },
-            location_logical: function () :Array {
-                var loc :MsoyLocation = getLocation();
-                return [loc.x, loc.y, loc.z];
-            },
-            location_pixel: function () :Array {
-                var loc :MsoyLocation = getLocation();
-                var bounds :Array = getRoomBounds();
-                bounds[0] *= loc.x;
-                bounds[1] *= loc.y;
-                bounds[2] *= loc.z;
-                return bounds;
-            },
-            dimensions: function () :Array {
-                return [ getContentWidth(), getContentHeight() ];
-            },
-            orientation: function () :Number {
-                return getLocation().orient;
-            },
-            type: function () :String {
-                for (var type :String in RoomController.ENTITY_TYPES) {
-                    if (RoomController.ENTITY_TYPES[type].indexOf(_ident.type) != -1) {
-                        return type;
-                    }
+        switch (name) {
+        case "hotspot":
+            var hotspot :Point = getMediaHotSpot();
+            return [ hotspot.x, hotspot.y ];
+
+        case "location_logical":
+            var loc :MsoyLocation = getLocation();
+            return [ loc.x, loc.y, loc.z ];
+
+        case "location_pixel":
+            var ploc :MsoyLocation = getLocation();
+            var bounds :Array = getRoomBounds();
+            bounds[0] *= ploc.x;
+            bounds[1] *= ploc.y;
+            bounds[2] *= ploc.z;
+            return bounds;
+
+        case "dimensions":
+            return [ getContentWidth(), getContentHeight() ];
+
+        case "orientation":
+            return getLocation().orient;
+
+        case "type":
+            for (var type :String in RoomController.ENTITY_TYPES) {
+                if (RoomController.ENTITY_TYPES[type].indexOf(_ident.type) != -1) {
+                    return type;
                 }
-
-                // This item was an unknown type
-                return null;
             }
-        };
+            return null;
 
-        if (name in specials) {
-            return (specials[name] as Function)();
-        } else {
+        default:
             return null;
         }
     }
@@ -828,14 +823,12 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function lookupEntityProperty (key :String) :Object
     {
-        var match :Array = key.match(/^std:(.*)/);
-
-        // Is this a special "std:*" property?
-        if (match != null) {
-            return getSpecialProperty(match[1]);
-        } else {
-            return callUserCode("lookupEntityProperty_v1", key);
+        // see if it's one of our special standard properties
+        if (key != null && StringUtil.startsWith(key, "std:")) {
+            return getSpecialProperty(key.substr(4));
         }
+
+        return callUserCode("lookupEntityProperty_v1", key);
     }
 
     /**

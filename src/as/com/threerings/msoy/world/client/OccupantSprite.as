@@ -392,15 +392,11 @@ public class OccupantSprite extends MsoySprite
 
     override protected function getSpecialProperty (name :String) :Object
     {
-        var specials :Object = {
-            name: function () :String {
-                return _occInfo.username.toString();
-            }
-        };
+        switch (name) {
+        case "name":
+            return _occInfo.username.toString();
 
-        if (name in specials) {
-            return (specials[name] as Function)();
-        } else {
+        default:
             return super.getSpecialProperty(name);
         }
     }
