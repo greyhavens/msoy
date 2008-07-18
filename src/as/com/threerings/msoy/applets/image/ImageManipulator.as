@@ -16,6 +16,8 @@ import flash.events.TextEvent;
 
 import flash.geom.Point;
 
+import flash.system.Capabilities;
+
 import flash.ui.Keyboard;
 
 import flash.utils.ByteArray;
@@ -287,7 +289,7 @@ public class ImageManipulator extends HBox
         tip.selectable = false;
         tip.width = 95;
         tip.setStyle("fontFamily", "_sans");
-        tip.setStyle("fontSize", 9);
+        tip.setStyle("fontSize", (Capabilities.os.indexOf("Linux") == -1) ? 9 : 7);
         tip.text = _ctx.IMAGE.get(trans);
         return tip;
     }
