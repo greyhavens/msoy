@@ -141,9 +141,9 @@ public class ImageManipulator extends HBox
         // TODO: add a scrollbox?
 
         createPositionControls(bar, sizeForced);
-        bar.addChild(FlexUtil.createSpacer(0, 10));
+        bar.addChild(FlexUtil.createSpacer(0, 0));
         createPaintControls(bar);
-        bar.addChild(FlexUtil.createSpacer(0, 10));
+        bar.addChild(FlexUtil.createSpacer(0, 0));
         createUndoControls(bar);
 
         var buts :HBox = new HBox();
@@ -289,7 +289,7 @@ public class ImageManipulator extends HBox
         tip.selectable = false;
         tip.width = 95;
         tip.setStyle("fontFamily", "_sans");
-        tip.setStyle("fontSize", (Capabilities.os.indexOf("Linux") == -1) ? 9 : 7);
+        tip.setStyle("fontSize", (Capabilities.os.indexOf("Linux") == -1) ? 9 : 8);
         tip.text = _ctx.IMAGE.get(trans);
         return tip;
     }
