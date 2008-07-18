@@ -195,9 +195,9 @@ public class MemberRepository extends DepotRepository
                 }
             }
         });
-
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(20,
-            "normalizedPermaname"));
+        
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(21, 
+            "normalizedPermaName"));
 
         // END TEMP
 
