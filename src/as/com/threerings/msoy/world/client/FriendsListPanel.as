@@ -283,6 +283,10 @@ public class FriendsListPanel extends TitleWindow
     {
         if (_statusEdit.text == Msgs.GENERAL.get("l.emptyStatus")) {
             _statusEdit.text = Msgs.GENERAL.get("l.statusPrompt");
+        } else {
+            // highlight everything in there so you can just type in your new status
+            var selectionEnd :int = _statusEdit.text == null ? 0 : _statusEdit.text.length;
+            _statusEdit.setSelection(0, selectionEnd);
         }
     }
 
