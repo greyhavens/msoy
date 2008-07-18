@@ -67,8 +67,10 @@ public class MemberStatUtil
 
         boolean updateSuccessful = true;
         boolean needsUpdate = false;
-        for (int ii = 0; ii < MAX_TRIES; ii++) {
-            Stat stat = getStat(playerId, type);
+        int ii = 0;
+        Stat stat = null;
+        for (ii = 0; ii < MAX_TRIES; ii++) {
+            stat = getStat(playerId, type);
             needsUpdate = updater.update(stat);
             // if the stat was updated, try to commit it to the repo. otherwise, we're done.
             if (needsUpdate) {
@@ -84,9 +86,11 @@ public class MemberStatUtil
             if (updateSuccessful) {
                 // TODO: post a MemberNotification so that the member's stats can be reloaded
                 // in memory if they're online
+                Log.log.info("Successfully updated player stat after " + (ii + 1) + " attempts. " +
+                    "[playerId= " + playerId + ", stat=" + stat + "]");
             } else {
                 Log.log.warning("Failed to update player stat after " + MAX_TRIES + " attempts. " +
-                    "[playerId= " + playerId + ", statType=" + type.name() + "]");
+                    "[playerId= " + playerId + ", stat=" + stat + "]");
             }
         }
 

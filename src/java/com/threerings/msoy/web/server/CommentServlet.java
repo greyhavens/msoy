@@ -14,6 +14,8 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.badge.server.MemberStatUtil;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 
@@ -125,12 +127,15 @@ public class CommentServlet extends MsoyServiceServlet
                     entityName = scene.name;
                 }
 
+                // update the member's WHIRLED_COMMENTS stat
+                MemberStatUtil.incrementStat(mrec.memberId, StatType.WHIRLED_COMMENTS, 1);
+
             } else if (etype == Comment.TYPE_PROFILE_WALL) {
                 ownerId = eid;
 
             } else {
                 try {
-                    ItemRepository<ItemRecord, ?, ?, ?> repo = 
+                    ItemRepository<ItemRecord, ?, ?, ?> repo =
                         MsoyServer.itemMan.getRepository((byte)etype);
                     CatalogRecord listing = repo.loadListing(eid, true);
                     if (listing != null) {
@@ -140,15 +145,15 @@ public class CommentServlet extends MsoyServiceServlet
                             entityName = item.name;
                         }
                     }
-    
+
                 } catch (ServiceException se) {
-                    // this is merely a failure to send the notification, don't let this 
+                    // this is merely a failure to send the notification, don't let this
                     // exception make it back to the commenter
-                    log.warning(    
+                    log.warning(
                         "unable to locate repository for apparent item type [" + etype + "]");
-    
+
                 } catch (PersistenceException pe) {
-                    log.warning("unable to load the item commented on [" + etype + ", " + eid + 
+                    log.warning("unable to load the item commented on [" + etype + ", " + eid +
                         ", " + pe + "]");
                 }
             }
