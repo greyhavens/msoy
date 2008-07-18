@@ -447,7 +447,7 @@ public class MsoyEvents
 
     /**
      * Generic event for an action such as a button click or hitting an a/b test page.  Used
-     * for short term testing.  abTestName and abTestGroup will be supplied if this is part of
+     * for short term testing. testName and testGroup will be supplied if this is part of
      * an a/b test.
      */
     @Event(name="TestActionReached")
@@ -456,16 +456,16 @@ public class MsoyEvents
         @Index @Field final public Date timestamp; 
         @Field final public String tracker;
         @Field final public String actionName;
-        @Field final public String testName;
-        @Field final public int abTestGroup;
+        @Index @Field final public String testName;
+        @Field final public int testGroup;
 
-        public TestActionReached (String tracker, String actionName, String testName, int abTestGroup)
+        public TestActionReached (String tracker, String actionName, String testName, int testGroup)
         {
             this.timestamp = new Date();
             this.tracker = tracker;
             this.actionName = actionName;
             this.testName = testName;
-            this.abTestGroup = abTestGroup;
+            this.testGroup = testGroup;
         }
     }
     
