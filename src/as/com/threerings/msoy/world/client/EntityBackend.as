@@ -65,7 +65,6 @@ public class EntityBackend extends ControlBackend
         o["selfDestruct_v1"] = selfDestruct_v1;
 
         o["getEntityIds_v1"] = getEntityIds_v1;
-        o["getEntityType_v1"] = getEntityType_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
         o["getMyEntityId_v1"] = getMyEntityId_v1;
 
@@ -92,11 +91,6 @@ public class EntityBackend extends ControlBackend
     protected function getEntityIds_v1 (type :String) :Array
     {
         return (_sprite == null) ? null : _sprite.getEntityIds(type);
-    }
-
-    protected function getEntityType_v1 (entityId :String) :String
-    {
-        return (_sprite == null) ? null : _sprite.getEntityType(entityId);
     }
 
     protected function getEntityProperty_v1 (entityId :String, key :String) :Object

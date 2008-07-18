@@ -803,6 +803,16 @@ public class MsoySprite extends DataPackMediaContainer
             },
             orientation: function () :Number {
                 return getLocation().orient;
+            },
+            type: function () :String {
+                for (var type :String in RoomController.ENTITY_TYPES) {
+                    if (RoomController.ENTITY_TYPES[type].indexOf(_ident.type) != -1) {
+                        return type;
+                    }
+                }
+
+                // This item was an unknown type
+                return null;
             }
         };
 
@@ -878,14 +888,6 @@ public class MsoySprite extends DataPackMediaContainer
         var ctrl :RoomController = getController();
 
         return (ctrl == null) ? null : ctrl.getEntityIds(type);
-    }
-
-    public function getEntityType (entityId :String) :String
-    {
-        var ctrl :RoomController = getController();
-
-        return (ctrl == null) ? null :
-            ctrl.getEntityType(ItemIdent.fromString(entityId));
     }
 
     public function getEntityProperty (entityId :String, key :String) :Object
