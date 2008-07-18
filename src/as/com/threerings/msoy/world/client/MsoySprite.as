@@ -806,12 +806,7 @@ public class MsoySprite extends DataPackMediaContainer
             return getLocation().orient;
 
         case "type":
-            for (var type :String in RoomController.ENTITY_TYPES) {
-                if (RoomController.ENTITY_TYPES[type].indexOf(_ident.type) != -1) {
-                    return type;
-                }
-            }
-            return null;
+            return RoomController.ENTITY_TYPES[_ident.type]; // will return null if unknown type
 
         default:
             return null;

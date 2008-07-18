@@ -13,6 +13,7 @@ import flash.geom.Rectangle;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import mx.controls.Button;
 import mx.core.Application;
@@ -133,11 +134,15 @@ public class RoomController extends SceneController
     public static const MAX_ENCODED_MESSAGE_LENGTH :int = 1024;
 
     /** The entity type groupings for querying for property owners. */
-    public static const ENTITY_TYPES :Object = {
-        furni: [ ItemTypes.FURNITURE, ItemTypes.TOY, ItemTypes.DECOR ],
-        avatar: [ ItemTypes.AVATAR, ItemTypes.OCCUPANT ],
-        pet: [ ItemTypes.PET ]
-    };
+    public static const ENTITY_TYPES :Dictionary = new Dictionary();
+        // static initialization...
+        ENTITY_TYPES[ItemTypes.FURNITURE] = "furni";
+        ENTITY_TYPES[ItemTypes.TOY] = "furni";
+        ENTITY_TYPES[ItemTypes.DECOR] = "furni";
+        ENTITY_TYPES[ItemTypes.AVATAR] = "avatar";
+        ENTITY_TYPES[ItemTypes.OCCUPANT] = "avatar";
+        ENTITY_TYPES[ItemTypes.PET] = "pet";
+        // end: static initialization
 
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
@@ -350,7 +355,7 @@ public class RoomController extends SceneController
             idents = idents.filter(
                 function (id :ItemIdent, ... etc) :Boolean {
                     // Is the entity a valid item of this type?
-                    return ENTITY_TYPES[type].indexOf(id.type) != -1;
+                    return (ENTITY_TYPES[id.type] == type);
                 });
         }
 
