@@ -51,6 +51,7 @@ public class ABTestEditorDialog extends BorderedDialog
         FlowPanel contents = MsoyUI.createFlowPanel("abTestEditorDialog");
         setContents(contents);
         
+        
         final TextBox name = new TextBox();
         contents.add(new FormElement(CAdmin.msgs.abTestNameLabel(), name));
         name.setMaxLength(ABTest.MAX_NAME_LENGTH);
@@ -76,11 +77,11 @@ public class ABTestEditorDialog extends BorderedDialog
         enabled.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (!_test.enabled && enabled.isChecked()) {
-                    if (_test.started != null) {
-                        MsoyUI.error(CAdmin.msgs.abTestEnabledWarning());
-                    }
                     _test.started = new Date();
                     _test.enabled = true;
+                    if (_test.started != null) {
+                        MsoyUI.info(CAdmin.msgs.abTestEnabledWarning());
+                    }
                 } else if (_test.enabled && !enabled.isChecked()) {
                     _test.ended = new Date();
                     _test.enabled = false;
@@ -95,12 +96,17 @@ public class ABTestEditorDialog extends BorderedDialog
         numGroups.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 try {
-                    _test.numGroups = Integer.parseInt(numGroups.getText().trim());
-                    if (_test.numGroups < 2) {
-                        MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
+                    if (_test.started != null) {
+                        numGroups.setText(_test.numGroups+"");
+                        MsoyUI.error(CAdmin.msgs.abTestNumGroupsDisabled());
+                    } else {
+                        _test.numGroups = Integer.parseInt(numGroups.getText().trim());
+                        if (_test.numGroups < 2) {
+                            MsoyUI.error(CAdmin.msgs.abTestNumGroupsNaN());
+                        }
                     }
                 } catch (NumberFormatException e) {
-                    MsoyUI.error(CAdmin.msgs.abTestNumGroupsError());
+                    MsoyUI.error(CAdmin.msgs.abTestNumGroupsNaN());
                 }
             }
         });
@@ -143,19 +149,12 @@ public class ABTestEditorDialog extends BorderedDialog
                 _test.creative = creative.getText().trim();
             }
         });
-                
-        FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
-        contents.add(buttons);
-        
-        String submitText;
-        submitText = _isNewTest ? CShell.cmsgs.create() : CShell.cmsgs.update();
-        Button submit = new Button(submitText);
-        submit.addClickListener(new ClickListener() {
+
+        Button submit = MsoyUI.createCrUpdateButton(_isNewTest, new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
             }
         });
-        buttons.add(submit);
 
         Button cancel = new Button(CShell.cmsgs.cancel());
         cancel.addClickListener(new ClickListener() {
@@ -163,9 +162,8 @@ public class ABTestEditorDialog extends BorderedDialog
                 ABTestEditorDialog.this.hide();
             }
         });
-        buttons.add(cancel);
+        contents.add(MsoyUI.createButtonPair(cancel, submit));
     }
-    
 
     /**
      * Called when the user clicks the "save" button to commit their edits or create a new item.

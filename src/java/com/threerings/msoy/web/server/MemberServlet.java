@@ -318,9 +318,9 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public int getABTestGroup (ReferralInfo info, String testName)
+    public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
     {
-        return _memLogic.getABTestGroup(testName, info);
+        return _memLogic.getABTestGroup(testName, info, logEvent);
     }
     
     // from MemberService
@@ -328,9 +328,10 @@ public class MemberServlet extends MsoyServiceServlet
     {
         int abTestGroup = -1;
         if (testName != null) {
-            abTestGroup = getABTestGroup(info, testName);
+            // grab the group without logging a tracking event about it
+            abTestGroup = _memLogic.getABTestGroup(testName, info, false);
         }
-        _eventLog.clientAction(info.tracker, actionName, abTestGroup);
+        _eventLog.testActionReached(info.tracker, actionName, testName, abTestGroup);
     }
 
     /**

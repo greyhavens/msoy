@@ -36,10 +36,11 @@ public class MemberLogic
      * @param affiliate String identifier for the visitor's affiliate (eg miniclip)
      * @param vector String identifier for the visitor's vector
      * @param creative String identifier for the visitor's creative
+     * @param logEvent If true, track that this visitor was added to this group
      * 
      * @return The a/b group the visitor has been assigned to, or < 0 for no group.
      */
-    public int getABTestGroup (String testName, ReferralInfo info)
+    public int getABTestGroup (String testName, ReferralInfo info, boolean logEvent)
     {
         ABTest test = null;
         try {
@@ -67,6 +68,11 @@ public class MemberLogic
         // generate the group number based on trackingID + testName
         final int seed = Math.abs(new String(info.tracker + testName).hashCode());
         final int group = (seed % test.numGroups) + 1;
+        
+        // optionally log an event to say the group was assigned
+        if (logEvent && group >= 0) {
+            _eventLog.testActionReached(info.tracker, "ABTestGroupAssigned", testName, group);
+        }
         
         return group;
     }
@@ -105,4 +111,7 @@ public class MemberLogic
 
     // dependencies
     @Inject protected ABTestRepository _testRepo;
+
+    /** Used to log interesting events for later grindage. */
+    @Inject protected MsoyEventLogger _eventLog;
 }

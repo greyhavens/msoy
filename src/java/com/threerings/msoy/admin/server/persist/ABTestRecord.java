@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.admin.server.persist;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.Key;
@@ -166,9 +166,9 @@ public class ABTestRecord extends PersistentRecord
         test.affiliate = affiliate;
         test.vector = vector;
         test.creative = creative;
+        test.started = (started != null) ? new Date(started.getTime()) : null;
+        test.ended = (ended != null) ? new Date(ended.getTime()) : null;
         test.enabled = enabled;
-        test.started = started;
-        test.ended = ended;
         return test;
     }
     

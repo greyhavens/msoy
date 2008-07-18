@@ -5,6 +5,8 @@ package client.admin;
 
 import java.util.List;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -66,22 +68,19 @@ public class ABTestListPanel extends FlowPanel
         // header row
         int col = 0;
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestName()));
-        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestDescription()));
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnabled()));
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestStarted()));
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnded()));
-        _contents.setWidget(0, col++, new Label(""));
         _contents.setWidget(0, col++, new Label(""));
         _contents.getRowFormatter().addStyleName(0, "Header");
 
         for (final ABTest test : tests) {
             int row = _contents.getRowCount();
             col = 0;
-            _contents.setWidget(row, col++, new Label(test.name));
-            _contents.setWidget(row, col++, new Label(test.description));
+            _contents.setWidget(row, col++, new Label(test.name));           
             _contents.setWidget(row, col++, new Label(String.valueOf(test.enabled)));
-            _contents.setWidget(row, col++, new Label(test.started != null ? test.started.toString() : ""));
-            _contents.setWidget(row, col++, new Label(test.ended != null ? test.ended.toString() : ""));
+            _contents.setWidget(row, col++, new Label(test.started != null ? dateFormat.format(test.started) : ""));
+            _contents.setWidget(row, col++, new Label(test.ended != null ? dateFormat.format(test.ended) : ""));
 
             Button editButton = new Button(CShell.cmsgs.edit());
             editButton.addClickListener(new ClickListener() {
@@ -89,13 +88,12 @@ public class ABTestListPanel extends FlowPanel
                     new ABTestEditorDialog(test, ABTestListPanel.this).show();
                 }
             });
-            _contents.setWidget(row, col++, editButton);
             
             Button testButton = new Button("Test");
             testButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     CAdmin.membersvc.getABTestGroup(
-                        TrackingCookie.get(), test.name, new MsoyCallback<Integer>() {
+                        TrackingCookie.get(), test.name, true, new MsoyCallback<Integer>() {
                             public void onSuccess (Integer group) {
                                 MsoyUI.info("You are in group #" + group);
                             }
@@ -108,9 +106,11 @@ public class ABTestListPanel extends FlowPanel
                     });
                 }
             });
-            _contents.setWidget(row, col++, testButton);
+            _contents.setWidget(row, col++, MsoyUI.createButtonPair(editButton, testButton));
+            
         }
     }
 
     protected FlexTable _contents;
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 }

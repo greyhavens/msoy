@@ -82,7 +82,8 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getABTestGroup}.
      */
-    public void getABTestGroup (ReferralInfo info, String testName, AsyncCallback<Integer> callback);
+    public void getABTestGroup (
+        ReferralInfo info, String testName, boolean logEvent, AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link MemberService#trackClientAction}.

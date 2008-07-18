@@ -446,22 +446,25 @@ public class MsoyEvents
     }
 
     /**
-     * Generic event for a client-side action such as a button click which may not otherwise 
-     * result in a call to the server.  Used primarily for A/B Testing.
+     * Generic event for an action such as a button click or hitting an a/b test page.  Used
+     * for short term testing.  abTestName and abTestGroup will be supplied if this is part of
+     * an a/b test.
      */
-    @Event(name="ClientAction")
-    public static class ClientAction implements MsoyEvent
+    @Event(name="TestActionReached")
+    public static class TestActionReached implements MsoyEvent
     {
         @Index @Field final public Date timestamp; 
         @Field final public String tracker;
         @Field final public String actionName;
+        @Field final public String testName;
         @Field final public int abTestGroup;
 
-        public ClientAction (String tracker, String actionName, int abTestGroup)
+        public TestActionReached (String tracker, String actionName, String testName, int abTestGroup)
         {
             this.timestamp = new Date();
             this.tracker = tracker;
             this.actionName = actionName;
+            this.testName = testName;
             this.abTestGroup = abTestGroup;
         }
     }

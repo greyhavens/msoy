@@ -269,11 +269,23 @@ public class MsoyUI
     }
 
     /**
+     * Creates a basic text button whose text changes depending on whether we are 
+     * creating or updating something.
+     */
+    public static Button createCrUpdateButton (boolean creating, ClickListener listener)
+    {
+        Button button = new Button(creating ? CShell.cmsgs.create() : CShell.cmsgs.update());
+        button.addClickListener(listener);
+        return button;
+    }
+
+    /**
      * Puts a pair buttons in a horizontal panel with a small gap betwixt them.
      */
     public static Widget createButtonPair (Button left, Button right)
     {
         HorizontalPanel panel = new HorizontalPanel();
+        panel.addStyleName("ButtonPair");
         panel.add(left);
         panel.add(WidgetUtil.makeShim(5, 5));
         panel.add(right);

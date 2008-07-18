@@ -102,7 +102,7 @@ public interface MemberService extends RemoteService
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
-    public int getABTestGroup (ReferralInfo info, String testName)
+    public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
         throws ServiceException;
     
     /**
