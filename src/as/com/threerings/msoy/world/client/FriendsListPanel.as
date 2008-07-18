@@ -284,7 +284,9 @@ public class FriendsListPanel extends TitleWindow
 
     protected function commitEdit (...ignored) :void
     {
-        _ctx.getTopPanel().getControlBar().giveChatFocus();
+        _statusEdit.setSelection(0, 0);
+        // delay losing focus by a frame so the selection has time to get set correctly.
+        callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
         var newStatus :String = _statusEdit.text;
         if (newStatus != _ctx.getMemberObject().headline) {
             var msvc :MemberService =
