@@ -168,11 +168,17 @@ public class LobbyPanel extends FloatingPanel
                 runningHeader = Msgs.GAME.get("l.running_header_seated");
             }
 
+            // Only show this button if we can start this game alone
+            _soloBtn.visible = (_lobbyObj.gameDef.match.getMinimumPlayers() <= 1);
+
         } else {
             noPendersMsg = Msgs.GAME.get(
                 _friendsOnly ? "m.no_friends_party" : "m.no_penders_party");
             pendersHeader = ""; // this is never used party games start immediately
             runningHeader = Msgs.GAME.get("l.running_header_party");
+
+            // Never show this button for Party games
+            _soloBtn.visible = false;
         }
 
         _noTablesLabel = FlexUtil.createLabel(noPendersMsg, "tableMessage");
@@ -344,7 +350,6 @@ public class LobbyPanel extends FloatingPanel
     {
         _isSeated = nowSeated;
         _multiBtn.enabled = !_isSeated;
-        //_soloBtn.enabled = _multiBtn.enabled;
         if (_isSeated) {
             showTables();
         }
@@ -438,10 +443,11 @@ public class LobbyPanel extends FloatingPanel
         var startBox :HBox = new HBox();
         startBox.styleName = "startBox";
         startBox.percentHeight = 100;
+
+        _soloBtn = new CommandButton( Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
+        startBox.addChild(_soloBtn);
         _multiBtn = new CommandButton(Msgs.GAME.get("b.start_multi"), showCreateMulti);
         startBox.addChild(_multiBtn);
-        _soloBtn = new CommandButton(Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
-        startBox.addChild(_soloBtn);
         _headerBox.addChild(startBox);
 
         var tablesHeader :HBox = new HBox();
