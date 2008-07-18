@@ -25,29 +25,24 @@ public class PlayPanel extends SmartTable
     {
         super("playPanel", 0, 0);
 
-        Widget single;
-        if (minPlayers == 1) {
-            single = makePlayButton("SinglePlay", new ClickListener() {
+        Widget play;
+
+        // Is this game single player only?
+        if (minPlayers == 1 && maxPlayers == 1) {
+            play = makePlayButton("SinglePlay", new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "s", ""+gameId));
+                    Application.go(Page.WORLD, Args.compose("game", "s", String.valueOf(gameId)));
                 }
             });
         } else {
-            single = MsoyUI.createLabel(CGames.msgs.gdpNoSingle(), "NoSingle");
-        }
-        Widget multi = WidgetUtil.makeShim(126, 50);
-        if (maxPlayers > 1) {
-            multi = makePlayButton("FriendPlay", new ClickListener() {
+            play = makePlayButton("FriendPlay", new ClickListener() {
                 public void onClick (Widget sender) {
                     Application.go(Page.WORLD, Args.compose("game", "l", ""+gameId));
                 }
             });
         }
-        int row = addWidget(single, 1, null);
-        getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
-        setWidget(row, 1, WidgetUtil.makeShim(15, 15));
-        setWidget(row, 2, multi);
-        getFlexCellFormatter().setVerticalAlignment(row, 2, HasAlignment.ALIGN_MIDDLE);
+        int row = addWidget(play, 1, null);
+        //getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
 
         if (playersOnline > 0) {
             addWidget(WidgetUtil.makeShim(10, 10), 3, null);

@@ -31,6 +31,10 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
+import com.threerings.parlor.data.TableConfig;
+import com.whirled.game.client.WhirledGameConfigurator;
+import com.threerings.io.TypedArray;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -145,7 +149,8 @@ public class LobbyPanel extends FloatingPanel
 
         if (_lobbyObj.gameDef == null) {
             _info.text = Msgs.GAME.get("e.no_gamedef");
-            _createBtn.enabled = false;
+            _multiBtn.enabled = false;
+            _soloBtn.enabled = false;
             showTables();
             return;
         }
@@ -253,7 +258,7 @@ public class LobbyPanel extends FloatingPanel
     /**
      * Shows the create game interface.
      */
-    public function showCreateGame () :void
+    public function showCreateMulti () :void
     {
         this.title = Msgs.GAME.get("t.create_game", getGame().name);
         setContents(_creationPanel);
@@ -338,7 +343,8 @@ public class LobbyPanel extends FloatingPanel
     public function seatednessDidChange (nowSeated :Boolean) :void
     {
         _isSeated = nowSeated;
-        _createBtn.enabled = !_isSeated;
+        _multiBtn.enabled = !_isSeated;
+        //_soloBtn.enabled = _multiBtn.enabled;
         if (_isSeated) {
             showTables();
         }
@@ -432,8 +438,10 @@ public class LobbyPanel extends FloatingPanel
         var startBox :HBox = new HBox();
         startBox.styleName = "startBox";
         startBox.percentHeight = 100;
-        _createBtn = new CommandButton(Msgs.GAME.get("b.start_game"), showCreateGame);
-        startBox.addChild(_createBtn);
+        _multiBtn = new CommandButton(Msgs.GAME.get("b.start_multi"), showCreateMulti);
+        startBox.addChild(_multiBtn);
+        _soloBtn = new CommandButton(Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
+        startBox.addChild(_soloBtn);
         _headerBox.addChild(startBox);
 
         var tablesHeader :HBox = new HBox();
@@ -523,7 +531,8 @@ public class LobbyPanel extends FloatingPanel
     protected var _contents :VBox;
     protected var _logo :MediaWrapper;
     protected var _info :Text;
-    protected var _createBtn :CommandButton;
+    protected var _multiBtn :CommandButton;
+    protected var _soloBtn :CommandButton;
 
     protected var _miniTable :TablePanel;
 

@@ -55,12 +55,16 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
-    public function LobbyController (gctx :GameContext, mode :int, onClear :Function) 
+    /** A command to start a single player game immediately. */
+    public static const PLAY_SOLO :String = "PlaySolo";
+
+    public function LobbyController (gctx :GameContext, mode :int, onClear :Function, playNow :Function) 
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
         _mode = mode;
         _onClear = onClear;
+        _playNow = playNow;
 
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
@@ -108,6 +112,14 @@ public class LobbyController extends Controller implements Subscriber
     public function get tableDir () :TableDirector
     {
         return _tableDir;
+    }
+
+    /**
+     * Handles PLAY_SOLO.
+     */
+    public function handlePlaySolo () :void
+    {
+        _playNow(LobbyCodes.PLAY_NOW_SINGLE);
     }
 
     /**
@@ -324,6 +336,9 @@ public class LobbyController extends Controller implements Subscriber
 
     /** Called when we shut ourselves down. */
     protected var _onClear :Function;
+
+    /** Called when the player wants instant action. */
+    protected var _playNow :Function;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;

@@ -53,7 +53,7 @@ public class LobbyGameLiaison extends GameLiaison
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
         // create our lobby controller which will display a "locating game..." interface
-        _lobby = new LobbyController(_gctx, _mode, lobbyCleared);
+        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow);
     }
 
     /**
@@ -108,7 +108,7 @@ public class LobbyGameLiaison extends GameLiaison
     public function showLobby () :void
     {
         if (_lobby == null) {
-            _lobby = new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared);
+            _lobby = new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow);
             joinLobby();
         } // otherwise it's already showing
     }
