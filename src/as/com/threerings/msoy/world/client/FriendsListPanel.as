@@ -5,10 +5,13 @@ package com.threerings.msoy.world.client {
 
 import flash.events.Event;
 import flash.events.FocusEvent;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import flash.ui.Keyboard;
 
 import flash.utils.Dictionary;
 
@@ -120,7 +123,7 @@ public class FriendsListPanel extends TitleWindow
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.HEADLINE) {
-            _statusEdit.text = event.getValue() as String;
+            setStatus(event.getValue() as String);
         }
     }
 
@@ -184,8 +187,7 @@ public class FriendsListPanel extends TitleWindow
         box.addChild(_nameLabel);
         _statusEdit = new TextInput();
         _statusEdit.editable = true;
-        _statusEdit.text = me.headline == "" || me.headline == null ? 
-            Msgs.GENERAL.get("l.emptyStatus") : me.headline;
+        setStatus(me.headline);
         _statusEdit.styleName = "statusEdit";
         _statusEdit.percentWidth = 100;
         _statusEdit.height = 17;
@@ -193,8 +195,10 @@ public class FriendsListPanel extends TitleWindow
         _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
         _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
         _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
+        _statusEdit.addEventListener(FocusEvent.FOCUS_OUT, editFocusOut);
         _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
         _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
+        _statusEdit.addEventListener(KeyboardEvent.KEY_UP, keyUp);
         box.addChild(_statusEdit);
     
         // initialize with currently online friends
@@ -282,6 +286,15 @@ public class FriendsListPanel extends TitleWindow
         }
     }
 
+    protected function editFocusOut (...ignored) :void
+    {
+        // quick check
+        if (_statusEdit.text == Msgs.GENERAL.get("l.statusPrompt") || 
+            _statusEdit.text == "") {
+            setStatus("");
+        }
+    }
+
     protected function commitEdit (...ignored) :void
     {
         _statusEdit.setSelection(0, 0);
@@ -296,8 +309,7 @@ public class FriendsListPanel extends TitleWindow
                     _ctx.displayFeedback(null, cause);
                     // revert to old status
                     var me :MemberObject = _ctx.getMemberObject();
-                    _statusEdit.text = me.headline == "" || me.headline == null ?
-                        Msgs.GENERAL.get("l.emptyStatus") : me.headline;
+                    setStatus(me.headline);
                 }));
         }
     }
@@ -322,6 +334,23 @@ public class FriendsListPanel extends TitleWindow
         } else {
             x = _currentX;
         }
+    }
+
+    protected function keyUp (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ESCAPE) {
+            var me :MemberObject = _ctx.getMemberObject();
+            setStatus(me.headline);
+            _statusEdit.setSelection(0, 0);
+            // delay losing focus by a frame so the selection has time to get set correctly.
+            callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
+        }
+    }
+
+    protected function setStatus (status :String) :void
+    {
+        _statusEdit.text = 
+            status == "" || status == null ?  Msgs.GENERAL.get("l.emptyStatus") : status;
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
