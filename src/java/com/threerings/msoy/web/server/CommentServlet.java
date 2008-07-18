@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 
@@ -14,8 +15,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.badge.server.MemberStatUtil;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 
@@ -23,8 +22,10 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -128,7 +129,7 @@ public class CommentServlet extends MsoyServiceServlet
                 }
 
                 // update the member's WHIRLED_COMMENTS stat
-                MemberStatUtil.incrementStat(mrec.memberId, StatType.WHIRLED_COMMENTS, 1);
+                _statLogic.incrementStat(mrec.memberId, StatType.WHIRLED_COMMENTS, 1);
 
             } else if (etype == Comment.TYPE_PROFILE_WALL) {
                 ownerId = eid;
@@ -231,4 +232,6 @@ public class CommentServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
+
+    @Inject StatLogic _statLogic;
 }

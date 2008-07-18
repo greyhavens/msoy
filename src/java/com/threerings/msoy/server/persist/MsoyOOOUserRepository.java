@@ -24,7 +24,9 @@ import com.samskivert.servlet.user.UserUtil;
 
 import com.threerings.user.OOOUser;
 import com.threerings.user.depot.DepotUserRepository;
+import com.threerings.user.depot.HistoricalUserRecord;
 import com.threerings.user.depot.OOOUserRecord;
+import com.threerings.user.depot.UserIdentRecord;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -42,6 +44,21 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     @Inject public MsoyOOOUserRepository (@OOODatabase PersistenceContext ctx)
     {
         super(ctx);
+    }
+
+    /**
+     * Deletes all records associated with the supplied user id. This should only be used when
+     * account creation failed and we want to wipe a user account that never existed. For user
+     * initiated account deletion use {@link #disableUser} (not yet implemented).
+     */
+    public void uncreateUser (int userId)
+        throws PersistenceException
+    {
+        delete(OOOUserRecord.class, userId);
+        delete(HistoricalUserRecord.class, userId);
+        // no need to invalidate the cache here as this user was *just* created and is not in the
+        // wild, and this userId will never be used again
+        deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID_C, userId), null);
     }
 
     // from SupportRepository

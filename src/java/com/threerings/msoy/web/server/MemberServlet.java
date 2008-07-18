@@ -16,7 +16,6 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.net.MailUtil;
 
-import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.FriendManager;
@@ -32,7 +31,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.EmailContact;
@@ -87,37 +85,15 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        try {
-            MemberName friendName = _memberRepo.noteFriendship(memrec.memberId, friendId);
-            if (friendName == null) {
-                throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
-            }
-            MsoyServer.feedRepo.publishMemberMessage(
-                memrec.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                friendName.toString() + "\t" + friendId);
-            _friendMan.friendshipEstablished(memrec.getName(), friendName);
-
-        } catch (PersistenceException pe) {
-            log.warning("addFriend failed [for=" + memrec.memberId +
-                    ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        _memberLogic.establishFriendship(memrec, friendId);
     }
 
     // from MemberService
     public void removeFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
-        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        try {
-            _memberRepo.clearFriendship(memrec.memberId, friendId);
-            _friendMan.friendshipCleared(memrec.memberId, friendId);
-
-        } catch (PersistenceException pe) {
-            log.warning("removeFriend failed [for=" + memrec.memberId +
-                    ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        _memberLogic.clearFriendship(memrec.memberId, friendId);
     }
 
     // from interface MemberService
@@ -320,7 +296,7 @@ public class MemberServlet extends MsoyServiceServlet
     // from MemberService
     public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
     {
-        return _memLogic.getABTestGroup(testName, info, logEvent);
+        return _memberLogic.getABTestGroup(testName, info, logEvent);
     }
     
     // from MemberService
@@ -329,7 +305,7 @@ public class MemberServlet extends MsoyServiceServlet
         int abTestGroup = -1;
         if (testName != null) {
             // grab the group without logging a tracking event about it
-            abTestGroup = _memLogic.getABTestGroup(testName, info, false);
+            abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
         }
         _eventLog.testActionReached(info.tracker, actionName, testName, abTestGroup);
     }
@@ -421,7 +397,7 @@ public class MemberServlet extends MsoyServiceServlet
 
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
-    @Inject protected MemberLogic _memLogic;
+    @Inject protected MemberLogic _memberLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;

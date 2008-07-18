@@ -51,19 +51,15 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
-import com.threerings.util.Name;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
 
-import com.threerings.msoy.badge.server.MemberStatUtil;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.server.MsoyEventLogger;
 
 import static com.threerings.msoy.Log.log;
 
@@ -310,6 +306,19 @@ public class MemberRepository extends DepotRepository
         MemberNameRecord record = load(MemberNameRecord.class,
                 new Where(MemberRecord.ACCOUNT_NAME_C, username));
         return (record == null ? null : record.toMemberName());
+    }
+
+    /**
+     * Loads up the card for the specified member. Returns null if no member exists with that id.
+     */
+    public MemberCard loadMemberCard (int memberId)
+        throws PersistenceException
+    {
+        MemberCardRecord mcr = load(
+            MemberCardRecord.class, new FromOverride(MemberRecord.class),
+            new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
+            new Where(MemberRecord.MEMBER_ID_C, memberId));
+        return (mcr == null) ? null : mcr.toMemberCard();
     }
 
     /**
@@ -792,7 +801,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Update the invitation indicated with the new memberId, and make friends of these people.
+     * Update the invitation indicated with the new memberId.
      */
     public void linkInvite (String inviteId, MemberRecord member)
         throws PersistenceException
@@ -800,7 +809,6 @@ public class MemberRepository extends DepotRepository
         InvitationRecord invRec = load(InvitationRecord.class, inviteId);
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
-        noteFriendship(invRec.inviterId, member.memberId);
     }
 
     /**
@@ -1011,21 +1019,21 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Makes the specified members friends. If they are already friends, this method will still
-     * return succesfully.
+     * Makes the specified members friends.
      *
      * @param memberId The id of the member performing this action.
      * @param otherId The id of the other member.
      *
-     * @return the member name of the invited friend, or null if the invited friend no longer
+     * @return the member card for the invited friend, or null if the invited friend no longer
      * exists.
+     * @exception DuplicateKeyException if the members are already friends.
      */
-    public MemberName noteFriendship (int memberId,  int otherId)
+    public MemberCard noteFriendship (int memberId,  int otherId)
         throws PersistenceException
     {
         // first load the member record of the potential friend
-        MemberRecord other = load(MemberRecord.class, otherId);
-        if (other.name == null) {
+        MemberCard other = loadMemberCard(otherId);
+        if (other == null) {
             log.warning("Failed to establish friends: member no longer exists " +
                         "[missingId=" + otherId + ", reqId=" + memberId + "].");
             return null;
@@ -1044,20 +1052,17 @@ public class MemberRepository extends DepotRepository
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
-        // there is no connection yet: add the other
-        if (existing.size() == 0) {
-            FriendRecord rec = new FriendRecord();
-            rec.inviterId = memberId;
-            rec.inviteeId = otherId;
-            insert(rec);
-            _eventLog.friendAdded(memberId, otherId);
-
-            // update the FRIENDS_MADE statistic for both players
-            MemberStatUtil.incrementStat(memberId, StatType.FRIENDS_MADE, 1);
-            MemberStatUtil.incrementStat(otherId, StatType.FRIENDS_MADE, 1);
+        // if they already have a connection, let the caller know by excepting
+        if (existing.size() > 0) {
+            throw new DuplicateKeyException(memberId + " and " + otherId + " are already friends");
         }
 
-        return other.getName();
+        FriendRecord rec = new FriendRecord();
+        rec.inviterId = memberId;
+        rec.inviteeId = otherId;
+        insert(rec);
+
+        return other;
     }
 
     /**
@@ -1074,8 +1079,6 @@ public class MemberRepository extends DepotRepository
 
         key = FriendRecord.getKey(otherId, memberId);
         deleteAll(FriendRecord.class, key, key);
-
-        _eventLog.friendRemoved(memberId, otherId);
     }
 
     /**
@@ -1208,7 +1211,6 @@ public class MemberRepository extends DepotRepository
         classes.add(ReferralRecord.class);
     }
 
-    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected FlowRepository _flowRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;

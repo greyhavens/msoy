@@ -28,7 +28,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.msoy.badge.server.MemberStatUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
@@ -38,9 +37,11 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.FriendManager;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
@@ -50,7 +51,6 @@ import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
@@ -149,7 +149,8 @@ public class WebUserServlet extends MsoyServiceServlet
         // if they have accumulated flow as a guest, transfer that to their account (note: only
         // negative ids are valid guest ids)
         if (guestId < 0) {
-            MsoyServer.peerMan.invokeNodeAction(new TransferGuestFlowAction(guestId, mrec.memberId));
+            MsoyServer.peerMan.invokeNodeAction(
+                new TransferGuestFlowAction(guestId, mrec.memberId));
         }
 
         // if we are responding to an invitation, wire that all up
@@ -183,15 +184,10 @@ public class WebUserServlet extends MsoyServiceServlet
                     log.warning("Failed to sent invite accepted mail", e);
                 }
 
-                // update the two friends' runtime objects if they are online
-                _friendMan.friendshipEstablished(mrec.getName(), inviter.getName());
+                // establish the inviter's friendship with the invite acceptor
+                _memberLogic.establishFriendship(inviter, mrec.memberId);
 
-                // publish a notification to the inviter's feed
                 try {
-                    MsoyServer.feedRepo.publishMemberMessage(
-                        inviter.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                        displayName + "\t" + mrec.memberId);
-
                     // pay out a sign up bonus to the inviter
                     _memberRepo.getFlowRepository().logUserAction(
                         new UserActionDetails(inviter.memberId, UserAction.INVITED_FRIEND_JOINED));
@@ -221,12 +217,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 });
 
                 // increment the inviter's INVITES_ACCEPTED stat
-                try {
-                    MemberStatUtil.incrementStat(inviter.memberId, StatType.INVITES_ACCEPTED, 1);
-                } catch (PersistenceException pe) {
-                    log.warning("Failed to increment INVITES_ACCEPTED for created account " +
-                        "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", pe);
-                }
+                _statLogic.incrementStat(inviter.memberId, StatType.INVITES_ACCEPTED, 1);
             }
         }
 
@@ -578,8 +569,10 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MsoyAuthenticator _author;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MailManager _mailMan;
-    @Inject protected MailRepository _mailRepo;
     @Inject protected FriendManager _friendMan;
+    @Inject protected MemberLogic _memberLogic;
+    @Inject protected StatLogic _statLogic;
+    @Inject protected MailRepository _mailRepo;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
