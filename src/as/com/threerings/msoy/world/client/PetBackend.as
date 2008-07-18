@@ -12,6 +12,8 @@ public class PetBackend extends ActorBackend
         super.populateControlProperties(o);
 
         o["sendChatMessage_v1"] = sendChatMessage_v1;
+
+        // old properties, backwards compatibility
         o["getName_v1"] = getName_v1;
     }
 
