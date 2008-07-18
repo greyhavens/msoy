@@ -74,9 +74,14 @@ public class LogonPanel extends SmartTable
         String lbl = CShell.cmsgs.forgotPassword();
         Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
             public void onClick (Widget widget) {
-                Frame.showDialog(
-                    "Forgot your password?",
-                    new ForgotPasswordDialog(_email.getText().trim()), showFloatingForgot);
+                String forgottenTitle = "Forgot your password?";
+                ForgotPasswordDialog forgottenDialog = new ForgotPasswordDialog(_email.getText().trim());
+                if(showFloatingForgot) {
+                    Frame.showPopupDialog(forgottenTitle, forgottenDialog);
+                }
+                else {
+                    Frame.showDialog(forgottenTitle, forgottenDialog);                    
+                }
             }
         });
         logon.addClickListener(new ClickListener() {
@@ -177,7 +182,7 @@ public class LogonPanel extends SmartTable
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(CShell.cmsgs.forgotEmailSent());
-                    Frame.clearDialog(ForgotPasswordDialog.this);
+                    Frame.clearDialog();
                     return false;
                 }
             };

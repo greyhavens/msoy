@@ -140,7 +140,7 @@ public class DoListItemPopup extends VerticalPanel
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Frame.clearDialog(DoListItemPopup.this);
+                Frame.clearDialog();
             }
         }));
         footer.add(WidgetUtil.makeShim(10, 10));
@@ -163,7 +163,7 @@ public class DoListItemPopup extends VerticalPanel
                 public boolean gotResult (Integer result) {
                     _item.catalogId = result;
                     MsoyUI.info(resultMsg);
-                    Frame.clearDialog(DoListItemPopup.this);
+                    Frame.clearDialog();
                     _listener.itemListed(_item, false);
                     return false;
                 }
@@ -185,7 +185,7 @@ public class DoListItemPopup extends VerticalPanel
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    Frame.clearDialog(DoListItemPopup.this);
+                    Frame.clearDialog();
                     _listener.itemListed(_item, true);
                     return false;
                 }
@@ -200,7 +200,7 @@ public class DoListItemPopup extends VerticalPanel
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    Frame.clearDialog(DoListItemPopup.this);
+                    Frame.clearDialog();
                     return false;
                 }
             };

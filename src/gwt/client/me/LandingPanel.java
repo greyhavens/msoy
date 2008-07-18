@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.ListingCard;
@@ -135,7 +136,13 @@ public class LandingPanel extends SimplePanel
         // collect the data for this page
         CMe.worldsvc.getLandingData(new MsoyCallback<LandingData>() {
             public void onSuccess (LandingData data) {
-                topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
+//                topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
+                FeaturedGameInfo[] topGames = new FeaturedGameInfo[1];
+                FeaturedGameInfo dummy = new FeaturedGameInfo();
+                dummy.creator = new MemberName("matt", 1);
+                dummy.gameId = 1;
+                topGames[0] = dummy;
+                topGamesPanel.setGames(topGames);
                 _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
                 _avatarPanel.setAvatars((ListingCard[])data.topAvatars);
             }

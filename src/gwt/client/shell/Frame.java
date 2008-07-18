@@ -4,11 +4,9 @@
 package client.shell;
 
 import java.util.ArrayList;
-
 import client.images.navi.NaviImages;
 import client.util.FlashClients;
 import client.util.MsoyUI;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -19,7 +17,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -28,6 +25,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -35,7 +33,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.Predicate;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
@@ -105,6 +102,9 @@ public class Frame
             RootPanel.get(LOADING_AND_TESTS).clear();
             RootPanel.get(LOADING_AND_TESTS).setVisible(false);
         }
+        
+        _dialog = new Dialog();
+        _popup = new PopupDialog();
     }
 
     /**
@@ -113,13 +113,7 @@ public class Frame
     public static void didLogon ()
     {
         _header.didLogon();
-
-        // clear out the logon dialog
-        clearDialog(new Predicate<Widget>() {
-            public boolean isMatch (Widget w) {
-                return (w instanceof LogonPanel);
-            }
-        });
+        clearDialog();
     }
 
     /**
@@ -254,45 +248,33 @@ public class Frame
      */
     public static void showDialog (String title, Widget dialog)
     {
-        showDialog(title, dialog, false);
+        // remove any existing content
+        clearDialog();
+        
+        // update the dialog content and add it
+        _dialog.update(title, dialog);     
+        RootPanel.get(HEADER).add(_dialog); // TODO: animate this sliding down
     }
 
     /**
      * Displays the supplied dialog in the frame or floating over the page.
-     * @param floatingDialog Dialog will float over the page rather than be embedded in the frame
      */
-    public static void showDialog (String title, Widget dialog, boolean floatingDialog)
+    public static void showPopupDialog (String title, Widget dialog)
     {
-        Dialog pd = new Dialog(title, dialog, floatingDialog);        
-        RootPanel.get(HEADER).add(pd); // TODO: animate this sliding down
+        _popup.setVisible(false);
+        _popup.update(title, dialog);
+        _popup.setVisible(true);
+        _popup.center();
     }
 
     /**
-     * Clears the specified dialog from the frame. Returns true if the dialog was located and
-     * cleared, false if not.
+     * Hides the current dialog contents.
      */
-    public static boolean clearDialog (final Widget dialog)
+    public static void clearDialog ()
     {
-        return clearDialog(new Predicate<Widget>() {
-            public boolean isMatch (Widget w) {
-                return (w == dialog);
-            }
-        }) > 0;
+        RootPanel.get(HEADER).remove(_dialog);
     }
-
-    /**
-     * Clears all dialogs that match the specified predicate. Returns the number of dialogs
-     * cleared.
-     */
-    public static int clearDialog (Predicate<Widget> pred)
-    {
-        int removed = clearDialog(RootPanel.get(HEADER), pred);
-        if (_contlist != null) {
-            removed += clearDialog(_contlist, pred);
-        }
-        return removed;
-    }
-
+    
     /**
      * Clears out the client section of the frame and creates a new scroll pane to contain a new
      * client (and other bits if desired).
@@ -318,8 +300,8 @@ public class Frame
         RootPanel.get(CONTENT).clear();
         _bar = null;
 
-        // clear out any lingering dialogs
-        clearDialog(new Predicate.TRUE<Widget>());
+        // clear out any lingering dialog content
+        clearDialog();
 
         // note that this is our current content
         _contlist = new FlowPanel();
@@ -369,22 +351,6 @@ public class Frame
         if (_bar != null) {
             _bar.setCloseVisible(FlashClients.clientExists());
         }
-    }
-
-    protected static int clearDialog (ComplexPanel panel, Predicate<Widget> pred)
-    {
-        if (panel == null) {
-            return 0; // cope with stale index.html files
-        }
-        int removed = 0;
-        for (int ii = 0; ii < panel.getWidgetCount(); ii++) {
-            Widget widget = panel.getWidget(ii);
-            if (widget instanceof Dialog && pred.isMatch(((Dialog)widget).getContent())) {
-                panel.remove(ii);
-                removed++;
-            }
-        }
-        return removed;
     }
 
     protected static TitleBar createTitleBar (String pageId)
@@ -461,35 +427,59 @@ public class Frame
 
     protected static class Dialog extends SimplePanel
     {
-        /**
-         * @param floatingDialog If true, encase content in a floating box
-         */
-        public Dialog (String title, Widget content, boolean floatingDialog) {
-            
-            if (floatingDialog) {
-                setStyleName("floatingDialogBox");
-            }
-            
+        public Dialog () {           
+            init(new ClickListener() {
+                public void onClick (Widget sender) {
+                    Frame.clearDialog();
+                }
+            });
+        }
+        
+        public Dialog (ClickListener closeListener) { 
+            init(closeListener);
+        }
+        
+        protected void init(ClickListener closeListener) {            
             setWidget(_innerTable = new SmartTable("pageDialog", 0, 0));
             
-            _innerTable.setText(0, 0, title, 1, "DialogTitle");
-            _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Frame.clearDialog(getContent());
-                }
-            }), 1, "Close");
-            _innerTable.setWidget(1, 0, content, 2, null);
+            _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(closeListener), 1, "Close");
             _innerTable.getFlexCellFormatter().setHorizontalAlignment(
                 1, 0, HasAlignment.ALIGN_CENTER);
-            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
+            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);            
         }
-
-        public Widget getContent () {
-            return _innerTable.getWidget(1, 0);
+        
+        public void update(String title, Widget content) {
+            _innerTable.setText(0, 0, title, 1, "DialogTitle");
+            _innerTable.setWidget(1, 0, content, 2, null);            
         }
+        
         protected SmartTable _innerTable;
     }
 
+    protected static class PopupDialog extends PopupPanel
+    {
+        public PopupDialog () {
+            
+            super(false);
+            setAnimationEnabled(true);
+            setStyleName("floatingDialogBox");
+            
+            _innerDialog = new Dialog(new ClickListener() {
+                public void onClick (Widget sender) {
+                    setVisible(false);
+                }                
+            });     
+            setWidget(_innerDialog);
+        }
+        
+        public void update(String title, Widget content) {
+            _innerDialog.update(title, content);            
+        }
+        
+        protected Dialog _innerDialog;
+        
+    }
+    
     protected static class SubNaviPanel extends FlowPanel
     {
         public void addLink (String iconPath, String label, final String page, final String args) {
@@ -750,6 +740,8 @@ public class Frame
     protected static FlowPanel _contlist;
     protected static ScrollPanel _scroller;
     protected static ScrollPanel _cscroller;
+    protected static Dialog _dialog;
+    protected static PopupDialog _popup;
 
     /** Our navigation menu images. */
     protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
