@@ -36,14 +36,14 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final byte ITEM_PACK = registerItemType(ItemPack.class, 12);
     public static final byte TROPHY_SOURCE = registerItemType(TrophySource.class, 13);
     public static final byte PRIZE = registerItemType(Prize.class, 14);
-    public static final byte PROP = registerItemType(Prize.class, 15);
+    public static final byte PROP = registerItemType(Prop.class, 15);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
     // of MemberObject to be a BitSet or something.
 
     /**
-     * A canonical ordering of our item types for use in the catalog, inventory, etc. Note that thi
+     * A canonical ordering of our item types for use in the catalog, inventory, etc. Note that this
      * does not contain subtypes (ie. LEVEL_PACK) as those do not have top-level categories but are
      * only shown when viewing an item of their containing type (ie. GAME).
      */
