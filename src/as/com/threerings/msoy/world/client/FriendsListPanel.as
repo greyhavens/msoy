@@ -43,10 +43,12 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.flex.PopUpUtil;
 
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -62,6 +64,7 @@ public class FriendsListPanel extends TitleWindow
     public function FriendsListPanel (ctx :WorldContext) :void
     {
         _ctx = ctx;
+        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopFriendsList);
     }
@@ -310,6 +313,15 @@ public class FriendsListPanel extends TitleWindow
         PopUpUtil.fitInRect(this, placeBounds);
     }
 
+    protected function miniWillChange (event :ValueEvent) :void
+    {
+        if (event.value) {
+            _currentX = x;
+        } else {
+            x = _currentX;
+        }
+    }
+
     private static const log :Log = Log.getLog(FriendsListPanel);
 
     protected static const PADDING :int = 10;
@@ -323,5 +335,6 @@ public class FriendsListPanel extends TitleWindow
     protected var _originals :Dictionary = new Dictionary();
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
+    protected var _currentX :int = 0;
 }
 }
