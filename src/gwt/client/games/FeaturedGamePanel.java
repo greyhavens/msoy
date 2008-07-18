@@ -59,7 +59,9 @@ public class FeaturedGamePanel extends AbsolutePanel
         add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
         
         add(new Stars(game.rating, true, false, null), 210, 180);
-        add(new PlayButton(game.gameId, game.minPlayers, game.maxPlayers), 307, 160);
+        PlayButton play = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
+        play.addStyleDependentName("small");
+        add(play, 307, 160);
     }
 
     protected FeaturedGameInfo[] _games;

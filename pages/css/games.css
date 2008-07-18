@@ -824,23 +824,34 @@
    PLAY BUTTON
 -------------------------------------*/
 
-.playButton .Button {
-  width: 126px;
-  height: 50px;
+.playButton {
+  width: 182px;
+  height: 74px;
   border: none;
   cursor: pointer;
   text-align: center;
+  background: transparent url(/images/game/play_button.png);
 }
 
-.playButton .SinglePlay {
-  background: transparent url(/images/game/play_alone.png);
+.playButton-down-hovering {
+  background: transparent url(/images/game/play_button_down.png);
 }
-.playButton .FriendPlay {
-  background: transparent url(/images/game/play_friends.png);
+
+.playButton-up-hovering {
+  background: transparent url(/images/game/play_button_over.png);
 }
-.playButton .SinglePlay-up-hovering {
-  background: transparent url(/images/game/play_alone_over.png);
+
+.playButton-small {
+  width: 126px;
+  height: 50px;
+  background: transparent url(/images/game/play_button_small.png); /* TODO: Get real button art. */
 }
-.playButton .FriendPlay-up-hovering {
-  background: transparent url(/images/game/play_friends_over.png);
+
+/*.playButton-small-down-hovering {
+  background: transparent url(/images/game/play_button_small_down.png);
 }
+
+.playButton-small-up-hovering {
+  background: transparent url(/images/game/play_button_small_over.png);
+}*/
+
