@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-
 /**
  * Handles some standard services for a top-level MetaSOY page.
  */
