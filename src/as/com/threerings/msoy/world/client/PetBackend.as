@@ -24,11 +24,11 @@ public class PetBackend extends ActorBackend
     }
 
     /**
-     * Called by user code to get the name of this pet.
+     * Deprecated on 2008-07-18. Use getEntityProperty(PROP_NAME) instead.
      */
     protected function getName_v1 () :String
     {
-        return (_sprite as PetSprite).getOccupantInfo().username.toString();
+        return getEntityProperty_v1(null, "std:name") as String;
     }
 }
 }
