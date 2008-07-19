@@ -1234,7 +1234,9 @@
           </maintainer>
         </info>
         <dependencies>
-            <require package="msoy-server-code"/>
+            <require package="msoy-server-code">
+              <equalTo>${version}</equalTo>
+            </require>
         </dependencies>
         <permissions>
           <permission user="${msoy.user}" group="${msoy.user}" mode="755" recursive="false">
