@@ -49,6 +49,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
    Assert.isNotNull(mystack.top());
    Assert.isTrue(mystack.length == 1, "Unexpected number of items on stack!");
  </pre>
+  #mxmlc -define=CONFIG::development,true -define=CONFIG::production,false
  <p></p>
 <br>
 <hr>

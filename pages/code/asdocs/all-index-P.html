@@ -148,12 +148,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PET">PET</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/PetControl.html">PetControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/package-detail.html">com.whirled</a></td>
 </tr>
 <tr>
@@ -175,6 +169,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
      Pick (do not remove) the specified number of elements from a bag,
      and distribute them to a specific player or set them as a property
      in the game data.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RandomUtil.html#pickRandom()">pickRandom</a>(values, randomFn) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RandomUtil.html">RandomUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Picks a random object from the supplied array of values.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html#playAvatarAction()">playAvatarAction</a>(action) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AVRGameControl.html">AVRGameControl</a></td>
@@ -276,6 +277,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
      Removes the last element from the RingBuffer and returns it.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html#positionBounds()">positionBounds</a>(disp, x, y) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html">DisplayUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Sets the top-left pixel of a DisplayObject to the given location, taking the
+     object's bounds into account.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html#positionRect()">positionRect</a>(r, bounds, avoid) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/DisplayUtil.html">DisplayUtil</a></td>
 </tr>
 <tr>
@@ -329,6 +338,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
      Creates a controller for a Prop.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_DIMENSIONS">PROP_DIMENSIONS</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> The entity pixel dimensions (an Array [width, height]).</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html#event:propertyChanged">propertyChanged</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/StateControl.html">StateControl</a></td>
 </tr>
 <tr>
@@ -364,10 +379,44 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
      Constructor.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#_propertyProvider">_propertyProvider</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_HOTSPOT">PROP_HOTSPOT</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> User specified callback to publish properties.</td>
+<td width="20"></td><td> The entity's hot spot (an Array [x, y]).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_LOCATION_LOGICAL">PROP_LOCATION_LOGICAL</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     The entity's location in logical coordinates (an Array [ x, y, z ]).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_LOCATION_PIXEL">PROP_LOCATION_PIXEL</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     The entity's location in pixel coordinates (an Array [ x, y, z ]).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html#PROP_MEMBER_ID">PROP_MEMBER_ID</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html">AvatarControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     The unique Whirled player ID of the owner on an avatar.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#PROP_NAME">PROP_NAME</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     The non-unique display name of the entity for avatars and pets.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#PROP_ORIENTATION">PROP_ORIENTATION</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> The entity facing direction (a Number).</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#PROPORTIONAL">PROPORTIONAL</a> &mdash; Constant static property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
@@ -376,6 +425,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td> Proportional is used for games where there is no way to measure player's performance
      against a global standard, but where the scores are subjective to the particular players
      currently playing.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_TYPE">PROP_TYPE</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> The type of the entity, AVATAR, PET or FURNI.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#push()">push</a>(... rest) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>

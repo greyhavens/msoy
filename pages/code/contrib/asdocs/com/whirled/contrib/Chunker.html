@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="Chunker,com.whirled.contrib.Chunker,COMPRESSED_TOKEN,END_TOKEN,MAX_CHUNK_DATA,MIN_SEND_WAIT,NO_TOKENS,OBJECT_TOKEN,START_TOKEN,_ctrl,_inData,_msgName,_nextSend,_outData,_outTokens,_timer,checkSendChunk,chunkReceived,handleMessage,handleUnload,send,sendChunk" name="keywords">
+<title>com.whirled.contrib.Chunker</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'Chunker - Whirled "contrib" Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/contrib/Chunker.html&amp;com/whirled/contrib/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Chunker</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Chunker"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class Chunker</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">Chunker <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
+</table>
+<p></p>
+ Chunks data to other instances of the entity being used.
+  Author: Ray Greenwell <ray "at" threerings.net>
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ctrl">_ctrl</a> : EntityControl<div class="summaryTableDescription"> The entity control we're using.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inData">_inData</a> : ByteArray<div class="summaryTableDescription"> The data we're currently receiving.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_msgName">_msgName</a> : String<div class="summaryTableDescription"> The message name we're using.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_nextSend">_nextSend</a> : int<div class="summaryTableDescription"> The time at which we should send the next chunk.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_outData">_outData</a> : ByteArray<div class="summaryTableDescription"> The data we're currently sending.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_outTokens">_outTokens</a> : int<div class="summaryTableDescription"> Some tokens describing the format of the _outData.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_timer">_timer</a> : Timer<div class="summaryTableDescription"> The Timer used to throttle sends.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#Chunker()">Chunker</a>(ctrl:EntityControl, msgName:String = "chunk", receivedCallback:Function = null)</div>
+<div class="summaryTableDescription">
+     Construct a Chunker.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#send()">send</a>(data:Object, tryCompress:Boolean = true):void</div>
+<div class="summaryTableDescription">
+     Send this data to all instances of this entity in chunked and throttled messages.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#checkSendChunk()">checkSendChunk</a>():void</div>
+<div class="summaryTableDescription">
+     Check to see if enough time has passed to send the next chunk.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#chunkReceived()">chunkReceived</a>(inBytes:ByteArray):void</div>
+<div class="summaryTableDescription">
+     Handle a received chunk.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleMessage()">handleMessage</a>(event:ControlEvent):void</div>
+<div class="summaryTableDescription">
+     Handles ControlEvent.MESSAGE_RECEIVED.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleUnload()">handleUnload</a>(event:Event):void</div>
+<div class="summaryTableDescription">
+     Handles Event.UNLOAD.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#sendChunk()">sendChunk</a>(... ignored):void</div>
+<div class="summaryTableDescription">
+     Send the next chunk.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<a name="eventSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:complete">complete</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the chunks are reconstituted and ready to use.</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#COMPRESSED_TOKEN">COMPRESSED_TOKEN</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#END_TOKEN">END_TOKEN</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_CHUNK_DATA">MAX_CHUNK_DATA</a> : int = 1020<div class="summaryTableDescription">[static] The maximum size of our chunks.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MIN_SEND_WAIT">MIN_SEND_WAIT</a> : int = 200<div class="summaryTableDescription">[static] The minimum time between sends.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NO_TOKENS">NO_TOKENS</a> : int = 0<div class="summaryTableDescription">[static] Token constants.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OBJECT_TOKEN">OBJECT_TOKEN</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#START_TOKEN">START_TOKEN</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_ctrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ctrl</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _ctrl:EntityControl</code><p> The entity control we're using. </p></div>
+<a name="_inData"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_inData</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _inData:ByteArray</code><p> The data we're currently receiving. </p></div>
+<a name="_msgName"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_msgName</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _msgName:String</code><p> The message name we're using. </p></div>
+<a name="_nextSend"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_nextSend</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _nextSend:int</code><p> The time at which we should send the next chunk. </p></div>
+<a name="_outData"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_outData</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _outData:ByteArray</code><p> The data we're currently sending. </p></div>
+<a name="_outTokens"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_outTokens</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _outTokens:int</code><p> Some tokens describing the format of the _outData. </p></div>
+<a name="_timer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_timer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _timer:Timer</code><p> The Timer used to throttle sends. Only used on the sender. </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="Chunker()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">Chunker</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function Chunker(ctrl:EntityControl, msgName:String = "chunk", receivedCallback:Function = null)</code><p>
+     Construct a Chunker.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ctrl</span>:EntityControl</code> &mdash; your AvatarControl or ToyControl, etc.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">msgName</span>:String</code> (default = "<code>chunk</code>")<code></code> &mdash; the name of the message to use for data sent using this chunker.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">receivedCallback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; may be specified instead of listening for the complete event,
+     this function will be invoked when the data is received.
+     Signature: function (data :Object) :void;
+     </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="checkSendChunk()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">checkSendChunk</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function checkSendChunk():void</code><p>
+     Check to see if enough time has passed to send the next chunk.
+     </p></div>
+<a name="chunkReceived()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">chunkReceived</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function chunkReceived(inBytes:ByteArray):void</code><p>
+     Handle a received chunk.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">inBytes</span>:ByteArray</code></td>
+</tr>
+</table>
+</div>
+<a name="handleMessage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleMessage(event:ControlEvent):void</code><p>
+     Handles ControlEvent.MESSAGE_RECEIVED.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ControlEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="handleUnload()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleUnload</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleUnload(event:Event):void</code><p>
+     Handles Event.UNLOAD.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="send()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">send</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function send(data:Object, tryCompress:Boolean = true):void</code><p>
+     Send this data to all instances of this entity in chunked and throttled messages.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">data</span>:Object</code> &mdash; a ByteArray or any other object graph that can be serialized to AMF3.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">tryCompress</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; whether to try to compress. Pass false if the data you're sending
+     is already compressed and you don't want to waste CPU trying.
+     </td>
+</tr>
+</table>
+</div>
+<a name="sendChunk()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sendChunk</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function sendChunk(... ignored):void</code><p>
+     Send the next chunk.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:complete"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">complete</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>com.threerings.util.ValueEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when the chunks are reconstituted and ready to use.
+ The 'value' property will contain the received data.
+  </p></div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="COMPRESSED_TOKEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">COMPRESSED_TOKEN</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const COMPRESSED_TOKEN:int</code>
+</div>
+<a name="END_TOKEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">END_TOKEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const END_TOKEN:int</code>
+</div>
+<a name="MAX_CHUNK_DATA"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MAX_CHUNK_DATA</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const MAX_CHUNK_DATA:int = 1020</code><p> The maximum size of our chunks. Whirled enforces a post-AMF3 1024 byte limit,
+     so we want to use all of that. In AMF3, one byte is used to encode "ByteArray", followed
+     by the length, which will be two bytes because 1024-ish is larger than 2^7 but less
+     than 2^14. So the AMF3 encoding takes 3 bytes, plus there's our 1 byte header for each
+     chunk, leaving us 1020 bytes for our chunk size. </p></div>
+<a name="MIN_SEND_WAIT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MIN_SEND_WAIT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const MIN_SEND_WAIT:int = 200</code><p> The minimum time between sends. This is even fairly aggressive. Using
+     other values may "work" but then certain times they may not work, so you're
+     best off not screwing with this. </p></div>
+<a name="NO_TOKENS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">NO_TOKENS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const NO_TOKENS:int = 0</code><p> Token constants. </p></div>
+<a name="OBJECT_TOKEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OBJECT_TOKEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const OBJECT_TOKEN:int</code>
+</div>
+<a name="START_TOKEN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">START_TOKEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const START_TOKEN:int</code>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->
