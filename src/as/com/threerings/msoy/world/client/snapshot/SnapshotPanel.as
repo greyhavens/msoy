@@ -41,66 +41,10 @@ public class SnapshotPanel extends FloatingPanel
 
         _ctrl = new SnapshotController(ctx, this);
         _view = view;
-        _bitmap = new BitmapData(IMAGE_WIDTH, IMAGE_HEIGHT);
-        updateSnapshot();
+        _snapshot = new Snapshot(view, IMAGE_WIDTH, IMAGE_HEIGHT);
+        
+        _snapshot.updateSnapshot();
         open();
-    }
-
-    /**
-     * Update the snapshot.
-     */
-    public function updateSnapshot (
-        includeOccupants :Boolean = true, includeOverlays :Boolean = true) :Boolean
-    {
-        // first let's fill the bitmap with black or something
-        _bitmap.fillRect(new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), 0x000000);
-
-        // draw the room, scaling down to the appropriate size
-        var newScale :Number = IMAGE_HEIGHT / _view.getScrollBounds().height;
-        var allSuccess :Boolean = true;
-
-        for (var ii :int = 0; ii < _view.numChildren; ii++) {
-            var child :DisplayObject = _view.getChildAt(ii);
-
-            var matrix :Matrix = child.transform.matrix; // makes a clone...
-            matrix.scale(newScale, newScale); // scales the matrix taken from that child object
-
-            if (child is MsoySprite) {
-                if (!includeOccupants && (child is OccupantSprite)) {
-                    continue; // skip occupants
-                }
-
-                var success :Boolean = MsoySprite(child).snapshot(_bitmap, matrix);
-                allSuccess &&= success;
-
-            } else {
-                try {
-                    _bitmap.draw(child, matrix, null, null, null, true);
-                    //trace("== Snapshot: raw sprite");
-
-                } catch (err :SecurityError) {
-                    // not a critical error
-                    Log.getLog(this).info("Unable to snapshot Room element: " + err);
-                    allSuccess = false;
-                }
-            }
-        }
-
-        if (includeOverlays) {
-            var d :DisplayObject = _view;
-            
-            // search up through the containment hierarchy until you find the LayeredContainer
-            // or the end of the hierarchy
-            while (!(d is LayeredContainer) && d.parent != null) {
-                d = d.parent;
-            }
-            if (d is LayeredContainer) {
-                // where does this matrix come from?  The last child in the original transformation?
-                (d as LayeredContainer).snapshotOverlays(_bitmap, newScale);
-            }
-        }
-
-        return allSuccess;
     }
 
     protected function takeNewSnapshot (... ignored) :void
@@ -110,14 +54,14 @@ public class SnapshotPanel extends FloatingPanel
             _showChat.selected = false;
         }
         _showChat.enabled = occs;
-        updateSnapshot(occs, _showChat.selected);
+        _snapshot.updateSnapshot(occs, _showChat.selected);
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"));
+        _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"), takeNewSnapshot);
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
         _showOccs.selected = true;
@@ -146,7 +90,7 @@ public class SnapshotPanel extends FloatingPanel
 //        addChild(url);
 
         _preview = new Image();
-        _preview.source = new BitmapAsset(_bitmap);
+        _preview.source = new BitmapAsset(_snapshot.bitmap);
         addChild(_preview);
 
 //        if (!_success) {
@@ -162,10 +106,10 @@ public class SnapshotPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         super.buttonClicked(buttonId);
-        _ctrl.close((buttonId == OK_BUTTON) ? _bitmap : null);
+        _ctrl.close((buttonId == OK_BUTTON) ? _snapshot.bitmap : null);
     }
 
-    protected var _bitmap :BitmapData;
+    protected var _snapshot :Snapshot
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;
