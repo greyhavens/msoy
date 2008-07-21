@@ -7,6 +7,7 @@ import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.Communicator;
@@ -47,6 +48,7 @@ public class BureauLauncherClient extends Client
         _target = target;
         addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
         getInvocationDirector().registerReceiver(new BureauLauncherDecoder(launcher));
+        setVersion(DeploymentConfig.version);
     }
 
     @Override // from Client
