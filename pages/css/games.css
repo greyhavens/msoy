@@ -841,17 +841,18 @@
   background: transparent url(/images/game/play_button_over.png);
 }
 
-.playButton-small {
-  width: 126px;
-  height: 50px;
-  background: transparent url(/images/game/play_button_small.png); /* TODO: Get real button art. */
+.playButtonSmall {
+  width: 120px;
+  height: 44px;
+  cursor: pointer;
+  background: transparent url(/images/game/play_button_small.png);
 }
 
-/*.playButton-small-down-hovering {
+.playButtonSmall-down-hovering {
   background: transparent url(/images/game/play_button_small_down.png);
 }
 
-.playButton-small-up-hovering {
+.playButtonSmall-up-hovering {
   background: transparent url(/images/game/play_button_small_over.png);
-}*/
+}
 

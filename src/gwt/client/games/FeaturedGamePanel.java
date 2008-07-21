@@ -60,7 +60,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         
         add(new Stars(game.rating, true, false, null), 210, 180);
         PlayButton play = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
-        play.addStyleDependentName("small");
+        play.setStyleName("playButtonSmall");
         add(play, 307, 160);
     }
 
