@@ -77,11 +77,11 @@ public class ABTestEditorDialog extends BorderedDialog
         enabled.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (!_test.enabled && enabled.isChecked()) {
-                    _test.started = new Date();
-                    _test.enabled = true;
                     if (_test.started != null) {
                         MsoyUI.info(CAdmin.msgs.abTestEnabledWarning());
                     }
+                    _test.started = new Date();
+                    _test.enabled = true;
                 } else if (_test.enabled && !enabled.isChecked()) {
                     _test.ended = new Date();
                     _test.enabled = false;
