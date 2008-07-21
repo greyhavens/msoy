@@ -491,6 +491,9 @@ public class Application
        $wnd.setReferral = function (ref) {
            @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
        };
+       $wnd.toggleClientHeight = function () {
+           @client.util.FlashClients::toggleClientHeight()();
+       }
     }-*/;
 
     /**
