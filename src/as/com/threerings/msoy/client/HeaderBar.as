@@ -33,6 +33,8 @@ import com.threerings.msoy.chat.client.ChatTabBar;
 
 import com.threerings.msoy.client.EmbedDialog;
 
+import com.threerings.msoy.world.client.WorldController;
+
 public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 20;
@@ -275,13 +277,21 @@ public class HeaderBar extends HBox
         _fullVersion.addChild(arrowWrapper);
         _extras.push(_fullVersion);
 
-        _closeBox = new VBox();
+        _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
         addChild(_closeBox);
+        
+        var heightBtn :CommandButton = new CommandButton();
+        heightBtn.setCommand(WorldController.TOGGLE_HEIGHT);
+        heightBtn.toolTip = Msgs.GENERAL.get("i.height");
+        heightBtn.styleName = "heightButton";
+        _closeBox.addChild(heightBtn);
+        
         var closeBtn :CommandButton = new CommandButton();
         closeBtn.setCommand(MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
+        
         setFullVersionLink(null);
     }
 
@@ -316,7 +326,7 @@ public class HeaderBar extends HBox
     protected var _fullVersionLink :CommandLinkButton;
     protected var _fullVersion :HBox;
 
-    protected var _closeBox :VBox;
+    protected var _closeBox :HBox;
 
     protected var _tabs :ChatTabBar;
 

@@ -826,14 +826,27 @@ BasePanel {
 .closeButton {
   height: 13px;
   width: 13px;
-  overSkin: Embed(source="../../pages/images/ui/close_over.png");
-  disabledSkin: Embed(source="../../pages/images/ui/close.png");
-  downSkin: Embed(source="../../pages/images/ui/close_down.png");
-  upSkin: Embed(source="../../pages/images/ui/close.png");
-  selectedOverSkin: Embed(source="../../pages/images/ui/close_over.png");
-  selectedDisabledSkin: Embed(source="../../pages/images/ui/close.png");
-  selectedDownSkin: Embed(source="../../pages/images/ui/close_down.png");
-  selectedUpSkin: Embed(source="../../pages/images/ui/close.png");
+  overSkin: Embed(source="../../pages/images/ui/client_close_over.png");
+  disabledSkin: Embed(source="../../pages/images/ui/client_close_default.png");
+  downSkin: Embed(source="../../pages/images/ui/client_close_down.png");
+  upSkin: Embed(source="../../pages/images/ui/client_close_default.png");
+  selectedOverSkin: Embed(source="../../pages/images/ui/client_close_over.png");
+  selectedDisabledSkin: Embed(source="../../pages/images/ui/client_close_default.png");
+  selectedDownSkin: Embed(source="../../pages/images/ui/client_close_down.png");
+  selectedUpSkin: Embed(source="../../pages/images/ui/client_close_default.png");
+}
+
+.heightButton {
+  height: 13px;
+  width: 13px;
+  overSkin: Embed(source="../../pages/images/ui/client_height_over.png");
+  disabledSkin: Embed(source="../../pages/images/ui/client_height_default.png");
+  downSkin: Embed(source="../../pages/images/ui/client_height_down.png");
+  upSkin: Embed(source="../../pages/images/ui/client_height_default.png");
+  selectedOverSkin: Embed(source="../../pages/images/ui/client_height_over.png");
+  selectedDisabledSkin: Embed(source="../../pages/images/ui/client_height_default.png");
+  selectedDownSkin: Embed(source="../../pages/images/ui/client_height_down.png");
+  selectedUpSkin: Embed(source="../../pages/images/ui/client_height_default.png");
 }
 
 .locationName {
@@ -982,6 +995,7 @@ BasePanel {
   paddingTop: 4px;
   paddingRight: 3px;
   paddingBottom: 3px;
+  horizontalGap: 3px;
 }
 
 .embedButton {

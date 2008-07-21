@@ -156,6 +156,9 @@ public class WorldController extends MsoyController
     /** Command to display the given room in Whirled (used in the embedded client). */
     public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
 
+    /** Command to toggle the client to full browser height. */
+    public static const TOGGLE_HEIGHT :String = "ToggleHeight";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -724,6 +727,25 @@ public class WorldController extends MsoyController
             new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
     }
 
+    /**
+     * Handles the TOGGLE_HEIGHT command.
+     */
+    public function handleToggleHeight () :void
+    {
+        if (inGWTApp()) {
+            try {
+                if (ExternalInterface.available) {
+                    ExternalInterface.call("toggleClientHeight");
+                    return;
+                }
+            } catch (e :Error) {
+                log.warning("Unable to handleToggleHeight via Javascript: " + e);
+            }
+        } else {
+        	log.warning("Can't access GWT to handleToggleHeight");
+        }
+    }
+    
     /**
      * Called by the scene director when we've traveled to a new scene.
      */
