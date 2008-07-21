@@ -17,9 +17,11 @@ import com.threerings.msoy.world.client.OccupantSprite;
 /**
  * Represents a particular snapshot
  */ 
-public class Snapshot {
-    
-    public function Snapshot (view:RoomView, width:int, height:int)
+public class Snapshot 
+{    
+    public var bitmap :BitmapData;
+
+    public function Snapshot (view :RoomView, width :int, height :int)
     {
         _view = view;
         _width = width;
@@ -54,7 +56,7 @@ public class Snapshot {
     /**
      * Render the overlays 
      */ 
-    protected function renderOverlays (bitmap:BitmapData, newScale:Number) :void {        
+    protected function renderOverlays (bitmap :BitmapData, newScale :Number) :void {        
         var d :DisplayObject = _view;
         
         // search up through the containment hierarchy until you find the LayeredContainer
@@ -63,7 +65,6 @@ public class Snapshot {
             d = d.parent;
         }
         if (d is LayeredContainer) {
-            // where does this matrix come from?  The last child in the original transformation?
             (d as LayeredContainer).snapshotOverlays(bitmap, newScale);
         }
     }
@@ -72,7 +73,7 @@ public class Snapshot {
      * Render the children
      */
     protected function renderChildren (
-        bitmap:BitmapData, newScale:Number, includeOccupants:Boolean) :Boolean 
+        bitmap :BitmapData, newScale :Number, includeOccupants :Boolean) :Boolean 
     {
         var allSuccess:Boolean = true;
         
@@ -105,10 +106,8 @@ public class Snapshot {
         return allSuccess;
     }
     
-    public var bitmap:BitmapData;
-
     protected var _view :RoomView;
-    protected var _width:int;
-    protected var _height:int;
+    protected var _width :int;
+    protected var _height :int;
 }
 }
