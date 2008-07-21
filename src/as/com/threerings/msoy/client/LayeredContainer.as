@@ -49,13 +49,13 @@ public class LayeredContainer extends Container
     /**
      * Snapshot all the overlays.
      */
-    public function snapshotOverlays (bitmapData :BitmapData, matrix :Matrix) :void
+    public function snapshotOverlays (bitmapData :BitmapData, scale :Number) :void
     {
         for (var ii :int = 0; ii < numChildren; ii++) {
             var disp :DisplayObject = getChildAt(ii);
             if (disp != _base) {
-                var m :Matrix = disp.transform.matrix;
-                m.concat(matrix);
+                var m :Matrix = disp.transform.matrix; // clone the matrix
+                m.scale(scale, scale); // scale it based on the passed in value
                 bitmapData.draw(disp, m, null, null, null, true);
             }
         }

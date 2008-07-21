@@ -63,7 +63,7 @@ public class SnapshotPanel extends FloatingPanel
             var child :DisplayObject = _view.getChildAt(ii);
 
             var matrix :Matrix = child.transform.matrix; // makes a clone...
-            matrix.scale(newScale, newScale);
+            matrix.scale(newScale, newScale); // scales the matrix taken from that child object
 
             if (child is MsoySprite) {
                 if (!includeOccupants && (child is OccupantSprite)) {
@@ -88,11 +88,15 @@ public class SnapshotPanel extends FloatingPanel
 
         if (includeOverlays) {
             var d :DisplayObject = _view;
+            
+            // search up through the containment hierarchy until you find the LayeredContainer
+            // or the end of the hierarchy
             while (!(d is LayeredContainer) && d.parent != null) {
                 d = d.parent;
             }
             if (d is LayeredContainer) {
-                (d as LayeredContainer).snapshotOverlays(_bitmap, matrix);
+                // where does this matrix come from?  The last child in the original transformation?
+                (d as LayeredContainer).snapshotOverlays(_bitmap, newScale);
             }
         }
 
@@ -113,11 +117,14 @@ public class SnapshotPanel extends FloatingPanel
     {
         super.createChildren();
 
+        _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"));
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
         _showOccs.selected = true;
         _showChat.selected = true;
+        _useAsCanonical.selected = false;
 
+        addChild(_useAsCanonical);
         addChild(_showOccs);
 
         var hbox :HBox = new HBox();
@@ -165,6 +172,7 @@ public class SnapshotPanel extends FloatingPanel
 
     protected var _showOccs :CommandCheckBox;
     protected var _showChat :CommandCheckBox;
+    protected var _useAsCanonical :CommandCheckBox;
 
 //    /** Were we successful in snapshotting every single scene element? */
 //    protected var _success :Boolean;
