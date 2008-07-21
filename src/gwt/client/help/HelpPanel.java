@@ -58,6 +58,10 @@ public class HelpPanel extends VerticalPanel
         
         // technical info
         add(new TongueBox(CHelp.msgs.helpTechTitle(), CHelp.msgs.helpTech(), true));
+
+        // rules / terms of service / etc
+        add(new TongueBox(CHelp.msgs.helpRulesTitle(), CHelp.msgs.helpRules(), true));
+        add(WidgetUtil.makeShim(10, 15));
         
         // whirled team
         FlowPanel team = new FlowPanel();
