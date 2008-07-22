@@ -3,19 +3,11 @@
 
 package com.threerings.msoy.data;
 
-import com.google.inject.Inject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
-import com.threerings.whirled.data.SceneModel;
-import com.threerings.whirled.server.SceneManager;
-
 import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
-
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -435,24 +427,6 @@ public class MemberObject extends MsoyBodyObject
     public Name getVisibleName ()
     {
         return memberName;
-    }
-
-    @Override // from BodyObject
-    public void willEnterPlace (Place place, PlaceObject plobj)
-    {
-        super.willEnterPlace(place, plobj);
-
-        // if we're entering a ScenePlace, it might be a Whirled we haven't visited before.
-        PlaceManager pman = _plreg.getPlaceManager(place.placeOid);
-        if (pman instanceof SceneManager) {
-            SceneModel sm = ((SceneManager)pman).getScene().getSceneModel();
-            if (sm instanceof MsoySceneModel) {
-                MsoySceneModel msm = (MsoySceneModel)sm;
-                if ( msm.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    stats.addToSetStat(StatType.WHIRLEDS_VISITED, msm.ownerId);
-                }
-            }
-        }
     }
 
     // AUTO-GENERATED: METHODS START
@@ -1055,9 +1029,6 @@ public class MemberObject extends MsoyBodyObject
         buf.append("id=").append(getMemberId()).append(" oid=");
         super.addWhoData(buf);
     }
-
-    /** Provides access to place managers. */
-    @Inject protected PlaceRegistry _plreg;
 
 //    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
 //    protected static final int MAX_RECENT_SCENES = 10;

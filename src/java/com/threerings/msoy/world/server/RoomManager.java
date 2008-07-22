@@ -55,6 +55,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
@@ -751,6 +752,10 @@ public class RoomManager extends SpotSceneManager
             MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
             member.metrics.room.init(isMemberScene, model.ownerId);
+
+            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                member.stats.addToSetStat(StatType.WHIRLEDS_VISITED, model.ownerId);
+            }
         }
     }
 
@@ -773,17 +778,17 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             member.metrics.room.save(member);
-            
+
             // get the last known occupancy length - this might have been measured above,
             // or by the peer serialization code if we're moving across servers
             int secondsInRoom = member.metrics.room.getLastOccupancyLength();
             MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-            
+
             // if this is not a transient viewer, log it!
             if (! member.memberName.isViewer()) {
                 _eventLog.roomLeft(
-                    member.getMemberId(), model.sceneId, isWhirled, 
+                    member.getMemberId(), model.sceneId, isWhirled,
                     secondsInRoom, _roomObj.occupants.size());
             }
         }
