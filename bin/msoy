@@ -4,6 +4,19 @@
 #
 # Startup script for the MetaSOY game server.
 
+WHOAMI=`whoami`
+if [ "$WHOAMI" != "root" ]; then
+    echo "This script must be run as root."
+    exit 255
+fi
+
+MSOY_HOME=`dirname $0`/..
+MSOY_HOME=`cd $MSOY_HOME ; pwd`
+if [ ! -f $MSOY_HOME/dist/msoy-server.conf ]; then
+    echo "Unable to infer MSOY_HOME. No msoy-server.conf file?"
+    exit 1
+fi
+
 check_pid() {
     NAME=$1
     PIDFILE=$2
@@ -20,18 +33,19 @@ check_pid() {
     fi
 }
 
-WHOAMI=`whoami`
-if [ "$WHOAMI" != "root" ]; then
-    echo "This script must be run as root."
-    exit 255
-fi
-
-MSOY_HOME=`dirname $0`/..
-MSOY_HOME=`cd $MSOY_HOME ; pwd`
-if [ ! -f $MSOY_HOME/dist/msoy-server.conf ]; then
-    echo "Unable to infer MSOY_HOME. No msoy-server.conf file?"
-    exit 1
-fi
+kill_server() {
+    MESSAGE=$1
+    SIGNAL=$2
+    SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
+    if [ ! -f $SERVER_PIDFILE ]; then
+        echo "No $SERVER_PIDFILE exists. Is the server running?"
+    else
+        echo -n "$MESSAGE msoy $PROCID."
+        kill -$SIGNAL `cat $SERVER_PIDFILE`
+        echo "Check $MSOY_HOME/log/respawn-$PROCID.log to ensure that it restarts."
+        rm -f $SERVER_PIDFILE
+    fi
+}
 
 # Read in our configuration
 . $MSOY_HOME/dist/msoy-server.conf
@@ -96,15 +110,11 @@ case "$1" in
         ;;
 
   restart)
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
-        if [ ! -f $SERVER_PIDFILE ]; then
-            echo "No $SERVER_PIDFILE exists. Is the server running?"
-        else
-            echo -n "Shutting down msoy $PROCID."
-            kill `cat $SERVER_PIDFILE`
-            echo "Check $MSOY_HOME/log/respawn-$PROCID.log to ensure that it restarts."
-            rm -f $SERVER_PIDFILE
-        fi
+        kill_server "Shutting down" 15
+        ;;
+
+  kill)
+        kill_server "Sticking a fork in" 9
         ;;
 
   *)
