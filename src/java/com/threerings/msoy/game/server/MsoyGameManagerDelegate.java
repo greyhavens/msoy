@@ -533,9 +533,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // update player stats
         final int[] playerIds = _playerIds.clone();
         final boolean[] winners = _gobj.winners.clone();
+        final int gameId = _content.detail.gameId;
         _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
             public void invokePersist () throws PersistenceException {
-                boolean isMultiplayer = (playerIds.length > 1);
 
                 for (int ii = 0; ii < playerIds.length; ii++) {
                     int playerId = _playerIds[ii];
@@ -543,7 +543,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                     // track total games played
                     _statLogic.incrementStat(playerId, StatType.GAMES_PLAYED, 1);
 
-                    if (isMultiplayer) {
+                    if (isMultiplayer()) {
                         // track unique game partners
                         for (int otherPlayerId : playerIds) {
                             if (otherPlayerId != playerId) {
@@ -560,8 +560,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 }
             }
             protected String getFailureMessage () {
-                StringBuilder builder = new StringBuilder("Failed to update game stats: ");
-                return builder.toString();
+                return "Failed to update game stats (gameId=" + gameId + ")";
             }
         });
     }
