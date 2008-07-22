@@ -28,8 +28,12 @@
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
-    <include name="${gsrc.dir}/**/*.java"/>
+    <exclude name="${src.dir}/**/data/*Marshaller.java"/>
+    <exclude name="${src.dir}/**/server/*Provider.java"/>
+    <exclude name="${src.dir}/**/server/*Dispatcher.java"/>
+    <include name="${gsrc.dir}/client/**/*.java"/>
     <exclude name="${gsrc.dir}/**/*Messages.java"/>
+    <exclude name="${gsrc.dir}/client/images/**/*Images.java"/>
   </fileset>
 
   <!-- override the src dirset and package names for the common javadoc target -->
