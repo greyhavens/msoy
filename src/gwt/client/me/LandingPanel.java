@@ -56,6 +56,7 @@ public class LandingPanel extends SimplePanel
         final Button joinButton =
             new Button("", Application.createLinkListener(Page.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
+        joinButton.addClickListener(MsoyUI.createTrackingListener("landingJoinButtonClicked", null));
         content.add(joinButton, 475, 0);
 
         // login box
@@ -72,6 +73,7 @@ public class LandingPanel extends SimplePanel
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 video.remove(0);
+                // TODO analytics not needed now that we have panopticon, but leave for comparaison
                 CMe.app.reportEvent("/me/video");
                 // slideshow actual size is 360x260
                 video.add(WidgetUtil.createFlashContainer(
@@ -80,6 +82,7 @@ public class LandingPanel extends SimplePanel
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/play_screen.png", CMe.msgs.landingClickToStart(), onClick);
+        clickToPlayImage.addClickListener(MsoyUI.createTrackingListener("landingVideoPlayed", null));
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 

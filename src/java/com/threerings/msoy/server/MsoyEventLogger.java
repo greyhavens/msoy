@@ -224,18 +224,29 @@ public class MsoyEventLogger
     }
 
     /**
+     * Action performed on the client such as clicking a particular button.
+     * @param tracker The visitors' tracking ID
+     * @param actionName Identifier for the action performed eg "landingPlayButtonClicked"
+     * @param details More info on the action, eg the id of the game clicked upon
+     */
+    public void clientAction (String tracker, String actionName, String details)
+    {
+        post(new MsoyEvents.ClientAction(tracker, actionName, details));
+    }
+
+    /**
      * Generic action such as clicking a particular button, viewing an a/b test or landing
-     * on a page.  Used for short term testing.
+     * on a page during an a/b test.  Used for short term testing.
      * @param tracker Assigned to every visitor who lands in GWT or Flash
      * @param actionName Identifier such as "LostPasswordButtonClicked"
      * @param testName Optionally record the name of a related a/b test group
      * @param abTestGroup The visitor's a/b group if this is part of an a/b test, or < 0.
      */
-    public void testActionReached (String tracker, String actionName, String testName, int abTestGroup)
+    public void testAction (String tracker, String actionName, String testName, int abTestGroup)
     {
-        post(new MsoyEvents.TestActionReached(tracker, actionName, testName, abTestGroup));
+        post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
     }
-
+    
     /** Posts a log message to the appropriate place. */
     protected void post (MsoyEvent message)
     {

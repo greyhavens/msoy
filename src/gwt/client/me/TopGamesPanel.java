@@ -24,6 +24,7 @@ import com.threerings.msoy.web.data.FeaturedGameInfo;
 import client.games.CGames;
 import client.games.GameBitsPanel;
 import client.games.GameNamePanel;
+import client.games.PlayButton;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
@@ -185,29 +186,16 @@ public class TopGamesPanel extends AbsolutePanel
             game.name, game.genre, game.creator, game.description);
         right.add(gameName);
 
-        // display single only if no multi exists
-        FlowPanel playButtonPanel = new FlowPanel();
-        if (game.maxPlayers == 1) {
-            PushButton singleButton = makePlayButton("SinglePlay", new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
-                }
-            });
-            playButtonPanel.add(singleButton);
-        }
-        else {
-            PushButton multiButton = makePlayButton("FriendPlay", new ClickListener() {
-                public void onClick (Widget sender) {
-                    Application.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
-                }
-            });
-            playButtonPanel.add(multiButton);
-        }
-        right.add(playButtonPanel);
+        // play button
+        PushButton playButton = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
+        playButton.setStyleName("playButtonSmall");
+        playButton.addClickListener(MsoyUI.createTrackingListener("landingGamePlayClicked", game.gameId+""));
+        right.add(playButton);
 
         // more games button
         PushButton moreGamesButton = makePlayButton(
             "MoreGames", Application.createLinkListener(Page.GAMES, ""));
+        moreGamesButton.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
         right.add(moreGamesButton);
 
         gameInfoTable.setWidget(0, 2, right);

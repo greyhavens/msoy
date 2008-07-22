@@ -23,8 +23,10 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SessionData;
 
+import client.admin.CAdmin;
 import client.shell.CShell;
 import client.shell.LogonPanel;
+import client.shell.TrackingCookie;
 
 /**
  * Contains useful user interface related methods.
@@ -363,6 +365,40 @@ public class MsoyUI
         Image image = new Image(path);
         image.setStyleName("inline");
         return image;
+    }
+
+    /**
+     * Create a ClickListener that will track an arbitrary click on any widget against our
+     * server-side tracking system.  No callback.
+     * @param action String identifier for the action to be logged eg "landingPlayButtonClicked"
+     * @param details Optional additional info about the action performed eg game or whirled id
+     */
+    public static ClickListener createTrackingListener (final String action, final String details)
+    {
+        ClickListener listener = new ClickListener() {
+            public void onClick (Widget sender) {
+                CAdmin.membersvc.trackClientAction(
+                    TrackingCookie.get(), action, details != null ? details : "", null);
+            }
+        };
+        return listener;
+    }
+
+    /**
+     * Create a ClickListener that will track an arbitrary click on any widget during an a/b test. 
+     * No callback is performed on success or failure.
+     * @param action String identifier for the action to be logged
+     * @param testName Optional string identifier for the a/b test if associated with one
+     */
+    public static ClickListener createTestTrackingListener (final String action, final String testName)
+    {
+        ClickListener listener = new ClickListener() {
+            public void onClick (Widget sender) {
+                CAdmin.membersvc.trackTestAction(
+                    TrackingCookie.get(), action, testName, null);
+            }
+        };
+        return listener;
     }
 
     /**

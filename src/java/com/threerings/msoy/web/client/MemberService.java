@@ -105,9 +105,15 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Generic method for tracking a client-side action such as clicking a button.  If testName
+     * Generic method for tracking a client-side action such as clicking a button.
+     */
+    public void trackClientAction (ReferralInfo info, String actionName, String details)
+        throws ServiceException;
+    
+    /**
+     * Tracking a client-side action such as clicking a button during an a/b test.  If testName
      * is supplied, the visitor's a/b test group will also be tracked.
      */
-    public void trackClientAction (ReferralInfo info, String actionName, String testName)
+    public void trackTestAction (ReferralInfo info, String actionName, String testName)
         throws ServiceException;
 }

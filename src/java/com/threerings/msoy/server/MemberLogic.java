@@ -151,7 +151,7 @@ public class MemberLogic
 
         // optionally log an event to say the group was assigned
         if (logEvent && group >= 0) {
-            _eventLog.testActionReached(info.tracker, "ABTestGroupAssigned", testName, group);
+            _eventLog.testAction(info.tracker, "ABTestGroupAssigned", testName, group);
         }
 
         return group;

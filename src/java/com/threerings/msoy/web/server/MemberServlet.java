@@ -300,16 +300,22 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void trackClientAction (ReferralInfo info, String actionName, String testName)
+    public void trackClientAction (ReferralInfo info, String actionName, String details)
+    {
+        _eventLog.clientAction(info.tracker, actionName, details);
+    }
+
+    // from MemberService
+    public void trackTestAction (ReferralInfo info, String actionName, String testName)
     {
         int abTestGroup = -1;
         if (testName != null) {
             // grab the group without logging a tracking event about it
             abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
+        } else {
+            testName = "";
         }
-        if (abTestGroup != -1) {
-            _eventLog.testActionReached(info.tracker, actionName, testName, abTestGroup);
-        }
+        _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
     }
 
     /**

@@ -422,28 +422,10 @@
   padding-top: 2px;
 }
 
-.LandingPanel .TopGamesPanel .GameInfo .PlayButton {
-  width: 126px;
-  height: 50px;
-  border: none;
-  cursor: pointer;
-  text-align: center;
+.LandingPanel .TopGamesPanel .GameInfo .playButtonSmall {
   position: absolute;
   top: 180px;
   left: 237px;
-}
-
-.LandingPanel .TopGamesPanel .GameInfo .SinglePlay {
-  background: transparent url(/images/game/play_alone.png);
-}
-.LandingPanel .TopGamesPanel .GameInfo .FriendPlay {
-  background: transparent url(/images/game/play_friends.png);
-}
-.LandingPanel .TopGamesPanel .GameInfo .SinglePlay-up-hovering {
-  background: transparent url(/images/game/play_alone_over.png);
-}
-.LandingPanel .TopGamesPanel .GameInfo .FriendPlay-up-hovering {
-  background: transparent url(/images/game/play_friends_over.png);
 }
 
 .LandingPanel .TopGamesPanel .GameInfo .MoreGames {

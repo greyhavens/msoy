@@ -456,12 +456,32 @@ public class MsoyEvents
     }
 
     /**
-     * Generic event for an action such as a button click or hitting an a/b test page.  Used
-     * for short term testing. testName and testGroup will be supplied if this is part of
-     * an a/b test.
+     * Generic event for an action such as a button click performed on the client.
      */
-    @Event(name="TestActionReached")
-    public static class TestActionReached implements MsoyEvent
+    @Event(name="ClientAction")
+    public static class ClientAction implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public String tracker;
+        @Field final public String actionName;
+        /** Additional information such as which game's button was clicked */
+        @Index @Field final public String details;
+
+        public ClientAction (String tracker, String actionName, String details)
+        {
+            this.timestamp = new Date();
+            this.tracker = tracker;
+            this.actionName = actionName;
+            this.details = details != null ? details : "";
+        }
+    }
+
+    /**
+     * A/B Test-related action such as a button click or hitting an a/b test page.  Used
+     * for short term testing.
+     */
+    @Event(name="TestAction")
+    public static class TestAction implements MsoyEvent
     {
         @Index @Field final public Date timestamp;
         @Field final public String tracker;
@@ -469,7 +489,7 @@ public class MsoyEvents
         @Index @Field final public String testName;
         @Field final public int testGroup;
 
-        public TestActionReached (String tracker, String actionName, String testName, int testGroup)
+        public TestAction (String tracker, String actionName, String testName, int testGroup)
         {
             this.timestamp = new Date();
             this.tracker = tracker;

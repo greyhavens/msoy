@@ -98,14 +98,10 @@ public class ABTestListPanel extends FlowPanel
                                 MsoyUI.info("You are in group #" + group);
                             }
                     });
-
-                    CAdmin.membersvc.trackClientAction(
-                        TrackingCookie.get(), "ClickedTestButton_"+test.name, test.name,
-                        new MsoyCallback<Void>() {
-                            public void onSuccess (Void result) {}
-                    });
                 }
             });
+            testButton.addClickListener(
+                MsoyUI.createTestTrackingListener("ClickedTestButton_"+test.name, test.name));
             _contents.setWidget(row, col++, MsoyUI.createButtonPair(editButton, testButton));
 
         }

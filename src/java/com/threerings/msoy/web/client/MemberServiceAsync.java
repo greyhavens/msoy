@@ -89,6 +89,12 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#trackClientAction}.
      */
     public void trackClientAction (
+        ReferralInfo info, String actionName, String details, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#trackTestAction}.
+     */
+    public void trackTestAction (
         ReferralInfo info, String actionName, String testName, AsyncCallback<Void> callback);
 
 }
