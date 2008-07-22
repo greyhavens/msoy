@@ -29,6 +29,7 @@
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
     <include name="${gsrc.dir}/**/*.java"/>
+    <exclude name="${gsrc.dir}/**/*Messages.java"/>
   </fileset>
 
   <!-- override the src dirset and package names for the common javadoc target -->
@@ -948,8 +949,9 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,mavendeps,distprojects-extra,dist,flashapps,thane-client,javaapps,tests"
-        description="Rebuilds all subprojects and whole top-level distribution.">
+  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
+  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle"
+          description="Rebuilds all subprojects and whole top-level distribution.">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
