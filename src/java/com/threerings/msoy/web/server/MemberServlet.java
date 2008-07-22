@@ -307,7 +307,9 @@ public class MemberServlet extends MsoyServiceServlet
             // grab the group without logging a tracking event about it
             abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
         }
-        _eventLog.testActionReached(info.tracker, actionName, testName, abTestGroup);
+        if (abTestGroup != -1) {
+            _eventLog.testActionReached(info.tracker, actionName, testName, abTestGroup);
+        }
     }
 
     /**
