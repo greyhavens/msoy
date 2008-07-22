@@ -15,8 +15,6 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Provides services used by all remote service servlets.
  */

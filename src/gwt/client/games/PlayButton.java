@@ -2,7 +2,6 @@ package client.games;
 
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.Application;

@@ -15,7 +15,6 @@ import client.util.events.ItemUsageListener;
 import client.util.events.FlashEvents;
 
 import client.shell.CShell;
-import client.shell.Frame;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 

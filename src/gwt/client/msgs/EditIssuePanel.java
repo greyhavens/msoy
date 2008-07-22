@@ -8,6 +8,7 @@ import java.util.List;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
 
+import client.shell.Application;
 import client.shell.Page;
 
 import com.google.gwt.user.client.ui.Button;
@@ -24,8 +25,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.Issue;
-
-import client.shell.Page;
 
 import client.util.MsoyCallback;
 
@@ -101,7 +100,6 @@ public class EditIssuePanel extends TableFooterPanel
 
     protected void fillViewPanel ()
     {
-        int row = 0;
         _table.setText(0, 1, IssueMsgs.typeMsg(_issue.type, CMsgs.mmsgs));
         _table.setText(1, 1, _issue.creator.toString());
         _table.setText(2, 1, (_issue.owner == null ?
@@ -120,7 +118,7 @@ public class EditIssuePanel extends TableFooterPanel
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    CMsgs.app.go(Page.WHIRLEDS,
+                    Application.go(Page.WHIRLEDS,
                             "t_" + _message.threadId + "_" + _page + "_" + _messageId);
                     return false;
                 }

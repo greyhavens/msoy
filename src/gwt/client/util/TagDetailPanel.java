@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -101,7 +100,7 @@ public class TagDetailPanel extends VerticalPanel
 
             if (_service.supportFlags()) {
                 InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
-                PopupMenu menu = new PopupMenu(flagLabel) {
+                new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
                         addFlag(CShell.cmsgs.tagMatureFlag(), CShell.cmsgs.tagMaturePrompt(),
                                 updateFlag(Item.FLAG_FLAGGED_MATURE));

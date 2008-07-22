@@ -24,8 +24,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.FurniUpdate;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Converts sequences of furniture modification updates into a single large update, which is then
  * committed to the database.

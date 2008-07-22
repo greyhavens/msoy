@@ -7,8 +7,6 @@ import com.threerings.msoy.data.all.JabberName;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.InvocationListener;
-import com.threerings.presents.client.InvocationService.ResultListener;
 
 /**
  * Defines Jabber related invocation services.

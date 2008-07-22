@@ -27,7 +27,6 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
-import client.util.ItemUtil;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 

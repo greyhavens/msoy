@@ -15,7 +15,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;

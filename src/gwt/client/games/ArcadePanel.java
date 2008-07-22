@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameInfo;
-import com.threerings.msoy.web.data.ArcadeData.Genre;
 
 import client.shell.Application;
 import client.shell.Args;

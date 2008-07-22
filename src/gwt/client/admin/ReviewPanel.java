@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.util.MsoyCallback;

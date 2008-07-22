@@ -53,7 +53,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 
 import com.threerings.msoy.peer.server.GameNodeAction;
-import com.threerings.msoy.person.data.GameAwardPayload;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.world.data.FurniData;
