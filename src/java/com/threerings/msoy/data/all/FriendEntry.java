@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Represents a friend connection.
  */
 public class FriendEntry
-    implements Comparable, DSet.Entry, IsSerializable
+    implements PeerEntry, IsSerializable
 {
     /** The display name of the friend. */
     public MemberName name;
@@ -41,12 +41,22 @@ public class FriendEntry
         this.status = status;
     }
 
-    /**
-     * Get the member id of this friend.
-     */
+    // from interface PeerEntry
+    public MemberName getName ()
+    {
+        return name;
+    }
+
+    // from interface PeerEntry
     public int getMemberId ()
     {
         return name.getMemberId();
+    }
+
+    // from interface PeerEntry
+    public MediaDesc getPhoto ()
+    {
+        return photo;
     }
 
     // from interface DSet.Entry
