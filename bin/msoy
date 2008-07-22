@@ -41,6 +41,10 @@ kill_server() {
         echo "No $SERVER_PIDFILE exists. Is the server running?"
     else
         echo -n "$MESSAGE msoy $PROCID."
+        # if we're SIGKILLing the server, try to generate a thread dump first
+        if [ "$SIGNAL" = 9 ]; then
+            kill -3 `cat $SERVER_PIDFILE`
+        fi
         kill -$SIGNAL `cat $SERVER_PIDFILE`
         echo "Check $MSOY_HOME/log/respawn-$PROCID.log to ensure that it restarts."
         rm -f $SERVER_PIDFILE
