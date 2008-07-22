@@ -531,7 +531,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         resetTracking();
 
         // update player stats
-        final int[] playerIds = _playerIds.clone();
+        // TEMP - tim will uncomment when this stops breaking
+        /*final int[] playerIds = _playerIds.clone();
         final boolean[] winners = _gobj.winners.clone();
         final int gameId = _content.detail.gameId;
         _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
@@ -562,7 +563,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             protected String getFailureMessage () {
                 return "Failed to update game stats (gameId=" + gameId + ")";
             }
-        });
+        });*/
     }
 
     protected void updatePlayerStats (final ArrayList<Integer> memberIds)
