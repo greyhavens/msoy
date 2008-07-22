@@ -330,6 +330,11 @@ public class PopupFilePreview extends TitleWindow
         case "Image":
             return [ new FileFilter(_ctx.REMIX.get("m.Image"), "*.jpg;*.jpeg;*.gif;*.png") ];
 
+        case "XML": // TODO
+            // fall through to Text
+        case "Text": // TODO
+            // fall through to default
+
         default:
             throw new Error("Don't understand " + _type + " files yet.");
         }

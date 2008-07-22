@@ -112,6 +112,24 @@ public class DataEditor extends FieldEditor
         return [ picker, new Spacer(), picker ];
     }
 
+    protected function setupPoint (entry :Object) :Array
+    {
+        // TODO
+        throw new Error("TODO");
+    }
+
+    protected function setupRectangle (entry :Object) :Array
+    {
+        // TODO
+        throw new Error("TODO");
+    }
+
+    protected function setupArray (entry :Object) :Array
+    {
+        // TODO
+        throw new Error("TODO");
+    }
+
     protected function updateLabel (label :Label, entry :Object) :void
     {
         label.text = (entry.value == null) ? "" : String(entry.value);
