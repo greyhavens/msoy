@@ -96,6 +96,12 @@ public class TrackingCookie
       @client.shell.TrackingCookie::save(Lcom/threerings/msoy/data/all/ReferralInfo;Z)(ref,overwrite);
     }-*/;
 
+    public static String makeReferralParams (String affiliate, String vector, String creative) 
+    {
+        return "aid_" + (affiliate != null ? affiliate : "") + 
+            "_" + (vector != null ? vector : "") + "_" + (creative != null ? creative : "");
+    }
+    
     private static final String AFFILIATE_ID = "aff";
     private static final String VECTOR_ID = "vec";
     private static final String CREATIVE_ID = "cre";

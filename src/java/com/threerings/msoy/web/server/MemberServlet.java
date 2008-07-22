@@ -360,6 +360,9 @@ public class MemberServlet extends MsoyServiceServlet
             }
             params.set("invite_id", inviteId);
             params.set("server_url", ServerConfig.getServerURL());
+            
+            params.set("referral_params", 
+                makeReferralParams(inviter.memberId+"", EMAIL_VECTOR, null));
 
             String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
             String result = MailSender.sendEmail(email, from, "memberInvite", params);
@@ -395,10 +398,20 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
+    protected static String makeReferralParams (String affiliate, String vector, String creative) 
+    {
+        return "aid_" + (affiliate != null ? affiliate : "") + 
+            "_" + (vector != null ? vector : "") + 
+            "_" + (creative != null && creative.length() > 0 ? creative : "_");
+    }
+
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
+    
+    /** This vector string represents an email invite */
+    public static final String EMAIL_VECTOR = "emailInvite";
 }
