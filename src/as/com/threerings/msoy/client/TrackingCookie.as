@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.client {
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.util.Config;
-import com.threerings.util.Log;
-
-import com.threerings.msoy.data.all.ReferralInfo;  
+import com.threerings.util.Log;  
 
 /**
  * Wrapper that stores and loads up tracking information: parameters from the referral,
@@ -75,6 +74,16 @@ public class TrackingCookie
         log.debug("Cleared referral info.");
     }
 
+    /**
+     * Return a list of tracking variables suitable for the FlashVars embed param
+     */
+    public static function makeFlashVars (
+        affiliate :String, vector :String, creative :String) :String
+    {
+        return AFFILIATE_ID + "=" + affiliate + "&" + VECTOR_ID + "=" + vector + 
+            "&" + CREATIVE_ID + "=" + creative;
+    }
+    
     /** The underlying config object used to store tracking info. */
     protected static const config :Config = new Config("rsrc/config/msoy/affiliate");
 
@@ -85,5 +94,8 @@ public class TrackingCookie
     protected static const VECTOR_ID :String = "vec";
     protected static const CREATIVE_ID :String = "cre";
     protected static const TRACKER_ID :String = "grp";
+    
+    /** This vector string represents an embedded room */
+    public static const ROOM_VECTOR :String = "room";
 }
 }
