@@ -279,7 +279,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 ExternalInterface.call("setReferral", member.referral);
             }
         } catch (e :Error) {
-            log.info("ExternalInterface.call('getReferral') failed", "error", e);
+            log.info("ExternalInterface.call('setReferral') failed", "error", e);
         }
     }
 
@@ -396,9 +396,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             try {
                 log.debug("Querying browser cookie for referral info");        
                 var result :Object = ExternalInterface.call("getReferral");
-                ref = ReferralInfo.makeInstance(
-                    result.affiliate as String, result.vector as String,
-                    result.creative as String, result.tracker as String);
+                if (result != null) {
+	                ref = ReferralInfo.makeInstance(
+	                    result.affiliate as String, result.vector as String,
+	                    result.creative as String, result.tracker as String);
+                }
             } catch (e :Error) {
                 log.info("ExternalInterface.call('getReferral') failed", "error", e);
             }
