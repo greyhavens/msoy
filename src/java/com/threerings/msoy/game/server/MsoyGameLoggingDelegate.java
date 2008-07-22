@@ -53,8 +53,15 @@ public class MsoyGameLoggingDelegate extends GameManagerDelegate
         int seconds = (int)((System.currentTimeMillis() - entry) / 1000);
 
         final MsoyGameManager gmgr = (MsoyGameManager)_plmgr;
+        final String tracker = (plobj.referral != null) ? plobj.referral.tracker : null;
+        if (tracker == null) {
+            log.warning("Game finished without referral info", "memberId", memberId);
+        }
+
         _eventLog.gameLeft(
-            memberId, _content.game.genre, _content.game.gameId, seconds, gmgr.isMultiplayer());
+            memberId, _content.game.genre, _content.game.gameId, seconds, 
+            gmgr.isMultiplayer(), tracker);
+        
     }
 
     /** Game description. */

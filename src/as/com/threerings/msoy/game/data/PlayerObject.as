@@ -17,6 +17,7 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -44,6 +45,9 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>questState</code> field. */
     public static const QUEST_STATE :String = "questState";
+
+    /** The field name of the <code>referral</code> field. */
+    public static const REFERRAL :String = "referral";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -69,6 +73,9 @@ public class PlayerObject extends BodyObject
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public var gameContent :DSet;
+
+    /** Player's referral information. */
+    public var referral :ReferralInfo;
 
     // from BodyObject
     override public function getTokens () :TokenRing
@@ -148,6 +155,7 @@ public class PlayerObject extends BodyObject
         gameState = (ins.readObject() as DSet);
         questState = (ins.readObject() as DSet);
         gameContent = (ins.readObject() as DSet);
+        referral = (ins.readObject() as ReferralInfo);
     }
 }
 }

@@ -789,7 +789,7 @@ public class RoomManager extends SpotSceneManager
             if (! member.memberName.isViewer()) {
                 _eventLog.roomLeft(
                     member.getMemberId(), model.sceneId, isWhirled,
-                    secondsInRoom, _roomObj.occupants.size());
+                    secondsInRoom, _roomObj.occupants.size(), member.referral.tracker);
             }
         }
 

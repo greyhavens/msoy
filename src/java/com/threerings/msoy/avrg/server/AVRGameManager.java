@@ -200,7 +200,8 @@ public class AVRGameManager
             _pendingMoves.remove(memberId);
 
             int playTime = player.getPlayTime(now());
-            _eventLog.avrgLeft(memberId, _gameId, playTime, _gameObj.players.size());
+            String tracker = player.playerObject.referral.tracker;
+            _eventLog.avrgLeft(memberId, _gameId, playTime, _gameObj.players.size(), tracker);
 
             _totalTrackedSeconds += playTime;
             flushPlayerGameState(player.playerObject);

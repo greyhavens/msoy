@@ -550,7 +550,9 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         // record to the event log that we created a new account
-        _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
+        final String iid = (invite == null) ? null : invite.inviteId;
+        final String tracker = (referral == null) ? null : referral.tracker; 
+        _eventLog.accountCreated(mrec.memberId, iid, tracker);
 
         return mrec;
     }

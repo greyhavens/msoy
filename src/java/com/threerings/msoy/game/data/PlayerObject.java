@@ -20,6 +20,7 @@ import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -50,6 +51,9 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>gameContent</code> field. */
     public static final String GAME_CONTENT = "gameContent";
+
+    /** The field name of the <code>referral</code> field. */
+    public static final String REFERRAL = "referral";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -75,6 +79,9 @@ public class PlayerObject extends BodyObject
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
+
+    /** Player's referral information. */
+    public ReferralInfo referral;
 
     /**
      * Return true if this user is a guest.
@@ -389,6 +396,22 @@ public class PlayerObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<GameContentOwnership> clone =
             (value == null) ? null : value.typedClone();
         this.gameContent = clone;
+    }
+
+    /**
+     * Requests that the <code>referral</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setReferral (ReferralInfo value)
+    {
+        ReferralInfo ovalue = this.referral;
+        requestAttributeChange(
+            REFERRAL, value, ovalue);
+        this.referral = value;
     }
     // AUTO-GENERATED: METHODS END
 

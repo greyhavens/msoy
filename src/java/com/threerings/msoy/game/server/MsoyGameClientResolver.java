@@ -3,22 +3,20 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.crowd.server.CrowdClientResolver;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyObjectAccess;
-import com.threerings.msoy.server.persist.MemberRecord;
-
+import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-
-import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.server.MsoyObjectAccess;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.ReferralRecord;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 
 /**
  * Resolves an MSOY Game client's runtime data.
@@ -73,6 +71,16 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // fill in this member's raw friends list
         playerObj.friends = new DSet<FriendEntry>(
             MsoyGameServer.memberRepo.loadFriends(member.memberId, -1));
+        
+        // just like in MsoyClientResolver, fill in any referral information from the database 
+        ReferralRecord refrec = MsoyGameServer.memberRepo.loadReferral(member.memberId);
+        if (refrec == null) {
+            // if they don't have referral info, it means they're an old user who needs to be
+            // grandfathered into the referral-tracking order of things. give them a new entry.
+            refrec = MsoyGameServer.memberRepo.setReferral(member.memberId,
+                ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
+        }
+        playerObj.referral = refrec.toInfo();
     }
 
     /**

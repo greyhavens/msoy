@@ -151,25 +151,28 @@ public class MsoyEventLogger
     }
 
     public void roomLeft (
-        int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft)
+        int playerId, int sceneId, boolean isWhirled, int secondsInRoom, 
+        int occupantsLeft, String tracker)
     {
-        post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft));
+        post(new MsoyEvents.RoomExit(
+            playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft, tracker));
     }
 
     public void avrgLeft (
-        int playerId, int gameId, int seconds, int playersLeft)
+        int playerId, int gameId, int seconds, int playersLeft, String tracker) 
     {
-        post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft));
+        post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
     }
 
     public void gameLeft (
-        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer)
+        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer, 
+        String tracker) 
     {
-        post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer));
+        post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
     }
 
     public void gamePlayed (
-        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
+        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId) 
     {
         post(new MsoyEvents.GamePlayed(
             gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
@@ -195,9 +198,9 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteViewed(inviteId));
     }
 
-    public void accountCreated (int newMemberId, String inviteId)
+    public void accountCreated (int newMemberId, String inviteId, String tracker)
     {
-        post(new MsoyEvents.AccountCreated(newMemberId, inviteId));
+        post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));
     }
 
     public void roomUpdated (int memberId, int sceneId)

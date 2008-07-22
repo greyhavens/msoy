@@ -237,9 +237,11 @@ public class MsoyEvents
         @Field final public boolean isWhirled;
         @Field final public int secondsInRoom;
         @Field final public int occupantsLeft;
+        @Field final public String tracker;
 
         public RoomExit (
-            int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft)
+            int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft,
+            String tracker) 
         {
             this.timestamp = new Date();
             this.playerId = playerId;
@@ -247,6 +249,7 @@ public class MsoyEvents
             this.isWhirled = isWhirled;
             this.secondsInRoom = secondsInRoom;
             this.occupantsLeft = occupantsLeft;
+            this.tracker = tracker;
         }
     }
 
@@ -258,14 +261,16 @@ public class MsoyEvents
         @Field final public int playerId;
         @Field final public int secondsInGame;
         @Field final public int playersLeft;
+        @Field final public String tracker;
 
-        public AVRGExit (int playerId, int gameId, int seconds, int playersLeft)
+        public AVRGExit (int playerId, int gameId, int seconds, int playersLeft, String tracker)
         {
             this.timestamp = new Date();
             this.playerId = playerId;
             this.gameId = gameId;
             this.secondsInGame = seconds;
             this.playersLeft = playersLeft;
+            this.tracker = tracker;
         }
     }
 
@@ -278,9 +283,11 @@ public class MsoyEvents
         @Field final public int playerId;
         @Field final public int secondsInGame;
         @Field final public boolean multiplayer;
+        @Field final public String tracker;
 
         public GameExit (
-            int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer)
+            int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer, 
+            String tracker)
         {
             this.timestamp = new Date();
             this.playerId = playerId;
@@ -288,6 +295,7 @@ public class MsoyEvents
             this.gameId = gameId;
             this.secondsInGame = seconds;
             this.multiplayer = multiplayer;
+            this.tracker = toValue(tracker);
         }
     }
 
@@ -387,12 +395,14 @@ public class MsoyEvents
         @Index @Field final public Date timestamp;
         @Field final public int newMemberId;
         @Field final public String inviteId;
+        @Field final public String tracker;
 
-        public AccountCreated (int newMemberId, String inviteId)
+        public AccountCreated (int newMemberId, String inviteId, String tracker)
         {
             this.timestamp = new Date();
             this.newMemberId = newMemberId;
             this.inviteId = toValue(inviteId);
+            this.tracker = toValue(tracker);
         }
     }
 

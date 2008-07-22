@@ -9,6 +9,7 @@ import com.threerings.crowd.server.CrowdClient;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 
+import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**
@@ -25,7 +26,14 @@ public class MsoyGameClient extends CrowdClient
 
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
+        MsoyGameCredentials credentials = (MsoyGameCredentials) getCredentials();
+
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
+
+        // pull referral out of the flash client, if they're not set already
+        if (_plobj.referral == null && credentials.referral != null) {
+            _plobj.setReferral(credentials.referral);
+        }
 
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);
