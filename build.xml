@@ -774,7 +774,7 @@
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
-      <include name="**/*Service.java"/>
+      <include name="**/client/*Service.java"/>
       <exclude name="**/web/**"/>
     </javac>
     <!-- now generate the associated files -->
@@ -784,6 +784,7 @@
         <exclude name="**/web/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
+        <exclude name="**/bureau/**"/>
         <exclude name="**/GameServerService.java"/>
       </fileset>
     </service>
