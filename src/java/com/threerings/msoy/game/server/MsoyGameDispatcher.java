@@ -38,15 +38,13 @@ public class MsoyGameDispatcher extends InvocationDispatcher<MsoyGameMarshaller>
         switch (methodId) {
         case MsoyGameMarshaller.INVITE_FRIENDS:
             ((MsoyGameProvider)provider).inviteFriends(
-                source,
-                ((Integer)args[0]).intValue(), (int[])args[1]
+                source, ((Integer)args[0]).intValue(), (int[])args[1]
             );
             return;
 
         case MsoyGameMarshaller.LOCATE_GAME:
             ((MsoyGameProvider)provider).locateGame(
-                source,
-                ((Integer)args[0]).intValue(), (MsoyGameService.LocationListener)args[1]
+                source, ((Integer)args[0]).intValue(), (MsoyGameService.LocationListener)args[1]
             );
             return;
 

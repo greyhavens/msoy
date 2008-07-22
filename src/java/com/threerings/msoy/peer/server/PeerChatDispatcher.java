@@ -41,36 +41,31 @@ public class PeerChatDispatcher extends InvocationDispatcher<PeerChatMarshaller>
         switch (methodId) {
         case PeerChatMarshaller.ADD_USER:
             ((PeerChatProvider)provider).addUser(
-                source,
-                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+                source, (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case PeerChatMarshaller.FORWARD_SPEAK:
             ((PeerChatProvider)provider).forwardSpeak(
-                source,
-                (Name)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
+                source, (Name)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
             );
             return;
 
         case PeerChatMarshaller.REMOVE_USER:
             ((PeerChatProvider)provider).removeUser(
-                source,
-                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+                source, (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case PeerChatMarshaller.UPDATE_CHANNEL:
             ((PeerChatProvider)provider).updateChannel(
-                source,
-                (ChatChannel)args[0], (InvocationService.InvocationListener)args[1]
+                source, (ChatChannel)args[0], (InvocationService.InvocationListener)args[1]
             );
             return;
 
         case PeerChatMarshaller.UPDATE_USER:
             ((PeerChatProvider)provider).updateUser(
-                source,
-                (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.InvocationListener)args[2]
+                source, (VizMemberName)args[0], (ChatChannel)args[1], (InvocationService.InvocationListener)args[2]
             );
             return;
 

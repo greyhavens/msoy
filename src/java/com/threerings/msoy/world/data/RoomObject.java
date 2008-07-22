@@ -127,10 +127,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemories (DSet<com.threerings.msoy.world.data.EntityMemoryEntry> value)
+    public void setMemories (DSet<EntityMemoryEntry> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EntityMemoryEntry> clone =
+        @SuppressWarnings("unchecked") DSet<EntityMemoryEntry> clone =
             (value == null) ? null : value.typedClone();
         this.memories = clone;
     }
@@ -175,10 +175,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setRoomProperties (DSet<com.threerings.msoy.world.data.RoomPropertyEntry> value)
+    public void setRoomProperties (DSet<RoomPropertyEntry> value)
     {
         requestAttributeChange(ROOM_PROPERTIES, value, this.roomProperties);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.RoomPropertyEntry> clone =
+        @SuppressWarnings("unchecked") DSet<RoomPropertyEntry> clone =
             (value == null) ? null : value.typedClone();
         this.roomProperties = clone;
     }
@@ -223,10 +223,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setControllers (DSet<com.threerings.msoy.world.data.EntityControl> value)
+    public void setControllers (DSet<EntityControl> value)
     {
         requestAttributeChange(CONTROLLERS, value, this.controllers);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EntityControl> clone =
+        @SuppressWarnings("unchecked") DSet<EntityControl> clone =
             (value == null) ? null : value.typedClone();
         this.controllers = clone;
     }
@@ -271,10 +271,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setEffects (DSet<com.threerings.msoy.world.data.EffectData> value)
+    public void setEffects (DSet<EffectData> value)
     {
         requestAttributeChange(EFFECTS, value, this.effects);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EffectData> clone =
+        @SuppressWarnings("unchecked") DSet<EffectData> clone =
             (value == null) ? null : value.typedClone();
         this.effects = clone;
     }

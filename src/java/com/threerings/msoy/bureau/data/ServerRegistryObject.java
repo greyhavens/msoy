@@ -83,10 +83,10 @@ public class ServerRegistryObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setServers (DSet<com.threerings.msoy.bureau.data.ServerRegistryObject.ServerInfo> value)
+    public void setServers (DSet<ServerRegistryObject.ServerInfo> value)
     {
         requestAttributeChange(SERVERS, value, this.servers);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.bureau.data.ServerRegistryObject.ServerInfo> clone =
+        @SuppressWarnings("unchecked") DSet<ServerRegistryObject.ServerInfo> clone =
             (value == null) ? null : value.typedClone();
         this.servers = clone;
     }

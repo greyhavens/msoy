@@ -38,8 +38,7 @@ public class MsoyPeerDispatcher extends InvocationDispatcher<MsoyPeerMarshaller>
         switch (methodId) {
         case MsoyPeerMarshaller.FORWARD_MEMBER_OBJECT:
             ((MsoyPeerProvider)provider).forwardMemberObject(
-                source,
-                (MemberObject)args[0], (String[])args[1], (Object[])args[2]
+                source, (MemberObject)args[0], (String[])args[1], (Object[])args[2]
             );
             return;
 

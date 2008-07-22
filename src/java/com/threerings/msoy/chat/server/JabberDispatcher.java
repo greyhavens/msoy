@@ -39,22 +39,19 @@ public class JabberDispatcher extends InvocationDispatcher<JabberMarshaller>
         switch (methodId) {
         case JabberMarshaller.REGISTER_IM:
             ((JabberProvider)provider).registerIM(
-                source,
-                (String)args[0], (String)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
+                source, (String)args[0], (String)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
             );
             return;
 
         case JabberMarshaller.SEND_MESSAGE:
             ((JabberProvider)provider).sendMessage(
-                source,
-                (JabberName)args[0], (String)args[1], (InvocationService.ResultListener)args[2]
+                source, (JabberName)args[0], (String)args[1], (InvocationService.ResultListener)args[2]
             );
             return;
 
         case JabberMarshaller.UNREGISTER_IM:
             ((JabberProvider)provider).unregisterIM(
-                source,
-                (String)args[0], (InvocationService.InvocationListener)args[1]
+                source, (String)args[0], (InvocationService.InvocationListener)args[1]
             );
             return;
 

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server;
 
+import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -17,30 +18,30 @@ public interface ItemProvider extends InvocationProvider
     /**
      * Handles a {@link ItemService#deleteItem} request.
      */
-    public void deleteItem (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
+    void deleteItem (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**
      * Handles a {@link ItemService#getCatalogId} request.
      */
-    public void getCatalogId (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
+    void getCatalogId (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**
      * Handles a {@link ItemService#getItemNames} request.
      */
-    public void getItemNames (ClientObject caller, ItemIdent[] arg1, InvocationService.ResultListener arg2)
+    void getItemNames (ClientObject caller, ItemIdent[] arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**
      * Handles a {@link ItemService#peepItem} request.
      */
-    public void peepItem (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
+    void peepItem (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**
      * Handles a {@link ItemService#reclaimItem} request.
      */
-    public void reclaimItem (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
+    void reclaimItem (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 }

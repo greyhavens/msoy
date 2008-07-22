@@ -60,10 +60,10 @@ public class AVRGameAgentObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setScenes (DSet<com.threerings.msoy.avrg.data.SceneInfo> value)
+    public void setScenes (DSet<SceneInfo> value)
     {
         requestAttributeChange(SCENES, value, this.scenes);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.avrg.data.SceneInfo> clone =
+        @SuppressWarnings("unchecked") DSet<SceneInfo> clone =
             (value == null) ? null : value.typedClone();
         this.scenes = clone;
     }

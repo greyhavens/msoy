@@ -39,36 +39,31 @@ public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
         switch (methodId) {
         case ItemMarshaller.DELETE_ITEM:
             ((ItemProvider)provider).deleteItem(
-                source,
-                (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
+                source, (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 
         case ItemMarshaller.GET_CATALOG_ID:
             ((ItemProvider)provider).getCatalogId(
-                source,
-                (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
+                source, (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 
         case ItemMarshaller.GET_ITEM_NAMES:
             ((ItemProvider)provider).getItemNames(
-                source,
-                (ItemIdent[])args[0], (InvocationService.ResultListener)args[1]
+                source, (ItemIdent[])args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 
         case ItemMarshaller.PEEP_ITEM:
             ((ItemProvider)provider).peepItem(
-                source,
-                (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
+                source, (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 
         case ItemMarshaller.RECLAIM_ITEM:
             ((ItemProvider)provider).reclaimItem(
-                source,
-                (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
+                source, (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

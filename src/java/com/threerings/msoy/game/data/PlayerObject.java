@@ -239,10 +239,10 @@ public class PlayerObject extends BodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setFriends (DSet<com.threerings.msoy.data.all.FriendEntry> value)
+    public void setFriends (DSet<FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.FriendEntry> clone =
+        @SuppressWarnings("unchecked") DSet<FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
     }
@@ -287,10 +287,10 @@ public class PlayerObject extends BodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setGameState (DSet<com.threerings.msoy.game.data.GameState> value)
+    public void setGameState (DSet<GameState> value)
     {
         requestAttributeChange(GAME_STATE, value, this.gameState);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameState> clone =
+        @SuppressWarnings("unchecked") DSet<GameState> clone =
             (value == null) ? null : value.typedClone();
         this.gameState = clone;
     }
@@ -335,10 +335,10 @@ public class PlayerObject extends BodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setQuestState (DSet<com.threerings.msoy.game.data.QuestState> value)
+    public void setQuestState (DSet<QuestState> value)
     {
         requestAttributeChange(QUEST_STATE, value, this.questState);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.QuestState> clone =
+        @SuppressWarnings("unchecked") DSet<QuestState> clone =
             (value == null) ? null : value.typedClone();
         this.questState = clone;
     }
@@ -383,10 +383,10 @@ public class PlayerObject extends BodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setGameContent (DSet<com.threerings.msoy.game.data.GameContentOwnership> value)
+    public void setGameContent (DSet<GameContentOwnership> value)
     {
         requestAttributeChange(GAME_CONTENT, value, this.gameContent);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameContentOwnership> clone =
+        @SuppressWarnings("unchecked") DSet<GameContentOwnership> clone =
             (value == null) ? null : value.typedClone();
         this.gameContent = clone;
     }

@@ -39,22 +39,19 @@ public class PeerProjectDispatcher extends InvocationDispatcher<PeerProjectMarsh
         switch (methodId) {
         case PeerProjectMarshaller.COLLABORATOR_ADDED:
             ((PeerProjectProvider)provider).collaboratorAdded(
-                source,
-                ((Integer)args[0]).intValue(), (MemberName)args[1]
+                source, ((Integer)args[0]).intValue(), (MemberName)args[1]
             );
             return;
 
         case PeerProjectMarshaller.COLLABORATOR_REMOVED:
             ((PeerProjectProvider)provider).collaboratorRemoved(
-                source,
-                ((Integer)args[0]).intValue(), (MemberName)args[1]
+                source, ((Integer)args[0]).intValue(), (MemberName)args[1]
             );
             return;
 
         case PeerProjectMarshaller.PROJECT_UPDATED:
             ((PeerProjectProvider)provider).projectUpdated(
-                source,
-                (SwiftlyProject)args[0]
+                source, (SwiftlyProject)args[0]
             );
             return;
 

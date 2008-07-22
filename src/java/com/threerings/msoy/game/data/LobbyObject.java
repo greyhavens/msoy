@@ -168,10 +168,10 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setTables (DSet<com.threerings.parlor.data.Table> value)
+    public void setTables (DSet<Table> value)
     {
         requestAttributeChange(TABLES, value, this.tables);
-        @SuppressWarnings("unchecked") DSet<com.threerings.parlor.data.Table> clone =
+        @SuppressWarnings("unchecked") DSet<Table> clone =
             (value == null) ? null : value.typedClone();
         this.tables = clone;
     }

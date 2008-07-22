@@ -38,8 +38,7 @@ public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLaunche
         switch (methodId) {
         case BureauLauncherMarshaller.GET_GAME_SERVER_REGISTRY_OID:
             ((BureauLauncherProvider)provider).getGameServerRegistryOid(
-                source,
-                (InvocationService.ResultListener)args[0]
+                source, (InvocationService.ResultListener)args[0]
             );
             return;
 

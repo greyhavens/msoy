@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.msoy.bureau.client.BureauLauncherService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -16,11 +17,11 @@ public interface BureauLauncherProvider extends InvocationProvider
     /**
      * Handles a {@link BureauLauncherService#getGameServerRegistryOid} request.
      */
-    public void getGameServerRegistryOid (ClientObject caller, InvocationService.ResultListener arg1)
+    void getGameServerRegistryOid (ClientObject caller, InvocationService.ResultListener arg1)
         throws InvocationException;
 
     /**
      * Handles a {@link BureauLauncherService#launcherInitialized} request.
      */
-    public void launcherInitialized (ClientObject caller);
+    void launcherInitialized (ClientObject caller);
 }

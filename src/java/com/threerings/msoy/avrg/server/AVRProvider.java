@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.server;
 
+import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -16,12 +17,12 @@ public interface AVRProvider extends InvocationProvider
     /**
      * Handles a {@link AVRService#activateGame} request.
      */
-    public void activateGame (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    void activateGame (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**
      * Handles a {@link AVRService#deactivateGame} request.
      */
-    public void deactivateGame (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+    void deactivateGame (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 }

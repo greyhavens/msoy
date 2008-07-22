@@ -41,50 +41,43 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         switch (methodId) {
         case GameServerMarshaller.AWARD_PRIZE:
             ((GameServerProvider)provider).awardPrize(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], (Prize)args[3], (InvocationService.ResultListener)args[4]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], (Prize)args[3], (InvocationService.ResultListener)args[4]
             );
             return;
 
         case GameServerMarshaller.CLEAR_GAME_HOST:
             ((GameServerProvider)provider).clearGameHost(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
             );
             return;
 
         case GameServerMarshaller.LEAVE_AVRGAME:
             ((GameServerProvider)provider).leaveAVRGame(
-                source,
-                ((Integer)args[0]).intValue()
+                source, ((Integer)args[0]).intValue()
             );
             return;
 
         case GameServerMarshaller.REPORT_FLOW_AWARD:
             ((GameServerProvider)provider).reportFlowAward(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
             );
             return;
 
         case GameServerMarshaller.REPORT_TROPHY_AWARD:
             ((GameServerProvider)provider).reportTrophyAward(
-                source,
-                ((Integer)args[0]).intValue(), (String)args[1], (Trophy)args[2]
+                source, ((Integer)args[0]).intValue(), (String)args[1], (Trophy)args[2]
             );
             return;
 
         case GameServerMarshaller.SAY_HELLO:
             ((GameServerProvider)provider).sayHello(
-                source,
-                ((Integer)args[0]).intValue()
+                source, ((Integer)args[0]).intValue()
             );
             return;
 
         case GameServerMarshaller.UPDATE_PLAYER:
             ((GameServerProvider)provider).updatePlayer(
-                source,
-                ((Integer)args[0]).intValue(), (GameSummary)args[1]
+                source, ((Integer)args[0]).intValue(), (GameSummary)args[1]
             );
             return;
 

@@ -125,10 +125,10 @@ public class ChatChannelObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setChatters (DSet<com.threerings.msoy.data.VizMemberName> value)
+    public void setChatters (DSet<VizMemberName> value)
     {
         requestAttributeChange(CHATTERS, value, this.chatters);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.VizMemberName> clone =
+        @SuppressWarnings("unchecked") DSet<VizMemberName> clone =
             (value == null) ? null : value.typedClone();
         this.chatters = clone;
     }

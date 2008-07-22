@@ -40,29 +40,25 @@ public class ChatChannelDispatcher extends InvocationDispatcher<ChatChannelMarsh
         switch (methodId) {
         case ChatChannelMarshaller.CREATE_CHANNEL:
             ((ChatChannelProvider)provider).createChannel(
-                source,
-                (String)args[0], (InvocationService.ResultListener)args[1]
+                source, (String)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 
         case ChatChannelMarshaller.INVITE_TO_CHANNEL:
             ((ChatChannelProvider)provider).inviteToChannel(
-                source,
-                (MemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
+                source, (MemberName)args[0], (ChatChannel)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case ChatChannelMarshaller.JOIN_CHANNEL:
             ((ChatChannelProvider)provider).joinChannel(
-                source,
-                (ChatChannel)args[0], (InvocationService.ResultListener)args[1]
+                source, (ChatChannel)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 
         case ChatChannelMarshaller.LEAVE_CHANNEL:
             ((ChatChannelProvider)provider).leaveChannel(
-                source,
-                (ChatChannel)args[0]
+                source, (ChatChannel)args[0]
             );
             return;
 

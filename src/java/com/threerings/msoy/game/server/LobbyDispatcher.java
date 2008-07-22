@@ -38,22 +38,19 @@ public class LobbyDispatcher extends InvocationDispatcher<LobbyMarshaller>
         switch (methodId) {
         case LobbyMarshaller.IDENTIFY_LOBBY:
             ((LobbyProvider)provider).identifyLobby(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 
         case LobbyMarshaller.JOIN_PLAYER_GAME:
             ((LobbyProvider)provider).joinPlayerGame(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 
         case LobbyMarshaller.PLAY_NOW:
             ((LobbyProvider)provider).playNow(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 

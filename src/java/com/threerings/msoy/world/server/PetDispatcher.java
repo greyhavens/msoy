@@ -38,22 +38,19 @@ public class PetDispatcher extends InvocationDispatcher<PetMarshaller>
         switch (methodId) {
         case PetMarshaller.CALL_PET:
             ((PetProvider)provider).callPet(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
         case PetMarshaller.ORDER_PET:
             ((PetProvider)provider).orderPet(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case PetMarshaller.SEND_CHAT:
             ((PetProvider)provider).sendChat(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], (InvocationService.ConfirmListener)args[3]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 

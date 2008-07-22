@@ -256,10 +256,10 @@ public class ProjectRoomObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setPathElements (DSet<com.threerings.msoy.swiftly.data.PathElement> value)
+    public void setPathElements (DSet<PathElement> value)
     {
         requestAttributeChange(PATH_ELEMENTS, value, this.pathElements);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.PathElement> clone =
+        @SuppressWarnings("unchecked") DSet<PathElement> clone =
             (value == null) ? null : value.typedClone();
         this.pathElements = clone;
     }
@@ -304,10 +304,10 @@ public class ProjectRoomObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setDocuments (DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> value)
+    public void setDocuments (DSet<SwiftlyDocument> value)
     {
         requestAttributeChange(DOCUMENTS, value, this.documents);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> clone =
+        @SuppressWarnings("unchecked") DSet<SwiftlyDocument> clone =
             (value == null) ? null : value.typedClone();
         this.documents = clone;
     }
@@ -352,10 +352,10 @@ public class ProjectRoomObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setCollaborators (DSet<com.threerings.msoy.data.all.MemberName> value)
+    public void setCollaborators (DSet<MemberName> value)
     {
         requestAttributeChange(COLLABORATORS, value, this.collaborators);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.MemberName> clone =
+        @SuppressWarnings("unchecked") DSet<MemberName> clone =
             (value == null) ? null : value.typedClone();
         this.collaborators = clone;
     }

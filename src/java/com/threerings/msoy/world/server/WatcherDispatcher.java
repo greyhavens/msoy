@@ -37,15 +37,13 @@ public class WatcherDispatcher extends InvocationDispatcher<WatcherMarshaller>
         switch (methodId) {
         case WatcherMarshaller.ADD_WATCH:
             ((WatcherProvider)provider).addWatch(
-                source,
-                ((Integer)args[0]).intValue()
+                source, ((Integer)args[0]).intValue()
             );
             return;
 
         case WatcherMarshaller.CLEAR_WATCH:
             ((WatcherProvider)provider).clearWatch(
-                source,
-                ((Integer)args[0]).intValue()
+                source, ((Integer)args[0]).intValue()
             );
             return;
 

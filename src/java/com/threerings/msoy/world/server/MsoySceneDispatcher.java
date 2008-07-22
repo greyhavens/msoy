@@ -39,8 +39,7 @@ public class MsoySceneDispatcher extends InvocationDispatcher<MsoySceneMarshalle
         switch (methodId) {
         case MsoySceneMarshaller.MOVE_TO:
             ((MsoySceneProvider)provider).moveTo(
-                source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (MsoyLocation)args[3], (SceneService.SceneMoveListener)args[4]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (MsoyLocation)args[3], (SceneService.SceneMoveListener)args[4]
             );
             return;
 

@@ -39,50 +39,43 @@ public class ProjectRoomDispatcher extends InvocationDispatcher<ProjectRoomMarsh
         switch (methodId) {
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
-                source,
-                (String)args[0], (PathElement)args[1], (String)args[2], (InvocationService.ConfirmListener)args[3]
+                source, (String)args[0], (PathElement)args[1], (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 
         case ProjectRoomMarshaller.BUILD_AND_EXPORT_PROJECT:
             ((ProjectRoomProvider)provider).buildAndExportProject(
-                source,
-                (InvocationService.ResultListener)args[0]
+                source, (InvocationService.ResultListener)args[0]
             );
             return;
 
         case ProjectRoomMarshaller.BUILD_PROJECT:
             ((ProjectRoomProvider)provider).buildProject(
-                source,
-                (InvocationService.ResultListener)args[0]
+                source, (InvocationService.ResultListener)args[0]
             );
             return;
 
         case ProjectRoomMarshaller.DELETE_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).deletePathElement(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
         case ProjectRoomMarshaller.LOAD_DOCUMENT:
             ((ProjectRoomProvider)provider).loadDocument(
-                source,
-                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
+                source, (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 
         case ProjectRoomMarshaller.RENAME_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).renamePathElement(
-                source,
-                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 
         case ProjectRoomMarshaller.UPDATE_TEXT_DOCUMENT:
             ((ProjectRoomProvider)provider).updateTextDocument(
-                source,
-                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 

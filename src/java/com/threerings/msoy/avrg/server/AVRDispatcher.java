@@ -38,15 +38,13 @@ public class AVRDispatcher extends InvocationDispatcher<AVRMarshaller>
         switch (methodId) {
         case AVRMarshaller.ACTIVATE_GAME:
             ((AVRProvider)provider).activateGame(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 
         case AVRMarshaller.DEACTIVATE_GAME:
             ((AVRProvider)provider).deactivateGame(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

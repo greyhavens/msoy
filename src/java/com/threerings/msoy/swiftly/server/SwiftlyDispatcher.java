@@ -38,8 +38,7 @@ public class SwiftlyDispatcher extends InvocationDispatcher<SwiftlyMarshaller>
         switch (methodId) {
         case SwiftlyMarshaller.ENTER_PROJECT:
             ((SwiftlyProvider)provider).enterProject(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 

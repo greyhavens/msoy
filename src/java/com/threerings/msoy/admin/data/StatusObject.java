@@ -133,10 +133,10 @@ public class StatusObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setGames (DSet<com.threerings.msoy.admin.data.StatusObject.GameInfo> value)
+    public void setGames (DSet<StatusObject.GameInfo> value)
     {
         requestAttributeChange(GAMES, value, this.games);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.admin.data.StatusObject.GameInfo> clone =
+        @SuppressWarnings("unchecked") DSet<StatusObject.GameInfo> clone =
             (value == null) ? null : value.typedClone();
         this.games = clone;
     }

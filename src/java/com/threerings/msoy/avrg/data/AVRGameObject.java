@@ -129,10 +129,10 @@ public class AVRGameObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setState (DSet<com.threerings.msoy.game.data.GameState> value)
+    public void setState (DSet<GameState> value)
     {
         requestAttributeChange(STATE, value, this.state);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.game.data.GameState> clone =
+        @SuppressWarnings("unchecked") DSet<GameState> clone =
             (value == null) ? null : value.typedClone();
         this.state = clone;
     }
@@ -197,10 +197,10 @@ public class AVRGameObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setPlayers (DSet<com.threerings.crowd.data.OccupantInfo> value)
+    public void setPlayers (DSet<OccupantInfo> value)
     {
         requestAttributeChange(PLAYERS, value, this.players);
-        @SuppressWarnings("unchecked") DSet<com.threerings.crowd.data.OccupantInfo> clone =
+        @SuppressWarnings("unchecked") DSet<OccupantInfo> clone =
             (value == null) ? null : value.typedClone();
         this.players = clone;
     }
@@ -245,10 +245,10 @@ public class AVRGameObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setPlayerLocs (DSet<com.threerings.msoy.avrg.data.PlayerLocation> value)
+    public void setPlayerLocs (DSet<PlayerLocation> value)
     {
         requestAttributeChange(PLAYER_LOCS, value, this.playerLocs);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.avrg.data.PlayerLocation> clone =
+        @SuppressWarnings("unchecked") DSet<PlayerLocation> clone =
             (value == null) ? null : value.typedClone();
         this.playerLocs = clone;
     }
