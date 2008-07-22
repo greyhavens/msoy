@@ -15,6 +15,7 @@ import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.admin.server.ConfigRegistry;
@@ -55,6 +56,7 @@ public class MsoyGameServer extends MsoyBaseServer
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
             bind(GameCookieManager.class).to(RepoCookieManager.class);
             bind(BodyLocator.class).to(PlayerLocator.class);
+            bind(PresentsServer.class).to(MsoyGameServer.class);
         }
     }
 

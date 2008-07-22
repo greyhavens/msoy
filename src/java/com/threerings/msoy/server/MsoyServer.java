@@ -101,6 +101,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneFactory.class).to(MsoySceneFactory.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
             bind(BodyLocator.class).to(MemberLocator.class);
+            bind(PresentsServer.class).to(MsoyServer.class);
         }
     }
 
