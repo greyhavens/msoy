@@ -15,6 +15,7 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 
+import mx.events.FlexEvent;
 import mx.events.ValidationResultEvent;
 
 import mx.managers.PopUpManager;
@@ -64,6 +65,7 @@ public class PopupEditor extends TitleWindow
 
         } else {
             _txt = new TextInput();
+            TextInput(_txt).addEventListener(FlexEvent.ENTER, handleEnterPressed);
         }
         _txt.text = entry.value;
 
@@ -88,6 +90,16 @@ public class PopupEditor extends TitleWindow
 
         PopUpManager.addPopUp(this, parent, true);
         PopUpUtil.center(this);
+    }
+
+    /**
+     * Submit the change, as long as things are valid.
+     */
+    protected function handleEnterPressed (event :FlexEvent) :void
+    {
+        if (_okBtn.enabled) {
+            close(true);
+        }
     }
 
     protected function checkValid (event :ValidationResultEvent) :void
