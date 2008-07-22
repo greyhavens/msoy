@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
@@ -24,6 +26,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.server.persist.BadgeRecord;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
@@ -112,7 +116,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.stats = new StatSet(stats.iterator());
 
         // and their badges
-        userObj.badges = new BadgeSet(MsoyServer.badgeRepo.loadBadges(member.memberId));
+        List<BadgeRecord> badgeRecs = MsoyServer.badgeRepo.loadBadges(member.memberId);
+        List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeRecs.size());
+        for (BadgeRecord rec : badgeRecs) {
+            badges.add(rec.toBadge());
+        }
+        userObj.badges = new BadgeSet(badges);
 
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);

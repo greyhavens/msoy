@@ -14,11 +14,9 @@ import com.threerings.presents.dobj.DSet;
 public final class BadgeSet extends DSet<EarnedBadge>
 {
     /** Creates a BadgeSet with the specified contents. */
-    public BadgeSet (Collection<BadgeRecord> records)
+    public BadgeSet (Iterable<EarnedBadge> source)
     {
-        for (BadgeRecord br : records) {
-            this.addBadge(br.toBadge());
-        }
+        super(source);
     }
 
     /** Creates an empty BadgeSet. */
