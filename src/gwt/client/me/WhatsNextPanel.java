@@ -14,7 +14,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,9 +62,14 @@ public class WhatsNextPanel extends SmartTable
         box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         Image shot = GAME_SHOTS[Random.nextInt(GAME_SHOTS.length)].createImage();
         ClickListener onClick = Application.createLinkListener(Page.GAMES, "");
-        box.add(MsoyUI.makeActionImage(shot, null, onClick));
+        ClickListener trackListener = MsoyUI.createTrackingListener("mePlayGames", null);
+        Image image = MsoyUI.makeActionImage(shot, null, onClick);
+        image.addClickListener(trackListener);
+        box.add(image);
         box.add(WidgetUtil.makeShim(10, 10));
-        box.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextPlay(), onClick));
+        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextPlay(), onClick);
+        button.addClickListener(trackListener);
+        box.add(button);
         box.add(WidgetUtil.makeShim(5, 5));
         box.add(MsoyUI.createLabel(CMe.msgs.nextPlayTip(), "tipLabel"));
         return box;
@@ -74,9 +81,14 @@ public class WhatsNextPanel extends SmartTable
         box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         Image shot = WHIRLED_SHOTS[Random.nextInt(WHIRLED_SHOTS.length)].createImage();
         ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "");
-        box.add(MsoyUI.makeActionImage(shot, null, onClick));
+        ClickListener trackListener = MsoyUI.createTrackingListener("meMakeFriends", null);
+        Image image = MsoyUI.makeActionImage(shot, null, onClick);
+        image.addClickListener(trackListener);
+        box.add(image);
         box.add(WidgetUtil.makeShim(10, 10));
-        box.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextExplore(), onClick));
+        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextExplore(), onClick);
+        button.addClickListener(trackListener);
+        box.add(button);
         box.add(WidgetUtil.makeShim(5, 5));
         box.add(MsoyUI.createLabel(CMe.msgs.nextExploreTip(), "tipLabel"));
         return box;
@@ -86,12 +98,15 @@ public class WhatsNextPanel extends SmartTable
     {
         RoundBox box = new RoundBox(RoundBox.BLUE);
         SmartTable contents = new SmartTable(0, 0);
-        ClickListener onClick = Application.createLinkListener(Page.WORLD,
-            "m" + CMe.getMemberId());
-        contents.setWidget(0, 0, _images.home_shot().createImage(), 1, "Screen");
+        ClickListener onClick = Application.createLinkListener(Page.WORLD, "m" + CMe.getMemberId());
+        ClickListener trackListener = MsoyUI.createTrackingListener("meDecorate", null);
+        Image image = MsoyUI.makeActionImage(_images.home_shot().createImage(), null, onClick);
+        image.addClickListener(trackListener);
+        contents.setWidget(0, 0, image, 1, "Screen");
         contents.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        contents.setWidget(0, 1, MsoyUI.createButton(
-                               MsoyUI.MEDIUM_THIN, CMe.msgs.nextDecorate(), onClick));
+        PushButton button = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, CMe.msgs.nextDecorate(), onClick);
+        button.addClickListener(trackListener);
+        contents.setWidget(0, 1, button);
         contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
         contents.setText(1, 0, CMe.msgs.nextDecorateTip(), 1, "tipLabel");
         box.add(contents);
@@ -104,9 +119,10 @@ public class WhatsNextPanel extends SmartTable
         friends.setHeight("100%");
         friends.setText(0, 0, CMe.msgs.nextFriends(), 1, "Title");
         friends.setText(1, 0, CMe.msgs.nextNoFriends(), 1, "NoFriends");
-        friends.setWidget(2, 0, Application.createImageLink(
-                              "/images/me/invite_friends.png",
-                              CMe.msgs.nextInviteTip(), Page.PEOPLE, "invites"));
+        Hyperlink imageLink = Application.createImageLink(
+            "/images/me/invite_friends.png", CMe.msgs.nextInviteTip(), Page.PEOPLE, "invites");
+        imageLink.addClickListener(MsoyUI.createTrackingListener("meInviteFriends", null));
+        friends.setWidget(2, 0, imageLink);
         friends.setText(3, 0, CMe.msgs.nextOr(), 1, "Or");
         friends.setText(4, 0, CMe.msgs.nextFind(), 1, "Title");
 
