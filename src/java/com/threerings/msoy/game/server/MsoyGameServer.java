@@ -52,11 +52,14 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
-            bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
+            // presents dependencies
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
-            bind(GameCookieManager.class).to(RepoCookieManager.class);
-            bind(BodyLocator.class).to(PlayerLocator.class);
             bind(PresentsServer.class).to(MsoyGameServer.class);
+            // crowd dependencies
+            bind(BodyLocator.class).to(PlayerLocator.class);
+            bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
+            // vilya game dependencies
+            bind(GameCookieManager.class).to(RepoCookieManager.class);
         }
     }
 

@@ -71,9 +71,11 @@ public abstract class MsoyBaseServer extends WhirledServer
             } catch (Exception e) {
                 addError(e);
             }
-            bind(ReportManager.class).to(QuietReportManager.class);
+            // depot dependencies
             bind(PersistenceContext.class).toInstance(
                 new PersistenceContext("msoy", _conprov, _cacher));
+            // presents dependencies
+            bind(ReportManager.class).to(QuietReportManager.class);
         }
 
         protected ConnectionProvider _conprov;
