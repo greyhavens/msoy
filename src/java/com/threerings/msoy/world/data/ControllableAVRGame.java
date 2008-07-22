@@ -16,12 +16,12 @@ public class ControllableAVRGame extends Controllable
     {
         _gameId = gameId;
     }
-    
+
     public int getGameId ()
     {
         return _gameId;
     }
-    
+
     public int compareTo (Controllable other)
     {
         if (other instanceof ControllableEntity) {

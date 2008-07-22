@@ -14,7 +14,7 @@ public class ControllableEntity extends Controllable
     {
         _ident = ident;
     }
-    
+
     public int compareTo (Controllable other)
     {
         if (other instanceof ControllableAVRGame) {
@@ -25,18 +25,18 @@ public class ControllableEntity extends Controllable
         }
         throw new IllegalArgumentException("Unknown Controllable subclass: " + other.getClass());
     }
-    
+
     public ItemIdent getItemIdent ()
     {
         return _ident;
     }
-    
+
     @Override
     public boolean isControllableBy (int bodyOid)
     {
         // any member can control an entity
         return true;
     }
-    
+
     protected ItemIdent _ident;
 }

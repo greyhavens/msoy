@@ -277,7 +277,7 @@ public class GroupRecord extends PersistentRecord
         group.memberCount = memberCount;
         return group;
     }
-    
+
     /**
      * Creates a MediaDesc of the group logo
      */

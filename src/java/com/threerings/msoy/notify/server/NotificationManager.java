@@ -34,7 +34,7 @@ public class NotificationManager
     public void notifyInvitationAccepted (
         int inviterId, String inviteeDisplayName, int inviteeId, String inviteeEmail)
     {
-        MemberNodeActions.sendNotification(inviterId, 
+        MemberNodeActions.sendNotification(inviterId,
             new InviteAcceptedNotification(inviteeEmail, inviteeDisplayName, inviteeId));
     }
 

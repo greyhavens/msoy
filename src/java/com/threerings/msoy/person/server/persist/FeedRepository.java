@@ -108,7 +108,7 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Publishes a self feed message, that will show up on the target's profile.  These are 
+     * Publishes a self feed message, that will show up on the target's profile.  These are
      * currently not throttled.
      */
     public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, String data)

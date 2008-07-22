@@ -33,7 +33,7 @@ import static com.threerings.msoy.Log.log;
 public class LocalEventLogger extends LoopingThread
 {
     public static final Integer VERSION_ID = 0xcdefcdef;
-    
+
     /**
      * Creates an logger that logs to the specified file.
      */
@@ -42,7 +42,7 @@ public class LocalEventLogger extends LoopingThread
         super("LocalEventLogger");
 
         _factory = new EventDataFactory();
-        
+
         _logPath = fullpath;
         openLog(true);
 
@@ -73,7 +73,7 @@ public class LocalEventLogger extends LoopingThread
             ByteArrayOutputStream encoded = new ByteArrayOutputStream();
             EventData eventdata = _factory.getEventData(event);
             EventDataSerializer.serialize(eventdata, encoded);
-            
+
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ObjectOutputStream oout = new ObjectOutputStream(bout);
             oout.writeObject(new Integer(VERSION_ID));
@@ -192,7 +192,7 @@ public class LocalEventLogger extends LoopingThread
 
     /** Converts events to EventData instances. */
     protected EventDataFactory _factory;
-    
+
     /** The path to our log file. */
     protected File _logPath;
 

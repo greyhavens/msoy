@@ -54,7 +54,7 @@ public abstract class ChannelSpeakHandler
             log.warning("Refusing speak request with invalid mode [caller=" + member.who() +
                         ", channel=" + _ch.getChannel() + ", mode=" + mode + "].");
             return false;
-        }            
+        }
 
         // the speaker passed the gauntlet.
         return true;

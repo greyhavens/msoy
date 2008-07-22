@@ -193,12 +193,12 @@ public class Group
     }
 
     // from Comparable
-    public int compareTo (Object o) 
+    public int compareTo (Object o)
     {
         // The compareTo contract allows ClassCastException
         Group other = (Group)o;
 
-        // this is used to sort groups on the GroupList page, so sort by group name first, then 
+        // this is used to sort groups on the GroupList page, so sort by group name first, then
         // by groupId if necessary.
         int nameComparison = name.compareTo(other.name);
         if (nameComparison == 0) {

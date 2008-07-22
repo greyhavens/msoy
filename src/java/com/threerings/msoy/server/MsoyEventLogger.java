@@ -67,7 +67,7 @@ public class MsoyEventLogger
             } catch (Exception e) {
                 log.warning("Failed to connect to remote logging server.", e);
             }
-        } 
+        }
     }
 
     // from interface MsoyBaseServer.Shutdowner
@@ -89,7 +89,7 @@ public class MsoyEventLogger
 
     public void flowTransaction (UserActionDetails info, int deltaFlow, int newTotal)
     {
-        post(new MsoyEvents.FlowTransaction(info.memberId, info.action.getNumber(), info.itemId, 
+        post(new MsoyEvents.FlowTransaction(info.memberId, info.action.getNumber(), info.itemId,
                                             info.itemType, deltaFlow, newTotal));
     }
 
@@ -149,7 +149,7 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
-    
+
     public void roomLeft (
         int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft)
     {
@@ -157,24 +157,24 @@ public class MsoyEventLogger
     }
 
     public void avrgLeft (
-        int playerId, int gameId, int seconds, int playersLeft) 
+        int playerId, int gameId, int seconds, int playersLeft)
     {
         post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft));
     }
-        
+
     public void gameLeft (
-        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer) 
+        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer)
     {
         post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer));
     }
-    
+
     public void gamePlayed (
-        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId) 
+        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
     {
         post(new MsoyEvents.GamePlayed(
             gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
     }
-    
+
     public void trophyEarned (int recipientId, int gameId, String trophyIdent)
     {
         post(new MsoyEvents.TrophyEarned(recipientId, gameId, trophyIdent));
@@ -209,7 +209,7 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.ProfileUpdated(memberId));
     }
-    
+
     /**
      * @param memberId who posted the message.
      * @param threadId the ID for the discussion thread.
@@ -242,7 +242,7 @@ public class MsoyEventLogger
         // log remotely (if applicable)
         if (_remote != null) {
             _remote.log(message);
-        } 
+        }
     }
 
     /** The connection via which we deliver our log messages. */
@@ -250,13 +250,13 @@ public class MsoyEventLogger
 
     /** Used to log events to the local filesystem. */
     protected LocalEventLogger _local;
-    
+
     /** Timeout value when connecting to the Panopticon server, in milliseconds. */
     protected static final int TIMEOUT = 1000;
-    
+
     /** Queue size for the remote connection. */
     protected static final int QUEUE_SIZE = 100;
-    
+
     /** Remote connection retry interval, in milliseconds. */
     protected static final int RETRY = 1000;
 }

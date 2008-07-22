@@ -21,7 +21,7 @@ public final class RoomName_CustomFieldSerializer
 
     public static RoomName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
-    {        
+    {
         return new RoomName(streamReader.readString(), streamReader.readInt());
     }
 

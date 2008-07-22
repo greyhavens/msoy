@@ -44,7 +44,7 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
 
     /** The memberId of the project member. */
     @Id public int memberId; /*TODO: this should have a foreign key constraint */
-    
+
     /** The itemId of the build result for this member, for this project. */
     public int buildResultItemId;
 

@@ -17,7 +17,7 @@ import static com.threerings.msoy.Log.log;
  * The game-server-side API for {@link WorldWatcherManager}; a registry of watched members whose
  * movements from scene to scene anywhere in the Whirled (i.e. cross server) are relayed to
  * the associated {@link Observer} objects.
- * 
+ *
  * The sole client of this service is currently AVRGameManager, which needs to keep track of
  * what rooms its various current players are in.
  */
@@ -40,9 +40,9 @@ public class GameWatcherManager
         }
         _worldClient.addWatch(memberId);
     }
-    
+
     /**
-     * Clear an existing movement watch on the given member. 
+     * Clear an existing movement watch on the given member.
      */
     public void clearWatch (int memberId)
     {
@@ -52,9 +52,9 @@ public class GameWatcherManager
         }
         _worldClient.clearWatch(memberId);
     }
-    
+
     /**
-     * Notification of member movement, from {@link WorldServerClient}. 
+     * Notification of member movement, from {@link WorldServerClient}.
      */
     public void memberMoved (int memberId, int sceneId, String hostname, int port)
     {
@@ -68,7 +68,7 @@ public class GameWatcherManager
 
     /** A map of members to {@link Observer} objects to notify of each member's movements. */
     protected IntMap<Observer> _observers = new HashIntMap<Observer>();
-    
+
     @Inject protected WorldServerClient _worldClient;
 }
 

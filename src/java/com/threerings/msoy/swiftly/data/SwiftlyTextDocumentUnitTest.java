@@ -28,13 +28,13 @@ public class SwiftlyTextDocumentUnitTest extends TestCase
         output.write("Hello, World".getBytes(TEXT_ENCODING));
 
         InputStream input = new FileInputStream(inputFile);
-    
+
         _doc = new SwiftlyTextDocument(input, null, TEXT_ENCODING);
     }
 
     public void testInstantiate ()
         throws Exception
-    {        
+    {
         assertEquals("Hello, World", _doc.getText());
     }
 
@@ -79,6 +79,6 @@ public class SwiftlyTextDocumentUnitTest extends TestCase
     }
 
     protected static final String TEXT_ENCODING = "utf8";
-    
+
     protected SwiftlyTextDocument _doc;
 }

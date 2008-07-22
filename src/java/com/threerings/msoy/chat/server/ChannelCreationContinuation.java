@@ -15,7 +15,7 @@ import static com.threerings.msoy.Log.log;
  * Represents the rest of processing to be performed after the channel was successfully
  * created, whether by hosting a brand new copy, or by subscribing to one already hosted somewhere.
  */
-public abstract class ChannelCreationContinuation 
+public abstract class ChannelCreationContinuation
 {
     public ChannelCreationContinuation (final MemberObject user, final ChatChannel channel,
                                         final ChatChannelService.ResultListener listener)

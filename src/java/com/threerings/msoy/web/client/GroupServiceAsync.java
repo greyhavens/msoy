@@ -39,7 +39,7 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#searchGroups}
      */
-    public void searchGroups (WebIdent ident, String searchString, 
+    public void searchGroups (WebIdent ident, String searchString,
                               AsyncCallback<List<GroupCard>> callback);
 
     /**
@@ -50,7 +50,7 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGroupInfo}
      */
-    public void getGroupInfo (WebIdent ident, int groupId, 
+    public void getGroupInfo (WebIdent ident, int groupId,
                               AsyncCallback<GroupService.GroupInfo> callback);
 
     /**
@@ -61,65 +61,65 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getMembershipGroups}
      */
-    public void getMembershipGroups (WebIdent ident, int memberId, boolean canInvite, 
+    public void getMembershipGroups (WebIdent ident, int memberId, boolean canInvite,
                                      AsyncCallback<List<GroupMembership>> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getGroupDetail} 
+     * The asynchronous version of {@link GroupService.getGroupDetail}
      */
     public void getGroupDetail (WebIdent ident, int groupId, AsyncCallback<GroupDetail> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getGroupMembers} 
+     * The asynchronous version of {@link GroupService.getGroupMembers}
      */
-    public void getGroupMembers (WebIdent ident, int groupId, 
+    public void getGroupMembers (WebIdent ident, int groupId,
                                  AsyncCallback<GroupService.MembersResult> callback);
 
     /**
      * The asynchronous version of {@link GroupService.getGroupRooms}
      */
-    public void getGroupRooms (WebIdent ident, int groupId, 
+    public void getGroupRooms (WebIdent ident, int groupId,
                                AsyncCallback<GroupService.RoomsResult> callback);
 
     /**
      * The asynchronous version of {@link GroupService.transferRoom}
      */
-    public void transferRoom (WebIdent ident, int groupId, int sceneId, 
+    public void transferRoom (WebIdent ident, int groupId, int sceneId,
                               AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.updateGroup} 
+     * The asynchronous version of {@link GroupService.updateGroup}
      */
-    public void updateGroup (WebIdent ident, Group group, GroupExtras extras, 
+    public void updateGroup (WebIdent ident, Group group, GroupExtras extras,
                              AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.createGroup} 
+     * The asynchronous version of {@link GroupService.createGroup}
      */
-    public void createGroup (WebIdent ident, Group group, GroupExtras extras, 
+    public void createGroup (WebIdent ident, Group group, GroupExtras extras,
                              AsyncCallback<Group> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.leaveGroup} 
+     * The asynchronous version of {@link GroupService.leaveGroup}
      */
-    public void leaveGroup (WebIdent ident, int groupId, int memberId, 
+    public void leaveGroup (WebIdent ident, int groupId, int memberId,
                             AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.joinGroup} 
+     * The asynchronous version of {@link GroupService.joinGroup}
      */
     public void joinGroup (WebIdent ident, int groupId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GroupService.updateMemberRank}
      */
-    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank, 
+    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank,
                                   AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GroupService.tagGroup}
      */
-    public void tagGroup (WebIdent ident, int groupId, String tag, boolean set, 
+    public void tagGroup (WebIdent ident, int groupId, String tag, boolean set,
                           AsyncCallback<TagHistory> callback);
 
     /**
@@ -135,6 +135,6 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getMyGroups}
      */
-    public void getMyGroups (WebIdent ident, byte sortMethod, 
+    public void getMyGroups (WebIdent ident, byte sortMethod,
                              AsyncCallback<List<MyGroupCard>> callback);
 }

@@ -31,7 +31,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
 
     /** Referral info data. */
     public ReferralInfo referral;
-    
+
     /**
      * Returns true if the supplied (non-null) session token is a guest session token.
      */

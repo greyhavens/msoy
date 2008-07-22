@@ -56,16 +56,16 @@ public class ABTestRepository extends DepotRepository
     {
         return load(ABTestRecord.class, new Where(ABTestRecord.NAME_C, name));
     }
-    
+
     /**
      * Inserts the supplied record into the database.
      */
     public void insertABTest (ABTest test)
         throws PersistenceException
-    {         
+    {
         try {
-            ABTestRecord record = ABTestRecord.class.newInstance();           
-            record.fromABTest(test);     
+            ABTestRecord record = ABTestRecord.class.newInstance();
+            record.fromABTest(test);
             insert(record);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -77,8 +77,8 @@ public class ABTestRepository extends DepotRepository
      */
     public void updateABTest (ABTest test)
         throws PersistenceException
-    {         
-        try {   
+    {
+        try {
             ABTestRecord record = ABTestRecord.class.newInstance();
             record.fromABTest(test);
             update(record);

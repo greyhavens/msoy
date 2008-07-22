@@ -32,7 +32,7 @@ public class ProjectStorageException extends Exception
         }
     }
 
-    /** API client requested something that would lead to a consistency failure. 
+    /** API client requested something that would lead to a consistency failure.
      * This will almost always be due to programmer error.
      */
     public static class ConsistencyError extends ProjectStorageException {

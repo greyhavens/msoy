@@ -75,8 +75,8 @@ public class Game extends Item
     /** The game screenshot media. */
     public MediaDesc shotMedia;
 
-    /** 
-     *  The server code media. Games may provide server code (in the form of a compiled action 
+    /**
+     *  The server code media. Games may provide server code (in the form of a compiled action
      *  script library) to be run in a bureau whenever the game launches.
      *  @see com.threerings.bureau.BureauRegistry
      *  @see com.threerings.msoy.game.server.MsoyGameServer
@@ -140,7 +140,7 @@ public class Game extends Item
     {
         return gameMedia;
     }
- 
+
     @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {

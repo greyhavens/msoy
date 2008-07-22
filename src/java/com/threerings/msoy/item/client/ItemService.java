@@ -25,7 +25,7 @@ public interface ItemService extends InvocationService
      */
     public void peepItem (Client client, ItemIdent item, ResultListener listener);
 
-    /** 
+    /**
      * Cause this item to become unused, removing it from the room that its in.
      */
     public void reclaimItem (

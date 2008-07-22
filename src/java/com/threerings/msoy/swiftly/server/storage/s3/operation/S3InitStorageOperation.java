@@ -15,7 +15,7 @@ import com.threerings.s3.client.S3Connection;
 public class S3InitStorageOperation extends S3StorageOperation {
     /**
      * Initialize a new storage repository initialization operation.
-     * 
+     *
      * @param lockManager Shared S3 lock manager.
      * @param connection Connection used to execute the operation.
      * @param bucket S3 bucket.

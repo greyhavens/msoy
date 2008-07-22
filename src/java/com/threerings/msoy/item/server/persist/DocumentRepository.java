@@ -42,7 +42,7 @@ public class DocumentRepository extends ItemRepository<
     {
         return DocumentRecord.class;
     }
-    
+
     @Override
     protected Class<DocumentCatalogRecord> getCatalogClass ()
     {

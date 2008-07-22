@@ -235,7 +235,7 @@ public class ForumRepository extends DepotRepository
         fmr.message = message;
         insert(fmr);
 
-        // update the post count and last post information for the thread        
+        // update the post count and last post information for the thread
         updatePartial(ForumThreadRecord.class, thread.threadId,
                       ForumThreadRecord.MOST_RECENT_POST_ID, fmr.messageId,
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
@@ -250,7 +250,7 @@ public class ForumRepository extends DepotRepository
         thread.mostRecentPostId = fmr.messageId;
         thread.mostRecentPostTime = fmr.created;
         thread.mostRecentPosterId = posterId;
-        
+
         return fmr;
     }
 

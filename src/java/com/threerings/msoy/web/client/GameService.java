@@ -125,7 +125,7 @@ public interface GameService extends RemoteService
      */
     public List<GameInfo> loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query)
         throws ServiceException;
-    
+
     /**
      * Loads up information for the landing page top games.
      */

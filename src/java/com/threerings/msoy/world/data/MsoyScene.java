@@ -80,7 +80,7 @@ public class MsoyScene extends SceneImpl
                                   _model.ownerType, _model.accessControl);
     }
 
-    /** 
+    /**
      * Returns the owner id for the scene.
      */
     public int getOwnerId ()
@@ -88,7 +88,7 @@ public class MsoyScene extends SceneImpl
         return _model.ownerId;
     }
 
-    /** 
+    /**
      * Returns the owner type for the scene.
      */
     public byte getOwnerType ()
@@ -97,13 +97,13 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Returns the access control for the scene. 
+     * Returns the access control for the scene.
      */
     public byte getAccessControl ()
     {
         return _model.accessControl;
     }
-    
+
     /**
      * Returns the type of the scene.
      */
@@ -140,11 +140,11 @@ public class MsoyScene extends SceneImpl
     /**
      * Retrieve the room entrance.
      */
-    public MsoyLocation getEntrance () 
+    public MsoyLocation getEntrance ()
     {
         return _model.entrance;
     }
-    
+
     /**
      * Retrieve the room decor.
      */
@@ -198,13 +198,13 @@ public class MsoyScene extends SceneImpl
     {
         throw new UnsupportedOperationException();
     }
-    
+
     // from SpotScene
     public Portal getDefaultEntrance ()
     {
         return _model.getDefaultEntrance();
     }
-    
+
     // from SpotScene
     public short getNextPortalId ()
     {
@@ -216,13 +216,13 @@ public class MsoyScene extends SceneImpl
     {
         return _model.getPortal(portalId);
     }
-    
+
     // from SpotScene
     public int getPortalCount ()
     {
         return _model.getPortalCount();
     }
-    
+
     // from SpotScene
     public Iterator getPortals ()
     {

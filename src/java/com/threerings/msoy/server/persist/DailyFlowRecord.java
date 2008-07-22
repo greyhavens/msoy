@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 public class DailyFlowRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 1;
-    
+
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #type} field. */
     public static final String TYPE = "type";

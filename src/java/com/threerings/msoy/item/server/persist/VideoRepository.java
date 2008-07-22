@@ -42,7 +42,7 @@ public class VideoRepository extends ItemRepository<
     {
         return VideoRecord.class;
     }
-    
+
     @Override
     protected Class<VideoCatalogRecord> getCatalogClass ()
     {

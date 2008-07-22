@@ -213,8 +213,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 if (creatorPortion > 0) {
                     // TODO: hold this in escrow
                     flowRec = _memberRepo.getFlowRepository().grantFlow(
-                        new UserActionDetails(listing.item.creatorId, UserAction.RECEIVED_PAYOUT, 
-                                              mrec.memberId, itemType, catalogId), 
+                        new UserActionDetails(listing.item.creatorId, UserAction.RECEIVED_PAYOUT,
+                                              mrec.memberId, itemType, catalogId),
                         creatorPortion);
                     MemberNodeActions.flowUpdated(flowRec);
                 }
@@ -427,7 +427,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // record the listing action
             UserActionDetails info = new UserActionDetails(
                 mrec.memberId, UserAction.UPDATED_LISTING, repo.getItemType(), originalItemId);
-            
+
             if (price > 0) {
                 MemberFlowRecord flowRec = _memberRepo.getFlowRepository().spendFlow(info, price);
                 MemberNodeActions.flowUpdated(flowRec);
@@ -566,8 +566,8 @@ public class CatalogServlet extends MsoyServiceServlet
             // now we have to take 30% of the refund away from the creator
             // TODO: when escrow works, this will blessedly go away
             int creatorPortion = (3 * flowRefund) / 10;
-            UserActionDetails payoutInfo = 
-                new UserActionDetails(item.creatorId, UserAction.RECEIVED_PAYOUT, 
+            UserActionDetails payoutInfo =
+                new UserActionDetails(item.creatorId, UserAction.RECEIVED_PAYOUT,
                         mrec.memberId, iident.type, iident.itemId);
             flowRec = _memberRepo.getFlowRepository().spendFlow(payoutInfo, creatorPortion);
             MemberNodeActions.flowUpdated(flowRec);

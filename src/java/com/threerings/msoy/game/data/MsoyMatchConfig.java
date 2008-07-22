@@ -6,7 +6,7 @@ package com.threerings.msoy.game.data;
 import com.whirled.game.data.TableMatchConfig;
 
 /**
- * Class to encapsulate extended properties to table matches for Whirled. 
+ * Class to encapsulate extended properties to table matches for Whirled.
  */
 public class MsoyMatchConfig extends TableMatchConfig
 {

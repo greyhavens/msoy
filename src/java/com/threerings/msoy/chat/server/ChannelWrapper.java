@@ -72,10 +72,10 @@ public abstract class ChannelWrapper
     {
         return ready() && _ccobj.chatters.containsKey(chatter.getKey());
     }
-    
+
     /** Does this channel contain the specified chatter? */
-    public boolean hasMember (MemberObject chatter) 
-    { 
+    public boolean hasMember (MemberObject chatter)
+    {
         return (chatter != null) && hasMember(chatter.memberName);
     }
 
@@ -93,7 +93,7 @@ public abstract class ChannelWrapper
             recordChatMessage((ChannelMessage)args[0]);
         }
     }
-        
+
     /** Cleans up old chat messages. */
     protected void removeStaleMessagesFromHistory ()
     {
@@ -122,7 +122,7 @@ public abstract class ChannelWrapper
 
     /** How long a chat message should stay in channel history (in milliseconds). */
     protected static final int MAX_RECENT_MESSAGE_AGE = 15 * 1000;
-    
+
     protected ChatChannel _channel;
     protected ChatChannelManager _mgr;
     protected ChatChannelObject _ccobj;

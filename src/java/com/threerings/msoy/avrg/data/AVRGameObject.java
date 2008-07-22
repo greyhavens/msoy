@@ -68,7 +68,7 @@ public class AVRGameObject extends DObject
      * requests.
      */
     public DSet<PlayerLocation> playerLocs = new DSet<PlayerLocation>();
-    
+
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
 

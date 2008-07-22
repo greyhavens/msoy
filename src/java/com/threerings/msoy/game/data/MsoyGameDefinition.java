@@ -14,7 +14,7 @@ public class MsoyGameDefinition extends GameDefinition
     /** If true, the game requires the LWJGL libraries. */
     public boolean lwjgl;
 
-    /** We need this here to be able to communicate with the whirled code that will launch the 
+    /** We need this here to be able to communicate with the whirled code that will launch the
      *  agent on the server. */
     public String serverMedia;
 
@@ -51,8 +51,8 @@ public class MsoyGameDefinition extends GameDefinition
         return serverMedia;
     }
 
-    /** 
-     * Configures the bureau id for this game's server code. 
+    /**
+     * Configures the bureau id for this game's server code.
      */
     public void setBureauId (String id)
     {

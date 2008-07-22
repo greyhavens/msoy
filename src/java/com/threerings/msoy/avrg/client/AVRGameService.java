@@ -37,7 +37,7 @@ public interface AVRGameService extends InvocationService
 
     public void cancelQuest (
         Client caller, String questId, ConfirmListener listener);
-    
+
     /**
      * Start a ticker that will send out timestamp information at the interval specified.
      *

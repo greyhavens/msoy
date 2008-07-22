@@ -78,7 +78,7 @@ public class WorldServerClient
             _wsvc.addWatch(_client, playerId);
         }
     }
-    
+
     public void clearWatch (int playerId)
     {
         if (_wsvc == null) {
@@ -87,7 +87,7 @@ public class WorldServerClient
             _wsvc.clearWatch(_client, playerId);
         }
     }
-    
+
     public void leaveAVRGame (int playerId)
     {
         if (_gssvc == null) {
@@ -169,7 +169,7 @@ public class WorldServerClient
             _watchmgr.memberMoved(memberId, sceneId, hostname, port);
         }
     };
-    
+
     protected ClientAdapter _clientObs = new ClientAdapter() {
         public void clientFailedToLogon (Client client, Exception cause) {
             log.warning("Failed to connect to world server.", cause);
@@ -180,7 +180,7 @@ public class WorldServerClient
             _gssvc = _client.requireService(GameServerService.class);
             _gssvc.sayHello(client, _port);
             client.getClientObject().addListener(WorldServerClient.this);
-            
+
             _wsvc = _client.requireService(WatcherService.class);
         }
 

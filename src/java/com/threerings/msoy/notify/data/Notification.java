@@ -18,7 +18,7 @@ public abstract class Notification extends SimpleStreamableObject
     public Notification ()
     {
         // nothing special
-    }        
+    }
 
     /**
      * Get the chat message used to announce this notification, or null.

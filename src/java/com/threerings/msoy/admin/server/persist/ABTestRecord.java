@@ -109,7 +109,7 @@ public class ABTestRecord extends PersistentRecord
     @Id
     @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE, allocationSize=1)
     public int abTestId;
-    
+
     /** The unique string identifier for this test, used to reference it when switching content. */
     @Column(length=ABTest.MAX_NAME_LENGTH, unique=true)
     public String name;
@@ -121,25 +121,25 @@ public class ABTestRecord extends PersistentRecord
     /** Number of equally-sized groups for this test (2 or more) */
     @Column(defaultValue="2")
     public int numGroups;
-    
+
     /** Only add visitors to a/b groups if this is their first time on whirled */
     public boolean onlyNewVisitors;
-    
+
     /** Only add visitors to a/b groups if they come from this affiliate */
     @Column(length=ABTest.MAX_AFFILIATE_LENGTH, nullable=true)
     public String affiliate;
-    
+
     /** Only add visitors to a/b groups if they come from this vector */
     @Column(length=ABTest.MAX_VECTOR_LENGTH, nullable=true)
     public String vector;
-    
+
     /** Only add visitors to a/b groups if they come from this creative */
     @Column(length=ABTest.MAX_CREATIVE_LENGTH, nullable=true)
     public String creative;
 
     /** Is this test being run on the site right now? */
     public boolean enabled;
-    
+
     /** The date on which this test was last enabled. */
     @Column(nullable=true)
     public Timestamp started;
@@ -171,7 +171,7 @@ public class ABTestRecord extends PersistentRecord
         test.enabled = enabled;
         return test;
     }
-    
+
     /**
      * Initializes this persistent record from the supplied runtime record. Only fields that are
      * user editable should be filled in.

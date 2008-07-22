@@ -973,11 +973,11 @@ public abstract class ItemRepository<
 
         return results;
     }
-    
+
     /**
-     * Return an sql operator representing a search for the given string in the item's 
+     * Return an sql operator representing a search for the given string in the item's
      * name, description and tags.
-     * 
+     *
      * an item matches the search query either if there is a full-text match against name
      * and/or description, or if one or more of the search words match one or more of the
      * item's tags; this is accomplished with an 'exists' subquery
@@ -1025,8 +1025,8 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-        
-        if (search != null && search.length() > 0) {   
+
+        if (search != null && search.length() > 0) {
             whereBits.add(buildSearchStringClause(search));
         }
 
@@ -1054,7 +1054,7 @@ public abstract class ItemRepository<
 
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
                                          CatalogListing.PRICING_HIDDEN)));
-        
+
         clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
     }
 

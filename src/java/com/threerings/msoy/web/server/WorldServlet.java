@@ -128,7 +128,7 @@ public class WorldServlet extends MsoyServiceServlet
             data.topGames = _gameLogic.loadTopGames(pps);
 
             // select the top rated avatars
-            ItemRepository<ItemRecord, ?, ?, ?> repo = 
+            ItemRepository<ItemRecord, ?, ?, ?> repo =
                 MsoyServer.itemMan.getRepository(Item.AVATAR);
             List<ListingCard> cards = Lists.newArrayList();
             for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,

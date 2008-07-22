@@ -99,7 +99,7 @@ public class UploadUtil
 
     /**
      * Publishes an InputStream to the default media store location, using name of the stream
-     * (usually its hash) and a supplied mime type. 
+     * (usually its hash) and a supplied mime type.
      */
     public static void publishStream (InputStream input, String name, String mimeType)
         throws IOException
@@ -140,7 +140,7 @@ public class UploadUtil
             if (! location.exists()) {
                 location.mkdir();
             }
-        } 
+        }
 
         // our new file location
         File target = new File(location, name);
@@ -157,7 +157,7 @@ public class UploadUtil
                 if (headers == null ) {
                     headers = Collections.emptyMap();
                 }
-                
+
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
                                AccessControlList.StandardPolicy.PUBLIC_READ, headers);
 
@@ -283,6 +283,6 @@ public class UploadUtil
     protected static final String SNAPSHOT_DIRECTORY = "snapshot";
 
     // Effectively 'never' expire date.
-    protected static final Map<String,String> EXPIRES_2038 = 
+    protected static final Map<String,String> EXPIRES_2038 =
         ImmutableMap.of("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
 }

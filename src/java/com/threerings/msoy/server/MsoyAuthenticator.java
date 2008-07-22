@@ -548,7 +548,7 @@ public class MsoyAuthenticator extends Authenticator
         if (referral != null) {
             _memberRepo.setReferral(mrec.memberId, referral);
         }
-        
+
         // record to the event log that we created a new account
         _eventLog.accountCreated(mrec.memberId, (invite == null) ? null : invite.inviteId);
 

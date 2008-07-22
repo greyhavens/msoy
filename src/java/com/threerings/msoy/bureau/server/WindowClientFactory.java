@@ -15,7 +15,7 @@ import com.threerings.util.Name;
  */
 public class WindowClientFactory implements ClientFactory
 {
-    /** 
+    /**
      * Creates a new factory.
      * @param delegate factory to use when a non-window launcher connection is encountered
      */

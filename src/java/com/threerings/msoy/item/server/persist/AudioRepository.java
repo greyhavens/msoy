@@ -42,7 +42,7 @@ public class AudioRepository extends ItemRepository<
     {
         return AudioRecord.class;
     }
-    
+
     @Override
     protected Class<AudioCatalogRecord> getCatalogClass ()
     {

@@ -33,7 +33,7 @@ public class AudioData extends SimpleStreamableObject
         volume = 1.0f;
         media = invalidMedia;
     }
-    
+
     /**
      * Helper function: specifies that this decor data structure has already been
      * populated from an Audio item object.
@@ -42,8 +42,8 @@ public class AudioData extends SimpleStreamableObject
     {
         return itemId != 0;
     }
-    
-    // documentation inherited 
+
+    // documentation inherited
     @Override
     public boolean equals (Object other)
     {
@@ -77,6 +77,6 @@ public class AudioData extends SimpleStreamableObject
     /** Media descriptor that represents invalid background audio (temporary). */
     protected static final MediaDesc invalidMedia =
         new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
-    
+
 
 }

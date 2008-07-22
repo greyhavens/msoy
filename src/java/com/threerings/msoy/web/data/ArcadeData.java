@@ -35,21 +35,21 @@ public class ArcadeData
 
     /** The number of top games to show on the arcade page */
     public static int TOP_GAME_COUNT = 20;
-    
+
     /** Info on the featured games. */
     public FeaturedGameInfo[] featuredGames;
 
-    /** 
+    /**
      * Information about each game genre.
      */
     public List<Genre> genres;
-    
+
     /**
      * List of all games ordered by name
      * Only need name and id
      */
     public List<GameInfo> allGames;
-    
+
     /**
      * List of top X games ordered by rank
      * TOnly need name, id and media

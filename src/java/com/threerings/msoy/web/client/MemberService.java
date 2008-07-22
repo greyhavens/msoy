@@ -66,7 +66,7 @@ public interface MemberService extends RemoteService
      * @param anonymous if true, the invitations will not be from the caller but will be
      * anonymous. This is only allowed for admin callers.
      */
-    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses, 
+    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses,
         String fromName, String customMessage, boolean anonymous)
         throws ServiceException;
 
@@ -92,7 +92,7 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch the highest ranked Whirled memebers for display on a leader board. 
+     * Fetch the highest ranked Whirled memebers for display on a leader board.
      * Returns a list of {@link MemberCard} records.
      */
     public List<MemberCard> getLeaderList ()
@@ -103,9 +103,9 @@ public interface MemberService extends RemoteService
      */
     public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
         throws ServiceException;
-    
+
     /**
-     * Generic method for tracking a client-side action such as clicking a button.  If testName 
+     * Generic method for tracking a client-side action such as clicking a button.  If testName
      * is supplied, the visitor's a/b test group will also be tracked.
      */
     public void trackClientAction (ReferralInfo info, String actionName, String testName)

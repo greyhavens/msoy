@@ -15,7 +15,7 @@ public class SnapshotUploadFile extends FileItemUploadFile
         super(item);
         _sceneId = sceneId;
     }
-    
+
     public int getSceneId ()
     {
         return _sceneId;

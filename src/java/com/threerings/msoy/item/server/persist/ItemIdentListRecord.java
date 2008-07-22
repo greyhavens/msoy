@@ -15,7 +15,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-    
+
 @Entity
 public class ItemIdentListRecord extends PersistentRecord
     implements Streamable

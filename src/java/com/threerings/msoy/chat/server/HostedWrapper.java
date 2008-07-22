@@ -28,7 +28,7 @@ public class HostedWrapper extends ChannelWrapper
         super(mgr, channel);
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void initialize (final ChannelCreationContinuation cccont)
     {
         log.info("Creating chat channel " + _channel + ".");
@@ -45,11 +45,11 @@ public class HostedWrapper extends ChannelWrapper
         SpeakDispatcher sd = new SpeakDispatcher(new HostedSpeakHandler(this, _mgr));
         _ccobj.setSpeakService(MsoyServer.invmgr.registerDispatcher(sd));
         _ccobj.addListener(this);
-        
+
         cccont.creationSucceeded(this);
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void shutdown ()
     {
         _ccobj.removeListener(this);
@@ -63,7 +63,7 @@ public class HostedWrapper extends ChannelWrapper
         MsoyServer.omgr.destroyObject(_ccobj.getOid());
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void addChatter (VizMemberName chatter)
     {
         try {
@@ -76,7 +76,7 @@ public class HostedWrapper extends ChannelWrapper
         }
     }
 
-    // from abstract class ChannelWrapper 
+    // from abstract class ChannelWrapper
     public void removeChatter (VizMemberName chatter)
     {
         try {
@@ -91,7 +91,7 @@ public class HostedWrapper extends ChannelWrapper
     public void updateChatter (final VizMemberName chatter)
     {
         try {
-            _mgr.updateUser(null, chatter, _channel, 
+            _mgr.updateUser(null, chatter, _channel,
                 new PeerChatService.InvocationListener() {
                     public void requestFailed (String cause) {
                         log.info("Hosted Wrapper updateChatter failed [channel=" + _channel +
@@ -99,7 +99,7 @@ public class HostedWrapper extends ChannelWrapper
                     }
                 });
         } catch (Exception ex) {
-            log.warning("Host failed to update a user [user=" + chatter + 
+            log.warning("Host failed to update a user [user=" + chatter +
                         ", channel=" + _channel + ", error=" + ex.getMessage() + "].");
         }
     }
@@ -109,7 +109,7 @@ public class HostedWrapper extends ChannelWrapper
     {
         if (!_channel.equals(channel)) {
             log.warning("Attempted to update ChatChannel on wrapper with incompatible channel!  " +
-                        "Only cosmetic channel updates are supported. [current=" + _channel + 
+                        "Only cosmetic channel updates are supported. [current=" + _channel +
                         ", new=" + channel + "]");
             return;
         }
@@ -161,7 +161,7 @@ public class HostedWrapper extends ChannelWrapper
      * same as the previous channel attribute.  This should only be used to make cosmetic changes
      * to the ChatChannel on the object (room name change, etc).
      */
-    protected void updateChannelOnObject (ChatChannel channel) 
+    protected void updateChannelOnObject (ChatChannel channel)
     {
         _ccobj.setChannel(channel);
     }

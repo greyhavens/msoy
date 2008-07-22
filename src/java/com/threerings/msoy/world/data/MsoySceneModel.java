@@ -34,16 +34,16 @@ public class MsoySceneModel extends SceneModel
     public static final byte ACCESS_EVERYONE = 0;
 
     /** Access control constant, denotes that only the scene owner and friends
-     *  (or group manager and members, in case of a group scene) can enter this scene. */ 
+     *  (or group manager and members, in case of a group scene) can enter this scene. */
     public static final byte ACCESS_OWNER_AND_FRIENDS = 1;
-    
+
     /** Access control constant, denotes that only the scene owner (or group manager,
      *  in case of a group scene) can enter this scene. */
     public static final byte ACCESS_OWNER_ONLY = 2;
 
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public byte accessControl;
-    
+
     /** The type of owner that owns this scene. */
     public byte ownerType;
 

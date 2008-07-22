@@ -42,7 +42,7 @@ public class BureauLauncher
             bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
             bind(Runner.class).toInstance(_runner);
         }
-        
+
         @EventQueue
         protected Runner _runner = new Runner();
     }
@@ -104,23 +104,23 @@ public class BureauLauncher
         }
 
         protected Thread _dispatcher = Thread.currentThread();
-        protected java.util.List<Runnable> _queue = 
+        protected java.util.List<Runnable> _queue =
             java.util.Collections.synchronizedList(
                 new java.util.LinkedList<Runnable>());
         protected boolean _stopped;
     }
 
-    /** 
-     * Runs the bureau launcher program. The arguments are not used and all data is read from 
+    /**
+     * Runs the bureau launcher program. The arguments are not used and all data is read from
      * burl-server.properties. The launcher operates as follows:<br/>
-     * <li>On startup and at intervals, connects to all world servers read from the 
+     * <li>On startup and at intervals, connects to all world servers read from the
      * <code>NODES</code> table that are not already connected.</li>
      * <li>If there are 0 nodes in the node table, exits.</li>
-     * <li>When a world server is successfully connected, subscribes to the game server registry 
-     * and connects to each server in the registry (as well as ones added later) that is not 
+     * <li>When a world server is successfully connected, subscribes to the game server registry
+     * and connects to each server in the registry (as well as ones added later) that is not
      * already connected.</li>
-     * <li>When {@link BureauLauncherConfig#worldServerWillAutoRestart} is set and any logoff 
-     * occurs, enters a faster polling mode to try and make sure we exit, thereby picking up new 
+     * <li>When {@link BureauLauncherConfig#worldServerWillAutoRestart} is set and any logoff
+     * occurs, enters a faster polling mode to try and make sure we exit, thereby picking up new
      * code.</li>
      * @see NodeRepository
      * @see #PEER_POLL_INTERVAL
@@ -186,7 +186,7 @@ public class BureauLauncher
         String server,
         int port)
     {
-        // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be 
+        // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be
         // called when the first instance of a game is played since the last server restart, so it
         // is debatable.
         String [] command = {
@@ -226,11 +226,11 @@ public class BureauLauncher
      */
     public void clientLoggedOff ()
     {
-        // auto restart is not reliable in that the world server does not always call the 
-        // shutdownLauncher method presumably due to class loader issues. In order to make the 
-        // development server load new bureau launcher goodness, use the nodes table as a backup 
-        // to make sure we get shut down. We just increase the frequency of the node poll so that 
-        // the main servers do not stop and restart before we get a chance to see that the number 
+        // auto restart is not reliable in that the world server does not always call the
+        // shutdownLauncher method presumably due to class loader issues. In order to make the
+        // development server load new bureau launcher goodness, use the nodes table as a backup
+        // to make sure we get shut down. We just increase the frequency of the node poll so that
+        // the main servers do not stop and restart before we get a chance to see that the number
         // of entries has gone to zero.
         if (BureauLauncherConfig.worldServerWillAutoRestart) {
             startHyperPoll();
@@ -289,7 +289,7 @@ public class BureauLauncher
                     }
                 }
             });
-            
+
         } catch (PersistenceException pe) {
             log.warning("Could not load nodes", pe);
         }
@@ -320,7 +320,7 @@ public class BureauLauncher
     /** Time between checks of the <code>NODES</code> table. */
     protected static long PEER_POLL_INTERVAL = 60000;
 
-    /** Time between checks of the <code>NODES</code> table when a recent logoff has been 
+    /** Time between checks of the <code>NODES</code> table when a recent logoff has been
      * encountered. */
     protected static long HYPER_PEER_POLL_INTERVAL = 60000;
 

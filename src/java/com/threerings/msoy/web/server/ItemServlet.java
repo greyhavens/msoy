@@ -253,7 +253,7 @@ public class ItemServlet extends MsoyServiceServlet
                     (mrec == null || (!mrec.isSupport() && mrec.memberId != record.ownerId))) {
                 // if it's listed, send them to the catalog
                 if (record.catalogId != 0) {
-                    return new ItemService.DetailOrIdent(null, 
+                    return new ItemService.DetailOrIdent(null,
                         new ItemIdent(iident.type, record.catalogId));
                 } else {
                     throw new ServiceException(ItemCodes.E_ACCESS_DENIED); // fall back to error

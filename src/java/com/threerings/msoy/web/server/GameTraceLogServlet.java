@@ -26,7 +26,7 @@ import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Exports trace logs for server-side game components.
- * 
+ *
  * TODO: This must be restricted to the developer(s?) of the game. Does that entail reading
  *       the source and listed items and checking against creatorId in those? We'll find out.
  */
@@ -43,7 +43,7 @@ public class GameTraceLogServlet extends HttpServlet
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
- 
+
             // make sure the user is authenticated, and pull out their record object
             Integer memberId = _mhelper.getMemberId(token);
             if (memberId == null) {
@@ -55,11 +55,11 @@ public class GameTraceLogServlet extends HttpServlet
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-            
+
             String gameIdStr = req.getParameter("gameId");
             if (gameIdStr == null) {
                 rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;                
+                return;
             }
             int gameId;
             try {
@@ -72,7 +72,7 @@ public class GameTraceLogServlet extends HttpServlet
             String logIdStr = req.getParameter("logId");
             if (logIdStr == null) {
                 enumerateLogs(rsp, gameId);
-                return;                
+                return;
             }
             int logId;
             try {
@@ -97,7 +97,7 @@ public class GameTraceLogServlet extends HttpServlet
         GameTraceLogRecord record = repo.loadTraceLog(logId);
         if (record == null) {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;            
+            return;
         }
         if (record.gameId != gameId) {
             rsp.sendError(HttpServletResponse.SC_FORBIDDEN);

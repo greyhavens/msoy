@@ -38,7 +38,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         switch (methodId) {
         case MemberMarshaller.ACKNOWLEDGE_WARNING:
             ((MemberProvider)provider).acknowledgeWarning(
-                source                
+                source
             );
             return;
 

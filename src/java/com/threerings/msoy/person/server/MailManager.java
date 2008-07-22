@@ -209,7 +209,7 @@ public class MailManager
 
         // otherwise do the deed
         String result = MailSender.sendEmail(
-            recip.accountName, ServerConfig.getFromAddress(), "gotMail", 
+            recip.accountName, ServerConfig.getFromAddress(), "gotMail",
             "subject", subject,"sender", sender.name, "senderId", sender.memberId,
             "body", body, "server_url", ServerConfig.getServerURL());
         if (result != null) {

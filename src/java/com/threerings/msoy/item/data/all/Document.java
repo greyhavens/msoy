@@ -34,7 +34,7 @@ public class Document extends Item
     {
         return docMedia;
     }
- 
+
     @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {

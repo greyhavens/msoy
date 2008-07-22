@@ -52,7 +52,7 @@ public class ChatChannelObject extends DObject
      * and process them as desired.
      */
     public ChannelMessage[] recentMessages = new ChannelMessage[] { };
-    
+
     /**
      * Used to generate speak requests on this place object.
      * This field has special behavior in a peer environment: its value is not distributed;

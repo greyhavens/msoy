@@ -196,7 +196,7 @@ public class ChatChannelManager
         MemberObject user = (MemberObject)caller;
         ChannelWrapper wrapper = _wrappers.get(channel);
         if (wrapper != null && wrapper.ready()) {
-            log.info("Removing " + user.who() + " from " + wrapper.getChannel() + " [hosted=" + 
+            log.info("Removing " + user.who() + " from " + wrapper.getChannel() + " [hosted=" +
                 (wrapper instanceof HostedWrapper) + "].");
             removeChatter(wrapper, user); // this will also clean up the channel if needed
         }
@@ -286,7 +286,7 @@ public class ChatChannelManager
     }
 
     // from interface PeerChatProvider
-    public void updateChannel (ClientObject caller, ChatChannel channel, 
+    public void updateChannel (ClientObject caller, ChatChannel channel,
                                PeerChatService.InvocationListener listener)
         throws InvocationException
     {
@@ -320,12 +320,12 @@ public class ChatChannelManager
     }
 
     /**
-     * Update the channel for a room's name.  
+     * Update the channel for a room's name.
      *
-     * @param room A RoomName to look for.  It should reference the same sceneId as a currently 
+     * @param room A RoomName to look for.  It should reference the same sceneId as a currently
      *             hosted room.
      */
-    public void updateRoomChannelName (RoomName room) 
+    public void updateRoomChannelName (RoomName room)
     {
         ChatChannel roomChannel = ChatChannel.makeRoomChannel(room);
         ChannelWrapper wrapper = _wrappers.get(roomChannel);

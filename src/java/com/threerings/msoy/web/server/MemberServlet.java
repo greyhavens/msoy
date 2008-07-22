@@ -298,7 +298,7 @@ public class MemberServlet extends MsoyServiceServlet
     {
         return _memberLogic.getABTestGroup(testName, info, logEvent);
     }
-    
+
     // from MemberService
     public void trackClientAction (ReferralInfo info, String actionName, String testName)
     {

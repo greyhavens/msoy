@@ -17,8 +17,8 @@ import com.threerings.util.Name;
  */
 public class BureauLauncherClientFactory implements ClientFactory
 {
-    /** 
-     * Creates a new factory. 
+    /**
+     * Creates a new factory.
      * @param delegate factory to use when a non-bureau launcher connection is encountered
      */
     public BureauLauncherClientFactory (ClientFactory delegate)

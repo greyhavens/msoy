@@ -112,7 +112,7 @@ public class PerfRecord
 
     // number of previous scores to count
     protected static final int BUCKETS = 10;
-    // the maximum time a score will last 
+    // the maximum time a score will last
     protected static final int MAX_TIME = 30000;
 
     protected float[] _scores = new float[BUCKETS];

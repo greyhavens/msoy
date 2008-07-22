@@ -74,12 +74,12 @@ public class MyStatsServlet extends HttpServlet
         throws JSONException, UnsupportedEncodingException
     {
         JSONObject result = new JSONObject();
-        
+
         result.put("name", URLEncoder.encode(member.name, "UTF-8"));
         result.put("coins", member.flow);
         result.put("level", member.level);
         result.put("friendsOnline", friends.size());
-        
+
         return result.toString();
     }
 

@@ -107,7 +107,7 @@ public class AVRGameManager
 
     /**
      * Called with our hosted game's data once it's finished loading from the database.
-     * @param gameAgentObj 
+     * @param gameAgentObj
      */
     public void startup (AVRGameObject gameObj, AVRGameAgentObject gameAgentObj,
                          GameContent content, List<GameStateRecord> stateRecords)
@@ -191,7 +191,7 @@ public class AVRGameManager
                             "playerOid=" + playerOid + "]");
                 return;
             }
-            
+
             int memberId = player.playerObject.getMemberId();
             // stop watching this player's movements
             _watchmgr.clearWatch(memberId);
@@ -201,7 +201,7 @@ public class AVRGameManager
 
             int playTime = player.getPlayTime(now());
             _eventLog.avrgLeft(memberId, _gameId, playTime, _gameObj.players.size());
-            
+
             _totalTrackedSeconds += playTime;
             flushPlayerGameState(player.playerObject);
             MsoyGameServer.worldClient.updatePlayer(memberId, null);
@@ -579,7 +579,7 @@ public class AVRGameManager
         } finally {
             player.commitTransaction();
         }
-        
+
         _watchmgr.addWatch(player.getMemberId(), _observer);
         // TODO: make sure the AVRG does not initialize for this player until Room Subscription
 
@@ -612,17 +612,17 @@ public class AVRGameManager
             if (entry.getValue() == sceneId) {
                 int memberId = entry.getKey();
                 removes.add(memberId);
-                
+
                 PlayerLocation loc = new PlayerLocation(memberId, sceneId);
                 if (_gameObj.playerLocs.contains(loc)) {
                     _gameObj.updatePlayerLocs(loc);
-                    
+
                 } else {
                     _gameObj.addToPlayerLocs(loc);
                 }
             }
         }
-        
+
         for (int memberId : removes) {
             _pendingMoves.remove(memberId);
         }
@@ -633,11 +633,11 @@ public class AVRGameManager
         log.debug(
             "Player entered scene [memberId=" + memberId + ", sceneId=" + sceneId +
             ", hostname=" + hostname + ", port=" + port + "]");
-        
+
         // TODO: this is incomplete, we need to keep a set of rooms that we've added to 'scenes'
         // TODO: but which have not yet completed subscription; we should obviously not add
         // TODO: players to _pendingMoves when they're moving into rooms we already know of
-        
+
         // until room subscription completes, just make a note that this player is in this scene
         _pendingMoves.put(memberId, sceneId);
 
@@ -647,15 +647,15 @@ public class AVRGameManager
             if (!info.equals(_gameAgentObj.scenes.get(sceneId))) {
                 _gameAgentObj.updateScenes(info);
             }
-            
+
         } else {
             _gameAgentObj.addToScenes(info);
         }
-        
+
         // TODO: this is only for debugging
         roomSubscriptionComplete(sceneId);
     }
-    
+
     protected void flushPlayerGameState (final PlayerObject player)
     {
         // find any modified memory records
@@ -826,13 +826,13 @@ public class AVRGameManager
             playerEnteredScene(memberId, sceneId, hostname, port);
         }
     };
-    
+
     /** The gameId of this particular AVRG. */
     protected int _gameId;
-    
+
     /** The distributed object that both clients and the agent sees. */
     protected AVRGameObject _gameObj;
-    
+
     /** The distributed object that only our agent sees. */
     AVRGameAgentObject _gameAgentObj;
 
@@ -844,7 +844,7 @@ public class AVRGameManager
 
     /** Tracks player that've moved to a scene not yet subscribed to by the agent. */
     protected IntIntMap _pendingMoves = new IntIntMap();
-    
+
     /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
      * tracked member that is no longer present with a Player object. */
     protected int _totalTrackedSeconds = 0;

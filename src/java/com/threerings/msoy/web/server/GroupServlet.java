@@ -187,11 +187,11 @@ public class GroupServlet extends MsoyServiceServlet
             if (card != null) {
                 detail.population = card.population;
             }
-            
+
             // collect the top members ordered by rank, then last online
             detail.topMembers = loadGroupMembers(
                 grec.groupId, GroupMembership.RANK_MEMBER, GroupDetail.NUM_TOP_MEMBERS, true);
-            
+
             return detail;
         } catch (PersistenceException pe) {
             log.warning("getGroupDetail failed [groupId=" + groupId + "]", pe);
@@ -734,7 +734,7 @@ public class GroupServlet extends MsoyServiceServlet
 
                 myGroupCards.add(card);
             }
-            
+
             // sort by the preferred sort method
             if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
                 Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_PEOPLE_ONLINE);
@@ -756,7 +756,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /** Compartor for sorting MyGroupCards, by population then by last post date. */
     public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_PEOPLE_ONLINE = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
@@ -794,7 +794,7 @@ public class GroupServlet extends MsoyServiceServlet
             else if (c2.rank == GroupMembership.RANK_MANAGER && c1.rank < GroupMembership.RANK_MANAGER) {
                 return 1;
             }
-            
+
             // from here down is the same as SORT_MYGROUPCARD_BY_PEOPLE_ONLINE
             int rv = c2.population - c1.population;
             if (rv != 0) {
@@ -861,7 +861,7 @@ public class GroupServlet extends MsoyServiceServlet
         for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, minRank, true)) {
             members.put(gmrec.memberId, gmrec.toGroupMemberCard());
         }
-        
+
         List<GroupMemberCard> mlist = Lists.newArrayList();
         for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
             mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));

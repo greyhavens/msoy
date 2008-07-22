@@ -21,16 +21,16 @@ public class Decor extends Item
 
     /** Type constant for a room with non-standard, flat layout. */
     public static final byte FLAT_LAYOUT = 3;
-    
+
     /** The number of type constants. */
     public static final int TYPE_COUNT = 4;
-    
+
     /** Room type. Specifies how the background wallpaper and layout are handled. */
     public byte type;
-    
+
     /** Room height, in pixels. */
     public short height;
-    
+
     /** Room width, in pixels. */
     public short width;
 
@@ -49,7 +49,7 @@ public class Decor extends Item
     /** Bitmap offset along the y axis, in room units. */
     public float offsetY;
 
-    
+
     @Override // from Item
     public byte getType ()
     {

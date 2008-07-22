@@ -50,7 +50,7 @@ public interface WorldServiceAsync
     /**
      * The asynchronous version of {@link WorldService#loadFeed}.
      */
-    public void loadFeed (WebIdent ident, int cutoffDays, 
+    public void loadFeed (WebIdent ident, int cutoffDays,
                           AsyncCallback<List<FeedMessage>> callback);
 
     /**

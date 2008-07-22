@@ -13,7 +13,7 @@ import java.util.List;
  * Defines the project storage interface
  */
 public interface ProjectStorage
-{    
+{
     /** Returns a list of path elements that compose the entirety of the project tree. */
     public List<PathElement> getProjectTree () throws ProjectStorageException;
 

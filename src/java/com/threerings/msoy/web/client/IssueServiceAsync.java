@@ -23,14 +23,14 @@ public interface IssueServiceAsync
      * The asynchronous version of {@link IssueService#loadIssues}.
      */
     public void loadIssues (WebIdent ident, int type, int state, int offset, int count,
-                            boolean needTotalCount, 
+                            boolean needTotalCount,
                             AsyncCallback<IssueService.IssueResult> callback);
 
     /**
      * The asynchronous version of {@link IssueService#loadOwnedIssues}.
      */
     public void loadOwnedIssues (WebIdent ident, int type, int state, int offset, int count,
-                                 boolean needTotalCount, 
+                                 boolean needTotalCount,
                                  AsyncCallback<IssueService.IssueResult> callback);
 
     /**
@@ -41,13 +41,13 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueServie#loadMessages}.
      */
-    public void loadMessages (WebIdent ident, int issueId, int messageId, 
+    public void loadMessages (WebIdent ident, int issueId, int messageId,
                               AsyncCallback<List<ForumMessage>> callback);
 
     /**
      * The asynchronous version of {@link IssueService#createIssue}.
      */
-    public void createIssue (WebIdent ident, Issue issue, int messageId, 
+    public void createIssue (WebIdent ident, Issue issue, int messageId,
                              AsyncCallback<Issue> callback);
 
     /**
@@ -58,7 +58,7 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#assignMessage}.
      */
-    public void assignMessage (WebIdent ident, int issueId, int messageId, 
+    public void assignMessage (WebIdent ident, int issueId, int messageId,
                                AsyncCallback<Void> callback);
 
     /**

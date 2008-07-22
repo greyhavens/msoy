@@ -42,7 +42,7 @@ public class FurnitureRepository extends ItemRepository<
     {
         return FurnitureRecord.class;
     }
-    
+
     @Override
     protected Class<FurnitureCatalogRecord> getCatalogClass ()
     {
@@ -54,7 +54,7 @@ public class FurnitureRepository extends ItemRepository<
     {
         return FurnitureCloneRecord.class;
     }
-    
+
     @Override
     protected Class<FurnitureRatingRecord> getRatingClass ()
     {

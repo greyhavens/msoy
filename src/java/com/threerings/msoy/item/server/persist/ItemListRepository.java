@@ -42,7 +42,7 @@ public class ItemListRepository extends DepotRepository
     public void createList (ItemListInfoRecord record)
         throws PersistenceException
     {
-        // 
+        //
     }
 
     public void deleteList (int listId)

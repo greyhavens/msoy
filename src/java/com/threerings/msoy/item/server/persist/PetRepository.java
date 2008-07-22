@@ -42,7 +42,7 @@ public class PetRepository extends ItemRepository<
     {
         return PetRecord.class;
     }
-    
+
     @Override
     protected Class<PetCatalogRecord> getCatalogClass ()
     {
@@ -54,7 +54,7 @@ public class PetRepository extends ItemRepository<
     {
         return PetCloneRecord.class;
     }
-    
+
     @Override
     protected Class<PetRatingRecord> getRatingClass ()
     {

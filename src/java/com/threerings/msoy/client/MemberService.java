@@ -81,7 +81,7 @@ public interface MemberService extends InvocationService
     /**
      * Set the given scene as the owner's home scene
      */
-    public void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId, 
+    public void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
         ConfirmListener listener);
 
     /**

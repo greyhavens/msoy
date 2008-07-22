@@ -58,7 +58,7 @@ public class ChannelName extends Name
     }
 
     @Override // from Name
-    public int compareTo (Name o) 
+    public int compareTo (Name o)
     {
         ChannelName oc = (ChannelName)o;
         if (_creatorId == oc._creatorId) {

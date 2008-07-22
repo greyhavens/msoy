@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 /**
- * Contains persistent data stored for members that have been granted and/or have sent 
+ * Contains persistent data stored for members that have been granted and/or have sent
  * invitations.
  */
 @Entity
@@ -45,7 +45,7 @@ public class InviterRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** This inviter's unique id. */
-    @Id 
+    @Id
     public int memberId;
 
     /** The number of invites this inviter has available. */

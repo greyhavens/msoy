@@ -53,7 +53,7 @@ public class Avatar extends Item
     {
         return avatarMedia;
     }
- 
+
     @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {

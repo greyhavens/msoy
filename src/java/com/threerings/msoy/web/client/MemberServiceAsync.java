@@ -44,7 +44,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
      */
-    public void loadInventory (WebIdent ident, byte type, int suiteId, 
+    public void loadInventory (WebIdent ident, byte type, int suiteId,
                                AsyncCallback<List<Item>> callback);
 
     /**
@@ -61,7 +61,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.
      */
-    public void getInvitation (String inviteId, boolean viewing, 
+    public void getInvitation (String inviteId, boolean viewing,
                                AsyncCallback<Invitation> callback);
 
     /**
@@ -73,12 +73,12 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#optOut}.
      */
     public void optOut (String inviteId, AsyncCallback<Void> callback);
-    
+
     /**
      * The asynchronous version of {@link MemberService#getLeaderList}.
      */
     public void getLeaderList (AsyncCallback<List<MemberCard>> callback);
-    
+
     /**
      * The asynchronous version of {@link MemberService#getABTestGroup}.
      */
@@ -90,5 +90,5 @@ public interface MemberServiceAsync
      */
     public void trackClientAction (
         ReferralInfo info, String actionName, String testName, AsyncCallback<Void> callback);
-    
+
 }

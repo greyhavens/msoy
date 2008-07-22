@@ -32,7 +32,7 @@ public class MemberName extends Name
 
     /**
      * Creates a member name that can be used as a key for a DSet lookup or whereever else one might
-     * need to use a {@link MemberName} instance as a key but do not have the (unneeded) member 
+     * need to use a {@link MemberName} instance as a key but do not have the (unneeded) member
      * name.
      */
     public static MemberName makeKey (int memberId)
@@ -53,13 +53,13 @@ public class MemberName extends Name
     /**
      * Returns true if the supplied member id represents an anonymous viewer.
      */
-    public static boolean isViewer (int memberId) 
+    public static boolean isViewer (int memberId)
     {
         return memberId == 0;
     }
-    
+
     /**
-     * Returns true if the supplied member id represents a guest or a viewer, 
+     * Returns true if the supplied member id represents a guest or a viewer,
      * rather than a registered user.
      */
     public static boolean isGuest (int memberId)

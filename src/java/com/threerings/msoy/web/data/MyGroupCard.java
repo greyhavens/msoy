@@ -24,7 +24,7 @@ public class MyGroupCard
     public static final byte SORT_BY_MANAGER = 2;
     /** Alternate sort by latest post, then population, then name */
     public static final byte SORT_BY_NEWEST_POST = 3;
-    
+
     /** The group's name. */
     public GroupName name;
 
@@ -39,18 +39,18 @@ public class MyGroupCard
 
     /** The number of people online in this group's scenes (as of the last snapshot). */
     public int population;
-    
+
     /** Total number of threads in this group's discussions */
     public int numThreads;
-    
+
     /** Total number of posts to all threads in this group's discussions */
     public int numPosts;
-    
+
     /** The member's rank in the group. */
     public byte rank;
-    
+
     /** Most recent thread for this Whirled on the My Discussions page */
     public ForumThread latestThread;
-    
-    
+
+
 }

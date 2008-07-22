@@ -24,7 +24,7 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#loadProfile}.
      */
-    public void loadProfile (WebIdent ident, int memberId, 
+    public void loadProfile (WebIdent ident, int memberId,
                              AsyncCallback<ProfileService.ProfileResult> callback);
 
     /**
@@ -41,24 +41,24 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.
      */
-    public void findProfiles (WebIdent ident, String search, 
+    public void findProfiles (WebIdent ident, String search,
                               AsyncCallback<List<MemberCard>> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadFriends}.
      */
-    public void loadFriends (WebIdent ident, int memberId, 
+    public void loadFriends (WebIdent ident, int memberId,
                              AsyncCallback<ProfileService.FriendsResult> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#getWebMailAddresses}.
      */
-    public void getWebMailAddresses (WebIdent ident, String email, String password, 
+    public void getWebMailAddresses (WebIdent ident, String email, String password,
                                      AsyncCallback<List<EmailContact>> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadSelfFeed}.
      */
-    public void loadSelfFeed (int profileMemberId, int cutoffDays, 
+    public void loadSelfFeed (int profileMemberId, int cutoffDays,
                               AsyncCallback<List<FeedMessage>> callback);
 }

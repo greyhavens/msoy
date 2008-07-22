@@ -25,51 +25,51 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#loadShopData}.
      */
     public void loadShopData (WebIdent ident, AsyncCallback<ShopData> callback);
-    
+
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows, 
-                             boolean includeCount, 
+    public void loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
+                             boolean includeCount,
                              AsyncCallback<CatalogService.CatalogResult> callback);
-    
+
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
     public void purchaseItem (
         WebIdent ident, byte itemType, int catalogId, int authedFlowCost, int authedGoldCost,
         AsyncCallback<Item> callback);
-    
+
     /**
      * The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebIdent ident, ItemIdent item, String descrip, int pricing, 
-                          int salesTarget, int flowCost, int goldCost, 
+    public void listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
+                          int salesTarget, int flowCost, int goldCost,
                           AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
      */
-    public void loadListing (WebIdent ident, byte itemType, int catalogId, 
+    public void loadListing (WebIdent ident, byte itemType, int catalogId,
                              AsyncCallback<CatalogListing> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}
      */
-    public void updateListing (WebIdent ident, ItemIdent item, String descrip, 
+    public void updateListing (WebIdent ident, ItemIdent item, String descrip,
                                AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
-    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing, 
-                               int salesTarget, int flowCost, int goldCost, 
+    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing,
+                               int salesTarget, int flowCost, int goldCost,
                                AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.
      */
-    public void removeListing (WebIdent ident, byte itemType, int catalogId, 
+    public void removeListing (WebIdent ident, byte itemType, int catalogId,
                                AsyncCallback<Void> callback);
 
     /**

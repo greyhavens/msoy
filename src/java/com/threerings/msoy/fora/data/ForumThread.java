@@ -57,7 +57,7 @@ public class ForumThread
 
     /** The requesting member's last read post index or 0. */
     public int lastReadPostIndex;
-    
+
     /** Details of the original post - not always required */
     public ForumMessage firstPost;
 

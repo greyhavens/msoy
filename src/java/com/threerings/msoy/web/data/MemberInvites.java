@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/** 
- * Contains the number of invites aviable for a user, along with the list of pending invites. 
+/**
+ * Contains the number of invites aviable for a user, along with the list of pending invites.
  */
 public class MemberInvites
     implements IsSerializable

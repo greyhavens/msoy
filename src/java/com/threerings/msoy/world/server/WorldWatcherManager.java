@@ -27,7 +27,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Maintains a list of watched members whose movements from scene to scene anywhere in the
  * Whirled (i.e. cross server) are reported through the {@link WatcherReceiver} facility.
- * 
+ *
  * The sole client of this service is currently the game server, allowing AVRGs to keep track
  * of what rooms their various current players are in.
  */
@@ -98,7 +98,7 @@ public class WorldWatcherManager
         }
         _memberWatchers.remove(memberId);
         _watcherMembers.remove(caller.getOid(), memberId);
-        
+
         // if this was the last member being watched, unsubscribe to death events
         if (!_watcherMembers.containsKey(caller.getOid())) {
             caller.removeListener(_watcherCleanup);
@@ -116,9 +116,9 @@ public class WorldWatcherManager
         }
     };
 
-    /** A map of each memberId that we're watching to the (one) caller to notify of the move. */ 
+    /** A map of each memberId that we're watching to the (one) caller to notify of the move. */
     protected IntMap<ClientObject> _memberWatchers = new HashIntMap<ClientObject>();
-    
+
     /** A multimap of caller Oid to memberId that can easily tell us who's watched by whom. */
     protected Multimap<Integer, Integer> _watcherMembers = new HashMultimap<Integer, Integer>();
 }

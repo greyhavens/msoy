@@ -21,7 +21,7 @@ public final class ChannelName_CustomFieldSerializer
 
     public static ChannelName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
-    {        
+    {
         return new ChannelName(streamReader.readString(), streamReader.readInt());
     }
 

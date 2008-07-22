@@ -48,13 +48,13 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#resetGameScores}.
      */
-    public void resetGameScores (WebIdent ident, int gameId, boolean single, 
+    public void resetGameScores (WebIdent ident, int gameId, boolean single,
                                  AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameTrophies}.
      */
-    public void loadGameTrophies (WebIdent ident, int gameId, 
+    public void loadGameTrophies (WebIdent ident, int gameId,
                                   AsyncCallback<List<Trophy>> callback);
 
     /**
@@ -71,7 +71,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadTopRanked}.
      */
-    public void loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends, 
+    public void loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends,
                                AsyncCallback<PlayerRating[][]> callback);
 
     /**
@@ -82,7 +82,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
-    public void loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query, 
+    public void loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query,
                                AsyncCallback<List<GameInfo>> callback);
 
     /**

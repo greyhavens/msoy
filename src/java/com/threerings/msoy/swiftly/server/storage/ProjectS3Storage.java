@@ -72,7 +72,7 @@ public class ProjectS3Storage implements ProjectStorage
 
     /** S3 Lock Manager. */
     private final S3StorageLockManager _lockMgr;
-    
+
     /** S3 storage bucket. */
     private final String _bucket;
 }

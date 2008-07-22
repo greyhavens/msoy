@@ -30,10 +30,10 @@ public final class MailHeaders
 
     /** The subject of this message. */
     public String subject;
-    
+
     /** The time at which the message was delivered. */
     public Date sent;
-    
+
     /** Whether or not this message has yet to be read. */
     public boolean unread;
 

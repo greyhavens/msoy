@@ -22,10 +22,10 @@ public class TagHistory
 
     /** The tag that was added or deleted, or null for COPIED. */
     public String tag;
-    
+
     /** The member who added or deleted the tag. */
     public MemberName member;
-    
+
     /** The action taken (ADDED or REMOVED or COPIED). */
     public byte action;
 

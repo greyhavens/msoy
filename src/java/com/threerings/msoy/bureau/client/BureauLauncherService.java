@@ -17,7 +17,7 @@ public interface BureauLauncherService extends InvocationService
     void launcherInitialized (Client caller);
 
     /**
-     * Query the id of the game server registry object, passing the result back to the given 
+     * Query the id of the game server registry object, passing the result back to the given
      * listener as an Integer. When a game server is queried, this should always be 0.
      * @see ServerRegistryObject
      */

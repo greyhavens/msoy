@@ -177,7 +177,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             log.info("Hosting member " + newloc + ".");
             _mnobj.addToMemberLocs(newloc);
         }
-        
+
         memberEnteredScene(newloc, _self.hostName, _self.port);
     }
 
@@ -518,8 +518,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected boolean ignoreClient (PresentsClient client)
     {
         // don't publish information about anonymous lurkers to our peers
-        return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) || 
-            (client instanceof BureauLauncherServerClient) || 
+        return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) ||
+            (client instanceof BureauLauncherServerClient) ||
             (client instanceof WindowServerClient);
     }
 
@@ -559,7 +559,7 @@ public class MsoyPeerManager extends CrowdPeerManager
                 observer.remoteMemberEnteredScene(loc, hostname, port);
                 return true;
             }
-        });        
+        });
     }
 
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */

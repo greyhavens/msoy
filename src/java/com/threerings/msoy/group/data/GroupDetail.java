@@ -38,15 +38,15 @@ public class GroupDetail
 
     /** When my rank was assigned (in millis since the epoch), or 0 if we're a non-member. */
     public long myRankAssigned;
-    
+
     /** Recent discussion threads for this group */
     public List<ForumThread> threads;
 
     /** The number of people online in this group's scenes (as of the last snapshot). */
     public int population;
-    
+
     /** The top {@link NUM_TOP_MEMBERS} members of this group, ordered by rank */
     public List<GroupMemberCard> topMembers;
-    
+
     public static int NUM_TOP_MEMBERS = 10;
 }

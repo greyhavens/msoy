@@ -19,22 +19,22 @@ public class GameInfo
 
     /** Alternate sort by newest */
     public static final byte SORT_BY_NEWEST = 1;
-    
+
     /** Alternate sort by name */
     public static final byte SORT_BY_NAME = 2;
-    
+
     /** Alternate sort with [23456]+ player games first */
     public static final byte SORT_BY_MULTIPLAYER = 3;
-    
+
     /** Alternate sort with 1+ player games first */
     public static final byte SORT_BY_SINGLE_PLAYER = 4;
 
     /** Alternate sort by category */
     public static final byte SORT_BY_GENRE = 5;
-    
+
     /** Alternate sort by # people playing */
     public static final byte SORT_BY_PLAYERS_ONLINE = 6;
-    
+
     /** The unique identifier for this game. */
     public int gameId;
 
@@ -64,7 +64,7 @@ public class GameInfo
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
-    
+
     /**
      * Returns the media to be shown for this game's thumbnail.
      */

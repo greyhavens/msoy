@@ -30,5 +30,5 @@ public class PathElementTreeNode extends DefaultMutableTreeNode
     public boolean getAllowsChildren ()
     {
         return !isLeaf();
-    } 
+    }
 }

@@ -5,7 +5,7 @@ package com.threerings.msoy.money.server;
 
 /**
  * The amount of money a member has in their coins, bars, and bling accounts.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MemberMoney
@@ -17,27 +17,27 @@ public class MemberMoney
         this.bars = bars;
         this.bling = bling;
     }
-    
+
     public int getBars ()
     {
         return bars;
     }
-    
+
     public int getCoins ()
     {
         return coins;
     }
-    
+
     public double getBling ()
     {
         return bling;
     }
-    
+
     public int getMemberId ()
     {
         return memberId;
     }
-    
+
     private final int bars;
     private final int coins;
     private final double bling;

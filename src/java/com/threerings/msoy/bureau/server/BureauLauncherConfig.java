@@ -27,7 +27,7 @@ public class BureauLauncherConfig
     /** The secret used to authenticate the bureau launching client. */
     public static String bureauSharedSecret;
 
-    /** True if the world/game servers will be restarting when code changes (and therefore 
+    /** True if the world/game servers will be restarting when code changes (and therefore
      * probably not calling BureauLauncherSender.shutdown. */
     public static boolean worldServerWillAutoRestart;
 

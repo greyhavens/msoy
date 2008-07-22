@@ -14,7 +14,7 @@ public class ABTest implements IsSerializable
 {
     /** Id. */
     public int abTestId;
-    
+
     /** The unique string identifier for this test, used to reference it when switching content. */
     public String name;
 
@@ -29,13 +29,13 @@ public class ABTest implements IsSerializable
 
     /** Only add visitors to a/b groups if they come from this affiliate */
     public String affiliate;
-    
+
     /** Only add visitors to a/b groups if they come from this vector */
     public String vector;
-    
+
     /** Only add visitors to a/b groups if they come from this creative */
     public String creative;
-    
+
     /** Is this test being run on the site right now? */
     public boolean enabled;
 
@@ -51,7 +51,7 @@ public class ABTest implements IsSerializable
     public static final int MAX_AFFILIATE_LENGTH = 50;
     public static final int MAX_VECTOR_LENGTH = 50;
     public static final int MAX_CREATIVE_LENGTH = 50;
-    
+
     /**
      * Constructor; set a few defaults
      */
@@ -60,7 +60,7 @@ public class ABTest implements IsSerializable
         onlyNewVisitors = true;
         numGroups = 2;
     }
-    
+
     /**
      * Throw an error if there is a problem with any of the test data.
      */

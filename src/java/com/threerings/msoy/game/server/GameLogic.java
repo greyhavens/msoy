@@ -140,7 +140,7 @@ public class GameLogic
     }
 
     /**
-     * Loads and returns data on the top games. Used on the landing and arcade pages.  
+     * Loads and returns data on the top games. Used on the landing and arcade pages.
      * Games that do not payout flow, and those with a ranking less than 4 stars not included.
      */
     public FeaturedGameInfo[] loadTopGames (PopularPlacesSnapshot pps)

@@ -33,7 +33,7 @@ import com.threerings.msoy.peer.server.MemberNodeAction;
 public class MemberNodeActions
 {
     /**
-     * Dispatches a notification that a member's info has changed to whichever server they are 
+     * Dispatches a notification that a member's info has changed to whichever server they are
      * logged into.
      */
     public static void infoChanged (
@@ -54,7 +54,7 @@ public class MemberNodeActions
             friends[ii++] = entry.name.getMemberId();
         }
         MsoyServer.peerMan.invokeNodeAction(new FriendEntryUpdate(
-            friends, memobj.getMemberId(), memobj.memberName.toString(), 
+            friends, memobj.getMemberId(), memobj.memberName.toString(),
             memobj.memberName.getPhoto(), memobj.headline));
     }
 
@@ -151,11 +151,11 @@ public class MemberNodeActions
             memobj.setHeadline(_status);
             MsoyServer.memberMan.updateOccupantInfo(memobj);
             MsoyServer.channelMan.updateMemberOnChannels(memobj.memberName);
-            
-            // Update FriendEntrys on friend's member objects.  Rather than preparing a 
+
+            // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
             // that contain at least one friend of this member, and do all the updating on that
-            // server.  Note that we don't even take this potentially expensive step if this 
+            // server.  Note that we don't even take this potentially expensive step if this
             // member isn't logged in.
             updateFriendEntries(memobj);
         }
@@ -322,7 +322,7 @@ public class MemberNodeActions
             // no friends found here, move along
             return false;
         }
-    
+
         @Override // from PeerManager.NodeAction
         protected void execute ()
         {

@@ -31,7 +31,7 @@ public class WindowAuthenticator extends ChainedAuthenticator
 
     @Override // from Authenticator
     protected void processAuthentication (
-        AuthingConnection conn, 
+        AuthingConnection conn,
         AuthResponse rsp)
     {
         AuthRequest req = conn.getAuthRequest();

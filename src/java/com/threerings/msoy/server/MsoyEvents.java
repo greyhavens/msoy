@@ -14,20 +14,20 @@ import com.threerings.panopticon.common.event.annotations.Index;
  */
 public class MsoyEvents
 {
-    public interface MsoyEvent 
+    public interface MsoyEvent
     {
     }
-    
+
     @Event(name="CurrentMemberStats")
     public static class CurrentMemberStats implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public String serverName;
         @Field final public int total;
         @Field final public int active;
         @Field final public int guests;
         @Field final public int viewers;
-        
+
         public CurrentMemberStats (
                 String serverName, int total, int active, int guests, int viewers)
         {
@@ -43,12 +43,12 @@ public class MsoyEvents
     @Event(name="Login")
     public static class Login implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public boolean firstLogin;
         @Field final public String sessionToken;
         @Field final public long createdOn;
-        
+
         public Login (int memberId, boolean firstLogin, String sessionToken, long createdOn)
         {
             this.timestamp = new Date();
@@ -62,7 +62,7 @@ public class MsoyEvents
     @Event(name="SessionMetrics")
     public static class SessionMetrics implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int inMyRooms;
         @Field final public int inFriendRooms;
@@ -71,9 +71,9 @@ public class MsoyEvents
         @Field final public int totalActive;
         @Field final public int totalIdle;
         @Field final public String sessionToken;
-        
-        public SessionMetrics (int memberId, int timeInMyRooms, int timeInFriendRooms, 
-            int timeInStrangerRooms, int timeInWhirleds, int totalTimeActive, int totalTimeIdle, 
+
+        public SessionMetrics (int memberId, int timeInMyRooms, int timeInFriendRooms,
+            int timeInStrangerRooms, int timeInWhirleds, int totalTimeActive, int totalTimeIdle,
             String sessionToken)
         {
             this.timestamp = new Date();
@@ -91,11 +91,11 @@ public class MsoyEvents
     @Event(name="MailSent")
     public static class MailSent implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int senderId;
         @Field final public int recipientId;
         @Field final public int payloadType;
-        
+
         public MailSent (int senderId, int recipientId, int payloadType)
         {
             this.timestamp = new Date();
@@ -108,15 +108,15 @@ public class MsoyEvents
     @Event(name="FlowTransaction")
     public static class FlowTransaction implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int actionType;
         @Field final public int itemId;
         @Field final public byte itemType;
         @Field final public int deltaFlow;
         @Field final public int newtotal;
-        
-        public FlowTransaction (int memberId, int actionType, int itemId, 
+
+        public FlowTransaction (int memberId, int actionType, int itemId,
             byte itemType, int deltaFlow, int newtotal)
         {
             this.timestamp = new Date();
@@ -132,13 +132,13 @@ public class MsoyEvents
     @Event(name="ItemPurchase")
     public static class ItemPurchase implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public byte itemType;
         @Field final public int itemId;
         @Field final public int flowCost;
         @Field final public int goldCost;
-        
+
         public ItemPurchase (
             int memberId, byte itemType, int itemId, int flowCost, int goldCost)
         {
@@ -154,7 +154,7 @@ public class MsoyEvents
     @Event(name="ItemCatalogListing")
     public static class ItemCatalogListing implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int creatorId;
         @Field final public byte itemType;
         @Field final public int itemId;
@@ -162,8 +162,8 @@ public class MsoyEvents
         @Field final public int goldCost;
         @Field final public int pricing;
         @Field final public int salesTarget;
-        
-        public ItemCatalogListing (int creatorId, byte itemType, 
+
+        public ItemCatalogListing (int creatorId, byte itemType,
             int itemId, int flowCost, int goldCost, int pricing, int salesTarget)
         {
             this.timestamp = new Date();
@@ -180,11 +180,11 @@ public class MsoyEvents
     @Event(name="FriendshipAction")
     public static class FriendshipAction implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int friendId;
         @Field final public boolean isAdded;
-        
+
         public FriendshipAction (int memberId, int friendId, boolean isAdded)
         {
             this.timestamp = new Date();
@@ -197,11 +197,11 @@ public class MsoyEvents
     @Event(name="GroupMembershipAction")
     public static class GroupMembershipAction implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int groupId;
         @Field final public boolean isJoined;
-        
+
         public GroupMembershipAction (int memberId, int groupId, boolean isJoined)
         {
             this.timestamp = new Date();
@@ -214,11 +214,11 @@ public class MsoyEvents
     @Event(name="GroupRankModification")
     public static class GroupRankModification implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int groupId;
         @Field final public byte newRank;
-        
+
         public GroupRankModification (int memberId, int groupId, byte newRank)
         {
             this.timestamp = new Date();
@@ -227,7 +227,7 @@ public class MsoyEvents
             this.newRank = newRank;
         }
     }
-    
+
     @Event(name="RoomExit")
     public static class RoomExit implements MsoyEvent
     {
@@ -237,9 +237,9 @@ public class MsoyEvents
         @Field final public boolean isWhirled;
         @Field final public int secondsInRoom;
         @Field final public int occupantsLeft;
-        
+
         public RoomExit (
-            int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft) 
+            int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft)
         {
             this.timestamp = new Date();
             this.playerId = playerId;
@@ -249,16 +249,16 @@ public class MsoyEvents
             this.occupantsLeft = occupantsLeft;
         }
     }
-    
+
     @Event(name="AVRGExit")
     public static class AVRGExit implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Index @Field final public int gameId;
         @Field final public int playerId;
         @Field final public int secondsInGame;
         @Field final public int playersLeft;
-        
+
         public AVRGExit (int playerId, int gameId, int seconds, int playersLeft)
         {
             this.timestamp = new Date();
@@ -272,13 +272,13 @@ public class MsoyEvents
     @Event(name="GameExit")
     public static class GameExit implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Index @Field final public int gameId;
         @Field final public byte gameGenre;
         @Field final public int playerId;
         @Field final public int secondsInGame;
         @Field final public boolean multiplayer;
-        
+
         public GameExit (
             int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer)
         {
@@ -294,14 +294,14 @@ public class MsoyEvents
     @Event(name="GamePlayed")
     public static class GamePlayed implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int gameGenre;
         @Field final public int gameId;
         @Field final public int itemId;
         @Field final public int payout;
         @Field final public int secondsPlayed;
         @Field final public int playerId;
-        
+
         public GamePlayed (
             int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
         {
@@ -318,11 +318,11 @@ public class MsoyEvents
     @Event(name="TrophyEarned")
     public static class TrophyEarned implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int recipientId;
         @Field final public int gameId;
         @Field final public String trophyIdent;
-        
+
         public TrophyEarned (int recipientId, int gameId, String trophyIdent)
         {
             this.timestamp = new Date();
@@ -335,12 +335,12 @@ public class MsoyEvents
     @Event(name="PrizeEarned")
     public static class PrizeEarned implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int recipientId;
         @Field final public int gameId;
         @Field final public String prizeIdent;
         @Field final public byte prizeItemType;
-        
+
         public PrizeEarned (int recipientId, int gameId, String prizeIdent, byte prizeItemType)
         {
             this.timestamp = new Date();
@@ -354,11 +354,11 @@ public class MsoyEvents
     @Event(name="InviteSent")
     public static class InviteSent implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public String inviteId;
         @Field final public int inviterId;
         @Field final public String recipient;
-        
+
         public InviteSent (String inviteId, int inviterId, String recipient)
         {
             this.timestamp = new Date();
@@ -371,9 +371,9 @@ public class MsoyEvents
     @Event(name="InviteViewed")
     public static class InviteViewed implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public String inviteId;
-        
+
         public InviteViewed (String inviteId)
         {
             this.timestamp = new Date();
@@ -384,10 +384,10 @@ public class MsoyEvents
     @Event(name="AccountCreated")
     public static class AccountCreated implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int newMemberId;
         @Field final public String inviteId;
-        
+
         public AccountCreated (int newMemberId, String inviteId)
         {
             this.timestamp = new Date();
@@ -399,10 +399,10 @@ public class MsoyEvents
     @Event(name="RoomUpdated")
     public static class RoomUpdated implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int sceneId;
-        
+
         public RoomUpdated (int memberId, int sceneId)
         {
             this.timestamp = new Date();
@@ -414,28 +414,28 @@ public class MsoyEvents
     @Event(name="ProfileUpdated")
     public static class ProfileUpdated implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
-        
+
         public ProfileUpdated (int memberId)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
         }
     }
-    
+
     @Event(name="ForumMessagePosted")
     public static class ForumMessagePosted implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int threadId;
-        /** 
+        /**
          * The number of posts that have been added to the related discussion thread.
          * If this is 1, it indicates that this is the first post of a new thread.
          */
         @Field final public int postNumber;
-       
+
         public ForumMessagePosted (int memberId, int threadId, int postNumber)
         {
             this.timestamp = new Date();
@@ -453,7 +453,7 @@ public class MsoyEvents
     @Event(name="TestActionReached")
     public static class TestActionReached implements MsoyEvent
     {
-        @Index @Field final public Date timestamp; 
+        @Index @Field final public Date timestamp;
         @Field final public String tracker;
         @Field final public String actionName;
         @Index @Field final public String testName;
@@ -468,7 +468,7 @@ public class MsoyEvents
             this.testGroup = testGroup;
         }
     }
-    
+
     protected static String toValue (String input) {
         return (input != null) ? input : "";
     }

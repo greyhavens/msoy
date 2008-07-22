@@ -19,7 +19,7 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface AdminService extends RemoteService
 {
-    /** 
+    /**
      * Grants the given number of invitations to the indicated user set.
      *
      * @param activeSince If null, all users will receive invitations
@@ -40,7 +40,7 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetches a list of players who were invited by inviterId. 
+     * Fetches a list of players who were invited by inviterId.
      */
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException;
@@ -62,19 +62,19 @@ public interface AdminService extends RemoteService
      */
     public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
         throws ServiceException;
-    
+
     /**
      * Configures a member as support personnel or not. Only callable by admins.
      */
     public List<ABTest> getABTests (WebIdent ident)
         throws ServiceException;
-    
+
     /**
      * Create a new A/B Test record
      */
     public void createTest (WebIdent ident, ABTest test)
         throws ServiceException;
-    
+
     /**
      * Update an existing A/B Test record
      */

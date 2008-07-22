@@ -18,7 +18,7 @@ public class HostedRoom extends HostedPlace
     public byte accessControl;
 
     /**
-     * Empty constructor used for unserializing 
+     * Empty constructor used for unserializing
      */
     public HostedRoom ()
     {

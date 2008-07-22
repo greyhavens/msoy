@@ -560,7 +560,7 @@ public class MsoyGameRegistry
         public LeaveAVRGameAction (int memberId) {
             super(memberId);
         }
-        
+
         protected void execute (MemberObject memObj) {
             // clear their AVRG affiliation
             memObj.setAvrGameId(0);

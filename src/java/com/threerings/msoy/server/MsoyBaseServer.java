@@ -320,7 +320,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             String token) {
             return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient",
-                "msoy", bureauId, token, "localhost", 
+                "msoy", bureauId, token, "localhost",
                 String.valueOf(getListenPorts()[0])};
         }
     }
@@ -333,7 +333,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             String token) {
             ClientObject launcher = selectLauncher();
             BureauLauncherSender.launchThane(
-                launcher, bureauId, token, ServerConfig.serverHost, 
+                launcher, bureauId, token, ServerConfig.serverHost,
                 getListenPorts()[0]);
         }
     }

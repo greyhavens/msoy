@@ -298,7 +298,7 @@ public class GameGameRegistry
     }
 
     /**
-     * Called when a game was successfully finished with a payout. 
+     * Called when a game was successfully finished with a payout.
      * Right now just logs the results for posterity.
      */
     public void gamePayout (UserActionDetails info, Game game, int payout, int secondsPlayed)
@@ -306,7 +306,7 @@ public class GameGameRegistry
         _eventLog.gamePlayed(
             game.genre, game.gameId, game.itemId, payout, secondsPlayed, info.memberId);
     }
-    
+
     // from AVRProvider
     public void activateGame (ClientObject caller, final int gameId,
                               final InvocationService.ResultListener listener)

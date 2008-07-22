@@ -25,7 +25,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public void acknowledgeWarning (Client arg1)
     {
         sendRequest(arg1, ACKNOWLEDGE_WARNING, new Object[] {
-            
+
         });
     }
 

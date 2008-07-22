@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.client.controller;
 
-/** 
+/**
  * An interface to display passive notifications.
  */
 public interface PassiveNotifier

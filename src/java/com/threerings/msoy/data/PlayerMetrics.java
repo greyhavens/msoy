@@ -12,7 +12,7 @@ public class PlayerMetrics
     /** Interface for all components of PlayerMetrics; enforces implementation of Streamable. */
     public interface Entry extends Streamable
     {
-        /** 
+        /**
          * Called to update current metrics when leaving the room or switching servers.
          */
         public void save (MemberObject player);
@@ -113,16 +113,16 @@ public class PlayerMetrics
             _currentSceneEntryTime = 0L;
         }
 
-        /** 
+        /**
          * Returns the last known occupancy length. Useful when dealing with server switches,
          * when PlayerMetrics get forcibly serialized and sent over before the player object
          * leaves its scene.
          */
-        public int getLastOccupancyLength () 
+        public int getLastOccupancyLength ()
         {
             return _lastMeasuredSeconds;
         }
-        
+
         /** Non-streamable data about the current scene. */
         protected transient boolean _currentSceneIsMember;
 
@@ -131,7 +131,7 @@ public class PlayerMetrics
 
         /** Non-streamable timestamp when we entered the current scene. */
         protected transient long _currentSceneEntryTime;
-        
+
         /** Non-streamable number that stores the last known scene occupancy length. */
         protected transient int _lastMeasuredSeconds;
     }

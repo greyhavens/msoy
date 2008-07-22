@@ -65,7 +65,7 @@ public class GroupName extends Name
     }
 
     @Override // from Name
-    public int compareTo (Name o) 
+    public int compareTo (Name o)
     {
         return _groupId - ((GroupName) o)._groupId;
     }

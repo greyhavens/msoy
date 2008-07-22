@@ -29,7 +29,7 @@ class Connections
     public Connections (BureauLauncher launcher)
     {
         _launcher = launcher;
-        
+
         _purge = new Interval(_launcher.getRunner()) {
             public void expired () {
                 purgeFailedConnections();
@@ -41,7 +41,7 @@ class Connections
 
     /**
      * Add a new connection to the given server. Logon is automatically attempted. If logon
-     * fails, the server is blacklisted for a given amount of time such that calls to 
+     * fails, the server is blacklisted for a given amount of time such that calls to
      * <code>add</code> the server again will be ignored.
      * @see #CLIENT_RENEW_TIME
      */
@@ -135,9 +135,9 @@ class Connections
             }
             _launcher.clientLoggedOff();
         }
-        
+
         /**
-         * Retrieves an entry that should be in a certain state. Uses the caller in warning 
+         * Retrieves an entry that should be in a certain state. Uses the caller in warning
          * messages.
          */
         protected Entry getEntry (Client client, String caller, State expected)
@@ -172,7 +172,7 @@ class Connections
     protected class Entry
     {
         /**
-         * Creates a new entry with a client in the pending state attempting logon to the given 
+         * Creates a new entry with a client in the pending state attempting logon to the given
          * server.
          */
         public Entry (String host, int port)
@@ -205,7 +205,7 @@ class Connections
         }
 
         /**
-         * Sets the current state to the given value and sets the last update time to the 
+         * Sets the current state to the given value and sets the last update time to the
          * current time.
          */
         public void setState (State state)

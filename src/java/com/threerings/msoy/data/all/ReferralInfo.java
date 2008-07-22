@@ -13,7 +13,7 @@ import com.threerings.io.Streamable;
 /**
  * Stores referral info for the current player: affiliate who sent them to us,
  * entry vector type, creative id (eg. one for each banner graphic), and a unique
- * tracking number used to assign them to test groups. 
+ * tracking number used to assign them to test groups.
  */
 public class ReferralInfo
     implements Streamable, IsSerializable
@@ -26,9 +26,9 @@ public class ReferralInfo
 
     /**
      * Instance creator. Returns a new instance, or null if one of the parameters is null.
-     */    
+     */
     public static ReferralInfo makeInstance (
-        String affiliate, String vector, String creative, String tracker) 
+        String affiliate, String vector, String creative, String tracker)
     {
         if (affiliate == null || vector == null || creative == null || tracker == null) {
             return null;
@@ -53,7 +53,7 @@ public class ReferralInfo
 
     /** Player's tracking ID, used to assign them to test groups. */
     public String tracker;
-    
+
     /** Constructor. */
     public ReferralInfo () { }
 
@@ -65,9 +65,9 @@ public class ReferralInfo
         this.creative = creative;
         this.tracker = tracker;
     }
-    
+
     /**
-     * Get the date and time that the tracking ID was assigned, derived from the tracker. 
+     * Get the date and time that the tracking ID was assigned, derived from the tracker.
      */
     public Date getCreationTime()
     {
@@ -75,7 +75,7 @@ public class ReferralInfo
             long timestamp = Long.parseLong(tracker, 16);
             return new Date(timestamp);
         } catch (NumberFormatException e) {
-            return new Date();    
+            return new Date();
         }
     }
 

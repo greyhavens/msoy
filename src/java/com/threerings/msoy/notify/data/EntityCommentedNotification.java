@@ -29,7 +29,7 @@ public class EntityCommentedNotification extends Notification
         _entityName = ename;
 
         // need to determine these on the Java side because we don't have the Comment class
-        // implemented in actionscript, and there is currently no other reason than these 
+        // implemented in actionscript, and there is currently no other reason than these
         // constants to do so.
         _isRoom = etype == Comment.TYPE_ROOM;
         _isProfile = etype == Comment.TYPE_PROFILE_WALL;
@@ -43,7 +43,7 @@ public class EntityCommentedNotification extends Notification
         } else if (_isProfile) {
             return MessageBundle.tcompose("m.profile_commented", _entityId);
         } else {
-            return MessageBundle.compose("m.item_commented", 
+            return MessageBundle.compose("m.item_commented",
                 MessageBundle.qualify(MsoyCodes.ITEM_MSGS, Item.getTypeKey((byte)_entityType)),
                 _entityName, _entityType, _entityId);
         }

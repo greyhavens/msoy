@@ -19,7 +19,7 @@ public class HostedChannel extends SimpleStreamableObject
 
     /** Distributed object id of this channel on the hosting peer. */
     public int oid;
-    
+
     // from DSet.Entry
     public Comparable getKey ()
     {
@@ -31,7 +31,7 @@ public class HostedChannel extends SimpleStreamableObject
     {
         return channel.hashCode();
     }
-    
+
     /** Used when unserializing. */
     public HostedChannel ()
     {

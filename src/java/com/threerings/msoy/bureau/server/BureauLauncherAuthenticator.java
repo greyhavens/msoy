@@ -29,7 +29,7 @@ public class BureauLauncherAuthenticator extends ChainedAuthenticator
     @Override // from abstract ChainedAuthenticator
     protected boolean shouldHandleConnection (AuthingConnection conn)
     {
-        return (conn.getAuthRequest().getCredentials() 
+        return (conn.getAuthRequest().getCredentials()
                 instanceof BureauLauncherCredentials);
     }
 
@@ -39,7 +39,7 @@ public class BureauLauncherAuthenticator extends ChainedAuthenticator
     {
         // here, we are ONLY authenticating bureau launchers
         AuthRequest req = conn.getAuthRequest();
-        BureauLauncherCredentials launcherCreds = 
+        BureauLauncherCredentials launcherCreds =
             (BureauLauncherCredentials) req.getCredentials();
 
         String password = BureauLauncherCredentials.createPassword(
@@ -49,7 +49,7 @@ public class BureauLauncherAuthenticator extends ChainedAuthenticator
             rsp.getData().code = AuthResponseData.SUCCESS;
 
         } else {
-            log.warning("Received invalid bureau launcher auth request", 
+            log.warning("Received invalid bureau launcher auth request",
                         "creds", launcherCreds);
             rsp.getData().code = AuthCodes.SERVER_ERROR;
         }

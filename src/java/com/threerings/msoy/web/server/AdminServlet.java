@@ -248,7 +248,7 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /**
      * Fetch a list of A/B test records
      */
@@ -263,7 +263,7 @@ public class AdminServlet extends MsoyServiceServlet
                 ABTest test = record.toABTest();
                 tests.add(test);
             }
-            return tests; 
+            return tests;
         } catch (PersistenceException pe) {
             log.warning("getABTests failed", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -287,7 +287,7 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /**
      * Update an existing A/B Test record
      */
@@ -306,7 +306,7 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     protected MemberRecord requireAdmin (WebIdent ident)
         throws ServiceException
     {
@@ -327,7 +327,7 @@ public class AdminServlet extends MsoyServiceServlet
 
     /** Provides access to persistent mail-related data. */
     @Inject protected MailRepository _mailRepo;
-    
+
     /** Provides access to persistent test data. */
     @Inject protected ABTestRepository _testRepo;
 

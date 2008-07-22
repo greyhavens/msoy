@@ -58,7 +58,7 @@ public class AvatarRepository extends ItemRepository<
     {
         return AvatarRecord.class;
     }
-    
+
     @Override
     protected Class<AvatarCatalogRecord> getCatalogClass ()
     {

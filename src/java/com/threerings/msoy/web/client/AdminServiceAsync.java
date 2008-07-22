@@ -18,52 +18,52 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface AdminServiceAsync
 {
-    /** 
+    /**
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince, 
+    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince,
                                   AsyncCallback<Void> callback);
 
-    /** 
+    /**
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId, 
+    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId,
                                   AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getMemberInfo}.
      */
-    public void getMemberInfo (WebIdent ident, int memberId, 
+    public void getMemberInfo (WebIdent ident, int memberId,
                                AsyncCallback<MemberAdminInfo> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getPlayerList}.
      */
-    public void getPlayerList (WebIdent ident, int inviterId, 
+    public void getPlayerList (WebIdent ident, int inviterId,
                                AsyncCallback<MemberInviteResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#spamPlayers}.
      */
-    public void spamPlayers (WebIdent ident, String subject, String body, int startId, int endId, 
+    public void spamPlayers (WebIdent ident, String subject, String body, int startId, int endId,
                              AsyncCallback<int[]> callback);
 
     /**
      * The asynchronous version of {@link AdminService#setIsSupport}.
      */
-    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport, 
+    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport,
                               AsyncCallback<Void> callback);
-    
+
     /**
      * The asynchronous version of {@link AdminService#getABTests}.
      */
     public void getABTests (WebIdent ident, AsyncCallback<List<ABTest>> callback);
-    
+
     /**
      * The asynchronous version of {@link AdminService#createTest}.
      */
     public void createTest (WebIdent ident, ABTest test, AsyncCallback<Void> callback);
-    
+
     /**
      * The asynchronous version of {@link AdminService#updateTest}.
      */

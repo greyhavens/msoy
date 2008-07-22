@@ -19,13 +19,13 @@ public class SceneAttrsUpdate extends SceneUpdate
 
     /** New access control info. */
     public byte accessControl;
-    
+
     /** Full description of the new decor. */
     public Decor decor;
 
     /** Background audio parameters. */
     public AudioData audioData;
-    
+
     /** The new entrance location. */
     public MsoyLocation entrance;
 

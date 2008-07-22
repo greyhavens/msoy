@@ -45,7 +45,7 @@ public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLaunche
 
         case BureauLauncherMarshaller.LAUNCHER_INITIALIZED:
             ((BureauLauncherProvider)provider).launcherInitialized(
-                source                
+                source
             );
             return;
 

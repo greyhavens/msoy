@@ -42,7 +42,7 @@ public class BureauLauncherClient extends Client
     public BureauLauncherClient (BureauLauncher launcher, Connections target)
     {
         super(new BureauLauncherCredentials(
-            BureauLauncherConfig.serverHost, 
+            BureauLauncherConfig.serverHost,
             BureauLauncherConfig.bureauSharedSecret), launcher.getRunner());
 
         _target = target;

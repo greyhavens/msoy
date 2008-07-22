@@ -370,7 +370,7 @@ public class MsoySceneRepository extends DepotRepository
         return record.sceneId;
     }
 
-    public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId) 
+    public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId)
         throws PersistenceException
     {
         updatePartial(SceneRecord.class, sceneId, SceneRecord.OWNER_TYPE, ownerType,
@@ -430,7 +430,7 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Utility class that compresses related scene updates. */
     @Inject protected UpdateAccumulator _accumulator;
-    
+
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     protected DecorRepository _decorRepo;
 }

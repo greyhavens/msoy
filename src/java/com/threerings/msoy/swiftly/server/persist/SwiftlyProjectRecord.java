@@ -86,7 +86,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     @Id
     @GeneratedValue
     public int projectId;
-    
+
     /** The id of the project owner. */
     public int ownerId;
 
@@ -123,11 +123,11 @@ public class SwiftlyProjectRecord extends PersistentRecord
         }
         if (project.remixable != remixable) {
             updates.put(REMIXABLE, project.remixable);
-        } 
+        }
         return updates;
     }
 
-    /** 
+    /**
      * Converts this persistent record to a runtime record.
      */
     public SwiftlyProject toSwiftlyProject ()

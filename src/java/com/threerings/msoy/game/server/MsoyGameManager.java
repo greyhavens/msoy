@@ -72,21 +72,21 @@ public class MsoyGameManager extends WhirledGameManager
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
 
-    /** 
+    /**
      * Returns true if the game is multiplayer, which happens when:
      * <ul>
      *   <li> The game is a party game, or
      *   <li> The table contains more than one player slot
      * </ul>
-     */ 
-    public boolean isMultiplayer () 
+     */
+    public boolean isMultiplayer ()
     {
-        return (_gameconfig.getMatchType() == GameConfig.PARTY) 
+        return (_gameconfig.getMatchType() == GameConfig.PARTY)
             // NOTE: originally the isMultiPlayer check in the delegate returned true
             // for seated continuous, but if there's only 1 slot.. ?
             || (_gameconfig.players.length > 1);
     }
-    
+
     @Override // from WhirledGameManager
     public void agentTrace (ClientObject caller, String trace)
     {

@@ -13,7 +13,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 
 /**
  * Contains the definition of a swiftly svn-based project storage.
- * 
+ *
  * BEWARE: In a number of locations we artifically constrain the size
  * of a string column in order to work around the following bug:
  *    http://bugs.mysql.com/bug.php?id=4541
@@ -82,10 +82,10 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     /** The storage base directory. */
     @Column(length=100)
     public String baseDir;
-    
+
     public URI toURI ()
         throws URISyntaxException
-    {        
+    {
         if (protocol.equals(ProjectSVNStorage.PROTOCOL_FILE)) {
             // Confusingly (buggily?) one must set an empty authority in order for URI
             // to properly append '//' to the file: scheme. If one calls getAuthority
@@ -99,7 +99,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
             if (port != 0) {
                 return new URI(protocol, null, host, port, baseDir, null, null);
             } else {
-                return new URI(protocol, host, baseDir, null);             
+                return new URI(protocol, host, baseDir, null);
             }
         }
     }

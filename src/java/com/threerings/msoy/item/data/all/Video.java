@@ -38,7 +38,7 @@ public class Video extends Item
     {
         return videoMedia;
     }
- 
+
     @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {

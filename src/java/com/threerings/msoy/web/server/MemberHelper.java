@@ -61,7 +61,7 @@ public class MemberHelper
             return MemberName.compareNames(c1.name, c2.name);
         }
     };
-    
+
     /** A compartor for sorting lists of MemberCard, most recently online to least. */
     public static Comparator<MemberCard> SORT_BY_LAST_ONLINE = new Comparator<MemberCard>() {
         public int compare (MemberCard c1, MemberCard c2) {
@@ -72,7 +72,7 @@ public class MemberHelper
             return MemberName.compareNames(c1.name, c2.name);
         }
     };
-    
+
     /**
      * A compartor for sorting lists of MemberCard, highest level to lowest, with
      * last online then name as a tiebreaker.

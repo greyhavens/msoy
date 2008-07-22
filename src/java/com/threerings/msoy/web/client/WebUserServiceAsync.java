@@ -29,14 +29,14 @@ public interface WebUserServiceAsync
      */
     public void register (
         String clientVersion, String username, String password, String displayName, int[] birthday,
-        MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId, 
+        MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId,
         String captchaChallenge, String captchaResponse, ReferralInfo referral,
         AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.
      */
-    public void validateSession (String clientVersion, String authtok, int expireDays, 
+    public void validateSession (String clientVersion, String authtok, int expireDays,
                                  AsyncCallback<SessionData> callback);
 
     /**
@@ -68,7 +68,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#resetPassword}.
      */
-    public void resetPassword (int memberId, String code, String newPassword, 
+    public void resetPassword (int memberId, String code, String newPassword,
                                AsyncCallback<Boolean> callback);
 
     /**

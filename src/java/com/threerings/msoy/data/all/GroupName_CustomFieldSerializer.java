@@ -21,7 +21,7 @@ public final class GroupName_CustomFieldSerializer
 
     public static GroupName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
-    {        
+    {
         return new GroupName(streamReader.readString(), streamReader.readInt());
     }
 

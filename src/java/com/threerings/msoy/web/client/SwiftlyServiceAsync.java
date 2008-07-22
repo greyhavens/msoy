@@ -22,7 +22,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getConnectConfig}.
      */
-    public void getConnectConfig (WebIdent ident, int projectId, 
+    public void getConnectConfig (WebIdent ident, int projectId,
                                   AsyncCallback<SwiftlyConnectConfig> callback);
 
     /**
@@ -44,7 +44,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#updateProject}.
      */
-    public void updateProject (WebIdent ident, SwiftlyProject project, 
+    public void updateProject (WebIdent ident, SwiftlyProject project,
                                AsyncCallback<Void> callback);
 
     /**
@@ -65,7 +65,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.
      */
-    public void getProjectCollaborators (WebIdent ident, int projectId, 
+    public void getProjectCollaborators (WebIdent ident, int projectId,
                                          AsyncCallback<List<MemberName>> callback);
 
     /**
@@ -76,12 +76,12 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.
      */
-    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name, 
+    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name,
                                     AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#joinCollaborators}.
      */
-    public void joinCollaborators (WebIdent ident, int projectId, MemberName name, 
+    public void joinCollaborators (WebIdent ident, int projectId, MemberName name,
                                    AsyncCallback<Void> callback);
 }

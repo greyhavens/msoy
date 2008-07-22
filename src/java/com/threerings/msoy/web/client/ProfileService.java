@@ -68,7 +68,7 @@ public interface ProfileService extends RemoteService
          */
         public List<Trophy> trophies;
 
-        /** 
+        /**
          * This member's recent self feed messages.
          */
         public List<FeedMessage> feed;

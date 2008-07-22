@@ -41,7 +41,7 @@ public class Photo extends Item
     {
         return photoMedia;
     }
- 
+
     @Override // from Item
     public void setPrimaryMedia (MediaDesc desc)
     {

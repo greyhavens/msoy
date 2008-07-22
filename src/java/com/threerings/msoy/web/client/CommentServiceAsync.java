@@ -20,7 +20,7 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#loadComments}.
      */
     public void loadComments (int entityType, int entityId, int offset, int count,
-                              boolean needCount, 
+                              boolean needCount,
                               AsyncCallback<CommentService.CommentResult> callback);
 
     /**
@@ -32,7 +32,7 @@ public interface CommentServiceAsync
     /**
      * The asynchronous version of {@link CommentService#deleteComment}.
      */
-    public void deleteComment (WebIdent ident, int entityType, int entityId, long when, 
+    public void deleteComment (WebIdent ident, int entityType, int entityId, long when,
                                AsyncCallback<Boolean> callback);
 
     /**

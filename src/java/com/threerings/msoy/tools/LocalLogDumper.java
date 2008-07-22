@@ -25,7 +25,7 @@ import com.threerings.panopticon.common.serialize.EncodingException;
 import com.threerings.panopticon.common.serialize.walken.EventDeserializer;
 
 /**
- * Dumps the events from a {@link LocalEventLogger}, either to screen, 
+ * Dumps the events from a {@link LocalEventLogger}, either to screen,
  * or to a binary file that holds serialized byte arrays.
  */
 public class LocalLogDumper
@@ -56,29 +56,29 @@ public class LocalLogDumper
                 }
             }
         };
-        
+
         // do it!
-        
+
         ObjectOutputStream out = null;
         if (args.length >= 3) {
             File target = new File(args[2], "events.dat");
             out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(target)));
         }
-        
+
         long start = System.currentTimeMillis();
         recursiveProcess(new File(args[0]), out, ff);
         double delta = (System.currentTimeMillis() - start) / 1000.0;
-        
+
         if (out != null) {
             out.close();
         }
 
-        System.err.println("Processed " + _eventcount + " events from " + _filecount + 
+        System.err.println("Processed " + _eventcount + " events from " + _filecount +
             " files in " + delta + "s (" + _eventcount/delta + " events/s).");
     }
-    
+
     /**
-     * Recursively reads event files.  
+     * Recursively reads event files.
      */
     protected static void recursiveProcess (File path, ObjectOutputStream out, FileFilter filter)
         throws IOException
@@ -91,62 +91,62 @@ public class LocalLogDumper
             // we're a directory, go through our contents, examining all subdirectories,
             // and any files that match the pattern
             for (File file : path.listFiles()) {
-                if (filter.accept(file) || file.isDirectory()) { 
+                if (filter.accept(file) || file.isDirectory()) {
                     recursiveProcess(file, out, filter);
                 }
             }
         }
     }
-    
+
     /**
      * Reads and processes a single event file.
      */
-    protected static void process (File file, ObjectOutputStream out) 
+    protected static void process (File file, ObjectOutputStream out)
         throws IOException
     {
         DataInputStream din = new DataInputStream(
             new BufferedInputStream(new FileInputStream(file)));
-        
+
         while (true) {
             try {
                 byte[] data = new byte[din.readInt()];
                 din.read(data);
                 ObjectInputStream payload = new ObjectInputStream(new ByteArrayInputStream(data));
                 Object o = payload.readObject();
-                
+
                 // if it's the old-format walken-serialized event, the stream will only have a byte array,
                 // which we'll need to convert to a regular EventData object, and convert to new format.
                 // if it's the new optic-serialized event, it'll have a magic cookie, and we can just
                 // pass it along.
-                
+
                 if (o instanceof byte[]) {
-                    
+
                     // walken version
                     EventDeserializer deserializer = new EventDeserializer((byte[]) o);
                     ByteArrayOutputStream bout = new ByteArrayOutputStream();
                     EventDataSerializer.serialize(deserializer.toEventData(), bout);
                     output(out, bout.toByteArray(), 0);
-                    
+
                 } else if (o instanceof Integer) {
-                    
+
                     // optic version
                     if (! ((Integer)o).equals(LocalEventLogger.VERSION_ID)) {
                         throw new IllegalStateException("Unknown item version: " + ((Integer)o));
                     }
-                    
+
                     Object result = payload.readObject();
                     if (! (result instanceof byte[])) {
                         throw new IllegalStateException("Unexpected data in item version " + o);
-                    } 
+                    }
                     output (out, (byte[]) result, (Integer) o);
-                    
+
                 } else {
                     throw new IllegalStateException("Unexpected event object: " + o.getClass().getName());
                 }
-                
+
             } catch (EOFException eofe) {
                 break;
-                
+
             } catch (ClassNotFoundException ce) {
                 throw new IOException("File contains old event definitions: " + file.getName() + "," +
                 		"; original exception: " + ce);
@@ -160,12 +160,12 @@ public class LocalLogDumper
         _filecount++;
     }
 
-    protected static void output (ObjectOutputStream out, byte[] opticEvent, int version) 
+    protected static void output (ObjectOutputStream out, byte[] opticEvent, int version)
         throws EncodingException, IOException
     {
         if (out != null) {
             out.writeObject(opticEvent);
-            
+
         } else {
             ByteArrayInputStream in = new ByteArrayInputStream(opticEvent);
             EventData data = EventDataSerializer.deserialize(in);
@@ -173,7 +173,7 @@ public class LocalLogDumper
         }
 
     }
-    
+
     protected static int _filecount = 0;
     protected static int _eventcount = 0;
 }

@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyHistory
@@ -24,7 +24,7 @@ public class MoneyHistory
         this.itemId = itemId;
         this.itemType = itemType;
     }
-    
+
     /**
      * ID of the member account this history is for.
      */
@@ -57,7 +57,7 @@ public class MoneyHistory
     {
         return spent;
     }
-    
+
     /**
      * Description of the transaction.
      */
@@ -65,7 +65,7 @@ public class MoneyHistory
     {
         return description;
     }
-    
+
     /**
      * Type of money that was transferred.
      */
@@ -90,7 +90,7 @@ public class MoneyHistory
     {
         return itemType;
     }
-    
+
     private final int memberId;
     private final Date timestamp;
     private final MoneyType type;

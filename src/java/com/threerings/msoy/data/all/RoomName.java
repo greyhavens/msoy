@@ -48,7 +48,7 @@ public class RoomName extends Name
     }
 
     @Override // from Name
-    public int compareTo (Name o) 
+    public int compareTo (Name o)
     {
         // TODO:
         //return Comparators.compare(_sceneId, ((RoomName) o)._sceneId);

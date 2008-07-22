@@ -5,7 +5,7 @@ package com.threerings.msoy.money.server;
 
 /**
  * Configuration of the money service.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyConfiguration
@@ -20,7 +20,7 @@ public class MoneyConfiguration
         this.blingCashoutTransactionFee = blingCashoutTransactionFee;
         this.maxSecuredPrices = maxSecuredPrices;
     }
-    
+
     /**
      * The percentage of the purchase price that will be awarded to the creator of an
      * item when it is bought.
@@ -45,7 +45,7 @@ public class MoneyConfiguration
     {
         return coinsToBarsWeightValue;
     }
-    
+
     /**
      * The amount to deduct when cashing out bling into real money.
      */
@@ -61,7 +61,7 @@ public class MoneyConfiguration
     {
         return maxSecuredPrices;
     }
-    
+
     private final double creatorKickback;
     private final long securePriceDuration;
     private final int maxSecuredPrices;

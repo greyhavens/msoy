@@ -41,10 +41,10 @@ public abstract class TagHistoryRecord extends PersistentRecord
 
     /** The ID of the tag that was added or deleted. */
     public int tagId;
-    
+
     /** The ID of the member who added or deleted the tag. */
     public int memberId;
-    
+
     /** The action taken (ADDED or REMOVED or COPIED). */
     public byte action;
 

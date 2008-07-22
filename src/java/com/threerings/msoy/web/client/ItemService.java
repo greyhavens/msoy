@@ -25,11 +25,11 @@ public interface ItemService extends RemoteService
     /** Provides results for {@link #loadItemDetail}. */
     public static class DetailOrIdent implements IsSerializable
     {
-        public DetailOrIdent () 
+        public DetailOrIdent ()
         {
         }
 
-        public DetailOrIdent (ItemDetail detail, ItemIdent ident) 
+        public DetailOrIdent (ItemDetail detail, ItemIdent ident)
         {
             this.detail = detail;
             this.ident = ident;

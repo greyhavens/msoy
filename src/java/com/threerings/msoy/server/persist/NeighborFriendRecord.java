@@ -95,7 +95,7 @@ public class NeighborFriendRecord extends PersistentRecord
 
     /** The home scene for this member. */
     public int homeSceneId;
-    
+
     /** The time at which this player was created. */
     public Date created;
 

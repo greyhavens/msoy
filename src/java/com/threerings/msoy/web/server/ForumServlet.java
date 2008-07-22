@@ -305,14 +305,14 @@ public class ForumServlet extends MsoyServiceServlet
                 groupId, mrec.memberId, flags, subject, message).toForumThread(
                     Collections.singletonMap(mrec.memberId, mrec.getName()),
                     Collections.singletonMap(group.groupId, group.getName()));
-            
+
             // log this event for metrics purposes
             _eventLog.forumMessagePosted(mrec.memberId, thread.threadId, thread.posts);
-            
+
             // mark this thread as read by the poster
             _forumRepo.noteLastReadPostId(
                 mrec.memberId, thread.threadId, thread.mostRecentPostId, 1);
-            
+
             // if we're posting to the announcement group, add a global feed post about it
             if (groupId == ServerConfig.getAnnounceGroupId()) {
                 MsoyServer.feedRepo.publishGlobalMessage(
@@ -398,7 +398,7 @@ public class ForumServlet extends MsoyServiceServlet
             // create the message in the database and return its runtime form
             ForumMessageRecord fmr = _forumRepo.postMessage(
             		ftr, mrec.memberId, inReplyTo, message);
-            
+
             // log event for metrics purposes
             _eventLog.forumMessagePosted(fmr.posterId, fmr.threadId, ftr.posts);
 
@@ -551,7 +551,7 @@ public class ForumServlet extends MsoyServiceServlet
         }
         return rank;
     }
-    
+
     /**
      * Runs the supplied HTML message through our sanitizer and rechecks that the length of the
      * message is within our limits. The sanitizer might make the message slightly longer.

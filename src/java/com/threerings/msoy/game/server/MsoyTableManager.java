@@ -43,16 +43,16 @@ public class MsoyTableManager extends TableManager
         _lobj = lmgr.getLobbyObject();
     }
 
-    @Override 
-    protected GameConfig createConfig (Table table) 
+    @Override
+    protected GameConfig createConfig (Table table)
     {
         MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
         config.init(_lobj.game, _lobj.gameDef);
         return config;
     }
 
-    @Override 
-    protected void notePlayerAdded (Table table, BodyObject body) 
+    @Override
+    protected void notePlayerAdded (Table table, BodyObject body)
     {
         super.notePlayerAdded(table, body);
 
@@ -61,7 +61,7 @@ public class MsoyTableManager extends TableManager
         MsoyGameServer.worldClient.updatePlayer(plobj.getMemberId(), _lobj.game);
     }
 
-    @Override 
+    @Override
     protected Table notePlayerRemoved (int playerOid, BodyObject body)
     {
         // mark this player as no longer "in" this game, unless this method is being called because

@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.ReferralInfo;
 
 /**
- * Stores referral information for a given user. 
+ * Stores referral information for a given user.
  */
 @Entity(indices={
     @Index(name="ixMemberId", fields={ ReferralRecord.MEMBER_ID }),
@@ -68,23 +68,23 @@ public class ReferralRecord extends PersistentRecord
 
     /** Identifies the entry vector type. */
     public String vector;
-    
+
     /** Identifies the creative element variant (banner etc). */
     public String creative;
-    
+
     /** Persistent tracking number, used to split players into various test groups. */
     public String tracker;
-    
-    /** 
-     * Convenience function to convert into a ReferralInfo object. 
+
+    /**
+     * Convenience function to convert into a ReferralInfo object.
      */
     public ReferralInfo toInfo ()
     {
         return ReferralInfo.makeInstance(affiliate, vector, creative, tracker);
     }
-    
-    /** 
-     * Convenience function to convert from a ReferralInfo object. 
+
+    /**
+     * Convenience function to convert from a ReferralInfo object.
      */
     public static ReferralRecord fromInfo (int memberId, ReferralInfo info)
     {

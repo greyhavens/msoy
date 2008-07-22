@@ -12,7 +12,7 @@ public class HostedGame extends HostedPlace
     public Integer port;
 
     /**
-     * Empty constructor used for unserializing 
+     * Empty constructor used for unserializing
      */
     public HostedGame ()
     {

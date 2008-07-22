@@ -58,7 +58,7 @@ public class GameTraceLogRecord
     @Id
     @GeneratedValue
     public int logId;
-    
+
     /** The id of the game whose logs we're recording. */
     public int gameId;
 
@@ -68,11 +68,11 @@ public class GameTraceLogRecord
     /** The log data in question. */
     @Column(length=65535)
     public String logData;
-    
+
     public GameTraceLogRecord ()
     {
     }
-    
+
     public GameTraceLogRecord (int gameId, String logData)
     {
         this.gameId = gameId;

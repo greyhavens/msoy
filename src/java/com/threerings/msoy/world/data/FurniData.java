@@ -38,11 +38,11 @@ public class FurniData extends SimpleStreamableObject
     /** An actionType indicating that actionData is a world game item id.
      *  actionData = "<gameId>:<gameName>" */
     public static final byte ACTION_WORLD_GAME = 4;
-    
+
     /** An actionType indicating that actionData is special page displayed in the chat panel.
      *  actionData = "<tabName>:<pageURL>" */
     public static final byte ACTION_HELP_PAGE = 5;
-    
+
     /** The id of this piece of furni. */
     public short id;
 

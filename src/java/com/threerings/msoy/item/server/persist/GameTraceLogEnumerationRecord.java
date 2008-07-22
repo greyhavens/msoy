@@ -42,7 +42,7 @@ public class GameTraceLogEnumerationRecord
 
     /** The primary key of this log record. */
     public int logId;
-    
+
     /** The id of the game whose logs we're recording. */
     public int gameId;
 

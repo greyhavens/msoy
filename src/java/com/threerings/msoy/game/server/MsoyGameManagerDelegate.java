@@ -69,7 +69,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 {
     /** The string we append to an agent's trace log that's about to exceed 64K. */
     public static String TRACE_CAP = "--- buffer full ---";
-    
+
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
@@ -409,7 +409,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 }
             });
         }
-        
+
         // if we were played for zero seconds, don't bother updating anything
         if (_totalTrackedSeconds == 0) {
             return;
@@ -918,9 +918,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 try {
                     MsoyGameServer.memberRepo.getFlowRepository().grantFlow(action, record.awarded);
                     MsoyGameServer.gameReg.gamePayout(
-                        action, _content.game, record.awarded, record.totalSecondsPlayed); 
+                        action, _content.game, record.awarded, record.totalSecondsPlayed);
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to grant flow [amount=" + 
+                    log.warning("Failed to grant flow [amount=" +
                             record.awarded + ", action=" + action + "].", pe);
                 }
                 return false;
@@ -961,8 +961,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
-    /** 
-     *  Make sure that the given caller is a player or an agent and can write to the data 
+    /**
+     *  Make sure that the given caller is a player or an agent and can write to the data
      *  of the given playerId.
      *  @return the resolved player object to write to
      **/
@@ -1087,10 +1087,10 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
     /** Accumulates up to 64K bytes of trace data from this game's Agent, if any. */
     protected StringBuilder _traceBuffer = new StringBuilder();
-    
+
     /** Determines whether we're still tracing or if we've bumped into the cap. */
     protected boolean _tracing = true;
-    
+
     /** Games for which we have no history earn no flow beyond this many minutes. */
     protected static final int MAX_FRESH_GAME_DURATION = 8*60;
 

@@ -13,7 +13,7 @@ import com.threerings.s3.client.S3Connection;
 abstract class S3StorageOperation {
     /**
      * Create a new storage operation instance.
-     * 
+     *
      * @param lockManager Shared S3 lock manager.
      * @param connection Connection used to execute the operation.
      * @param bucket S3 bucket.
@@ -33,7 +33,7 @@ abstract class S3StorageOperation {
         return _lockManager;
     }
 
-    
+
     /**
      * @return The operation's S3Connection.
      */
@@ -57,7 +57,7 @@ abstract class S3StorageOperation {
 
     /** S3 lock manager. */
     private final S3StorageLockManager _lockManager;
-    
+
     /** S3 connection. */
     private final S3Connection _connection;
 
@@ -65,5 +65,5 @@ abstract class S3StorageOperation {
     private final String _bucket;
 
     /** Bucket-relative path to the repository. */
-    private final String _repositoryPath;    
+    private final String _repositoryPath;
 }

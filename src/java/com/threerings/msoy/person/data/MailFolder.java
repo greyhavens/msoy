@@ -23,22 +23,22 @@ final public class MailFolder
 
     /** The id of the member who owns this folder. */
     public int ownerId;
-    
+
     /** The name of this folder. */
     public String name;
 
     /** The number of unread messages in the folder, a computed value. */
     public int unreadCount;
-    
+
     /** The number of read messages in the folder, a computed value. */
     public int readCount;
-    
+
     @Override
     public int hashCode ()
     {
         return folderId + 31*ownerId;
     }
-    
+
     @Override
     public boolean equals (Object obj)
     {

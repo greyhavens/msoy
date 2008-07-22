@@ -16,7 +16,7 @@ public class EntityControl extends SimpleStreamableObject
 {
     /** Identifies what is being controlled. */
     public Controllable controlled;
-    
+
     /** The body oid of the client in control of this controllable. */
     public int controllerOid;
 

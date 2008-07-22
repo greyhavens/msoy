@@ -21,7 +21,7 @@ public interface PeerChatService extends InvocationService
      */
     public void forwardSpeak (Client client, Name chatter, ChatChannel channel,
                               String message, byte mode, PeerChatService.ConfirmListener listener);
-        
+
     /**
      * Asks the host to add a new user to the channel.
      */

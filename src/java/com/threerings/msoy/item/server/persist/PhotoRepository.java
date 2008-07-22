@@ -42,7 +42,7 @@ public class PhotoRepository extends ItemRepository<
     {
         return PhotoRecord.class;
     }
-    
+
     @Override
     protected Class<PhotoCatalogRecord> getCatalogClass ()
     {

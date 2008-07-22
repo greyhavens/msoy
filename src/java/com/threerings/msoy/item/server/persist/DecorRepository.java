@@ -42,7 +42,7 @@ public class DecorRepository extends ItemRepository<
     {
         return DecorRecord.class;
     }
-    
+
     @Override
     protected Class<DecorCatalogRecord> getCatalogClass ()
     {
@@ -54,7 +54,7 @@ public class DecorRepository extends ItemRepository<
     {
         return DecorCloneRecord.class;
     }
-    
+
     @Override
     protected Class<DecorRatingRecord> getRatingClass ()
     {

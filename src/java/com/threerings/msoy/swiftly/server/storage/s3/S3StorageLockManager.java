@@ -12,7 +12,7 @@ package com.threerings.msoy.swiftly.server.storage.s3;
  * WARNING: This API should be considered unstable and subject to change
  * until ample time has been spent working out impendence mismatches with
  * a distributed locking system.
- * 
+ *
  * @author landonf@threerings.net
  */
 public interface S3StorageLockManager
@@ -43,7 +43,7 @@ public interface S3StorageLockManager
     /**
      * Lock the given S3 object on behalf of the specified owner. Returns a lock reference
      * that must be used to release the lock.
-     * 
+     *
      * @param owner Identifying entity that will own the lock
      * @param objectKey The S3 object key to lock
      * @param timeout The maximum time to wait on the lock, in seconds.

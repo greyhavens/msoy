@@ -229,7 +229,7 @@ public class GameRepository extends ItemRepository<
     {
         return loadGenre(genre, limit, null);
     }
-    
+
     /**
      * Loads all listed game records in the specified genre, sorted from highest to lowest rating.
      *
@@ -258,14 +258,14 @@ public class GameRepository extends ItemRepository<
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (genre >= 0) {
             whereBits.add(new Conditionals.Equals(GameRecord.GENRE_C, genre));
-        }    
+        }
         if (searchQuery != null && searchQuery.length() > 0) {
             whereBits.add(buildSearchStringClause(searchQuery));
         }
         if (whereBits.size() > 0) {
             clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
         }
-        
+
         // finally fetch all the game records of interest
         return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
     }
@@ -405,13 +405,13 @@ public class GameRepository extends ItemRepository<
             store(irec);
         }
     }
-    
+
     public GameTraceLogRecord loadTraceLog (int logId)
         throws PersistenceException
     {
         return load(GameTraceLogRecord.class, logId);
     }
-    
+
     public List<GameTraceLogEnumerationRecord> enumerateTraceLogs (int gameId)
         throws PersistenceException
     {

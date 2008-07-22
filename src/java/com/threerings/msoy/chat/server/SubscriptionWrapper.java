@@ -119,7 +119,7 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         Tuple<MsoyNodeObject,Client> bits = getChannelHost("updateChatter", chatter);
         if (bits != null) {
-            bits.left.peerChatService.updateUser(bits.right, chatter, _channel, 
+            bits.left.peerChatService.updateUser(bits.right, chatter, _channel,
                 new PeerChatService.InvocationListener() {
                     public void requestFailed (String cause) {
                         log.info("Update chatter failed [channel=" + _channel +
@@ -134,17 +134,17 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         if (!_channel.equals(channel)) {
             log.warning("Attempted to update ChatChannel on wrapper with incompatible channel!  " +
-                        "Only cosmetic channel updates are supported. [current=" + _channel + 
+                        "Only cosmetic channel updates are supported. [current=" + _channel +
                         ", new=" + channel + "]");
             return;
         }
 
         Tuple<MsoyNodeObject,Client> bits = getChannelHost("updateChannel", null);
         if (bits != null) {
-            bits.left.peerChatService.updateChannel(bits.right, channel, 
+            bits.left.peerChatService.updateChannel(bits.right, channel,
                 new PeerChatService.InvocationListener() {
                     public void requestFailed (String cause) {
-                        log.info("Update channel failed [channel=" + channel + ", cause=" + 
+                        log.info("Update channel failed [channel=" + channel + ", cause=" +
                             cause + "].");
                     }
                 });
@@ -159,7 +159,7 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         if (host == null) {
-            log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter + 
+            log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter +
                 ", " + _channel + "].");
             return null;
         }

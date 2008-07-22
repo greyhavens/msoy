@@ -324,7 +324,7 @@ public class LobbyManager
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
-    
+
     /** Event logger. */
     protected MsoyEventLogger _eventLog;
 

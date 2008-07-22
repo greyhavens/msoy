@@ -63,14 +63,14 @@ public class MsoyClient extends WhirledClient
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
         MsoyCredentials credentials = (MsoyCredentials) getCredentials();
-        
+
         if (acct != null) {
             _memobj.setTokens(acct.tokens);
         } else {
             _memobj.setTokens(new MsoyTokenRing());
         }
 
-        // if we didn't get referral info from the database already, pull it from 
+        // if we didn't get referral info from the database already, pull it from
         // our authentication credentials (ie. from the flash / browser cookies)
         if (_memobj.referral == null) {
             _memobj.setReferral(credentials.referral);
@@ -81,7 +81,7 @@ public class MsoyClient extends WhirledClient
 
         // start active/idle metrics on this server - the player starts out active
         _memobj.metrics.idle.init(true);
-        
+
         // let our various server entities know that this member logged on
         _locator.memberLoggedOn(_memobj);
     }
@@ -117,7 +117,7 @@ public class MsoyClient extends WhirledClient
         if (! _sessionForwarded && ! (_memobj.username instanceof LurkerName)) {
             String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
             _memobj.metrics.save(_memobj);
-            _eventLog.logPlayerMetrics(_memobj, sessTok); 
+            _eventLog.logPlayerMetrics(_memobj, sessTok);
         }
 
         // remove our idle tracker
@@ -169,10 +169,10 @@ public class MsoyClient extends WhirledClient
         public void attributeChanged (AttributeChangedEvent event) {
             if (event.getName().equals(MemberObject.STATUS)) {
                 boolean idle = isIdle((Byte)event.getValue());
-                
+
                 _memobj.metrics.idle.save(_memobj);
                 _memobj.metrics.idle.init(!idle);
-                
+
                 if (idle) {
                     // log.info(_memobj.who() + " is idle.");
                     _idleStamp = _memobj.statusTime;

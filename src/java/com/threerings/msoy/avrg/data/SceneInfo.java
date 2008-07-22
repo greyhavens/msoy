@@ -10,7 +10,7 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
 /**
- * Helps an AVRG keep track of which world server is currently hosting a given scene. 
+ * Helps an AVRG keep track of which world server is currently hosting a given scene.
  */
 public class SceneInfo extends SimpleStreamableObject
     implements DSet.Entry, Comparable<SceneInfo>

@@ -561,7 +561,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void updateStatus (ClientObject caller, String status, 
+    public void updateStatus (ClientObject caller, String status,
                               InvocationService.InvocationListener listener)
         throws InvocationException
     {
