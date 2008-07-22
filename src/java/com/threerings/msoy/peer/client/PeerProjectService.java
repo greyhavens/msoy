@@ -16,15 +16,15 @@ public interface PeerProjectService extends InvocationService
     /**
      * Reports to the room hosting this project that the supplied project object has been updated.
      */
-    public void projectUpdated (Client client, SwiftlyProject project);
+    void projectUpdated (Client client, SwiftlyProject project);
 
     /**
      * Reports to the room hosting this project that the supplied member is now a collaborator.
      */
-    public void collaboratorAdded (Client client, int projectId, MemberName name);
+    void collaboratorAdded (Client client, int projectId, MemberName name);
 
     /**
      * Reports to the room hosting this project that the supplied member is not a collaborator.
      */
-    public void collaboratorRemoved (Client client, int projectId, MemberName name);
+    void collaboratorRemoved (Client client, int projectId, MemberName name);
 }

@@ -32,7 +32,7 @@ public abstract class SwiftlyDocument
     /** Implemented by concrete subclasses to support construction based on mime type */
     public interface DocumentFactory {
         /** Returns true if the provided mime type is supported. */
-        public boolean handlesMimeType (String mimeType);
+        boolean handlesMimeType (String mimeType);
 
         /** Returns an ImageIcon for displaying this kind of document */
         public ImageIcon createIcon () throws IOException;

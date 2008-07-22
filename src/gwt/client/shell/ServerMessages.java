@@ -10,50 +10,50 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
  */
 public interface ServerMessages extends ConstantsWithLookup
 {
-    public String internal_error ();
-    public String server_error ();
-    public String access_denied ();
+    String internal_error ();
+    String server_error ();
+    String access_denied ();
 
-    public String server_closed ();
-    public String no_registrations ();
-    public String invite_already_redeemed ();
-    public String failed_captcha ();
+    String server_closed ();
+    String no_registrations ();
+    String invite_already_redeemed ();
+    String failed_captcha ();
 
-    public String no_such_user ();
-    public String invalid_password ();
-    public String session_expired ();
-    public String invalid_email ();
-    public String duplicate_email ();
-    public String duplicate_permaname ();
-    public String version_mismatch ();
+    String no_such_user ();
+    String invalid_password ();
+    String session_expired ();
+    String invalid_email ();
+    String duplicate_email ();
+    String duplicate_permaname ();
+    String version_mismatch ();
 
-    public String no_such_item ();
-    public String item_in_use ();
-    public String item_listed ();
+    String no_such_item ();
+    String item_in_use ();
+    String item_listed ();
 
-    public String hit_sales_limit ();
-    public String insufficient_flow ();
-    public String insufficient_gold ();
-    public String list_super_item ();
+    String hit_sales_limit ();
+    String insufficient_flow ();
+    String insufficient_gold ();
+    String list_super_item ();
 
-    public String no_such_project ();
-    public String project_name_exists ();
+    String no_such_project ();
+    String project_name_exists ();
 
-    public String opted_out ();
-    public String already_registered ();
-    public String already_invited ();
-    public String already_friend ();
+    String opted_out ();
+    String already_registered ();
+    String already_invited ();
+    String already_friend ();
 
-    public String group_name_in_use ();
+    String group_name_in_use ();
 
-    public String invalid_group ();
-    public String invalid_thread ();
-    public String invalid_message ();
+    String invalid_group ();
+    String invalid_thread ();
+    String invalid_message ();
 
-    public String bad_username_pass ();
-    public String unsupported_webmail ();
-    public String user_input_required ();
-    public String max_webmail_attempts ();
+    String bad_username_pass ();
+    String unsupported_webmail ();
+    String user_input_required ();
+    String max_webmail_attempts ();
 
-    public String ab_test_duplicate_name ();
+    String ab_test_duplicate_name ();
 }

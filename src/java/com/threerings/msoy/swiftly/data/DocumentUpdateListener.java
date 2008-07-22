@@ -13,5 +13,5 @@ public interface DocumentUpdateListener extends ChangeListener
     /**
      * Called when a document is updated.
      */
-    public void documentUpdated (DocumentUpdatedEvent event);
+    void documentUpdated (DocumentUpdatedEvent event);
 }

@@ -64,7 +64,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#ignoreThread}.
      */
-    public void ignoreThread (WebIdent ident, int threadId, AsyncCallback<Void> callback);
+    void ignoreThread (WebIdent ident, int threadId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#postMessage}.
@@ -81,7 +81,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#deleteMessage}.
      */
-    public void deleteMessage (WebIdent ident, int messageId, AsyncCallback<Void> callback);
+    void deleteMessage (WebIdent ident, int messageId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#complainMessage}.

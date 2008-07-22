@@ -42,17 +42,17 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#getConnectConfig}.
      */
-    public void getConnectConfig (AsyncCallback<ConnectConfig> callback);
+    void getConnectConfig (AsyncCallback<ConnectConfig> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
      */
-    public void sendForgotPasswordEmail (String email, AsyncCallback<Void> callback);
+    void sendForgotPasswordEmail (String email, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.
      */
-    public void updateEmail (WebIdent ident, String newEmail, AsyncCallback<Void> callback);
+    void updateEmail (WebIdent ident, String newEmail, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmailPrefs}.
@@ -63,7 +63,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#updatePassword}.
      */
-    public void updatePassword (WebIdent ident, String newPassword, AsyncCallback<Void> callback);
+    void updatePassword (WebIdent ident, String newPassword, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#resetPassword}.
@@ -74,15 +74,15 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
-    public void configurePermaName (WebIdent ident, String permaName, AsyncCallback<Void> callback);
+    void configurePermaName (WebIdent ident, String permaName, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#getAccountInfo}.
      */
-    public void getAccountInfo (WebIdent ident, AsyncCallback<AccountInfo> callback);
+    void getAccountInfo (WebIdent ident, AsyncCallback<AccountInfo> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateAccountInfo}.
      */
-    public void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback<Void> callback);
+    void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback<Void> callback);
 }

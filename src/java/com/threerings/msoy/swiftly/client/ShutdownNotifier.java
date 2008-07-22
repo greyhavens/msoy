@@ -11,5 +11,5 @@ public interface ShutdownNotifier
     /**
      * Notification that the application is shutting down.
      */
-    public void shuttingDown ();
+    void shuttingDown ();
 }

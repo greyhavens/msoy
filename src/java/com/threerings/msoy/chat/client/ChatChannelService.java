@@ -19,7 +19,7 @@ public interface ChatChannelService extends InvocationService
      * Requests to join the specified channel. The oid of the channel chat object will be returned
      * if access is granted to the channel.
      */
-    public void joinChannel (Client client, ChatChannel channel, ResultListener listener);
+    void joinChannel (Client client, ChatChannel channel, ResultListener listener);
 
     /**
      * Requests that the caller be removed from the specified chat channel. This does not actually
@@ -27,7 +27,7 @@ public interface ChatChannelService extends InvocationService
      * the channel and stick around listening to what's happening there, but solving that problem
      * is very complicated, particularly across server clusters. So we punt.
      */
-    public void leaveChannel (Client client, ChatChannel channel);
+    void leaveChannel (Client client, ChatChannel channel);
 
     /**
      * Invites the specified player to join the specified chat channel. If the invitation is
@@ -40,5 +40,5 @@ public interface ChatChannelService extends InvocationService
      * Requests to create a private chat channel with the specified name. If the channel is
      * created, the oid of the channel chat object will be returned via the supplied listener.
      */
-    public void createChannel (Client client, String name, ResultListener listener);
+    void createChannel (Client client, String name, ResultListener listener);
 }

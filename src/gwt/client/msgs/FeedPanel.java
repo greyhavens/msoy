@@ -44,7 +44,7 @@ public class FeedPanel extends TongueBox
 {
     public static interface FeedLoader
     {
-        public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
+        void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
     }
 
     public FeedPanel (String emptyMessage, boolean setHeader, FeedLoader feedLoader)
@@ -114,7 +114,7 @@ public class FeedPanel extends TongueBox
 
     protected interface StringBuilder
     {
-        public String build (FriendFeedMessage message);
+        String build (FriendFeedMessage message);
     }
 
     protected static class FeedList extends VerticalPanel

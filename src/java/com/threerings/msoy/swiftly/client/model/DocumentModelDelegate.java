@@ -48,35 +48,35 @@ public interface DocumentModelDelegate
     /**
      * Success/failure callbacks for an addDocument call.
      */
-    public void documentAdded (RequestId requestId, NewPathElement newElement);
+    void documentAdded (RequestId requestId, NewPathElement newElement);
     public void documentAdditionFailed (RequestId requestId, NewPathElement newElement,
                                         FailureCode error);
 
     /**
      * Success/failure callbacks for a deleteDocument call.
      */
-    public void documentDeleted (RequestId requestId, PathElement element);
+    void documentDeleted (RequestId requestId, PathElement element);
     public void documentDeleteFailed (RequestId requestId, PathElement element,
                                       FailureCode error);
 
     /**
      * Success/failure callbacks for an updateTextDocument call.
      */
-    public void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc);
+    void textDocumentUpdated (RequestId requestId, SwiftlyTextDocument doc);
     public void textDocumentUpdateFailed (RequestId requestId, SwiftlyTextDocument doc,
                                           FailureCode error);
 
     /**
      * Success/failure callbacks for a addPathElement call.
      */
-    public void directoryAdded (RequestId requestId, PathElement element);
+    void directoryAdded (RequestId requestId, PathElement element);
     public void directoryAdditionFailed (RequestId requestId, PathElement element,
                                          FailureCode error);
 
     /**
      * Success/failure callbacks for a renamePathElement call.
      */
-    public void pathElementRenamed (RequestId requestId, PathElement element);
+    void pathElementRenamed (RequestId requestId, PathElement element);
     public void pathElementRenameFailed (RequestId requestId, PathElement element,
                                          FailureCode error);
 }

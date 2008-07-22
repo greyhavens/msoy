@@ -35,7 +35,7 @@ public class ProjectEdit extends FlexTable
      */
     public static interface ProjectEditListener
     {
-        public void projectSubmitted (SwiftlyProject project);
+        void projectSubmitted (SwiftlyProject project);
     }
 
     public ProjectEdit (int projectId, ProjectEditListener listener)

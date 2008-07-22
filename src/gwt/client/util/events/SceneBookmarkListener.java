@@ -9,8 +9,8 @@ package client.util.events;
 public interface SceneBookmarkListener extends FlashEventListener
 {
     /** Called when a scene is added to the scenes list. */
-    public void sceneAdded (SceneBookmarkEvent event);
+    void sceneAdded (SceneBookmarkEvent event);
 
     /** Called when a scene is removed from the scenes list. */
-    public void sceneRemoved (SceneBookmarkEvent event);
+    void sceneRemoved (SceneBookmarkEvent event);
 }

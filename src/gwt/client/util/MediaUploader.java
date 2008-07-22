@@ -37,7 +37,7 @@ public class MediaUploader extends FormPanel
          * @param height if the media is a non-thumbnail image this will contain the height of the
          * image, otherwise zero.
          */
-        public void mediaUploaded (String name, MediaDesc desc, int width, int height);
+        void mediaUploaded (String name, MediaDesc desc, int width, int height);
     }
 
     public MediaUploader (String mediaId, Listener listener)

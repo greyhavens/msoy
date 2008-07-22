@@ -37,7 +37,7 @@ public interface S3StorageLockManager
     	/**
     	 * Release the lock.
     	 */
-    	public void unlock ();
+    	void unlock ();
     }
 
     /**

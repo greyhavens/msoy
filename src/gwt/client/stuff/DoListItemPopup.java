@@ -29,7 +29,7 @@ public class DoListItemPopup extends VerticalPanel
 {
     public interface ListedListener
     {
-        public void itemListed (Item item, boolean updated);
+        void itemListed (Item item, boolean updated);
     }
 
     public static void show (Item item, CatalogListing listing, ListedListener listener)

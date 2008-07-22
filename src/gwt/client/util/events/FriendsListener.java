@@ -9,8 +9,8 @@ package client.util.events;
 public interface FriendsListener extends FlashEventListener
 {
     /** Called when a friend is added to the friends list. */
-    public void friendAdded (FriendEvent event);
+    void friendAdded (FriendEvent event);
 
     /** Called when a friend is removed from the friends list. */
-    public void friendRemoved (FriendEvent event);
+    void friendRemoved (FriendEvent event);
 }

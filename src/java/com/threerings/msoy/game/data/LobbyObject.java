@@ -24,7 +24,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public interface SubscriberListener
     {
         /** Called when the number of subscribers has changed. */
-        public void subscriberCountChanged (LobbyObject target);
+        void subscriberCountChanged (LobbyObject target);
     }
 
     // AUTO-GENERATED: FIELDS START

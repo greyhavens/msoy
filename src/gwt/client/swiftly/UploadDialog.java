@@ -31,7 +31,7 @@ public class UploadDialog extends FlexTable
      */
     public static interface UploadDialogListener
     {
-        public void dialogClosed ();
+        void dialogClosed ();
     }
 
     public UploadDialog (String projectId, WebIdent ident, SwiftlyConnectConfig config,

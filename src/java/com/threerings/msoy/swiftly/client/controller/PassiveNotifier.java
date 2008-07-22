@@ -9,8 +9,8 @@ package com.threerings.msoy.swiftly.client.controller;
 public interface PassiveNotifier
 {
     /** Display an info level message */
-    public void showInfo (String message);
+    void showInfo (String message);
 
     /** Display an error level message */
-    public void showError (String message);
+    void showError (String message);
 }

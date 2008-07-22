@@ -19,8 +19,8 @@ import client.shell.CShell;
 public class SearchBox extends HorizontalPanel
 {
     public static interface Listener {
-        public void search (String query);
-        public void clearSearch ();
+        void search (String query);
+        void clearSearch ();
     }
 
     public SearchBox (Listener listener)

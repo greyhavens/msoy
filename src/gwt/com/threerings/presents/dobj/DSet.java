@@ -11,6 +11,6 @@ public class DSet
 {
     public static interface Entry
     {
-        public Comparable getKey ();
+        Comparable getKey ();
     }
 }

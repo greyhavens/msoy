@@ -12,10 +12,10 @@ public interface CompilerOutputComponent
     /**
      * Display the given CompilerOutput line in the gutter.
      */
-    public void displayCompilerOutput (CompilerOutput line);
+    void displayCompilerOutput (CompilerOutput line);
 
     /**
      * Clears any CompilerOutput currently shown on this gutter.
      */
-    public void clearCompilerOutput ();
+    void clearCompilerOutput ();
 }

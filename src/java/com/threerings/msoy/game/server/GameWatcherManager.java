@@ -25,7 +25,7 @@ import static com.threerings.msoy.Log.log;
 public class GameWatcherManager
 {
     public static interface Observer {
-        public void memberMoved (int memberId, int sceneId, String hostname, int port);
+        void memberMoved (int memberId, int sceneId, String hostname, int port);
     }
 
     /**

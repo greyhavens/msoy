@@ -27,17 +27,17 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadGameDetail}.
      */
-    public void loadGameDetail (WebIdent ident, int gameId, AsyncCallback<GameDetail> callback);
+    void loadGameDetail (WebIdent ident, int gameId, AsyncCallback<GameDetail> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameMetrics}.
      */
-    public void loadGameMetrics (WebIdent ident, int gameId, AsyncCallback<GameMetrics> callback);
+    void loadGameMetrics (WebIdent ident, int gameId, AsyncCallback<GameMetrics> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameLogs}.
      */
-    public void loadGameLogs (WebIdent ident, int gameId, AsyncCallback<GameLogs> callback);
+    void loadGameLogs (WebIdent ident, int gameId, AsyncCallback<GameLogs> callback);
 
     /**
      * The asynchronous version of {@link GameService#updateGameInstructions}.
@@ -66,7 +66,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadTrophyCase}.
      */
-    public void loadTrophyCase (WebIdent ident, int memberId, AsyncCallback<TrophyCase> callback);
+    void loadTrophyCase (WebIdent ident, int memberId, AsyncCallback<TrophyCase> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTopRanked}.
@@ -77,7 +77,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadArcadeData}.
      */
-    public void loadArcadeData (WebIdent ident, AsyncCallback<ArcadeData> callback);
+    void loadArcadeData (WebIdent ident, AsyncCallback<ArcadeData> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
@@ -88,5 +88,5 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadTopGamesData}.
      */
-    public void loadTopGamesData (WebIdent ident, AsyncCallback<FeaturedGameInfo[]> callback);
+    void loadTopGamesData (WebIdent ident, AsyncCallback<FeaturedGameInfo[]> callback);
 }

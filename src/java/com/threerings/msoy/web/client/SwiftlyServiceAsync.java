@@ -28,12 +28,12 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
      */
-    public void getRemixableProjects (WebIdent ident, AsyncCallback<List<SwiftlyProject>> callback);
+    void getRemixableProjects (WebIdent ident, AsyncCallback<List<SwiftlyProject>> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getMembersProjects}.
      */
-    public void getMembersProjects (WebIdent ident, AsyncCallback<List<SwiftlyProject>> callback);
+    void getMembersProjects (WebIdent ident, AsyncCallback<List<SwiftlyProject>> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#createProject}.
@@ -50,17 +50,17 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#loadProject}.
      */
-    public void loadProject (WebIdent ident, int projectId, AsyncCallback<SwiftlyProject> callback);
+    void loadProject (WebIdent ident, int projectId, AsyncCallback<SwiftlyProject> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectOwner}.
      */
-    public void getProjectOwner (WebIdent ident, int projectId, AsyncCallback<MemberName> callback);
+    void getProjectOwner (WebIdent ident, int projectId, AsyncCallback<MemberName> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#deleteProject}.
      */
-    public void deleteProject (WebIdent ident, int projectId, AsyncCallback<Void> callback);
+    void deleteProject (WebIdent ident, int projectId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.
@@ -71,7 +71,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getFriends}.
      */
-    public void getFriends (WebIdent ident, AsyncCallback<List<FriendEntry>> callback);
+    void getFriends (WebIdent ident, AsyncCallback<List<FriendEntry>> callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.

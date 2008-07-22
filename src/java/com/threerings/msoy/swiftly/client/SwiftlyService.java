@@ -14,5 +14,5 @@ public interface SwiftlyService extends InvocationService
     /**
      * Resolves and reports the room oid for the specified project.
      */
-    public void enterProject (Client client, int projectId, ResultListener listener);
+    void enterProject (Client client, int projectId, ResultListener listener);
 }

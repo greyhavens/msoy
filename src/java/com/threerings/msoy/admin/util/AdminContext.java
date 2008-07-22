@@ -13,8 +13,8 @@ import com.threerings.presents.util.PresentsContext;
 public interface AdminContext extends PresentsContext
 {
     /** Provides access to translation messages. */
-    public MessageManager getMessageManager ();
+    MessageManager getMessageManager ();
 
     /** Translates a message from the admin message bundle. */
-    public String xlate (String message);
+    String xlate (String message);
 }

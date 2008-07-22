@@ -5,5 +5,5 @@ package client.me;
 
 public interface PopulationDisplay
 {
-    public void displayPopulation (int population);
+    void displayPopulation (int population);
 }

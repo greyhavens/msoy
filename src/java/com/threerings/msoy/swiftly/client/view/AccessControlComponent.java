@@ -11,10 +11,10 @@ public interface AccessControlComponent
     /**
      * Show a view for the user having write access.
      */
-    public void showWriteAccess ();
+    void showWriteAccess ();
 
     /**
      * Show a view for the user having read only access.
      */
-    public void showReadOnlyAccess ();
+    void showReadOnlyAccess ();
 }

@@ -13,25 +13,25 @@ public interface ProjectPanel
     /**
      * Tell the JTree to start editing the name of the selected node.
      */
-    public void renameCurrentElement ();
+    void renameCurrentElement ();
 
     /**
      * Enable editing of tree nodes.
      */
-    public void enableEditing ();
+    void enableEditing ();
 
     /**
      * Disable editing of tree nodes.
      */
-    public void disableEditing ();
+    void disableEditing ();
 
     /**
      * Return the parent of the currently selected element.
      */
-    public PathElement getCurrentParent ();
+    PathElement getCurrentParent ();
 
     /**
      * Return the currently selected PathElement.
      */
-    public PathElement getSelectedPathElement ();
+    PathElement getSelectedPathElement ();
 }

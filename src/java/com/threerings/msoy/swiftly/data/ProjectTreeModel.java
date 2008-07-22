@@ -116,8 +116,8 @@ public class ProjectTreeModel extends DefaultTreeModel
 
     private interface NodeOp
     {
-        public boolean isMatch (PathElementTreeNode node);
-        public void update (PathElementTreeNode node);
+        boolean isMatch (PathElementTreeNode node);
+        void update (PathElementTreeNode node);
     }
 
     private final PathElementEditor _editor;

@@ -16,5 +16,5 @@ public interface TextEditor
      * Inform the TextEditor that the contents of the SwiftlyTextDocument it is displaying
      * has changed.
      */
-    public void documentTextChanged ();
+    void documentTextChanged ();
 }

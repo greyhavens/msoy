@@ -10,5 +10,5 @@ public interface DocumentContentListener
     /**
      * Inform the listener that the contents of the supplied SwiftlyTextDocument have changed.
      */
-    public void documentContentsChanged (SwiftlyTextDocument doc);
+    void documentContentsChanged (SwiftlyTextDocument doc);
 }

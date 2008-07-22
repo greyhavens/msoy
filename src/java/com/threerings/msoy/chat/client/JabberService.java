@@ -22,10 +22,10 @@ public interface JabberService extends InvocationService
     /**
      * Unregisters a client with an IM gateway.
      */
-    public void unregisterIM (Client client, String gateway, InvocationListener listener);
+    void unregisterIM (Client client, String gateway, InvocationListener listener);
 
     /**
      * Sends a message to a Jabber contact.
      */
-    public void sendMessage (Client client, JabberName name, String message, ResultListener listener);
+    void sendMessage (Client client, JabberName name, String message, ResultListener listener);
 }

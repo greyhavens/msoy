@@ -15,7 +15,7 @@ public class PlayerMetrics
         /**
          * Called to update current metrics when leaving the room or switching servers.
          */
-        public void save (MemberObject player);
+        void save (MemberObject player);
     };
 
     /** Tracks idle time. */

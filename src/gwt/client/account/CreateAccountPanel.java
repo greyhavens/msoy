@@ -54,7 +54,7 @@ public class CreateAccountPanel extends VerticalPanel
     public interface RegisterListener
     {
         /** Called when the player is logging on due to a successful registration. */
-        public void didRegister ();
+        void didRegister ();
     }
 
     public CreateAccountPanel (RegisterListener regListener)

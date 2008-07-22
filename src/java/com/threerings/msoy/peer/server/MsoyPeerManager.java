@@ -69,13 +69,13 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static interface RemoteMemberObserver
     {
         /** Called when this member has logged onto another server. */
-        public void remoteMemberLoggedOn (MemberName member);
+        void remoteMemberLoggedOn (MemberName member);
 
         /** Called when this member has logged off of another server. */
-        public void remoteMemberLoggedOff (MemberName member);
+        void remoteMemberLoggedOff (MemberName member);
 
         /** Called when this member has entered a new scene within a world server. */
-        public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port);
+        void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port);
     }
 
     /** Used to participate in the member object forwarding process. */
@@ -86,12 +86,12 @@ public class MsoyPeerManager extends CrowdPeerManager
          * the supplied map will be sent to the other server. Note: all values in the map must be
          * streamable types.
          */
-        public void packMember (MemberObject memobj, Map<String,Object> data);
+        void packMember (MemberObject memobj, Map<String,Object> data);
 
         /**
          * Unpacks additional data delivered with a forwarded member object.
          */
-        public void unpackMember (MemberObject memobj, Map<String,Object> data);
+        void unpackMember (MemberObject memobj, Map<String,Object> data);
     }
 
     /** Returns a lock used to claim resolution of the specified scene. */

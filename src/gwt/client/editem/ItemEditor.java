@@ -56,7 +56,7 @@ public abstract class ItemEditor extends FlexTable
          * @param height if the media is a non-thumbnail image this will contain the height of the
          * image, otherwise zero.
          */
-        public String updateMedia (String name, MediaDesc desc, int width, int height);
+        String updateMedia (String name, MediaDesc desc, int width, int height);
     }
 
     /**

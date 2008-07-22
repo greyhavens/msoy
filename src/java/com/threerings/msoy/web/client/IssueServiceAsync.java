@@ -36,7 +36,7 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueServie#loadIssue}.
      */
-    public void loadIssue (WebIdent ident, int issueId, AsyncCallback<Issue> callback);
+    void loadIssue (WebIdent ident, int issueId, AsyncCallback<Issue> callback);
 
     /**
      * The asynchronous version of {@link IssueServie#loadMessages}.
@@ -53,7 +53,7 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#updateIssue}.
      */
-    public void updateIssue (WebIdent ident, Issue issue, AsyncCallback<Issue> callback);
+    void updateIssue (WebIdent ident, Issue issue, AsyncCallback<Issue> callback);
 
     /**
      * The asynchronous version of {@link IssueService#assignMessage}.
@@ -64,5 +64,5 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#loadOwners}.
      */
-    public void loadOwners (WebIdent ident, AsyncCallback<List<MemberName>> callback);
+    void loadOwners (WebIdent ident, AsyncCallback<List<MemberName>> callback);
 }

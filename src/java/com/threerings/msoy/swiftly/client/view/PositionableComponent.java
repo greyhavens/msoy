@@ -13,10 +13,10 @@ public interface PositionableComponent
     /**
      * Returns the Component implementing this interface.
      */
-    public Component getComponent ();
+    Component getComponent ();
 
     /**
      * Requests that this component move to the PositionLocation if possible.
      */
-    public void gotoLocation (PositionLocation location);
+    void gotoLocation (PositionLocation location);
 }

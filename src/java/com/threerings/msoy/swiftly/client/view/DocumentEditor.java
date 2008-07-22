@@ -13,10 +13,10 @@ public interface DocumentEditor<D extends SwiftlyDocument>
     /**
      * Return the SwiftlyDocument loaded in this DocumentEditor
      */
-    public D getSwiftlyDocument ();
+    D getSwiftlyDocument ();
 
     /**
      * Inform the DocumentEditor to display the supplied SwiftlyDocument.
      */
-    public void loadDocument (D doc);
+    void loadDocument (D doc);
 }

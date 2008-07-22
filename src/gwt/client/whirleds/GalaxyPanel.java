@@ -208,7 +208,7 @@ public class GalaxyPanel extends VerticalPanel
 
     protected static interface ModelLoader
     {
-        public void loadModel (MsoyCallback<List<GroupCard>> callback);
+        void loadModel (MsoyCallback<List<GroupCard>> callback);
     }
 
     protected class GroupWidget extends ItemBox

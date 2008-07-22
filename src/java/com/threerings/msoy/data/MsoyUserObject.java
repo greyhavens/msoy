@@ -13,10 +13,10 @@ public interface MsoyUserObject
     /**
      * Returns this member's name.
      */
-    public MemberName getMemberName ();
+    MemberName getMemberName ();
 
     /**
      * Returns this member's unique id.
      */
-    public int getMemberId ();
+    int getMemberId ();
 }

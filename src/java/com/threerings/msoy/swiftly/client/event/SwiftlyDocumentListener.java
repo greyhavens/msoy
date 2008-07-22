@@ -10,14 +10,14 @@ import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 public interface SwiftlyDocumentListener
 {
     /** Notify the listener that a SwiftlyDocument was added to the project */
-    public void documentAdded (SwiftlyDocument doc);
+    void documentAdded (SwiftlyDocument doc);
 
     /** Notify the listener that a SwiftlyTextDocument was updated in a project */
-    public void documentUpdated (SwiftlyTextDocument doc);
+    void documentUpdated (SwiftlyTextDocument doc);
 
     /** Notify the listener that a SwiftlyImageDocument was updated in a project */
-    public void documentUpdated (SwiftlyImageDocument doc);
+    void documentUpdated (SwiftlyImageDocument doc);
 
     /** Notify the listener that a SwiftlyDocument was removed from a project */
-    public void documentRemoved (SwiftlyDocument doc);
+    void documentRemoved (SwiftlyDocument doc);
 }

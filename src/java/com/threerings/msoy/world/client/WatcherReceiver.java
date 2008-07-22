@@ -7,5 +7,5 @@ import com.threerings.presents.client.InvocationReceiver;
 
 public interface WatcherReceiver extends InvocationReceiver
 {
-    public void memberMoved (int memberId, int sceneId, String hostname, int port);
+    void memberMoved (int memberId, int sceneId, String hostname, int port);
 }

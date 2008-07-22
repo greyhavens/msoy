@@ -33,12 +33,12 @@ public interface ProjectModelDelegate
     /**
      * Success/failure callbacks for a buildProject call.
      */
-    public void buildRequestSucceeded (RequestId requestId, BuildResult result);
-    public void buildRequestFailed (RequestId requestId, FailureCode error);
+    void buildRequestSucceeded (RequestId requestId, BuildResult result);
+    void buildRequestFailed (RequestId requestId, FailureCode error);
 
     /**
      * Success/failure callbacks for a buildAndExportProject call.
      */
-    public void buildAndExportRequestSucceeded (RequestId requestId, BuildResult result);
-    public void buildAndExportRequestFailed (RequestId requestId, FailureCode error);
+    void buildAndExportRequestSucceeded (RequestId requestId, BuildResult result);
+    void buildAndExportRequestFailed (RequestId requestId, FailureCode error);
 }

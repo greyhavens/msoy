@@ -23,7 +23,7 @@ public class TagCloud extends FlowPanel
     public interface TagListener
     {
         /** Called when a tag has been clicked (or cleared if the argument is null). */
-        public void tagClicked (String tag);
+        void tagClicked (String tag);
     }
 
     public TagCloud (byte type, int count, TagListener listener)

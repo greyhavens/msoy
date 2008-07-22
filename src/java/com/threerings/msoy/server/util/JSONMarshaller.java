@@ -53,7 +53,7 @@ public class JSONMarshaller<T>
     public static interface Migration
     {
         /** Converts an old field to its new name. */
-        public String migrateField (String original);
+        String migrateField (String original);
     }
 
     /**

@@ -10,5 +10,5 @@ public interface TranslatableError
     /**
      * Returns the TranslatorMessage wrapped by the implementor.
      */
-    public TranslationMessage getMessage ();
+    TranslationMessage getMessage ();
 }

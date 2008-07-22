@@ -18,7 +18,7 @@ public interface LobbyService extends InvocationService
      *
      * @param gameId the item id of a Game-type item.
      */
-    public void identifyLobby (Client client, int gameId, ResultListener listener);
+    void identifyLobby (Client client, int gameId, ResultListener listener);
 
     /**
      * Requests to immediately get into the specified game. If a game could be started and/or
@@ -27,7 +27,7 @@ public interface LobbyService extends InvocationService
      *
      * @param mode the type of game to enter: {@link LobbyCodes#PLAY_NOW_SINGLE}, etc.
      */
-    public void playNow (Client client, int gameId, int mode, ResultListener listener);
+    void playNow (Client client, int gameId, int mode, ResultListener listener);
 
     /**
      * Return the Oid of the game that this player is in.  Returns -1 if they are currently not
@@ -35,5 +35,5 @@ public interface LobbyService extends InvocationService
      *
      * @param playerId the member id of the player to find.
      */
-    public void joinPlayerGame (Client client, int playerId, ResultListener listener);
+    void joinPlayerGame (Client client, int playerId, ResultListener listener);
 }

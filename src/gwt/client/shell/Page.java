@@ -16,7 +16,7 @@ public abstract class Page
 {
     /** Used to dynamically create the appropriate page when we are loaded. */
     public static interface Creator {
-        public Page createPage ();
+        Page createPage ();
     }
 
     // constants for our various pages

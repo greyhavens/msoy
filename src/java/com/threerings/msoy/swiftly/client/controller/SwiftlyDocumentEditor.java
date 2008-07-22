@@ -19,14 +19,14 @@ public interface SwiftlyDocumentEditor
       * row and column.
       * @param highlight indicates whether the new location should be highlighted briefly
       */
-    public void editTextDocument (SwiftlyTextDocument document, PositionLocation location);
+    void editTextDocument (SwiftlyTextDocument document, PositionLocation location);
 
     /**
       * Requests the supplied SwiftlyImageDocument be opened in this editor,
       */
-    public void editImageDocument (SwiftlyImageDocument document);
+    void editImageDocument (SwiftlyImageDocument document);
 
-    public List<FileTypes> getCreateableFileTypes ();
+    List<FileTypes> getCreateableFileTypes ();
 
     /** Maps a human friendly name to a mime type. */
     public static class FileTypes

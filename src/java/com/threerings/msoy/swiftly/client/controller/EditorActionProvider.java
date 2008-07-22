@@ -10,12 +10,12 @@ import javax.swing.Action;
  */
 public interface EditorActionProvider
 {
-    public Action getBuildAction ();
-    public Action getBuildExportAction ();
-    public Action getShowConsoleAction ();
-    public Action getCloseCurrentTabAction ();
-    public Action getAddFileAction ();
-    public Action getUploadFileAction ();
-    public Action getDeleteFileAction ();
-    public Action getRenameFileAction ();
+    Action getBuildAction ();
+    Action getBuildExportAction ();
+    Action getShowConsoleAction ();
+    Action getCloseCurrentTabAction ();
+    Action getAddFileAction ();
+    Action getUploadFileAction ();
+    Action getDeleteFileAction ();
+    Action getRenameFileAction ();
 }

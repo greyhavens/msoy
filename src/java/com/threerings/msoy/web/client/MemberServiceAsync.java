@@ -24,22 +24,22 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getMemberCard}.
      */
-    public void getMemberCard (int memberId, AsyncCallback<MemberCard> callback);
+    void getMemberCard (int memberId, AsyncCallback<MemberCard> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
-    public void getFriendStatus (WebIdent ident, int memberId, AsyncCallback<Boolean> callback);
+    void getFriendStatus (WebIdent ident, int memberId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
-    public void addFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
+    void addFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
-    public void removeFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
+    void removeFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
@@ -50,7 +50,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getInvitationsStatus}.
      */
-    public void getInvitationsStatus (WebIdent ident, AsyncCallback<MemberInvites> callback);
+    void getInvitationsStatus (WebIdent ident, AsyncCallback<MemberInvites> callback);
 
     /**
      * The asynchronous version of {@link MemberService#sendInvites}.
@@ -67,17 +67,17 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#removeInvitation}.
      */
-    public void removeInvitation (WebIdent ident, String inviteId, AsyncCallback<Void> callback);
+    void removeInvitation (WebIdent ident, String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#optOut}.
      */
-    public void optOut (String inviteId, AsyncCallback<Void> callback);
+    void optOut (String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getLeaderList}.
      */
-    public void getLeaderList (AsyncCallback<List<MemberCard>> callback);
+    void getLeaderList (AsyncCallback<List<MemberCard>> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getABTestGroup}.

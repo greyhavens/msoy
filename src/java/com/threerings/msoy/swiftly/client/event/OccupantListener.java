@@ -11,10 +11,10 @@ public interface OccupantListener
     /**
      * Called when a user joins the project room.
      */
-    public void userEntered (String username);
+    void userEntered (String username);
 
     /**
      * Called when a user leaves the project room.
      */
-    public void userLeft (String username);
+    void userLeft (String username);
 }

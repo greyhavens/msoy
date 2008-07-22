@@ -42,11 +42,11 @@ public class TagDetailPanel extends VerticalPanel
      */
     public interface TagService
     {
-        public void tag (String tag, AsyncCallback<TagHistory> callback);
-        public void untag (String tag, AsyncCallback<TagHistory> callback);
-        public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
-        public void getTags (AsyncCallback<Collection<String>> callback);
-        public boolean supportFlags ();
+        void tag (String tag, AsyncCallback<TagHistory> callback);
+        void untag (String tag, AsyncCallback<TagHistory> callback);
+        void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
+        void getTags (AsyncCallback<Collection<String>> callback);
+        boolean supportFlags ();
 
         /**
          * In this case, the implementor is responsible for editing the flags on the local object
@@ -54,13 +54,13 @@ public class TagDetailPanel extends VerticalPanel
          *
          * @param flag the flag to send to the server and set on the local object on success
          */
-        public void setFlags (byte flag);
+        void setFlags (byte flag);
 
         /**
          * If additional entries are required on the Menu that pops up when a tag is clicked, this
          * method can add menu items for that purpose.
          */
-        public void addMenuItems (String tag, PopupMenu menu);
+        void addMenuItems (String tag, PopupMenu menu);
     }
 
     public TagDetailPanel (TagService service, boolean showAddUI)

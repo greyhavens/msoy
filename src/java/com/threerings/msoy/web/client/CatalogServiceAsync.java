@@ -24,7 +24,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadShopData}.
      */
-    public void loadShopData (WebIdent ident, AsyncCallback<ShopData> callback);
+    void loadShopData (WebIdent ident, AsyncCallback<ShopData> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
@@ -75,10 +75,10 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#returnItem}
      */
-    public void returnItem (WebIdent ident, ItemIdent item, AsyncCallback<int[]> callback);
+    void returnItem (WebIdent ident, ItemIdent item, AsyncCallback<int[]> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#getPopularTags}.
      */
-    public void getPopularTags (byte type, int count, AsyncCallback<Map<String, Integer>> callback);
+    void getPopularTags (byte type, int count, AsyncCallback<Map<String, Integer>> callback);
 }

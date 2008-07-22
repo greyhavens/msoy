@@ -13,7 +13,7 @@ import com.threerings.presents.client.InvocationService;
 public interface ProjectRoomService extends InvocationService
 {
     /** Requests a document be loaded. */
-    public void loadDocument (Client client, PathElement element, ConfirmListener listener);
+    void loadDocument (Client client, PathElement element, ConfirmListener listener);
 
     /** Requests to add a document to the project. */
     public void addDocument (Client client, String fileName, PathElement parent, String mimeType,
@@ -26,15 +26,15 @@ public interface ProjectRoomService extends InvocationService
     public void updateTextDocument (Client client, int documentId, String text,
                                     ConfirmListener listener);
     /** Requests that the specified path element be removed from the project. */
-    public void deletePathElement (Client client, int elementId, ConfirmListener listener);
+    void deletePathElement (Client client, int elementId, ConfirmListener listener);
 
     /** Requests that the specified path element be renamed. */
     public void renamePathElement (Client client, int elementId, String newName,
                                    ConfirmListener listener);
 
     /** Requests that the project be build and the artifacts be published to the game object. */
-    public void buildProject (Client client, ResultListener listener);
+    void buildProject (Client client, ResultListener listener);
 
     /** Load the build result into this users inventory. */
-    public void buildAndExportProject (Client client, ResultListener listener);
+    void buildAndExportProject (Client client, ResultListener listener);
 }

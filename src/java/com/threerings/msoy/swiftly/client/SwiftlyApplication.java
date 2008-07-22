@@ -16,20 +16,20 @@ public interface SwiftlyApplication
     /**
      * Request that the supplied SwifltyWindow be attached to the main application content pane.
      */
-    public void attachWindow (SwiftlyWindowView window);
+    void attachWindow (SwiftlyWindowView window);
 
     /**
      * Create a PassiveNotifier connected to this SwiftlyApplication.
      */
-    public PassiveNotifier createNotifier ();
+    PassiveNotifier createNotifier ();
 
     /**
      * Displays the supplied URL in an application specific way.
      */
-    public void showURL (URL url);
+    void showURL (URL url);
 
     /**
      * Adds a ShutdownNotifier to this SwiftlyApplication.
      */
-    public void addShutdownNotifier (ShutdownNotifier notifier);
+    void addShutdownNotifier (ShutdownNotifier notifier);
 }

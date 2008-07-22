@@ -16,7 +16,7 @@ public interface SwiftlyWindow
      */
     public interface AttachCallback
     {
-        public void windowDisplayed ();
+        void windowDisplayed ();
     }
 
     /**
@@ -24,7 +24,7 @@ public interface SwiftlyWindow
      * @param pathElementType the type of {@link PathElement} to name
      * @return the name of the path element. null if the user clicked cancel
      */
-    public String showSelectPathElementNameDialog (PathElement.Type pathElementType);
+    String showSelectPathElementNameDialog (PathElement.Type pathElementType);
 
     /**
      * Shows a modal, external frame dialog prompting the user to name a {@link PathElement.FILE}
@@ -32,21 +32,21 @@ public interface SwiftlyWindow
      * @param parentElement the PathElement that will be the parent of the returned PathElement
      * @return the new path element. null if the user clicked cancel
      */
-    public CreateFileDialog showCreateFileDialog (SwiftlyDocumentEditor editor);
+    CreateFileDialog showCreateFileDialog (SwiftlyDocumentEditor editor);
 
     /**
      * Shows a modal, internal frame dialog asking for user confirmation.
      * Returns true if the user clicked Yes, false if they clicked No.
      */
-    public boolean showConfirmDialog (String message);
+    boolean showConfirmDialog (String message);
 
     /**
      * Show the chat panel.
      */
-    public void showChatPanel ();
+    void showChatPanel ();
 
     /**
      * Hide the chat panel.
      */
-    public void hideChatPanel ();
+    void hideChatPanel ();
 }

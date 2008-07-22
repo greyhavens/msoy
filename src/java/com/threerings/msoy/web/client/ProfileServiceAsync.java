@@ -36,7 +36,7 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#updateInterests}.
      */
-    public void updateInterests (WebIdent ident, List interests, AsyncCallback<Void> callback);
+    void updateInterests (WebIdent ident, List interests, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.

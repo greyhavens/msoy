@@ -17,5 +17,5 @@ public interface EditorHost
      * @param item if the editor was creating a new item, the new item should be passed to this
      * method so that it can be added to the display.
      */
-    public void editComplete (Item item);
+    void editComplete (Item item);
 }

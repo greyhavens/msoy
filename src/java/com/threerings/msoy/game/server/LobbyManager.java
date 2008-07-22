@@ -53,7 +53,7 @@ public class LobbyManager
 {
     public interface ShutdownObserver
     {
-        public void lobbyDidShutdown (Game game);
+        void lobbyDidShutdown (Game game);
     }
 
     /**

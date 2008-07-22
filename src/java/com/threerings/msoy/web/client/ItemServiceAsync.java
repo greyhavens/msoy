@@ -30,12 +30,12 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#updateItem}.
      */
-    public void updateItem (WebIdent ident, Item item, AsyncCallback<Void> callback);
+    void updateItem (WebIdent ident, Item item, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#remixItem}.
      */
-    public void remixItem (WebIdent ident, Item item, AsyncCallback<Item> callback);
+    void remixItem (WebIdent ident, Item item, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#revertRemixClone}.
@@ -52,7 +52,7 @@ public interface ItemServiceAsync
     /**
      * Loads the details of a particular item.
      */
-    public void loadItem (WebIdent ident, ItemIdent item, AsyncCallback<Item> callback);
+    void loadItem (WebIdent ident, ItemIdent item, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadItemDetail}.
@@ -69,7 +69,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#deleteItem}.
      */
-    public void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback<Void> callback);
+    void deleteItem (WebIdent ident, ItemIdent item, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
@@ -92,7 +92,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous versions of {@link ItemService#getRecentTags}.
      */
-    public void getRecentTags (WebIdent ident, AsyncCallback<Collection<TagHistory>> callback);
+    void getRecentTags (WebIdent ident, AsyncCallback<Collection<TagHistory>> callback);
 
     /**
      * The asynchronous version of {@link ItemService#tagItem}.

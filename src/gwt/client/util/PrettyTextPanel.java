@@ -45,7 +45,7 @@ public class PrettyTextPanel extends Widget
          * parse the given plain text, adding the resulting elements to parent, with the
          * knowledge that we are currently at the given pipeline stage.
          */
-        public void parse (String plainText, Element parent, int stage);
+        void parse (String plainText, Element parent, int stage);
     }
 
     /**

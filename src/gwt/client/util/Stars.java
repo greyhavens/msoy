@@ -15,9 +15,9 @@ public class Stars extends FlowPanel
 {
     public interface StarMouseListener
     {
-        public void starClicked (byte newRating);
-        public void starMouseOn (byte rating);
-        public void starMouseOff ();
+        void starClicked (byte newRating);
+        void starMouseOn (byte rating);
+        void starMouseOff ();
     }
 
     public Stars (float rating, boolean isAverage, boolean halfSize, StarMouseListener handler)

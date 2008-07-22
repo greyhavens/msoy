@@ -42,7 +42,7 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#deleteConversation}
      */
-    public void deleteConversation (WebIdent ident, int convoId, AsyncCallback<Boolean> callback);
+    void deleteConversation (WebIdent ident, int convoId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link MailService#updatePayload}
