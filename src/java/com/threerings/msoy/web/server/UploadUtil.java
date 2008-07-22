@@ -125,8 +125,8 @@ public class UploadUtil
      * Currently this is to the filesystem first, and then s3 if enabled. A map of headers
      * to be added to the s3 object may be supplied.
      */
-    public static void publishStream (
-        InputStream input, String subdirectory, String name, String mimeType, Map<String,String> headers)
+    public static void publishStream (InputStream input, String subdirectory, String name,
+                                      String mimeType, Map<String,String> headers)
         throws IOException
     {
         // copy the uploaded file data to the local file system media store. eventually we will
@@ -232,11 +232,12 @@ public class UploadUtil
                 float scale = (iratio > tratio) ?
                     MediaDesc.THUMBNAIL_WIDTH / (float)image.getWidth() :
                     MediaDesc.THUMBNAIL_HEIGHT / (float)image.getHeight();
-                width = Math.round(scale * image.getWidth());
-                height = Math.round(scale * image.getHeight());
+                width = Math.max(1, Math.round(scale * image.getWidth()));
+                height = Math.max(1, Math.round(scale * image.getHeight()));
 
                 // generate the scaled image
-                BufferedImage timage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                BufferedImage timage =
+                    new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D gfx = timage.createGraphics();
                 try {
                     gfx.drawImage(image, 0, 0, width, height, null);
