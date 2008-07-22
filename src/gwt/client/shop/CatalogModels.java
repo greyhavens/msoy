@@ -78,7 +78,6 @@ public class CatalogModels
 
         // now scan through our models and remove that listing from any that might contain it
         for (Map.Entry<CatalogQuery, Listings> entry : _models.entrySet()) {
-            CatalogQuery query = entry.getKey();
             if (entry.getKey().itemType != listing.detail.item.getType()) {
                 continue;
             }

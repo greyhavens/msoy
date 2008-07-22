@@ -193,9 +193,6 @@ public class CatalogServlet extends MsoyServiceServlet
             // note the new purchase for the item
             repo.nudgeListing(catalogId, true);
 
-            // used for logging
-            String details = itemType + " " + catalogId + " " + flowCost + " " + listing.goldCost;
-
             if (flowCost > 0) {
                 // if the creator of this item is purchasing it, just deduct 70% of the cost
                 // instead of taking 100% and paying them 30% and inflating their flowEarned

@@ -332,7 +332,7 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {
-        boolean gotControl = ensureEntityControl((MemberObject) caller, item, "requestControl");
+        ensureEntityControl((MemberObject) caller, item, "requestControl");
         // TODO: throw invocationexception on failure?
     }
 

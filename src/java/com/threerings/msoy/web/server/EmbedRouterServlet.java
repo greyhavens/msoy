@@ -34,8 +34,6 @@ public class EmbedRouterServlet extends HttpServlet
         throws IOException
     {
         String info = (req.getPathInfo() == null) ? "" : req.getPathInfo();
-        String host;
-        int port;
 
         try {
             if (info.startsWith("/g")) {
@@ -44,7 +42,6 @@ public class EmbedRouterServlet extends HttpServlet
                 sendResponse(rsp, config.server + ":" + config.port + ":" + config.guestId);
 
             } else if (info.startsWith("/s")) {
-                int sceneId = Integer.parseInt(info.substring(2));
                 // TODO: if someone is already hosting this scene, send them directly there
                 sendResponse(rsp, ServerConfig.serverHost + ":" + ServerConfig.serverPorts[0]);
 

@@ -302,8 +302,6 @@ public class GameServlet extends MsoyServiceServlet
     public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
-
         try {
             MemberRecord tgtrec = _memberRepo.loadMember(memberId);
             if (tgtrec == null) {

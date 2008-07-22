@@ -123,9 +123,6 @@ public class PrettyTextPanel extends Widget
                             smallestIndex = index;
                         }
                     }
-                    String openRegex = "\\[" + styles[smallestIndexIndex] + "\\]";
-                    String open = "[" + styles[smallestIndexIndex] + "]";
-                    String closeRegex = "\\[/" + styles[smallestIndexIndex] + "\\]";
                     String close = "[/" + styles[smallestIndexIndex] + "]";
                     String styleAttribute = "";
                     String styleValue = "";
@@ -180,7 +177,7 @@ public class PrettyTextPanel extends Widget
                         nextSpace = nextSpace == -1 ? parseText.length() : nextSpace;
                         String URL = parseText.substring(ii, nextSpace);
                         Element anchor = DOM.createAnchor();
-                        DOM.setAttribute(anchor, "href", URL);
+                        DOM.setElementProperty(anchor, "href", URL);
                         DOM.setInnerText(anchor, URL);
                         DOM.appendChild(parent, anchor);
                         parseText = parseText.substring(nextSpace);

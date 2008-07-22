@@ -32,8 +32,6 @@ public class MsoySceneFactory
     // from interface SceneRegistry.ConfigFactory
     public PlaceConfig createPlaceConfig (SceneModel smodel)
     {
-        MsoySceneModel model = (MsoySceneModel) smodel;
-
         // TODO: do the right thing
         return new RoomConfig();
     }

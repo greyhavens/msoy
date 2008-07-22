@@ -299,7 +299,6 @@ public class PlayerBrowserPanel extends HorizontalPanel
             Element cell = DOM.getChild(row, AVAILABLE_INVITES_COLUMN);
             String text = DOM.getInnerText(cell);
             try {
-                int available = Integer.parseInt(text);
                 text = "" + (Integer.parseInt(text) + amount);
             } catch (NumberFormatException nfe) {
                 CAdmin.log("NFE attempting to add to available invites: " + nfe.getMessage());

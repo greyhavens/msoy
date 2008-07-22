@@ -52,7 +52,6 @@ import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelObject;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.RoomManager;
@@ -441,7 +440,6 @@ public class ChatChannelManager
     protected void removeChatter (ChannelWrapper wrapper, MemberObject user)
     {
         if (!wrapper.hasMember(user)) {
-            ChatChannelObject cobj = wrapper.getCCObj();
             log.warning("User not in chat channel, cannot remove [user=" + user.who() +
                         ", channel=" + wrapper.getChannel() + "].");
             return;

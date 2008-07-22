@@ -25,10 +25,8 @@ public class GameStubServlet extends HttpServlet
         throws IOException
     {
         int gameId;
-        int clientVersion;
         try {
             gameId = Integer.parseInt(req.getParameter("gameId"));
-            clientVersion = Integer.parseInt(req.getParameter("v"));
         } catch (NumberFormatException nfe) {
             log.info("Received bad gameStub request: " + req.getQueryString());
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);

@@ -126,7 +126,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin(ident);
+        requireAdmin(ident);
         MemberInviteResult res = new MemberInviteResult();
         try {
             MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
