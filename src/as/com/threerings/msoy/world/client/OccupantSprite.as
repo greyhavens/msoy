@@ -16,6 +16,7 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ValueEvent;
+import com.threerings.util.MethodQueue;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.TextFieldUtil;
@@ -25,6 +26,8 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.msoy.data.MsoyBodyObject;
 
 import com.threerings.msoy.chat.client.ComicOverlay;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -251,8 +254,18 @@ public class OccupantSprite extends MsoySprite
         var oldInfo :OccupantInfo = _occInfo;
         _occInfo = newInfo;
 
+        var oldIdent :ItemIdent = _ident;
+
         // potentially update our visualization
-        configureDisplay(oldInfo, newInfo);
+        // Broadcast to usercode if there was a display change
+        if (configureDisplay(oldInfo, newInfo)) {
+            var view :RoomView = parent as RoomView;
+            if (view != null) {
+                view.dispatchEntityLeft(oldIdent);
+                // Dispatch it on the next frame, after we've been fully updated
+                MethodQueue.callLater(view.dispatchEntityEntered, [ _ident ]);
+            }
+        }
 
         // potentially update our name and decorations
         if (configureDecorations(oldInfo, newInfo)) {
