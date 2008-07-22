@@ -332,7 +332,7 @@ public class Application
             ReferralInfo ref = new ReferralInfo(
                 affiliate, vector, creative, ReferralInfo.makeRandomTracker());
             TrackingCookie.save(ref, false);
-            
+
         } else {
             if (! TrackingCookie.contains()) {
                 TrackingCookie.save(ReferralInfo.makeInstance(
@@ -371,7 +371,7 @@ public class Application
         // convert the page to GA format and report it to Google Analytics
         reportEvent(args.toPath(page));
     }
-        
+
     protected void initContext ()
     {
         CShell.app = this;
@@ -484,7 +484,7 @@ public class Application
        };
        $wnd.setGuestId = function (guestId) {
            @client.shell.Application::setGuestId(I)(guestId);
-       };           
+       };
        $wnd.getReferral = function () {
            return @client.shell.TrackingCookie::getAsObject()();
        };

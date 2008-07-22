@@ -125,7 +125,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected void postComment (String text)
     {
-        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text, 
+        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text,
             new MsoyCallback<Comment>() {
                 public void onSuccess (Comment result) {
                     postedComment(result);
@@ -175,7 +175,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         new CommentComplainPopup(comment, _etype, _entityId).show();
     }
 
-    protected class CommentModel 
+    protected class CommentModel
         extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
     {
         @Override

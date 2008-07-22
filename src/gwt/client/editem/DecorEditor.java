@@ -25,7 +25,7 @@ public class DecorEditor extends ItemEditor
         // some sample values. dimensions will be overwritten once a new image gets uploaded.
         d.type = Decor.IMAGE_OVERLAY;
         d.width = 800;
-        d.height = 400; 
+        d.height = 400;
         d.depth = 400;
         d.horizon = 0.5f;
         d.offsetX = 0;
@@ -46,7 +46,7 @@ public class DecorEditor extends ItemEditor
                 _item.furniMedia = desc;
                 if (width > 0 && height > 0) {
                     // set dimensions
-                    _decor.width = (short) width; 
+                    _decor.width = (short) width;
                     _decor.height = (short) height;
                     _decor.depth = (short) height;
                     // clear offsets
@@ -63,7 +63,7 @@ public class DecorEditor extends ItemEditor
         HTML viewer = new HTML();
         // note: the container has to be added to the DOM *before* we add the flash viewer
         addRow(viewer);
-        FlashClients.embedDecorViewer(viewer); 
+        FlashClients.embedDecorViewer(viewer);
         configureCallbacks(this);
     }
 
@@ -83,7 +83,7 @@ public class DecorEditor extends ItemEditor
     protected void updateDebuggingLabel ()
     {
         // the following is useful while debugging gwt/flash interop
-        
+
         /*
         String typelabel = CShell.emsgs.decorType_None();
         switch (_decor.type) {
@@ -94,7 +94,7 @@ public class DecorEditor extends ItemEditor
         // GWT doesn't emulate java.text.NumberFormat...
         // so we "format" this float by hand to three decimal places. ugh. :(
         String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
-        
+
         MsoyUI.info(
             CShell.emsgs.decorDimensions() + " " + _decor.width + " x " +
             _decor.height + " x " + _decor.depth + "<br/>" +
@@ -133,7 +133,7 @@ public class DecorEditor extends ItemEditor
         decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type,
                           _decor.offsetX, _decor.offsetY, _decor.hideWalls);
     }
-    
+
     /**
      * Configures foreign interface that will be called by Flash.
      */
@@ -141,8 +141,8 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecorInit = function () {
             editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
         };
-        $wnd.updateDecor = function (width, height, depth, horizon, 
-                                     type, offsetX, offsetY, hideWalls) 
+        $wnd.updateDecor = function (width, height, depth, horizon,
+                                     type, offsetX, offsetY, hideWalls)
         {
             editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFBFFZ)(
                 width, height, depth, horizon, type, offsetX, offsetY, hideWalls);

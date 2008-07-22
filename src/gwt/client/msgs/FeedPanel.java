@@ -143,12 +143,12 @@ public class FeedPanel extends TongueBox
             });
             messages = new ArrayList<FeedMessage>();
             // messages needs to be mutable, and the list returned from Arrays.asList() is fixed
-            // size, resulting in an annoying messages-less break in execution in GWT1.5 compiled 
+            // size, resulting in an annoying messages-less break in execution in GWT1.5 compiled
             // javascript
             messages.addAll(Arrays.asList(messageArray));
-            HashMap<MessageKey, MessageAggregate> messageMapLeft = 
+            HashMap<MessageKey, MessageAggregate> messageMapLeft =
                 new HashMap<MessageKey, MessageAggregate>();
-            HashMap<MessageKey, MessageAggregate> messageMapRight = 
+            HashMap<MessageKey, MessageAggregate> messageMapRight =
                 new HashMap<MessageKey, MessageAggregate>();
 
             long header = startofDay(System.currentTimeMillis());
@@ -232,7 +232,7 @@ public class FeedPanel extends TongueBox
         /**
          * Builds a left side or right side aggregated HashMap for the supplied messages.
          */
-        protected void buildMessageMap (List<FeedMessage> messages, long header, 
+        protected void buildMessageMap (List<FeedMessage> messages, long header,
             HashMap<MessageKey, MessageAggregate> map, boolean left)
         {
             for (FeedMessage message : messages) {
@@ -655,7 +655,7 @@ public class FeedPanel extends TongueBox
     {
         public boolean displayed = false;
 
-        public void add (FeedMessage message) 
+        public void add (FeedMessage message)
         {
             if (displayed) {
                 CShell.log(
@@ -677,7 +677,7 @@ public class FeedPanel extends TongueBox
             }
         }
 
-        public int size () 
+        public int size ()
         {
             return list.size();
         }

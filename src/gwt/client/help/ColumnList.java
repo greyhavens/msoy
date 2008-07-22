@@ -20,7 +20,7 @@ public class ColumnList extends SmartTable
         if (htmlList == null || htmlList.size() == 0 || numColumns == 0) {
             return;
         }
-        int itemsPerColumn = new Double(Math.ceil(new Double(htmlList.size()).doubleValue() / 
+        int itemsPerColumn = new Double(Math.ceil(new Double(htmlList.size()).doubleValue() /
                              new Double(numColumns).doubleValue())).intValue();
         Iterator<String> iter = htmlList.iterator();
         for (int ii = 0; ii < numColumns; ii++) {

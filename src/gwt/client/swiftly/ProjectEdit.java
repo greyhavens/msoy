@@ -177,7 +177,7 @@ public class ProjectEdit extends FlexTable
                     loadFriends();
                 }
                 public void onFailure (Throwable caught) {
-                    CSwiftly.log("Listing collaborators failed memberId=[" + 
+                    CSwiftly.log("Listing collaborators failed memberId=[" +
                         CSwiftly.getMemberId() + "]", caught);
                     SwiftlyPanel.displayError(CSwiftly.serverError(caught));
                 }

@@ -63,7 +63,7 @@ public class GameDetailPanel extends SmartTable
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
-        // Note: the gameId may be the negative original gameId, but GameDetail's id is never 
+        // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
         _gameId = gameId;
         Frame.setTitle(detail.getGame().name);

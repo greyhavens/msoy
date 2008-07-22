@@ -61,7 +61,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         _fmodels = fmodels;
         setModel(fmodels.getUnreadThreads(refresh), 0);
     }
-    
+
     // from interface SearchBox.Listener
     public void search (String search)
     {
@@ -137,7 +137,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     {
         super.displayResults(start, count, list);
 
-        if (_model instanceof ForumModels.GroupThreads) { 
+        if (_model instanceof ForumModels.GroupThreads) {
             _startThread.setVisible(true);
             _startThread.setEnabled(((ForumModels.GroupThreads)_model).canStartThread());
             _refresh.setVisible(false);
@@ -211,13 +211,13 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
             Hyperlink latest = Application.createLink(
                 CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
-                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1, 
+                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
                 thread.mostRecentPostId));
             latest.setTitle(CMsgs.mmsgs.tlpLastTip());
             mrp.add(latest);
             setWidget(0, col, mrp);
             getFlexCellFormatter().setStyleName(0, col++, "LastPost");
-            
+
             // add an ignore button when displaying unread threads from many groups
             if (_groupId == 0) {
                 Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");

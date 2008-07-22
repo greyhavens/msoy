@@ -12,7 +12,7 @@ public class StatusChangeEvent extends FlashEvent
     // constants for the different types of status updates we can receive. Defined in BaseClient.as
     public static final int LEVEL = 1;
     public static final int FLOW = 2;
-    public static final int GOLD = 3; 
+    public static final int GOLD = 3;
     public static final int MAIL = 4;
 
     /** The name of this event type: defined in BaseClient.as. */
@@ -36,7 +36,7 @@ public class StatusChangeEvent extends FlashEvent
     }
 
     @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args) 
+    public void readFlashArgs (JavaScriptObject args)
     {
         _type = FlashClients.getIntElement(args, 0);
         _value = FlashClients.getIntElement(args, 1);

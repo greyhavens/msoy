@@ -41,7 +41,7 @@ public class index extends Page
         } else if (args.get(0, "").equals("browser")) {
             if (_playerBrowser == null) {
                 _playerBrowser = new PlayerBrowserPanel();
-            } 
+            }
             setContent(CAdmin.msgs.browserTitle(), _playerBrowser);
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 

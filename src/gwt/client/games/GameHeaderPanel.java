@@ -33,12 +33,12 @@ public class GameHeaderPanel extends FlowPanel
 {
     public GameHeaderPanel (
         final byte genre, final byte sortMethod, final String query, String titleText)
-    {       
+    {
         setStyleName("gameHeaderPanel");
         _genre = genre;
-                
+
         add(MsoyUI.createLabel(titleText, "GenreTitle"));
-        
+
         // find a game fast dropdown box
         FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
         findGame.add(MsoyUI.createLabel(CGames.msgs.genreFindGame(), "Title"));
@@ -116,7 +116,7 @@ public class GameHeaderPanel extends FlowPanel
 
     /** Dropdown of all games */
     protected ListBox _findGameBox;
-    
+
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
 }

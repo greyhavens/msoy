@@ -40,13 +40,13 @@ public class WhirledDiscussionsPanel extends FlowPanel
 //    @Override // from UIObject
 //    public void setVisible (boolean visible)
 //    {
-//        
+//
 //        super.setVisible(visible);
 //        if (!visible || _loaded || _detail == null) {
 //            return;
 //        }
 //        _loaded = true;
-        
+
         FlowPanel rss = new FlowPanel();
         rss.setStyleName("RSS");
         ClickListener rssClick = new ClickListener() {
@@ -62,7 +62,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             "/images/group/thread_rss.png", CWhirleds.msgs.discussionRss(), rssClick);
         rss.add(rssImage);
         add(rss);
-        
+
         // there are no threads, print a message
         if (_detail.threads.size() == 0) {
             HTML noThreads = new HTML(CWhirleds.msgs.discussionNoThreads());
@@ -70,7 +70,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(noThreads);
             return;
         }
-        
+
         // add a ThreadWidget and divider for each thread
         for (int ii = 0; ii < _detail.threads.size(); ii++) {
             ForumThread thread = _detail.threads.get(ii);
@@ -82,7 +82,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             }
         }
     }
-    
+
     /**
      * Displays the original post of a single thread.
      */
@@ -90,16 +90,16 @@ public class WhirledDiscussionsPanel extends FlowPanel
     {
         public ThreadWidget (final ForumThread thread) {
             setStyleName("Thread");
-            
+
             Label date = new Label(DATE_FORMAT.format(thread.mostRecentPostTime));
             date.setStyleName("Date");
             add(date);
-            
+
             Widget subject = Application.createLink(
                 thread.subject, Page.WHIRLEDS, Args.compose("t", thread.threadId));
             subject.setStyleName("Subject");
             add(subject);
-            
+
             HTML text = new HTML(thread.firstPost.message);
             text.setStyleName("Text");
             add(text);
@@ -110,7 +110,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
                 thread.firstPost.poster.photo, MediaDesc.HALF_THUMBNAIL_SIZE, posterClick);
             posterIcon.setStyleName("PostedByIcon");
             add(posterIcon);
-            
+
             // posted by <a href="#people-{ID}">{NAME}</a> at {TIME}
             FlowPanel postedBy = new FlowPanel();
             postedBy.addStyleName("PostedBy");
@@ -122,7 +122,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             postedBy.add (new InlineLabel(
                 " " + CWhirleds.msgs.discussionAt(TIME_FORMAT.format(thread.firstPost.created))));
             add(postedBy);
-            
+
             final String repliesText;
             if (thread.posts == 2) {
                 // one reply - singular
@@ -144,7 +144,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
 
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;
-    
+
     /** Used to format the most recent post date. */
     protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy");
 

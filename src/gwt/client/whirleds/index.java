@@ -50,7 +50,7 @@ public class index extends MsgsEntryPoint
                 }
                 setContent(new GroupEdit(group, _detail.getGroupExtras()));
             }
-            
+
         } else if (action.equals("mywhirleds")) {
             byte sortMethod = (byte) args.get(1, 0);
             MyWhirleds myWhirleds = new MyWhirleds(sortMethod);

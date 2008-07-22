@@ -171,6 +171,6 @@ public class MediaUploader extends FormPanel
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected static HashMap<String, MediaUploader> _uploaders = 
+    protected static HashMap<String, MediaUploader> _uploaders =
         new HashMap<String, MediaUploader>();
 }

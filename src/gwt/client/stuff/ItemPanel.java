@@ -158,7 +158,7 @@ public class ItemPanel extends VerticalPanel
         _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
     }
 
-    protected String getPitch (String postfix) 
+    protected String getPitch (String postfix)
     {
         String pitch = CStuff.dmsgs.getString("itemUploadPitch" + _type + postfix);
         if (-1 != pitch.indexOf("@MEMBER_ID@")) {

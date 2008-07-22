@@ -16,7 +16,7 @@ import client.shell.CShell;
  * Utility class for listening to events from the Flash client.
  */
 public class FlashEvents
-{ 
+{
     static {
         configureEventCallback();
     }
@@ -62,7 +62,7 @@ public class FlashEvents
     /**
      * Called through the JavaScript bridge to dispatch an event that arrived from Flash.
      */
-    protected static void triggerEvent (String eventName, JavaScriptObject args) 
+    protected static void triggerEvent (String eventName, JavaScriptObject args)
     {
         if (!_eventListeners.containsKey(eventName)) {
             return; // if no one is listening, stop here
@@ -116,6 +116,6 @@ public class FlashEvents
         }
     }-*/;
 
-    protected static Map<String, ListenerList<FlashEventListener>> _eventListeners = 
+    protected static Map<String, ListenerList<FlashEventListener>> _eventListeners =
         new HashMap<String, ListenerList<FlashEventListener>>();
 }

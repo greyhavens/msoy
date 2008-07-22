@@ -40,7 +40,7 @@ public class TagDetailPanel extends VerticalPanel
      * Interface to the interaction between this panel and the service handling tagging/flagging in
      * the background.
      */
-    public interface TagService 
+    public interface TagService
     {
         public void tag (String tag, AsyncCallback<TagHistory> callback);
         public void untag (String tag, AsyncCallback<TagHistory> callback);
@@ -48,10 +48,10 @@ public class TagDetailPanel extends VerticalPanel
         public void getTags (AsyncCallback<Collection<String>> callback);
         public boolean supportFlags ();
 
-        /** 
+        /**
          * In this case, the implementor is responsible for editing the flags on the local object
          * that is being flagged, and is therefore responsible for providing the callback.
-         * 
+         *
          * @param flag the flag to send to the server and set on the local object on success
          */
         public void setFlags (byte flag);
@@ -131,7 +131,7 @@ public class TagDetailPanel extends VerticalPanel
             }
         };
     }
-    
+
     protected void toggleTagHistory ()
     {
         // TODO: if this is used again, it will need to be abstracted like everything else in this
@@ -250,7 +250,7 @@ public class TagDetailPanel extends VerticalPanel
 //                     _quickTags.addItem(CShell.cmsgs.tagSelectOne());
 //                     for (TagHistory history : result) {
 //                         String tag = history.tag;
-//                         if (tag != null && !addedTags.contains(tag) && 
+//                         if (tag != null && !addedTags.contains(tag) &&
 //                             history.member.getMemberId() == CShell.getMemberId()) {
 //                             _quickTags.addItem(tag);
 //                             addedTags.add(tag);

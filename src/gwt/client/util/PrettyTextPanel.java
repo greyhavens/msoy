@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
 
-public class PrettyTextPanel extends Widget 
+public class PrettyTextPanel extends Widget
 {
     /**
      * This class parses out the incoming (untrusted) text, and builds up a DOM tree around
@@ -18,7 +18,7 @@ public class PrettyTextPanel extends Widget
      * This class extends Widget instead of Panel in order to prevent arbitrary additions of
      * other Widgets.
      */
-    public PrettyTextPanel (String plainText) 
+    public PrettyTextPanel (String plainText)
     {
         setElement(DOM.createDiv());
         pipeline[0].parse(plainText, getElement(), 0);
@@ -34,15 +34,15 @@ public class PrettyTextPanel extends Widget
             // instead.
             Element div = DOM.createDiv();
             DOM.setInnerText(div, plainText);
-            DOM.setStyleAttribute(div, "display", "inline"); 
-            DOM.appendChild(parent, div); 
+            DOM.setStyleAttribute(div, "display", "inline");
+            DOM.appendChild(parent, div);
         }
     }
 
     protected interface Parser
     {
         /**
-         * parse the given plain text, adding the resulting elements to parent, with the 
+         * parse the given plain text, adding the resulting elements to parent, with the
          * knowledge that we are currently at the given pipeline stage.
          */
         public void parse (String plainText, Element parent, int stage);
@@ -52,12 +52,12 @@ public class PrettyTextPanel extends Widget
      * This is an array of parsers, wherein each parser needs to accept text, and parse it for
      * what it is interested in, and then pass the parts its not interested in down the pipeline.
      *
-     * This action proceeds recursively, in order to make it easy to create HTML structures.  
+     * This action proceeds recursively, in order to make it easy to create HTML structures.
      */
     protected static final Parser[] pipeline = {
         // paragraph and indented list parser
         new Parser() {
-            public void parse (String plainText, Element parent, int stage) 
+            public void parse (String plainText, Element parent, int stage)
             {
                 ArrayList<Element> lists = new ArrayList<Element>();
                 int depth = 0;
@@ -65,7 +65,7 @@ public class PrettyTextPanel extends Widget
                 for (int ii = 0; ii < paragraphs.length; ii++) {
                     paragraphs[ii] = paragraphs[ii].trim();
                     // find the number of stars prepending this line
-                    for (depth = 0; paragraphs[ii].startsWith("*"); 
+                    for (depth = 0; paragraphs[ii].startsWith("*");
                         paragraphs[ii] = paragraphs[ii].substring(1), depth++);
                     // make sure the current list stack contains the right number of lists
                     if (depth < lists.size()) {
@@ -111,7 +111,7 @@ public class PrettyTextPanel extends Widget
             {
                 String[] styles = { "i", "b", "u" };
                 String stylesRegex = "[ibu]";
-                if (plainText.matches(".*\\[" + stylesRegex + "\\].*\\[/" + stylesRegex + 
+                if (plainText.matches(".*\\[" + stylesRegex + "\\].*\\[/" + stylesRegex +
                     "\\].*")) {
                     int smallestIndex = plainText.length();
                     int smallestIndexIndex = 0;
@@ -148,7 +148,7 @@ public class PrettyTextPanel extends Widget
                     DOM.setStyleAttribute(styled, "display", "inline");
                     DOM.setStyleAttribute(styled, styleAttribute, styleValue);
                     // needs to pass through this parser again, in case styles are nested
-                    passDownPipe(plainText.substring(smallestIndex + close.length() - 1, end), 
+                    passDownPipe(plainText.substring(smallestIndex + close.length() - 1, end),
                         styled, stage - 1);
                     DOM.appendChild(parent, styled);
                     // might be more styles down the line as well
@@ -158,15 +158,15 @@ public class PrettyTextPanel extends Widget
                 }
             }
         },
-        
+
         // link parser
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
             {
-                // TODO: add sophistication.  This currently does a boring search for http: - 
+                // TODO: add sophistication.  This currently does a boring search for http: -
                 // in the future it should recognize less formal URLs in text.  A super-awesome
                 // regex will probably be needed to make sure nobody is doing some tricky hackery
-                // in the URL (and to avoid snafu's like periods and tabs at the end of URLs).  
+                // in the URL (and to avoid snafu's like periods and tabs at the end of URLs).
                 String parseText = plainText;
                 int ii = 0;
                 while (ii >= 0) {

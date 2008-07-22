@@ -42,7 +42,7 @@ public class TrackingCookie
      *
      * This function will only overwrite old data if the /overwrite/ flag is set to true.
      * Referral infos should only be saved if they don't already exist, or if there's
-     * an authoritative version coming from the server. 
+     * an authoritative version coming from the server.
      */
     public static void save (ReferralInfo referral, boolean overwrite)
     {
@@ -54,8 +54,8 @@ public class TrackingCookie
         CookieUtil.set("/", 365, VECTOR_ID, referral.vector);
         CookieUtil.set("/", 365, CREATIVE_ID, referral.creative);
         CookieUtil.set("/", 365, TRACKER_ID, referral.tracker);
-        
-        CShell.log("Saved referral info: " + referral); 
+
+        CShell.log("Saved referral info: " + referral);
     }
 
     /**
@@ -70,7 +70,7 @@ public class TrackingCookie
 
         CShell.log("Cleared referral info.");
     }
-    
+
     /**
      * Flattens a ReferralInfo object into a Java object.
      */
@@ -92,7 +92,7 @@ public class TrackingCookie
     public static native void saveAsObject (Object obj, boolean overwrite) /*-{
       var ref =
         @com.threerings.msoy.data.all.ReferralInfo::makeInstance(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(obj.affiliate, obj.vector, obj.creative, obj.tracker);
-        
+
       @client.shell.TrackingCookie::save(Lcom/threerings/msoy/data/all/ReferralInfo;Z)(ref,overwrite);
     }-*/;
 
@@ -101,4 +101,4 @@ public class TrackingCookie
     private static final String CREATIVE_ID = "cre";
     private static final String TRACKER_ID = "grp";
 }
-    
+

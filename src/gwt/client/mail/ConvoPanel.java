@@ -43,7 +43,7 @@ public class ConvoPanel extends FlowPanel
     protected void refresh ()
     {
         clear();
-        CMail.mailsvc.loadConversation(CMail.ident, _convoId, 
+        CMail.mailsvc.loadConversation(CMail.ident, _convoId,
             new MsoyCallback<MailService.ConvoResult>() {
                 public void onSuccess (MailService.ConvoResult result) {
                     init(result);

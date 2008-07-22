@@ -24,7 +24,7 @@ public class ArcadePanel extends FlowPanel
     public ArcadePanel ()
     {
         setStyleName("arcade");
-        
+
         add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
 
         CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback<ArcadeData>() {
@@ -32,13 +32,13 @@ public class ArcadePanel extends FlowPanel
                 init(data);
             }
         });
-        
+
     }
 
     protected void init (ArcadeData data)
     {
         _header.init(data.allGames);
-        
+
         // show the top N games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
         topGames.add(MsoyUI.createImage("/images/game/top_games_title.png", "TopGamesTitle"));
@@ -46,9 +46,9 @@ public class ArcadePanel extends FlowPanel
         for (int i = 0; i < data.topGames.size(); i++) {
             topGames.add(new TopGameWidget(i+1, data.topGames.get(i)));
         }
-        
+
         add(new FeaturedGamePanel(data.featuredGames));
-        
+
         add(MsoyUI.createLabel("Browse by Category", "BrowseGenresTitle"));
 
         // display genre links and browse games in each genre
@@ -56,7 +56,7 @@ public class ArcadePanel extends FlowPanel
         add(browseGenres);
         for (int ii = 0; ii < data.genres.size(); ii++) {
             ArcadeData.Genre genre = data.genres.get(ii);
-            
+
             // display top games in the genre if there are any
             if (genre.games.length == 0) {
                 continue;
@@ -77,12 +77,12 @@ public class ArcadePanel extends FlowPanel
 
             ClickListener genreClick = Application.createLinkListener(
                 Page.GAMES, Args.compose("g", genre.genre));
-            
+
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
             header.add(MsoyUI.createActionLabel(CGames.dmsgs.getString("genre" + genre.genre), genreClick));
-            
+
             // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
                 GameInfo game = genre.games[i];
@@ -102,18 +102,18 @@ public class ArcadePanel extends FlowPanel
                     genreGame.add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, gameClick)));
                 }
             }
-            
+
             // pad the games area with blank game boxes
             for (int i = genre.games.length; i < ArcadeData.Genre.HIGHLIGHTED_GAMES; i++) {
                 add(MsoyUI.createFlowPanel("GenreGame"));
             }
-            
+
             add(MsoyUI.createSimplePanel("ViewAll", Application.createLink(
                 CGames.msgs.genreMore(""+genre.gameCount), Page.GAMES, Args.compose("g", genre.genre))));
 
         }
     }
-    
+
     /**
      * Display a game in the Top X Games list
      */
@@ -128,8 +128,8 @@ public class ArcadePanel extends FlowPanel
             add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, onClick)));
         }
     }
-        
-    
+
+
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
 }

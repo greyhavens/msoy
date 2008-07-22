@@ -30,7 +30,7 @@ import client.shell.Application;
 import client.shell.Page;
 
 /**
- * Displays the rooms of a particular Whirled. 
+ * Displays the rooms of a particular Whirled.
  */
 public class WhirledRoomsPanel extends VerticalPanel
 {
@@ -53,7 +53,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         _roomsGrid = new SmartTable(0, 0);
         for (int ii = 0; ii < rooms.groupRooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
-            _roomsGrid.setWidget(row, col, 
+            _roomsGrid.setWidget(row, col,
                 new RoomWidget(rooms.groupRooms.get(ii)));
         }
         add(new TongueBox(CWhirleds.msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
@@ -77,7 +77,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         add(new TongueBox(CWhirleds.msgs.detailCallersRoomsTitle(), transferPanel));
     }
 
-    protected void transferCurrentRoom () 
+    protected void transferCurrentRoom ()
     {
         final int index = _roomsListBox.getSelectedIndex();
         if (index < 0) {
@@ -94,7 +94,7 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected void moveSceneToGrid (int index)
     {
-        // TODO if we leave this tab and come back to it, this data should be refreshed from the 
+        // TODO if we leave this tab and come back to it, this data should be refreshed from the
         // server
         GroupService.Room room = _roomsResult.callerRooms.remove(index);
         _roomsListBox.removeItem(index);

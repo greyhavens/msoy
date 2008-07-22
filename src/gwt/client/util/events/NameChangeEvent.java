@@ -28,7 +28,7 @@ public class NameChangeEvent extends FlashEvent
     }
 
     @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args) 
+    public void readFlashArgs (JavaScriptObject args)
     {
         _name = FlashClients.getStringElement(args, 0);
     }

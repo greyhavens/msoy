@@ -39,7 +39,7 @@ public class SceneBookmarkEvent extends FlashEvent
     }
 
     @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args) 
+    public void readFlashArgs (JavaScriptObject args)
     {
         _action = FlashClients.getIntElement(args, 0);
         _sceneName = FlashClients.getStringElement(args, 1);

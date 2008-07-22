@@ -134,7 +134,7 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId), 
+        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     PresentPayload payload = new PresentPayload(result);
@@ -149,7 +149,7 @@ public class ComposePanel extends FlowPanel
 
     public void setGroupInviteId (int groupId)
     {
-        CMail.groupsvc.getGroupInfo(CMail.ident, groupId, 
+        CMail.groupsvc.getGroupInfo(CMail.ident, groupId,
             new MsoyCallback<GroupService.GroupInfo>() {
                 public void onSuccess (GroupService.GroupInfo result) {
                     _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
@@ -165,7 +165,7 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(), 
+            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(),
                 new MsoyCallback<ProfileService.FriendsResult>() {
                     public void onSuccess (ProfileService.FriendsResult result) {
                         _friends = result.friends;

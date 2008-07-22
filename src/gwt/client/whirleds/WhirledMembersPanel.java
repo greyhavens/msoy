@@ -76,13 +76,13 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
         controls.setWidget(0, 0, _invite = new Button(CWhirleds.msgs.wmpInvite()));
     }
 
-    public boolean amSenior (GroupMemberCard member) 
+    public boolean amSenior (GroupMemberCard member)
     {
         return (_detail.myRank > member.rank) ||
             (_detail.myRank == member.rank && _detail.myRankAssigned < member.rankAssigned);
     }
 
-    protected Command updateMemberRank (final GroupMemberCard card, final byte rank) 
+    protected Command updateMemberRank (final GroupMemberCard card, final byte rank)
     {
         return new Command() {
             public void execute () {
@@ -130,9 +130,9 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
             setText(1, 0, rankStr, 1, "tipLabel");
             setWidget(2, 0, new MemberStatusLabel(card.status), 2, null);
 
-            // if we're not a manager above this member in rank, or we're not support+ don't add 
+            // if we're not a manager above this member in rank, or we're not support+ don't add
             // the edit controls
-            if (!CWhirleds.isSupport() && 
+            if (!CWhirleds.isSupport() &&
                 (_detail.myRank != GroupMembership.RANK_MANAGER || !amSenior(card))) {
                 return;
             }

@@ -77,7 +77,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         _forwardButton.setEnabled(false);
     }
 
-    public void displayPlayersInvitedBy (final int memberId) 
+    public void displayPlayersInvitedBy (final int memberId)
     {
         int childList = -1;
         int parentList = -1;
@@ -90,9 +90,9 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 break;
             }
         }
-        
+
         int memberIdToFetch = memberId;
-        if (childList > 0 || 
+        if (childList > 0 ||
                 // special case only invoked if we have a populated list, and the person goes back
                 // to the root admin console and clicks "player browser" again.
                 (childList == 0 && _playerLists.get(childList).getResult().memberId == 0)) {
@@ -161,7 +161,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         }
     }
 
-    protected void addToAvailable (int memberId, int amount) 
+    protected void addToAvailable (int memberId, int amount)
     {
         Iterator iter = _playerLists.iterator();
         while (iter.hasNext()) {
@@ -177,7 +177,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         public PlayerList (MemberInviteResult result)
         {
             _result = result;
-            String title = _result.name != null && !_result.name.equals("") ? 
+            String title = _result.name != null && !_result.name.equals("") ?
                 CAdmin.msgs.browserInvitedBy(_result.name) : CAdmin.msgs.browserNoInviter();
             setStyleName("PlayerList");
             int row = 0;
@@ -189,7 +189,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
                 getFlexCellFormatter().addStyleName(row, 0, "Title");
                 HorizontalPanel buttons = new HorizontalPanel();
-                // wtf?  Even if you don't set this property, the default gets applied directly to 
+                // wtf?  Even if you don't set this property, the default gets applied directly to
                 // the element, so I can't override it in the css file.  Thanks a ton, GWT team.
                 buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
                 buttons.addStyleName("Buttons");
@@ -211,7 +211,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                         return true;
                     }
                     public boolean gotResult (Void result) {
-                        MsoyUI.info(CAdmin.msgs.browserAddInvites("" + numInvites.getValue(), 
+                        MsoyUI.info(CAdmin.msgs.browserAddInvites("" + numInvites.getValue(),
                                     _result.name));
                         PlayerBrowserPanel.this.addToAvailable(
                             _result.memberId, numInvites.getValue().intValue());
@@ -230,11 +230,11 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getRowFormatter().addStyleName(row, "Clickable");
             getRowFormatter().addStyleName(row, "Separator");
             // organized in the same order as the NNN_COLUMN constants
-            String[] labelText = new String[] { CAdmin.msgs.browserName(), 
-                CAdmin.msgs.browserAvailable(), CAdmin.msgs.browserUsed(), 
+            String[] labelText = new String[] { CAdmin.msgs.browserName(),
+                CAdmin.msgs.browserAvailable(), CAdmin.msgs.browserUsed(),
                 CAdmin.msgs.browserTotal() };
-            int[] sortType = new int[] { RowComparator.SORT_TYPE_STRING, 
-                RowComparator.SORT_TYPE_INT, RowComparator.SORT_TYPE_INT, 
+            int[] sortType = new int[] { RowComparator.SORT_TYPE_STRING,
+                RowComparator.SORT_TYPE_INT, RowComparator.SORT_TYPE_INT,
                 RowComparator.SORT_TYPE_INT };
             int[] sortOrder = new int[] { RowComparator.SORT_ORDER_ASCENDING,
                 RowComparator.SORT_ORDER_DESCENDING, RowComparator.SORT_ORDER_DESCENDING,
@@ -280,7 +280,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 setWidget(row, NAME_COLUMN, nameLabel);
                 setText(row, AVAILABLE_INVITES_COLUMN, "" + member.invitesGranted);
                 setText(row, USED_INVITES_COLUMN, "" + member.invitesSent);
-                setText(row++, TOTAL_INVITES_COLUMN, 
+                setText(row++, TOTAL_INVITES_COLUMN,
                     "" + (member.invitesGranted + member.invitesSent));
                 getFlexCellFormatter().addStyleName(row-1, NUM_COLUMNS-1, "Last");
                 _rows[ii++] = getRowFormatter().getElement(row-1);
@@ -288,7 +288,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getRowFormatter().addStyleName(row-1, "Bottom");
         }
 
-        public boolean addToAvailable (int memberId, int amount) 
+        public boolean addToAvailable (int memberId, int amount)
         {
             Label label = _memberIds.get(memberId);
             if (label == null) {
@@ -307,7 +307,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             return true;
         }
 
-        public boolean highlight (int memberId) 
+        public boolean highlight (int memberId)
         {
             Label label = _memberIds.get(memberId);
             if (label == null) {
@@ -327,7 +327,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
         }
 
-        public MemberInviteResult getResult () 
+        public MemberInviteResult getResult ()
         {
             return _result;
         }
@@ -355,7 +355,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             public static final int SORT_ORDER_DESCENDING = -1;
             public static final int SORT_ORDER_ASCENDING = 1;
 
-            public RowComparator (int column, int sortType, int sortOrder) 
+            public RowComparator (int column, int sortType, int sortOrder)
             {
                 _column = column;
                 _sortType = sortType;
@@ -371,12 +371,12 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     other._sortOrder == _sortOrder;
             }
 
-            public int compare (Object o1, Object o2) 
+            public int compare (Object o1, Object o2)
             {
                 if (!(o1 instanceof Element) || !(o2 instanceof Element)) {
                     CAdmin.log("Received non-Element when sorting player list! " +
                         "|" + o1 + "|" + o2 + "|");
-                    return 0; 
+                    return 0;
                 }
                 String s1 = getCellContents((Element) o1);
                 String s2 = getCellContents((Element) o2);
@@ -394,7 +394,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 return result * _sortOrder;
             }
 
-            protected String getCellContents (Element row) 
+            protected String getCellContents (Element row)
             {
                 if (DOM.getChildCount(row) < _column) {
                     CAdmin.log("Element row does not contain " + _column + " children.");
@@ -414,10 +414,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected static final int USED_INVITES_COLUMN = 2;
         protected static final int TOTAL_INVITES_COLUMN = 3;
 
-        // Something super weird is going on here (possibly a bug with the GWT compiler).  
-        // This array holds only Elements, but if it is declared as Element[], then the 
+        // Something super weird is going on here (possibly a bug with the GWT compiler).
+        // This array holds only Elements, but if it is declared as Element[], then the
         // comparator's compare() method fails when checking if the objects it receives are
-        // instanceof Element.  If the array is declared as Object[], and every time an 
+        // instanceof Element.  If the array is declared as Object[], and every time an
         // element is accessed it is casted to Element, everything works fine.
         protected Object[] _rows;
         protected MemberInviteResult _result;

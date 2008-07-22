@@ -31,11 +31,11 @@ public class ABTestListPanel extends FlowPanel
         setStyleName("abTestListPanel");
         refresh();
     }
-    
+
     /**
      * Fetch and display a list of all tests with the newest tests at the top.
      */
-    public void refresh () 
+    public void refresh ()
     {
         clear();
         Button createButton = new Button(CAdmin.msgs.abTestCreateNew());
@@ -47,7 +47,7 @@ public class ABTestListPanel extends FlowPanel
         add(createButton);
 
         add(_contents = new SmartTable("Tests", 10, 0));
-        
+
         CAdmin.adminsvc.getABTests(CAdmin.ident, new MsoyCallback<List<ABTest>>() {
             public void onSuccess (List<ABTest> tests) {
                 displayTests(tests);
@@ -55,7 +55,7 @@ public class ABTestListPanel extends FlowPanel
         });
     }
 
-    /** 
+    /**
      * Print a table with one test per row
      */
     protected void displayTests (List<ABTest> tests)
@@ -64,7 +64,7 @@ public class ABTestListPanel extends FlowPanel
             _contents.setText(0, 0, "No tests");
             return;
         }
-        
+
         // header row
         int col = 0;
         _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestName()));
@@ -77,7 +77,7 @@ public class ABTestListPanel extends FlowPanel
         for (final ABTest test : tests) {
             int row = _contents.getRowCount();
             col = 0;
-            _contents.setWidget(row, col++, new Label(test.name));           
+            _contents.setWidget(row, col++, new Label(test.name));
             _contents.setWidget(row, col++, new Label(String.valueOf(test.enabled)));
             _contents.setWidget(row, col++, new Label(test.started != null ? dateFormat.format(test.started) : ""));
             _contents.setWidget(row, col++, new Label(test.ended != null ? dateFormat.format(test.ended) : ""));
@@ -88,7 +88,7 @@ public class ABTestListPanel extends FlowPanel
                     new ABTestEditorDialog(test, ABTestListPanel.this).show();
                 }
             });
-            
+
             Button testButton = new Button("Test");
             testButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -98,16 +98,16 @@ public class ABTestListPanel extends FlowPanel
                                 MsoyUI.info("You are in group #" + group);
                             }
                     });
-                    
+
                     CAdmin.membersvc.trackClientAction(
-                        TrackingCookie.get(), "ClickedTestButton_"+test.name, test.name, 
+                        TrackingCookie.get(), "ClickedTestButton_"+test.name, test.name,
                         new MsoyCallback<Void>() {
                             public void onSuccess (Void result) {}
                     });
                 }
             });
             _contents.setWidget(row, col++, MsoyUI.createButtonPair(editButton, testButton));
-            
+
         }
     }
 

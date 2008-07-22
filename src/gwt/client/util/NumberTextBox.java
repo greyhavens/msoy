@@ -7,12 +7,12 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-/** 
+/**
  * A text box that will only accept numbers.
  */
 public class NumberTextBox extends TextBox
 {
-    public NumberTextBox (boolean allowFloatingPoint) 
+    public NumberTextBox (boolean allowFloatingPoint)
     {
         this(allowFloatingPoint, 0, 0);
     }
@@ -26,15 +26,15 @@ public class NumberTextBox extends TextBox
     }
 
     /**
-     * @param allowFloatingPoint If true, a single decimal point is part of the allowed character 
+     * @param allowFloatingPoint If true, a single decimal point is part of the allowed character
      * set.  Otherwise, only [0-9]* is accepted.
      */
-    public NumberTextBox (final boolean allowFloatingPoint, int maxLength, int visibleLength) 
+    public NumberTextBox (final boolean allowFloatingPoint, int maxLength, int visibleLength)
     {
         _allowFloatingPoint = allowFloatingPoint;
 
         addKeyboardListener(new KeyboardListener() {
-            public void onKeyUp (Widget sender, char keyCode, int modifiers) { 
+            public void onKeyUp (Widget sender, char keyCode, int modifiers) {
                 if ((modifiers & KeyboardListener.MODIFIER_SHIFT) != 0 || keyCode > '9' ||
                     keyCode < '0') {
                     String text = getText();
@@ -69,7 +69,7 @@ public class NumberTextBox extends TextBox
      */
     public Number getValue ()
     {
-        return _allowFloatingPoint ? (Number)(new Double(getText())) : 
+        return _allowFloatingPoint ? (Number)(new Double(getText())) :
             (Number)(new Integer(getText()));
     }
 

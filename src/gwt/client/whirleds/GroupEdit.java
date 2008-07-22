@@ -114,7 +114,7 @@ public class GroupEdit extends FlexTable
             }
         }
         addRow(CWhirleds.msgs.editCatalogType(), _catalogType);
-        addRow(CWhirleds.msgs.editCatalogTag(), 
+        addRow(CWhirleds.msgs.editCatalogTag(),
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
         HorizontalPanel footer = new HorizontalPanel();
@@ -133,7 +133,7 @@ public class GroupEdit extends FlexTable
         int frow = getRowCount();
         setWidget(frow, 1, footer);
         getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
-        
+
         // TODO integrate tags into the main form
         if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
@@ -166,7 +166,7 @@ public class GroupEdit extends FlexTable
             addRow("", WidgetUtil.makeShim(1, 20));
             addRow("", tags);
         }
-        
+
     }
 
     protected void addRow (String label, Widget contents)
@@ -221,13 +221,13 @@ public class GroupEdit extends FlexTable
                         if (tags.size() > 0) {
                             MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
                         } else if (_group.groupId > 0) {
-                            CWhirleds.groupsvc.updateGroup( 
+                            CWhirleds.groupsvc.updateGroup(
                                 CWhirleds.ident, _group, _extras, updateCallback);
                         } else {
                             CWhirleds.groupsvc.createGroup(
                                 CWhirleds.ident, _group, _extras, createCallback);
                         }
-                    } 
+                    }
                 });
         } else {
             if (_group.groupId > 0) {

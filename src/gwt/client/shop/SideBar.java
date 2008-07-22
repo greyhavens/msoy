@@ -42,7 +42,7 @@ public class SideBar extends SmartTable
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 byte type = Item.TYPES[ii];
                 String name = CShop.dmsgs.getString("pItemType" + type);
-                
+
                 if (query.itemType == type) {
                     add(MsoyUI.createLabel(name, "Selected"));
                 } else {

@@ -19,7 +19,7 @@ public abstract class FlashEvent
     public abstract void readFlashArgs (JavaScriptObject args);
 
     /**
-     * Events with the associated listener interface should implement this function and 
+     * Events with the associated listener interface should implement this function and
      * notify the supplied listener if it implements their event listening interface.
      */
     public abstract void notifyListener (FlashEventListener listener);

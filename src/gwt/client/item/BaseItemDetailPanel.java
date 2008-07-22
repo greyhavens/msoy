@@ -126,7 +126,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
                 CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
-            } 
+            }
             public void untag (String tag, AsyncCallback<TagHistory> callback) {
                 CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
             }

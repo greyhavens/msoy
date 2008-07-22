@@ -36,10 +36,10 @@ public class index extends Page
         if (action.equals("create")) {
             _onLogonPage = ME;
             _onLogonArgs = "";
-            setContent(CAccount.msgs.createTitle(), 
+            setContent(CAccount.msgs.createTitle(),
                 new CreateAccountPanel(new CreateAccountPanel.RegisterListener() {
                     public void didRegister () {
-                        _onLogonPage = ME;                       
+                        _onLogonPage = ME;
                         _onLogonArgs = "";
                     }
                 }));

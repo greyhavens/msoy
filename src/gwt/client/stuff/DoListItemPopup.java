@@ -136,7 +136,7 @@ public class DoListItemPopup extends VerticalPanel
 
         add(_status);
 
-        // create buttons for listing and 
+        // create buttons for listing and
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {

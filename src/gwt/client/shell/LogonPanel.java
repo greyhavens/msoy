@@ -45,7 +45,7 @@ public class LogonPanel extends SmartTable
     {
         this(headerMode, logon, false);
     }
-    
+
     /**
      * Constructor
      * @param headerMode Changes the location of the form elements
@@ -80,7 +80,7 @@ public class LogonPanel extends SmartTable
                     Frame.showPopupDialog(forgottenTitle, forgottenDialog);
                 }
                 else {
-                    Frame.showDialog(forgottenTitle, forgottenDialog);                    
+                    Frame.showDialog(forgottenTitle, forgottenDialog);
                 }
             }
         });

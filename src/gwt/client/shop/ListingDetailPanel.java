@@ -56,7 +56,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(_priceLabel = new PriceLabel(_listing.flowCost, _listing.goldCost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
-        PushButton purchase = 
+        PushButton purchase =
             MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
         new ClickCallback<Item>(purchase) {
             public boolean callService () {

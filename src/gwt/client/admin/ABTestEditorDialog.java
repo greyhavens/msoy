@@ -37,7 +37,7 @@ public class ABTestEditorDialog extends BorderedDialog
     public ABTestEditorDialog (ABTest test, ABTestListPanel parent)
     {
         _parent = parent;
-        
+
         if (test == null) {
             _isNewTest = true;
             setHeaderTitle(CAdmin.msgs.abTestCreateTitle());
@@ -47,11 +47,11 @@ public class ABTestEditorDialog extends BorderedDialog
             setHeaderTitle(CAdmin.msgs.abTestEditTitle());
             _test = test;
         }
-        
+
         FlowPanel contents = MsoyUI.createFlowPanel("abTestEditorDialog");
         setContents(contents);
-        
-        
+
+
         final TextBox name = new TextBox();
         contents.add(new FormElement(CAdmin.msgs.abTestNameLabel(), name));
         name.setMaxLength(ABTest.MAX_NAME_LENGTH);
@@ -70,7 +70,7 @@ public class ABTestEditorDialog extends BorderedDialog
                 _test.description = description.getText().trim();
             }
         });
-        
+
         final CheckBox enabled = new CheckBox();
         contents.add(new FormElement(CAdmin.msgs.abTestEnabledLabel(), enabled));
         enabled.setChecked(_test.enabled);
@@ -110,7 +110,7 @@ public class ABTestEditorDialog extends BorderedDialog
                 }
             }
         });
-        
+
         final CheckBox onlyNewVisitors = new CheckBox();
         contents.add(new FormElement(CAdmin.msgs.abTestOnlyNewVisitorsLabel(), onlyNewVisitors));
         onlyNewVisitors.setChecked(_test.onlyNewVisitors);
@@ -119,7 +119,7 @@ public class ABTestEditorDialog extends BorderedDialog
                 _test.onlyNewVisitors = onlyNewVisitors.isChecked();
             }
         });
-        
+
         final TextBox affiliate = new TextBox();
         contents.add(new FormElement(CAdmin.msgs.abTestAffiliateLabel(), affiliate));
         affiliate.setMaxLength(ABTest.MAX_AFFILIATE_LENGTH);
@@ -129,7 +129,7 @@ public class ABTestEditorDialog extends BorderedDialog
                 _test.affiliate = affiliate.getText().trim();
             }
         });
-        
+
         final TextBox vector = new TextBox();
         contents.add(new FormElement(CAdmin.msgs.abTestVectorLabel(), vector));
         vector.setMaxLength(ABTest.MAX_VECTOR_LENGTH);
@@ -191,8 +191,8 @@ public class ABTestEditorDialog extends BorderedDialog
                 }
             });
 
-        } 
-        
+        }
+
         else {
             CAdmin.adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
@@ -218,13 +218,13 @@ public class ABTestEditorDialog extends BorderedDialog
             add(MsoyUI.createSimplePanel("Element", widget));
         }
     }
-    
+
     /** Are we creating a new test (true), or editing an existing one (false)? */
     protected final boolean _isNewTest;
-    
+
     /** Data for the test */
     protected final ABTest _test;
-    
+
     /** Parent panel needs to have data refreshed after create/update */
     protected final ABTestListPanel _parent;
 }

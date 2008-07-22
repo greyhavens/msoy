@@ -75,7 +75,7 @@ public class DashboardPanel extends FlexTable
                 }
             }));
         }
-        
+
         // a/b testing controls
         controls = new HorizontalPanel();
         controls.setSpacing(10);

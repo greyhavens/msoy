@@ -59,7 +59,7 @@ public class PromptPopup extends BorderedPopup
     /**
      * Prompt the user, call onAffirmative or onNegative depending on user's input.
      */
-    public void prompt () 
+    public void prompt ()
     {
         VerticalPanel content = new VerticalPanel();
         content.setStyleName("promptPopup");
@@ -84,7 +84,7 @@ public class PromptPopup extends BorderedPopup
                     onNegative();
                 }
                 hide();
-            }  
+            }
         };
         noButton.addClickListener(listener);
         yesButton.addClickListener(listener);

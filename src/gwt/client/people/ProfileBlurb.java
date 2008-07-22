@@ -225,7 +225,7 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, CPeople.msgs.status());
         // seed the status line with a facebook-esque que, if empty
-        String status = _profile.headline == "" || _profile.headline == null ? 
+        String status = _profile.headline == "" || _profile.headline == null ?
             CPeople.msgs.statusQue() : _profile.headline;
         _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
         econtent.setWidget(row++, 1, _estatus);

@@ -107,7 +107,7 @@ public class WhirledDetailPanel extends FlowPanel
         Frame.setTitle(_detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
-        
+
         // objects in top area are absolutely positioned in css
         AbsolutePanel mainDetails = new AbsolutePanel();
         mainDetails.setStyleName("MainDetails");
@@ -117,7 +117,7 @@ public class WhirledDetailPanel extends FlowPanel
         FlowPanel titleBox = new FlowPanel();
         titleBox.addStyleName("TitleBox");
         mainDetails.add(titleBox);
-        
+
         // use the default logo if this group doesn't have one
         MediaDesc logoMedia = _group.logo;
         if (logoMedia == null) {
@@ -140,10 +140,10 @@ public class WhirledDetailPanel extends FlowPanel
         creator.addStyleName("Creator");
         established.add(creator);
         titleBox.add(established);
-        
+
         // members opens in contentPanel
         titleBox.add(new InlineLabel(_group.memberCount + " "));
-        InlineLabel members = new InlineLabel(CWhirleds.msgs.detailMembers()); 
+        InlineLabel members = new InlineLabel(CWhirleds.msgs.detailMembers());
         titleBox.add(members);
         members.addStyleName("actionLabel");
         ClickListener membersClick = new ClickListener() {
@@ -152,7 +152,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
         };
         members.addClickListener(membersClick);
-        
+
         // enter and discussions buttons
         PushButton enterButton = MsoyUI.createButton(
             MsoyUI.LONG_THIN, CWhirleds.msgs.detailEnter(), Application.createLinkListener(
@@ -164,12 +164,12 @@ public class WhirledDetailPanel extends FlowPanel
                 Page.WHIRLEDS, Args.compose("f", _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         mainDetails.add(discussionsButton);
-                
+
         // join, charter, shop, manage, etc
         FlowPanel actions = new FlowPanel();
         actions.setStyleName("Actions");
         mainDetails.add(actions);
-        
+
         // join this whirled
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
             if (Group.canJoin(_group.policy) && !CWhirleds.isGuest()) {
@@ -178,7 +178,7 @@ public class WhirledDetailPanel extends FlowPanel
                                    CWhirleds.msgs.detailJoinPrompt(), joinGroup()).setContext(
                                        CWhirleds.msgs.detailJoinContext(_group.name))));
             }
-        } 
+        }
         // leave this whirled & invite others to it
         else {
             actions.add(MsoyUI.createActionLabel(
@@ -191,7 +191,7 @@ public class WhirledDetailPanel extends FlowPanel
             actions.add(MsoyUI.createActionLabel(
                 CWhirleds.msgs.detailInvite(), Application.createLinkListener(Page.MAIL, args)));
         }
-        
+
         // shop
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
             String args = ShopUtil.composeArgs(
@@ -199,9 +199,9 @@ public class WhirledDetailPanel extends FlowPanel
             actions.add(MsoyUI.createActionLabel(
                 CWhirleds.msgs.detailShop(), Application.createLinkListener(Page.SHOP, args)));
         }
-        
+
         // read charter
-        Label readCharter = new Label(CWhirleds.msgs.detailReadCharter()); 
+        Label readCharter = new Label(CWhirleds.msgs.detailReadCharter());
         actions.add(readCharter);
         readCharter.addStyleName("actionLabel");
         ClickListener charterClick = new ClickListener() {
@@ -216,16 +216,16 @@ public class WhirledDetailPanel extends FlowPanel
             FlowPanel managerActions = new FlowPanel();
             managerActions.setStyleName("ManagerActions");
             actions.add(managerActions);
-            
+
             String args = Args.compose("edit", _group.groupId);
             Label editWhirled = MsoyUI.createActionLabel(
                 CWhirleds.msgs.detailEdit(), Application.createLinkListener(Page.WHIRLEDS, args));
             editWhirled.addStyleName("inline");
             managerActions.add(editWhirled);
-            
+
             managerActions.add(new InlineLabel(" | "));
-            
-            InlineLabel manageRooms = new InlineLabel(CWhirleds.msgs.detailManageRooms()); 
+
+            InlineLabel manageRooms = new InlineLabel(CWhirleds.msgs.detailManageRooms());
             managerActions.add(manageRooms);
             manageRooms.addStyleName("actionLabel");
             ClickListener roomsClick = new ClickListener() {
@@ -235,12 +235,12 @@ public class WhirledDetailPanel extends FlowPanel
             };
             manageRooms.addClickListener(roomsClick);
         }
-        
+
         // screenshot, #online, blurb
         FlowPanel screenshot = new FlowPanel();
         screenshot.setStyleName("ScreenshotBox");
         mainDetails.add(screenshot);
-        
+
         // display a screenshot of the whirled that can be clicked for a live view
         screenshot.add(_whirledViewPanel = new SimplePanel());
         _whirledViewPanel.setStyleName("Screenshot");
@@ -253,19 +253,19 @@ public class WhirledDetailPanel extends FlowPanel
         final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/whirled_click_here.jpg", "", liveVewClick);
         _whirledViewPanel.add(clickToPlayImage);
-        
+
         if (_detail.population > 0) {
             HTML online = new HTML(CWhirleds.msgs.featuredOnline(""+_detail.population));
             online.setStyleName("Online");
             screenshot.add(online);
         }
-        
+
         if (_group.blurb != null) {
             HTML blurb = new HTML(_group.blurb);
             blurb.setStyleName("Blurb");
             screenshot.add(blurb);
         }
-        
+
         HorizontalPanel lowerArea = new HorizontalPanel();
         add(lowerArea);
         // content panel defaults to discussions
@@ -274,7 +274,7 @@ public class WhirledDetailPanel extends FlowPanel
         // list managers and some members
         lowerArea.add(new TopMembersPanel());
     }
-    
+
     protected Command removeMember (final int memberId)
     {
         return new Command() {
@@ -301,7 +301,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
         };
     }
-    
+
 
     /**
      * Displays multiple panels: Discussions, Charter, Members, Rooms.  Panels
@@ -320,7 +320,7 @@ public class WhirledDetailPanel extends FlowPanel
             add(container);
             container.add(_content = new SimplePanel());
             _content.setStyleName("ContentPanelContent");
-            
+
             // back to discussions button hidden by default
             container.add(_backButton = new Label(CWhirleds.msgs.detailBackToDiscussions()));
             _backButton.setVisible(false);
@@ -333,7 +333,7 @@ public class WhirledDetailPanel extends FlowPanel
             };
             _backButton.addClickListener(backClick);
         }
-        
+
         public void showDiscussions () {
             if (_discussions != null && _content.getWidget() == _discussions) {
                 return;
@@ -345,7 +345,7 @@ public class WhirledDetailPanel extends FlowPanel
             _content.setWidget(_discussions);
             _backButton.setVisible(false);
         }
-        
+
         public void showCharter () {
             if (_charter != null && _content.getWidget() == _charter) {
                 return;
@@ -359,7 +359,7 @@ public class WhirledDetailPanel extends FlowPanel
             _content.setWidget(_charter);
             _backButton.setVisible(true);
         }
-        
+
         public void showMembers () {
             if (_members != null && _content.getWidget() == _members) {
                 return;
@@ -383,7 +383,7 @@ public class WhirledDetailPanel extends FlowPanel
             _content.setWidget(_rooms);
             _backButton.setVisible(true);
         }
-        
+
         protected SimplePanel _title;
         protected SimplePanel _content;
         protected Label _backButton;
@@ -400,20 +400,20 @@ public class WhirledDetailPanel extends FlowPanel
     {
         public TopMembersPanel () {
             setStyleName("TopMembersPanel");
-            add(MsoyUI.createSimplePanel("Title", 
+            add(MsoyUI.createSimplePanel("Title",
                 new HTML(CWhirleds.msgs.detailTopMembersTitle())));
-            
+
             FlowPanel content = new FlowPanel();
             content.setStyleName("Content");
             add(content);
 
-            SmartTable members = new SmartTable("Members", 0, 0); 
+            SmartTable members = new SmartTable("Members", 0, 0);
             content.add(members);
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
                 ClickListener iconClick = Application.createLinkListener(
                     Page.PEOPLE, "" + member.name.getMemberId());
-                ThumbBox icon = 
+                ThumbBox icon =
                     new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE, iconClick);
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
@@ -425,9 +425,9 @@ public class WhirledDetailPanel extends FlowPanel
                   "Name", Application.memberViewLink("" + member.name, member.name.getMemberId()));
                 members.setWidget((ii * 2) + 1, 0, name);
             }
-            
+
             // see all opens in contentPanel
-            Label seeAllLink = new Label(CWhirleds.msgs.detailTopMembersSeeAll()); 
+            Label seeAllLink = new Label(CWhirleds.msgs.detailTopMembersSeeAll());
             content.add(seeAllLink);
             seeAllLink.addStyleName("SeeAll");
             seeAllLink.addStyleName("actionLabel");
@@ -440,7 +440,7 @@ public class WhirledDetailPanel extends FlowPanel
         }
     }
 
-    
+
     protected Group _group;
     protected GroupDetail _detail;
     protected GroupExtras _extras;

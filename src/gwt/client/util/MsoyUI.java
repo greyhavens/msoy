@@ -79,7 +79,7 @@ public class MsoyUI
         }
         return label;
     }
-    
+
     /**
      * Creates a SimplePanel with the supplied style and widget
      */
@@ -94,7 +94,7 @@ public class MsoyUI
         }
         return panel;
     }
-    
+
     /**
      * Creates a FlowPanel with the provided style
      */
@@ -269,7 +269,7 @@ public class MsoyUI
     }
 
     /**
-     * Creates a basic text button whose text changes depending on whether we are 
+     * Creates a basic text button whose text changes depending on whether we are
      * creating or updating something.
      */
     public static Button createCrUpdateButton (boolean creating, ClickListener listener)

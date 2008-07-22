@@ -51,7 +51,7 @@ import client.util.ThumbBox;
  */
 public class CreateAccountPanel extends VerticalPanel
 {
-    public interface RegisterListener 
+    public interface RegisterListener
     {
         /** Called when the player is logging on due to a successful registration. */
         public void didRegister ();
@@ -261,8 +261,8 @@ public class CreateAccountPanel extends VerticalPanel
         String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
         String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
         CAccount.usersvc.register(
-            DeploymentConfig.version, email, CAccount.md5hex(password), name, 
-            _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge, 
+            DeploymentConfig.version, email, CAccount.md5hex(password), name,
+            _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge,
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {
                     // notify our registration listener

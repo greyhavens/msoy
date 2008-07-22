@@ -176,10 +176,10 @@ public class IssueModels
     }
 
     /** A cached Issues data model. */
-    protected HashMap<Integer, HashMap<Integer, Issues>> _issuesModel = 
+    protected HashMap<Integer, HashMap<Integer, Issues>> _issuesModel =
         new HashMap<Integer, HashMap<Integer, Issues>>();
 
     /** A cached OwnedIssues data model. */
-    protected HashMap<Integer, HashMap<Integer, OwnedIssues>> _ownedModel = 
+    protected HashMap<Integer, HashMap<Integer, OwnedIssues>> _ownedModel =
         new HashMap<Integer, HashMap<Integer, OwnedIssues>>();
 }

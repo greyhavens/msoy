@@ -63,7 +63,7 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (byte type, int itemId)
     {
-        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), 
+        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     setItem(result);

@@ -41,7 +41,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(CGames.msgs.featuredOnline("" + game.playersOnline), "Online"), 10, 170);
         }
-        
+
         // prev and next buttons are positioned in css
         add(MsoyUI.createPrevNextButtons(new ClickListener() {
             public void onClick (Widget sender) {
@@ -52,12 +52,12 @@ public class FeaturedGamePanel extends AbsolutePanel
                 selectGame((index+1)%_games.length);
             }
         }));
-        
+
         add(MsoyUI.createLabel(game.name, "Name"), 200, 40);
         add(MsoyUI.createLabel(CGames.dmsgs.getString("genre" + game.genre), "Genre"), 200, 65);
         add(new CreatorLabel(game.creator), 200, 85);
         add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
-        
+
         add(new Stars(game.rating, true, false, null), 210, 180);
         PlayButton play = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
         play.setStyleName("playButtonSmall");

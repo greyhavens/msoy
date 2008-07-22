@@ -39,7 +39,7 @@ import client.util.Stars;
 public class GameGenrePanel extends FlowPanel
 {
     public GameGenrePanel (final byte genre, final byte sortMethod, final String query)
-    {       
+    {
         setStyleName("gameGenre");
         _genre = genre;
 
@@ -61,25 +61,25 @@ public class GameGenrePanel extends FlowPanel
                     Application.go(Page.GAMES, Args.compose(
                         new String[] {"g", genre+"", newSortMethod+"", query}));
                 }
-                
+
             }
         });
-        
-        String titleText; 
+
+        String titleText;
         if (genre >= 0) {
             String genreTitle = CGames.dmsgs.getString("genre" + genre);
             if (genreTitle.length() > 8) {
                 titleText = genreTitle;
             }
             else {
-                titleText = genreTitle + " Games"; 
+                titleText = genreTitle + " Games";
             }
         }
         else {
             titleText = CGames.msgs.genreAllGames();
         }
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
-        
+
         CGames.gamesvc.loadGameGenre(
             CGames.ident, genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
                 public void onSuccess (List<GameInfo> games) {
@@ -95,7 +95,7 @@ public class GameGenrePanel extends FlowPanel
     {
         // set the dropdown list of all games
         _header.init(games);
-        
+
         // add the games to the page
         add(new GameGenreGrid(games));
     }
@@ -110,12 +110,12 @@ public class GameGenrePanel extends FlowPanel
             addStyleName("Games");
             setModel(new SimpleDataModel<GameInfo>(games), 0);
         }
-        
+
         @Override
         protected Widget createWidget (GameInfo item) {
             return new GameInfoPanel(item);
         }
-        
+
         @Override
         protected String getEmptyMessage () {
             return CGames.msgs.genreNoGames();
@@ -125,30 +125,30 @@ public class GameGenrePanel extends FlowPanel
          * Add the sort box and header row
          */
         @Override
-        protected void addCustomControls (FlexTable controls) {           
+        protected void addCustomControls (FlexTable controls) {
             controls.setWidget(
                 0, 0, new InlineLabel(CGames.msgs.genreSortBy(), false, false, false));
             controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
             controls.setWidget(0, 1, _sortBox);
-            
+
             // add a second row with table titles
             FlowPanel headers = new FlowPanel();
             headers.setStyleName("Titles");
             controls.setWidget(1, 0, headers);
             controls.getFlexCellFormatter().setColSpan(1, 0, 7);
-            
+
             headers.add(createTitle("Name", "NameTitle", GameInfo.SORT_BY_RATING));
             headers.add(createTitle("Rating", "RatingTitle", GameInfo.SORT_BY_NAME));
             headers.add(createTitle("Category", "CategoryTitle", GameInfo.SORT_BY_GENRE));
-            headers.add(createTitle("Now Playing", "NowPlayingTitle", 
+            headers.add(createTitle("Now Playing", "NowPlayingTitle",
                 GameInfo.SORT_BY_PLAYERS_ONLINE));
         }
-        
+
         /**
          * Creates a title for display in the grid header that performs a sort action onclick
          */
         protected Widget createTitle (String text, String styleName, byte sortMethod) {
-            Hyperlink link = Application.createLink(text, Page.GAMES, 
+            Hyperlink link = Application.createLink(text, Page.GAMES,
                 Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
             link.addStyleName(styleName);
             return link;
@@ -164,7 +164,7 @@ public class GameGenrePanel extends FlowPanel
                 formatter.addStyleName(row, col, "Alternating");
             }
         }
-        
+
         /**
          * One row of the grid with details on a single game.
          */
@@ -174,7 +174,7 @@ public class GameGenrePanel extends FlowPanel
             {
                 setStyleName("GameInfoPanel");
                 int col = 0;
-                
+
                 ClickListener gameClick = new ClickListener() {
                     public void onClick (Widget widget) {
                         Application.go(Page.GAMES, Args.compose("d", game.gameId));
@@ -182,13 +182,13 @@ public class GameGenrePanel extends FlowPanel
                 };
                 setWidget(0, col++, MediaUtil.createMediaView(
                     game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick), 1, "Thumbnail");
-                
+
                 FlowPanel name = new FlowPanel();
                 name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));
-                name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80), 
+                name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80),
                          "Description"));
                 setWidget(0, col++, name, 1, "NameDesc");
-                
+
                 FlowPanel ratingPanel = new FlowPanel();
                 ratingPanel.add(new Stars(game.rating, true, false, null));
                 ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""),
@@ -230,7 +230,7 @@ public class GameGenrePanel extends FlowPanel
             }
         }
     }
-    
+
     protected static final String[] SORT_LABELS = new String[] {
         CGames.msgs.genreSortByRating(),
         CGames.msgs.genreSortByNewest(),
@@ -240,7 +240,7 @@ public class GameGenrePanel extends FlowPanel
         CGames.msgs.genreSortByCategory(),
         CGames.msgs.genreSortByNowPlaying()
     };
-    
+
     protected static final byte[] SORT_VALUES = new byte[] {
         GameInfo.SORT_BY_RATING,
         GameInfo.SORT_BY_NEWEST,
@@ -253,12 +253,12 @@ public class GameGenrePanel extends FlowPanel
 
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
-    
+
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
-    
+
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
-    
+
     protected static final int GAMES_PER_PAGE = 10;
 }

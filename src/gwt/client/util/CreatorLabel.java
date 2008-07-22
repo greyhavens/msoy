@@ -35,7 +35,7 @@ public class CreatorLabel extends FlowPanel
         setMember(name, null);
     }
 
-    public void setMember (MemberName name, PopupMenu menu) 
+    public void setMember (MemberName name, PopupMenu menu)
     {
         while (getWidgetCount() > 0) {
             remove(0);

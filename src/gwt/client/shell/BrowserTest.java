@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
 
 /**
- * Determines whether the visitor is using a suppported browser and displays a 
+ * Determines whether the visitor is using a suppported browser and displays a
  * warning specific to their detected browser if they are not.
  */
 public class BrowserTest
@@ -30,9 +30,9 @@ public class BrowserTest
         if (cookie != null && cookie.equals("true")) {
             return null;
         }
-        
+
         String browserType = getBrowserType();
-        
+
         final String message;
 
         if (browserType.equals(SUPPORTED_MSIE) || browserType.equals(SUPPORTED_FIREFOX)
@@ -49,8 +49,8 @@ public class BrowserTest
         }
         else {
             message = CShell.cmsgs.browserUnsupported();
-        }     
-        
+        }
+
         FlowPanel browserTestWidget = null;
         if (message != null) {
             browserTestWidget = MsoyUI.createFlowPanel("browserTest");
@@ -58,17 +58,17 @@ public class BrowserTest
             browserTestWidget.add(messageBox);
             messageBox.add(MsoyUI.createLabel(CShell.cmsgs.browserTitle(), "Title"));
             messageBox.add(new HTML(message));
-            
+
             messageBox.add(MsoyUI.createActionImage(
                 "/images/landing/get_firefox_button.png", CShell.cmsgs.browserGetFirefox(), new ClickListener() {
                 public void onClick (Widget widget) { Window.open("http://getfirefox.com", "_blank", ""); } }));
             messageBox.add(MsoyUI.createActionImage(
                 "/images/landing/continue_button.png", CShell.cmsgs.browserClose(), continueClicked));
         }
-        
+
         // set a cookie so they don't see this warning again
         CookieUtil.set("/", 365, TEST_SEEN_COOKIE, "true");
-        
+
         return browserTestWidget;
     }
 
@@ -78,38 +78,38 @@ public class BrowserTest
      */
     private static native String getBrowserType() /*-{
             var ua = navigator.userAgent.toLowerCase();
-            
+
             if (ua.indexOf("msie 6.0") != -1) {
                 return "old_msie";
             }
-            
+
             // assume anything that isn't ie6 is newer
             else if (ua.indexOf("msie") != -1) {
                 return "supported_msie";
             }
-            
+
             else if (ua.indexOf("webkit") != -1) {
                 return "safari";
             }
-            
+
             else if (ua.indexOf("opera") != -1) {
                 return "opera";
             }
 
             // lump all gecko browsers into firefox
             else if (ua.indexOf("gecko") != -1) {
-                var result = /rv:([0-9]+)\.([0-9]+)/.exec(ua); 
-                if (result && result.length == 3) { 
-                    var version = (parseInt(result[1]) * 10) + parseInt(result[2]); 
-                    if (version >= 19) 
-                       return "supported_firefox"; 
-                } 
+                var result = /rv:([0-9]+)\.([0-9]+)/.exec(ua);
+                if (result && result.length == 3) {
+                    var version = (parseInt(result[1]) * 10) + parseInt(result[2]);
+                    if (version >= 19)
+                       return "supported_firefox";
+                }
                 return "old_firefox";
             }
-            
+
             return "unknown";
     }-*/;
-    
+
     protected static final String OLD_MSIE = "old_msie";
     protected static final String SUPPORTED_MSIE = "supported_msie";
     protected static final String OLD_FIREFOX = "old_firefox";
@@ -117,6 +117,6 @@ public class BrowserTest
     protected static final String SAFARI = "safari";
     protected static final String OPERA = "opera";
     protected static final String UNKNOWN = "unknown";
-    
+
     protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen";
 }

@@ -63,7 +63,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         });
         _info.setWidget(0, 2, next);
         _info.getFlexCellFormatter().setRowSpan(0, 2, 2);
-        
+
         // optional list of icons
         if (showThumbnails) {
             add(_iconsPanel = new FlowPanel());
@@ -75,7 +75,7 @@ public class FeaturedWhirledPanel extends FlowPanel
     {
         _whirleds = whirleds;
         showWhirled(0);
-        
+
         // display icons for the first four whirleds
         if (_iconsPanel != null) {
             for (int i = 0; i < 4; i++) {
@@ -140,7 +140,7 @@ public class FeaturedWhirledPanel extends FlowPanel
                     showWhirled(index);
                 }
             };
-            
+
             // put the icon in a box with the whirled name beneath it
             Widget image = MediaUtil.createMediaView(card.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupClick);
             FlowPanel iconBox = new FlowPanel();
@@ -150,10 +150,10 @@ public class FeaturedWhirledPanel extends FlowPanel
             add(MsoyUI.createActionLabel(card.name.toString(), groupClick));
         }
     }
-    
+
     protected boolean _showPlaceholder;
-    protected FlowPanel _iconsPanel; 
-    
+    protected FlowPanel _iconsPanel;
+
     protected GroupCard[] _whirleds;
     protected int _selidx;
 

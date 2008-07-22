@@ -32,7 +32,7 @@ public class FriendsPanel extends FlowPanel
         }
 
         _memberId = memberId;
-        CPeople.profilesvc.loadFriends(CPeople.ident, _memberId, 
+        CPeople.profilesvc.loadFriends(CPeople.ident, _memberId,
             new MsoyCallback<ProfileService.FriendsResult>() {
                 public void onSuccess (ProfileService.FriendsResult result) {
                     gotFriends(result);

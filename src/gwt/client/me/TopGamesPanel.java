@@ -156,7 +156,7 @@ public class TopGamesPanel extends AbsolutePanel
             left.add(MsoyUI.createLabel(
                 CGames.msgs.featuredOnline("" + game.playersOnline), "Online"));
         }
-        
+
         left.add(WidgetUtil.makeShim(10, 10));
         left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0));
 

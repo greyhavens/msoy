@@ -48,7 +48,7 @@ public class MyWhirleds extends AbsolutePanel
     public MyWhirleds (byte sortMethod)
     {
         setStyleName("myWhirleds");
-        
+
         _sortBox = new ListBox();
         for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
             _sortBox.addItem(SORT_LABELS[ii]);
@@ -80,15 +80,15 @@ public class MyWhirleds extends AbsolutePanel
         add(MsoyUI.createSimplePanel("WhirledsGrid", grid));
         grid.setModel(new SimpleDataModel<MyGroupCard>(whirleds), 0);
     }
-    
+
     /**
      * Displays a list of whirleds in a paged grid.
      */
     protected class WhirledsGrid extends PagedGrid<MyGroupCard>
-    {       
+    {
         public static final int WHIRLEDS_PER_PAGE = 10;
 
-        public WhirledsGrid () 
+        public WhirledsGrid ()
         {
             super(WHIRLEDS_PER_PAGE, 1);
             setWidth("100%");
@@ -111,14 +111,14 @@ public class MyWhirleds extends AbsolutePanel
         {
             return true;
         }
-        
+
         @Override // from PagedGrid
-        protected void addCustomControls (FlexTable controls) {           
+        protected void addCustomControls (FlexTable controls) {
             controls.setWidget(
                 0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
             controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
             controls.setWidget(0, 1, _sortBox);
-            
+
             // add a second row with table titles
             FlowPanel headers = new FlowPanel();
             headers.setStyleName("Headers");
@@ -135,7 +135,7 @@ public class MyWhirleds extends AbsolutePanel
          */
         protected class WhirledWidget extends AbsolutePanel
         {
-            public WhirledWidget (MyGroupCard card) 
+            public WhirledWidget (MyGroupCard card)
             {
                 setStyleName("WhirledWidget");
 
@@ -147,7 +147,7 @@ public class MyWhirleds extends AbsolutePanel
                 logoBox.setStyleName("LogoBox");
                 logoBox.setWidget(logo);
                 add(logoBox);
-                
+
                 // name links to whirled
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
@@ -163,7 +163,7 @@ public class MyWhirleds extends AbsolutePanel
                     name.add(managerStar);
                 }
                 add(name);
-                
+
                 // only show members online if there is at least one
                 if (card.population > 0) {
                     Label membersOnline = new Label(CWhirleds.msgs.myMembersOnline(""+card.population));
@@ -173,13 +173,13 @@ public class MyWhirleds extends AbsolutePanel
 
                 // latest thread subject links to thread
                 if (card.latestThread != null) {
-                    
+
                     Hyperlink latestThreadSubject = Application.createLink(
-                        card.latestThread.subject, 
+                        card.latestThread.subject,
                         Page.WHIRLEDS, Args.compose("t", card.latestThread.threadId));
                     latestThreadSubject.setStyleName("LatestThreadSubject");
                     add(latestThreadSubject);
-                    
+
                     //MsoyUI.createLabel(text, styleName)
                     FlowPanel postedBy = new FlowPanel();
                     postedBy.setStyleName("PostedBy");
@@ -188,7 +188,7 @@ public class MyWhirleds extends AbsolutePanel
                     String memberName = card.latestThread.firstPost.poster.name.toString();
                     int memberId = card.latestThread.firstPost.poster.name.getMemberId();
                     postedBy.add(Application.memberViewLink(memberName, memberId));
-                    
+
                     FlowPanel date = new FlowPanel();
                     date.setStyleName("Date");
                     add(date);
@@ -205,22 +205,22 @@ public class MyWhirleds extends AbsolutePanel
                     InlineLabel time = new InlineLabel(" " + TIME_FORMAT.format(created));
                     time.addStyleName("Time");
                     date.add(time);
-                    
+
                 }
                 else {
                     HTML noThreads = new HTML("No discussions");
                     noThreads.setStyleName("NoThreads");
                     add(noThreads);
                 }
-                
+
                 // #threads and #posts link to discussions
                 Hyperlink numThreads = Application.createLink(
-                    card.numThreads+"", 
+                    card.numThreads+"",
                     Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numThreads.addStyleName("NumThreads");
                 add(numThreads);
                 Hyperlink numPosts = Application.createLink(
-                    card.numPosts+"", 
+                    card.numPosts+"",
                     Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numPosts.addStyleName("NumPosts");
                 add(numPosts);
@@ -243,7 +243,7 @@ public class MyWhirleds extends AbsolutePanel
 
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
-    
+
     /** Used to format the most recent post date. */
     protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yy");
     protected static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm aa");

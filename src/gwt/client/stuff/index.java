@@ -86,14 +86,14 @@ public class index extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident, 
+                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident,
                     new MsoyCallback<ItemService.DetailOrIdent>() {
                         public void onSuccess (ItemService.DetailOrIdent result) {
                             if (result.detail != null) {
                                 _detail = result.detail;
                                 _models.updateItem(_detail.item);
                                 setContent(title, new ItemDetailPanel(_models, _detail));
-    
+
                             } else {
                                 // We didn't have access to that specific item, but have been given
                                 // the catalog id for the prototype.

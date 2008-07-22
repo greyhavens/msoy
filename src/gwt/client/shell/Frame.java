@@ -80,10 +80,10 @@ public class Frame
         // default to scrolling off.  In the rare case where a page wants scrolling, it gets enabled
         // explicitly.
         Window.enableScrolling(false);
-        
+
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING_AND_TESTS).getElement(), "");
-        
+
         // If the browser is unsupported, hide the page (still being built) and show a warning.
         ClickListener continueClicked = new ClickListener() {
             public void onClick (Widget widget) {
@@ -91,7 +91,7 @@ public class Frame
                 RootPanel.get(LOADING_AND_TESTS).clear();
                 RootPanel.get(LOADING_AND_TESTS).setVisible(false);
                 RootPanel.get(SITE_CONTAINER).setVisible(true);
-            } 
+            }
         };
         Widget warningDialog = BrowserTest.getWarningDialog(continueClicked);
         if (warningDialog != null) {
@@ -102,7 +102,7 @@ public class Frame
             RootPanel.get(LOADING_AND_TESTS).clear();
             RootPanel.get(LOADING_AND_TESTS).setVisible(false);
         }
-        
+
         _dialog = new Dialog();
         _popup = new PopupDialog();
     }
@@ -242,7 +242,7 @@ public class Frame
             _scroller.ensureVisible(widget);
         }
     }
-    
+
     /**
      * Displays the supplied dialog in the frame.
      */
@@ -250,9 +250,9 @@ public class Frame
     {
         // remove any existing content
         clearDialog();
-        
+
         // update the dialog content and add it
-        _dialog.update(title, dialog);     
+        _dialog.update(title, dialog);
         RootPanel.get(HEADER).add(_dialog); // TODO: animate this sliding down
     }
 
@@ -274,7 +274,7 @@ public class Frame
     {
         RootPanel.get(HEADER).remove(_dialog);
     }
-    
+
     /**
      * Clears out the client section of the frame and creates a new scroll pane to contain a new
      * client (and other bits if desired).
@@ -427,59 +427,59 @@ public class Frame
 
     protected static class Dialog extends SimplePanel
     {
-        public Dialog () {           
+        public Dialog () {
             init(new ClickListener() {
                 public void onClick (Widget sender) {
                     Frame.clearDialog();
                 }
             });
         }
-        
-        public Dialog (ClickListener closeListener) { 
+
+        public Dialog (ClickListener closeListener) {
             init(closeListener);
         }
-        
-        protected void init(ClickListener closeListener) {            
+
+        protected void init(ClickListener closeListener) {
             setWidget(_innerTable = new SmartTable("pageDialog", 0, 0));
-            
+
             _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(closeListener), 1, "Close");
             _innerTable.getFlexCellFormatter().setHorizontalAlignment(
                 1, 0, HasAlignment.ALIGN_CENTER);
-            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);            
+            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
         }
-        
+
         public void update(String title, Widget content) {
             _innerTable.setText(0, 0, title, 1, "DialogTitle");
-            _innerTable.setWidget(1, 0, content, 2, null);            
+            _innerTable.setWidget(1, 0, content, 2, null);
         }
-        
+
         protected SmartTable _innerTable;
     }
 
     protected static class PopupDialog extends PopupPanel
     {
         public PopupDialog () {
-            
+
             super(false);
             setAnimationEnabled(true);
             setStyleName("floatingDialogBox");
-            
+
             _innerDialog = new Dialog(new ClickListener() {
                 public void onClick (Widget sender) {
                     setVisible(false);
-                }                
-            });     
+                }
+            });
             setWidget(_innerDialog);
         }
-        
+
         public void update(String title, Widget content) {
-            _innerDialog.update(title, content);            
+            _innerDialog.update(title, content);
         }
-        
+
         protected Dialog _innerDialog;
-        
+
     }
-    
+
     protected static class SubNaviPanel extends FlowPanel
     {
         public void addLink (String iconPath, String label, final String page, final String args) {
@@ -593,7 +593,7 @@ public class Frame
                       _images.sme());
             addButton(col++, Page.PEOPLE, CShell.cmsgs.menuFriends(), _images.friends(),
                       _images.ofriends(), _images.sfriends());
-            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(), 
+            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(),
                       _images.ogames(), _images.sgames());
             addButton(col++, Page.WHIRLEDS, CShell.cmsgs.menuWorlds(), _images.worlds(),
                       _images.oworlds(), _images.sworlds());

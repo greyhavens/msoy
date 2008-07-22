@@ -67,7 +67,7 @@ public class index extends MsgsEntryPoint
         CPeople.msgs = (PeopleMessages)GWT.create(PeopleMessages.class);
     }
 
-    protected void displaySearch (Args args) 
+    protected void displaySearch (Args args)
     {
         if (_search == null) {
             _search = new SearchPanel();

@@ -58,7 +58,7 @@ public class FriendsBlurb extends Blurb
 
     protected class FriendWidget extends FlowPanel
     {
-        public FriendWidget (final MemberCard card) 
+        public FriendWidget (final MemberCard card)
         {
             setStyleName("Friend");
             ClickListener profileClick = new ClickListener() {

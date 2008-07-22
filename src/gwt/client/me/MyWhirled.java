@@ -38,7 +38,7 @@ public class MyWhirled extends VerticalPanel
         add(new StuffNaviBar(Item.NOT_A_TYPE));
         add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
         add(new WhatsNextPanel(data));
-        String empty = 
+        String empty =
             data.friendCount > 0 ? CMe.mmsgs.emptyFeed() : CMe.mmsgs.emptyFeedNoFriends();
         FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {

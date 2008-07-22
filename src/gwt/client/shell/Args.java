@@ -117,7 +117,7 @@ public class Args
         }
         return -1;
     }
-    
+
     /**
      * Splices off the arguments from the specified index onward and returns them as an array for
      * recomposition with {@link #compose}.
@@ -155,7 +155,7 @@ public class Args
         }
         return args;
     }
-    
+
     /**
      * Called by {@link Application} when configuring our arguments.
      */

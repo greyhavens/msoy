@@ -21,7 +21,7 @@ public class DateFields extends HorizontalPanel
         return new Date(datevec[0] - 1900, datevec[1], datevec[2]);
     }
 
-    public DateFields () 
+    public DateFields ()
     {
         setStyleName("dateFields");
         setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
@@ -72,7 +72,7 @@ public class DateFields extends HorizontalPanel
      * Get the date that has been put into the fields of this DateFields widget as (year, month,
      * day). If one or more of the fields hasn't been filled in properly, this method returns null.
      */
-    public int[] getDate () 
+    public int[] getDate ()
     {
         int year = Integer.parseInt(_year.getItemText(_year.getSelectedIndex()));
         return new int[] { year, _month.getSelectedIndex(), _day.getSelectedIndex() + 1 };

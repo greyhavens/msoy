@@ -24,7 +24,7 @@ import client.util.ServiceBackedDataModel;
 public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
-    public static class GroupThreads 
+    public static class GroupThreads
         extends ServiceBackedDataModel<ForumThread, ForumService.ThreadResult>
     {
         public GroupThreads (int groupId) {
@@ -95,7 +95,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            CMsgs.forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this); 
+            CMsgs.forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -176,14 +176,14 @@ public class ForumModels
                     public void onFailure (Throwable failure) {
                         callback.onFailure(failure);
                     }
-                }); 
+                });
         }
 
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
     /** A data model that provides a particular thread's messages. */
-    public static class ThreadMessages 
+    public static class ThreadMessages
         extends ServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
     {
         public ThreadMessages (int threadId, ForumThread thread) {
@@ -260,7 +260,7 @@ public class ForumModels
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
             CMsgs.forumsvc.loadMessages(CMsgs.ident, _threadId, _thread.lastReadPostId,
-                                        start, count, needCount, this); 
+                                        start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel

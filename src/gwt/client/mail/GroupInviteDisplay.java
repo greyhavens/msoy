@@ -48,7 +48,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI ()
         {
-            CMail.groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId, 
+            CMail.groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId,
                 new MsoyCallback<GroupService.GroupInfo>() {
                     public void onSuccess (GroupService.GroupInfo result) {
                         _info = result;
@@ -80,7 +80,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void joinGroup ()
         {
-            CMail.groupsvc.joinGroup(CMail.ident, _invitePayload.groupId, 
+            CMail.groupsvc.joinGroup(CMail.ident, _invitePayload.groupId,
                 new MsoyCallback<Void>() {
                     // if joining the group succeeds, mark this invitation as accepted
                     public void onSuccess (Void result) {

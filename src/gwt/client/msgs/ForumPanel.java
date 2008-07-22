@@ -83,7 +83,7 @@ public class ForumPanel extends TitledListPanel
         // default title may be overwritten later
         _title = MsoyUI.createSimplePanel("TitleBox", new Label(title));
         header.setWidget(0, col++, _title, 1, "Title");
-        
+
         if (listener != null) {
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
         }
@@ -94,7 +94,7 @@ public class ForumPanel extends TitledListPanel
         }
         return header;
     }
-    
+
     /**
      * After _fmodels is filled, override the default title with the group name and a link to it.
      */
@@ -122,7 +122,7 @@ public class ForumPanel extends TitledListPanel
 
     /** Our forum model cache. */
     protected ForumModels _fmodels;
-    
+
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;
 

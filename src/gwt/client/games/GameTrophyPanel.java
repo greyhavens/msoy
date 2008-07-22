@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import client.util.MediaUtil;
 
 /**
- * Displays the trophies 
+ * Displays the trophies
  */
 public class GameTrophyPanel extends PagedGrid<Trophy>
 {

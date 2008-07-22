@@ -193,7 +193,7 @@ public class FlashClients
     /**
      * Exposed. Also called from ItemRemixer.
      */
-    public static String createDecorViewerParams (Decor decor) 
+    public static String createDecorViewerParams (Decor decor)
     {
         return "decorType=" + decor.type + "&decorWidth=" + decor.width +
             "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +

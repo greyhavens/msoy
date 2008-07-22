@@ -113,7 +113,7 @@ public class EditAccountPanel extends SmartTable
 
         // configure real name interface
         setText(row++, 0, CMe.msgs.editRealNameHeader(), 3, "Header");
-        
+
         setText(row, 0, CMe.msgs.editRealName(), 1, "rightLabel");
         setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
@@ -345,13 +345,13 @@ public class EditAccountPanel extends SmartTable
         _uppname.setEnabled(valid);
     }
 
-    protected void setError (String text) 
+    protected void setError (String text)
     {
         _status.addStyleName("Error");
         _status.setText(text);
     }
 
-    protected void setStatus (String text) 
+    protected void setStatus (String text)
     {
         _status.removeStyleName("Error");
         _status.setText(text);

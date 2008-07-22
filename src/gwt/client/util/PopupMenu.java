@@ -28,14 +28,14 @@ public abstract class PopupMenu extends PopupPanel
         setTrigger(trigger);
     }
 
-    /** 
+    /**
      * Set the label that will trigger the popping up of this menu
      */
     public void setTrigger (Label trigger)
     {
         trigger.addStyleName("LabelLink");
         trigger.addMouseListener(new MouseListenerAdapter() {
-            public void onMouseDown (Widget sender, int x, int y) { 
+            public void onMouseDown (Widget sender, int x, int y) {
                 clear();
                 _menu = new MenuBar(true);
                 addMenuItems();

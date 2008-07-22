@@ -133,7 +133,7 @@ public class GameEditor extends ItemEditor
         }
         addRow(CShell.emsgs.gameGenre(), _genre);
 
-        // seated continuous games are disabled for 
+        // seated continuous games are disabled for
         addRow(CShell.emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
@@ -192,9 +192,9 @@ public class GameEditor extends ItemEditor
         addTip(CShell.emsgs.gameServerHeadingTip());
         MediaUpdater serverMediaUpdater = new MediaUpdater() {
             public String updateMedia (
-                String name, 
-                MediaDesc desc, 
-                int width, 
+                String name,
+                MediaDesc desc,
+                int width,
                 int height) {
                 // TODO: validate media type
                 _game.serverMedia = desc;
@@ -202,16 +202,16 @@ public class GameEditor extends ItemEditor
             }
         };
         MediaUploader serverMediaUploader = createUploader(
-            Game.SERVER_CODE_MEDIA, 
-            TYPE_CODE, 
-            MediaUploader.NORMAL, 
+            Game.SERVER_CODE_MEDIA,
+            TYPE_CODE,
+            MediaUploader.NORMAL,
             serverMediaUpdater);
         addRow(
             CShell.emsgs.gameServerMediaLabel(),
-            serverMediaUploader, 
+            serverMediaUploader,
             CShell.emsgs.gameServerMediaTip());
         addRow(
-            CShell.emsgs.gameServerClass(), 
+            CShell.emsgs.gameServerClass(),
             _serverClass = new TextBox(),
             CShell.emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
