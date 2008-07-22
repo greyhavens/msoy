@@ -20,7 +20,7 @@
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    **/msoy/group/data/GroupMembership.class,
+    **/msoy/group/data/GroupMembership.class,**/msoy/badge/data/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/notify/data/**,
     **/msoy/game/data/GameSummary.class,**/msoy/world/data/WorldOccupantInfo.class,
     **/msoy/web/data/ServiceCodes.class)
