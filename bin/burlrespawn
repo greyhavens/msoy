@@ -33,7 +33,7 @@ while (1) {
     # update the code to the latest version
     if (read_prop("$root/dist/burl-server.properties", "dev_deployment") ne "true") {
         check_system("apt-get --assume-yes update");
-        check_system("apt-get --assume-yes install msoy-server");
+        check_system("apt-get --assume-yes install burl-server");
     }
 
     # now run the server
