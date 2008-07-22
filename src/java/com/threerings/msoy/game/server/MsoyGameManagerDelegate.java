@@ -4,15 +4,18 @@
 package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Comparators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -22,6 +25,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.media.util.MathUtil;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
@@ -41,6 +45,7 @@ import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
@@ -51,8 +56,12 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.badge.data.BadgeType;
+import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.server.BadgeUtil;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -520,6 +529,46 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // stop accumulating "game time" for players
         stopTracking();
         resetTracking();
+
+        // update player stats
+        final int[] playerIds = _playerIds.clone();
+        final boolean[] winners = _gobj.winners.clone();
+        _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
+            public void invokePersist () throws PersistenceException {
+                boolean isMultiplayer = (playerIds.length > 1);
+
+                for (int ii = 0; ii < playerIds.length; ii++) {
+                    int playerId = _playerIds[ii];
+
+                    // track total games played
+                    _statLogic.incrementStat(playerId, StatType.GAMES_PLAYED, 1);
+
+                    if (isMultiplayer) {
+                        // track unique game partners
+                        for (int otherPlayerId : playerIds) {
+                            if (otherPlayerId != playerId) {
+                                _statLogic.addToSetStat(playerId, StatType.MP_GAME_PARTNERS,
+                                    otherPlayerId);
+                            }
+                        }
+
+                        // track multiplayer game wins
+                        if (winners[ii]) {
+                            _statLogic.incrementStat(playerId, StatType.MP_GAMES_WON, 1);
+                        }
+                    }
+                }
+            }
+            protected String getFailureMessage () {
+                StringBuilder builder = new StringBuilder("Failed to update game stats: ");
+                return builder.toString();
+            }
+        });
+    }
+
+    protected void updatePlayerStats (final ArrayList<Integer> memberIds)
+    {
+
     }
 
     public void recordAgentTrace (String trace)
@@ -1100,4 +1149,10 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
+
+    /** Provides access to the main invoker. */
+    @Inject protected @MainInvoker Invoker _invoker;
+
+    /** Used to update member statistics. */
+    @Inject protected StatLogic _statLogic;
 }
