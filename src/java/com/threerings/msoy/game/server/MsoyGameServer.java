@@ -114,6 +114,9 @@ public class MsoyGameServer extends MsoyBaseServer
         gameReg = _gameReg;
         worldClient = _worldClient;
 
+        // give our game game registry Injection Power (tm)
+        _gameReg.init(injector);
+
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
             public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {

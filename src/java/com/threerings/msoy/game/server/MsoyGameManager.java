@@ -28,27 +28,17 @@ public class MsoyGameManager extends WhirledGameManager
         super();
     }
 
-    @Override
-    public void addDelegate (PlaceManagerDelegate delegate)
-    {
-        super.addDelegate(delegate);
-
-        if (delegate instanceof MsoyGameManagerDelegate) {
-            _awardDelegate = (MsoyGameManagerDelegate) delegate;
-        }
-    }
-
     // from interface WhirledGameProvider
-    public void awardTrophy (
-        ClientObject caller, String ident, int playerId, InvocationService.InvocationListener listener)
+    public void awardTrophy (ClientObject caller, String ident, int playerId,
+                             InvocationService.InvocationListener listener)
         throws InvocationException
     {
         _awardDelegate.awardTrophy(caller, ident, playerId, listener);
     }
 
     // from interface WhirledGameProvider
-    public void awardPrize (
-        ClientObject caller, String ident, int playerId, InvocationService.InvocationListener listener)
+    public void awardPrize (ClientObject caller, String ident, int playerId,
+                            InvocationService.InvocationListener listener)
         throws InvocationException
     {
         _awardDelegate.awardPrize(caller, ident, playerId, listener);
@@ -87,11 +77,24 @@ public class MsoyGameManager extends WhirledGameManager
             || (_gameconfig.players.length > 1);
     }
 
+    @Override
+    public void addDelegate (PlaceManagerDelegate delegate)
+    {
+        super.addDelegate(delegate);
+
+        if (delegate instanceof AwardDelegate) {
+            _awardDelegate = (AwardDelegate) delegate;
+        }
+        if (delegate instanceof AgentTraceDelegate) {
+            _traceDelegate = (AgentTraceDelegate) delegate;
+        }
+    }
+
     @Override // from WhirledGameManager
     public void agentTrace (ClientObject caller, String trace)
     {
         super.agentTrace(caller, trace);
-        _awardDelegate.recordAgentTrace(trace);
+        _traceDelegate.recordAgentTrace(trace);
     }
 
     @Override // from PlaceManager
@@ -114,6 +117,9 @@ public class MsoyGameManager extends WhirledGameManager
         return 1000L * ((getPlayerSlots() == 1) ? 180 : 90);
     }
 
-    /** A delegate that takes care of flow, ratings, trophy, prizes.. */
-    protected MsoyGameManagerDelegate _awardDelegate;
+    /** A delegate that takes care of awarding flow, ratings, trophy, prizes.. */
+    protected AwardDelegate _awardDelegate;
+
+    /** A delegate that handles agent traces.. */
+    protected AgentTraceDelegate _traceDelegate;
 }

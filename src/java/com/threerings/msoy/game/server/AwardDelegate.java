@@ -24,7 +24,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.media.util.MathUtil;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
@@ -32,8 +31,8 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.rating.server.RatingManagerDelegate;
-import com.threerings.parlor.rating.server.persist.RatingRepository;
+import com.threerings.parlor.game.server.GameManagerDelegate;
+import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.whirled.game.data.GameData;
@@ -73,17 +72,13 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
-public class MsoyGameManagerDelegate extends RatingManagerDelegate
+public class AwardDelegate extends RatingDelegate
 {
-    /** The string we append to an agent's trace log that's about to exceed 64K. */
-    public static String TRACE_CAP = "--- buffer full ---";
-
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public MsoyGameManagerDelegate (Invoker invoker, GameContent content)
+    public AwardDelegate (GameContent content)
     {
-        super(invoker);
         // keep our game content around for later
         _content = content;
     }
@@ -425,20 +420,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // put the kibosh on further flow tracking
         _flowPerMinute = -1;
 
-        // if there were agent traces, flush them to the database
-        if (_traceBuffer.length() > 0) {
-            final int gameId = _content.detail.gameId;
-            MsoyGameServer.invoker.postUnit(new RepositoryUnit("storeAgentTrace(" + gameId + ")") {
-                public void invokePersist () throws Exception {
-                    GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
-                    gameRepo.storeTraceLog(gameId, _traceBuffer.toString());
-                }
-                public void handleSuccess () {
-                    // good
-                }
-            });
-        }
-
         // if we were played for zero seconds, don't bother updating anything
         if (_totalTrackedSeconds == 0) {
             return;
@@ -476,7 +457,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // record this gameplay for future game metrics tracking and blah blah
         final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
-        MsoyGameServer.invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+        _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
             public void invokePersist () throws Exception {
                 GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
                 // note that this game was played
@@ -551,17 +532,16 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         resetTracking();
     }
 
-    public void recordAgentTrace (String trace)
+    @Override // from RatingDelegate
+    protected int minimumRatedDuration ()
     {
-        if (_tracing) {
-            // the first line we see that would exceed 64K turns off tracing
-            if (_traceBuffer.length() + trace.length() + 1 + TRACE_CAP.length() + 1 < 65535) {
-                _traceBuffer.append(trace).append("\n");
-            } else {
-                _traceBuffer.append(TRACE_CAP).append("\n");
-                _tracing = false;
-            }
-        }
+        return 10; // don't rate games that last less than 10 seconds
+    }
+
+    @Override // from RatingDelegate
+    protected void updateRatingInMemory (int gameId, Rating rating)
+    {
+        // we don't keep in-memory ratings for whirled
     }
 
     /**
@@ -621,24 +601,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     {
         DObject dobj = MsoyGameServer.omgr.getObject(playerOid);
         return (dobj instanceof PlayerObject ? ((PlayerObject)dobj).getMemberId() : 0);
-    }
-
-    @Override // from RatingManagerDelegate
-    protected int minimumRatedDuration ()
-    {
-        return 10; // don't rate games that last less than 10 seconds
-    }
-
-    @Override // from RatingManagerDelegate
-    protected RatingRepository getRatingRepository ()
-    {
-        return MsoyGameServer.ratingRepo;
-    }
-
-    @Override // from RatingManagerDelegate
-    protected void updateRatingInMemory (int gameId, Rating rating)
-    {
-        // we don't keep in-memory ratings for whirled
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -817,7 +779,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         }
     }
 
-    @Override // from RatingManagerDelegate
+    @Override // from RatingDelegate
     protected int getGameId ()
     {
         // single player ratings are stored as -gameId, multi-player as gameId
@@ -998,7 +960,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit("grantFlow") {
+        _invoker.postUnit(new Invoker.Unit("grantFlow") {
             public boolean invoke () {
                 UserActionDetails action = new UserActionDetails(
                         record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
@@ -1173,12 +1135,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
     /** Tracks accumulated playtime for all players in the game. */
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
-    /** Accumulates up to 64K bytes of trace data from this game's Agent, if any. */
-    protected StringBuilder _traceBuffer = new StringBuilder();
-
-    /** Determines whether we're still tracing or if we've bumped into the cap. */
-    protected boolean _tracing = true;
-
     /** Games for which we have no history earn no flow beyond this many minutes. */
     protected static final int MAX_FRESH_GAME_DURATION = 8*60;
 
@@ -1188,9 +1144,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
-
-    /** Provides access to the main invoker. */
-    @Inject protected @MainInvoker Invoker _invoker;
 
     /** Used to update member statistics. */
     @Inject protected StatLogic _statLogic;

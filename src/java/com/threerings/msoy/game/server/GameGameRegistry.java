@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
@@ -103,6 +104,14 @@ public class GameGameRegistry
         // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
+    }
+
+    /**
+     * Provides this registry with an injector it can use to create manager instances.
+     */
+    public void init (Injector injector)
+    {
+        _injector = injector;
     }
 
     /**
@@ -464,8 +473,8 @@ public class GameGameRegistry
                     return;
                 }
 
-                LobbyManager lmgr = new LobbyManager(
-                    _omgr, _invoker, _invmgr, _plreg, _eventLog, GameGameRegistry.this);
+                LobbyManager lmgr = _injector.getInstance(LobbyManager.class);
+                lmgr.init(_invmgr, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
                 _lobbies.put(gameId, lmgr);
 
@@ -757,6 +766,9 @@ public class GameGameRegistry
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
+
+    /** We use this to inject dependencies into managers we create. */
+    protected Injector _injector;
 
     // various and sundry dependent services
     @Inject protected RootDObjectManager _omgr;

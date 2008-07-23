@@ -6,12 +6,14 @@ package com.threerings.msoy.game.server;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -34,6 +36,7 @@ import com.whirled.game.data.TableMatchConfig;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -51,30 +54,24 @@ import static com.threerings.msoy.Log.log;
 public class LobbyManager
     implements LobbyObject.SubscriberListener
 {
+    /** Allows interested parties to know when a lobby shuts down. */
     public interface ShutdownObserver
     {
         void lobbyDidShutdown (Game game);
     }
 
     /**
-     * Create a new LobbyManager.
-     *
-     * @param game The game we're managing a lobby for.
+     * Initializes this lobby manager and prepares it for operation.
      */
-    public LobbyManager (RootDObjectManager omgr, Invoker invoker, InvocationManager invmgr,
-                         PlaceRegistry plreg, MsoyEventLogger log, ShutdownObserver shutObs)
+    public void init (InvocationManager invmgr, ShutdownObserver shutObs)
     {
-        _omgr = omgr;
-        _invoker = invoker;
-        _plreg = plreg;
         _shutObs = shutObs;
-        _eventLog = log;
 
         _lobj = _omgr.registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
         _lobj.addListener(_tableWatcher);
 
-        _tableMgr = new MsoyTableManager(omgr, invmgr, plreg, this);
+        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, this);
 
         // since we start empty, we need to immediately assume shutdown
         recheckShutdownInterval();
@@ -260,9 +257,10 @@ public class LobbyManager
         throws InstantiationException, InvocationException
     {
         List<PlaceManagerDelegate> delegates = Lists.newArrayList();
-        delegates.add(new MsoyGameLoggingDelegate(_content, _eventLog));
-        delegates.add(new MsoyGameManagerDelegate(_invoker, _content));
-        return (GameManager) _plreg.createPlace(config, delegates);
+        delegates.add(new EventLoggingDelegate(_content));
+        delegates.add(new AwardDelegate(_content));
+        delegates.add(new AgentTraceDelegate(getGameId()));
+        return (GameManager)_plreg.createPlace(config, delegates);
     }
 
     /**
@@ -313,20 +311,8 @@ public class LobbyManager
         }
     };
 
-    /** Our distributed object manager. */
-    protected RootDObjectManager _omgr;
-
-    /** Our database invoker thread. */
-    protected Invoker _invoker;
-
-    /** Used to create places. */
-    protected PlaceRegistry _plreg;
-
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
-
-    /** Event logger. */
-    protected MsoyEventLogger _eventLog;
 
     /** This fellow wants to hear when we shutdown. */
     protected ShutdownObserver _shutObs;
@@ -339,6 +325,13 @@ public class LobbyManager
 
     /** An interval to let us delay lobby shutdown for awhile. */
     protected Interval _shutdownInterval;
+
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected PlaceRegistry _plreg;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected GameRepository _gameRepo;
 
     /** idle time before shutting down the manager. */
     protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms
