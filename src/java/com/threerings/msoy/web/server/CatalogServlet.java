@@ -18,10 +18,12 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
@@ -218,6 +220,12 @@ public class CatalogServlet extends MsoyServiceServlet
                         creatorPortion);
                     MemberNodeActions.flowUpdated(flowRec);
                 }
+            }
+
+            // update player stats if the seller wasn't also the purchaser
+            if (mrec.memberId != listing.item.creatorId) {
+                _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
+                _statLogic.incrementStat(listing.item.creatorId, StatType.ITEMS_SOLD, 1);
             }
 
             // update their runtime inventory as appropriate
@@ -670,4 +678,5 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected StatLogic _statLogic;
 }
