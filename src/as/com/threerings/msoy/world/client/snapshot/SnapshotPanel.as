@@ -32,8 +32,8 @@ import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    public static const CANONICAL_WIDTH :int = 380; // old: 320;
-    public static const CANONICAL_HEIGHT :int = 167; // old: 180;
+    public static const CANONICAL_WIDTH :int = 350; // old: 320;
+    public static const CANONICAL_HEIGHT :int = 200; // old: 180;
 
     public var fullRoom :Snapshot;
     public var canonical :Snapshot;
