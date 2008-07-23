@@ -13,7 +13,6 @@ import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
 import com.adobe.images.JPGEncoder;
-import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
@@ -63,9 +62,8 @@ public class SnapshotController extends Controller
 
     protected function upload (bitmap :BitmapData, sceneId :int) :void
     {
-//        const encoder :JPGEncoder = new JPGEncoder(80);
-//        const mimeBody :ByteArray = makeMimeBody(sceneId, encoder.encode(bitmap));
-        const mimeBody :ByteArray = makeMimeBody(sceneId, PNGEncoder.encode(bitmap));
+        const encoder :JPGEncoder = new JPGEncoder(80);
+        const mimeBody :ByteArray = makeMimeBody(sceneId, encoder.encode(bitmap));
 
         // TODO: display a progress dialog during uploading
         // These should be local, or the dialog is a new thing. Fuck this controller, actually.
@@ -98,8 +96,8 @@ public class SnapshotController extends Controller
             "Content-Disposition: form-data; name=\"scene\"\r\n" +
             "\r\n" + String(sceneId) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"snapshot\"; " +
-            "filename=\"snapshot.png\"\r\n" +
-            "Content-Type: image/png\r\n" +
+            "filename=\"snapshot.jpg\"\r\n" +
+            "Content-Type: image/jpeg\r\n" +
             "\r\n");
         output.writeBytes(data);
         output.writeUTFBytes("\r\n--" + BOUNDARY + "--\r\n");
