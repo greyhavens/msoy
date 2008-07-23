@@ -6,6 +6,9 @@ package com.threerings.msoy.applets.remixer {
 import flash.events.Event;
 import flash.events.TextEvent;
 
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
@@ -56,23 +59,16 @@ public class DataEditor extends FieldEditor
 
     protected function setupString (entry :Object, validator :Validator = null) :Array
     {
-        var label :Label = new Label();
-        label.selectable = false;
-        label.setStyle("color", NAME_AND_VALUE_COLOR);
-        updateLabel(label, entry);
-        _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED,
-            function (event :ValueEvent) :void {
-                if (event.value === entry.name) {
-                    updateLabel(label, _ctx.pack.getDataEntry(entry.name));
-                }
-            });
+        var valToString :Function = function (val :Object) :String {
+            return String(val);
+        };
 
         var dataEditor :DataEditor = this;
-        var change :CommandButton = createEditButton(function () :void {
-            new PopupEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name), validator);
-        });
+        var changeAction :Function = function () :void {
+            new PopupStringEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name), validator);
+        };
 
-        return [ label, change, change ];
+        return setupPopper(entry, valToString, changeAction);
     }
 
     protected function setupNumber (entry :Object) :Array
@@ -114,25 +110,79 @@ public class DataEditor extends FieldEditor
 
     protected function setupPoint (entry :Object) :Array
     {
-        // TODO
-        throw new Error("TODO");
+        var valToString :Function = function (val :Object) :String {
+            var p :Point = val as Point;
+            if (p == null) {
+                return "";
+            }
+            return "Point(" + p.x + ", " + p.y + ")";
+        };
+
+        var dataEditor :DataEditor = this;
+        var changeAction :Function = function () :void {
+            new PopupPointEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name));
+        };
+
+        return setupPopper(entry, valToString, changeAction);
     }
 
     protected function setupRectangle (entry :Object) :Array
     {
-        // TODO
-        throw new Error("TODO");
+        var valToString :Function = function (val :Object) :String {
+            var r :Rectangle = val as Rectangle;
+            if (r == null) {
+                return "";
+            }
+            return "Rectangle(" + r.x + ", " + r.y + ", " + r.width + ", " + r.height + ")";
+        };
+
+        var dataEditor :DataEditor = this;
+        var changeAction :Function = function () :void {
+            new PopupRectangleEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name));
+        };
+
+        return setupPopper(entry, valToString, changeAction);
     }
 
     protected function setupArray (entry :Object) :Array
     {
-        // TODO
-        throw new Error("TODO");
+        var valToString :Function = function (val :Object) :String {
+            return (val as Array).join();
+        };
+
+        var dataEditor :DataEditor = this;
+        var changeAction :Function = function () :void {
+            new PopupArrayEditor(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name));
+        };
+
+        return setupPopper(entry, valToString, changeAction);
     }
 
-    protected function updateLabel (label :Label, entry :Object) :void
+    /**
+     * Configure an editor that uses a pop-up to edit the actual value.
+     */
+    protected function setupPopper (
+        entry :Object, valToString :Function, changeAction :Function) :Array
     {
-        label.text = (entry.value == null) ? "" : String(entry.value);
+        var label :Label = new Label();
+        label.selectable = false;
+        label.setStyle("color", NAME_AND_VALUE_COLOR);
+        updateLabel(label, entry.value, valToString);
+        _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED,
+            function (event :ValueEvent) :void {
+                if (event.value === entry.name) {
+                    updateLabel(label, _ctx.pack.getDataEntry(entry.name).value, valToString);
+                }
+            });
+
+        var change :CommandButton = createEditButton(changeAction);
+
+        return [ label, change, change ];
+    }
+
+    protected function updateLabel (label :Label, value :Object, valToString :Function) :void
+    {
+        label.text = (value == null) ? "" : valToString(value);
     }
 
     internal function updateValue (value :*) :void

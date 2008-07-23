@@ -5,39 +5,32 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
-import flash.events.TextEvent;
-
-import mx.controls.Label;
-import mx.controls.TextArea;
-import mx.controls.TextInput;
 
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 
-import mx.events.FlexEvent;
-import mx.events.ValidationResultEvent;
-
 import mx.managers.PopUpManager;
-
-import mx.validators.Validator;
-import mx.validators.ValidationResult;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.PopUpUtil;
 
+/**
+ * Subclassable to allow editing a data field in a popup.
+ */
 public class PopupEditor extends TitleWindow
 {
     public function PopupEditor (
-        ctx :RemixContext, parent :DataEditor, entry :Object, validator :Validator = null)
+        ctx :RemixContext, parent :DataEditor, entry :Object)
     {
         _parent = parent;
-        _validator = validator;
-
         this.title = entry.name;
-        var type :String = entry.type as String;
 
+        // configure the okbutton immediately
+        _okBtn = new CommandButton(ctx.REMIX.get("b.ok"), close, true);
+
+        // set up the grid with some standard bits
         var grid :Grid = new Grid();
         addChild(grid);
         GridUtil.addRow(grid, ctx.REMIX.get("l.name"), entry.name as String);
@@ -46,81 +39,49 @@ public class PopupEditor extends TitleWindow
             desc = ctx.REMIX.get("m.none");
         }
         GridUtil.addRow(grid, ctx.REMIX.get("l.desc"), desc);
-        GridUtil.addRow(grid, ctx.REMIX.get("l.type"), type);
+        GridUtil.addRow(grid, ctx.REMIX.get("l.type"), entry.type as String);
 
-        if (type == "Number") {
-            var min :Number = Number(entry.min);
-            var max :Number = Number(entry.max);
+        // add class-specific UI
+        configureUI(ctx, entry, grid);
 
-            if (!isNaN(min)) {
-                GridUtil.addRow(grid, ctx.REMIX.get("l.min"), String(min));
-            }
-            if (!isNaN(max)) {
-                GridUtil.addRow(grid, ctx.REMIX.get("l.max"), String(max));
-            }
-        }
-
-        if (_validator == null) {
-            _txt = new TextArea();
-
-        } else {
-            _txt = new TextInput();
-            TextInput(_txt).addEventListener(FlexEvent.ENTER, handleEnterPressed);
-        }
-        _txt.text = entry.value;
-
-        GridUtil.addRow(grid, _txt, [2, 1]);
-
+        // add the buttons to the bottom
         var buttonBar :HBox = new HBox();
         buttonBar.setStyle("horizontalAlign", "right");
         buttonBar.percentWidth = 100;
         buttonBar.addChild(new CommandButton(ctx.REMIX.get("b.cancel"), close, false));
-        _okBtn = new CommandButton(ctx.REMIX.get("b.ok"), close, true);
         buttonBar.addChild(_okBtn);
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 
-        if (_validator != null) {
-            _validator.source = _txt;
-            _validator.property = "text";
-            _validator.addEventListener(ValidationResultEvent.VALID, checkValid);
-            _validator.addEventListener(ValidationResultEvent.INVALID, checkValid);
-            _validator.triggerEvent = Event.CHANGE; // TextEvent.TEXT_INPUT;
-            _validator.trigger = IEventDispatcher(_txt);
-        }
+        // and pop-up
+        open();
+    }
 
-        PopUpManager.addPopUp(this, parent, true);
+    protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
+    {
+        // your subclass does stuff here
+    }
+
+    protected function getNewValue () :Object
+    {
+        return null; // your subclass does stuff here
+    }
+
+    protected function open () :void
+    {
+        PopUpManager.addPopUp(this, _parent, true);
         PopUpUtil.center(this);
-    }
-
-    /**
-     * Submit the change, as long as things are valid.
-     */
-    protected function handleEnterPressed (event :FlexEvent) :void
-    {
-        if (_okBtn.enabled) {
-            close(true);
-        }
-    }
-
-    protected function checkValid (event :ValidationResultEvent) :void
-    {
-        _okBtn.enabled = (event.type == ValidationResultEvent.VALID);
     }
 
     protected function close (save :Boolean) :void
     {
         if (save) {
-            _parent.updateValue(_txt.text);
+            _parent.updateValue(getNewValue());
         }
 
         PopUpManager.removePopUp(this);
     }
 
     protected var _parent :DataEditor;
-
-    protected var _validator :Validator;
-
-    protected var _txt :Object; // either a TextInput or TextArea (no common text base class)
 
     protected var _okBtn :CommandButton;
 }
