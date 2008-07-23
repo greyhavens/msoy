@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -31,13 +32,13 @@ public class ItemLogic
     public void resolveCardNames (List<ListingCard> list)
         throws PersistenceException
     {
-        // determine which member names we need to look up
-        IntSet members = new ArrayIntSet();
-        for (ListingCard card : list) {
-            members.add(card.creator.getMemberId());
-        }
-        // now look up the names and build a map of memberId -> MemberName
-        IntMap<MemberName> map = _memberRepo.loadMemberNames(members);
+        // look up the names and build a map of memberId -> MemberName
+        IntMap<MemberName> map = _memberRepo.loadMemberNames(
+            list, new Function<ListingCard,Integer>() {
+                public Integer apply (ListingCard card) {
+                    return card.creator.getMemberId();
+                }
+            });
         // finally fill in the listings using the map
         for (ListingCard card : list) {
             card.creator = map.get(card.creator.getMemberId());

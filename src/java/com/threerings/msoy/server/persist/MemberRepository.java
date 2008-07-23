@@ -6,15 +6,16 @@ package com.threerings.msoy.server.persist;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -278,6 +279,20 @@ public class MemberRepository extends DepotRepository
         MemberNameRecord name = load(MemberNameRecord.class,
                                      new Where(MemberRecord.MEMBER_ID_C, memberId));
         return (name == null) ? null : name.toMemberName();
+    }
+
+    /**
+     * Extracts the set of member id from the supplied collection of records using the supplied
+     * <code>getId</code> function and loads up the associated names.
+     */
+    public <C> IntMap<MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
+        throws PersistenceException
+    {
+        Set<Integer> memberIds = new ArrayIntSet();
+        for (C record : records) {
+            memberIds.add(getId.apply(record));
+        }
+        return loadMemberNames(memberIds);
     }
 
     /**

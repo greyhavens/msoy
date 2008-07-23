@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -41,16 +42,8 @@ public class MsoyGameInfoProvider extends GameInfoProvider
     public HashMap<String,String> resolveGameNames (HashSet<String> names)
         throws PersistenceException
     {
-        HashSet<Integer> memberIds = new HashSet<Integer>();
-        for (String name : names) {
-            try {
-                memberIds.add(Integer.valueOf(name));
-            } catch (NumberFormatException nfe) {
-                // this should never happen
-            }
-        }
         HashMap<String,String> map = new HashMap<String,String>();
-        for (MemberName name : _memberRepo.loadMemberNames(memberIds).values()) {
+        for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
             map.put(Integer.toString(name.getMemberId()), name.toString());
         }
         return map;
@@ -92,4 +85,10 @@ public class MsoyGameInfoProvider extends GameInfoProvider
 
     // maximum number of display names to return
     protected static final int LOOKUP_LIMIT = 50;
+
+    protected static final Function<String,Integer> TO_INT = new Function<String,Integer>() {
+        public Integer apply (String value) {
+            return Integer.valueOf(value);
+        }
+    };
 }

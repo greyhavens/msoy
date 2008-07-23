@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -106,6 +108,14 @@ public class ForumThreadRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 6;
+
+    /** Provides the {@link #mostRecentPosterId} of a record. */
+    public static final Function<ForumThreadRecord,Integer> GET_MOST_RECENT_POSTER_ID =
+        new Function<ForumThreadRecord,Integer>() {
+        public Integer apply (ForumThreadRecord record) {
+            return record.mostRecentPosterId;
+        }
+    };
 
     /** A unique identifier for this forum thread. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

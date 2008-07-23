@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -35,6 +36,14 @@ public abstract class TagHistoryRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
+
+    /** Provides the {@link #memberId} of a record. */
+    public static final Function<TagHistoryRecord,Integer> GET_MEMBER_ID =
+        new Function<TagHistoryRecord,Integer>() {
+        public Integer apply (TagHistoryRecord record) {
+            return record.memberId;
+        }
+    };
 
     /** The ID of the target being operated on. */
     public int targetId;

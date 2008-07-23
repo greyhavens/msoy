@@ -13,7 +13,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -51,7 +50,8 @@ public class ForumLogic
         throws PersistenceException
     {
         // enumerate the last-posters and create member names for them
-        IntMap<MemberName> names = resolveNames(thrrecs);
+        IntMap<MemberName> names = _memberRepo.loadMemberNames(
+            thrrecs, ForumThreadRecord.GET_MOST_RECENT_POSTER_ID);
 
         // convert the threads to runtime format
         Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
@@ -86,19 +86,6 @@ public class ForumLogic
         }
 
         return Lists.newArrayList(thrmap.values());
-    }
-
-    /**
-     * Resolves the names of the posters of the supplied threads.
-     */
-    protected IntMap<MemberName> resolveNames (List<ForumThreadRecord> thrrecs)
-        throws PersistenceException
-    {
-        IntSet posters = new ArrayIntSet();
-        for (ForumThreadRecord thrrec : thrrecs) {
-            posters.add(thrrec.mostRecentPosterId);
-        }
-        return _memberRepo.loadMemberNames(posters);
     }
 
     @Inject protected MemberRepository _memberRepo;

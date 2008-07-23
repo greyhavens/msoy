@@ -467,18 +467,22 @@ public class ItemServlet extends MsoyServiceServlet
     {
         try {
             ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            List<TagHistoryRecord> records =
+                repo.getTagRepository().getTagHistoryByTarget(iident.itemId);
+            IntMap<MemberName> names = _memberRepo.loadMemberNames(
+                records, TagHistoryRecord.GET_MEMBER_ID);
+
             List<TagHistory> list = Lists.newArrayList();
-            for (TagHistoryRecord thr :
-                     repo.getTagRepository().getTagHistoryByTarget(iident.itemId)) {
-                TagNameRecord tag = repo.getTagRepository().getTag(thr.tagId);
+            for (TagHistoryRecord threc : records) {
+                TagNameRecord tag = repo.getTagRepository().getTag(threc.tagId);
                 TagHistory history = new TagHistory();
-                history.member = MemberName.makeKey(thr.memberId);
+                history.member = names.get(threc.memberId);
                 history.tag = tag.tag;
-                history.action = thr.action;
-                history.time = new Date(thr.time.getTime());
+                history.action = threc.action;
+                history.time = new Date(threc.time.getTime());
                 list.add(history);
             }
-            return resolveNames(list);
+            return list;
 
         } catch (PersistenceException pe) {
             log.warning("Failed to get tag history [item=" + iident + "]", pe);
@@ -753,23 +757,6 @@ public class ItemServlet extends MsoyServiceServlet
             log.warning("Admin item delete failed [item=" + iident + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-    }
-
-    /**
-     * Helpy helper function.
-     */
-    protected Collection<TagHistory> resolveNames (Collection<TagHistory> histories)
-        throws PersistenceException
-    {
-        ArrayIntSet ids = new ArrayIntSet();
-        for (TagHistory th : histories) {
-            ids.add(th.member.getMemberId());
-        }
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(ids);
-        for (TagHistory th : histories) {
-            th.member = names.get(th.member.getMemberId());
-        }
-        return histories;
     }
 
     /**

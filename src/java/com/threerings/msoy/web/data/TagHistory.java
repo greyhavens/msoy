@@ -6,6 +6,7 @@ package com.threerings.msoy.web.data;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MemberName;
