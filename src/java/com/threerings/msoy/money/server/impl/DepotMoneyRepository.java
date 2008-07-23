@@ -13,6 +13,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Where;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -20,7 +21,7 @@ import com.threerings.presents.annotation.BlockingThread;
  * class is not thread-safe, but all operations should be confined to a single thread
  * (as per the contract of {@link BlockingThread}.
  * 
- * TODO: This implementation manually performs optimistic locking on all records.
+ * This implementation manually performs optimistic locking on all records.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
@@ -39,7 +40,7 @@ final class DepotMoneyRepository extends DepotRepository
     public void addHistory (final MemberAccountHistoryRecord history)
     {
         try {
-            store(history);
+            insert(history);
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }
@@ -55,9 +56,28 @@ final class DepotMoneyRepository extends DepotRepository
     }
 
     public void saveAccount (final MemberAccountRecord account)
+        throws StaleDataException
     {
         try {
-            store(account);
+            final long oldVersion = account.getVersionId();
+            // Meh...
+            account.versionId++;
+            if (account.getVersionId() == 1) {
+                insert(account);
+            } else {
+                final int count = updatePartial(MemberAccountRecord.class,
+                    new Where(MemberAccountRecord.MEMBER_ID_C, account.getMemberId(), 
+                        MemberAccountRecord.VERSION_ID_C, oldVersion),
+                    MemberAccountRecord.getKey(account.getMemberId()),
+                    MemberAccountRecord.BARS, account.getBars(),
+                    MemberAccountRecord.COINS, account.getCoins(),
+                    MemberAccountRecord.BLING, account.getBling(),
+                    MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
+                    MemberAccountRecord.VERSION_ID, account.getVersionId());
+                if (count == 0) {
+                    throw new StaleDataException();
+                }
+            }
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

@@ -39,13 +39,24 @@ final class MoneyServiceImpl
 
     public void buyBars (final int memberId, final int numBars)
     {
-        MemberAccountRecord account = repo.getAccountById(memberId);
-        if (account == null) {
-            account = new MemberAccountRecord(memberId);
-        }
-        final MemberAccountHistoryRecord history = account.buyBars(numBars);
-        repo.saveAccount(account);
-        repo.addHistory(history);
+        int retries = 0;
+        do {
+            try {
+                MemberAccountRecord account = repo.getAccountById(memberId);
+                if (account == null) {
+                    account = new MemberAccountRecord(memberId);
+                }
+                final MemberAccountHistoryRecord history = account.buyBars(numBars);
+                repo.saveAccount(account);
+                repo.addHistory(history);
+                return;
+            } catch (final StaleDataException sde) {
+                // Try again!
+                retries++;
+            }
+        } while (retries < 3);
+        
+        throw new IllegalStateException("Cannot update account after 3 retries due to stale data.");
     }
 
     public void buyItemWithBars (final int memberId, final ItemIdent item)
