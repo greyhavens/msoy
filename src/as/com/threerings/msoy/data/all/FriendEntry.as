@@ -3,22 +3,17 @@
 
 package com.threerings.msoy.data.all {
 
-import com.threerings.util.Comparable;
-import com.threerings.util.Hashable;
-
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.presents.dobj.DSet_Entry;
-
 /**
  * Represents a friend connection.
  */
 public class FriendEntry
-    implements Comparable, DSet_Entry, Hashable
+    implements PeerEntry
 {
     /** The display name of the friend. */
     public var name :MemberName;
@@ -49,6 +44,16 @@ public class FriendEntry
     public function getMemberId () :int
     {
         return name.getMemberId();
+    }
+
+    public function getName () :MemberName
+    {
+        return name;
+    }
+
+    public function getPhoto () :MediaDesc
+    {
+        return photo;
     }
 
     // from Hashable
