@@ -591,7 +591,7 @@ public abstract class ItemEditor extends FlexTable
             textbox.addKeyboardListener(new KeyboardListenerAdapter() {
                 public void onKeyPress (Widget sender, char keyCode, int mods) {
                     if (_item != null) {
-                        DeferredCommand.add(new Command() {
+                        DeferredCommand.addCommand(new Command() {
                             public void execute () {
                                 binder.textUpdated(textbox.getText());
                             }

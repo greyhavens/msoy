@@ -224,7 +224,7 @@ public class RichTextToolbar extends Composite
 
         // this may be called before we're added to the DOM, so we need to wait until our inner
         // iframe is created before trying to set its background color, etc.
-        DeferredCommand.add(new Command() {
+        DeferredCommand.addCommand(new Command() {
             public void execute () {
                 setPanelColorsImpl(richText.getElement(), (_tcolor == null) ? "" : _tcolor,
                                    (_bgcolor == null) ? "none" : _bgcolor);
@@ -241,7 +241,7 @@ public class RichTextToolbar extends Composite
     protected void onAttach ()
     {
         super.onAttach();
-        DeferredCommand.add(new Command() {
+        DeferredCommand.addCommand(new Command() {
             public void execute () {
                 configureIFrame(richText.getElement());
             }

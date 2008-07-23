@@ -99,8 +99,8 @@ public class ImageChooserPopup extends VerticalPanel
         // from interface EditorHost
         public void editComplete (Item item) {
             CShell.log("Edit complete " + item);
-            if (item != null) {
-                ((SimpleDataModel)_model).addItem(0, item);
+            if (item != null && item instanceof Photo) {
+                ((SimpleDataModel<Photo>)_model).addItem(0, (Photo)item);
                 CShell.log("Added to model");
                 displayPage(0, true);
                 CShell.log("Updated page");

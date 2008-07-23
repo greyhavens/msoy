@@ -44,7 +44,7 @@ public class index extends MsgsEntryPoint
                 setContent(new GroupEdit());
             } else {
                 Group group = _detail.getGroup();
-                if (group == null && group.groupId != groupId) {
+                if (group == null || group.groupId != groupId) {
                     MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
                     return;
                 }

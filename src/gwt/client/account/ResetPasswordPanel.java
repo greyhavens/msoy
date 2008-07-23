@@ -119,7 +119,7 @@ public class ResetPasswordPanel extends FlexTable
     protected KeyboardListener _validator = new KeyboardListenerAdapter() {
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {
             // let the keypress go through, then validate our data
-            DeferredCommand.add(new Command() {
+            DeferredCommand.addCommand(new Command() {
                 public void execute () {
                     validateData();
                 }

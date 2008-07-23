@@ -215,7 +215,7 @@ public class ItemPanel extends VerticalPanel
 
     protected HorizontalPanel _shop;
     protected ListBox _filters;
-    protected PagedGrid _contents;
+    protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
 
     protected static final String[] FLABELS = {

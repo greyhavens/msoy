@@ -413,7 +413,7 @@ public class FeedPanel extends TongueBox
          */
         protected Widget[] buildMediaArray (List<FriendFeedMessage> list)
         {
-            List<Widget> media = new ArrayList();
+            List<Widget> media = new ArrayList<Widget>();
             for (FriendFeedMessage message : list) {
                 Widget w = buildMedia(message);
                 if (w != null) {

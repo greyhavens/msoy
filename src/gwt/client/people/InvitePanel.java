@@ -251,7 +251,7 @@ public class InvitePanel extends VerticalPanel
         });
     }
 
-    protected void inviteResults (List addrs, InvitationResults invRes)
+    protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
     {
         ResultsPopup rp = new ResultsPopup(CPeople.msgs.inviteResults());
         int row = 0;
@@ -260,7 +260,7 @@ public class InvitePanel extends VerticalPanel
 
         for (int ii = 0; ii < invRes.results.length; ii++) {
             if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null;
-                EmailContact ec = (EmailContact)addrs.get(ii);
+                EmailContact ec = addrs.get(ii);
                 if (!success) {
                     contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful());
                     success = true;
@@ -275,7 +275,7 @@ public class InvitePanel extends VerticalPanel
         boolean members = false;
         for (int ii = 0; ii < invRes.results.length; ii++) {
             if (invRes.names[ii] != null) {
-                EmailContact ec = (EmailContact)addrs.get(ii);
+                EmailContact ec = addrs.get(ii);
                 if (!members) {
                     contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
                     members = true;
@@ -301,7 +301,7 @@ public class InvitePanel extends VerticalPanel
                 contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed());
                 failed = true;
             }
-            EmailContact ec = (EmailContact)addrs.get(ii);
+            EmailContact ec = addrs.get(ii);
             String name = CPeople.msgs.inviteMember(ec.name, ec.email);
             String result = invRes.results[ii].startsWith("e.") ?
                 CPeople.msgs.inviteResultsNote(name, CPeople.serverError(invRes.results[ii])) :

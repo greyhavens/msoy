@@ -53,7 +53,7 @@ public class SearchControls extends SmartTable
         _search.setWidth("200px");
         _search.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
-                DeferredCommand.add(new Command() {
+                DeferredCommand.addCommand(new Command() {
                     public void execute () {
                         _go.setEnabled(getQuery().length() != 0);
                     }

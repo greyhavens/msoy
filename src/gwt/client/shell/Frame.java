@@ -70,7 +70,7 @@ public class Frame
         for (int ii = 0; ii < JS_DEPENDS.length; ii += 2) {
             Element e = DOM.getElementById(JS_DEPENDS[ii]);
             if (e != null) {
-                DOM.setAttribute(e, "src", JS_DEPENDS[ii+1]);
+                DOM.setElementAttribute(e, "src", JS_DEPENDS[ii+1]);
             }
         }
 
@@ -164,7 +164,7 @@ public class Frame
     public static void closeClient (boolean deferred)
     {
         if (deferred) {
-            DeferredCommand.add(new Command() {
+            DeferredCommand.addCommand(new Command() {
                 public void execute () {
                     closeClient(false);
                 }

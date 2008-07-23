@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.data.Issue;
 
+import client.shell.Application;
 import client.shell.Page;
 import client.util.MsoyUI;
 
@@ -58,7 +59,7 @@ public class IssuePanel extends TitledListPanel
 
     public void redisplayIssues ()
     {
-        CMsgs.app.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
+        Application.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
     }
 
     public void displayIssue (int issueId, int owned)
