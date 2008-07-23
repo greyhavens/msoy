@@ -5,15 +5,20 @@ package com.threerings.msoy.money.server;
 
 import java.util.Date;
 
+import net.jcip.annotations.Immutable;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@Immutable
 public class MoneyHistory
 {
     public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type, final double amount,
-        final boolean spent, final String description, final int itemId, final int itemType)
+        final boolean spent, final String description, final ItemIdent item)
     {
         this.memberId = memberId;
         this.timestamp = timestamp;
@@ -21,8 +26,7 @@ public class MoneyHistory
         this.amount = amount;
         this.spent = spent;
         this.description = description;
-        this.itemId = itemId;
-        this.itemType = itemType;
+        this.item = item;
     }
 
     /**
@@ -75,20 +79,11 @@ public class MoneyHistory
     }
 
     /**
-     * ID of the item that was involved in this transaction.
-     * @return
+     * Item involved in the transaction.
      */
-    public int getItemId ()
+    public ItemIdent getItem ()
     {
-        return itemId;
-    }
-
-    /**
-     * Type of the item that was involved in this transaction.
-     */
-    public int getItemType ()
-    {
-        return itemType;
+        return item;
     }
 
     private final int memberId;
@@ -97,6 +92,5 @@ public class MoneyHistory
     private final double amount;
     private final boolean spent;
     private final String description;
-    private final int itemId;
-    private final int itemType;
+    private final ItemIdent item;
 }

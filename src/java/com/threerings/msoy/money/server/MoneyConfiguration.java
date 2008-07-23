@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.money.server;
 
+import net.jcip.annotations.Immutable;
+
 /**
  * Configuration of the money service.
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@Immutable
 public class MoneyConfiguration
 {
     public MoneyConfiguration (final double creatorKickback, final long securePriceDuration,

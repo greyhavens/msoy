@@ -7,12 +7,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.presents.annotation.BlockingThread;
+
 /**
  * Facade for all money (coins, bars, and bling) transactions.  This is the starting place to access
  * these services.
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@BlockingThread
 public interface MoneyService
 {
     /**
@@ -29,12 +33,11 @@ public interface MoneyService
      * @param memberId ID of the member securing the price.
      * @param creatorId ID of the creator of the item being secured.
      * @param affiliateId ID of the affiliate associated with this purchase.  Null if no affiliate.
-     * @param itemId ID of the item whose price is being secured.
-     * @param itemType Type of the item whose price is being secured.
+     * @param item Item to secure the price for.
      * @param numBars Number of bars
      * @return Price of the item secured in coins, according to the current exchange rate.
      */
-    int secureBarPrice (int memberId, int creatorId, Integer affiliateId, int itemId, int itemType, int numBars);
+    int secureBarPrice (int memberId, int creatorId, Integer affiliateId, ItemIdent item, int numBars);
 
     /**
      * Secures a price for an item in coins.  This ensures the user will be able to purchase
@@ -44,23 +47,23 @@ public interface MoneyService
      * reached (specified by {@link MoneyConfiguration#getMaxSecuredPrices()}.  In either case,
      * an attempt to buy the item will fail with a {@link NotSecuredException}.
      *
-     * This will only secure the price of an item in coins -- no bar price will be secured, and thus
-     * an attempt to purchase this item with bars will result in a {@link CoinsOnlyException}.
+     * This will secure the coin price of the item as given, and it will also secure the equivalent
+     * price in bars according to the current exchange rate.
      *
      * @param memberId ID of the member securing the price.
      * @param creatorId ID of the creator of the item being secured.
      * @param affiliateId ID of the affiliate associated with this purchase.  Null if no affiliate.
-     * @param itemId ID of the item whose price is being secured.
-     * @param itemType Type of the item whose price is being secured.
+     * @param item Item to secure the price for.
      * @param numCoins Number of coins.
      */
-    void secureCoinPrice (int memberId, int creatorId, Integer affiliateId, int itemId, int itemType, int numCoins);
+    void secureCoinPrice (int memberId, int creatorId, Integer affiliateId, ItemIdent item, int numCoins);
 
     /**
      * Purchases an item using bars as the currency.  This will only update the appropriate accounts
      * of an exchange of money -- item fulfillment must be handled separately.  The item must have
      * been previously secured for some price through {@link #secureBarPrice(int, int, Integer, int, int, int)
-     * secureBarPrice}.  The account balances will be updated in the following manner:
+     * secureBarPrice} or {@link #secureCoinPrice(int, int, Integer, ItemIdent, int)}.  The 
+     * account balances will be updated in the following manner:
      *
      * <ul>
      *     <li>Member: the bar price will be deducted from their account.</li>
@@ -72,22 +75,20 @@ public interface MoneyService
      * </ul>
      *
      * @param memberId ID of the member making the purchase.
-     * @param itemId ID of the item being purchased.
-     * @param itemType Type of the item being purchased.
+     * @param item Item to purchase.
      * @throws NotEnoughMoneyException The member making the purchase does not have enough bars in
      *      their account.
      * @throws NotSecuredException The member did not secure a price for the item.
-     * @throws CoinsOnlyException The price secured for the item was only in coins -- it cannot
-     *      be purchased for bars.
      */
-    void buyItemWithBars (int memberId, int itemId, int itemType)
-        throws NotEnoughMoneyException, NotSecuredException, CoinsOnlyException;
+    void buyItemWithBars (int memberId, ItemIdent item)
+        throws NotEnoughMoneyException, NotSecuredException;
 
     /**
      * Purchases an item using coins as the currency.  This will only update the appropriate accounts
      * of an exchange of money -- item fulfillment must be handled separately.  The item must have
-     * been previously secured for some price through {@link #secureCoinPrice(int, int, Integer, int, int, int)
-     * secureCoinPrice}.  The account balances will be updated in the following manner:
+     * been previously secured for some price through {@link #secureBarPrice(int, int, Integer, int, int, int)
+     * secureBarPrice} or {@link #secureCoinPrice(int, int, Integer, ItemIdent, int)}.  The account 
+     * balances will be updated in the following manner:
      *
      * <ul>
      *     <li>Member: the coin price will be deducted from their account.</li>
@@ -98,13 +99,12 @@ public interface MoneyService
      * </ul>
      *
      * @param memberId ID of the member making the purchase.
-     * @param itemId ID of the item being purchased.
-     * @param itemType Type of the item being purchased.
+     * @param item Item to purchase.
      * @throws NotEnoughMoneyException The member making the purchase does not have enough coins in
      *      their account.
      * @throws NotSecuredException The member did not secure a price for the item.
      */
-    void buyItemWithCoins (int memberId, int itemId, int itemType)
+    void buyItemWithCoins (int memberId, ItemIdent item)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
@@ -118,7 +118,8 @@ public interface MoneyService
 
     /**
      * Awards some number of coins to a member for some activity, such as playing a game.  This
-     * may also result in some bling being awarded to the creator of the game or the affiliate.
+     * will also keep track of coins spent awarded for each creator, so that the creators can
+     * receive bling when people play their games.
      *
      * @param memberId ID of the member to receive the coins.
      * @param creatorId ID of the creator of the item that caused the coins to be awarded.
@@ -127,17 +128,6 @@ public interface MoneyService
      * @param amount Number of coins to be awarded.
      */
     void awardCoins (int memberId, int creatorId, Integer affiliateId, int amount);
-
-    /**
-     * Transfers some number of coins from one account to another one.
-     *
-     * @param srcMemberId ID of the member who will give the coins.
-     * @param destMemberId ID of the member who will receive the coins.
-     * @param amount Number of coins to transfer.
-     * @throws NotEnoughMoneyException The source account does not have enough coins.
-     */
-    void giveCoins (int srcMemberId, int destMemberId, int amount)
-        throws NotEnoughMoneyException;
 
     /**
      * Retrieves the current account balance (coins, bars, and bling) for the given member.
@@ -171,7 +161,7 @@ public interface MoneyService
      * @param blingAmount Amount of bling to convert to bars.
      * @return Number of bars added to the account.
      * @throws NotEnoughMoneyException The account does not have the specified amount of
-     *      bling available.
+     *      bling available, aight?
      */
     int exchangeBlingForBars (int memberId, double blingAmount)
         throws NotEnoughMoneyException;

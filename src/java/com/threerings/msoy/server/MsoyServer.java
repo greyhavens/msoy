@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.File;
 import java.util.Iterator;
 
@@ -12,65 +14,50 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-
 import com.samskivert.jdbc.depot.PersistenceContext;
-
 import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-
-import com.threerings.util.Name;
-
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.server.PresentsServer;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.client.InvocationService;
-
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
-
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
-import com.threerings.parlor.game.server.GameManager;
-
-import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.util.SceneFactory;
-
 import com.threerings.msoy.admin.server.MsoyAdminManager;
+import com.threerings.msoy.bureau.server.WindowAuthenticator;
+import com.threerings.msoy.bureau.server.WindowClientFactory;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.chat.server.JabberManager;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
-import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.money.server.impl.MoneyModule;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.server.MsoyHttpServer;
-
-import com.threerings.msoy.fora.server.persist.CommentRepository;
-
 import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-
-import com.threerings.msoy.bureau.server.WindowAuthenticator;
-import com.threerings.msoy.bureau.server.WindowClientFactory;
-
-import com.threerings.msoy.data.MemberObject;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.parlor.game.server.GameManager;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsServer;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.util.Name;
+import com.threerings.whirled.server.SceneRegistry;
+import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.SceneFactory;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -99,6 +86,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
             bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
+            install(new MoneyModule());
         }
     }
 
@@ -108,19 +96,19 @@ public class MsoyServer extends MsoyBaseServer
     /**
      * Starts everything a runnin'.
      */
-    public static void main (String[] args)
+    public static void main (final String[] args)
     {
         // if we're on the dev server, up our long invoker warning to 3 seconds
         if (ServerConfig.autoRestart) {
             Invoker.setDefaultLongThreshold(3000L);
         }
 
-        Injector injector = Guice.createInjector(new Module());
-        MsoyServer server = injector.getInstance(MsoyServer.class);
+        final Injector injector = Guice.createInjector(new Module());
+        final MsoyServer server = injector.getInstance(MsoyServer.class);
         try {
             server.init(injector);
             server.run();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Unable to initialize server", e);
             System.exit(255);
         }
@@ -132,7 +120,7 @@ public class MsoyServer extends MsoyBaseServer
         // shut down our http server
         try {
             _httpServer.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Failed to stop http server.", e);
         }
 
@@ -143,7 +131,7 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    public void init (Injector injector)
+    public void init (final Injector injector)
         throws Exception
     {
         super.init(injector);
@@ -153,10 +141,10 @@ public class MsoyServer extends MsoyBaseServer
 
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
+            public Class<? extends PresentsClient> getClientClass (final AuthRequest areq) {
                 return MsoyClient.class;
             }
-            public Class<? extends ClientResolver> getClientResolverClass (Name username) {
+            public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
                 return MsoyClientResolver.class;
             }
         });
@@ -177,10 +165,10 @@ public class MsoyServer extends MsoyBaseServer
 
     @Override // from BureauLauncherProvider
     public void getGameServerRegistryOid (
-        ClientObject caller, InvocationService.ResultListener arg1)
+        final ClientObject caller, final InvocationService.ResultListener arg1)
         throws InvocationException
     {
-        int oid = _gameReg.getServerRegistryObject().getOid();
+        final int oid = _gameReg.getServerRegistryObject().getOid();
         arg1.requestProcessed(oid);
     }
 
@@ -204,7 +192,7 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    protected void finishInit (Injector injector)
+    protected void finishInit (final Injector injector)
         throws Exception
     {
         super.finishInit(injector);
@@ -230,7 +218,7 @@ public class MsoyServer extends MsoyBaseServer
         MemberNodeActions.init(_peerMan);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
-            public int getUserId (BodyObject bodyObj) {
+            public int getUserId (final BodyObject bodyObj) {
                 return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
@@ -250,6 +238,7 @@ public class MsoyServer extends MsoyBaseServer
         if (ServerConfig.autoRestart) {
             _codeModified = codeModifiedTime();
             new Interval() { // Note well: this interval does not run on the dobj thread
+                @Override
                 public void expired () {
                     // ...we simply post a LongRunnable to do the job
                     _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
@@ -258,6 +247,7 @@ public class MsoyServer extends MsoyBaseServer
                         }
                     });
                 }
+                @Override
                 public String toString () {
                     return "checkAutoRestart interval";
                 }
@@ -298,14 +288,14 @@ public class MsoyServer extends MsoyBaseServer
     protected void checkAutoRestart ()
     {
         // look up the last-modified time
-        long lastModified = codeModifiedTime();
+        final long lastModified = codeModifiedTime();
         if (lastModified <= _codeModified || _adminMan.statObj.serverRebootTime != 0L) {
             return;
         }
 
         // if someone is online, give 'em two minutes, otherwise reboot immediately
         boolean playersOnline = false;
-        for (Iterator<ClientObject> iter = _clmgr.enumerateClientObjects(); iter.hasNext(); ) {
+        for (final Iterator<ClientObject> iter = _clmgr.enumerateClientObjects(); iter.hasNext(); ) {
             if (iter.next() instanceof MemberObject) {
                 playersOnline = true;
                 break;
