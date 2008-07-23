@@ -107,7 +107,19 @@ public class PopularPlacesSnapshot
 
     protected PopularPlacesSnapshot ()
     {
-        // count up the population in all scenes and games
+        // any member on any world server can be playing any game on any game server, so we first
+        // need to make a first pass to collect metadata on all hosted games
+        final IntMap<HostedPlace> hostedGames = IntMaps.newHashIntMap();
+        MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+            public void apply (NodeObject nodeobj) {
+                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
+                for (HostedPlace game : mnobj.hostedGames) {
+                    hostedGames.put(game.placeId, game);
+                }
+            }
+        });
+
+        // now we can count up the population in all scenes and games
         MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
@@ -126,7 +138,7 @@ public class PopularPlacesSnapshot
                         }
                     }
                     if (memloc.gameId > 0) {
-                        HostedPlace game = mnobj.hostedGames.get(memloc.gameId);
+                        HostedPlace game = hostedGames.get(memloc.gameId);
                         if (game != null) {
                             // map games by game id
                             increment(_games, _glist, game.placeId, game);
