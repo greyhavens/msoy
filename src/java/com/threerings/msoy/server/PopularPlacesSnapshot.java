@@ -14,12 +14,14 @@ import com.samskivert.util.SortableArrayList;
 import com.threerings.msoy.data.MemberLocation;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -35,14 +37,13 @@ public class PopularPlacesSnapshot
     /**
      * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
      * populated ones and sorts all scenes by owner, caching the values.
-     *
-     * This must be called on the dobj thread.
      */
     @EventThread
-    public static PopularPlacesSnapshot takeSnapshot ()
+    public static PopularPlacesSnapshot takeSnapshot (
+        PresentsDObjectMgr omgr, MsoyPeerManager peerMan)
     {
-        MsoyServer.requireDObjThread(MsoyServer.omgr);
-        return new PopularPlacesSnapshot();
+        omgr.requireEventThread();
+        return new PopularPlacesSnapshot(peerMan);
     }
 
     /**
@@ -105,12 +106,12 @@ public class PopularPlacesSnapshot
         return _totalPopulation;
     }
 
-    protected PopularPlacesSnapshot ()
+    protected PopularPlacesSnapshot (MsoyPeerManager peerMan)
     {
         // any member on any world server can be playing any game on any game server, so we first
         // need to make a first pass to collect metadata on all hosted games
         final IntMap<HostedPlace> hostedGames = IntMaps.newHashIntMap();
-        MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+        peerMan.applyToNodes(new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (HostedPlace game : mnobj.hostedGames) {
@@ -120,7 +121,7 @@ public class PopularPlacesSnapshot
         });
 
         // now we can count up the population in all scenes and games
-        MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+        peerMan.applyToNodes(new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (MemberLocation memloc : mnobj.memberLocs) {

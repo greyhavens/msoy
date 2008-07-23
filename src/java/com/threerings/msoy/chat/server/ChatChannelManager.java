@@ -17,6 +17,7 @@ import com.threerings.util.Name;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.ClientManager;
@@ -88,11 +89,11 @@ public class ChatChannelManager
     /**
      * Initializes this manager during server startup.
      */
-    public void init (InvocationManager invmgr)
+    public void init ()
     {
         // register and initialize our peer chat service
         MsoyNodeObject me = (MsoyNodeObject)_peerMan.getNodeObject();
-        me.setPeerChatService(invmgr.registerDispatcher(new PeerChatDispatcher(this)));
+        me.setPeerChatService(_invmgr.registerDispatcher(new PeerChatDispatcher(this)));
     }
 
     // from interface ChatChannelProvider
@@ -377,6 +378,7 @@ public class ChatChannelManager
         if (host != null) {
             log.info("Subscribing to another host peer: " + host.nodeName);
             SubscriptionWrapper ch = new SubscriptionWrapper(ChatChannelManager.this, channel);
+            ch.initServices(_omgr, _invmgr, _peerMan);
             ch.initialize(cont);
             return;
         }
@@ -387,6 +389,7 @@ public class ChatChannelManager
             public void run () {
                 log.info("Got lock, creating channel " + channel);
                 HostedWrapper ch = new HostedWrapper(ChatChannelManager.this, channel);
+                ch.initServices(_omgr, _invmgr, _peerMan);
                 ch.initialize(cont);
             }
             public void fail (String peerName) {
@@ -474,8 +477,11 @@ public class ChatChannelManager
     /** Contains a mapping of all chat channels we know about, hosted or subscribed. */
     protected Map<ChatChannel, ChannelWrapper> _wrappers = Maps.newHashMap();
 
-    @Inject protected MsoyPeerManager _peerMan;
+    // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected SceneRepository _sceneRepo;
     @Inject protected SceneRegistry _sceneReg;

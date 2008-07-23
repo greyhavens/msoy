@@ -3,16 +3,19 @@
 
 package com.threerings.msoy.swiftly.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 
 import com.samskivert.io.PersistenceException;
+
+import com.threerings.presents.client.InvocationService.ResultListener;
+import com.threerings.presents.dobj.RootDObjectManager;
+
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.server.build.BuildArtifact;
-import com.threerings.presents.client.InvocationService.ResultListener;
+
+import static com.threerings.msoy.Log.log;
 
 public abstract class AbstractBuildTask
     implements Runnable
@@ -21,6 +24,8 @@ public abstract class AbstractBuildTask
                               ResultListener listener)
     {
         _manager = manager;
+        _omgr = (RootDObjectManager)manager.getPlaceObject().getManager();
+
         // snapshot the projectId, type and name while we are on the dobject thread
         _projectId = manager.getRoomObj().project.projectId;
 
@@ -65,7 +70,7 @@ public abstract class AbstractBuildTask
      */
     public void publishFailure (Exception error, final String reason) {
         log.warning("Project build failed.", error);
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run() {
                 _listener.requestFailed(reason);
             }
@@ -73,6 +78,7 @@ public abstract class AbstractBuildTask
     }
 
     /** Need to be visible for subclasses. */
+    protected final RootDObjectManager _omgr;
     protected final ProjectRoomManager _manager;
     protected final MemberName _member;
     protected final int _projectId;

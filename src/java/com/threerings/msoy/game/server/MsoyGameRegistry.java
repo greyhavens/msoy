@@ -10,6 +10,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -17,6 +18,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -30,6 +32,8 @@ import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -42,6 +46,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -134,7 +139,7 @@ public class MsoyGameRegistry
         }
 
         // we're going to need the Game item to finish resolution
-        MsoyServer.invoker.postUnit(new PersistingUnit("locateGame", listener) {
+        _invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws PersistenceException {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
                     _game = TUTORIAL_GAME;
@@ -172,9 +177,9 @@ public class MsoyGameRegistry
 
         // load up the game's name; hello database!
         String name = "inviteFriends(" + gameId + ", " + StringUtil.toString(friendIds) + ")";
-        MsoyServer.invoker.postUnit(new RepositoryUnit(name) {
+        _invoker.postUnit(new RepositoryUnit(name) {
             public void invokePersist () throws Exception {
-                GameRecord grec = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+                GameRecord grec = _itemMan.getGameRepository().loadGameRecord(gameId);
                 if (grec == null) {
                     throw new Exception("No record for game."); // the standard logging is good
                 }
@@ -182,7 +187,7 @@ public class MsoyGameRegistry
             }
             public void handleSuccess () {
                 for (int friendId : friendIds) {
-                    MsoyServer.peerMan.invokeNodeAction(
+                    _peerMan.invokeNodeAction(
                         new InviteNodeAction(friendId, memobj.memberName, gameId, _game));
                 }
             }
@@ -215,8 +220,7 @@ public class MsoyGameRegistry
         if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
             return;
         }
-
-        MsoyServer.peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
+        _peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
     }
 
     // from interface GameServerProvider
@@ -225,8 +229,7 @@ public class MsoyGameRegistry
         if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
             return;
         }
-
-        MsoyServer.peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
+        _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
     }
 
     // from interface GameServerProvider
@@ -235,8 +238,7 @@ public class MsoyGameRegistry
         if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaCoins + ")")) {
             return;
         }
-
-        MsoyServer.peerMan.invokeNodeAction(new ReportCoinsAwardAction(memberId, deltaCoins));
+        _peerMan.invokeNodeAction(new ReportCoinsAwardAction(memberId, deltaCoins));
     }
 
     // from interface GameServerProvider
@@ -293,10 +295,10 @@ public class MsoyGameRegistry
         }
 
         // update their occupant info if they're in a scene
-        MsoyServer.memberMan.updateOccupantInfo(memObj);
+        _memberMan.updateOccupantInfo(memObj);
 
         // update their published location in our peer object
-        MsoyServer.peerMan.updateMemberLocation(memObj);
+        _peerMan.updateMemberLocation(memObj);
     }
 
     /**
@@ -340,7 +342,7 @@ public class MsoyGameRegistry
 //             "m.got_trophy_subject", trophy.name);
 //         String body = _serverMsgs.getBundle("server").get(
 //             "m.got_trophy_body", trophy.description);
-//         MsoyServer.mailMan.deliverMessage(
+//         _mailMan.deliverMessage(
 //             // TODO: sender should be special system id
 //             memberId, memberId, subject, body, new GameAwardPayload(
 //                 trophy.gameId, gameName, GameAwardPayload.TROPHY, trophy.name, trophy.trophyMedia),
@@ -356,11 +358,10 @@ public class MsoyGameRegistry
             return;
         }
         // pass the buck to the item manager
-        MsoyServer.itemMan.awardPrize(
-            memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
+        _itemMan.awardPrize(memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
     }
 
-    // from interface MsoyServer.Shutdowner
+    // from interface _Shutdowner
     public void shutdown ()
     {
         // shutdown our game server handlers
@@ -378,12 +379,12 @@ public class MsoyGameRegistry
 
     protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
     {
-        Tuple<String, Integer> rhost = MsoyServer.peerMan.getGameHost(gameId);
+        Tuple<String, Integer> rhost = _peerMan.getGameHost(gameId);
         if (rhost == null) {
             return false;
         }
 
-        String hostname = MsoyServer.peerMan.getPeerPublicHostName(rhost.left);
+        String hostname = _peerMan.getPeerPublicHostName(rhost.left);
         log.info("Sending game player to " + rhost.left + ":" + rhost.right + ".");
         listener.gameLocated(hostname, rhost.right);
         return true;
@@ -392,10 +393,10 @@ public class MsoyGameRegistry
     protected void lockGame (final Game game, final MsoyGameService.LocationListener listener)
     {
         // otherwise obtain a lock and resolve the game ourselves
-        MsoyServer.peerMan.acquireLock(
-            MsoyPeerManager.getGameLock(game.gameId), new ResultListener<String>() {
+        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId),
+                             new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
-                if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
+                if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + game.name + ".");
                     hostGame(game, listener);
 
@@ -431,8 +432,8 @@ public class MsoyGameRegistry
             listener.requestFailed(GameCodes.INTERNAL_ERROR);
 
             // releases our lock on this game as we didn't end up hosting it
-            MsoyServer.peerMan.releaseLock(MsoyPeerManager.getGameLock(game.gameId),
-                                           new ResultListener.NOOP<String>());
+            _peerMan.releaseLock(MsoyPeerManager.getGameLock(game.gameId),
+                                 new ResultListener.NOOP<String>());
             return;
         }
 
@@ -455,7 +456,7 @@ public class MsoyGameRegistry
     }
 
     /** Handles communications with a delegate game server. */
-    protected static class GameServerHandler
+    protected class GameServerHandler
     {
         public int port;
 
@@ -490,7 +491,7 @@ public class MsoyGameRegistry
                 log.warning("Requested to host game that we're already hosting? [port=" + port +
                             ", game=" + game.gameId + "].");
             } else {
-                MsoyServer.peerMan.gameDidStartup(game.gameId, game.name, port);
+                _peerMan.gameDidStartup(game.gameId, game.name, port);
             }
         }
 
@@ -499,7 +500,7 @@ public class MsoyGameRegistry
                 log.warning("Requested to clear game that we're not hosting? [port=" + port +
                             ", game=" + gameId + "].");
             } else {
-                MsoyServer.peerMan.gameDidShutdown(gameId);
+                _peerMan.gameDidShutdown(gameId);
             }
         }
 
@@ -533,11 +534,12 @@ public class MsoyGameRegistry
         }
 
         protected void execute (MemberObject tgtobj) {
-            MsoyServer.notifyMan.notifyGameInvite(tgtobj, _inviter, _inviterId, _game, _gameId);
+            _notifyMan.notifyGameInvite(tgtobj, _inviter, _inviterId, _game, _gameId);
         }
 
         protected int _inviterId, _gameId;
         protected String _inviter, _game;
+        @Inject protected transient NotificationManager _notifyMan;
     }
 
     /** Handles updating a player's game. */
@@ -549,10 +551,11 @@ public class MsoyGameRegistry
         }
 
         protected void execute (MemberObject memObj) {
-            MsoyServer.gameReg.updatePlayerOnPeer(memObj, _game);
+            _gameReg.updatePlayerOnPeer(memObj, _game);
         }
 
         protected GameSummary _game;
+        @Inject protected transient MsoyGameRegistry _gameReg;
     }
 
     /** Handles leaving an AVR game. */
@@ -598,8 +601,12 @@ public class MsoyGameRegistry
 
     // dependencies
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected MsoyPeerManager _peerMan;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;

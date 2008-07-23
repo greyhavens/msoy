@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.data;
 
 import com.threerings.io.SimpleStreamableObject;
+import com.threerings.msoy.data.MemberObject;
 
 /**
  * A reference to a client-side executable which can participate in the pseudo-server control
@@ -14,6 +15,6 @@ import com.threerings.io.SimpleStreamableObject;
 public abstract class Controllable extends SimpleStreamableObject
     implements Comparable<Controllable>
 {
-    /** Determines whether or not the given body is able to control this controllable. */
-    public abstract boolean isControllableBy (int bodyOid);
+    /** Determines whether or not the given member is able to control this controllable. */
+    public abstract boolean isControllableBy (MemberObject member);
 }

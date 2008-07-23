@@ -1046,7 +1046,8 @@ public class RoomManager extends SpotSceneManager
             TreeSet<Controller> set = new TreeSet<Controller>(controllers.values());
             for (Controllable ctrlable : ctrlables) {
                 for (Controller ctrl : set) {
-                    if (!ctrlable.isControllableBy(ctrl.bodyOid)) {
+                    MemberObject mobj = (MemberObject)_omgr.getObject(ctrl.bodyOid);
+                    if (mobj == null || !ctrlable.isControllableBy(mobj)) {
                         continue;
                     }
                     set.remove(ctrl);

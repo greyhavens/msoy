@@ -570,7 +570,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             // that case, the null location could mean heading to the game, and we do need to zero
             // out the sceneId on this player's MemberLocation.
             if (event.getName().equals(MemberObject.LOCATION)) {
-                MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
+                MemberObject memobj = (MemberObject)_omgr.getObject(event.getTargetOid());
                 if (memobj == null) {
                     log.warning("Got location change for unregistered member!? " + event);
                     return;

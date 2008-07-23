@@ -8,13 +8,14 @@ import com.samskivert.util.Interval;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.data.ChatChannelObject;
+
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.MsoyServer;
+
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.ChatChannelObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -34,16 +35,16 @@ public class HostedWrapper extends ChannelWrapper
         log.info("Creating chat channel " + _channel + ".");
 
         // create and initialize a new chat channel object
-        _ccobj = MsoyServer.omgr.registerObject(new ChatChannelObject());
+        _ccobj = _omgr.registerObject(new ChatChannelObject());
         _ccobj.channel = _channel;
 
         // and advertise to other peers that we're hosting this channel
         HostedChannel hosted = new HostedChannel(_channel, _ccobj.getOid());
-        ((MsoyNodeObject) MsoyServer.peerMan.getNodeObject()).addToHostedChannels(hosted);
+        ((MsoyNodeObject) _peerMan.getNodeObject()).addToHostedChannels(hosted);
 
         // initialize speak service
         SpeakDispatcher sd = new SpeakDispatcher(new HostedSpeakHandler(this, _mgr));
-        _ccobj.setSpeakService(MsoyServer.invmgr.registerDispatcher(sd));
+        _ccobj.setSpeakService(_invmgr.registerDispatcher(sd));
         _ccobj.addListener(this);
 
         cccont.creationSucceeded(this);
@@ -53,14 +54,14 @@ public class HostedWrapper extends ChannelWrapper
     public void shutdown ()
     {
         _ccobj.removeListener(this);
-        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
+        _invmgr.clearDispatcher(_ccobj.speakService);
 
         log.info("Shutting down hosted chat channel: " + _channel + ".");
-        MsoyNodeObject host = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
+        MsoyNodeObject host = (MsoyNodeObject)_peerMan.getNodeObject();
         host.removeFromHostedChannels(HostedChannel.getKey(_channel));
 
         // clean up the hosted dobject
-        MsoyServer.omgr.destroyObject(_ccobj.getOid());
+        _omgr.destroyObject(_ccobj.getOid());
     }
 
     // from abstract class ChannelWrapper

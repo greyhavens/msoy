@@ -16,6 +16,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.whirled.data.SceneUpdate;
 
@@ -39,6 +40,14 @@ public class UpdateAccumulator
     public void init (MsoySceneRepository repo)
     {
         _repo = repo;
+        _flusher = new Interval(_invoker) {
+            public void expired () {
+                checkAll(false);
+            }
+            public String toString () {
+                return "UpdateAccumulator.checkAll";
+            }
+        };
         _flusher.schedule(FLUSH_INTERVAL, true);
     }
 
@@ -75,7 +84,7 @@ public class UpdateAccumulator
         // stop our flushing interval
         _flusher.cancel();
 
-        MsoyServer.invoker.postUnit(new Invoker.Unit("UpdateAccumulator.shutdown") {
+        _invoker.postUnit(new Invoker.Unit("UpdateAccumulator.shutdown") {
             public boolean invoke () {
                 checkAll(true);
                 return false;
@@ -182,14 +191,10 @@ public class UpdateAccumulator
 
     /** Handles flushing our room updates periodically. Note that we're setting up an Interval that
      * posts to the invoker thread. */
-    protected Interval _flusher = new Interval(MsoyServer.invoker) {
-        public void expired () {
-            checkAll(false);
-        }
-        public String toString () {
-            return "UpdateAccumulator.checkAll";
-        }
-    };
+    protected Interval _flusher;
+
+    // our dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
 
     /** How often accumulated updates should be checked, in milliseconds between checks. */
     protected static final long FLUSH_INTERVAL = 2000;

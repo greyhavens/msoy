@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.data;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -32,7 +33,7 @@ public class ControllableEntity extends Controllable
     }
 
     @Override
-    public boolean isControllableBy (int bodyOid)
+    public boolean isControllableBy (MemberObject member)
     {
         // any member can control an entity
         return true;

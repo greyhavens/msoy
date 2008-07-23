@@ -5,9 +5,10 @@ package com.threerings.msoy.game.server;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.crowd.data.PlaceConfig;
@@ -19,7 +20,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages games that have a sandboxed Java server component.
  */
-@EventThread
+@Singleton @EventThread
 public class HostedGameManager
 {
     /**
@@ -56,5 +57,5 @@ public class HostedGameManager
     }
 
     /** Maps game manager class names to custom class loaders. */
-    protected HashMap<String,URLClassLoader> _loaders = Maps.newHashMap();
+    protected Map<String,URLClassLoader> _loaders = Maps.newHashMap();
 }

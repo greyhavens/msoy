@@ -103,9 +103,6 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
-    /** All blocking Swiftly subversion actions must occur on this thread. */
-    public static Invoker swiftlyInvoker;
-
     /** An invoker for sending email. */
     @Deprecated public static Invoker mailInvoker;
 
@@ -213,11 +210,6 @@ public class MsoyServer extends MsoyBaseServer
         _conmgr.addChainedAuthenticator(new WindowAuthenticator());
         _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
 
-        // initialize the swiftly invoker
-        swiftlyInvoker = new Invoker("swiftly_invoker", _omgr);
-        swiftlyInvoker.setDaemon(true);
-        swiftlyInvoker.start();
-
         // initialize the mail invoker
         mailInvoker = new Invoker("mail_invoker", _omgr);
         mailInvoker.setDaemon(true);
@@ -270,7 +262,7 @@ public class MsoyServer extends MsoyBaseServer
         _adminMan.init();
         _memberMan.init();
         _friendMan.init();
-        _channelMan.init(_invmgr);
+        _channelMan.init();
         _jabberMan.init();
         _itemMan.init();
         swiftlyMan.init(_invmgr);

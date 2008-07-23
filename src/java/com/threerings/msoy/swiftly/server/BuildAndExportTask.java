@@ -1,43 +1,50 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.server;
 
 import java.io.IOException;
 
 import com.samskivert.io.PersistenceException;
-import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.presents.client.InvocationService.ResultListener;
+
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.FurnitureRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.swiftly.data.BuildResult;
-import com.threerings.msoy.swiftly.server.build.BuildArtifact;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
+
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.msoy.web.server.UploadUtil;
-import com.threerings.presents.client.InvocationService.ResultListener;
+
+import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.server.build.BuildArtifact;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 
 /** Handles a request to build our project. */
 public class BuildAndExportTask extends AbstractBuildTask
 {
     public BuildAndExportTask (ProjectRoomManager manager, SwiftlyRepository swiftlyRepo,
-                               MemberName member, ResultListener listener)
+                               ItemManager itemMan, MemberName member, ResultListener listener)
     {
         super(manager, member, listener);
 
         _swiftlyRepo = swiftlyRepo;
+        _itemMan = itemMan;
 
         // snapshot the project type and name while we are on the dobject thread
         _projectName = manager.getRoomObj().project.projectName;
@@ -50,14 +57,14 @@ public class BuildAndExportTask extends AbstractBuildTask
     @Override // from CommonBuildTask
     public void publishResult (final BuildResult result)
     {
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run() {
                 // inform the item manager of the new or updated item if the build succeeded
                 if (result.buildSuccessful()) {
                     if (_record.itemId == 0) {
-                        MsoyServer.itemMan.itemCreated(_record);
+                        _itemMan.itemCreated(_record);
                     } else {
-                        MsoyServer.itemMan.itemUpdated(_record);
+                        _itemMan.itemUpdated(_record);
                     }
                 }
                 // update the build result id cache
@@ -79,7 +86,7 @@ public class BuildAndExportTask extends AbstractBuildTask
         // load the correct item repository
         ItemRepository<ItemRecord, ?, ?, ?> repo = null;
         try {
-            repo = MsoyServer.itemMan.getRepository(_itemType);
+            repo = _itemMan.getRepository(_itemType);
 
         } catch (ServiceException se) {
             throw new RuntimeException("Unable to find repository for Swiftly project item type." +
@@ -189,9 +196,11 @@ public class BuildAndExportTask extends AbstractBuildTask
         }
     }
 
-    protected final SwiftlyRepository _swiftlyRepo;
-    protected final String _projectName;
-    protected final byte _itemType;
     protected Integer _resultId;
     protected ItemRecord _record;
+
+    protected final byte _itemType;
+    protected final String _projectName;
+    protected final ItemManager _itemMan;
+    protected final SwiftlyRepository _swiftlyRepo;
 }

@@ -63,15 +63,6 @@ public class MsoyGameServer extends MsoyBaseServer
         }
     }
 
-    /** Manages lobbies and other game bits on this server. */
-    public static GameGameRegistry gameReg;
-
-    /** Handles sandboxed game server code. */
-    public static HostedGameManager hostedMan = new HostedGameManager();
-
-    /** Manages our connection back to our parent world server. */
-    public static WorldServerClient worldClient;
-
     /**
      * Starts everything a runnin'.
      */
@@ -101,10 +92,6 @@ public class MsoyGameServer extends MsoyBaseServer
         throws Exception
     {
         super.init(injector);
-
-        // TEMP: initialize our legacy static members
-        gameReg = _gameReg;
-        worldClient = _worldClient;
 
         // give our game game registry Injection Power (tm)
         _gameReg.init(injector);
@@ -142,7 +129,7 @@ public class MsoyGameServer extends MsoyBaseServer
         throws Exception
     {
         // TODO: the game servers probably need to hear about changes to runtime config bits
-        return new DatabaseConfigRegistry(_perCtx, invoker);
+        return new DatabaseConfigRegistry(_perCtx, _invoker);
     }
 
     @Override // from PresentsServer
@@ -158,13 +145,14 @@ public class MsoyGameServer extends MsoyBaseServer
             super(shutmgr);
         }
         @Override protected PlaceManager createPlaceManager (PlaceConfig config) throws Exception {
-            ClassLoader loader = hostedMan.getClassLoader(config);
+            ClassLoader loader = _hostedMan.getClassLoader(config);
             if (loader == null) {
                 return super.createPlaceManager(config);
             }
             return (PlaceManager)Class.forName(
                 config.getManagerClassName(), true, loader).newInstance();
         }
+        @Inject protected HostedGameManager _hostedMan;
     }
 
     /** Manages lobbies and other game bits on this server. */

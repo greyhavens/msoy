@@ -18,11 +18,12 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.presents.dobj.RootDObjectManager;
 
 public class SwiftlyUploadServlet extends AbstractUploadServlet
 {
@@ -76,9 +77,9 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         // project if it exists, and then commits the file to svn and adds it to the room
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("insertUploadFile[" + projectId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.insertUploadFile(projectId, uploadFile, waiter);
+                _swiftlyMan.insertUploadFile(projectId, uploadFile, waiter);
             }
         });
 
@@ -119,10 +120,10 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         }
     }
 
-    /** Provides useful member related services. */
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected SwiftlyManager _swiftlyMan;
     @Inject protected MemberHelper _mhelper;
-
-    /** Repository of Swiftly data. */
     @Inject protected SwiftlyRepository _swiftlyRepo;
 
     /** Restrict all Swiftly file uploads to 4 megabytes. */

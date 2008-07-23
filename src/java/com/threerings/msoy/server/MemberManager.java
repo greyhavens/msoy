@@ -33,6 +33,7 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -129,10 +130,11 @@ public class MemberManager
      */
     public void init ()
     {
-        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot();
-        _ppInvalidator = new Interval(MsoyServer.omgr) {
+        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
+        _ppInvalidator = new Interval(_omgr) {
             public void expired() {
-                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot();
+                PopularPlacesSnapshot newSnapshot =
+                    PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
                 synchronized(MemberManager.this) {
                     _ppSnapshot = newSnapshot;
                 }
@@ -807,12 +809,14 @@ public class MemberManager
 
     // dependencies
     @Inject protected ClientManager _clmgr;
+    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailLogic _mailLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;

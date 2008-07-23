@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -34,7 +35,8 @@ import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.data.ConnectConfig;
@@ -80,7 +82,7 @@ public class ProjectRoomManager extends PlaceManager
         File whirledSdk = new File(ServerConfig.serverRoot + WHIRLED_SDK);
 
         // Setup the svn executor.
-        _svnExecutor = new SerialExecutor(MsoyServer.omgr);
+        _svnExecutor = new SerialExecutor(_omgr);
 
         // Setup the builder.
         _builder = new LocalProjectBuilder(
@@ -88,7 +90,7 @@ public class ProjectRoomManager extends PlaceManager
             ServerConfig.serverRoot.getAbsoluteFile());
 
         // Load the project tree from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
+        _swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
             @Override
             public boolean invoke () {
                 try {
@@ -125,7 +127,7 @@ public class ProjectRoomManager extends PlaceManager
                 getRoomObj().postMessage(ProjectRoomObject.ACCESS_CONTROL_CHANGE);
 
                 // add this node to the peer manager as the project host
-                MsoyServer.peerMan.projectDidStartup(project, config);
+                _peerMan.projectDidStartup(project, config);
 
                 listener.requestCompleted(config);
             }
@@ -164,7 +166,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // Otherwise we'll have to delete the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("deletePathElement") {
+        _swiftlyInvoker.postUnit(new Invoker.Unit("deletePathElement") {
             @Override
             public boolean invoke () {
                 try {
@@ -214,7 +216,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // Otherwise we'll have to rename the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("renamePathElement") {
+        _swiftlyInvoker.postUnit(new Invoker.Unit("renamePathElement") {
             @Override
             public boolean invoke () {
                 try {
@@ -318,7 +320,7 @@ public class ProjectRoomManager extends PlaceManager
         MemberObject memobj = (MemberObject)caller;
 
         AbstractBuildTask buildTask = new BuildAndExportTask(
-            this, _swiftlyRepo, memobj.memberName, listener);
+            this, _swiftlyRepo, _itemMan, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
     }
 
@@ -331,7 +333,7 @@ public class ProjectRoomManager extends PlaceManager
         requireReadPermissions(caller);
 
         // Load the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
+        _swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
             @Override
             public boolean invoke () {
                 try {
@@ -545,7 +547,7 @@ public class ProjectRoomManager extends PlaceManager
         // TODO: wait for our svn serial executor to finish, but timeout if it takes more than 10
         // seconds or so
 
-        MsoyServer.swiftlyMan.projectDidShutdown(this);
+        _swiftlyMan.projectDidShutdown(this);
     }
 
     /**
@@ -579,6 +581,12 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Cache the memberId to build result itemId mapping used for exporting results */
     protected Map<MemberName, Integer> _resultItems;
+
+    // our dependencies
+    @Inject protected SwiftlyInvoker _swiftlyInvoker;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected SwiftlyManager _swiftlyMan;
+    @Inject protected ItemManager _itemMan;
 
     /** Server-root relative path to the Whirled SDK. */
     protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";

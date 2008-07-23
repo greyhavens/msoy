@@ -34,11 +34,12 @@ import com.threerings.msoy.data.all.MemberName;
 @EventThread
 public class MsoyTableManager extends TableManager
 {
-    public MsoyTableManager (RootDObjectManager omgr, InvocationManager invmgr, PlaceRegistry plreg,
-                             LobbyManager lmgr)
+    public MsoyTableManager (RootDObjectManager omgr, InvocationManager invmgr,
+                             PlaceRegistry plreg, WorldServerClient worldClient, LobbyManager lmgr)
     {
         super(omgr, invmgr, plreg, lmgr.getLobbyObject());
 
+        _worldClient = worldClient;
         _lmgr = lmgr;
         _lobj = lmgr.getLobbyObject();
     }
@@ -58,7 +59,7 @@ public class MsoyTableManager extends TableManager
 
         // mark this player as "in" this game
         PlayerObject plobj = (PlayerObject) body;
-        MsoyGameServer.worldClient.updatePlayer(plobj.getMemberId(), _lobj.game);
+        _worldClient.updatePlayer(plobj.getMemberId(), _lobj.game);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class MsoyTableManager extends TableManager
         // the game itself started.
         PlayerObject plobj = (PlayerObject) body;
         if (plobj != null && !_membersPlaying.contains(plobj.getMemberId())) {
-            MsoyGameServer.worldClient.updatePlayer(plobj.getMemberId(), null);
+            _worldClient.updatePlayer(plobj.getMemberId(), null);
         }
 
         return super.notePlayerRemoved(playerOid, body);
@@ -108,7 +109,7 @@ public class MsoyTableManager extends TableManager
 
             MemberName member = (MemberName) table.players[ii];
             if (_membersPlaying.remove(member.getMemberId())) {
-                MsoyGameServer.worldClient.updatePlayer(member.getMemberId(), null);
+                _worldClient.updatePlayer(member.getMemberId(), null);
             }
         }
 
@@ -120,7 +121,7 @@ public class MsoyTableManager extends TableManager
             PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
             int memberId = plobj.getMemberId();
             if (!_membersPlaying.contains(memberId)) {
-                MsoyGameServer.worldClient.updatePlayer(memberId, _lobj.game);
+                _worldClient.updatePlayer(memberId, _lobj.game);
             }
             _membersPlaying.add(memberId);
         }
@@ -128,7 +129,7 @@ public class MsoyTableManager extends TableManager
         public void objectRemoved (ObjectRemovedEvent event) {
             PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
             int memberId = plobj.getMemberId();
-            MsoyGameServer.worldClient.updatePlayer(memberId, null);
+            _worldClient.updatePlayer(memberId, null);
             _membersPlaying.remove(memberId);
         }
     };
@@ -136,4 +137,5 @@ public class MsoyTableManager extends TableManager
     protected LobbyManager _lmgr;
     protected LobbyObject _lobj;
     protected ArrayIntSet _membersPlaying = new ArrayIntSet();
+    protected WorldServerClient _worldClient;
 }

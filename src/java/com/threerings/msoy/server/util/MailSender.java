@@ -29,7 +29,6 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.web.data.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
@@ -94,8 +93,6 @@ public class MailSender
     @BlockingThread
     public static String sendEmail (String recip, String sender, String template, Parameters params)
     {
-        MsoyBaseServer.refuseDObjThread(MsoyBaseServer.omgr); // avoid unhappy accidents
-
         // skip emails to placeholder addresses
         if (isPlaceholderAddress(recip)) {
             return null; // feign success

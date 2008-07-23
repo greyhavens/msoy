@@ -16,7 +16,6 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyClient;
-import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -47,7 +46,7 @@ public class RuntimeConfig
                 DObject object = omgr.registerObject((DObject)field.get(null));
 
                 // set the tight-ass access controller
-                object.setAccessController(ADMIN_CONTROLLER);
+                object.setAccessController(new AdminAccessController(omgr));
 
                 // register the object with the config object registry
                 confReg.registerObject(key, key, object);
@@ -63,8 +62,11 @@ public class RuntimeConfig
 
     /** An access controller that provides stricter-than-normal access to these configuration
      * objects. */
-    protected static AccessController ADMIN_CONTROLLER = new AccessController()
-    {
+    protected static class AdminAccessController implements AccessController {
+        public AdminAccessController (RootDObjectManager omgr) {
+            _omgr = omgr;
+        }
+
         public boolean allowSubscribe (DObject object, Subscriber subscriber) {
             // if the subscriber is a client; make sure they're an admin
             if (subscriber instanceof MsoyClient) {
@@ -82,7 +84,7 @@ public class RuntimeConfig
             }
 
             // make sure the originator is an admin
-            DObject obj = MsoyBaseServer.omgr.getObject(sourceOid);
+            DObject obj = _omgr.getObject(sourceOid);
             if (!(obj instanceof MemberObject)) {
                 return false;
             }
@@ -96,5 +98,7 @@ public class RuntimeConfig
                      ", object=" + object.getClass().getName() + ", change=" + event + "].");
             return true;
         }
+
+        protected RootDObjectManager _omgr;
     };
 }

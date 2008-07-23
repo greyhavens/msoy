@@ -32,7 +32,7 @@ public class PlayerLocator extends BodyLocator
     @EventThread
     public PlayerObject lookupPlayer (int playerId)
     {
-        MsoyGameServer.requireDObjThread(_omgr);
+        _omgr.requireEventThread();
         return _online.get(playerId);
     }
 
@@ -68,7 +68,7 @@ public class PlayerLocator extends BodyLocator
     @Override // from BodyLocator
     public BodyObject lookupBody (Name visibleName)
     {
-        MsoyGameServer.requireDObjThread(_omgr);
+        _omgr.requireEventThread();
         return _online.get(((MemberName) visibleName).getMemberId());
     }
 

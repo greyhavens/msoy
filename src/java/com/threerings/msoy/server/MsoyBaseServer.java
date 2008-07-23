@@ -76,11 +76,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
 
-    // legacy static references
-    public static Invoker invoker;
-    public static PresentsDObjectMgr omgr;
-    public static InvocationManager invmgr;
-
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
      * {@link IllegalStateException} if it is not.
@@ -115,11 +110,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize event logger
         _eventLog.init(getIdent());
-
-        // TEMP: set up our legacy static references
-        invoker = _invoker;
-        omgr = _omgr;
-        invmgr = _invmgr;
 
         super.init(injector);
 
@@ -189,7 +179,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     }
 
     // from BureauLauncherProvider
-    public void getGameServerRegistryOid (ClientObject caller, InvocationService.ResultListener arg1)
+    public void getGameServerRegistryOid (ClientObject caller,
+                                          InvocationService.ResultListener arg1)
         throws InvocationException
     {
         arg1.requestProcessed(0);

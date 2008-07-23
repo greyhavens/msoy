@@ -7,12 +7,15 @@ import com.samskivert.util.ArrayUtil;
 
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
+import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 
@@ -47,6 +50,17 @@ public abstract class ChannelWrapper
     public boolean ready ()
     {
         return _ccobj != null;
+    }
+
+    /**
+     * Provides this wrapper with services it needs. This is called before {@link #initialize}.
+     */
+    public void initServices (RootDObjectManager omgr, InvocationManager invmgr,
+                              MsoyPeerManager peerMan)
+    {
+        _omgr = omgr;
+        _invmgr = invmgr;
+        _peerMan = peerMan;
     }
 
     /** Initializes the local distributed channel object. When done, calls the continuation. */
@@ -120,10 +134,15 @@ public abstract class ChannelWrapper
         _ccobj.recentMessages = ArrayUtil.append(_ccobj.recentMessages, msg);
     }
 
-    /** How long a chat message should stay in channel history (in milliseconds). */
-    protected static final int MAX_RECENT_MESSAGE_AGE = 15 * 1000;
-
     protected ChatChannel _channel;
     protected ChatChannelManager _mgr;
     protected ChatChannelObject _ccobj;
+
+    // our dependencies
+    protected RootDObjectManager _omgr;
+    protected InvocationManager _invmgr;
+    protected MsoyPeerManager _peerMan;
+
+    /** How long a chat message should stay in channel history (in milliseconds). */
+    protected static final int MAX_RECENT_MESSAGE_AGE = 15 * 1000;
 }

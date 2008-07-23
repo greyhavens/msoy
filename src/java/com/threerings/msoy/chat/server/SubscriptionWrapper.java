@@ -16,7 +16,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -34,7 +33,7 @@ public class SubscriptionWrapper extends ChannelWrapper
     public void initialize (final ChannelCreationContinuation cccont)
     {
         // let's create a proxy to a channel object hosted on another server
-        MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
+        MsoyNodeObject host = _peerMan.getChannelHost(_channel);
         HostedChannel hosted = host.hostedChannels.get(HostedChannel.getKey(_channel));
         if (hosted == null) {
             // the host used to have this channel, but it disappeared. where did it go?
@@ -48,7 +47,7 @@ public class SubscriptionWrapper extends ChannelWrapper
         ResultListener<Integer> subscriptionResult = new ResultListener<Integer>() {
             public void requestCompleted (Integer localOid) {
                 // subscription successful! we have the local oid of the proxy object
-                _ccobj = (ChatChannelObject) MsoyServer.omgr.getObject(localOid);
+                _ccobj = (ChatChannelObject)_omgr.getObject(localOid);
                 _ccobj.channel = _channel;
                 // create our special handler, which forwards all speak requests to the host.
                 // nota bene: we are creating a local instance of the special handler, and
@@ -59,7 +58,7 @@ public class SubscriptionWrapper extends ChannelWrapper
                 // instead of the service initialized by the host. (todo: move this out of dobj?)
                 SubscriptionWrapper superthis = SubscriptionWrapper.this;
                 SpeakDispatcher sd = new SpeakDispatcher(new SubscriptionSpeakHandler(superthis));
-                _ccobj.speakService = MsoyServer.invmgr.registerDispatcher(sd);
+                _ccobj.speakService = _invmgr.registerDispatcher(sd);
                 _ccobj.addListener(superthis);
                 // we're so done.
                 cccont.creationSucceeded(superthis);
@@ -71,7 +70,7 @@ public class SubscriptionWrapper extends ChannelWrapper
         };
 
         // now let's get the proxy object - the listener will do the rest
-        MsoyServer.peerMan.proxyRemoteObject(host.nodeName, hosted.oid, subscriptionResult);
+        _peerMan.proxyRemoteObject(host.nodeName, hosted.oid, subscriptionResult);
     }
 
     // from abstract class ChannelWrapper
@@ -79,17 +78,17 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         // clean up the object
         _ccobj.removeListener(this);
-        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
+        _invmgr.clearDispatcher(_ccobj.speakService);
 
         // unsubscribe from the proxy
-        MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
+        MsoyNodeObject host = _peerMan.getChannelHost(_channel);
         if (host == null) {
             // host already destroyed the distributed object
             return;
         }
 
         HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
-        MsoyServer.peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
+        _peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
     }
 
     // from abstract class ChannelWrapper
@@ -157,14 +156,14 @@ public class SubscriptionWrapper extends ChannelWrapper
      */
     protected Tuple<MsoyNodeObject,Client> getChannelHost (String caller, VizMemberName chatter)
     {
-        MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
+        MsoyNodeObject host = _peerMan.getChannelHost(_channel);
         if (host == null) {
             log.warning("No host for channel [caller=" + caller + ", chatter=" + chatter +
                 ", " + _channel + "].");
             return null;
         }
 
-        Client client = MsoyServer.peerMan.getPeerClient(host.nodeName);
+        Client client = _peerMan.getPeerClient(host.nodeName);
         if (client == null) {
             log.warning("Missing client for chat host node [caller=" + caller +
                         ", node=" + host.nodeName + "].");
