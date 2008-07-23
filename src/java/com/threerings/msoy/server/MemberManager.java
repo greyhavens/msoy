@@ -54,10 +54,12 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -216,8 +218,8 @@ public class MemberManager
         if (user.location == null) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
 //            // TEST: let's pretend that we KNOW that they're in a game... just move them home
-//            MemberObject bootee = MsoyServer.lookupMember(booteeId);
-//            MsoyServer.screg.moveBody(bootee, bootee.getHomeSceneId());
+//            MemberObject bootee = _locator.lookupMember(booteeId);
+//            _screg.moveBody(bootee, bootee.getHomeSceneId());
 //            listener.requestProcessed();
 //            return;
         }
@@ -268,7 +270,7 @@ public class MemberManager
             throw new InvocationException("e.not_a_friend");
         }
 
-        MemberLocation memloc = MsoyServer.peerMan.getMemberLocation(memberId);
+        MemberLocation memloc = _peerMan.getMemberLocation(memberId);
         if (memloc == null) {
             throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
         }
@@ -314,8 +316,7 @@ public class MemberManager
         }
 
         // issue the follow invitation to the target
-        MsoyServer.notifyMan.notifyFollowInvite(
-            target, user.memberName.toString(), user.getMemberId());
+        _notifyMan.notifyFollowInvite(target, user.memberName.toString(), user.getMemberId());
 
         // add this player to our followers set, if they ratify the follow request before we leave
         // our current location, the wiring up will be complete; if we leave the room before they
@@ -384,7 +385,7 @@ public class MemberManager
 
         // otherwise, make sure it exists and we own it
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
-        MsoyServer.itemMan.getItem(ident, new ResultListener<Item>() {
+        _itemMan.getItem(ident, new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 Avatar avatar = (Avatar) item;
                 if (user.getMemberId() != avatar.ownerId) { // ensure that they own it
@@ -673,7 +674,7 @@ public class MemberManager
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
                 public void handleSuccess () {
-                    MsoyServer.notifyMan.notify(member, new LevelUpNotification(newLevel));
+                    _notifyMan.notify(member, new LevelUpNotification(newLevel));
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" +
@@ -726,7 +727,7 @@ public class MemberManager
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
                 if (newScale != 0 && avatar != null && avatar.scale != newScale) {
-                    MsoyServer.itemMan.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                    _itemMan.getAvatarRepository().updateScale(avatar.itemId, newScale);
                 }
             }
 
@@ -735,7 +736,7 @@ public class MemberManager
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
                 }
-                MsoyServer.itemMan.updateItemUsage(
+                _itemMan.updateItemUsage(
                     user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
                     public void requestFailed (Exception cause) {
                         log.warning("Unable to update usage from an avatar change.");
@@ -754,11 +755,11 @@ public class MemberManager
                     long now = System.currentTimeMillis();
                     if (prev != null) {
                         prev.lastTouched = now;
-                        MsoyServer.itemMan.avatarUpdatedOnPeer(user, prev);
+                        _itemMan.avatarUpdatedOnPeer(user, prev);
                     }
                     if (avatar != null) {
                         avatar.lastTouched = now + 1; // the new one should be more recently touched
-                        MsoyServer.itemMan.avatarUpdatedOnPeer(user, avatar);
+                        _itemMan.avatarUpdatedOnPeer(user, avatar);
                     }
 
                     // now set the new avatar
@@ -816,6 +817,8 @@ public class MemberManager
     @Inject protected MemberLogic _memberLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;

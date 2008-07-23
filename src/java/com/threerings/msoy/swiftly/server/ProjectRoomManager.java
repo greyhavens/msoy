@@ -307,7 +307,7 @@ public class ProjectRoomManager extends PlaceManager
         MemberObject memobj = (MemberObject)caller;
 
         AbstractBuildTask buildTask = new BuildTask(this, memobj.memberName, listener);
-        _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
+        _svnExecutor.addTask(new CommitProjectTask(this, _swiftlyMan, buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -321,7 +321,7 @@ public class ProjectRoomManager extends PlaceManager
 
         AbstractBuildTask buildTask = new BuildAndExportTask(
             this, _swiftlyRepo, _itemMan, memobj.memberName, listener);
-        _svnExecutor.addTask(new CommitProjectTask(this, buildTask, listener));
+        _svnExecutor.addTask(new CommitProjectTask(this, _swiftlyMan, buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -566,7 +566,7 @@ public class ProjectRoomManager extends PlaceManager
             }
 
         };
-        _svnExecutor.addTask(new CommitProjectTask(this, listener));
+        _svnExecutor.addTask(new CommitProjectTask(this, _swiftlyMan, listener));
     }
 
     protected ProjectRoomObject _roomObj;

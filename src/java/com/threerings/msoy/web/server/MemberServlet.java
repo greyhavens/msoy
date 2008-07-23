@@ -28,6 +28,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -109,7 +110,7 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
         try {
             List<Item> items = Lists.newArrayList();
             for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
@@ -415,6 +416,7 @@ public class MemberServlet extends MsoyServiceServlet
 
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MemberLogic _memberLogic;
 
     /** Maximum number of members to return for the leader board */

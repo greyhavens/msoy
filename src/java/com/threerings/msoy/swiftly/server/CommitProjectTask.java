@@ -6,9 +6,10 @@ package com.threerings.msoy.swiftly.server;
 import java.util.ArrayList;
 
 import com.samskivert.util.SerialExecutor;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+
 import com.threerings.presents.client.InvocationService.ResultListener;
+
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 
 import static com.threerings.msoy.Log.log;
 
@@ -19,18 +20,21 @@ public class CommitProjectTask
     /**
      * Only commit the project, do not perform a build.
      */
-    public CommitProjectTask (ProjectRoomManager manager, ResultListener listener)
+    public CommitProjectTask (ProjectRoomManager manager, SwiftlyManager swiftlyMan,
+                              ResultListener listener)
     {
-        this(manager, null, listener);
+        this(manager, swiftlyMan, null, listener);
     }
 
     /**
      * Commit the project, then perform a build.
      */
-    public CommitProjectTask (ProjectRoomManager manager, AbstractBuildTask buildTask,
-                              ResultListener listener)
+    public CommitProjectTask (ProjectRoomManager manager, SwiftlyManager swiftlyMan,
+                              AbstractBuildTask buildTask, ResultListener listener)
     {
         _manager = manager;
+        _swiftlyMan = swiftlyMan;
+
         // take a snapshot of certain items while we're on the dobj thread
         _allDocs = manager.getRoomObj().documents.toArray(
             new SwiftlyDocument[manager.getRoomObj().documents.size()]);
@@ -86,7 +90,7 @@ public class CommitProjectTask
 
         // if the commit worked, run the build if instructed
         if (buildRequested()) {
-            MsoyServer.swiftlyMan.buildExecutor.execute(_buildTask);
+            _swiftlyMan.buildExecutor.execute(_buildTask);
 
         } else {
             // TODO: can we avoid using null here?
@@ -109,6 +113,7 @@ public class CommitProjectTask
     protected final ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
 
     protected final ProjectRoomManager _manager;
+    protected final SwiftlyManager _swiftlyMan;
     protected final AbstractBuildTask _buildTask;
     protected final ResultListener _listener;
     protected Throwable _error;

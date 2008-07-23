@@ -3,12 +3,16 @@
 
 package com.threerings.msoy.chat.server;
 
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.presents.data.ClientObject;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.presents.data.ClientObject;
+
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.chat.data.ChatChannel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -16,9 +20,10 @@ import static com.threerings.msoy.Log.log;
  */
 public class SubscriptionSpeakHandler extends ChannelSpeakHandler
 {
-    public SubscriptionSpeakHandler (SubscriptionWrapper wrapper)
+    public SubscriptionSpeakHandler (MsoyPeerManager peerMan, SubscriptionWrapper wrapper)
     {
         super(wrapper);
+        _peerMan = peerMan;
     }
 
     // from interface SpeakProvider
@@ -27,10 +32,10 @@ public class SubscriptionSpeakHandler extends ChannelSpeakHandler
         if (validateSpeaker(caller, mode)) {
             VizMemberName chatter = ((MemberObject)caller).memberName;
             ChatChannel channel = _ch.getChannel();
-            MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(channel);
+            MsoyNodeObject host = _peerMan.getChannelHost(channel);
             if (host != null) {
                 host.peerChatService.forwardSpeak(
-                    MsoyServer.peerMan.getPeerClient(host.nodeName),
+                    _peerMan.getPeerClient(host.nodeName),
                     chatter, channel, message, mode, new ReportListener(chatter));
             } else {
                 log.info("Dropping channel message, no host [speaker=" + chatter +
@@ -38,5 +43,6 @@ public class SubscriptionSpeakHandler extends ChannelSpeakHandler
             }
         }
     }
-}
 
+    protected MsoyPeerManager _peerMan;
+}

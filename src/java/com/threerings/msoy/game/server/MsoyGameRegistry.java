@@ -95,10 +95,8 @@ public class MsoyGameRegistry
     /**
      * Initializes this registry and queues up our game servers to be started.
      */
-    public void init (GameRepository gameRepo)
+    public void init ()
     {
-        _gameRepo = gameRepo;
-
         _serverRegObj = new ServerRegistryObject();
         _omgr.registerObject(_serverRegObj);
 
@@ -587,9 +585,6 @@ public class MsoyGameRegistry
         protected int _deltaCoins;
     }
 
-    /** Used to load metadata for games. */
-    protected GameRepository _gameRepo;
-
     /** Hold distributed information about our game servers. */
     protected ServerRegistryObject _serverRegObj;
 
@@ -607,6 +602,7 @@ public class MsoyGameRegistry
     @Inject protected MemberManager _memberMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected GameRepository _gameRepo;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;

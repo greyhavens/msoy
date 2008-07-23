@@ -23,8 +23,9 @@ import com.threerings.msoy.world.data.MsoyPortal;
  */
 public class MsoySceneMoveHandler extends SceneMoveHandler
 {
-    public MsoySceneMoveHandler (LocationManager locman, BodyObject body, int sceneVer,
-                                 MsoyLocation dest, SceneService.SceneMoveListener listener)
+    public MsoySceneMoveHandler (LocationManager locman, MsoyPeerManager peerMan, BodyObject body,
+                                 int sceneVer, MsoyLocation dest,
+                                 SceneService.SceneMoveListener listener)
     {
         super(locman, body, sceneVer, listener);
         _dest = dest;
@@ -35,7 +36,7 @@ public class MsoySceneMoveHandler extends SceneMoveHandler
     {
         super.sceneFailedToResolve(sceneId, reason);
         // release our scene resolution lock because we booched it
-        MsoyServer.peerMan.releaseLock(
+        _peerMan.releaseLock(
             MsoyPeerManager.getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
 
@@ -61,5 +62,6 @@ public class MsoySceneMoveHandler extends SceneMoveHandler
         }
     }
 
+    protected MsoyPeerManager _peerMan;
     protected MsoyLocation _dest;
 }

@@ -51,7 +51,6 @@ import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -106,36 +105,6 @@ public class MsoyServer extends MsoyBaseServer
     /** An invoker for sending email. */
     @Deprecated public static Invoker mailInvoker;
 
-    /** Our runtime admin manager. */
-    public static MsoyAdminManager adminMan = new MsoyAdminManager();
-
-    /** Manages interactions with our peer servers. */
-    public static MsoyPeerManager peerMan;
-
-    /** Our runtime member manager. */
-    public static MemberManager memberMan;
-
-    /** Handles management of member's friends lists. */
-    public static FriendManager friendMan;
-
-    /** Our runtime chat channel manager. */
-    public static ChatChannelManager channelMan;
-
-    /** The Msoy item manager. */
-    public static ItemManager itemMan;
-
-    /** Our runtime swiftly editor manager. */
-    public static SwiftlyManager swiftlyMan;
-
-    /** Manages our external game servers. */
-    public static MsoyGameRegistry gameReg;
-
-    /** Handles our cuddly little pets. */
-    public static PetManager petMan;
-
-    /** Handles notifications to clients. */
-    public static NotificationManager notifyMan;
-
     /**
      * Starts everything a runnin'.
      */
@@ -178,19 +147,6 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         super.init(injector);
-
-        // TEMP: publish some managers via the legacy static references
-        peerMan = _peerMan;
-        gameReg = _gameReg;
-        swiftlyMan = _swiftlyMan;
-        adminMan = _adminMan;
-        itemMan = _itemMan;
-        channelMan = _channelMan;
-        memberMan = _memberMan;
-        friendMan = _friendMan;
-        petMan = _petMan;
-        notifyMan = _notifyMan;
-        // DO NOT ADD TO THIS LIST: do things the right way with injection
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
@@ -259,15 +215,19 @@ public class MsoyServer extends MsoyBaseServer
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // intialize various services
+        _sceneRepo.init();
         _adminMan.init();
         _memberMan.init();
         _friendMan.init();
         _channelMan.init();
         _jabberMan.init();
         _itemMan.init();
-        swiftlyMan.init(_invmgr);
+        _swiftlyMan.init(_invmgr);
         _petMan.init(injector);
-        _gameReg.init(itemMan.getGameRepository());
+        _gameReg.init();
+
+        // TEMP: give a peer manager refernce to MemberNodeActions
+        MemberNodeActions.init(_peerMan);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -354,6 +314,9 @@ public class MsoyServer extends MsoyBaseServer
         _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
+    /** Manages world scene data. */
+    @Inject protected MsoySceneRepository _sceneRepo;
+
     /** Our runtime jabber manager. */
     @Inject protected JabberManager _jabberMan;
 
@@ -386,9 +349,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Handles our cuddly little pets. */
     @Inject protected PetManager _petMan;
-
-    /** Handles notifications to clients. */
-    @Inject protected NotificationManager _notifyMan;
 
     /** The member movement observation manager. */
     @Inject protected WorldWatcherManager _watcherMan;

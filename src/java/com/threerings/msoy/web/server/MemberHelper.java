@@ -26,6 +26,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -219,7 +220,7 @@ public class MemberHelper
         });
 
         // now load up the rest of their member card information
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         try {
             Set<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
             for (MemberCardRecord mcr : _memberRepo.loadMemberCards(keys)) {
@@ -261,5 +262,6 @@ public class MemberHelper
 
     // our dependencies
     @Inject protected ServletLogic _servletLogic;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
 }

@@ -57,10 +57,16 @@ public class MsoySceneRepository extends DepotRepository
     implements SceneRepository
 {
     @Inject public MsoySceneRepository (PersistenceContext ctx)
-        throws PersistenceException
     {
         super(ctx);
+    }
 
+    /**
+     * Creates our default scenes and starts up our accumulator.
+     */
+    public void init ()
+        throws PersistenceException
+    {
         // create our stock scenes if they are not yet created
         for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
             checkCreateStockScene(stock);

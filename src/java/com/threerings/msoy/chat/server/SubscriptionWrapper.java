@@ -57,8 +57,8 @@ public class SubscriptionWrapper extends ChannelWrapper
                 // we need this so that our clients will always talk to the local service,
                 // instead of the service initialized by the host. (todo: move this out of dobj?)
                 SubscriptionWrapper superthis = SubscriptionWrapper.this;
-                SpeakDispatcher sd = new SpeakDispatcher(new SubscriptionSpeakHandler(superthis));
-                _ccobj.speakService = _invmgr.registerDispatcher(sd);
+                _ccobj.speakService = _invmgr.registerDispatcher(
+                    new SpeakDispatcher(new SubscriptionSpeakHandler(_peerMan, superthis)));
                 _ccobj.addListener(superthis);
                 // we're so done.
                 cccont.creationSucceeded(superthis);

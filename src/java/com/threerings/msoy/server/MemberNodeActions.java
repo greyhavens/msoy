@@ -10,22 +10,20 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.chat.server.ChatChannelManager;
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-
 import com.threerings.msoy.server.persist.MemberFlowRecord;
-
-import com.threerings.msoy.notify.data.Notification;
-
-import com.threerings.msoy.group.data.GroupMembership;
-
-import com.threerings.msoy.peer.server.MemberNodeAction;
 
 /**
  * Contains various member node actions.
@@ -33,13 +31,22 @@ import com.threerings.msoy.peer.server.MemberNodeAction;
 public class MemberNodeActions
 {
     /**
+     * Provides us with our peer manager reference. TODO: nix this and require callers to inject a
+     * MemberNodeActions instance.
+     */
+    public static void init (MsoyPeerManager peerMan)
+    {
+        _peerMan = peerMan;
+    }
+
+    /**
      * Dispatches a notification that a member's info has changed to whichever server they are
      * logged into.
      */
     public static void infoChanged (
         int memberId, String displayName, MediaDesc photo, String status)
     {
-        MsoyServer.peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
+        _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
     }
 
     /**
@@ -53,9 +60,9 @@ public class MemberNodeActions
         for (FriendEntry entry : memobj.friends) {
             friends[ii++] = entry.name.getMemberId();
         }
-        MsoyServer.peerMan.invokeNodeAction(new FriendEntryUpdate(
-            friends, memobj.getMemberId(), memobj.memberName.toString(),
-            memobj.memberName.getPhoto(), memobj.headline));
+        _peerMan.invokeNodeAction(
+            new FriendEntryUpdate(friends, memobj.getMemberId(), memobj.memberName.toString(),
+                                  memobj.memberName.getPhoto(), memobj.headline));
     }
 
     /**
@@ -64,7 +71,7 @@ public class MemberNodeActions
      */
     public static void flowUpdated (MemberFlowRecord record)
     {
-        MsoyServer.peerMan.invokeNodeAction(new FlowUpdated(record));
+        _peerMan.invokeNodeAction(new FlowUpdated(record));
     }
 
     /**
@@ -76,7 +83,7 @@ public class MemberNodeActions
      */
     public static void reportUnreadMail (int memberId, int newMailCount)
     {
-        MsoyServer.peerMan.invokeNodeAction(new ReportUnreadMail(memberId, newMailCount));
+        _peerMan.invokeNodeAction(new ReportUnreadMail(memberId, newMailCount));
     }
 
     /**
@@ -85,7 +92,7 @@ public class MemberNodeActions
      */
     public static void joinedGroup (int memberId, GroupMembership gm)
     {
-        MsoyServer.peerMan.invokeNodeAction(new JoinedGroup(memberId, gm));
+        _peerMan.invokeNodeAction(new JoinedGroup(memberId, gm));
     }
 
     /**
@@ -94,7 +101,7 @@ public class MemberNodeActions
      */
     public static void leftGroup (int memberId, int groupId)
     {
-        MsoyServer.peerMan.invokeNodeAction(new LeftGroup(memberId, groupId));
+        _peerMan.invokeNodeAction(new LeftGroup(memberId, groupId));
     }
 
     /**
@@ -102,7 +109,7 @@ public class MemberNodeActions
      */
     public static void bootMember (int memberId)
     {
-        MsoyServer.peerMan.invokeNodeAction(new BootMember(memberId));
+        _peerMan.invokeNodeAction(new BootMember(memberId));
     }
 
     /**
@@ -110,7 +117,7 @@ public class MemberNodeActions
      */
     public static void avatarUpdated (int memberId, int avatarId)
     {
-        MsoyServer.peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId));
+        _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId));
     }
 
     /**
@@ -118,7 +125,7 @@ public class MemberNodeActions
      */
     public static void avatarDeleted (int memberId, int avatarId)
     {
-        MsoyServer.peerMan.invokeNodeAction(new AvatarDeleted(memberId, avatarId));
+        _peerMan.invokeNodeAction(new AvatarDeleted(memberId, avatarId));
     }
 
     /**
@@ -126,7 +133,7 @@ public class MemberNodeActions
      */
     public static void sendNotification (int memberId, Notification notification)
     {
-        MsoyServer.peerMan.invokeNodeAction(new SendNotification(memberId, notification));
+        _peerMan.invokeNodeAction(new SendNotification(memberId, notification));
     }
 
     /**
@@ -134,7 +141,7 @@ public class MemberNodeActions
      */
     public static void badgeAwarded (BadgeRecord record)
     {
-        MsoyServer.peerMan.invokeNodeAction(new BadgeAwarded(record));
+        _peerMan.invokeNodeAction(new BadgeAwarded(record));
     }
 
     protected static class InfoChanged extends MemberNodeAction
@@ -149,8 +156,8 @@ public class MemberNodeActions
         protected void execute (MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
-            MsoyServer.memberMan.updateOccupantInfo(memobj);
-            MsoyServer.channelMan.updateMemberOnChannels(memobj.memberName);
+            _memberMan.updateOccupantInfo(memobj);
+            _channelMan.updateMemberOnChannels(memobj.memberName);
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
@@ -163,6 +170,9 @@ public class MemberNodeActions
         protected String _displayName;
         protected MediaDesc _photo;
         protected String _status;
+
+        @Inject protected transient ChatChannelManager _channelMan;
+        @Inject protected transient MemberManager _memberMan;
     }
 
     protected static class FlowUpdated extends MemberNodeAction
@@ -241,8 +251,10 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            MsoyServer.memberMan.bootMember(_memberId);
+            _memberMan.bootMember(_memberId);
         }
+
+        @Inject protected transient MemberManager _memberMan;
     }
 
     protected static class AvatarDeleted extends MemberNodeAction
@@ -253,10 +265,12 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            MsoyServer.itemMan.avatarDeletedOnPeer(memobj, _avatarId);
+            _itemMan.avatarDeletedOnPeer(memobj, _avatarId);
         }
 
         protected int _avatarId;
+
+        @Inject protected transient ItemManager _itemMan;
     }
 
     protected static class AvatarUpdated extends MemberNodeAction
@@ -267,10 +281,12 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            MsoyServer.itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
+            _itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
         }
 
         protected int _avatarId;
+
+        @Inject protected transient ItemManager _itemMan;
     }
 
     protected static class SendNotification extends MemberNodeAction
@@ -281,10 +297,12 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            MsoyServer.notifyMan.notify(memobj, _notification);
+            _notifyMan.notify(memobj, _notification);
         }
 
         protected Notification _notification;
+
+        @Inject protected transient NotificationManager _notifyMan;
     }
 
     protected static class BadgeAwarded extends MemberNodeAction
@@ -345,4 +363,6 @@ public class MemberNodeActions
         /** Used to look up member objects. */
         @Inject protected MemberLocator _locator;
     }
+
+    protected static MsoyPeerManager _peerMan;
 }

@@ -33,7 +33,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -228,15 +227,18 @@ public class MemberLogic
 
         protected void execute (final MemberObject memobj) {
             MemberName friend = new MemberName(_friendName, _friendId);
-            boolean online = (MsoyServer.peerMan.locateClient(friend) != null);
+            boolean online = (_peerMan.locateClient(friend) != null);
             memobj.addToFriends(new FriendEntry(friend, online, _friendPhoto, _friendStatus));
-            MsoyServer.friendMan.registerFriendInterest(memobj, _friendId);
+            _friendMan.registerFriendInterest(memobj, _friendId);
         }
 
         protected int _friendId;
         protected String _friendName;
         protected MediaDesc _friendPhoto;
         protected String _friendStatus;
+
+        @Inject protected transient MsoyPeerManager _peerMan;
+        @Inject protected transient FriendManager _friendMan;
     }
 
     protected static class RemoveFriend extends MemberNodeAction
@@ -252,7 +254,8 @@ public class MemberLogic
         }
 
         protected int _friendId;
-        @Inject protected FriendManager _friendMan;
+
+        @Inject protected transient FriendManager _friendMan;
     }
 
     // dependencies

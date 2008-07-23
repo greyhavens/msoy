@@ -119,7 +119,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
         // this fellow will handle the nitty gritty of our scene switch
         final MsoySceneMoveHandler handler =
-            new MsoySceneMoveHandler(_locman, mover, version, destLoc, listener) {
+            new MsoySceneMoveHandler(_locman, _peerMan, mover, version, destLoc, listener) {
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
                 super.effectSceneMove(scmgr);
                 // if we're a member and we have a pet following us, we need to move the pet
@@ -208,6 +208,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
+    // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyPeerManager _peerMan;

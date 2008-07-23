@@ -93,8 +93,7 @@ public class GameTraceLogServlet extends HttpServlet
     protected void exportLog (HttpServletResponse rsp, int logId, int gameId)
         throws PersistenceException, IOException
     {
-        GameRepository repo = MsoyServer.itemMan.getGameRepository();
-        GameTraceLogRecord record = repo.loadTraceLog(logId);
+        GameTraceLogRecord record = _gameRepo.loadTraceLog(logId);
         if (record == null) {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -112,8 +111,7 @@ public class GameTraceLogServlet extends HttpServlet
     {
         rsp.setContentType("text/html");
         rsp.getOutputStream().println("Logs for game [id=" + gameId + "]: ");
-        GameRepository repo = MsoyServer.itemMan.getGameRepository();
-        for (GameTraceLogEnumerationRecord record : repo.enumerateTraceLogs(gameId)) {
+        for (GameTraceLogEnumerationRecord record : _gameRepo.enumerateTraceLogs(gameId)) {
             rsp.getOutputStream().print(
                 "<a href='/gamelogs?gameId=" + gameId + "&logId=" + record.logId + "'>" +
                 record.logId + "</a>&nbsp;");
@@ -121,6 +119,7 @@ public class GameTraceLogServlet extends HttpServlet
         StreamUtil.close(rsp.getOutputStream());
     }
 
-    /** Provides useful member related services. */
+    // our dependencies
     @Inject protected MemberHelper _mhelper;
+    @Inject protected GameRepository _gameRepo;
 }
