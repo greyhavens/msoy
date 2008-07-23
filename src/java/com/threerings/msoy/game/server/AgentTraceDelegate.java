@@ -8,6 +8,8 @@ import com.google.inject.Inject;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 
+import com.threerings.presents.annotation.MainInvoker;
+
 import com.threerings.parlor.game.server.GameManagerDelegate;
 
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -70,6 +72,6 @@ public class AgentTraceDelegate extends GameManagerDelegate
     protected boolean _tracing = true;
 
     // our dependencies
-    @Inject protected Invoker _invoker;
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected GameRepository _gameRepo;
 }
