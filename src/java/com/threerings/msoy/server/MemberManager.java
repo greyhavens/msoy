@@ -44,22 +44,19 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.msoy.person.server.MailManager;
-
-import com.threerings.msoy.person.data.Profile;
-
-import com.threerings.msoy.person.util.FeedMessageType;
-
-import com.threerings.msoy.world.data.MsoySceneModel;
-
 import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.server.BadgeManager;
+import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -70,8 +67,6 @@ import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.notify.data.LevelUpNotification;
 
 import com.threerings.msoy.server.persist.FlowRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
@@ -220,7 +215,7 @@ public class MemberManager
         checkCurrentLevel(member);
 
         // update badges
-        MsoyServer.badgeMan.updateBadges(member);
+        _badgeMan.updateBadges(member);
     }
 
     // from interface MemberProvider
@@ -835,6 +830,7 @@ public class MemberManager
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailManager _mailMan;
     @Inject protected BodyManager _bodyMan;
+    @Inject protected BadgeManager _badgeMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;

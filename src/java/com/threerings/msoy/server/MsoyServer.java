@@ -58,13 +58,12 @@ import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 
+import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.persist.MailRepository;
-import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneFactory;
@@ -151,12 +150,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to our trophy metadata. */
     public static TrophyRepository trophyRepo;
-
-    /** Provides access to the badge repository. */
-    public static BadgeRepository badgeRepo;
-
-    /** Handles the updating of a member's badges. */
-    public static BadgeManager badgeMan;
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
@@ -246,8 +239,7 @@ public class MsoyServer extends MsoyBaseServer
         issueRepo = _issueRepo;
         commentRepo = _commentRepo;
         trophyRepo = _trophyRepo;
-        badgeRepo = _badgeRepo;
-        badgeMan = _badgeMan;
+        // DO NOT ADD TO THIS LIST: do things the right way with injection
 
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
@@ -484,9 +476,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides access to our trophy metadata. */
     @Inject protected TrophyRepository _trophyRepo;
-
-    /** Provides access to the badge repository. */
-    @Inject protected BadgeRepository _badgeRepo;
 
     /** Handles updating a member's badges. */
     @Inject protected BadgeManager _badgeMan;

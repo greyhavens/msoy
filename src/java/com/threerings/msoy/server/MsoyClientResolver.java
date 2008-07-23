@@ -28,6 +28,7 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
@@ -116,7 +117,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.stats = new StatSet(stats.iterator());
 
         // and their badges
-        List<BadgeRecord> badgeRecs = MsoyServer.badgeRepo.loadBadges(member.memberId);
+        List<BadgeRecord> badgeRecs = _badgeRepo.loadBadges(member.memberId);
         List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeRecs.size());
         for (BadgeRecord rec : badgeRecs) {
             badges.add(rec.toBadge());
@@ -195,4 +196,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             });
         }
     }
+
+    // dependencies
+    @Inject protected BadgeRepository _badgeRepo;
 }
