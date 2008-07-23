@@ -120,7 +120,9 @@ public class PopupFilePreview extends TitleWindow
         _label.maxWidth = 250;
 
         hbox = new HBox();
-        hbox.addChild(_edit = new CommandButton(_ctx.REMIX.get("b.edit"), doEdit));
+        if (imageOk) {
+            hbox.addChild(_edit = new CommandButton(_ctx.REMIX.get("b.edit"), doEdit));
+        }
         hbox.addChild(_label);
         previewBox.addChild(hbox);
 
@@ -153,7 +155,9 @@ public class PopupFilePreview extends TitleWindow
         _bytes = bytes;
         _image.setImage(bytes);
         _ok.enabled = (bytes != null);
-        _edit.enabled = (bytes != null);
+        if (_edit != null) {
+            _edit.enabled = (bytes != null);
+        }
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -330,10 +334,11 @@ public class PopupFilePreview extends TitleWindow
         case "Image":
             return [ new FileFilter(_ctx.REMIX.get("m.Image"), "*.jpg;*.jpeg;*.gif;*.png") ];
 
-        case "XML": // TODO
-            // fall through to Text
-        case "Text": // TODO
-            // fall through to default
+        case "XML":
+            return [ new FileFilter(_ctx.REMIX.get("m.XML"), "*") ];
+
+        case "Text":
+            return [ new FileFilter(_ctx.REMIX.get("m.Text"), "*") ];
 
         default:
             throw new Error("Don't understand " + _type + " files yet.");
