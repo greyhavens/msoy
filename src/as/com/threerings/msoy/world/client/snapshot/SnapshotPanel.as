@@ -32,18 +32,26 @@ import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    public static const IMAGE_WIDTH :int = 380; // old: 320;
-    public static const IMAGE_HEIGHT :int = 167; // old: 180;
+    public static const CANONICAL_WIDTH :int = 380; // old: 320;
+    public static const CANONICAL_HEIGHT :int = 167; // old: 180;
+
+    public var fullRoom :Snapshot;
+    public var canonical :Snapshot;
 
     public function SnapshotPanel (ctx :WorldContext, sceneId :int, view :RoomView)
     {
         super(ctx, Msgs.WORLD.get("t.snap"));
 
-        _ctrl = new SnapshotController(ctx, this);
+        _sceneId = sceneId;
         _view = view;
-        _snapshot = new Snapshot(view, IMAGE_WIDTH, IMAGE_HEIGHT);
+        _ctrl = new SnapshotController(ctx, this);
         
-        _snapshot.updateSnapshot();
+        canonical = new Snapshot(view, CANONICAL_WIDTH, CANONICAL_HEIGHT);
+        canonical.updateSnapshot();
+        
+        fullRoom = new Snapshot(view, view.width, view.height);
+        fullRoom.updateSnapshot();
+        
         open();
     }
 
@@ -54,7 +62,8 @@ public class SnapshotPanel extends FloatingPanel
             _showChat.selected = false;
         }
         _showChat.enabled = occs;
-        _snapshot.updateSnapshot(occs, _showChat.selected);
+        canonical.updateSnapshot(occs, _showChat.selected);
+        fullRoom.updateSnapshot(occs, _showChat.selected);
     }
 
     override protected function createChildren () :void
@@ -79,7 +88,7 @@ public class SnapshotPanel extends FloatingPanel
         addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
 //        var label :Text = new Text();
-//        label.text = Msgs.WORLD.get("l.edit_snapshot_desc");
+//        label.text = Msgs.WORLD.get("l.edit_canonical_desc");
 //        label.width = int(IMAGE_WIDTH);
 //        label.selectable = false;
 //        addChild(label);
@@ -90,7 +99,7 @@ public class SnapshotPanel extends FloatingPanel
 //        addChild(url);
 
         _preview = new Image();
-        _preview.source = new BitmapAsset(_snapshot.bitmap);
+        _preview.source = new BitmapAsset(canonical.bitmap);
         addChild(_preview);
 
 //        if (!_success) {
@@ -106,10 +115,10 @@ public class SnapshotPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         super.buttonClicked(buttonId);
-        _ctrl.close((buttonId == OK_BUTTON) ? _snapshot.bitmap : null);
+        _ctrl.close(buttonId == OK_BUTTON, this, _sceneId);
     }
 
-    protected var _snapshot :Snapshot
+    protected var _sceneId :int;
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;

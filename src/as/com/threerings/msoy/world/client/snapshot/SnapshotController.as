@@ -16,6 +16,7 @@ import com.adobe.images.JPGEncoder;
 
 import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
+import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Prefs;
@@ -43,14 +44,17 @@ public class SnapshotController extends Controller
 //        return DeploymentConfig.mediaURL + "/snapshot/" + _sceneId + ".jpg";
 //    }
 
-
-    /** Called when after the screenshot panel was closed. If bitmap is not null,
-     *  it will be uploaded to the server as the new screenshot for the scene. */
-    public function close (bitmap :BitmapData, sceneId :int = 0) :void
+    /** Called when after the screenshot panel was closed. If doUpload is true, the snapshots
+     *  taken by snapshotPanel will be uploaded to the server.  The canonical one will be
+     *  used as the new snapshot for the scene. */
+    public function close (doUpload :Boolean, panel :SnapshotPanel, sceneId :int = 0) :void
     {
-        if (bitmap != null) {
-            upload(bitmap, sceneId);
-
+        if (doUpload) {
+            if (panel.canonical.bitmap) {
+                upload(panel.canonical.bitmap, sceneId);
+            }
+            
+            //todo: save the ordinary file here... depends on 
             _ctx.getGameDirector().tutorialEvent("snapshotTaken");
         }
         _panel = null;
