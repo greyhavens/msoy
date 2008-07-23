@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.util.ResultListener;
 
