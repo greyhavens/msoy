@@ -45,7 +45,7 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -223,10 +223,16 @@ public class MemberManager
                                   InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-        // pass the buck to the mail manager
-        _mailMan.sendFriendInvite(user.getMemberId(), friendId, listener);
+        _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+            public void invokePersistent () throws Exception {
+                _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
+            }
+            public void handleSuccess () {
+                ((InvocationService.ConfirmListener)_listener).requestProcessed();
+            }
+        });
     }
 
     // from interface MemberProvider
@@ -828,7 +834,7 @@ public class MemberManager
     // dependencies
     @Inject protected ClientManager _clmgr;
     @Inject protected PlaceRegistry _placeReg;
-    @Inject protected MailManager _mailMan;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected MemberLocator _locator;

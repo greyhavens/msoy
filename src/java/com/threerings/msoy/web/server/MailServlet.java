@@ -24,7 +24,7 @@ import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.MailPayload;
-import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -165,7 +165,7 @@ public class MailServlet extends MsoyServiceServlet
             }
 
             // let the mail manager handle the rest
-            _mailMan.startConversation(memrec, recip, subject, body, attachment);
+            _mailLogic.startConversation(memrec, recip, subject, body, attachment);
 
         } catch (PersistenceException pe) {
             log.warning("Start conversation failed [for=" + memrec.who() +
@@ -182,7 +182,8 @@ public class MailServlet extends MsoyServiceServlet
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
             // pass the buck to the mail manager
-            ConvMessageRecord cmr = _mailMan.continueConversation(memrec, convoId, body, attachment);
+            ConvMessageRecord cmr = _mailLogic.continueConversation(
+                memrec, convoId, body, attachment);
 
             // convert the added message to a runtime record and return it to the caller
             ConvMessage result = cmr.toConvMessage();
@@ -233,5 +234,5 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     @Inject protected MailRepository _mailRepo;
-    @Inject protected MailManager _mailMan;
+    @Inject protected MailLogic _mailLogic;
 }

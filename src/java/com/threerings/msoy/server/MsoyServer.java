@@ -63,7 +63,6 @@ import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneFactory;
@@ -113,7 +112,7 @@ public class MsoyServer extends MsoyBaseServer
     public static Invoker swiftlyInvoker;
 
     /** An invoker for sending email. */
-    public static Invoker mailInvoker;
+    @Deprecated public static Invoker mailInvoker;
 
     /** Our runtime admin manager. */
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
@@ -135,9 +134,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
-
-    /** Contains information on our mail system. */
-    public static MailRepository mailRepo;
 
     /** Contains information on our forums. */
     public static ForumRepository forumRepo;
@@ -168,14 +164,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Handles notifications to clients. */
     public static NotificationManager notifyMan;
-
-    /**
-     * Returns true if we are running in a World server.
-     */
-    public static boolean isActive ()
-    {
-        return (mailInvoker != null);
-    }
 
     /**
      * Starts everything a runnin'.
@@ -233,7 +221,6 @@ public class MsoyServer extends MsoyBaseServer
         notifyMan = _notifyMan;
         supportMan = _supportMan;
         sceneRepo = _sceneRepo;
-        mailRepo = _mailRepo;
         groupRepo = _groupRepo;
         forumRepo = _forumRepo;
         issueRepo = _issueRepo;
@@ -461,9 +448,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Contains information on our groups. */
     @Inject protected GroupRepository _groupRepo;
-
-    /** Contains information on our mail system. */
-    @Inject protected MailRepository _mailRepo;
 
     /** Contains information on our forums. */
     @Inject protected ForumRepository _forumRepo;

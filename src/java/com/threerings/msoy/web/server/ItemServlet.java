@@ -19,7 +19,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -674,7 +674,7 @@ public class ItemServlet extends MsoyServiceServlet
                 }
                 MemberRecord owner = MsoyServer.memberRepo.loadMember(ownerId);
                 if (owner != null) {
-                    _mailMan.startConversation(admin, owner, subject, body, null);
+                    _mailLogic.startConversation(admin, owner, subject, body, null);
                 }
             }
 
@@ -785,5 +785,5 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     /** Handles mail-related services. */
-    @Inject protected MailManager _mailMan;
+    @Inject protected MailLogic _mailLogic;
 }

@@ -45,5 +45,5 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     protected int _memberId;
 
     /** Used to look up member objects. */
-    @Inject protected MemberLocator _locator;
+    @Inject protected transient MemberLocator _locator;
 }

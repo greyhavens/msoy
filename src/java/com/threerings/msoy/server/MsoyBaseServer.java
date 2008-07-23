@@ -15,8 +15,6 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 
-import com.threerings.util.MessageManager;
-
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -76,17 +74,12 @@ public abstract class MsoyBaseServer extends WhirledServer
                 new PersistenceContext("msoy", _conprov, _cacher));
             // presents dependencies
             bind(ReportManager.class).to(QuietReportManager.class);
+            // msoy dependencies
         }
 
         protected ConnectionProvider _conprov;
         protected CacheAdapter _cacher;
     }
-
-    /** Provides a mechanism for translating strings on the server. <em>Note:</em> avoid using this
-     * if at all possible. Delay translation to the client so that we can properly react to the
-     * client's locale. Translating on the server means that we treat all clients as if they are
-     * using the default locale of the server. */
-    public static MessageManager msgMan = new MessageManager("rsrc.i18n");
 
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;

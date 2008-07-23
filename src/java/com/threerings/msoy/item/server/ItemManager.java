@@ -45,6 +45,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -400,9 +401,9 @@ public class ItemManager
 
 // TODO: post to their feed
 //                 // send them a mail message as well
-//                 String subject = MsoyServer.msgMan.getBundle("server").get(
+//                 String subject = _serverMsgs.getBundle("server").get(
 //                     "m.got_prize_subject", _result.name);
-//                 String body = MsoyServer.msgMan.getBundle("server").get("m.got_prize_body");
+//                 String body = _serverMsgs.getBundle("server").get("m.got_prize_body");
 //                 MsoyServer.mailMan.deliverMessage(
 //                     // TODO: sender should be special system id
 //                     memberId, memberId, subject, body, new GameAwardPayload(
@@ -1294,10 +1295,13 @@ public class ItemManager
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
 
-    /** Our scene registry. */
+    // our dependencies
     @Inject protected SceneRegistry _sceneReg;
+    @Inject protected ItemListRepository _listRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected ServerMessages _serverMsgs;
 
-    // our various repositories
+    // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;
     @Inject protected AvatarRepository _avatarRepo;
     @Inject protected DecorRepository _decorRepo;
@@ -1313,10 +1317,4 @@ public class ItemManager
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
     @Inject protected PropRepository _propRepo;
-
-    /** The special repository that stores item lists. */
-    @Inject protected ItemListRepository _listRepo;
-
-    /** Reference to the event logger. */
-    @Inject protected MsoyEventLogger _eventLog;
 }

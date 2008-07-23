@@ -10,16 +10,12 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.JSONMarshaller;
@@ -44,42 +40,32 @@ import com.threerings.msoy.person.server.persist.MailRepository;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles mail services.
+ * Provides mail related services to servlets and other blocking thread entities.
  */
-@Singleton
-public class MailManager
+@Singleton @BlockingThread
+public class MailLogic
 {
     /**
      * Sends a friend invitation email from the supplied inviter to the specified member.
      */
-    @EventThread
-    public void sendFriendInvite (final int inviterId, final int friendId,
-                                  InvocationService.ConfirmListener listener)
+    public void sendFriendInvite (int inviterId, int friendId)
+        throws PersistenceException, ServiceException
     {
-        String uname = "sendInviteMail(" + inviterId + ", " + friendId + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
-            public void invokePersistent () throws Exception {
-                MemberRecord sender = _memberRepo.loadMember(inviterId);
-                MemberRecord recip = _memberRepo.loadMember(friendId);
-                if (sender == null || recip == null) {
-                    log.warning("Missing records for friend invite [iid=" + inviterId +
-                                ", tid=" + friendId + ", irec=" + sender + ", trec=" + recip + "].");
-                    throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-                }
-                String subj = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
-                String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
-                startConversation(sender, recip, subj, body, new FriendInvitePayload());
-            }
-            public void handleSuccess () {
-                ((InvocationService.ConfirmListener)_listener).requestProcessed();
-            }
-        });
+        MemberRecord sender = _memberRepo.loadMember(inviterId);
+        MemberRecord recip = _memberRepo.loadMember(friendId);
+        if (sender == null || recip == null) {
+            log.warning("Missing records for friend invite [iid=" + inviterId +
+                        ", tid=" + friendId + ", irec=" + sender + ", trec=" + recip + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        String subj = _serverMsgs.getBundle("server").get("m.friend_invite_subject");
+        String body = _serverMsgs.getBundle("server").get("m.friend_invite_body");
+        startConversation(sender, recip, subj, body, new FriendInvitePayload());
     }
 
     /**
      * Starts a mail conversation between the specified two parties.
      */
-    @BlockingThread
     public void startConversation (MemberRecord sender, MemberRecord recip,
                                    String subject, String body, MailPayload attachment)
         throws ServiceException, PersistenceException
@@ -101,7 +87,6 @@ public class MailManager
     /**
      * Continues the specified mail conversation.
      */
-    @BlockingThread
     public ConvMessageRecord continueConversation (MemberRecord poster, int convoId, String body,
                                                    MailPayload attachment)
         throws ServiceException, PersistenceException
@@ -155,8 +140,7 @@ public class MailManager
         // potentially send a real email to the recipient
         MemberRecord recip = _memberRepo.loadMember(otherId);
         if (recip != null) {
-            String subject = MsoyServer.msgMan.getBundle("server").get(
-                "m.reply_subject", conrec.subject);
+            String subject = _serverMsgs.getBundle("server").get("m.reply_subject", conrec.subject);
             sendMailEmail(poster, recip, subject, body);
         }
 
@@ -219,8 +203,9 @@ public class MailManager
         }
     }
 
+    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected ItemManager _itemMan;
-    @Inject protected @MainInvoker Invoker _invoker;
 }

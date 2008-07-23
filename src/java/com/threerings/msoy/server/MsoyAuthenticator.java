@@ -22,6 +22,7 @@ import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -32,6 +33,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -530,8 +532,8 @@ public class MsoyAuthenticator extends Authenticator
         mrec.setFlag(MemberRecord.Flag.ADMIN, account.tokens.isAdmin());
 
         // create a blank room for them, store it
-        String name = MsoyServer.msgMan.getBundle("server").get("m.new_room_name", mrec.name);
-        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
+        String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
+        mrec.homeSceneId = _sceneRepo.createBlankRoom(
             MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
@@ -605,17 +607,13 @@ public class MsoyAuthenticator extends Authenticator
         return "Guest" + _nextGuestNumber;
     }
 
-    /** Provides access to persistent member information. */
-    @Inject protected MemberRepository _memberRepo;
-
-    /** Reference to the event logger. */
-    @Inject protected MsoyEventLogger _eventLog;
-
-    /** The default domain against which we authenticate. */
+    // our dependencies
     @Inject protected Domain _defaultDomain;
-
-    /** Provides peer-related services. */
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** Used to assign display names to guests. */
     protected static int _nextGuestNumber;

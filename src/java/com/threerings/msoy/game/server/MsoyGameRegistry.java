@@ -32,6 +32,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
@@ -335,9 +336,9 @@ public class MsoyGameRegistry
 
 // TODO: put this in their feed
 //         // send them a mail message as well
-//         String subject = MsoyServer.msgMan.getBundle("server").get(
+//         String subject = _serverMsgs.getBundle("server").get(
 //             "m.got_trophy_subject", trophy.name);
-//         String body = MsoyServer.msgMan.getBundle("server").get(
+//         String body = _serverMsgs.getBundle("server").get(
 //             "m.got_trophy_body", trophy.description);
 //         MsoyServer.mailMan.deliverMessage(
 //             // TODO: sender should be special system id
@@ -596,6 +597,7 @@ public class MsoyGameRegistry
     protected HashIntMap<GameServerHandler> _handmap = new HashIntMap<GameServerHandler>();
 
     // dependencies
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PresentsDObjectMgr _omgr;
 

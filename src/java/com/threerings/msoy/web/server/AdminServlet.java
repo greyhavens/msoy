@@ -19,8 +19,8 @@ import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -320,15 +320,14 @@ public class AdminServlet extends MsoyServiceServlet
     protected void sendGotInvitesMail (int senderId, int recipientId, int number)
         throws PersistenceException
     {
-        String subject = MsoyServer.msgMan.getBundle("server").get("m.got_invites_subject", number);
-        String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
+        String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
+        String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
 
-    /** Provides access to persistent mail-related data. */
+    // our dependencies
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected MailRepository _mailRepo;
-
-    /** Provides access to persistent test data. */
     @Inject protected ABTestRepository _testRepo;
 
     protected static final int MEMBERS_PER_LOOP = 100;

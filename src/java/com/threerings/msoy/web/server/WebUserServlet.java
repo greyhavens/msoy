@@ -35,21 +35,25 @@ import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
@@ -139,7 +143,7 @@ public class WebUserServlet extends MsoyServiceServlet
         prec.realName = info.realName;
         prec.setPhoto(photo);
         try {
-            MsoyServer.profileRepo.storeProfile(prec);
+            _profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.warning("Failed to create initial profile [prec=" + prec + "]", pe);
             // keep on keepin' on
@@ -148,8 +152,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // if they have accumulated flow as a guest, transfer that to their account (note: only
         // negative ids are valid guest ids)
         if (guestId < 0) {
-            MsoyServer.peerMan.invokeNodeAction(
-                new TransferGuestFlowAction(guestId, mrec.memberId));
+            _peerMan.invokeNodeAction(new TransferGuestFlowAction(guestId, mrec.memberId));
         }
 
         // if we are responding to an invitation, wire that all up
@@ -173,12 +176,11 @@ public class WebUserServlet extends MsoyServiceServlet
 
             if (inviter != null) {
                 // send them a whirled mail informing them of the acceptance
-                String subject = MsoyServer.msgMan.getBundle("server").get(
-                    "m.invite_accepted_subject");
-                String body = MsoyServer.msgMan.getBundle("server").get(
+                String subject = _serverMsgs.getBundle("server").get("m.invite_accepted_subject");
+                String body = _serverMsgs.getBundle("server").get(
                     "m.invite_accepted_body", invite.inviteeEmail, displayName);
                 try {
-                    _mailMan.startConversation(mrec, inviter, subject, body, null);
+                    _mailLogic.startConversation(mrec, inviter, subject, body, null);
                 } catch (Exception e) {
                     log.warning("Failed to sent invite accepted mail", e);
                 }
@@ -210,7 +212,7 @@ public class WebUserServlet extends MsoyServiceServlet
                         // TODO: will tackle this problem when notification has been peerified.
 
                         // and possibly send a runtime notification as well
-                        MsoyServer.notifyMan.notifyInvitationAccepted(
+                        _notifyMan.notifyInvitationAccepted(
                             finvite.inviterId, displayName, mrec.memberId, finvite.inviteeEmail);
                     }
                 });
@@ -411,7 +413,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             AccountInfo ainfo = new AccountInfo();
-            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
             if (prec != null) {
                 ainfo.realName = prec.realName;
             }
@@ -433,9 +435,9 @@ public class WebUserServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
-            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
             prec.realName = info.realName;
-            MsoyServer.profileRepo.storeProfile(prec);
+            _profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.warning("Failed to update user account info [who=" + mrec.memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -557,21 +559,27 @@ public class WebUserServlet extends MsoyServiceServlet
             if (flow > 0) {
                 log.info("Transfering guest-accumulated flow to user [guestId=" + _memberId +
                          ", memberId=" + _toMemberId + "].");
-                MsoyServer.memberMan.grantFlow(
+                _memberMan.grantFlow(
                     new UserActionDetails(_toMemberId, UserAction.TRANSFER_FROM_GUEST), flow);
             }
         }
 
         protected int _toMemberId;
+        @Inject protected transient MemberManager _memberMan;
     }
 
+    // our dependencies
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected MailManager _mailMan;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected FriendManager _friendMan;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected StatLogic _statLogic;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected ProfileRepository _profileRepo;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
