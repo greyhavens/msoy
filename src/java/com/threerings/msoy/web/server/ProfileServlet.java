@@ -39,16 +39,21 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.person.data.FeedMessage;
 import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.data.ProfileCodes;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -77,7 +82,7 @@ public class ProfileServlet extends MsoyServiceServlet
         MemberRecord memrec = _mhelper.getAuthedUser(ident);
 
         try {
-            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
             if (tgtrec == null) {
                 return null;
             }
@@ -97,7 +102,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // load friend info
             result.friends = resolveFriendsData(memrec, tgtrec);
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(tgtrec.memberId);
+            IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
             result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
             result.totalFriendCount = friendIds.size();
 
@@ -138,7 +143,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         try {
             // load their old profile record for "first time configuration" purposes
-            ProfileRecord oprof = MsoyServer.profileRepo.loadProfile(memrec.memberId);
+            ProfileRecord oprof = _profileRepo.loadProfile(memrec.memberId);
 
             // stuff their updated profile data into the database
             ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
@@ -148,7 +153,7 @@ public class ProfileServlet extends MsoyServiceServlet
             } else {
                 log.warning("Account missing old profile [id=" + memrec.memberId + "].");
             }
-            MsoyServer.profileRepo.storeProfile(nrec);
+            _profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
             UserAction action = (nrec.modifications == 1)
@@ -163,7 +168,7 @@ public class ProfileServlet extends MsoyServiceServlet
             boolean statusChanged = oprof.headline != nrec.headline;
 
             if (nameChanged) {
-                MsoyServer.memberRepo.configureDisplayName(memrec.memberId, displayName);
+                _memberRepo.configureDisplayName(memrec.memberId, displayName);
             }
 
             if (statusChanged || nameChanged || photoChanged) {
@@ -205,19 +210,19 @@ public class ProfileServlet extends MsoyServiceServlet
         try {
             // if the caller is a member, load up their friends set
             IntSet callerFriendIds = (mrec == null) ? null :
-                MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+                _memberRepo.loadFriendIds(mrec.memberId);
 
             // locate the members that match the supplied search
             IntSet mids = new ArrayIntSet();
 
             // first check for an email match (and use only that if we have a match)
-            MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
+            MemberRecord memrec = _memberRepo.loadMember(search);
             if (memrec != null) {
                 mids.add(memrec.memberId);
 
             } else {
                 // look for a display name match
-                mids.addAll(MsoyServer.memberRepo.findMembersByDisplayName(
+                mids.addAll(_memberRepo.findMembersByDisplayName(
                                 search, false, MAX_PROFILE_MATCHES));
                 // look for a real name match
                 mids.addAll(_profileRepo.findMembersByRealName(
@@ -244,20 +249,20 @@ public class ProfileServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
-            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
             if (tgtrec == null) {
                 return null;
             }
 
             FriendsResult result = new FriendsResult();
             result.name = tgtrec.getName();
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(memberId);
+            IntSet friendIds = _memberRepo.loadFriendIds(memberId);
             IntSet callerFriendIds = null;
             if (mrec != null) {
                 if (mrec.memberId == memberId) {
                     callerFriendIds = friendIds;
                 } else {
-                    callerFriendIds = MsoyServer.memberRepo.loadFriendIds(mrec.memberId);
+                    callerFriendIds = _memberRepo.loadFriendIds(mrec.memberId);
                 }
             }
             List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
@@ -294,9 +299,9 @@ public class ProfileServlet extends MsoyServiceServlet
                 EmailContact ec = new EmailContact();
                 ec.name = contact.getName();
                 ec.email = contact.getEmail();
-                MemberRecord member = MsoyServer.memberRepo.loadMember(ec.email);
+                MemberRecord member = _memberRepo.loadMember(ec.email);
                 if (member != null) {
-                    if (MsoyServer.memberRepo.getFriendStatus(memrec.memberId, member.memberId)) {
+                    if (_memberRepo.getFriendStatus(memrec.memberId, member.memberId)) {
                         // just skip people who are already friends
                         continue;
                     }
@@ -350,14 +355,13 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         // load up the feed records for the target member
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
-        return ServletUtil.resolveFeedMessages(
-            MsoyServer.feedRepo.loadMemberFeed(profileMemberId, since));
+        return _servletLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        ProfileRecord prec = MsoyServer.profileRepo.loadProfile(tgtrec.memberId);
+        ProfileRecord prec = _profileRepo.loadProfile(tgtrec.memberId);
         int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
         Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec, forMemberId);
 
@@ -370,13 +374,17 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         Map<Integer,MemberCard> cards = Maps.newLinkedHashMap();
-        for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(
+        for (FriendEntry entry : _memberRepo.loadFriends(
                  tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
             MemberCard card = new MemberCard();
             card.name = entry.name;
             cards.put(entry.name.getMemberId(), card);
         }
-        resolveCardData(cards);
+        for (ProfileRecord profile : _profileRepo.loadProfiles(cards.keySet())) {
+            MemberCard card = cards.get(profile.memberId);
+            card.photo = profile.getPhoto();
+            card.headline = profile.headline;
+        }
 
         List<MemberCard> results = Lists.newArrayList();
         results.addAll(cards.values());
@@ -387,7 +395,7 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
-        return MsoyServer.groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
+        return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
@@ -428,7 +436,7 @@ public class ProfileServlet extends MsoyServiceServlet
         // now load up and fill in the game details
         for (IntMap.IntEntry<GameRating> entry : map.intEntrySet()) {
             int gameId = entry.getIntKey();
-            GameRecord record = MsoyServer.itemMan.getGameRepository().loadGameRecord(gameId);
+            GameRecord record = _gameRepo.loadGameRecord(gameId);
             if (record == null) {
                 log.warning("Player has rating for non-existent game [id=" + gameId + "].");
                 entry.getValue().gameName = "";
@@ -449,27 +457,24 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         List<Trophy> list = Lists.newArrayList();
         for (TrophyRecord record :
-                 MsoyServer.trophyRepo.loadRecentTrophies(tgtrec.memberId, MAX_PROFILE_TROPHIES)) {
+                 _trophyRepo.loadRecentTrophies(tgtrec.memberId, MAX_PROFILE_TROPHIES)) {
             list.add(record.toTrophy());
         }
         return list;
     }
 
-    protected static void resolveCardData (Map<Integer,? extends MemberCard> cards)
-        throws PersistenceException
-    {
-        for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(cards.keySet())) {
-            MemberCard card = cards.get(profile.memberId);
-            card.photo = profile.getPhoto();
-            card.headline = profile.headline;
-        }
-    }
-
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _waCleared = System.currentTimeMillis();
 
+    // our dependencies
+    @Inject protected ServletLogic _servletLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected RatingRepository _ratingRepo;
+    @Inject protected TrophyRepository _trophyRepo;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;

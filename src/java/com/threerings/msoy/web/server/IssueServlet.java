@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
@@ -14,15 +15,15 @@ import com.samskivert.util.IntSet;
 
 import com.samskivert.io.PersistenceException;
 
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
-
-import com.threerings.msoy.server.persist.MemberRecord;
-
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRecord;
+import com.threerings.msoy.fora.server.persist.IssueRepository;
 
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.Issue;
@@ -30,6 +31,7 @@ import com.threerings.msoy.fora.data.IssueCodes;
 
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.client.IssueService;
 import com.threerings.msoy.web.data.MemberCard;
@@ -70,12 +72,12 @@ public class IssueServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
-            IssueRecord irec = MsoyServer.issueRepo.loadIssue(issueId);
+            IssueRecord irec = _issueRepo.loadIssue(issueId);
             Issue issue = irec.toIssue();
-            MemberRecord member = MsoyServer.memberRepo.loadMember(irec.creatorId);
+            MemberRecord member = _memberRepo.loadMember(irec.creatorId);
             issue.creator = new MemberName(member.permaName, member.memberId);
             if (irec.ownerId != -1) {
-                member = MsoyServer.memberRepo.loadMember(irec.ownerId);
+                member = _memberRepo.loadMember(irec.ownerId);
                 issue.owner = new MemberName(member.permaName, member.memberId);
             }
             return issue;
@@ -93,9 +95,9 @@ public class IssueServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         try {
-            List<ForumMessageRecord> msgrecs = MsoyServer.forumRepo.loadIssueMessages(issueId);
+            List<ForumMessageRecord> msgrecs = _forumRepo.loadIssueMessages(issueId);
             if (messageId > 0) {
-                ForumMessageRecord msgrec = MsoyServer.forumRepo.loadMessage(messageId);
+                ForumMessageRecord msgrec = _forumRepo.loadMessage(messageId);
                 msgrecs.add(0, msgrec);
             }
             // TODO Do we want to validate read priviledges for these individual messages?
@@ -106,7 +108,7 @@ public class IssueServlet extends MsoyServiceServlet
             for (ForumMessageRecord msgrec : msgrecs) {
                 posters.add(msgrec.posterId);
             }
-            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(posters)) {
+            for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
                 cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
 
@@ -134,12 +136,12 @@ public class IssueServlet extends MsoyServiceServlet
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
 
-            Issue rissue = MsoyServer.issueRepo.createIssue(issue).toIssue();
+            Issue rissue = _issueRepo.createIssue(issue).toIssue();
             rissue.creator = issue.creator;
             rissue.owner = issue.owner;
 
             if (messageId > 0) {
-                MsoyServer.forumRepo.updateMessageIssue(messageId, rissue.issueId);
+                _forumRepo.updateMessageIssue(messageId, rissue.issueId);
             }
             return rissue;
 
@@ -159,7 +161,7 @@ public class IssueServlet extends MsoyServiceServlet
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
-            IssueRecord irec = MsoyServer.issueRepo.loadIssue(issue.issueId);
+            IssueRecord irec = _issueRepo.loadIssue(issue.issueId);
             if (irec.state != Issue.STATE_OPEN) {
                 throw new ServiceException(IssueCodes.E_ISSUE_CLOSED);
             }
@@ -171,7 +173,7 @@ public class IssueServlet extends MsoyServiceServlet
                 throw new ServiceException(IssueCodes.E_ISSUE_CLOSE_NOT_OWNER);
             }
 
-            MsoyServer.issueRepo.updateIssue(issue);
+            _issueRepo.updateIssue(issue);
             return issue;
 
         } catch (PersistenceException pe) {
@@ -190,12 +192,12 @@ public class IssueServlet extends MsoyServiceServlet
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
             }
-            IssueRecord irec = MsoyServer.issueRepo.loadIssue(issueId);
+            IssueRecord irec = _issueRepo.loadIssue(issueId);
             if (irec.state != Issue.STATE_OPEN) {
                 throw new ServiceException(IssueCodes.E_ISSUE_CLOSED);
             }
 
-            MsoyServer.forumRepo.updateMessageIssue(messageId, issueId);
+            _forumRepo.updateMessageIssue(messageId, issueId);
         } catch (PersistenceException pe) {
             log.warning("Failed to assign message [for=" + who(mrec) +
                     "issueId=" + issueId + ", messageId=" + messageId + "].", pe);
@@ -212,13 +214,13 @@ public class IssueServlet extends MsoyServiceServlet
         List<MemberName> owners = Lists.newArrayList();
 
         try {
-            List<GroupMembershipRecord> gmrs = MsoyServer.groupRepo.getMembers(
+            List<GroupMembershipRecord> gmrs = _groupRepo.getMembers(
                 ServerConfig.getIssueGroupId(), GroupMembership.RANK_MANAGER);
             ArrayIntSet memberIds = new ArrayIntSet();
             for (GroupMembershipRecord gmr : gmrs) {
                 memberIds.add(gmr.memberId);
             }
-            List<MemberRecord> members = MsoyServer.memberRepo.loadMembers(memberIds);
+            List<MemberRecord> members = _memberRepo.loadMembers(memberIds);
             for (MemberRecord member : members) {
                 owners.add(new MemberName(member.permaName, member.memberId));
             }
@@ -242,7 +244,7 @@ public class IssueServlet extends MsoyServiceServlet
             ArrayIntSet states = new ArrayIntSet();
             states.add(state);
             List<IssueRecord> irecs =
-                MsoyServer.issueRepo.loadIssues(types, states, owner, offset, count);
+                _issueRepo.loadIssues(types, states, owner, offset, count);
 
             List<Issue> issues = Lists.newArrayList();
             if (irecs.size() > 0) {
@@ -255,7 +257,7 @@ public class IssueServlet extends MsoyServiceServlet
                         members.add(record.ownerId);
                     }
                 }
-                for (MemberRecord mem : MsoyServer.memberRepo.loadMembers(members)) {
+                for (MemberRecord mem : _memberRepo.loadMembers(members)) {
                     mnames.put(mem.memberId, new MemberName(mem.permaName, mem.memberId));
                 }
                 for (IssueRecord record : irecs) {
@@ -271,7 +273,7 @@ public class IssueServlet extends MsoyServiceServlet
 
             if (needTotalCount) {
                 result.issueCount = (result.issues.size() < count && offset == 0) ?
-                    result.issues.size() : MsoyServer.issueRepo.loadIssueCount(types, states);
+                    result.issues.size() : _issueRepo.loadIssueCount(types, states);
             }
             return result;
 
@@ -281,4 +283,10 @@ public class IssueServlet extends MsoyServiceServlet
             throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
         }
     }
+
+    // our dependencies
+    @Inject protected IssueRepository _issueRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ForumRepository _forumRepo;
 }

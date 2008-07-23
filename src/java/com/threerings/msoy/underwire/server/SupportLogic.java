@@ -43,15 +43,12 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles generating events for underwire.
+ * Handles generating events for the Underwire support system.
  */
-@Singleton
-public class MsoyUnderwireManager
+@Singleton @BlockingThread
+public class SupportLogic
 {
-    /**
-     * Register out underwire repository.
-     */
-    public void init (PersistenceContext perCtx)
+    @Inject public SupportLogic (PersistenceContext perCtx)
     {
         _underrepo = new UnderwireRepository(perCtx);
     }
@@ -59,7 +56,6 @@ public class MsoyUnderwireManager
     /**
      * Adds an auto-ban event record to the user.
      */
-    @BlockingThread
     public void reportAutoBan (OOOUser user, String reason)
         throws PersistenceException
     {
@@ -146,7 +142,6 @@ public class MsoyUnderwireManager
     /**
      * Adds a mesasge complaint to the even queue.
      */
-    @BlockingThread
     public void addMessageComplaint (MemberName source, int targetId, String message,
                                      String subject, String link)
         throws PersistenceException

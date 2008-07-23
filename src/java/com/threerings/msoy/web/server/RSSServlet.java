@@ -12,18 +12,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.samskivert.util.HashIntMap;
-import com.samskivert.io.PersistenceException;
+import com.google.inject.Inject;
 
-import com.threerings.msoy.server.MsoyServer;
+import com.samskivert.io.PersistenceException;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 
-import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,16 +66,16 @@ public class RSSServlet extends HttpServlet
                 return;
             }
 
-            int numThreads = MsoyServer.forumRepo.loadThreadCount(groupId);
+            int numThreads = _forumRepo.loadThreadCount(groupId);
 
             String rss = loadCachedRSS(groupId, numThreads);
             if (rss == null) {
                 List<ForumThreadRecord> threads =
-                    MsoyServer.forumRepo.loadRecentThreads(group.groupId, THREAD_COUNT);
+                    _forumRepo.loadRecentThreads(group.groupId, THREAD_COUNT);
                 List<ForumMessageRecord> messages = new ArrayList<ForumMessageRecord>();
                 for (ForumThreadRecord thread : threads) {
                     List<ForumMessageRecord> message =
-                        MsoyServer.forumRepo.loadMessages(thread.threadId, 0, 1);
+                        _forumRepo.loadMessages(thread.threadId, 0, 1);
                     messages.add(message.size() == 0 ? null : message.get(0));
                 }
                 rss = generateRSS(group, threads, messages, numThreads);
@@ -92,7 +96,7 @@ public class RSSServlet extends HttpServlet
     protected Group getGroup (int groupId)
         throws PersistenceException
     {
-        GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
         return grec == null ? null : grec.toGroupObject();
     }
 
@@ -162,8 +166,12 @@ public class RSSServlet extends HttpServlet
         }
     }
 
+    // our dependencies
+    @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupRepository _groupRepo;
+
     /** Cache our generated rss files. */
-    protected static HashIntMap<RSSCache> _rssCache = new HashIntMap<RSSCache>();
+    protected static IntMap<RSSCache> _rssCache = IntMaps.newHashIntMap();
 
     /** Used for RFC 822 compliant date strings. */
     protected static SimpleDateFormat _sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");

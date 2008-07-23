@@ -46,15 +46,16 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
-import com.threerings.msoy.web.data.GroupCard;
-import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -77,11 +78,9 @@ public class GroupRepository extends DepotRepository
     {
     }
 
-    @Inject public GroupRepository (PersistenceContext ctx, MsoyEventLogger eventLog)
+    @Inject public GroupRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        _eventLog = eventLog;
 
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
@@ -248,7 +247,7 @@ public class GroupRepository extends DepotRepository
         record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
 
-        int sceneId = MsoyServer.sceneRepo.createBlankRoom(
+        int sceneId = _sceneRepo.createBlankRoom(
             MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true);
         updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
@@ -351,7 +350,7 @@ public class GroupRepository extends DepotRepository
         int memberId, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
         throws PersistenceException
     {
-        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(memberId);
+        List<GroupMembershipRecord> records = getMemberships(memberId);
         IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
         for (GroupMembershipRecord record : records) {
             rmap.put(record.groupId, record);
@@ -359,7 +358,7 @@ public class GroupRepository extends DepotRepository
 
         // potentially filter exclusive groups and resolve the group names
         IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
-        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(rmap.keySet())) {
+        for (GroupRecord group : loadGroups(rmap.keySet())) {
             if (filter == null || filter.isMatch(new Tuple<GroupRecord,GroupMembershipRecord>(
                                                      group, rmap.get(group.groupId)))) {
                 groupNames.put(group.groupId, group.toGroupName());
@@ -382,7 +381,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupCard> getMemberGroups (int memberId, boolean includeExclusive)
         throws PersistenceException
     {
-        List<GroupMembershipRecord> records = MsoyServer.groupRepo.getMemberships(memberId);
+        List<GroupMembershipRecord> records = getMemberships(memberId);
         IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
         for (GroupMembershipRecord record : records) {
             rmap.put(record.groupId, record);
@@ -390,7 +389,7 @@ public class GroupRepository extends DepotRepository
 
         // potentially filter exclusive groups and resolve the group names
         List<GroupCard> groups = Lists.newArrayList();
-        for (GroupRecord group : MsoyServer.groupRepo.loadGroups(rmap.keySet())) {
+        for (GroupRecord group : loadGroups(rmap.keySet())) {
             if (group.policy != Group.POLICY_EXCLUSIVE || includeExclusive) {
                 groups.add(group.toGroupCard());
             }
@@ -530,6 +529,7 @@ public class GroupRepository extends DepotRepository
     /** Used to manage our group tags. */
     protected TagRepository _tagRepo;
 
-    /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
+    // our dependencies
+    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected MsoyEventLogger _eventLog;
 }

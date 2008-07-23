@@ -17,18 +17,23 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
+import com.threerings.msoy.fora.server.persist.CommentRepository;
+import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.CommentService;
@@ -38,6 +43,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -54,8 +60,7 @@ public class CommentServlet extends MsoyServiceServlet
     {
         // no authentication required to view comments
         try {
-            List<CommentRecord> records =
-                MsoyServer.commentRepo.loadComments(etype, eid, offset, count);
+            List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count);
 
             // resolve the member cards for all commentors
             IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
@@ -63,7 +68,7 @@ public class CommentServlet extends MsoyServiceServlet
             for (CommentRecord record : records) {
                 memIds.add(record.memberId);
             }
-            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(memIds)) {
+            for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(memIds)) {
                 cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
 
@@ -82,7 +87,7 @@ public class CommentServlet extends MsoyServiceServlet
             result.comments = comments;
             if (needCount) {
                 result.commentCount = (records.size() < count && offset == 0) ?
-                    records.size() : MsoyServer.commentRepo.loadCommentCount(etype, eid);
+                    records.size() : _commentRepo.loadCommentCount(etype, eid);
             }
 
             return result;
@@ -111,7 +116,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         try {
             // record the comment to the data-ma-base
-            MsoyServer.commentRepo.postComment(etype, eid, mrec.memberId, text);
+            _commentRepo.postComment(etype, eid, mrec.memberId, text);
 
             // find out the owner id of and the entity name for the entity that was commented on
             int ownerId = 0;
@@ -119,10 +124,10 @@ public class CommentServlet extends MsoyServiceServlet
 
             // if this is a comment on a user room, post a self feed message
             if (etype == Comment.TYPE_ROOM) {
-                SceneRecord scene = MsoyServer.sceneRepo.loadScene(eid);
+                SceneRecord scene = _sceneRepo.loadScene(eid);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     String data = scene.sceneId + "\t" + scene.name;
-                    MsoyServer.feedRepo.publishSelfMessage(
+                    _feedRepo.publishSelfMessage(
                         scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
                     ownerId = scene.ownerId;
                     entityName = scene.name;
@@ -136,8 +141,7 @@ public class CommentServlet extends MsoyServiceServlet
 
             } else {
                 try {
-                    ItemRepository<ItemRecord, ?, ?, ?> repo =
-                        MsoyServer.itemMan.getRepository((byte)etype);
+                    ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository((byte)etype);
                     CatalogRecord listing = repo.loadListing(eid, true);
                     if (listing != null) {
                         ItemRecord item = listing.item;
@@ -161,7 +165,7 @@ public class CommentServlet extends MsoyServiceServlet
 
             // notify the item creator that a comment was made
             if (ownerId > 0 && ownerId != mrec.memberId) {
-                MsoyServer.notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
+                _notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
             }
 
             // fake up a comment record to return to the client
@@ -187,14 +191,14 @@ public class CommentServlet extends MsoyServiceServlet
         try {
             // if we're not support personel, ensure that we are the poster of this comment
             if (!mrec.isSupport()) {
-                CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
+                CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
                 if (record == null ||
                     !Comment.canDelete(etype, eid, record.memberId, mrec.memberId)) {
                     return false;
                 }
             }
 
-            MsoyServer.commentRepo.deleteComment(etype, eid, posted);
+            _commentRepo.deleteComment(etype, eid, posted);
             return true;
 
         } catch (PersistenceException pe) {
@@ -210,7 +214,7 @@ public class CommentServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         try {
-            CommentRecord record = MsoyServer.commentRepo.loadComment(etype, eid, posted);
+            CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
             if (record == null) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
@@ -223,8 +227,8 @@ public class CommentServlet extends MsoyServiceServlet
                 link = null;
             }
 
-            MsoyServer.supportMan.addMessageComplaint(
-                    mrec.getName(), record.memberId, record.text, subject, link);
+            _supportLogic.addMessageComplaint(
+                mrec.getName(), record.memberId, record.text, subject, link);
 
         } catch (PersistenceException pe) {
             log.warning("Failed to complain comment [entity=" + etype + ":" + eid +
@@ -233,5 +237,13 @@ public class CommentServlet extends MsoyServiceServlet
         }
     }
 
-    @Inject StatLogic _statLogic;
+    // our dependencies
+    @Inject protected ItemManager _itemMan;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected StatLogic _statLogic;
+    @Inject protected SupportLogic _supportLogic;
+    @Inject protected CommentRepository _commentRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

@@ -18,9 +18,9 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.person.server.MailLogic;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -42,6 +43,7 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 /**
  * Provides the server implementation of {@link ItemService}.
@@ -64,7 +66,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // create the persistent item record
-        repo = MsoyServer.itemMan.getRepository(item.getType());
+        repo = _itemMan.getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
 
         // configure the item's creator and owner
@@ -78,8 +80,7 @@ public class ItemServlet extends MsoyServiceServlet
                             ", item=" + item + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            ItemRepository<ItemRecord, ?, ?, ?> prepo =
-                MsoyServer.itemMan.getRepository(parent.type);
+            ItemRepository<ItemRecord, ?, ?, ?> prepo = _itemMan.getRepository(parent.type);
             ItemRecord prec = null;
             try {
                 prec = prepo.loadItem(parent.itemId);
@@ -114,9 +115,9 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // let the item manager know that we've created this item
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.itemCreated(record);
+                _itemMan.itemCreated(record);
             }
         });
 
@@ -136,7 +137,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.getType());
         try {
             // load up the old version of the item
             final ItemRecord record = repo.loadItem(item.itemId);
@@ -157,9 +158,9 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(record);
 
             // let the item manager know that we've updated this item
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemUpdated(record);
+                    _itemMan.itemUpdated(record);
                 }
             });
 
@@ -224,7 +225,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Item loadItem (WebIdent ident, ItemIdent item)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.type);
         try {
             ItemRecord irec = repo.loadItem(item.itemId);
             return (irec == null) ? null : irec.toItem();
@@ -240,7 +241,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
 
         try {
             ItemRecord record = repo.loadItem(iident.itemId);
@@ -262,9 +263,9 @@ public class ItemServlet extends MsoyServiceServlet
 
             ItemDetail detail = new ItemDetail();
             detail.item = record.toItem();
-            detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId))
-                ? mrec.getName() // shortcut for items we created
-                : MsoyServer.memberRepo.loadMemberName(record.creatorId); // normal lookup
+            detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId)) ?
+                mrec.getName() : // shortcut for items we created
+                _memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
                 detail.memberRating = repo.getRating(iident.itemId, mrec.memberId);
             }
@@ -272,7 +273,7 @@ public class ItemServlet extends MsoyServiceServlet
             case Item.USED_AS_FURNITURE:
             case Item.USED_AS_PET:
             case Item.USED_AS_BACKGROUND:
-                detail.useLocation = MsoyServer.sceneRepo.identifyScene(detail.item.location);
+                detail.useLocation = _sceneRepo.identifyScene(detail.item.location);
                 break;
             }
             return new ItemService.DetailOrIdent(detail, null);
@@ -289,7 +290,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
-        AvatarRepository repo = MsoyServer.itemMan.getAvatarRepository();
+        AvatarRepository repo = _itemMan.getAvatarRepository();
         try {
             final AvatarRecord avatar = repo.loadItem(avatarId);
             if (avatar == null) {
@@ -303,9 +304,9 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateScale(avatarId, newScale);
 
             // let the item manager know that we've updated this item
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemUpdated(avatar);
+                    _itemMan.itemUpdated(avatar);
                 }
             });
 
@@ -323,7 +324,7 @@ public class ItemServlet extends MsoyServiceServlet
 //        throws ServiceException
 //    {
 //        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-//        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+//        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
 //
 //        try {
 //            // load a copy of the clone to modify
@@ -349,9 +350,9 @@ public class ItemServlet extends MsoyServiceServlet
 //                originalId, item.itemId, item.ownerId, System.currentTimeMillis());
 //
 //            // let the item manager know that we've created a new item
-//            MsoyServer.omgr.postRunnable(new Runnable() {
+//            _omgr.postRunnable(new Runnable() {
 //                public void run () {
-//                    MsoyServer.itemMan.itemCreated(item);
+//                    _itemMan.itemCreated(item);
 //                }
 //            });
 //
@@ -369,7 +370,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
 
         try {
             final ItemRecord item = repo.loadItem(iident.itemId);
@@ -388,9 +389,9 @@ public class ItemServlet extends MsoyServiceServlet
             repo.deleteItem(iident.itemId);
 
             // let the item manager know that we've deleted this item
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemDeleted(item);
+                    _itemMan.itemDeleted(item);
                 }
             });
 
@@ -406,7 +407,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
 
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -445,9 +446,9 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final ServletWaiter<Collection<String>> waiter =
             new ServletWaiter<Collection<String>>("getTags[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.getTags(item, waiter);
+                _itemMan.getTags(item, waiter);
             }
         });
         return waiter.waitForResult();
@@ -459,9 +460,9 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.getTagHistory(item, waiter);
+                _itemMan.getTagHistory(item, waiter);
             }
         });
         return waiter.waitForResult();
@@ -474,9 +475,9 @@ public class ItemServlet extends MsoyServiceServlet
         final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + mrec.memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.getRecentTags(mrec.memberId, waiter);
+                _itemMan.getRecentTags(mrec.memberId, waiter);
             }
         });
         return waiter.waitForResult();
@@ -490,9 +491,9 @@ public class ItemServlet extends MsoyServiceServlet
         final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
             "tagItem[" + item + ", " + set + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.tagItem(item, memrec.memberId, tag, set, waiter);
+                _itemMan.tagItem(item, memrec.memberId, tag, set, waiter);
             }
         });
         return waiter.waitForResult();
@@ -504,7 +505,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         byte type = iident.type;
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
@@ -550,7 +551,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -572,7 +573,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -603,8 +604,8 @@ public class ItemServlet extends MsoyServiceServlet
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
-            for (byte type : MsoyServer.itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+            for (byte type : _itemMan.getRepositoryTypes()) {
+                ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
                 for (ItemRecord record : repo.loadFlaggedItems(count)) {
                     Item item = record.toItem();
 
@@ -612,7 +613,7 @@ public class ItemServlet extends MsoyServiceServlet
                     ItemDetail detail = new ItemDetail();
                     detail.item = item;
                     detail.memberRating = 0; // not populated
-                    detail.creator = MsoyServer.memberRepo.loadMemberName(record.creatorId);
+                    detail.creator = _memberRepo.loadMemberName(record.creatorId);
 
                     // add the detail to our result and see if we're done
                     items.add(detail);
@@ -639,7 +640,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         byte type = iident.type;
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
         try {
             ItemRecord item = repo.loadOriginalItem(iident.itemId);
             IntSet owners = new ArrayIntSet();
@@ -672,7 +673,7 @@ public class ItemServlet extends MsoyServiceServlet
                 if (ownerId == admin.memberId) {
                     continue; // admin deleting their own item? sure, whatever!
                 }
-                MemberRecord owner = MsoyServer.memberRepo.loadMember(ownerId);
+                MemberRecord owner = _memberRepo.loadMember(ownerId);
                 if (owner != null) {
                     _mailLogic.startConversation(admin, owner, subject, body, null);
                 }
@@ -733,7 +734,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(itemIdent.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemIdent.type);
         try {
             // load up the old version of the item
             CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
@@ -761,9 +762,9 @@ public class ItemServlet extends MsoyServiceServlet
             orig.initFromClone(record);
 
             // let the item manager know that we've updated this item
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.itemMan.itemUpdated(orig);
+                    _itemMan.itemUpdated(orig);
                 }
             });
 
@@ -784,6 +785,9 @@ public class ItemServlet extends MsoyServiceServlet
             throws PersistenceException;
     }
 
-    /** Handles mail-related services. */
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

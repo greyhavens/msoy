@@ -22,9 +22,9 @@ import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -98,7 +98,7 @@ public class SnapshotServlet extends UploadServlet
             member = _mhelper.requireAuthedUser(ident);
 
             // now load the scene, and check who's the owner (todo: deal with group rooms)
-            List<SceneBookmarkEntry> scenes = MsoyServer.sceneRepo.getOwnedScenes(memberId);
+            List<SceneBookmarkEntry> scenes = _sceneRepo.getOwnedScenes(memberId);
             for (SceneBookmarkEntry scene : scenes) {
                 if (scene.sceneId == sceneId) {
                     return sceneId; // we found the owner - all done!
@@ -144,6 +144,7 @@ public class SnapshotServlet extends UploadServlet
         return fields;
     }
 
-    /** Provides useful member related services. */
+    // our dependencies
     @Inject protected MemberHelper _mhelper;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

@@ -25,7 +25,9 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
@@ -34,11 +36,15 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.server.ChatChannelManager;
+
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -47,6 +53,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -54,7 +61,9 @@ import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -62,7 +71,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -71,6 +80,7 @@ import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.web.data.LandingData;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.MyWhirledData;
@@ -79,7 +89,6 @@ import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.LandingData;
 
 import static com.threerings.msoy.Log.log;
 
@@ -102,10 +111,10 @@ public class WorldServlet extends MsoyServiceServlet
             data = new LandingData();
 
             // determine our featured whirled based on who's online now
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             List<GroupCard> popWhirleds = Lists.newArrayList();
             for (PlaceCard card : pps.getTopWhirleds()) {
-                GroupRecord group = MsoyServer.groupRepo.loadGroup(card.placeId);
+                GroupRecord group = _groupRepo.loadGroup(card.placeId);
                 if (group != null) {
                     GroupCard gcard = group.toGroupCard();
                     gcard.population = card.population;
@@ -118,7 +127,7 @@ public class WorldServlet extends MsoyServiceServlet
             // if we don't have enough people online, supplement with other groups
             if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
                 int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
-                for (GroupRecord group : MsoyServer.groupRepo.getGroupsList(0, count)) {
+                for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
                     popWhirleds.add(group.toGroupCard());
                 }
             }
@@ -129,7 +138,7 @@ public class WorldServlet extends MsoyServiceServlet
 
             // select the top rated avatars
             ItemRepository<ItemRecord, ?, ?, ?> repo =
-                MsoyServer.itemMan.getRepository(Item.AVATAR);
+                _itemMan.getRepository(Item.AVATAR);
             List<ListingCard> cards = Lists.newArrayList();
             for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,
                                                        0, null, 0, ShopData.TOP_ITEM_COUNT)) {
@@ -197,7 +206,7 @@ public class WorldServlet extends MsoyServiceServlet
         if (mrec != null) {
             try {
                 friends = _memberRepo.loadFriends(mrec.memberId, -1);
-                for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
+                for (GroupRecord gRec : _groupRepo.getFullMemberships(mrec.memberId)) {
                     groups.add(new GroupName(gRec.name, gRec.groupId));
                 }
             } catch (PersistenceException e) {
@@ -213,7 +222,7 @@ public class WorldServlet extends MsoyServiceServlet
         // now proceed to the dobj thread to get runtime state
         final ServletWaiter<String> waiter = new ServletWaiter<String>(
             "serializePopularPlaces[" + n + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
                     JSONObject result = new JSONObject();
@@ -237,7 +246,7 @@ public class WorldServlet extends MsoyServiceServlet
 
         try {
             MyWhirledData data = new MyWhirledData();
-            data.whirledPopulation = MsoyServer.memberMan.getPPSnapshot().getPopulationCount();
+            data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
             IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
             data.friendCount = friendIds.size();
@@ -246,7 +255,7 @@ public class WorldServlet extends MsoyServiceServlet
             }
 
             IntSet groupMemberships = new ArrayIntSet();
-            for (GroupMembershipRecord gmr : MsoyServer.groupRepo.getMemberships(mrec.memberId)) {
+            for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
                 groupMemberships.add(gmr.groupId);
             }
             data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
@@ -268,7 +277,7 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
                 RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
             }
@@ -283,7 +292,7 @@ public class WorldServlet extends MsoyServiceServlet
 
         try {
             List<WorldService.Room> rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
+            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(mrec.memberId)) {
                 WorldService.Room room = new WorldService.Room();
                 room.sceneId = scene.sceneId;
                 room.name = scene.sceneName;
@@ -305,7 +314,7 @@ public class WorldServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         try {
-            List<GroupMembershipRecord> groups = MsoyServer.groupRepo.getMemberships(mrec.memberId);
+            List<GroupMembershipRecord> groups = _groupRepo.getMemberships(mrec.memberId);
             ArrayIntSet groupIds = new ArrayIntSet(groups.size());
             for (GroupMembershipRecord record : groups) {
                 groupIds.add(record.groupId);
@@ -330,7 +339,7 @@ public class WorldServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            SceneRecord screc = MsoyServer.sceneRepo.loadScene(sceneId);
+            SceneRecord screc = _sceneRepo.loadScene(sceneId);
             if (screc == null) {
                 return null;
             }
@@ -343,7 +352,7 @@ public class WorldServlet extends MsoyServiceServlet
                 info.owner = _memberRepo.loadMemberName(screc.ownerId);
                 break;
             case MsoySceneModel.OWNER_TYPE_GROUP:
-                info.owner = MsoyServer.groupRepo.loadGroupName(screc.ownerId);
+                info.owner = _groupRepo.loadGroupName(screc.ownerId);
                 break;
             }
             return info;
@@ -362,18 +371,19 @@ public class WorldServlet extends MsoyServiceServlet
     {
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        return ServletUtil.resolveFeedMessages(
-            MsoyServer.feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
+        return _servletLogic.resolveFeedMessages(
+            _feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
     }
 
     /**
      * Adds popular chat channel information to the supplied "My Whirled" result.
      */
+    @EventThread
     protected void addPopularChannels (MemberName name, Set<GroupName> groups, JSONObject result)
         throws JSONException
     {
         JSONArray channels = new JSONArray();
-        Iterable<ChatChannel> allChannels = MsoyServer.channelMan.getChatChannels();
+        Iterable<ChatChannel> allChannels = _channelMan.getChatChannels();
         int desiredChannels = 8;
 
         // first add active channels we're members of
@@ -409,16 +419,17 @@ public class WorldServlet extends MsoyServiceServlet
     /**
      * Adds popular places (scenes and games) information to the supplied "My Whirled" result.
      */
-    protected void addPopularPlaces (
-        MemberRecord mrec, MemberName name, final List<FriendEntry> friends, JSONObject result)
+    @EventThread
+    protected void addPopularPlaces (MemberRecord mrec, MemberName name,
+                                     final List<FriendEntry> friends, JSONObject result)
         throws JSONException
     {
         final IntMap<PlaceDetail> scenes = IntMaps.newHashIntMap();
         final IntMap<PlaceDetail> games = IntMaps.newHashIntMap();
-        final PopularPlacesSnapshot snap = MsoyServer.memberMan.getPPSnapshot();
+        final PopularPlacesSnapshot snap = _memberMan.getPPSnapshot();
 
         // locate all of our online friends
-        MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+        _peerMan.applyToNodes(new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
 
@@ -491,6 +502,7 @@ public class WorldServlet extends MsoyServiceServlet
         result.put("totpop", snap.getPopulationCount());
     }
 
+    @EventThread
     protected void addTopPopularPlaces (Iterable<PlaceCard> top, IntMap<PlaceDetail> map)
     {
         int n = 3; // TODO: totally ad-hoc
@@ -533,9 +545,19 @@ public class WorldServlet extends MsoyServiceServlet
     /** Contains a cached copy of our WhatIsWhirled data. */
     protected ExpiringReference<LandingData> _landingData;
 
-    @Inject protected GameRepository _gameRepo;
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected ChatChannelManager _channelMan;
+    @Inject protected ServletLogic _servletLogic;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;

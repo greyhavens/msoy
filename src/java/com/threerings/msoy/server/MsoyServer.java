@@ -58,12 +58,7 @@ import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 
-import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
-import com.threerings.msoy.fora.server.persist.ForumRepository;
-import com.threerings.msoy.fora.server.persist.IssueRepository;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.underwire.server.MsoyUnderwireManager;
 
 import com.threerings.msoy.world.server.MsoySceneFactory;
 import com.threerings.msoy.world.server.MsoySceneRegistry;
@@ -128,27 +123,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan;
-
-    /** Our runtime support manager. */
-    public static MsoyUnderwireManager supportMan;
-
-    /** Contains information on our groups. */
-    public static GroupRepository groupRepo;
-
-    /** Contains information on our forums. */
-    public static ForumRepository forumRepo;
-
-    /** Contains information on our issues. */
-    public static IssueRepository issueRepo;
-
-    /** Contains member comments on various things. */
-    public static CommentRepository commentRepo;
-
-    /** Provides access to our trophy metadata. */
-    public static TrophyRepository trophyRepo;
-
-    /** The Msoy scene repository. */
-    public static MsoySceneRepository sceneRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan;
@@ -219,13 +193,6 @@ public class MsoyServer extends MsoyBaseServer
         friendMan = _friendMan;
         petMan = _petMan;
         notifyMan = _notifyMan;
-        supportMan = _supportMan;
-        sceneRepo = _sceneRepo;
-        groupRepo = _groupRepo;
-        forumRepo = _forumRepo;
-        issueRepo = _issueRepo;
-        commentRepo = _commentRepo;
-        trophyRepo = _trophyRepo;
         // DO NOT ADD TO THIS LIST: do things the right way with injection
 
         // we need to know when we're shutting down
@@ -309,15 +276,12 @@ public class MsoyServer extends MsoyBaseServer
         swiftlyMan.init(_invmgr);
         _petMan.init(injector);
         _gameReg.init(itemMan.getGameRepository());
-        _supportMan.init(_perCtx);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
                 return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
-
-        sceneRepo.init(itemMan.getDecorRepository());
 
         // start up our HTTP server
         _httpServer.start();
@@ -410,9 +374,6 @@ public class MsoyServer extends MsoyBaseServer
     /** Our runtime swiftly editor manager. */
     @Inject protected SwiftlyManager _swiftlyMan;
 
-    /** The Msoy scene repository. */
-    @Inject protected MsoySceneRepository _sceneRepo;
-
     /** Our runtime admin manager. */
     @Inject protected MsoyAdminManager _adminMan;
 
@@ -437,32 +398,11 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles notifications to clients. */
     @Inject protected NotificationManager _notifyMan;
 
-    /** Our runtime support manager. */
-    @Inject protected MsoyUnderwireManager _supportMan;
-
     /** The member movement observation manager. */
     @Inject protected WorldWatcherManager _watcherMan;
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
-
-    /** Contains information on our groups. */
-    @Inject protected GroupRepository _groupRepo;
-
-    /** Contains information on our forums. */
-    @Inject protected ForumRepository _forumRepo;
-
-    /** Contains information on our issues. */
-    @Inject protected IssueRepository _issueRepo;
-
-    /** Contains member comments on various things. */
-    @Inject protected CommentRepository _commentRepo;
-
-    /** Provides access to our trophy metadata. */
-    @Inject protected TrophyRepository _trophyRepo;
-
-    /** Handles updating a member's badges. */
-    @Inject protected BadgeManager _badgeMan;
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

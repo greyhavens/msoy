@@ -46,6 +46,8 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.MailLogic;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -56,6 +58,7 @@ import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberLocation;
@@ -73,6 +76,7 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -510,7 +514,7 @@ public class MemberManager
         _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
                 int memberId = member.getMemberId();
-                SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
+                SceneRecord scene = _sceneRepo.loadScene(sceneId);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     if (scene.ownerId == memberId) {
                         _memberRepo.setHomeSceneId(memberId, sceneId);
@@ -546,7 +550,7 @@ public class MemberManager
         String uname = "getHomeSceneId(" + groupId + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
-                _homeSceneId = MsoyServer.groupRepo.getHomeSceneId(groupId);
+                _homeSceneId = _groupRepo.getHomeSceneId(groupId);
             }
             public void handleSuccess () {
                 reportRequestProcessed(_homeSceneId);
@@ -558,7 +562,7 @@ public class MemberManager
     // from interface MemberProvider
     public void complainMember (ClientObject caller, int memberId, String complaint)
     {
-        MsoyServer.supportMan.addComplaint((MemberObject)caller, memberId, complaint);
+        _supportLogic.addComplaint((MemberObject)caller, memberId, complaint);
     }
 
     // from interface MemberProvider
@@ -573,7 +577,7 @@ public class MemberManager
         String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
             public void invokePersistent () throws Exception {
-                MsoyServer.profileRepo.updateHeadline(member.getMemberId(), commitStatus);
+                _profileRepo.updateHeadline(member.getMemberId(), commitStatus);
             }
             public void handleSuccess () {
                 member.setHeadline(commitStatus);
@@ -693,7 +697,7 @@ public class MemberManager
                     _memberRepo.setUserLevel(memberId, newLevel);
                     _memberRepo.grantInvites(memberId, 1);
                     // mark the level gain in their feed
-                    MsoyServer.feedRepo.publishMemberMessage(
+                    _feedRepo.publishMemberMessage(
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
                 public void handleSuccess () {
@@ -835,11 +839,15 @@ public class MemberManager
     @Inject protected ClientManager _clmgr;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected SupportLogic _supportLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected @MainInvoker Invoker _invoker;
 
     /** The required flow for the first few levels is hard-coded */

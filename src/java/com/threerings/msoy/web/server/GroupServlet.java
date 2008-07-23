@@ -36,9 +36,11 @@ import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.fora.server.ForumLogic;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 
 import com.threerings.msoy.group.data.Group;
@@ -176,7 +178,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             // load up recent threads for this group (ordered by thread id)
-            List<ForumThreadRecord> thrrecs = MsoyServer.forumRepo.loadRecentThreads(groupId, 3);
+            List<ForumThreadRecord> thrrecs = _forumRepo.loadRecentThreads(groupId, 3);
             Map<Integer,GroupName> gmap =
                 Collections.singletonMap(detail.group.groupId, detail.group.getName());
             detail.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, false, true);
@@ -228,7 +230,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             RoomsResult result = new RoomsResult();
             List<GroupService.Room> rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(
+            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(
                     MsoySceneModel.OWNER_TYPE_GROUP, groupId)) {
                 GroupService.Room room = new GroupService.Room();
                 room.sceneId = scene.sceneId;
@@ -239,7 +241,7 @@ public class GroupServlet extends MsoyServiceServlet
             result.groupRooms = rooms;
 
             rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : MsoyServer.sceneRepo.getOwnedScenes(mrec.memberId)) {
+            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(mrec.memberId)) {
                 if (scene.sceneId == mrec.homeSceneId) {
                     continue;
                 }
@@ -272,15 +274,14 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             // ensure the caller is the owner of this scene
-            SceneRecord scene = MsoyServer.sceneRepo.loadScene(sceneId);
+            SceneRecord scene = _sceneRepo.loadScene(sceneId);
             if (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER ||
                 scene.ownerId != mrec.memberId) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
 
             // sign the deed over
-            MsoyServer.sceneRepo.transferSceneOwnership(
-                sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+            _sceneRepo.transferSceneOwnership(sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
 
         } catch (PersistenceException pe) {
             log.warning("transferRoom failed [groupId=" + groupId + ", sceneId=" +
@@ -707,11 +708,10 @@ public class GroupServlet extends MsoyServiceServlet
                 card.name = record.toGroupName();
 
                 // fetch thread information
-                card.numThreads = MsoyServer.forumRepo.loadThreadCount(record.groupId);
-                card.numPosts = MsoyServer.forumRepo.loadMessageCount(record.groupId);
+                card.numThreads = _forumRepo.loadThreadCount(record.groupId);
+                card.numPosts = _forumRepo.loadMessageCount(record.groupId);
 
-                List<ForumThreadRecord> threads =
-                    MsoyServer.forumRepo.loadRecentThreads(record.groupId, 1);
+                List<ForumThreadRecord> threads = _forumRepo.loadRecentThreads(record.groupId, 1);
                 if (threads.size() > 0) {
                     Map<Integer,GroupName> gmap =
                         Collections.singletonMap(record.groupId, card.name);
@@ -896,6 +896,9 @@ public class GroupServlet extends MsoyServiceServlet
         return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
     }
 
+    // our dependencies
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ForumLogic _forumLogic;
+    @Inject protected ForumRepository _forumRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

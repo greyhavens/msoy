@@ -12,19 +12,23 @@ import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
+import com.threerings.stats.server.persist.StatRepository;
+
+import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.badge.data.BadgeSet;
@@ -38,8 +42,10 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-//import com.threerings.msoy.data.all.SceneBookmarkEntry;
+// import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ReferralRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -53,7 +59,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     public ClientObject createClientObject ()
     {
         // see if we have a member object forwarded from our peer
-        MemberObject memobj = MsoyServer.peerMan.getForwardedMemberObject(_username);
+        MemberObject memobj = _peerMan.getForwardedMemberObject(_username);
         return (memobj != null) ? memobj : new MemberObject();
     }
 
@@ -95,14 +101,14 @@ public class MsoyClientResolver extends CrowdClientResolver
         throws Exception
     {
         // load up their member information using on their authentication (account) name
-        MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member = _memberRepo.loadMember(_username.toString());
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
         // we need their profile photo to create the member name
-        ProfileRecord precord = MsoyServer.profileRepo.loadProfile(member.memberId);
+        ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         userObj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
@@ -115,7 +121,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.level = member.level;
 
         // load up this member's persistent stats
-        List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
+        List<Stat> stats = _statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
 
         // and their badges
@@ -127,46 +133,45 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.badges = new BadgeSet(badges);
 
 //        // load up any item lists they may have
-//        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
+//        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);
 //        userObj.lists = new DSet<ItemListInfo>(itemLists);
 
 // TEMP: flow evaporation is disabled; we need to think more about this
 //         // calculate flow evaporation since last logon
 //         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
-//         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
+//         _memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
 //        userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
-//            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator());
+//            _sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
         userObj.friends = new DSet<FriendEntry>(
-            MsoyServer.memberRepo.loadFriends(member.memberId, -1));
+            _memberRepo.loadFriends(member.memberId, -1));
 
         // load up this member's group memberships
         userObj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
-            MsoyServer.groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
+            _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail count
         userObj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
-            AvatarRecord avatar =
-                MsoyServer.itemMan.getAvatarRepository().loadItem(member.avatarId);
+            AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
                 userObj.avatar = (Avatar)avatar.toItem();
             }
         }
 
         // clobber any referral information with what's in the database
-        ReferralRecord refrec = MsoyServer.memberRepo.loadReferral(member.memberId);
+        ReferralRecord refrec = _memberRepo.loadReferral(member.memberId);
         if (refrec == null) {
             // if they don't have referral info, it means they're an old user who needs to be
             // grandfathered into the new referral-tracking order of things. give them
             // a new entry with an empty affiliate, and a random tracking number.
-            refrec = MsoyServer.memberRepo.setReferral(member.memberId,
+            refrec = _memberRepo.setReferral(member.memberId,
                 ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
         }
         userObj.referral = refrec.toInfo();
@@ -180,7 +185,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         if (!user.isGuest() && user.avatarCache == null) {
             // load up their recently used avatars
-            MsoyServer.itemMan.loadRecentlyTouched(
+            _itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
                 new ResultListener<List<Item>>() {
                 public void requestCompleted (List<Item> items) {
@@ -200,6 +205,12 @@ public class MsoyClientResolver extends CrowdClientResolver
     }
 
     // dependencies
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected ItemManager _itemMan;
     @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected StatRepository _statRepo;
 }

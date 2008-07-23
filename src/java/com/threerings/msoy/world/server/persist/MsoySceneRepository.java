@@ -60,22 +60,11 @@ public class MsoySceneRepository extends DepotRepository
         throws PersistenceException
     {
         super(ctx);
-    }
 
-    /**
-     * Provides any additional initialization that needs to happen after runtime configuration had
-     * been loaded, and other services initialized.
-     */
-    public void init (DecorRepository decorRepo)
-        throws PersistenceException
-    {
         // create our stock scenes if they are not yet created
         for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
             checkCreateStockScene(stock);
         }
-
-        // keep a pointer to the decor repository
-        _decorRepo = decorRepo;
 
         // initialize our update accumulator
         _accumulator.init(this);
@@ -432,5 +421,5 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected UpdateAccumulator _accumulator;
 
     /** Internal reference to the decor repository, used to load up decor for each scene. */
-    protected DecorRepository _decorRepo;
+    @Inject protected DecorRepository _decorRepo;
 }

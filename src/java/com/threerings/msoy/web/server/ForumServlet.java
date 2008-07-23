@@ -19,18 +19,22 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.HTMLSanitizer;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.fora.data.ForumCodes;
 import com.threerings.msoy.fora.data.ForumMessage;
@@ -65,7 +69,7 @@ public class ForumServlet extends MsoyServiceServlet
         try {
             // load up said member's group memberships
             Map<Integer, GroupName> groups = Maps.newHashMap();
-            for (GroupCard card : MsoyServer.groupRepo.getMemberGroups(mrec.memberId, true)) {
+            for (GroupCard card : _groupRepo.getMemberGroups(mrec.memberId, true)) {
                 groups.put(card.name.getGroupId(), card.name);
             }
 
@@ -273,7 +277,7 @@ public class ForumServlet extends MsoyServiceServlet
         for (ForumMessageRecord msgrec : msgrecs) {
             posters.add(msgrec.posterId);
         }
-        for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(posters)) {
+        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
             cards.put(mcrec.memberId, mcrec.toMemberCard());
         }
 
@@ -315,12 +319,12 @@ public class ForumServlet extends MsoyServiceServlet
 
             // if we're posting to the announcement group, add a global feed post about it
             if (groupId == ServerConfig.getAnnounceGroupId()) {
-                MsoyServer.feedRepo.publishGlobalMessage(
+                _feedRepo.publishGlobalMessage(
                     FeedMessageType.GLOBAL_ANNOUNCEMENT, subject + "\t" + thread.threadId);
 
             // otherwise, if the thread is an announcement thread, post a feed message about it
             } else if (thread.isAnnouncement()) {
-                MsoyServer.feedRepo.publishGroupMessage(
+                _feedRepo.publishGroupMessage(
                     groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
                     group.name + "\t" + subject + "\t" + thread.threadId);
             }
@@ -404,7 +408,7 @@ public class ForumServlet extends MsoyServiceServlet
 
             // load up the member card for the poster
             IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-            for (MemberCardRecord mcrec : MsoyServer.memberRepo.loadMemberCards(
+            for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(
                      Collections.singleton(mrec.memberId))) {
                 cards.put(mcrec.memberId, mcrec.toMemberCard());
             }
@@ -496,9 +500,9 @@ public class ForumServlet extends MsoyServiceServlet
             if (fmr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
             }
-            MsoyServer.supportMan.addMessageComplaint(
-                    mrec.getName(), fmr.posterId, fmr.message, complaint,
-                    ServerConfig.getServerURL() + "/#whirleds-t_" + fmr.threadId);
+            _supportLogic.addMessageComplaint(
+                mrec.getName(), fmr.posterId, fmr.message, complaint,
+                ServerConfig.getServerURL() + "/#whirleds-t_" + fmr.threadId);
         } catch (PersistenceException pe) {
             log.warning("Failed to complain message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);
@@ -512,7 +516,7 @@ public class ForumServlet extends MsoyServiceServlet
     protected Group getGroup (int groupId)
         throws PersistenceException, ServiceException
     {
-        GroupRecord grec = MsoyServer.groupRepo.loadGroup(groupId);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
         if (grec == null) {
             throw new ServiceException(ForumCodes.E_INVALID_GROUP);
         }
@@ -544,7 +548,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (mrec.isAdmin()) { // admins are always treated as managers
                 return GroupMembership.RANK_MANAGER;
             }
-            GroupMembershipRecord grm = MsoyServer.groupRepo.getMembership(groupId, mrec.memberId);
+            GroupMembershipRecord grm = _groupRepo.getMembership(groupId, mrec.memberId);
             if (grm != null) {
                 rank = grm.rank;
             }
@@ -570,7 +574,11 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // dependencies
-    @Inject protected ForumRepository _forumRepo;
-    @Inject protected ForumLogic _forumLogic;
+    @Inject protected SupportLogic _supportLogic;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected ForumLogic _forumLogic;
+    @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected FeedRepository _feedRepo;
 }

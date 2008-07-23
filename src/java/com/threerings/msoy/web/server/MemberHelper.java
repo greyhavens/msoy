@@ -47,7 +47,7 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MemberHelper
 {
-    /** A compartor for sorting lists of GroupMemberCard, by rank then most recently online to least. */
+    /** Sorts lists of GroupMemberCard by rank then most recently online to least. */
     public static Comparator<GroupMemberCard> SORT_BY_RANK = new Comparator<GroupMemberCard>() {
         public int compare (GroupMemberCard c1, GroupMemberCard c2) {
             int rankDiff = c2.rank - c1.rank;
@@ -62,7 +62,7 @@ public class MemberHelper
         }
     };
 
-    /** A compartor for sorting lists of MemberCard, most recently online to least. */
+    /** Sorts lists of MemberCard most recently online to least. */
     public static Comparator<MemberCard> SORT_BY_LAST_ONLINE = new Comparator<MemberCard>() {
         public int compare (MemberCard c1, MemberCard c2) {
             int rv = MemberCard.compare(c1.status, c2.status);
@@ -73,10 +73,8 @@ public class MemberHelper
         }
     };
 
-    /**
-     * A compartor for sorting lists of MemberCard, highest level to lowest, with
-     * last online then name as a tiebreaker.
-     */
+    /** Sorts lists of MemberCard highest level to lowest, with last online then name as
+     * tiebreaker. */
     public static Comparator<MemberCard> SORT_BY_LEVEL = new Comparator<MemberCard>() {
         public int compare (MemberCard c1, MemberCard c2) {
             if (c1.level > c2.level) {
@@ -207,7 +205,7 @@ public class MemberHelper
 
         // hop over to the dobj thread and figure out which of these members is online
         final IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
-        ServletUtil.invokePeerOperation(
+        _servletLogic.invokePeerOperation(
             "resolveMemberCards(" + memberIds + ")", new PeerManager.Operation() {
             public void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
@@ -257,10 +255,11 @@ public class MemberHelper
         return cards;
     }
 
-    /** Provides access to persistent member information. */
-    @Inject protected MemberRepository _memberRepo;
-
     /** Contains a mapping of authenticated members. */
     protected Map<String,Integer> _members =
         Collections.synchronizedMap(new HashMap<String,Integer>());
+
+    // our dependencies
+    @Inject protected ServletLogic _servletLogic;
+    @Inject protected MemberRepository _memberRepo;
 }

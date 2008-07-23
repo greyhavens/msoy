@@ -19,6 +19,7 @@ import com.threerings.user.OOOUser;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
@@ -155,7 +156,7 @@ public class OOOAuthenticationDomain
         if (!newIdent && !StringUtil.isBlank(machIdent) &&
                 !MsoyAuthenticator.isValidIdent(machIdent)) {
             if (_authrep.ban(OOOUser.METASOY_SITE_ID, user.username)) {
-                MsoyServer.supportMan.reportAutoBan(user, "AUTO-BAN: supplied invalid machIdent");
+                _supportLogic.reportAutoBan(user, "AUTO-BAN: supplied invalid machIdent");
             }
 
         // otherwire add the ident if necessary
@@ -244,4 +245,5 @@ public class OOOAuthenticationDomain
     }
 
     @Inject protected MsoyOOOUserRepository _authrep;
+    @Inject protected SupportLogic _supportLogic;
 }
