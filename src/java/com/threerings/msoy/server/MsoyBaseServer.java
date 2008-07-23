@@ -271,9 +271,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
 
-    /** The directory that contains our log files. */
-    protected static File _logdir = new File(ServerConfig.serverRoot, "log");
-
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
 }

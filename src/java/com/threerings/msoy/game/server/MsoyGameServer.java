@@ -27,16 +27,13 @@ import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 
-
 import com.threerings.msoy.server.MsoyBaseServer;
-
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -157,9 +154,6 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** Manages lobbies and other game bits on this server. */
     @Inject protected GameGameRegistry _gameReg;
-
-    /** Provides the game-side API for watching member movements on the world server. */
-    @Inject protected GameWatcherManager _watchMan;
 
     /** Provides parlor game services. */
     @Inject protected ParlorManager _parlorMan;

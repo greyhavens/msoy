@@ -216,7 +216,7 @@ public class MsoyServer extends MsoyBaseServer
         mailInvoker.start();
 
         // initialize our HTTP server
-        _httpServer.init(injector, _logdir);
+        _httpServer.init(injector, new File(ServerConfig.serverRoot, "log"));
     }
 
     @Override // from BureauLauncherProvider
