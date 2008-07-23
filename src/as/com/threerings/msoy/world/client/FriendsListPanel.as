@@ -153,10 +153,14 @@ public class FriendsListPanel extends TitleWindow
         _friendsList.verticalScrollPolicy = ScrollPolicy.ON;
         _friendsList.percentWidth = 100;
         _friendsList.percentHeight = 100;
-        _friendsList.itemRenderer = new ClassFactory(FriendRenderer);
         _friendsList.dataProvider = _friends;
         _friendsList.selectable = false;
         _friendsList.variableRowHeight = true;
+
+        var cf :ClassFactory = new ClassFactory(FriendRenderer);
+        cf.properties = { mctx: _ctx };
+        _friendsList.itemRenderer = cf;
+
         addChild(_friendsList);
 
         // set up the sort for the collection
@@ -226,47 +230,38 @@ public class FriendsListPanel extends TitleWindow
             if (!containsFriend(friend)) {
                 addFriend(friend);
             } else {
-                var original :Object = _originals[friend.name.getMemberId()];
-                currentEntries.splice(currentEntries.indexOf(original), 1);
+                currentEntries.splice(currentEntries.indexOf(friend), 1);
             }
         }
 
         // anything left in currentEntries wasn't found on the new MemberObject
-        for each (var entry :Array in currentEntries) {
-            removeFriend(entry[1] as FriendEntry);
+        for each (var entry :FriendEntry in currentEntries) {
+            removeFriend(entry as FriendEntry);
         }
     }
 
     protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
     {
-        if (!(o1 is Array) || !(o2 is Array)) {
-            return 0;
-        }
-
-        var friend1 :FriendEntry = (o1 as Array)[1] as FriendEntry;
-        var friend2 :FriendEntry = (o2 as Array)[1] as FriendEntry;
+        var friend1 :FriendEntry = o1 as FriendEntry;
+        var friend2 :FriendEntry = o2 as FriendEntry;
         return MemberName.BY_DISPLAY_NAME(friend1.name, friend2.name);
     }
 
     protected function containsFriend (friend :FriendEntry) :Boolean
     {
-        return _originals[friend.name.getMemberId()] !== undefined;
+        return _friends.contains(friend);
     }
 
     protected function addFriend (friend :FriendEntry) :void
     {
-        var data :Array = [ _ctx, friend ];
-        _originals[friend.name.getMemberId()] = data;
-        _friends.addItem(data);
+        _friends.addItem(friend);
     }
 
     protected function removeFriend (friend :FriendEntry) :void
     {
-        var data :Array = _originals[friend.name.getMemberId()] as Array;
-        if (data != null) {
-            _friends.removeItemAt(_friends.getItemIndex(data));
+        if (containsFriend(friend)) {
+            _friends.removeItemAt(_friends.getItemIndex(friend));
         }
-        delete _originals[friend.name.getMemberId()];
     }
 
     protected function editMouseOver (...ignored) :void
@@ -367,7 +362,6 @@ public class FriendsListPanel extends TitleWindow
     protected var _ctx :WorldContext;
     protected var _friendsList :List;
     protected var _friends :ArrayCollection = new ArrayCollection();
-    protected var _originals :Dictionary = new Dictionary();
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
     protected var _currentX :int = 0;

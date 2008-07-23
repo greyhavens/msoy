@@ -27,6 +27,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class FriendRenderer extends HBox 
 {
+    // Initialized by the ClassFactory
+    public var mctx :MsoyContext;
+
     public function FriendRenderer () 
     {
         super();
@@ -77,12 +80,11 @@ public class FriendRenderer extends HBox
 
         removeAllChildren();
 
-        if (this.data == null || !(this.data is Array) || (this.data as Array).length != 2) {
+        if (this.data == null) {
             return;
         }
 
-        _mctx = this.data[0] as MsoyContext;
-        var friend :FriendEntry = this.data[1] as FriendEntry;
+        var friend :FriendEntry = this.data as FriendEntry;
         _name = friend.name;
 
         var labelBox :VBox = new VBox();
@@ -117,11 +119,10 @@ public class FriendRenderer extends HBox
     protected function handleClick (event :MouseEvent) :void
     {
         var menuItems :Array = [];
-        _mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
-        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
+        mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
+        CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
     }
 
-    protected var _mctx :MsoyContext;
     protected var _name :MemberName;
 }
 }
