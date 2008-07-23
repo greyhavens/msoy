@@ -335,6 +335,9 @@ public class CatalogServlet extends MsoyServiceServlet
                     "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
             }
 
+            // update player stats
+            _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_LISTED, 1);
+
             return record.catalogId;
 
         } catch (PersistenceException pe) {
