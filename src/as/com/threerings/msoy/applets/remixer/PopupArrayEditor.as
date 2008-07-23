@@ -20,34 +20,24 @@ import mx.validators.ValidationResult;
 
 import com.threerings.flex.GridUtil;
 
+// we could almost just omit this and use the String editor, but the little element count is groovy
 public class PopupArrayEditor extends PopupStringEditor
 {
     override protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
     {
-        super.configureUI(ctx, entry, grid);
-        if (entry.value == null) {
-            _txt.text = "";
-        } else {
-            // TODO: better parse?
-            _txt.text = (entry.value as Array).join();
-        }
-
         _elemCount = new Label();
+
+        super.configureUI(ctx, entry, grid);
+
         GridUtil.addRow(grid, ctx.REMIX.get("l.elemCount"), _elemCount);
-
-        // now listen for _txt changes and update the elemCount
-        _txt.addEventListener(Event.CHANGE, handleTextChange);
-        handleTextChange(null)
     }
 
-    protected function handleTextChange (event :Event) :void
+    override protected function handleTextValidation (event :Event) :void
     {
-        _elemCount.text = String((getNewValue() as Array).length);
-    }
-
-    override protected function getNewValue () :Object
-    {
-        return String(_txt.text).split(",");
+        super.handleTextValidation(event);
+        if (_okBtn.enabled) {
+            _elemCount.text = String((getNewValue() as Array).length);
+        }
     }
 
     protected var _elemCount :Label;

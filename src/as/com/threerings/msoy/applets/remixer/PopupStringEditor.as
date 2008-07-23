@@ -21,6 +21,9 @@ import mx.validators.ValidationResult;
 
 import com.threerings.flex.GridUtil;
 
+/**
+ * Can be used to edit almost any type.
+ */
 public class PopupStringEditor extends PopupEditor
 {
     public function PopupStringEditor (validator :Validator = null) :void
@@ -43,15 +46,16 @@ public class PopupStringEditor extends PopupEditor
             }
         }
 
-        if (_validator == null) {
+        var textToShow :String;
+        if (entry.type == "String") {
             _txt = new TextArea();
+            textToShow = entry.value; // allow "s and so forth
 
         } else {
             _txt = new TextInput();
-            TextInput(_txt).addEventListener(FlexEvent.ENTER, handleEnterPressed);
+            IEventDispatcher(_txt).addEventListener(FlexEvent.ENTER, handleEnterPressed);
+            textToShow = entry.toString(); // set the text formatted
         }
-        GridUtil.addRow(grid, _txt, [2, 1]);
-
         if (_validator != null) {
             _validator.source = _txt;
             _validator.property = "text";
@@ -59,14 +63,29 @@ public class PopupStringEditor extends PopupEditor
             _validator.addEventListener(ValidationResultEvent.INVALID, checkValid);
             _validator.triggerEvent = Event.CHANGE; // TextEvent.TEXT_INPUT;
             _validator.trigger = IEventDispatcher(_txt);
-        }
 
-        _txt.text = entry.value;
+        } else {
+            IEventDispatcher(_txt).addEventListener(Event.CHANGE, handleTextValidation);
+        }
+        _txt.text = textToShow;
+        handleTextValidation(null); // validate now
+        GridUtil.addRow(grid, _txt, [2, 1]);
     }
 
     override protected function getNewValue () :Object
     {
-        return _txt.text;
+        return _entry.fromString(_txt.text);
+    }
+
+    protected function handleTextValidation (event :Event) :void
+    {
+        try {
+            getNewValue();
+            _okBtn.enabled = true;
+        } catch (e :Error) {
+            trace("Invalid value: " + e);
+            _okBtn.enabled = false;
+        }
     }
 
     /**
@@ -89,4 +108,3 @@ public class PopupStringEditor extends PopupEditor
     protected var _txt :Object; // either a TextInput or TextArea (no common text base class)
 }
 }
-

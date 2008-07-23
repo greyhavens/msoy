@@ -27,6 +27,7 @@ public class PopupEditor extends TitleWindow
     public function open (ctx :RemixContext, parent :DataEditor, entry :Object) :void
     {
         _parent = parent;
+        _entry = entry;
         this.title = entry.name;
 
         // configure the okbutton immediately
@@ -79,6 +80,8 @@ public class PopupEditor extends TitleWindow
     }
 
     protected var _parent :DataEditor;
+
+    protected var _entry :Object;
 
     protected var _okBtn :CommandButton;
 }

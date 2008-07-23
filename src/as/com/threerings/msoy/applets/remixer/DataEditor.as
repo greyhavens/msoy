@@ -41,9 +41,10 @@ public class DataEditor extends FieldEditor
         try {
             return Object(this)["setup" + entry.type](entry);
         } catch (err :Error) {
-            // fall through to super
+            // fall through
         }
-        return super.getUI(entry);
+        // use the string editor with basic validation
+        return setupString(entry);
     }
 
     protected function setupBoolean (entry :Object) :Array
@@ -59,13 +60,10 @@ public class DataEditor extends FieldEditor
 
     protected function setupString (entry :Object, validator :Validator = null) :Array
     {
-        var valToString :Function = function (val :Object) :String {
-            return String(val);
-        };
         var createFn :Function = function () :PopupEditor {
             return new PopupStringEditor(validator);
         };
-        return setupPopper(entry, valToString, createFn);
+        return setupPopper(entry, createFn);
     }
 
     protected function setupNumber (entry :Object) :Array
@@ -107,78 +105,53 @@ public class DataEditor extends FieldEditor
 
     protected function setupPoint (entry :Object) :Array
     {
-        var valToString :Function = function (val :Object) :String {
-            var p :Point = val as Point;
-            if (p == null) {
-                return "";
-            }
-            return "Point(" + p.x + ", " + p.y + ")";
-        };
         var createFn :Function = function () :PopupEditor {
             return new PopupPointEditor();
         };
-        return setupPopper(entry, valToString, createFn);
+        return setupPopper(entry, createFn);
     }
 
     protected function setupRectangle (entry :Object) :Array
     {
-        var valToString :Function = function (val :Object) :String {
-            var r :Rectangle = val as Rectangle;
-            if (r == null) {
-                return "";
-            }
-            return "Rectangle(" + r.x + ", " + r.y + ", " + r.width + ", " + r.height + ")";
-        };
         var createFn :Function = function () :PopupEditor {
             return new PopupRectangleEditor();
         };
-        return setupPopper(entry, valToString, createFn);
+        return setupPopper(entry, createFn);
     }
 
     protected function setupArray (entry :Object) :Array
     {
-        var valToString :Function = function (val :Object) :String {
-            return (val as Array).join();
-        };
         var createFn :Function = function () :PopupEditor {
             return new PopupArrayEditor();
         };
-        return setupPopper(entry, valToString, createFn);
+        return setupPopper(entry, createFn);
     }
 
     /**
      * Configure an editor that uses a pop-up to edit the actual value.
      */
-    protected function setupPopper (
-        entry :Object, valToString :Function, createPopper :Function) :Array
+    protected function setupPopper (entry :Object, createPopper :Function) :Array
     {
+        var label :Label = new Label();
+        label.selectable = false;
+        label.setStyle("color", NAME_AND_VALUE_COLOR);
+        label.text = entry.toString();
+
         var handleEntryChange :Function = function (event :ValueEvent) :void {
             if (event.value === entry.name) {
-                // we don't use entry, above, because we want to get the latest data every
-                // time we the button is pushed
-                updateLabel(label, _ctx.pack.getDataEntry(entry.name).value, valToString);
+                label.text = entry.toString(); // update the label
             }
         };
+        _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED, handleEntryChange);
+
         var dataEditor :DataEditor = this;
         var doPopFn :Function = function () :void {
             // here also, we don't use entry, we fetch it fresh
             var popper :PopupEditor = createPopper();
             popper.open(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name));
         };
-
-        var label :Label = new Label();
-        label.selectable = false;
-        label.setStyle("color", NAME_AND_VALUE_COLOR);
-        updateLabel(label, entry.value, valToString);
-        _ctx.pack.addEventListener(EditableDataPack.DATA_CHANGED, handleEntryChange);
-
         var change :CommandButton = createEditButton(doPopFn);
         return [ label, change, change ];
-    }
-
-    protected function updateLabel (label :Label, value :Object, valToString :Function) :void
-    {
-        label.text = (value == null) ? "" : valToString(value);
     }
 
     internal function updateValue (value :*) :void
