@@ -19,6 +19,7 @@ import client.shell.Application;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.SceneThumbnail;
 import client.util.ThumbBox;
 import client.util.TongueBox;
 
@@ -55,9 +56,9 @@ public class MyRoomsPanel extends VerticalPanel
         {
             super("Room", 0, 2);
             ClickListener onClick = Application.createLinkListener(Page.WORLD, "s"+room.sceneId);
-            MediaDesc decor = (room.decor != null) ? room.decor :
-                Item.getDefaultThumbnailMediaFor(Item.DECOR);
-            setWidget(0, 0, new ThumbBox(decor, onClick));
+            SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId);
+            sceneImage.addClickListener(onClick);
+            setWidget(0, 0, sceneImage);
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
         }
