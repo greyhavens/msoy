@@ -36,7 +36,7 @@ public class MemberLocator extends BodyLocator
      */
     public MemberObject lookupMember (int memberId)
     {
-        MsoyServer.requireDObjThread(_omgr);
+        _omgr.requireEventThread();
         return _online.get(memberId);
     }
 
@@ -54,7 +54,7 @@ public class MemberLocator extends BodyLocator
      */
     public Collection<MemberObject> getMembersOnline ()
     {
-        MsoyServer.requireDObjThread(_omgr);
+        _omgr.requireEventThread();
         return Collections.unmodifiableCollection(_online.values());
     }
 
@@ -87,7 +87,7 @@ public class MemberLocator extends BodyLocator
     @Override // from BodyLocator
     public BodyObject lookupBody (Name visibleName)
     {
-        MsoyServer.requireDObjThread(_omgr);
+        _omgr.requireEventThread();
         return _online.get(((MemberName) visibleName).getMemberId());
     }
 

@@ -73,33 +73,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         protected CacheAdapter _cacher;
     }
 
-    /** Maintains a registry of runtime configuration information. */
-    public static ConfigRegistry confReg;
-
-    /**
-     * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
-     * {@link IllegalStateException} if it is not.
-     */
-    public static void requireDObjThread (PresentsDObjectMgr omgr)
-    {
-        if (!omgr.isDispatchThread()) {
-            String errmsg = "This method must be called on the distributed object thread.";
-            throw new IllegalStateException(errmsg);
-        }
-    }
-
-    /**
-     * Ensures that the calling thread <em>is not</em> the distributed object event dispatch
-     * thread, throwing an {@link IllegalStateException} if it is.
-     */
-    public static void refuseDObjThread (PresentsDObjectMgr omgr)
-    {
-        if (omgr.isDispatchThread()) {
-            String errmsg = "This method must not be called on the distributed object thread.";
-            throw new IllegalStateException(errmsg);
-        }
-    }
-
     @Override // from WhirledServer
     public void init (final Injector injector)
         throws Exception
@@ -117,7 +90,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create and set up our configuration registry and admin service
-        confReg = createConfigRegistry();
+        ConfigRegistry confReg = createConfigRegistry();
         AdminProvider.init(_invmgr, confReg);
 
         // initialize the bureau registry (subclasses will enable specific bureau types)
