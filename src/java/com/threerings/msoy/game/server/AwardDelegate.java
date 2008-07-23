@@ -57,9 +57,6 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.EarnedBadge;
-import com.threerings.msoy.badge.server.BadgeUtil;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
