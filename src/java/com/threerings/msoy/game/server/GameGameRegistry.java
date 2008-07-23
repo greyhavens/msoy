@@ -42,11 +42,13 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.whirled.game.data.GameData;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -294,6 +296,8 @@ public class GameGameRegistry
                     trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
                     trophy.name + "\t" + trophy.gameId +
                     "\t" + MediaDesc.mdToString(trec.trophyMedia));
+                // update the player's stats
+                _statLogic.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
             }
             public void handleSuccess () {
                 _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
@@ -779,6 +783,7 @@ public class GameGameRegistry
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerLocator _locator;
     @Inject protected BureauRegistry _bureauReg;
+    @Inject protected StatLogic _statLogic;
 
     // various and sundry repositories for loading persistent data
     @Inject protected GameRepository _gameRepo;
