@@ -240,17 +240,31 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
-        boolean haveNonZeroScore = false;
+        int highestScore = Integer.MIN_VALUE;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
-            haveNonZeroScore = haveNonZeroScore || (scores[ii] > 0);
+            int thisScore = scores[ii];
+            highestScore = Math.max(highestScore, thisScore);
         }
+
+        ArrayList<Integer> winnerOids = new ArrayList<Integer>();
+        if (highestScore > 0) {
+            for (int ii = 0; ii < playerOids.length; ii++) {
+                if (scores[ii] == highestScore) {
+                    winnerOids.add(playerOids[ii]);
+                }
+            }
+        }
+
+        // Update stats. We do this here instead of in gameDidEnd, because the list of winners
+        // isn't available there.
+        updatePlayerStats(players.keySet(), winnerOids);
 
         // if we have no non-zero scores then end the game without awarding flow or updating
         // ratings or percentilers
-        if (!haveNonZeroScore) {
+        if (highestScore <= 0) {
             _gmgr.endGame();
             return;
         }
@@ -328,14 +342,20 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
+        // pull the winners out of the IntMap
+        ArrayIntSet winners = new ArrayIntSet();
+        for (Player player : players.values()) {
+            if (player.score == 1) {
+                winners.add(player.playerOid);
+            }
+        }
+
+        // Update stats. We do this here instead of in gameDidEnd, because the list of winners
+        // isn't available there if endGameWithScores() is called.
+        updatePlayerStats(players.keySet(), winners);
+
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
-            ArrayIntSet winners = new ArrayIntSet();
-            for (Player player : players.values()) {
-                if (player.score == 1) {
-                    winners.add(player.playerOid);
-                }
-            }
             ((WhirledGameManager)_gmgr).setWinners(winners.toIntArray());
 
         } else {
@@ -529,46 +549,6 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // stop accumulating "game time" for players
         stopTracking();
         resetTracking();
-
-        // update player stats
-        // TEMP - tim will uncomment when this stops breaking
-        /*final int[] playerIds = _playerIds.clone();
-        final boolean[] winners = _gobj.winners.clone();
-        final int gameId = _content.detail.gameId;
-        _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
-            public void invokePersist () throws PersistenceException {
-
-                for (int ii = 0; ii < playerIds.length; ii++) {
-                    int playerId = _playerIds[ii];
-
-                    // track total games played
-                    _statLogic.incrementStat(playerId, StatType.GAMES_PLAYED, 1);
-
-                    if (isMultiplayer()) {
-                        // track unique game partners
-                        for (int otherPlayerId : playerIds) {
-                            if (otherPlayerId != playerId) {
-                                _statLogic.addToSetStat(playerId, StatType.MP_GAME_PARTNERS,
-                                    otherPlayerId);
-                            }
-                        }
-
-                        // track multiplayer game wins
-                        if (winners[ii]) {
-                            _statLogic.incrementStat(playerId, StatType.MP_GAMES_WON, 1);
-                        }
-                    }
-                }
-            }
-            protected String getFailureMessage () {
-                return "Failed to update game stats (gameId=" + gameId + ")";
-            }
-        });*/
-    }
-
-    protected void updatePlayerStats (final ArrayList<Integer> memberIds)
-    {
-
     }
 
     public void recordAgentTrace (String trace)
@@ -582,6 +562,65 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 _tracing = false;
             }
         }
+    }
+
+    /**
+     * Called when a game ends to update various Passport-related stats.
+     */
+    protected void updatePlayerStats (Iterable<Integer> playerOids, Iterable<Integer> winnerOids)
+    {
+        log.info("updatePlayerStats()");
+        final int gameId = _content.detail.gameId;
+        final boolean isMultiplayer = isMultiplayer();
+        final ArrayList<Integer> playerIds = playerOidsToMemberIds(playerOids);
+        final ArrayList<Integer> winnerIds = playerOidsToMemberIds(winnerOids);
+        _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
+            public void invokePersist () throws PersistenceException {
+                for (int playerId : playerIds) {
+                    // track total games played
+                    _statLogic.incrementStat(playerId, StatType.GAMES_PLAYED, 1);
+
+                    if (isMultiplayer) {
+                        // track unique game partners
+                        for (int otherPlayerId : playerIds) {
+                            if (otherPlayerId != playerId) {
+                                _statLogic.addToSetStat(playerId, StatType.MP_GAME_PARTNERS,
+                                    otherPlayerId);
+                            }
+                        }
+                    }
+                }
+
+                // track multiplayer game wins
+                if (isMultiplayer) {
+                    for (int playerId : winnerIds) {
+                        _statLogic.addToSetStat(playerId, StatType.MP_GAMES_WON, 1);
+                    }
+                }
+            }
+            protected String getFailureMessage () {
+                return "Failed to update game stats (gameId=" + gameId + ")";
+            }
+        });
+    }
+
+    protected ArrayList<Integer> playerOidsToMemberIds (Iterable<Integer> playerOids)
+    {
+        final ArrayList<Integer> memberIds = new ArrayList<Integer>();
+        for (int playerOid : playerOids) {
+            int memberId = playerOidToMemberId(playerOid);
+            if (memberId > 0) {
+                memberIds.add(memberId);
+            }
+        }
+
+        return memberIds;
+    }
+
+    protected int playerOidToMemberId (int playerOid)
+    {
+        DObject dobj = MsoyGameServer.omgr.getObject(playerOid);
+        return (dobj instanceof PlayerObject ? ((PlayerObject)dobj).getMemberId() : 0);
     }
 
     @Override // from RatingManagerDelegate
