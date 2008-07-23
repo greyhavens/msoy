@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Comparators;
@@ -130,7 +129,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
         // store the trophy to the database, we won't tell them that they earned it and they'll be
         // able to earn it again next time
-        plobj.addToGameContent(new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
+        plobj.addToGameContent(
+            new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
 
         // create the persistent record we will shortly store
         TrophyRecord trophy = new TrophyRecord();
@@ -249,7 +249,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
             highestScore = Math.max(highestScore, thisScore);
         }
 
-        ArrayList<Integer> winnerOids = new ArrayList<Integer>();
+        List<Integer> winnerOids = Lists.newArrayList();
         if (highestScore > 0) {
             for (int ii = 0; ii < playerOids.length; ii++) {
                 if (scores[ii] == highestScore) {
@@ -572,8 +572,8 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         log.info("updatePlayerStats()");
         final int gameId = _content.detail.gameId;
         final boolean isMultiplayer = isMultiplayer();
-        final ArrayList<Integer> playerIds = playerOidsToMemberIds(playerOids);
-        final ArrayList<Integer> winnerIds = playerOidsToMemberIds(winnerOids);
+        final List<Integer> playerIds = playerOidsToMemberIds(playerOids);
+        final List<Integer> winnerIds = playerOidsToMemberIds(winnerOids);
         _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
             public void invokePersist () throws PersistenceException {
                 for (int playerId : playerIds) {
@@ -604,9 +604,9 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
         });
     }
 
-    protected ArrayList<Integer> playerOidsToMemberIds (Iterable<Integer> playerOids)
+    protected List<Integer> playerOidsToMemberIds (Iterable<Integer> playerOids)
     {
-        final ArrayList<Integer> memberIds = new ArrayList<Integer>();
+        final List<Integer> memberIds = Lists.newArrayList();
         for (int playerOid : playerOids) {
             int memberId = playerOidToMemberId(playerOid);
             if (memberId > 0) {
@@ -771,7 +771,7 @@ public class MsoyGameManagerDelegate extends RatingManagerDelegate
                 totalFlow += player.availFlow;
             }
             for (Player player : players.values()) {
-                player.flowAward = (int) Math.floor(((float) totalFlow) * player.score / totalScore);
+                player.flowAward = (int)Math.floor(((float)totalFlow) * player.score / totalScore);
             }
             break;
         } // end: case PROPORTIONAL
