@@ -10,6 +10,8 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 
+import mx.controls.Text;
+
 import mx.managers.PopUpManager;
 
 import com.threerings.flex.CommandButton;
@@ -37,10 +39,10 @@ public class PopupEditor extends TitleWindow
         var grid :Grid = new Grid();
         addChild(grid);
         GridUtil.addRow(grid, ctx.REMIX.get("l.name"), entry.name as String);
-        var desc :String = entry.info as String;
-        if (desc == null) {
-            desc = ctx.REMIX.get("m.none");
-        }
+        var desc :Text = new Text();
+        desc.selectable = false;
+        desc.width = 300;
+        desc.text = (entry.info as String) || ctx.REMIX.get("m.none");
         GridUtil.addRow(grid, ctx.REMIX.get("l.desc"), desc);
         GridUtil.addRow(grid, ctx.REMIX.get("l.type"), entry.type as String);
 
