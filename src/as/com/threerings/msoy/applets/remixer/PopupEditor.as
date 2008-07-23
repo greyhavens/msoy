@@ -21,8 +21,10 @@ import com.threerings.flex.PopUpUtil;
  */
 public class PopupEditor extends TitleWindow
 {
-    public function PopupEditor (
-        ctx :RemixContext, parent :DataEditor, entry :Object)
+    /**
+     * Initialize and open this editor.
+     */
+    public function open (ctx :RemixContext, parent :DataEditor, entry :Object) :void
     {
         _parent = parent;
         this.title = entry.name;
@@ -52,8 +54,9 @@ public class PopupEditor extends TitleWindow
         buttonBar.addChild(_okBtn);
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 
-        // and pop-up
-        open();
+        // finally, let 'er rip
+        PopUpManager.addPopUp(this, _parent, true);
+        PopUpUtil.center(this);
     }
 
     protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
@@ -64,12 +67,6 @@ public class PopupEditor extends TitleWindow
     protected function getNewValue () :Object
     {
         return null; // your subclass does stuff here
-    }
-
-    protected function open () :void
-    {
-        PopUpManager.addPopUp(this, _parent, true);
-        PopUpUtil.center(this);
     }
 
     protected function close (save :Boolean) :void

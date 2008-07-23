@@ -22,11 +22,6 @@ import com.threerings.flex.GridUtil;
 
 public class PopupPointEditor extends PopupEditor
 {
-    public function PopupPointEditor (ctx :RemixContext, parent :DataEditor, entry :Object)
-    {
-        super(ctx, parent, entry);
-    }
-
     override protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
     {
         _x = new TextInput();

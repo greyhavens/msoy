@@ -21,11 +21,6 @@ import com.threerings.flex.GridUtil;
 
 public class PopupRectangleEditor extends PopupPointEditor
 {
-    public function PopupRectangleEditor (ctx :RemixContext, parent :DataEditor, entry :Object)
-    {
-        super(ctx, parent, entry);
-    }
-
     override protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
     {
         super.configureUI(ctx, entry, grid);

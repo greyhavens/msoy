@@ -23,11 +23,10 @@ import com.threerings.flex.GridUtil;
 
 public class PopupStringEditor extends PopupEditor
 {
-    public function PopupStringEditor (
-        ctx :RemixContext, parent :DataEditor, entry :Object, validator :Validator = null)
+    public function PopupStringEditor (validator :Validator = null) :void
     {
         _validator = validator;
-        super(ctx, parent, entry);
+        super();
     }
 
     override protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void

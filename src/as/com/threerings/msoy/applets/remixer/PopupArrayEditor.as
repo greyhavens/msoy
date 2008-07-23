@@ -22,18 +22,13 @@ import com.threerings.flex.GridUtil;
 
 public class PopupArrayEditor extends PopupStringEditor
 {
-    public function PopupArrayEditor (
-        ctx :RemixContext, parent :DataEditor, entry :Object)
-    {
-        super(ctx, parent, entry);
-    }
-
     override protected function configureUI (ctx :RemixContext, entry :Object, grid :Grid) :void
     {
         super.configureUI(ctx, entry, grid);
         if (entry.value == null) {
             _txt.text = "";
         } else {
+            // TODO: better parse?
             _txt.text = (entry.value as Array).join();
         }
 
@@ -58,4 +53,3 @@ public class PopupArrayEditor extends PopupStringEditor
     protected var _elemCount :Label;
 }
 }
-
