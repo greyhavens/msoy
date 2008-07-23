@@ -96,7 +96,7 @@ public class AwardDelegate extends RatingDelegate
         // infinite monkeys, we will track trophies awarded to guests and transfer them to their
         // newly created account
         if (plobj.isGuest()) {
-            log.info("Guest " + playerId + " not awarded trophy " + ident);
+            log.info("Guest " + playerId + " not awarded trophy " + ident + ".");
             return;
         }
 
@@ -116,8 +116,8 @@ public class AwardDelegate extends RatingDelegate
         // if the player already has this trophy, ignore the request
         final int gameId = _content.game.gameId;
         if (plobj.ownsGameContent(gameId, GameData.TROPHY_DATA, ident)) {
-            log.info("Game requested to award already held trophy [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            log.info("Game requested to award already held trophy", "game", where(),
+                     "who", plobj.who(), "ident", ident);
             return;
         }
 
@@ -143,8 +143,8 @@ public class AwardDelegate extends RatingDelegate
         // version, so a developer will not constantly re-receive trophies once they have released
         // them and earned them permanently from the catalog version of their game
         if (_content.game.isDeveloperVersion()) {
-            log.info("Awarding transient trophy to developer [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            log.info("Awarding transient trophy to developer", "game", where(),
+                     "who", plobj.who(), "ident", ident);
             plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
             return;
         }
@@ -184,16 +184,16 @@ public class AwardDelegate extends RatingDelegate
             }
         }
         if (prize == null) {
-            log.info("Game requested to award unknown prize [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            log.info("Game requested to award unknown prize", "game", where(),
+                     "who", plobj.who(), "ident", ident);
             throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
         }
 
         // if the player has already earned this prize during this session, ignore the request
         final int gameId = _content.game.gameId;
         if (plobj.ownsGameContent(gameId, GameData.PRIZE_MARKER, ident)) {
-            log.info("Game requested to award already earned prize [game=" + where() +
-                     ", who=" + plobj.who() + ", ident=" + ident + "].");
+            log.info("Game requested to award already earned prize", "game", where(),
+                     "who", plobj.who(), "ident", ident);
             return;
         }
 
@@ -227,9 +227,8 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // TEMP? Log scores.
-        log.info("endGameWithScores [name=" + _content.game.name + ", id=" + _content.game.gameId +
-            ", payoutType=" + payoutType + ", playerOids=" + StringUtil.toString(playerOids) +
-            ", scores=" + StringUtil.toString(scores) + "].");
+        log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
+                 "payoutType", payoutType, "playerOids", playerOids, "scores", scores);
 
         int now = now();
 
@@ -354,8 +353,8 @@ public class AwardDelegate extends RatingDelegate
             ((WhirledGameManager)_gmgr).setWinners(winners.toIntArray());
 
         } else {
-            log.warning("Unable to configure WhirledGameManager with winners [where=" + where() +
-                        ", isa=" + _gmgr.getClass().getName() + "].");
+            log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
+                        "isa", _gmgr.getClass().getName());
         }
 
         // now actually end the game
@@ -434,9 +433,9 @@ public class AwardDelegate extends RatingDelegate
         int avgDuration = Math.round(60 * getAverageGameDuration(perPlayerDuration));
         int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
-            log.info("Capping player minutes at 120% of average [game=" + where() +
-                     ", pgames=" + _totalTrackedGames + ", average=" + avgDuration +
-                     ", current=" + perPlayerDuration + ", capped=" + capDuration + "].");
+            log.info("Capping player minutes at 120% of average", "game", where(),
+                     "pgames", _totalTrackedGames, "average", avgDuration,
+                     "current", perPlayerDuration, "capped", capDuration);
             totalMinutes = capDuration * _totalTrackedGames;
         }
 
@@ -549,7 +548,6 @@ public class AwardDelegate extends RatingDelegate
      */
     protected void updatePlayerStats (Iterable<Integer> playerOids, Iterable<Integer> winnerOids)
     {
-        log.info("updatePlayerStats()");
         final int gameId = _content.detail.gameId;
         final boolean isMultiplayer = isMultiplayer();
         final List<Integer> playerIds = playerOidsToMemberIds(playerOids);
@@ -635,8 +633,8 @@ public class AwardDelegate extends RatingDelegate
         rating.experience++;
         rating.modified = true;
 
-        log.info("Updated rating [who=" + rating.playerName + ", orat=" + orat + ", erat=" + erat +
-                 ", diff=" + pctdiff + ", K=" + K + ", nrat=" + nrat + "].");
+        log.info("Updated rating", "who", rating.playerName, "orat", orat, "erat", erat,
+                 "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
     protected void awardFlow (IntMap<Player> players, int payoutType)
@@ -739,8 +737,7 @@ public class AwardDelegate extends RatingDelegate
         } // end: case PROPORTIONAL
         }
 
-        log.info("Awarding flow [game=" + where() + ", type=" + payoutType +
-                 ", to=" + players + "].");
+        log.info("Awarding flow", "game", where(), "type", payoutType, "to" + players);
 
         // finally, award the flow and report it to the player
         boolean actuallyAward = !_content.game.isDeveloperVersion();
@@ -909,9 +906,9 @@ public class AwardDelegate extends RatingDelegate
 
         // log things for a while so we can see how often and to what extent this happens
         if (awardMins != avgMins) {
-            log.info("Scaling player's awardable flow due to short game [game=" + where() +
-                     ", memberId=" + record.memberId + ", avgMins=" + avgMins +
-                     ", playerMins=" + playerMins + ", awardMins=" + awardMins + "].");
+            log.info("Scaling player's awardable flow due to short game", "game", where(),
+                     "memberId", record.memberId, "avgMins", avgMins, "playerMins", playerMins,
+                     "awardMins", awardMins);
         }
 //        }
 
@@ -923,7 +920,7 @@ public class AwardDelegate extends RatingDelegate
         // remove their flow record and grant them the flow
         final FlowRecord record = _flowRecords.remove(oid);
         if (record == null) {
-            log.warning("No flow record found [oid=" + oid + "]");
+            log.warning("No flow record found", "oid", oid);
             return;
         }
 
@@ -951,7 +948,7 @@ public class AwardDelegate extends RatingDelegate
 
         // sanity check that we're initialized
         if (_flowPerMinute == -1) {
-            log.warning("Unknown flow rate, but there's a grant. Wha?");
+            log.warning("Unknown flow rate, but there's a grant. Wha?", "game", where());
             return;
         }
 
@@ -970,8 +967,8 @@ public class AwardDelegate extends RatingDelegate
                     MsoyGameServer.gameReg.gamePayout(
                         action, _content.game, record.awarded, record.totalSecondsPlayed);
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to grant flow [amount=" +
-                            record.awarded + ", action=" + action + "].", pe);
+                    log.warning("Failed to grant flow", "amount", record.awarded,
+                                "action", action, pe);
                 }
                 return false;
             }
