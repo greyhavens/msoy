@@ -26,8 +26,8 @@ import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.server.persist.OOODatabase;
 
@@ -55,7 +55,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected SupportRepository createSupportRepository ()
     {
-        return _authrep;
+        return _authRepo;
     }
 
     @Override // from UnderwireServlet
@@ -74,7 +74,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
             Caller caller = new Caller();
             caller.username = Integer.toString(mrec.memberId);
             caller.email = mrec.accountName;
-            caller.authtok = MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays);
+            caller.authtok = _memberRepo.startOrJoinSession(mrec.memberId, expireDays);
             caller.isSupport = mrec.isSupport();
             return caller;
 
@@ -110,7 +110,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     {
         MemberName name;
         try {
-            name = MsoyServer.memberRepo.loadMemberName(username);
+            name = _memberRepo.loadMemberName(username);
         } catch (PersistenceException pe) {
             log.warning("Error looking up member", pe);
             name = null; // handled with the next check
@@ -131,9 +131,6 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected GameInfoProvider getInfoProvider ()
     {
-        if (_infoprov == null) {
-            _infoprov = new MsoyGameInfoProvider();
-        }
         return _infoprov;
     }
 
@@ -148,7 +145,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         throws UnderwireException
     {
         try {
-            MemberRecord mrec = MsoyServer.memberRepo.loadMemberForSession(authtok);
+            MemberRecord mrec = _memberRepo.loadMemberForSession(authtok);
             if (mrec == null) {
                 return null;
             }
@@ -166,10 +163,11 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         }
     }
 
-    protected MsoyGameInfoProvider _infoprov;
-
+    // our dependencies
     @Inject protected MsoyGameActionHandler _actionHandler;
+    @Inject protected MsoyGameInfoProvider _infoprov;
     @Inject protected MsoyAuthenticator _author;
-    @Inject protected MsoyOOOUserRepository _authrep;
     @Inject protected @OOODatabase PersistenceContext _userCtx;
+    @Inject protected MsoyOOOUserRepository _authRepo;
+    @Inject protected MemberRepository _memberRepo;
 }

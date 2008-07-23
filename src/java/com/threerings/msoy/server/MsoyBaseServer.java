@@ -27,16 +27,12 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.bureau.server.BureauAuthenticator;
 
-import com.threerings.parlor.rating.server.persist.RatingRepository;
-import com.threerings.stats.server.persist.StatRepository;
-
 import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.DictionaryManager;
-import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
@@ -45,10 +41,6 @@ import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
 import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -83,27 +75,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
-
-    /** Contains information on our members. */
-    public static MemberRepository memberRepo;
-
-    /** Contains the rating data for each player and game. */
-    public static RatingRepository ratingRepo;
-
-    /** Maintains "smart" digital item memories. */
-    public static MemoryRepository memoryRepo;
-
-    /** Manages the persistent repository of stats. */
-    public static StatRepository statRepo;
-
-    /** Stores user's game cookies. */
-    public static GameCookieRepository gameCookieRepo;
-
-    /** Contains information on our member profiles. */
-    public static ProfileRepository profileRepo;
-
-    /** The Msoy feed repository. */
-    public static FeedRepository feedRepo;
 
     // legacy static references
     public static Invoker invoker;
@@ -149,13 +120,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         invoker = _invoker;
         omgr = _omgr;
         invmgr = _invmgr;
-        memberRepo = _memberRepo;
-        ratingRepo = _ratingRepo;
-        memoryRepo = _memoryRepo;
-        statRepo = _statRepo;
-        gameCookieRepo = _gameCookieRepo;
-        profileRepo = _profileRepo;
-        feedRepo = _feedRepo;
 
         super.init(injector);
 
@@ -342,27 +306,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
-
-    /** Contains information on our members. */
-    @Inject protected MemberRepository _memberRepo;
-
-    /** Contains the rating data for each player and game. */
-    @Inject protected RatingRepository _ratingRepo;
-
-    /** Maintains "smart" digital item memories. */
-    @Inject protected MemoryRepository _memoryRepo;
-
-    /** Manages the persistent repository of stats. */
-    @Inject protected StatRepository _statRepo;
-
-    /** Stores user's game cookies. */
-    @Inject protected GameCookieRepository _gameCookieRepo;
-
-    /** Contains information on our member profiles. */
-    @Inject protected ProfileRepository _profileRepo;
-
-    /** The Msoy feed repository. */
-    @Inject protected FeedRepository _feedRepo;
 
     /** The directory that contains our log files. */
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");

@@ -163,40 +163,6 @@ public class MemberManager
     }
 
     /**
-     * Fetch the home ID for a member and return it.
-     */
-    public void getHomeId (final byte ownerType, final int ownerId,
-                           ResultListener<Integer> listener)
-    {
-        _invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
-            public Integer invokePersistResult () throws PersistenceException {
-                switch (ownerType) {
-                case MsoySceneModel.OWNER_TYPE_MEMBER:
-                    MemberRecord member = _memberRepo.loadMember(ownerId);
-                    return (member == null) ? null : member.homeSceneId;
-
-                case MsoySceneModel.OWNER_TYPE_GROUP:
-                    GroupRecord group = _groupRepo.loadGroup(ownerId);
-                    return (group == null) ? null : group.homeSceneId;
-
-                default:
-                    log.warning("Unknown ownerType provided to getHomeId " +
-                        "[ownerType=" + ownerType +
-                        ", ownerId=" + ownerId + "].");
-                    return null;
-                }
-            }
-            public void handleSuccess () {
-                if (_result == null) {
-                    handleFailure(new InvocationException("m.no_such_user"));
-                } else {
-                    super.handleSuccess();
-                }
-            }
-        });
-    }
-
-    /**
      * Called when a member logs onto this server.
      */
     public void memberLoggedOn (final MemberObject member)
@@ -268,19 +234,23 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
-                           final InvocationService.ResultListener listener)
+    public void getHomeId (ClientObject caller, final byte ownerType, final int ownerId,
+                           InvocationService.ResultListener listener)
         throws InvocationException
     {
-        ResultListener<Integer> rl = new ResultListener<Integer>() {
-            public void requestCompleted (Integer result) {
-                listener.requestProcessed(result);
+        _invoker.postUnit(new PersistingUnit(listener) {
+            public void invokePersistent () throws PersistenceException {
+                _homeId = _memberLogic.getHomeId(ownerType, ownerId);
             }
-            public void requestFailed (Exception cause) {
-                listener.requestFailed(cause.getMessage());
+            public void handleSuccess () {
+                if (_homeId == null) {
+                    handleFailure(new InvocationException("m.no_such_user"));
+                } else {
+                    ((InvocationService.ResultListener)_listener).requestProcessed(_homeId);
+                }
             }
-        };
-        getHomeId(ownerType, ownerId, rl);
+            protected Integer _homeId;
+        });
     }
 
     // from interface MemberProvider
@@ -840,6 +810,7 @@ public class MemberManager
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailLogic _mailLogic;
     @Inject protected SupportLogic _supportLogic;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected MemberLocator _locator;

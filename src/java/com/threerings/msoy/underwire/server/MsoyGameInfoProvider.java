@@ -9,24 +9,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import com.samskivert.io.PersistenceException;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
-
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.underwire.server.GameInfoProvider;
-
 import com.threerings.underwire.web.data.Account;
 
 /**
  * Provides game-specific info for Whirled.
  */
+@Singleton
 public class MsoyGameInfoProvider extends GameInfoProvider
 {
     @Override // from GameInfoProvider
@@ -49,7 +50,7 @@ public class MsoyGameInfoProvider extends GameInfoProvider
             }
         }
         HashMap<String,String> map = new HashMap<String,String>();
-        for (MemberName name : MsoyBaseServer.memberRepo.loadMemberNames(memberIds)) {
+        for (MemberName name : _memberRepo.loadMemberNames(memberIds).values()) {
             map.put(Integer.toString(name.getMemberId()), name.toString());
         }
         return map;
@@ -60,7 +61,7 @@ public class MsoyGameInfoProvider extends GameInfoProvider
         throws PersistenceException
     {
         List<Integer> memberIds =
-            MsoyBaseServer.memberRepo.findMembersByDisplayName(gameName, true, LOOKUP_LIMIT);
+            _memberRepo.findMembersByDisplayName(gameName, true, LOOKUP_LIMIT);
         ArrayList<String> names = new ArrayList<String>(memberIds.size());
         for (Integer memberId : memberIds) {
             names.add(memberId.toString());
@@ -72,13 +73,12 @@ public class MsoyGameInfoProvider extends GameInfoProvider
     public void populateAccount (Account account)
         throws PersistenceException
     {
-        MemberRecord member = MsoyBaseServer.memberRepo.loadMember(account.email);
+        MemberRecord member = _memberRepo.loadMember(account.email);
         if (member != null) {
             account.firstSession = new Date(member.created.getTime());
             account.lastSession = new Date(member.lastSession.getTime());
             account.altName = member.permaName;
-            MemberWarningRecord warning =
-                MsoyBaseServer.memberRepo.loadMemberWarningRecord(member.memberId);
+            MemberWarningRecord warning = _memberRepo.loadMemberWarningRecord(member.memberId);
             if (warning != null) {
                 account.tempBan = warning.banExpires == null ?
                     null : new Date(warning.banExpires.getTime());
@@ -86,6 +86,9 @@ public class MsoyGameInfoProvider extends GameInfoProvider
             }
         }
     }
+
+    // our dependencies
+    @Inject protected MemberRepository _memberRepo;
 
     // maximum number of display names to return
     protected static final int LOOKUP_LIMIT = 50;

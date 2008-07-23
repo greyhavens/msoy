@@ -27,7 +27,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
@@ -220,22 +219,14 @@ public class WorldServlet extends MsoyServiceServlet
         }
 
         // now proceed to the dobj thread to get runtime state
-        final ServletWaiter<String> waiter = new ServletWaiter<String>(
-            "serializePopularPlaces[" + n + "]");
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    JSONObject result = new JSONObject();
-                    addPopularChannels(name, groups, result);
-                    addPopularPlaces(mrec, name, friends, result);
-                    waiter.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
-                } catch (Exception e) {
-                    waiter.requestFailed(e);
-                    return;
-                }
+        return runDObjectAction("serializePopularPlaces[" + n + "]", new DOAction<String>() {
+            public String run () throws Exception {
+                JSONObject result = new JSONObject();
+                addPopularChannels(name, groups, result);
+                addPopularPlaces(mrec, name, friends, result);
+                return URLEncoder.encode(result.toString(), "UTF-8");
             }
         });
-        return waiter.waitForResult();
     }
 
     // from WorldService
@@ -277,7 +268,7 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
-        _omgr.postRunnable(new Runnable() {
+        postDObjectAction(new Runnable() {
             public void run () {
                 RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
             }
@@ -546,7 +537,6 @@ public class WorldServlet extends MsoyServiceServlet
     protected ExpiringReference<LandingData> _landingData;
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberManager _memberMan;
     @Inject protected ItemManager _itemMan;

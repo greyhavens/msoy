@@ -84,10 +84,7 @@ public class ServletLogic
         }
 
         // generate a lookup for the member names
-        IntMap<MemberName> memberNames = IntMaps.newHashIntMap();
-        for (MemberName name : _memberRepo.loadMemberNames(memberIds)) {
-            memberNames.put(name.getMemberId(), name);
-        }
+        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
 
         // generate a lookup for the group names
         IntMap<GroupName> groupNames = IntMaps.newHashIntMap();

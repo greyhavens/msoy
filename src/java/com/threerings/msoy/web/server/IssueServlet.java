@@ -18,7 +18,6 @@ import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -286,7 +285,6 @@ public class IssueServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected IssueRepository _issueRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ForumRepository _forumRepo;
 }

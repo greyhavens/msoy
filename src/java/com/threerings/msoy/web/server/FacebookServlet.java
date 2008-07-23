@@ -34,13 +34,14 @@ import com.facebook.api.FacebookRestClient;
 import com.facebook.api.ProfileField;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -144,10 +145,10 @@ public class FacebookServlet extends HttpServlet
 
         try {
             // if this Facebook account is already mapped to a Whirled account, log them in
-            int memberId = MsoyServer.memberRepo.lookupExternalAccount(
+            int memberId = _memberRepo.lookupExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId));
             if (memberId != 0) {
-                sessionCreds = MsoyServer.memberRepo.startOrJoinSession(memberId, FB_SESSION_DAYS);
+                sessionCreds = _memberRepo.startOrJoinSession(memberId, FB_SESSION_DAYS);
                 return new Tuple<Integer,String>(fbUserId, sessionCreds);
             }
 
@@ -203,10 +204,10 @@ public class FacebookServlet extends HttpServlet
 
             log.info("Creating Facebook account [name=" + name + ", id=" + fbUserId + "].");
             mrec = _author.createAccount(email, password, name, true, null, null);
-            MsoyServer.memberRepo.mapExternalAccount(
+            _memberRepo.mapExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 
-            sessionCreds = MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, FB_SESSION_DAYS);
+            sessionCreds = _memberRepo.startOrJoinSession(mrec.memberId, FB_SESSION_DAYS);
             creds = new Tuple<Integer,String>(fbUserId, sessionCreds);
 
         } catch (ServiceException se) {
@@ -223,7 +224,7 @@ public class FacebookServlet extends HttpServlet
         ProfileRecord prec = createProfile(info);
         try {
             prec.memberId = mrec.memberId;
-            MsoyServer.profileRepo.storeProfile(prec);
+            _profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.warning("Failed to store profile [id=" + fbUserId + ", prec=" + prec + "].", pe);
         }
@@ -232,12 +233,12 @@ public class FacebookServlet extends HttpServlet
         for (Integer friendFbId : friendIds) {
             int friendId = 0;
             try {
-                friendId = MsoyServer.memberRepo.lookupExternalAccount(
+                friendId = _memberRepo.lookupExternalAccount(
                     ExternalMapRecord.FACEBOOK, friendFbId.toString());
                 if (friendId == 0) {
                     continue;
                 }
-                MsoyServer.memberRepo.noteFriendship(mrec.memberId, friendId);
+                _memberRepo.noteFriendship(mrec.memberId, friendId);
             } catch (PersistenceException pe) {
                 log.warning("Failed to link Facebook user to friend " +
                         "[mid=" + mrec.memberId + ", fid=" + friendId +
@@ -339,8 +340,10 @@ public class FacebookServlet extends HttpServlet
         return new FacebookRestClient(apiKey, secret, sessionKey, userId);
     }
 
-    /** Handles our authentication services. */
+    // our dependencies
     @Inject protected MsoyAuthenticator _author;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected ProfileRepository _profileRepo;
 
     /** Used to parse Facebook profile birthdays. */
     protected static SimpleDateFormat _bfmt = new SimpleDateFormat("MMMM dd, yyyy");

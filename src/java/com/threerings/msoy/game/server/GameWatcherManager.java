@@ -69,6 +69,6 @@ public class GameWatcherManager
     /** A map of members to {@link Observer} objects to notify of each member's movements. */
     protected IntMap<Observer> _observers = new HashIntMap<Observer>();
 
+    // our dependencies
     @Inject protected WorldServerClient _worldClient;
 }
-

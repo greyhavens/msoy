@@ -341,8 +341,7 @@ public class GameGameRegistry
         _loadingAVRGames.put(gameId, list = new ResultListenerList());
         list.add(joinListener);
 
-        final AVRGameManager fmgr = new AVRGameManager(
-            gameId, _invoker, _avrgRepo, _eventLog, _watchmgr);
+        final AVRGameManager fmgr = _injector.getInstance(AVRGameManager.class);
         final AVRGameObject gameObj = fmgr.createGameObject();
         final AVRGameAgentObject gameAgentObj = fmgr.createGameAgentObject();
 
@@ -368,7 +367,7 @@ public class GameGameRegistry
 
                 _omgr.registerObject(gameObj);
                 _omgr.registerObject(gameAgentObj);
-                fmgr.startup(gameObj, gameAgentObj, _content, _recs);
+                fmgr.startup(gameId, gameObj, gameAgentObj, _content, _recs);
 
                 _avrgManagers.put(gameId, fmgr);
 

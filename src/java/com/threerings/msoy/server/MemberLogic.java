@@ -13,6 +13,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -23,6 +25,7 @@ import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -42,6 +45,30 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread @Singleton
 public class MemberLogic
 {
+    /**
+     * Looks up the home scene id of the specified entity (member or group).
+     *
+     * @return the id if the entity was found, null otherwise.
+     */
+    public Integer getHomeId (byte ownerType, int ownerId)
+        throws PersistenceException
+    {
+        switch (ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            MemberRecord member = _memberRepo.loadMember(ownerId);
+            return (member == null) ? null : member.homeSceneId;
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            GroupRecord group = _groupRepo.loadGroup(ownerId);
+            return (group == null) ? null : group.homeSceneId;
+
+        default:
+            log.warning("Unknown ownerType provided to getHomeId", "ownerType", ownerType,
+                        "ownerId", ownerId);
+            return null;
+        }
+    }
+
     /**
      * Establishes a friendship between the supplied two members. This handles updating the
      * respective members' stats, publishing to the feed and notifying the dobj runtime system.
@@ -232,6 +259,7 @@ public class MemberLogic
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected StatLogic _statLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected ABTestRepository _testRepo;
     @Inject protected MsoyEventLogger _eventLog;

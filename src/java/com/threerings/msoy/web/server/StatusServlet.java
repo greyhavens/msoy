@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
@@ -22,7 +24,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -45,9 +47,9 @@ public class StatusServlet extends HttpServlet
 
         try {
             final ServletWaiter<Void> waiter = new ServletWaiter<Void>("collectStats");
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    MsoyServer.peerMan.applyToNodes(collector);
+                    _peerMan.applyToNodes(collector);
                     waiter.postSuccess(null);
                 }
             });
@@ -125,4 +127,8 @@ public class StatusServlet extends HttpServlet
                 ", rooms=" + rooms + ", games=" + games + ", channels=" + channels + "] ";
         }
     }
+
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected MsoyPeerManager _peerMan;
 }

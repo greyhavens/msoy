@@ -23,8 +23,8 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.IntSet;
 
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -55,7 +55,7 @@ public class MyStatsServlet extends HttpServlet
             }
 
             // now get their friend ids
-            IntSet friendIds = MsoyServer.memberRepo.loadFriendIds(member.memberId);
+            IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
             List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
 
             // and print out the response
@@ -83,6 +83,7 @@ public class MyStatsServlet extends HttpServlet
         return result.toString();
     }
 
-    /** Provides useful member related services. */
+    // our dependencies
     @Inject protected MemberHelper _mhelper;
+    @Inject protected MemberRepository _memberRepo;
 }

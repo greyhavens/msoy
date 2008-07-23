@@ -16,7 +16,6 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
@@ -68,7 +67,7 @@ public class MailServlet extends MsoyServiceServlet
 
             // resolve the member cards for the other parties
             IntMap<MemberCard> others = IntMaps.newHashIntMap();
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(otherIds)) {
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(otherIds)) {
                 others.put(mcr.memberId, mcr.toMemberCard());
             }
             for (int ii = 0, ll = convos.size(); ii < ll; ii++) {
@@ -109,7 +108,7 @@ public class MailServlet extends MsoyServiceServlet
             if (conrec == null) {
                 return null;
             }
-            convo.other = MsoyServer.memberRepo.loadMemberName(conrec.getOtherId(memrec.memberId));
+            convo.other = _memberRepo.loadMemberName(conrec.getOtherId(memrec.memberId));
             convo.subject = conrec.subject;
 
             // load up the messages in this conversation
@@ -125,7 +124,7 @@ public class MailServlet extends MsoyServiceServlet
 
             // resolve the member cards for the participants
             IntMap<MemberCard> authors = IntMaps.newHashIntMap();
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(authorIds)) {
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(authorIds)) {
                 authors.put(mcr.memberId, mcr.toMemberCard());
             }
             for (int ii = 0, ll = msgs.size(); ii < ll; ii++) {
@@ -157,7 +156,7 @@ public class MailServlet extends MsoyServiceServlet
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         try {
             // make sure the recipient exists
-            MemberRecord recip = MsoyServer.memberRepo.loadMember(recipId);
+            MemberRecord recip = _memberRepo.loadMember(recipId);
             if (recip == null) {
                 log.warning("Requested to send mail to non-existent recipient " +
                             "[from=" + memrec.who() + ", to=" + recipId + "].");
@@ -187,7 +186,7 @@ public class MailServlet extends MsoyServiceServlet
 
             // convert the added message to a runtime record and return it to the caller
             ConvMessage result = cmr.toConvMessage();
-            for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
                      Collections.singleton(memrec.memberId))) {
                 result.author = mcr.toMemberCard();
             }

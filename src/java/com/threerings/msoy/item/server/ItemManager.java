@@ -27,11 +27,13 @@ import com.samskivert.util.Tuple;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
@@ -42,11 +44,13 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
@@ -54,6 +58,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 
 import com.threerings.msoy.peer.server.GameNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.world.data.FurniData;
@@ -123,7 +128,7 @@ public class ItemManager
             public void attributeChanged (AttributeChangedEvent event) {
                 if (ServerConfigObject.NEW_AND_HOT_DROPOFF_DAYS.equals(event.getName())) {
                     final int days = event.getIntValue();
-                    MsoyServer.invoker.postUnit(new Invoker.Unit("updateNewAndHotDropoffDays") {
+                    _invoker.postUnit(new Invoker.Unit("updateNewAndHotDropoffDays") {
                         public boolean invoke () {
                             ItemRepository.setNewAndHotDropoffDays(days);
                             return false;
@@ -242,7 +247,7 @@ public class ItemManager
         if (repo == null) {
             return;
         }
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("getItem", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Item>("getItem", lner) {
             public Item invokePersistResult () throws Exception {
                 ItemRecord rec = repo.loadItem(ident.itemId);
                 if (rec == null) {
@@ -271,7 +276,7 @@ public class ItemManager
         }
 
         // do it all at once
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Item>>("getItems", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("getItems", lner) {
             public List<Item> invokePersistResult () throws Exception {
                 // create a list to hold the results
                 List<Item> items = Lists.newArrayList();
@@ -289,7 +294,7 @@ public class ItemManager
     public List<ItemListInfo> getItemLists (int memberId)
         throws PersistenceException
     {
-        if (MsoyServer.omgr.isDispatchThread()) {
+        if (_omgr.isDispatchThread()) {
             throw new IllegalStateException("Must be called from the invoker");
         }
 
@@ -318,7 +323,7 @@ public class ItemManager
 
     public void loadItemList (final int listId, ResultListener<List<Item>> lner)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Item>>("loadItemList", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("loadItemList", lner) {
             public List<Item> invokePersistResult () throws Exception {
                 // first, look up the list
                 ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
@@ -379,7 +384,7 @@ public class ItemManager
                             final Prize prize, ResultListener<Item> listener)
     {
         final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(prize.targetType, listener);
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("awardPrize", listener) {
+        _invoker.postUnit(new RepositoryListenerUnit<Item>("awardPrize", listener) {
             public Item invokePersistResult () throws Exception {
                 CatalogRecord<ItemRecord> listing = repo.loadListing(prize.targetCatalogId, true);
                 if (listing == null) {
@@ -404,7 +409,7 @@ public class ItemManager
 //                 String subject = _serverMsgs.getBundle("server").get(
 //                     "m.got_prize_subject", _result.name);
 //                 String body = _serverMsgs.getBundle("server").get("m.got_prize_body");
-//                 MsoyServer.mailMan.deliverMessage(
+//                 _mailMan.deliverMessage(
 //                     // TODO: sender should be special system id
 //                     memberId, memberId, subject, body, new GameAwardPayload(
 //                         gameId, gameName, GameAwardPayload.PRIZE,
@@ -488,7 +493,7 @@ public class ItemManager
             return; // getRepository already informed the listener about this problem
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
             public Object invokePersistResult () throws Exception {
                 if (oldItemId != 0) {
                     repo.markItemUsage(new int[] { oldItemId }, Item.UNUSED, 0);
@@ -527,7 +532,7 @@ public class ItemManager
             // if they're wearing it, update that.
             if (avatar.equals(memObj.avatar)) {
                 memObj.setAvatar(avatar);
-                MsoyServer.memberMan.updateOccupantInfo(memObj);
+                _memberMan.updateOccupantInfo(memObj);
             }
 
             // probably we'll update it in their cache, too.
@@ -564,7 +569,7 @@ public class ItemManager
             if ((memObj.avatar != null) && (memObj.avatar.itemId == avatarId)) {
                 // the user is wearing this item: delete
                 memObj.setAvatar(null);
-                MsoyServer.memberMan.updateOccupantInfo(memObj);
+                _memberMan.updateOccupantInfo(memObj);
             }
             ItemIdent ident = new ItemIdent(Item.AVATAR, avatarId);
             if (memObj.avatarCache.containsKey(ident)) {
@@ -624,7 +629,7 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
             public Object invokePersistResult () throws Exception {
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
@@ -669,7 +674,7 @@ public class ItemManager
             MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
 
         } else if (type == Item.GAME) {
-            MsoyServer.peerMan.invokeNodeAction(new GameUpdatedAction(((GameRecord) rec).gameId));
+            _peerMan.invokeNodeAction(new GameUpdatedAction(((GameRecord) rec).gameId));
         }
     }
 
@@ -696,7 +701,7 @@ public class ItemManager
         }
 
         // load ye items
-        MsoyServer.invoker.postUnit(
+        _invoker.postUnit(
             new RepositoryListenerUnit<List<Item>>("loadRecentlyTouched", lner) {
             public List<Item> invokePersistResult () throws Exception {
                 List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
@@ -705,154 +710,6 @@ public class ItemManager
                     returnList.add(list.get(ii).toItem());
                 }
                 return returnList;
-            }
-        });
-    }
-
-    /**
-     * Fetches the tags for a given item.
-     */
-    public void getTags (final ItemIdent ident, ResultListener<Collection<String>> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<String>>("getTags", lner) {
-            public Collection<String> invokePersistResult () throws Exception {
-                List<String> result = Lists.newArrayList();
-                for (TagNameRecord tagName : repo.getTagRepository().getTags(ident.itemId)) {
-                    result.add(tagName.tag);
-                }
-                return result;
-            }
-        });
-    }
-
-    /**
-     * Fetch the tagging history for a given item.
-     */
-    public void getTagHistory (final ItemIdent ident,
-                               ResultListener<Collection<TagHistory>> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<TagHistory>>("getTagHistory", lner) {
-            public Collection<TagHistory> invokePersistResult () throws Exception {
-                Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
-                List<TagHistory> list = Lists.newArrayList();
-                for (TagHistoryRecord record :
-                         repo.getTagRepository().getTagHistoryByTarget(ident.itemId)) {
-                    // TODO: we should probably cache in MemberRepository
-                    MemberRecord memRec = memberCache.get(record.memberId);
-                    if (memRec == null) {
-                        memRec = MsoyServer.memberRepo.loadMember(record.memberId);
-                        memberCache.put(record.memberId, memRec);
-                    }
-
-                    TagNameRecord tag = repo.getTagRepository().getTag(record.tagId);
-                    TagHistory history = new TagHistory();
-                    history.member = memRec.getName();
-                    history.tag = tag.tag;
-                    history.action = record.action;
-                    history.time = new Date(record.time.getTime());
-                    list.add(history);
-                }
-                return list;
-            }
-        });
-    }
-
-    /**
-     * Fetch the list of recently assigned tags for the specified member.
-     */
-    public void getRecentTags (final int memberId, ResultListener<Collection<TagHistory>> lner)
-    {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<TagHistory>>("getRecentTags", lner) {
-            public Collection<TagHistory> invokePersistResult () throws Exception {
-                MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
-                MemberName memName = memRec.getName();
-                List<TagHistory> list = Lists.newArrayList();
-                for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?>> entry :
-                         _repos.entrySet()) {
-                    ItemRepository<ItemRecord, ?, ?, ?> repo = entry.getValue();
-                    for (TagHistoryRecord record :
-                             repo.getTagRepository().getTagHistoryByMember(memberId)) {
-                        TagNameRecord tag = record.tagId == -1 ? null :
-                            repo.getTagRepository().getTag(record.tagId);
-                        TagHistory history = new TagHistory();
-                        history.member = memName;
-                        history.tag = tag == null ? null : tag.tag;
-                        history.action = record.action;
-                        history.time = new Date(record.time.getTime());
-                        list.add(history);
-                    }
-                }
-                return list;
-            }
-        });
-    }
-
-    /**
-     * Add the specified tag to the specified item or remove it. Return a tag history object if the
-     * tag did not already exist.
-     */
-    public void tagItem (final ItemIdent ident, final int taggerId, String rawTagName,
-                         final boolean doTag, ResultListener<TagHistory> lner)
-    {
-        // sanitize the tag name
-        final String tagName = rawTagName.trim().toLowerCase();
-
-        if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
-            lner.requestFailed(new IllegalArgumentException("Invalid tag '" + tagName + "'"));
-            return;
-        }
-
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        // and perform the tagging
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>("tagItem", lner) {
-            public TagHistory invokePersistResult () throws Exception {
-                long now = System.currentTimeMillis();
-
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new PersistenceException("Missing item for tagItem [item=" + ident + "]");
-                }
-                int originalId = (item.sourceId != 0) ? item.sourceId : ident.itemId;
-
-                // map tag to tag id
-                TagNameRecord tag = repo.getTagRepository().getOrCreateTag(tagName);
-
-                // and do the actual work
-                TagHistoryRecord historyRecord = doTag ?
-                    repo.getTagRepository().tag(originalId, tag.tagId, taggerId, now) :
-                    repo.getTagRepository().untag(originalId, tag.tagId, taggerId, now);
-                if (historyRecord != null) {
-                    // look up the member
-                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
-                    // and create the return value
-                    TagHistory history = new TagHistory();
-                    history.member = mrec.getName();
-                    history.tag = tag.tag;
-                    history.action = historyRecord.action;
-                    history.time = new Date(historyRecord.time.getTime());
-                    return history;
-                }
-                return null;
             }
         });
     }
@@ -870,7 +727,7 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("setFlags", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Void>("setFlags", lner) {
             public Void invokePersistResult () throws Exception {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
@@ -894,7 +751,7 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("setMature", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Void>("setMature", lner) {
             public Void invokePersistResult () throws Exception {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
@@ -952,7 +809,7 @@ public class ItemManager
         }
 
         // pull item names from repos
-        MsoyServer.invoker.postUnit(
+        _invoker.postUnit(
             new RepositoryListenerUnit<String[]>("getItemNames", new ResultAdapter<String[]>(rl)) {
             public String[] invokePersistResult () throws Exception {
                 String[] itemNames = new String[idents.length];
@@ -1021,7 +878,7 @@ public class ItemManager
                             }
 
                             ResultListener<Void> rl = new ResultListener.NOOP<Void>();
-                            MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", rl) {
+                            _invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", rl) {
                                 public Void invokePersistResult () throws Exception {
                                     ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type);
                                     repo.deleteItem(ident.itemId);
@@ -1122,7 +979,7 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("getRandomCatalogItem", lner) {
+        _invoker.postUnit(new RepositoryListenerUnit<Item>("getRandomCatalogItem", lner) {
             public Item invokePersistResult () throws Exception {
                 CatalogRecord<? extends ItemRecord> record;
                 if (tags == null || tags.length == 0) {
@@ -1143,7 +1000,7 @@ public class ItemManager
     protected void registerRepository (byte itemType, ItemRepository repo)
     {
         _repos.put(itemType, repo);
-        repo.init(itemType, MsoyServer.memoryRepo, _eventLog);
+        repo.init(itemType);
     }
 
     /**
@@ -1288,18 +1145,25 @@ public class ItemManager
         }
 
         @Override protected void execute () {
-            MsoyServer.gameReg.gameUpdatedOnPeer(_gameId);
+            _gameReg.gameUpdatedOnPeer(_gameId);
         }
+
+        @Inject protected transient MsoyGameRegistry _gameReg;
     }
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
 
     // our dependencies
-    @Inject protected SceneRegistry _sceneReg;
-    @Inject protected ItemListRepository _listRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected SceneRegistry _sceneReg;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected ItemListRepository _listRepo;
+    @Inject protected MemberRepository _memberRepo;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

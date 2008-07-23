@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.inject.Inject;
+
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
@@ -15,9 +17,9 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.IntIntMap.IntIntEntry;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -28,6 +30,7 @@ import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -41,13 +44,14 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameWatcherManager;
-import com.threerings.msoy.game.server.MsoyGameServer;
+import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -71,18 +75,14 @@ import static com.threerings.msoy.Log.log;
 public class AVRGameManager
     implements AVRGameProvider, OidListListener
 {
-    /**
-     * Creates a new {@link AVRGameManager} for the given game.
-     */
-    public AVRGameManager (
-        int gameId, Invoker invoker, AVRGameRepository repo, MsoyEventLogger eventLog,
-        GameWatcherManager watchmgr)
+    public int getGameId ()
     {
-        _gameId = gameId;
-        _invoker = invoker;
-        _repo = repo;
-        _eventLog = eventLog;
-        _watchmgr = watchmgr;
+        return _gameId;
+    }
+
+    public AVRGameObject getGameObject ()
+    {
+        return _gameObj;
     }
 
     public AVRGameObject createGameObject ()
@@ -95,23 +95,14 @@ public class AVRGameManager
         return new AVRGameAgentObject();
     }
 
-    public AVRGameObject getGameObject ()
-    {
-        return _gameObj;
-    }
-
-    public int getGameId ()
-    {
-        return _gameId;
-    }
-
     /**
      * Called with our hosted game's data once it's finished loading from the database.
      * @param gameAgentObj
      */
-    public void startup (AVRGameObject gameObj, AVRGameAgentObject gameAgentObj,
+    public void startup (int gameId, AVRGameObject gameObj, AVRGameAgentObject gameAgentObj,
                          GameContent content, List<GameStateRecord> stateRecords)
     {
+        _gameId = gameId;
         _gameObj = gameObj;
         _gameAgentObj = gameAgentObj;
         _content = content;
@@ -120,8 +111,7 @@ public class AVRGameManager
         gameObj.addListener(this);
 
         gameObj.startTransaction();
-        gameObj.setAvrgService(
-            MsoyGameServer.invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
         gameObj.setGameMedia(_content.game.gameMedia);
         try {
             for (GameStateRecord rec : stateRecords) {
@@ -205,7 +195,7 @@ public class AVRGameManager
 
             _totalTrackedSeconds += playTime;
             flushPlayerGameState(player.playerObject);
-            MsoyGameServer.worldClient.updatePlayer(memberId, null);
+            _worldClient.updatePlayer(memberId, null);
         }
     }
 
@@ -347,7 +337,7 @@ public class AVRGameManager
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
-                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
+                    _memberRepo.getFlowRepository().grantFlow(
                         new UserActionDetails(player.getMemberId(), UserAction.COMPLETED_QUEST,
                                               -1, Game.GAME, _gameId, questId), payout);
                 }
@@ -383,7 +373,7 @@ public class AVRGameManager
 
                 // if we paid out flow, let any logged-on member objects know
                 if (payout > 0) {
-                    MsoyGameServer.worldClient.reportFlowAward(player.getMemberId(), payout);
+                    _worldClient.reportFlowAward(player.getMemberId(), payout);
                     // report to the game that this player earned some flow
                     player.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, payout, -1);
                 }
@@ -584,7 +574,7 @@ public class AVRGameManager
         _watchmgr.addWatch(player.getMemberId(), _observer);
         // TODO: make sure the AVRG does not initialize for this player until Room Subscription
 
-        MsoyGameServer.worldClient.updatePlayer(player.getMemberId(), _content.game);
+        _worldClient.updatePlayer(player.getMemberId(), _content.game);
     }
 
     /**
@@ -609,7 +599,7 @@ public class AVRGameManager
     {
         IntSet removes = new ArrayIntSet();
 
-        for (IntIntEntry entry : _pendingMoves.entrySet()) {
+        for (IntIntMap.IntIntEntry entry : _pendingMoves.entrySet()) {
             if (entry.getValue() == sceneId) {
                 int memberId = entry.getKey();
                 removes.add(memberId);
@@ -853,11 +843,15 @@ public class AVRGameManager
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;
 
-    protected AVRGameRepository _repo;
-    protected GameRepository _gameRepo;
-    protected GameWatcherManager _watchmgr;
-    protected MsoyEventLogger _eventLog;
-    protected Invoker _invoker;
+    // our dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected WorldServerClient _worldClient;
+    @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected AVRGameRepository _repo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected MemberRepository _memberRepo;
 
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;

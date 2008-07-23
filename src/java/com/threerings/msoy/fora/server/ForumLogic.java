@@ -98,13 +98,7 @@ public class ForumLogic
         for (ForumThreadRecord thrrec : thrrecs) {
             posters.add(thrrec.mostRecentPosterId);
         }
-        IntMap<MemberName> names = IntMaps.newHashIntMap();
-        if (posters.size() > 0) {
-            for (MemberName name : _memberRepo.loadMemberNames(posters)) {
-                names.put(name.getMemberId(), name);
-            }
-        }
-        return names;
+        return _memberRepo.loadMemberNames(posters);
     }
 
     @Inject protected MemberRepository _memberRepo;

@@ -18,7 +18,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -41,6 +40,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
 
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.client.CatalogService;
@@ -222,7 +222,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // update their runtime inventory as appropriate
             final Item nitem = newClone.toItem();
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemPurchased(nitem);
                 }
@@ -321,7 +321,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // publish to the member's feed if it's not hidden
             if (pricing != CatalogListing.PRICING_HIDDEN) {
-                MsoyServer.feedRepo.publishMemberMessage(mrec.memberId,
+                _feedRepo.publishMemberMessage(mrec.memberId,
                     FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
                     String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId) +
                     "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
@@ -436,7 +436,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // kick off a notification that the list item was updated to e.g. reload game lobbies
-            MsoyServer.omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemUpdated(listItem);
                 }
@@ -666,6 +666,8 @@ public class CatalogServlet extends MsoyServiceServlet
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
 
-    @Inject ItemLogic _itemLogic;
-    @Inject ItemManager _itemMan;
+    // our dependencies
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected FeedRepository _feedRepo;
 }

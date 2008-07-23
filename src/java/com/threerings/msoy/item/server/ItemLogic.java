@@ -10,7 +10,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
@@ -38,10 +37,7 @@ public class ItemLogic
             members.add(card.creator.getMemberId());
         }
         // now look up the names and build a map of memberId -> MemberName
-        IntMap<MemberName> map = IntMaps.newHashIntMap();
-        for (MemberName record: _memberRepo.loadMemberNames(members)) {
-            map.put(record.getMemberId(), record);
-        }
+        IntMap<MemberName> map = _memberRepo.loadMemberNames(members);
         // finally fill in the listings using the map
         for (ListingCard card : list) {
             card.creator = map.get(card.creator.getMemberId());

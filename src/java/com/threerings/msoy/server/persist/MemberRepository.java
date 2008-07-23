@@ -25,6 +25,8 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
@@ -273,25 +275,26 @@ public class MemberRepository extends DepotRepository
     public MemberName loadMemberName (int memberId)
         throws PersistenceException
     {
-        List<MemberName> result = loadMemberNames(Collections.singleton(memberId));
-        return result.isEmpty() ? null : result.get(0);
+        MemberNameRecord name = load(MemberNameRecord.class,
+                                     new Where(MemberRecord.MEMBER_ID_C, memberId));
+        return (name == null) ? null : name.toMemberName();
     }
 
     /**
-     * Looks up some members' names by id.
+     * Looks up members' names by id.
      *
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
-    public List<MemberName> loadMemberNames (Set<Integer> memberIds)
+    public IntMap<MemberName> loadMemberNames (Set<Integer> memberIds)
         throws PersistenceException
     {
-        List<MemberName> names = Lists.newArrayList();
+        IntMap<MemberName> names = IntMaps.newHashIntMap();
         if (memberIds.size() > 0) {
             for (MemberNameRecord name : findAll(
                      MemberNameRecord.class,
                      new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
-                names.add(name.toMemberName());
+                names.put(name.memberId, name.toMemberName());
             }
         }
         return names;

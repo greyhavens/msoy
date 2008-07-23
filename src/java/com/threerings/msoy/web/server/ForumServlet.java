@@ -24,7 +24,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
@@ -579,6 +578,5 @@ public class ForumServlet extends MsoyServiceServlet
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected FeedRepository _feedRepo;
 }

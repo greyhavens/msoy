@@ -6,22 +6,26 @@ package com.threerings.msoy.web.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.RootDObjectManager;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
@@ -115,7 +119,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // let the item manager know that we've created this item
-        _omgr.postRunnable(new Runnable() {
+        postDObjectAction(new Runnable() {
             public void run () {
                 _itemMan.itemCreated(record);
             }
@@ -158,7 +162,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOriginalItem(record);
 
             // let the item manager know that we've updated this item
-            _omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemUpdated(record);
                 }
@@ -304,7 +308,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateScale(avatarId, newScale);
 
             // let the item manager know that we've updated this item
-            _omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemUpdated(avatar);
                 }
@@ -350,7 +354,7 @@ public class ItemServlet extends MsoyServiceServlet
 //                originalId, item.itemId, item.ownerId, System.currentTimeMillis());
 //
 //            // let the item manager know that we've created a new item
-//            _omgr.postRunnable(new Runnable() {
+//            postDObjectAction(new Runnable() {
 //                public void run () {
 //                    _itemMan.itemCreated(item);
 //                }
@@ -389,7 +393,7 @@ public class ItemServlet extends MsoyServiceServlet
             repo.deleteItem(iident.itemId);
 
             // let the item manager know that we've deleted this item
-            _omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemDeleted(item);
                 }
@@ -441,62 +445,126 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<String> getTags (WebIdent ident, final ItemIdent item)
+    public Collection<String> getTags (WebIdent ident, ItemIdent iident)
         throws ServiceException
     {
-        final ServletWaiter<Collection<String>> waiter =
-            new ServletWaiter<Collection<String>>("getTags[" + item + "]");
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                _itemMan.getTags(item, waiter);
+        try {
+            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            List<String> result = Lists.newArrayList();
+            for (TagNameRecord tagName : repo.getTagRepository().getTags(iident.itemId)) {
+                result.add(tagName.tag);
             }
-        });
-        return waiter.waitForResult();
+            return result;
+        } catch (PersistenceException pe) {
+            log.warning("Failed to get tags [item=" + iident + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getTagHistory (WebIdent ident, final ItemIdent item)
+    public Collection<TagHistory> getTagHistory (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
-        final ServletWaiter<Collection<TagHistory>> waiter =
-            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + item + "]");
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                _itemMan.getTagHistory(item, waiter);
+        try {
+            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            List<TagHistory> list = Lists.newArrayList();
+            for (TagHistoryRecord thr :
+                     repo.getTagRepository().getTagHistoryByTarget(iident.itemId)) {
+                TagNameRecord tag = repo.getTagRepository().getTag(thr.tagId);
+                TagHistory history = new TagHistory();
+                history.member = MemberName.makeKey(thr.memberId);
+                history.tag = tag.tag;
+                history.action = thr.action;
+                history.time = new Date(thr.time.getTime());
+                list.add(history);
             }
-        });
-        return waiter.waitForResult();
+            return resolveNames(list);
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to get tag history [item=" + iident + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
     public Collection<TagHistory> getRecentTags (WebIdent ident)
         throws ServiceException
     {
-        final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
-        final ServletWaiter<Collection<TagHistory>> waiter =
-            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + mrec.memberId + "]");
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                _itemMan.getRecentTags(mrec.memberId, waiter);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberName name = memrec.getName();
+
+        try {
+            List<TagHistory> list = Lists.newArrayList();
+            for (byte type : _itemMan.getRepositoryTypes()) {
+                ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+                for (TagHistoryRecord record :
+                         repo.getTagRepository().getTagHistoryByMember(memrec.memberId)) {
+                    TagNameRecord tag = (record.tagId == -1) ? null :
+                        repo.getTagRepository().getTag(record.tagId);
+                    TagHistory history = new TagHistory();
+                    history.member = name;
+                    history.tag = (tag == null) ? null : tag.tag;
+                    history.action = record.action;
+                    history.time = new Date(record.time.getTime());
+                    list.add(history);
+                }
             }
-        });
-        return waiter.waitForResult();
+            return list;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to get recent tags [ident=" + ident + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
-    public TagHistory tagItem (final WebIdent ident, final ItemIdent item, final String tag,
-                               final boolean set)
+    public TagHistory tagItem (WebIdent ident, ItemIdent iident, String rawTagName, boolean set)
         throws ServiceException
     {
-        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-            "tagItem[" + item + ", " + set + "]");
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                _itemMan.tagItem(item, memrec.memberId, tag, set, waiter);
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+
+        // sanitize the tag name
+        final String tagName = rawTagName.trim().toLowerCase();
+
+        // the client should protect us from invalid names, but we double check
+        if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        try {
+            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            long now = System.currentTimeMillis();
+
+            ItemRecord item = repo.loadItem(iident.itemId);
+            if (item == null) {
+                throw new PersistenceException("Missing item for tagItem [item=" + iident + "]");
             }
-        });
-        return waiter.waitForResult();
+            int originalId = (item.sourceId != 0) ? item.sourceId : iident.itemId;
+
+            // map tag to tag id
+            TagNameRecord tag = repo.getTagRepository().getOrCreateTag(tagName);
+
+            // do the actual work
+            TagHistoryRecord historyRecord = set ?
+                repo.getTagRepository().tag(originalId, tag.tagId, memrec.memberId, now) :
+                repo.getTagRepository().untag(originalId, tag.tagId, memrec.memberId, now);
+            if (historyRecord == null) {
+                return null;
+            }
+
+            // report on this history event
+            TagHistory history = new TagHistory();
+            history.member = memrec.getName();
+            history.tag = tag.tag;
+            history.action = historyRecord.action;
+            history.time = new Date(historyRecord.time.getTime());
+            return history;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to tag item", "ident", ident, "item", iident, "tag", tagName,
+                        "set", set, pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
@@ -600,7 +668,7 @@ public class ItemServlet extends MsoyServiceServlet
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
-        List<ItemDetail> items = new ArrayList<ItemDetail>();
+        List<ItemDetail> items = Lists.newArrayList();
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
@@ -688,6 +756,23 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     /**
+     * Helpy helper function.
+     */
+    protected Collection<TagHistory> resolveNames (Collection<TagHistory> histories)
+        throws PersistenceException
+    {
+        ArrayIntSet ids = new ArrayIntSet();
+        for (TagHistory th : histories) {
+            ids.add(th.member.getMemberId());
+        }
+        IntMap<MemberName> names = _memberRepo.loadMemberNames(ids);
+        for (TagHistory th : histories) {
+            th.member = names.get(th.member.getMemberId());
+        }
+        return histories;
+    }
+
+    /**
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.
      */
@@ -762,7 +847,7 @@ public class ItemServlet extends MsoyServiceServlet
             orig.initFromClone(record);
 
             // let the item manager know that we've updated this item
-            _omgr.postRunnable(new Runnable() {
+            postDObjectAction(new Runnable() {
                 public void run () {
                     _itemMan.itemUpdated(orig);
                 }
@@ -786,7 +871,6 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected ItemManager _itemMan;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MsoySceneRepository _sceneRepo;

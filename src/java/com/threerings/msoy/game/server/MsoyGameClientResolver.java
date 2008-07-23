@@ -3,20 +3,28 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.crowd.server.CrowdClientResolver;
+
+import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ReferralRecord;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Resolves an MSOY Game client's runtime data.
@@ -53,14 +61,14 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         throws Exception
     {
         // load up their member information using on their authentication (account) name
-        MemberRecord member = MsoyGameServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member = _memberRepo.loadMember(_username.toString());
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
         // we need their profile photo as well
-        ProfileRecord precord = MsoyGameServer.profileRepo.loadProfile(member.memberId);
+        ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         playerObj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
@@ -70,14 +78,14 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         // fill in this member's raw friends list
         playerObj.friends = new DSet<FriendEntry>(
-            MsoyGameServer.memberRepo.loadFriends(member.memberId, -1));
+            _memberRepo.loadFriends(member.memberId, -1));
         
         // just like in MsoyClientResolver, fill in any referral information from the database 
-        ReferralRecord refrec = MsoyGameServer.memberRepo.loadReferral(member.memberId);
+        ReferralRecord refrec = _memberRepo.loadReferral(member.memberId);
         if (refrec == null) {
             // if they don't have referral info, it means they're an old user who needs to be
             // grandfathered into the referral-tracking order of things. give them a new entry.
-            refrec = MsoyGameServer.memberRepo.setReferral(member.memberId,
+            refrec = _memberRepo.setReferral(member.memberId,
                 ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
         }
         playerObj.referral = refrec.toInfo();
@@ -97,4 +105,8 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // guests operate at the default new user humanity level
         playerObj.humanity = MsoyCodes.STARTING_HUMANITY;
     }
+
+    // our dependencies
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected ProfileRepository _profileRepo;
 }

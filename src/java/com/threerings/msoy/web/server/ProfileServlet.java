@@ -39,7 +39,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -468,7 +467,6 @@ public class ProfileServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected ServletLogic _servletLogic;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;

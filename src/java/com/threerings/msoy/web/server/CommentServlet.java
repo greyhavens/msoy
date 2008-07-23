@@ -31,7 +31,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
@@ -243,7 +242,6 @@ public class CommentServlet extends MsoyServiceServlet
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected CommentRepository _commentRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
 }

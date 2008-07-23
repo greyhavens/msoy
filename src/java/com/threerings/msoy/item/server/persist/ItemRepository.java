@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 
@@ -159,11 +160,9 @@ public abstract class ItemRepository<
     /**
      * Configures this repository with its item type and the memory repository.
      */
-    public void init (byte itemType, MemoryRepository memRepo, MsoyEventLogger eventLog)
+    public void init (byte itemType)
     {
         _itemType = itemType;
-        _memRepo = memRepo;
-        _eventLog = eventLog;
     }
 
     /**
@@ -1173,11 +1172,9 @@ public abstract class ItemRepository<
     /** Used to manage our item tags. */
     protected TagRepository _tagRepo;
 
-    /** We call into this to delete item memory if we're an item that has memory. */
-    protected MemoryRepository _memRepo;
-
-    /** Reference to the event logger. */
-    protected MsoyEventLogger _eventLog;
+    // our dependencies
+    @Inject protected MemoryRepository _memRepo;
+    @Inject protected MsoyEventLogger _eventLog;
 
     /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */
     protected static int _newAndHotDropoffSeconds = 7 * 60 * 60 * 24;

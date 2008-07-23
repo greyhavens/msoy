@@ -25,8 +25,9 @@ import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -79,7 +80,7 @@ public class GroupServlet extends MsoyServiceServlet
             GalaxyData data = new GalaxyData();
 
             // determine our featured whirled based on who's online now
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             List<GroupCard> popWhirleds = Lists.newArrayList();
             for (PlaceCard card : pps.getTopWhirleds()) {
                 GroupRecord group = _groupRepo.loadGroup(card.placeId);
@@ -128,7 +129,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             // fill in the current population of these groups
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             for (GroupCard group : groups) {
                 PlaceCard card = pps.getWhirled(group.name.getGroupId());
                 if (card != null) {
@@ -165,7 +166,7 @@ public class GroupServlet extends MsoyServiceServlet
             GroupDetail detail = new GroupDetail();
             detail.group = grec.toGroupObject();
             detail.extras = grec.toExtrasObject();
-            detail.creator = MsoyServer.memberRepo.loadMemberName(grec.creatorId);
+            detail.creator = _memberRepo.loadMemberName(grec.creatorId);
             detail.memberCount = _groupRepo.countMembers(grec.groupId);
 
             // determine our rank info if we're a member
@@ -184,7 +185,7 @@ public class GroupServlet extends MsoyServiceServlet
             detail.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, false, true);
 
             // fill in the current population of the group
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             PlaceCard card = pps.getWhirled(groupId);
             if (card != null) {
                 detail.population = card.population;
@@ -321,14 +322,12 @@ public class GroupServlet extends MsoyServiceServlet
     public Integer getGroupHomeId (WebIdent ident, final int groupId)
         throws ServiceException
     {
-        final ServletWaiter<Integer> waiter =new ServletWaiter<Integer>(
-            "getHomeId[" + groupId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
-            }
-        });
-        return waiter.waitForResult();
+        try {
+            return _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        } catch (PersistenceException pe) {
+            log.warning("getGroupHomeId failed [id=" + groupId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
@@ -374,7 +373,7 @@ public class GroupServlet extends MsoyServiceServlet
         final int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
         try {
-            MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
+            MemberRecord mRec = _memberRepo.loadMember(memberId);
             if (mRec == null) {
                 log.warning("Requested group membership for unknown member [id=" + memberId + "].");
                 return Collections.emptyList();
@@ -694,7 +693,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
             List<MyGroupCard> myGroupCards = Lists.newArrayList();
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
             for (GroupRecord record : groupRecords) {
                 final MyGroupCard card = new MyGroupCard();
@@ -837,7 +836,7 @@ public class GroupServlet extends MsoyServiceServlet
 
     protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
     {
-        PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         for (GroupCard card : groups) {
             PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
             if (pcard != null) {
@@ -863,7 +862,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         List<GroupMemberCard> mlist = Lists.newArrayList();
-        for (MemberCardRecord mcr : MsoyServer.memberRepo.loadMemberCards(members.keySet())) {
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(members.keySet())) {
             mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));
         }
         if (mlist.size() < members.size()) {
@@ -897,6 +896,8 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;

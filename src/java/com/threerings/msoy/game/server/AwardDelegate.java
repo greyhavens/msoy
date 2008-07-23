@@ -47,6 +47,8 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -54,14 +56,12 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.server.MsoyGameServer;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -147,8 +147,8 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // otherwise, award them the trophy, then add it to their runtime collection
-        MsoyGameServer.gameReg.awardTrophy(
-            _content.game.name, trophy, source.description, new InvocationService.ResultListener() {
+        _gameReg.awardTrophy(_content.game.name, trophy, source.description,
+                             new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
                 plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, (Trophy)result);
             }
@@ -201,9 +201,8 @@ public class AwardDelegate extends RatingDelegate
 
         // because we don't have a full item manager, we have to pass the buck to a world server to
         // do the actual prize awarding
-        MsoyGameServer.worldClient.awardPrize(
-            plobj.getMemberId(), gameId, _content.game.name, prize,
-            new InvocationService.ResultListener() {
+        _worldClient.awardPrize(plobj.getMemberId(), gameId, _content.game.name, prize,
+                                new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
                 plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, (Item)result);
             }
@@ -455,13 +454,12 @@ public class AwardDelegate extends RatingDelegate
         final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
         _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
             public void invokePersist () throws Exception {
-                GameRepository gameRepo = MsoyGameServer.gameReg.getGameRepository();
                 // note that this game was played
-                gameRepo.noteGamePlayed(
+                _gameRepo.noteGamePlayed(
                     gameId, isMultiplayer(), _totalTrackedGames, playerMins, _totalAwardedFlow);
                 // if it's time to recalc our payout factor, do that
                 if (newFlowToNextRecalc > 0) {
-                    _newData = gameRepo.computeAndUpdatePayoutFactor(
+                    _newData = _gameRepo.computeAndUpdatePayoutFactor(
                         gameId, newFlowToNextRecalc, hourlyRate);
                 }
             }
@@ -482,7 +480,7 @@ public class AwardDelegate extends RatingDelegate
     {
         super.bodyEntered(bodyOid);
 
-        PlayerObject plobj = (PlayerObject)MsoyGameServer.omgr.getObject(bodyOid);
+        PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
         // potentially create a flow record for this occupant
         if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
@@ -496,7 +494,7 @@ public class AwardDelegate extends RatingDelegate
 
         // if this person is a player, load up their content packs and trophies
         if (isPlayer(plobj)) {
-            MsoyGameServer.gameReg.resolveOwnedContent(Math.abs(_content.game.gameId), plobj);
+            _gameReg.resolveOwnedContent(Math.abs(_content.game.gameId), plobj);
         }
     }
 
@@ -594,7 +592,7 @@ public class AwardDelegate extends RatingDelegate
 
     protected int playerOidToMemberId (int playerOid)
     {
-        DObject dobj = MsoyGameServer.omgr.getObject(playerOid);
+        DObject dobj = _omgr.getObject(playerOid);
         return (dobj instanceof PlayerObject ? ((PlayerObject)dobj).getMemberId() : 0);
     }
 
@@ -746,11 +744,11 @@ public class AwardDelegate extends RatingDelegate
 
             // update the player's member object on their world server
             if (actuallyAward && player.flowAward > 0) {
-                MsoyGameServer.worldClient.reportFlowAward(record.memberId, player.flowAward);
+                _worldClient.reportFlowAward(record.memberId, player.flowAward);
             }
 
             // report to the game that this player earned some flow
-            DObject user = MsoyGameServer.omgr.getObject(player.playerOid);
+            DObject user = _omgr.getObject(player.playerOid);
             if (user != null) {
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile, actuallyAward);
@@ -812,8 +810,7 @@ public class AwardDelegate extends RatingDelegate
     protected Percentiler getScoreDistribution ()
     {
         // we want the "rating" game id so we use getGameId()
-        Percentiler tiler = MsoyGameServer.gameReg.getScoreDistribution(
-            getGameId(), isMultiplayer());
+        Percentiler tiler = _gameReg.getScoreDistribution(getGameId(), isMultiplayer());
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
@@ -960,9 +957,9 @@ public class AwardDelegate extends RatingDelegate
                         record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
                         _content.game.getType(), _content.game.itemId, details);
                 try {
-                    MsoyGameServer.memberRepo.getFlowRepository().grantFlow(action, record.awarded);
-                    MsoyGameServer.gameReg.gamePayout(
-                        action, _content.game, record.awarded, record.totalSecondsPlayed);
+                    _memberRepo.getFlowRepository().grantFlow(action, record.awarded);
+                    _gameReg.gamePayout(action, _content.game, record.awarded,
+                                        record.totalSecondsPlayed);
                 } catch (PersistenceException pe) {
                     log.warning("Failed to grant flow", "amount", record.awarded,
                                 "action", action, pe);
@@ -1139,6 +1136,10 @@ public class AwardDelegate extends RatingDelegate
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
 
-    /** Used to update member statistics. */
+    // our dependencies
+    @Inject protected GameGameRegistry _gameReg;
+    @Inject protected WorldServerClient _worldClient;
     @Inject protected StatLogic _statLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected GameRepository _gameRepo;
 }

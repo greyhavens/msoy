@@ -43,15 +43,19 @@ import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.peer.server.GameNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.GameUtil;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -118,7 +122,7 @@ public class GameServlet extends MsoyServiceServlet
                 }
             }
 
-            PlaceCard game = MsoyServer.memberMan.getPPSnapshot().getGame(gameId);
+            PlaceCard game = _memberMan.getPPSnapshot().getGame(gameId);
             if (game != null) {
                 detail.playingNow = game.population;
             }
@@ -233,7 +237,7 @@ public class GameServlet extends MsoyServiceServlet
             _ratingRepo.updatePercentile(uGameId, new Percentiler());
 
             // tell any resolved instance of this game to clear its in memory percentiler
-            MsoyServer.peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));
+            _peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));
 
         } catch (PersistenceException pe) {
             log.warning("Failed to update instructions [for=" + mrec.who() +
@@ -385,13 +389,13 @@ public class GameServlet extends MsoyServiceServlet
 
             // resolve the member's names
             Set<Integer> memIds = players.keySet();
-            for (MemberName name : _memberRepo.loadMemberNames(memIds)) {
+            for (MemberName name : _memberRepo.loadMemberNames(memIds).values()) {
                 PlayerRating pr = players.get(name.getMemberId());
                 pr.name = name;
             }
 
             // resolve their profile photos
-            for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(memIds)) {
+            for (ProfileRecord profile : _profileRepo.loadProfiles(memIds)) {
                 PlayerRating pr = players.get(profile.memberId);
                 pr.photo = profile.getPhoto();
             }
@@ -413,7 +417,7 @@ public class GameServlet extends MsoyServiceServlet
     {
         try {
             ArcadeData data = new ArcadeData();
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
             // determine the "featured" games
             List<FeaturedGameInfo> featured = Lists.newArrayList();
@@ -512,7 +516,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            PopularPlacesSnapshot pps = MsoyServer.memberMan.getPPSnapshot();
+            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
             // load up all the games in this genre
             List<GameRecord> games = _gameRepo.loadGenre(genre, -1, query);
@@ -559,7 +563,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            return _gameLogic.loadTopGames(MsoyServer.memberMan.getPPSnapshot());
+            return _gameLogic.loadTopGames(_memberMan.getPPSnapshot());
 
         } catch (PersistenceException pe) {
             log.warning("loadTopGamesData failed [for=" + ident + "].");
@@ -608,7 +612,7 @@ public class GameServlet extends MsoyServiceServlet
                                            int[] earnerIds, Long[][] whenEarneds)
         throws ServiceException, PersistenceException
     {
-        TrophySourceRepository tsrepo = MsoyServer.itemMan.getTrophySourceRepository();
+        TrophySourceRepository tsrepo = _trophySourceRepo;
 
         int gameSuiteId = grec.toItem().getSuiteId();
 
@@ -687,16 +691,22 @@ public class GameServlet extends MsoyServiceServlet
 
         @Override // from PeerManager.NodeAction
         protected void execute () {
-            MsoyServer.gameReg.resetGameScores(_gameId, _single);
+            _gameReg.resetGameScores(_gameId, _single);
         }
 
         protected boolean _single;
+        @Inject protected transient MsoyGameRegistry _gameReg;
     }
 
-    @Inject protected GameRepository _gameRepo;
+    // our dependencies
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected RatingRepository _ratingRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected TrophySourceRepository _trophySourceRepo;
 
     /** Compartor for sorting {@link GameInfo}, by gameId. */
     protected static Comparator<GameInfo> SORT_BY_NEWEST = new Comparator<GameInfo>() {

@@ -14,14 +14,18 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 
+import com.threerings.presents.dobj.RootDObjectManager;
+
+import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
@@ -55,9 +59,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // either on this server or on a different node and returns that server's ConnectConfig
         final ServletWaiter<ConnectConfig> waiter =
             new ServletWaiter<ConnectConfig>("resolveRoomManager[" + projectId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.resolveRoomManager(memrec.getName(), project, waiter);
+                _swiftlyMan.resolveRoomManager(memrec.getName(), project, waiter);
             }
         });
 
@@ -304,7 +308,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
-            return MsoyServer.memberRepo.loadFriends(memrec.memberId, -1);
+            return _memberRepo.loadFriends(memrec.memberId, -1);
         } catch (PersistenceException pe) {
             log.warning("Getting member's friends failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -372,9 +376,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // project if it exists, and then tells it to update its local list of collaborators
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("addCollaborator[" + projectId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.addCollaborator(projectId, name, waiter);
+                _swiftlyMan.addCollaborator(projectId, name, waiter);
             }
         });
 
@@ -393,9 +397,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // project if it exists, and then tells it to update its local list of collaborators
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("removeCollaborator[" + projectId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.removeCollaborator(projectId, name, waiter);
+                _swiftlyMan.removeCollaborator(projectId, name, waiter);
             }
         });
 
@@ -413,9 +417,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // project if it exists, and then tells it to update its local swiftly project
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("updateProject[" + project.projectId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
+        _omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.swiftlyMan.updateProject(project, waiter);
+                _swiftlyMan.updateProject(project, waiter);
             }
         });
 
@@ -487,6 +491,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
     }
 
-    /** Repository of Swiftly data. */
+    // our dependencies
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected SwiftlyManager _swiftlyMan;
     @Inject protected SwiftlyRepository _swiftlyRepo;
 }
