@@ -51,7 +51,7 @@ public class SnapshotController extends Controller
     {
         if (doUpload) {
             if (panel.canonical.bitmap) {
-                upload(panel.canonical.bitmap, sceneId);
+                uploadCanonical(panel.canonical.bitmap, sceneId);
             }
             
             //todo: save the ordinary file here... depends on 
@@ -60,7 +60,7 @@ public class SnapshotController extends Controller
         _panel = null;
     }
 
-    protected function upload (bitmap :BitmapData, sceneId :int) :void
+    protected function uploadCanonical (bitmap :BitmapData, sceneId :int) :void
     {
         const encoder :JPGEncoder = new JPGEncoder(80);
         const mimeBody :ByteArray = makeMimeBody(sceneId, encoder.encode(bitmap));
