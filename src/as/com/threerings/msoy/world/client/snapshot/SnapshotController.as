@@ -57,7 +57,7 @@ public class SnapshotController extends Controller
                 upload (panel.canonical.bitmap, sceneId, CANONICAL_THUMBNAIL_SERVICE);
             }
             
-            if (panel.snapshot.bitmap) {
+            if (panel.fullRoom.bitmap) {
                 // todo: uncomment this once the scene snapshot service is implemented.
                 //upload (panel.canonical.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
             }

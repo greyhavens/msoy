@@ -36,7 +36,7 @@ public class SnapshotPanel extends FloatingPanel
     public static const CANONICAL_HEIGHT :int = 200; // old: 180;
 
     public var fullRoom :Snapshot;
-    public var canonical :Snapshot;
+    public var canonical :Snapshot
 
     public function SnapshotPanel (ctx :WorldContext, sceneId :int, view :RoomView)
     {
@@ -46,8 +46,15 @@ public class SnapshotPanel extends FloatingPanel
         _view = view;
         _ctrl = new SnapshotController(ctx, this);
         
-        canonical = new Snapshot(view, CANONICAL_WIDTH, CANONICAL_HEIGHT);
-        canonical.updateSnapshot();
+        // if the user is permitted to manage the room then enable the taking of canonical snapshots
+        _canonicalEnabled = _view.canManageRoom();
+        
+        Log.getLog(this).warning("_canonicalEnabled = "+_canonicalEnabled);        
+        
+        if (_canonicalEnabled) {
+            canonical = new Snapshot(view, CANONICAL_WIDTH, CANONICAL_HEIGHT);
+            canonical.updateSnapshot();
+        }
         
         fullRoom = new Snapshot(view, view.width, view.height);
         fullRoom.updateSnapshot();
@@ -62,7 +69,11 @@ public class SnapshotPanel extends FloatingPanel
             _showChat.selected = false;
         }
         _showChat.enabled = occs;
-        canonical.updateSnapshot(occs, _showChat.selected);
+        
+        if (_canonicalEnabled) {
+            canonical.updateSnapshot(occs, _showChat.selected);
+        }
+        
         fullRoom.updateSnapshot(occs, _showChat.selected);
     }
 
@@ -70,20 +81,25 @@ public class SnapshotPanel extends FloatingPanel
     {
         super.createChildren();
 
-        _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"), takeNewSnapshot);
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
         _showOccs.selected = true;
         _showChat.selected = true;
-        _useAsCanonical.selected = false;
 
-        addChild(_useAsCanonical);
         addChild(_showOccs);
 
         var hbox :HBox = new HBox();
         hbox.addChild(FlexUtil.createSpacer(10));
         hbox.addChild(_showChat);
         addChild(hbox);
+
+        // only add the button to take the canonical snapshot if it's enabled.
+        if (_canonicalEnabled) {
+            _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"), 
+                takeNewSnapshot);
+            _useAsCanonical.selected = false;
+            addChild(_useAsCanonical);
+        }
 
         addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
@@ -122,6 +138,7 @@ public class SnapshotPanel extends FloatingPanel
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;
+    protected var _canonicalEnabled :Boolean;
 
     protected var _showOccs :CommandCheckBox;
     protected var _showChat :CommandCheckBox;
