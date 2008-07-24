@@ -1,7 +1,5 @@
 package client.me;
 
-import java.util.Date;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -13,7 +11,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.FeaturedGameInfo;
@@ -119,21 +116,7 @@ public class LandingPanel extends SimplePanel
         content.add(_featuredWhirled, 290, 618);
 
         // copyright, about, terms & conditions, help
-        FlowPanel copyright = new FlowPanel();
-        copyright.setStyleName("LandingCopyright");
-        int year = 1900 + new Date().getYear();
-        copyright.add(MsoyUI.createHTML(CMe.msgs.landingCopyright(""+year), "inline"));
-        copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://www.threerings.net", CMe.msgs.landingAbout()));
-        copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink(
-            "http://wiki.whirled.com/Terms_of_Service", CMe.msgs.landingTerms()));
-        copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(makeLink("http://www.threerings.net/about/privacy.html",
-                               CMe.msgs.landingPrivacy()));
-        copyright.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        copyright.add(Application.createLink(CMe.msgs.landingHelp(), Page.HELP, ""));
-        content.add(copyright, 48, 970);
+        content.add(new LandingCopyright(), 48, 970);
 
         // collect the data for this page
         CMe.worldsvc.getLandingData(new MsoyCallback<LandingData>() {
@@ -143,13 +126,6 @@ public class LandingPanel extends SimplePanel
                 _avatarPanel.setAvatars((ListingCard[])data.topAvatars);
             }
         });
-    }
-
-    protected Widget makeLink (String url, String title)
-    {
-        Anchor anchor = new Anchor(url, title, "_blank");
-        anchor.addStyleName("external");
-        return anchor;
     }
 
     protected FeaturedWhirledPanel _featuredWhirled;

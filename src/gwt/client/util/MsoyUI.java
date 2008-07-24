@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SessionData;
@@ -375,13 +376,12 @@ public class MsoyUI
      */
     public static ClickListener createTrackingListener (final String action, final String details)
     {
-        ClickListener listener = new ClickListener() {
+        return new ClickListener() {
             public void onClick (Widget sender) {
                 CAdmin.membersvc.trackClientAction(
                     TrackingCookie.get(), action, details != null ? details : "", null);
             }
         };
-        return listener;
     }
 
     /**
@@ -392,13 +392,22 @@ public class MsoyUI
      */
     public static ClickListener createTestTrackingListener (final String action, final String testName)
     {
-        ClickListener listener = new ClickListener() {
+        return new ClickListener() {
             public void onClick (Widget sender) {
                 CAdmin.membersvc.trackTestAction(
                     TrackingCookie.get(), action, testName, null);
             }
         };
-        return listener;
+    }
+
+    /**
+     * Create a link to an external page
+     */
+    public static Anchor createExternalAnchor (String url, String title)
+    {
+        Anchor anchor = new Anchor(url, title, "_blank");
+        anchor.addStyleName("external");
+        return anchor;
     }
 
     /**

@@ -12,13 +12,16 @@ import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.client.WorldServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.WebCreds;
 
+import client.admin.CAdmin;
 import client.games.CGames;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.shell.TrackingCookie;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 
@@ -65,6 +68,29 @@ public class index extends MsgsEntryPoint
                 });
             }
 
+        // landing page for creators (a/b test: half see signup, half see info - default is info)
+        } else if (action.equals("creators")) {
+            CAdmin.membersvc.getABTestGroup(
+                TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
+                    public void onSuccess (Integer group) {
+                        Frame.closeClient(false); // fullscreen
+                        if (group == 1) {
+                            setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);                                                        
+                        } else {
+                            // if test is not running visitors see info page
+                            setContent(CMe.msgs.titleCreators(), new CreatorsPanel(), false);
+                        }
+                    }
+            });
+
+        // registration form ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorssignuptest")) {
+            setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);
+
+        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorsinfotest")) {
+            setContent(CMe.msgs.titleCreators(), new CreatorsPanel(), false);
+
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
             FlashClients.tutorialEvent("myWhirledVisited");
@@ -101,5 +127,11 @@ public class index extends MsgsEntryPoint
     {
         Frame.closeClient(false); // no client on the main guest landing page
         setContent(CMe.msgs.landingTitle(), new LandingPanel(), false);
+    }
+
+    @Override // from Page
+    protected void didLogon (WebCreds creds)
+    {
+        Application.go(ME, "");
     }
 }

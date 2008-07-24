@@ -22,15 +22,12 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -38,18 +35,15 @@ import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Application;
-import client.shell.CShell;
+import client.shell.Page;
 import client.shell.TrackingCookie;
 import client.util.DateFields;
-import client.util.MediaUploader;
 import client.util.MsoyUI;
-import client.util.RoundBox;
-import client.util.ThumbBox;
 
 /**
  * Displays an interface for creating a new account.
  */
-public class CreateAccountPanel extends VerticalPanel
+public class CreateAccountPanel extends FlowPanel
 {
     public interface RegisterListener
     {
@@ -61,86 +55,62 @@ public class CreateAccountPanel extends VerticalPanel
     {
         _regListener = regListener;
         setStyleName("createAccount");
-        setSpacing(10);
 
+        FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
+        add(loginLink);
+        loginLink.add(new InlineLabel(CAccount.msgs.createAlreadyMember()));
+        loginLink.add(MsoyUI.createActionLabel(
+            CAccount.msgs.createLoginLink(), "inline", 
+            Application.createLinkListener(Page.ACCOUNT, "login")));
+        
         add(MsoyUI.createLabel(CAccount.msgs.createIntro(), "Intro"));
+        add(MsoyUI.createLabel(CAccount.msgs.createCoins(), "Coins"));
 
-        // create the account information section
-        RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
-        box.add(new LabeledBox(CAccount.msgs.createEmail(), _email = new TextBox(),
-                               CAccount.msgs.createEmailTip()));
+        add(new LabeledBox(
+            CAccount.msgs.createEmail(), _email = new TextBox(), CAccount.msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
-        _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                _password.setFocus(true);
-            }
-        }));
         if (Application.activeInvite != null &&
             Application.activeInvite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
             // provide the invitation email as the default
             _email.setText(Application.activeInvite.inviteeEmail);
         }
-        _email.setFocus(true);
 
-        box.add(WidgetUtil.makeShim(10, 10));
-        box.add(new LabeledBox(CAccount.msgs.createPassword(), _password = new PasswordTextBox(),
-                               CAccount.msgs.createPasswordTip(),
-                               CAccount.msgs.createConfirm(), _confirm = new PasswordTextBox(),
-                               CAccount.msgs.createConfirmTip()));
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                _confirm.setFocus(true);
-            }
-        }));
-        _password.addKeyboardListener(_onType);
-        _confirm.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                _name.setFocus(true);
-            }
-        }));
-        _confirm.addKeyboardListener(_onType);
-        add(makeStep(1, box));
-
-        // create the real you section
-        box = new RoundBox(RoundBox.DARK_BLUE);
-        box.add(new LabeledBox(CAccount.msgs.createRealName(), _rname = new TextBox(),
-                               CAccount.msgs.createRealNameTip()));
+        add(new LabeledBox(
+            CAccount.msgs.createRealName(), _rname = new TextBox(), 
+            CAccount.msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
-        box.add(WidgetUtil.makeShim(10, 10));
-        box.add(new LabeledBox(CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
-                               CAccount.msgs.createDateOfBirthTip()));
-        add(makeStep(2, box));
+        add(new LabeledBox(
+            CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(), 
+            CAccount.msgs.createDateOfBirthTip()));
 
-        // create the Whirled you section
-        box = new RoundBox(RoundBox.DARK_BLUE);
+        add(new LabeledBox(
+            CAccount.msgs.createPassword(), _password = new PasswordTextBox(), 
+            CAccount.msgs.createPasswordTip()));
+        _password.addKeyboardListener(_onType);
+        
+        add(new LabeledBox(
+            CAccount.msgs.createConfirm(), _confirm = new PasswordTextBox(),
+            CAccount.msgs.createConfirmTip()));
+        _confirm.addKeyboardListener(_onType);
+
         _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
-        box.add(new LabeledBox(CAccount.msgs.createDisplayName(), _name,
-                               CAccount.msgs.createDisplayNameTip()));
-        box.add(WidgetUtil.makeShim(10, 10));
-        box.add(new LabeledBox(CAccount.msgs.createPhoto(), _photo = new PhotoUploader(),
-                               CAccount.msgs.createPhotoTip()));
-        add(makeStep(3, box));
+        add(new LabeledBox(
+            CAccount.msgs.createDisplayName(), _name, CAccount.msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (hasRecaptchaKey()) {
-            box = new RoundBox(RoundBox.DARK_BLUE);
-            box.add(new HTML("<div id=\"recaptchaDiv\"></div>"));
-            add(makeStep(4, box));
+            add(new LabeledBox(
+                CAccount.msgs.createCaptcha(), new HTML("<div id=\"recaptchaDiv\"></div>"), null));
+            add(new HTML("<div id=\"recaptchaDiv\"></div>"));
         }
-
-        // add the TOS agreement checkbox and submit button
-        final HorizontalPanel tosBits = new HorizontalPanel();
-        tosBits.setVerticalAlignment(HasAlignment.ALIGN_BOTTOM);
-        tosBits.addStyleName("TOS");
-        tosBits.add(_tosBox = new CheckBox(""));
-        tosBits.add(WidgetUtil.makeShim(5, 5));
-        tosBits.add(MsoyUI.createHTML(CAccount.msgs.createTOSAgree(), null));
-        add(tosBits);
+        
+        add(new LabeledBox(
+            CAccount.msgs.createTOS(), _tosBox = new CheckBox(CAccount.msgs.createTOSAgree()), null));
 
         HorizontalPanel controls = new HorizontalPanel();
-        controls.setWidth("400px");
+        controls.setWidth("500px");
         controls.add(_status = MsoyUI.createLabel("", "Status"));
         controls.add(WidgetUtil.makeShim(10, 10));
         controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
@@ -151,10 +121,6 @@ public class CreateAccountPanel extends VerticalPanel
         };
         controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(), createGo));
         add(controls);
-
-        Label slurp;
-        add(slurp = new Label(""));
-        setCellHeight(slurp, "100%");
     }
 
     @Override // from Widget
@@ -166,7 +132,7 @@ public class CreateAccountPanel extends VerticalPanel
         }
         if (hasRecaptchaKey()) {
             RootPanel.get("recaptchaDiv").add(
-                    MsoyUI.createLabel(CAccount.msgs.createCaptcha(), "label"));
+                    MsoyUI.createLabel(CAccount.msgs.createCaptchaLoading(), "label"));
             initCaptcha();
         }
     }
@@ -262,11 +228,13 @@ public class CreateAccountPanel extends VerticalPanel
         String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
         CAccount.usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name,
-            _dateOfBirth.getDate(), _photo.getPhoto(), info, 1, inviteId, guestId, challenge,
+            _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {
                     // notify our registration listener
-                    _regListener.didRegister();
+                    if (_regListener != null) {
+                        _regListener.didRegister();
+                    }
                     // clear our current token otherwise didLogon() will try to load it
                     Application.setCurrentToken(null);
                     // pass our credentials into the application (which will trigger a redirect)
@@ -276,7 +244,7 @@ public class CreateAccountPanel extends VerticalPanel
                 if (hasRecaptchaKey()) {
                         reloadRecaptcha();
                         if (caught instanceof CaptchaException) {
-                        focusRecaptcha();
+                            focusRecaptcha();
                         }
                     }
                     setStatus(CAccount.serverError(caught));
@@ -297,34 +265,6 @@ public class CreateAccountPanel extends VerticalPanel
         return table;
     }
 
-    protected class PhotoUploader extends SmartTable
-    {
-        public PhotoUploader ()
-        {
-            setWidget(0, 0, new ThumbBox(Profile.DEFAULT_PHOTO, null));
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
-            setWidget(0, 1, new MediaUploader(Item.THUMB_MEDIA, new MediaUploader.Listener() {
-                public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
-                    if (!desc.isImage()) {
-                        MsoyUI.error(CShell.emsgs.errPhotoNotImage());
-                        return;
-                    }
-                    _media = desc;
-                    setWidget(0, 0, new ThumbBox(_media, null));
-                }
-            }));
-            setText(1, 0, CAccount.msgs.createPhotoTip(), 1, "tipLabel");
-
-        }
-
-        public MediaDesc getPhoto ()
-        {
-            return _media;
-        }
-
-        protected MediaDesc _media;
-    }
-
     protected static class LabeledBox extends FlowPanel
     {
         public LabeledBox (String title, Widget contents, String tip)
@@ -334,17 +274,9 @@ public class CreateAccountPanel extends VerticalPanel
             add(title, contents, tip);
         }
 
-        public LabeledBox (String title1, Widget contents1, String tip1,
-                           String title2, Widget contents2, String tip2)
-        {
-            this(title1, contents1, tip1);
-            add(WidgetUtil.makeShim(3, 3));
-            add(title2, contents2, tip2);
-        }
-
         public void add (String title, final Widget contents, final String tip)
         {
-            add(MsoyUI.createLabel(title, "Label"));
+            add(MsoyUI.createHTML(title, "Label"));
             add(contents);
             if (contents instanceof SourcesFocusEvents) {
                 ((SourcesFocusEvents)contents).addFocusListener(new FocusListener() {
@@ -363,12 +295,12 @@ public class CreateAccountPanel extends VerticalPanel
 
         protected void showTip (Widget trigger, String tip)
         {
-            if (!_tip.isAttached()) {
-                DOM.setStyleAttribute(_tip.getElement(), "left",
-                                      (trigger.getOffsetWidth()+15) + "px");
-                DOM.setStyleAttribute(_tip.getElement(), "top",
-                                      (trigger.getAbsoluteTop() - getAbsoluteTop() +
-                                       trigger.getOffsetHeight()/2 - 27) + "px");
+            if (!_tip.isAttached() && tip != null) {
+                DOM.setStyleAttribute(
+                    _tip.getElement(), "left", (trigger.getOffsetWidth()+160) + "px");
+                DOM.setStyleAttribute(
+                    _tip.getElement(), "top", (trigger.getAbsoluteTop() - getAbsoluteTop() +
+                    trigger.getOffsetHeight()/2 - 27) + "px");
                 _tip.setText(0, 0, tip);
                 add(_tip);
             }
@@ -418,7 +350,6 @@ public class CreateAccountPanel extends VerticalPanel
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
-    protected PhotoUploader _photo;
     protected CheckBox _tosBox;
     protected Label _status;
     protected RegisterListener _regListener;

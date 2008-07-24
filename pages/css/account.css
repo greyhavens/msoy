@@ -4,45 +4,65 @@
  * Styles for Account pages.
  */
 
+/* ------------------------------------
+   CREATE ACCOUNT
+-------------------------------------*/
+
 .createAccount {
-  background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  background: url(/images/ui/gradient_dark_bg.png) repeat-x top #3283aa;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
   width: 100%;
   height: 100%;
-  color: #FFFFFF;
+  min-height: 520px;
+}
+.createAccount,
+.createAccount a {
+  color: #d0e6f7;
 }
 
 .createAccount .Intro {
-  padding-bottom: 5px;
-  color: #2E7CA3;
-  font-size: 28px;
+  color: #FFFFFF;
+  font-size: 20px;
   font-weight: bold;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  padding: 10px;
 }
 
-.createAccount .Step .Number {
-  font-size: 48px;
-  vertical-align: top;
-  padding-right: 5px;
+.createAccount .Login {
+  float: right;
+  padding: 20px;
+}
+
+.createAccount .Login .actionLabel {
+  margin-left: 5px;
+}
+
+.createAccount .Coins {
+  margin: 0 0 20px 10px;
 }
 
 .createAccount .Label {
-  font-weight: bold;
-  font-size: 14px;
-  padding: 0px 0px 2px 3px;
+  padding: 3px 5px 0 3px;
+  width: 150px;
+  float: left;
+  text-align: right;
 }
 
 .createAccount .Box {
   position: relative;
+  margin-bottom: 10px;
 }
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox {
-  width: 250px;
+  width: 175px;
+  height: 20px;
 }
 
 .createAccount .Tip {
   background: url(/images/ui/tip_balloon.png) no-repeat;
   position: absolute;
-  width: 285px;
+  width: 250px;
   height: 55px;
   vertical-align: middle;
   font-size: 12px;
@@ -55,16 +75,11 @@
   padding-right: 10px;
 }
 
-.createAccount .TOS {
-  padding-left: 55px;
-}
-
-.createAccount .TOS a {
-  color: white;
-}
-
 .createAccount .Status {
   text-align: center;
+  font-size: 14px;
+  color: #FFFFFF;
+  font-weight: bold;
 }
 
 .createAccount .dateFields div {
@@ -81,10 +96,55 @@
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox, .createAccount .gwt-ListBox {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
   color: #1D5884;
+  border: solid #5c5d61 1px;
 }
+
+/* ------------------------------------
+   LOGIN PAGE
+-------------------------------------*/
+
+.loginPagePanel {
+  background: url(/images/ui/gradient_dark_bg.png) repeat-x top #3283aa;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+}
+
+.loginPagePanel,
+.loginPagePanel a {
+  color: #d0e6f7;
+}
+
+.loginPagePanel .logonPanel {
+  margin: 25px 0 10px 25px;
+}
+
+.loginPagePanel .rightLabel {
+  padding: 3px 3px 0 0;
+}
+
+.loginPagePanel .gwt-TextBox,
+.loginPagePanel .gwt-PasswordTextBox {
+  width: 175px;
+  height: 20px;
+  margin-bottom: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #1D5884;
+  border: solid #5c5d61 1px;
+}
+
+.loginPagePanel .LoginButton {
+  margin-left: 200px;
+}
+
+/* ------------------------------------
+   WELCOME / COINS PAGE
+-------------------------------------*/
 
 .welcome {
   background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;

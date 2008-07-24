@@ -44,6 +44,11 @@ public class index extends Page
                     }
                 }));
 
+        } else if (action.equals("login")) {
+            _onLogonPage = ME;
+            _onLogonArgs = "";
+            setContent(CAccount.msgs.loginPageTitle(), new LoginPagePanel());
+
         } else if (action.equals("optout")) {
             _onLogonPage = ME;
             _onLogonArgs = "";
