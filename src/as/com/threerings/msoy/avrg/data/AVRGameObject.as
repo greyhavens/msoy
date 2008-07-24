@@ -70,7 +70,7 @@ public class AVRGameObject extends DObject
      * requests.
      */
     public var playerLocs :DSet = new DSet();
-    PlayerLocation;
+    PlayerLocation; // no-op reference to force link
 
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;

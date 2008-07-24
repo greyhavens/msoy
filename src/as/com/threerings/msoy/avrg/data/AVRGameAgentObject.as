@@ -12,7 +12,7 @@ public class AVRGameAgentObject extends AgentObject
 {
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
     public var scenes :DSet = new DSet();
-    SceneInfo;
+    SceneInfo; // no-op reference to force link
     
     /** ID of the game object. */
     public var gameOid :int;
