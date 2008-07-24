@@ -31,5 +31,6 @@ public class SceneThumbnail extends Image
     }
     
     protected static final String SNAPSHOT_DIR = DeploymentConfig.mediaURL + "/snapshot/";
-    protected static final String DEFAULT_SNAPSHOT = DeploymentConfig.staticMediaURL + "snapshot/default.jpg";
+    protected static final String DEFAULT_SNAPSHOT = DeploymentConfig.staticMediaURL + 
+        "snapshot/default.jpg";
 }
