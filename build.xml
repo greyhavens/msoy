@@ -1216,7 +1216,7 @@
           </maintainer>
         </info>
         <permissions>
-          <permission group="${msoy.group}" mode="775" recursive="false">
+          <permission user="root" group="${msoy.group}" mode="775" recursive="false">
             <path>log/</path>
             <path>logs/</path>
             <path>run/</path>
