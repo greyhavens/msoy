@@ -16,7 +16,7 @@ public class SceneThumbnail extends Image
 {    
     public SceneThumbnail (int sceneId) 
     {
-        addStyleName("Link");
+        addStyleName("actionLabel");
         addLoadListener(new LoadListener() {
             public void onLoad (Widget sender) {}
             
