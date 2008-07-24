@@ -50,6 +50,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
@@ -544,14 +545,22 @@ public class AwardDelegate extends RatingDelegate
     protected void updatePlayerStats (Iterable<Integer> playerOids, Iterable<Integer> winnerOids)
     {
         final int gameId = _content.detail.gameId;
+
+        // we're currently not persisting any stats for in-development games
+        if (Game.isDeveloperVersion(gameId)) {
+            return;
+        }
+
         final boolean isMultiplayer = isMultiplayer();
         final List<Integer> playerIds = playerOidsToMemberIds(playerOids);
         final List<Integer> winnerIds = playerOidsToMemberIds(winnerOids);
         _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
             public void invokePersist () throws PersistenceException {
                 for (int playerId : playerIds) {
-                    // track total games played
-                    _statLogic.incrementStat(playerId, StatType.GAMES_PLAYED, 1);
+                    // track total game sessions
+                    _statLogic.incrementStat(playerId, StatType.GAME_SESSIONS, 1);
+                    // track unique games played
+                    _statLogic.addToSetStat(playerId, StatType.UNIQUE_GAMES_PLAYED, gameId);
 
                     if (isMultiplayer) {
                         // track unique game partners

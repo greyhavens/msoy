@@ -9,6 +9,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.stats.data.IntSetStat;
 import com.threerings.stats.data.IntStat;
+import com.threerings.stats.data.MaxValueIntStat;
 import com.threerings.stats.data.Stat;
 
 /**
@@ -22,12 +23,13 @@ public enum StatType implements Stat.Type
     INVITES_ACCEPTED(new IntStat(), true),
     WHIRLED_COMMENTS(new IntStat(), true),
     MINUTES_ACTIVE(new IntStat(), true),
-    CONSEC_DAILY_LOGINS(new IntStat(), true),
+    CONSEC_DAILY_LOGINS(new MaxValueIntStat(), true),
     WHIRLEDS_VISITED(new IntSetStat(), true),
 
     // game stats
     TROPHIES_EARNED(new IntStat(), true),
-    GAMES_PLAYED(new IntStat(), true),
+    GAME_SESSIONS(new IntStat(), true),
+    UNIQUE_GAMES_PLAYED(new IntSetStat(), true),
     MP_GAMES_WON(new IntStat(), true),
     MP_GAME_PARTNERS(new IntSetStat(), true),
 

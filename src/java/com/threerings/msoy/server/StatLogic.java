@@ -66,6 +66,8 @@ public class StatLogic
                 // TODO: send this stat modifier to the server that is hosting this member's
                 // runtime stats, if any (note: this functionality may also be provided by the
                 // Vilya Stat system)
+                log.info("updateStat succeeded", "playerId", playerId,
+                    "statType", modifier.getType().name());
             }
         } catch (PersistenceException pe) {
             log.warning("updateStat failed", "playerId", playerId, "type", modifier.getType(), pe);
