@@ -207,6 +207,22 @@ public class GameRecord extends ItemRecord
     public byte serverMimeType;
 
     /**
+     * Returns true if the specified game is in development.
+     */
+    public static boolean isDeveloperVersion (int gameId)
+    {
+        return gameId < 0;
+    }
+
+    /**
+     * Returns true if this is game is in development
+     */
+    public boolean isDeveloperVersion ()
+    {
+        return isDeveloperVersion(gameId);
+    }
+
+    /**
      * Creates a {@link GameInfo} record for this game.
      */
     public GameInfo toGameInfo ()

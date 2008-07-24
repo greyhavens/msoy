@@ -425,7 +425,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 result.add(rrec);
                 map.put(rrec.gameId, rrec);
             }
-            if (record.gameId < 0) {
+            if (GameRecord.isDeveloperVersion(record.gameId)) {
                 rrec.singleRating = record.rating;
             } else {
                 rrec.multiRating = record.rating;

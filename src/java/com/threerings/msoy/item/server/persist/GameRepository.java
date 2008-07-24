@@ -215,7 +215,7 @@ public class GameRepository extends ItemRepository<
         if (gdr == null) {
             return null;
         }
-        return loadItem(gameId < 0 ? gdr.sourceItemId : gdr.listedItemId);
+        return loadItem(GameRecord.isDeveloperVersion(gameId) ? gdr.sourceItemId : gdr.listedItemId);
     }
 
     /**
@@ -280,7 +280,7 @@ public class GameRepository extends ItemRepository<
         SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
         SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
         updateLiteral(GameDetailRecord.class, Math.abs(gameId),
-					  ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
+                    ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
                                         GameDetailRecord.FLOW_TO_NEXT_RECALC, sub));
     }
 
