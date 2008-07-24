@@ -174,6 +174,8 @@ public class AVRGameManager
      */
     public void shutdown ()
     {
+        log.info("Shutting down avrg", "gameId", _gameId);
+        
         _shutdownCheck.cancel();
         
         stopTickers();

@@ -659,12 +659,8 @@ public class GameGameRegistry
     public void avrGameDidShutdown (final Game game)
     {
         // destroy our record of that avrg
-        AVRGameManager mgr = _avrgManagers.remove(game.gameId);
+        _avrgManagers.remove(game.gameId);
         _loadingAVRGames.remove(game.gameId);
-        
-        if (mgr != null && mgr.getGameAgentObject() != null) {
-            _bureauReg.destroyAgent(mgr.getGameAgentObject());
-        }
         
         // kill the bureau session
         killBureauSession(game.gameId);
