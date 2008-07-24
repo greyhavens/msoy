@@ -59,7 +59,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 public class FriendsListPanel extends TitleWindow
-    implements SetListener, AttributeChangeListener
+    implements AttributeChangeListener
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
@@ -90,35 +90,6 @@ public class FriendsListPanel extends TitleWindow
         init(memObj);
     }
 
-    // from SetListener
-    public function entryAdded (event :EntryAddedEvent) :void
-    {
-        if (event.getName() == MemberObject.FRIENDS) {
-            addFriend(event.getEntry() as FriendEntry);
-        }
-    }
-
-    // from SetListener
-    public function entryUpdated (event :EntryUpdatedEvent) :void
-    {
-        if (event.getName() == MemberObject.FRIENDS) {
-            var newEntry :FriendEntry = event.getEntry() as FriendEntry;
-            var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            removeFriend(oldEntry);
-            if (newEntry.online) {
-                addFriend(newEntry);
-            }
-        }
-    }
-
-    // from SetListener
-    public function entryRemoved (event :EntryRemovedEvent) :void
-    {
-        if (event.getName() == MemberObject.FRIENDS) {
-            removeFriend(event.getOldEntry() as FriendEntry);
-        }
-    }
-
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
@@ -145,29 +116,13 @@ public class FriendsListPanel extends TitleWindow
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new List();
-        _friendsList.styleName = "friendList";
-        _friendsList.horizontalScrollPolicy = ScrollPolicy.OFF;
-        // I'd love to make this AUTO, but labels are stupid and can't deal with growing only
-        // up to a dynamic size, so I've got to make all the widths static.  
-        _friendsList.verticalScrollPolicy = ScrollPolicy.ON;
-        _friendsList.percentWidth = 100;
-        _friendsList.percentHeight = 100;
-        _friendsList.dataProvider = _friends;
-        _friendsList.selectable = false;
-        _friendsList.variableRowHeight = true;
-
-        var cf :ClassFactory = new ClassFactory(FriendRenderer);
-        cf.properties = { mctx: _ctx };
-        _friendsList.itemRenderer = cf;
+        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, FriendRenderer);
+        _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
+            // Only show online friends
+            return friend.online;
+        }
 
         addChild(_friendsList);
-
-        // set up the sort for the collection
-        var sort :Sort = new Sort();
-        sort.compareFunction = sortFunction;
-        _friends.sort = sort;
-        _friends.refresh();
 
         // add a little separator
         var separator :VBox = new VBox();
@@ -220,48 +175,9 @@ public class FriendsListPanel extends TitleWindow
     protected function init (memObj :MemberObject) :void
     {
         memObj.addListener(this);
+        memObj.addListener(_friendsList);
 
-        var currentEntries :Array = _friends.toArray();
-        for each (var friend :FriendEntry in memObj.friends.toArray()) {
-            if (!friend.online) {
-                continue;
-            }
-
-            if (!containsFriend(friend)) {
-                addFriend(friend);
-            } else {
-                currentEntries.splice(currentEntries.indexOf(friend), 1);
-            }
-        }
-
-        // anything left in currentEntries wasn't found on the new MemberObject
-        for each (var entry :FriendEntry in currentEntries) {
-            removeFriend(entry as FriendEntry);
-        }
-    }
-
-    protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
-    {
-        var friend1 :FriendEntry = o1 as FriendEntry;
-        var friend2 :FriendEntry = o2 as FriendEntry;
-        return MemberName.BY_DISPLAY_NAME(friend1.name, friend2.name);
-    }
-
-    protected function containsFriend (friend :FriendEntry) :Boolean
-    {
-        return _friends.contains(friend);
-    }
-
-    protected function addFriend (friend :FriendEntry) :void
-    {
-        _friends.addItem(friend);
-    }
-
-    protected function removeFriend (friend :FriendEntry) :void
-    {
-        if (containsFriend(friend)) {
-            _friends.removeItemAt(_friends.getItemIndex(friend));
-        }
+        _friendsList.init(memObj.friends.toArray());
     }
 
     protected function editMouseOver (...ignored) :void
@@ -360,7 +276,7 @@ public class FriendsListPanel extends TitleWindow
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
     protected var _ctx :WorldContext;
-    protected var _friendsList :List;
+    protected var _friendsList :PeerList;
     protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
