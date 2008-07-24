@@ -8,9 +8,9 @@ import com.google.inject.Inject;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 
-import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.parlor.game.server.GameManagerDelegate;
+import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -18,7 +18,7 @@ import com.threerings.msoy.item.server.persist.GameRepository;
  * Handles the recording of game agent trace logs and writing them to the database when the game
  * has ended.
  */
-public class AgentTraceDelegate extends GameManagerDelegate
+public class AgentTraceDelegate extends PlaceManagerDelegate
 {
     /** The string we append to an agent's trace log that's about to exceed 64K. */
     public static String TRACE_CAP = "--- buffer full ---";
