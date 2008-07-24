@@ -26,6 +26,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -130,9 +131,10 @@ public class MsoyClient extends WhirledClient
         }
 
         // update session related stats in their MemberRecord
-        final MemberName name = _memobj.memberName;
-        final StatSet stats = _memobj.stats;
         final int activeMins = Math.round(activeSeconds / 60f);
+        final MemberName name = _memobj.memberName;
+        final StatSet stats = _memobj.getStats();
+        stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
         _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
             public boolean invoke () {
                 try {
