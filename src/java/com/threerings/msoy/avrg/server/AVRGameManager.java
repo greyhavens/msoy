@@ -17,6 +17,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -29,10 +30,12 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.data.ScenePlace;
@@ -47,6 +50,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.data.GameState;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.GameContent;
@@ -66,6 +70,9 @@ import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
 import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.server.WhirledGameManager;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -73,8 +80,20 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager
-    implements AVRGameProvider, OidListListener
+    implements AVRGameProvider, OidListListener, AVRGameObject.SubscriberListener
 {
+    /** Observes our shutdown function call. */
+    public interface ShutdownObserver
+    {
+        /** Informs the observer a shutdown has happened. */
+        void avrGameDidShutdown (final Game game);
+    }
+    
+    public void setShutdownObserver (ShutdownObserver obs)
+    {
+        _shutdownObserver = obs;
+    }
+    
     public int getGameId ()
     {
         return _gameId;
@@ -85,43 +104,63 @@ public class AVRGameManager
         return _gameObj;
     }
 
-    public AVRGameObject createGameObject ()
+    public AVRGameAgentObject getGameAgentObject ()
     {
-        return new AVRGameObject();
-    }
-
-    public AVRGameAgentObject createGameAgentObject ()
-    {
-        return new AVRGameAgentObject();
+        return _gameAgentObj;
     }
 
     /**
      * Called with our hosted game's data once it's finished loading from the database.
      * @param gameAgentObj
      */
-    public void startup (int gameId, AVRGameObject gameObj, AVRGameAgentObject gameAgentObj,
-                         GameContent content, List<GameStateRecord> stateRecords)
+    public void startup (
+        int gameId, GameContent content, MsoyGameDefinition def, 
+        List<GameStateRecord> stateRecords)
     {
         _gameId = gameId;
-        _gameObj = gameObj;
-        _gameAgentObj = gameAgentObj;
         _content = content;
 
+        _gameObj = new AVRGameObject();
+        _gameObj.subscriberListener = this;
+        _omgr.registerObject(_gameObj);
+        
+        _gameAgentObj = createGameAgentObject(content.game, def);
+        _gameAgentObj.gameOid = _gameObj.getOid();
+        _breg.startAgent(_gameAgentObj);
+        
         // listen for gameObj.playerOids removals
-        gameObj.addListener(this);
+        _gameObj.addListener(this);
 
-        gameObj.startTransaction();
-        gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
-        gameObj.setGameMedia(_content.game.gameMedia);
+        _gameObj.startTransaction();
+        _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        _gameObj.setGameMedia(_content.game.gameMedia);
         try {
             for (GameStateRecord rec : stateRecords) {
-                gameObj.addToState(rec.toEntry());
+                _gameObj.addToState(rec.toEntry());
             }
         } finally {
-            gameObj.commitTransaction();
+            _gameObj.commitTransaction();
         }
+
+        _shutdownCheck = new Interval (_omgr) {
+            public void expired () {
+                checkForShutdown();
+            }
+        };
     }
 
+    //  from AVRGameObject.SubscriberListener
+    public void subscriberCountChanged (AVRGameObject target)
+    {
+        int agents = _gameAgentObj != null ? 1 : 0;
+        if (target.getSubscriberCount() == agents) {
+            _shutdownCheck.schedule(IDLE_UNLOAD_PERIOD);
+            
+        } else {
+            _shutdownCheck.cancel();            
+        }
+    }
+    
     /**
      * The game has changed while we're hosting it; update the media, the client will reload.
      */
@@ -135,8 +174,14 @@ public class AVRGameManager
      */
     public void shutdown ()
     {
+        _shutdownCheck.cancel();
+        
         stopTickers();
 
+        if (_gameAgentObj != null) {
+            _breg.destroyAgent(_gameAgentObj);
+        }
+        
         // identify any modified memory records for flushing to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
@@ -154,6 +199,10 @@ public class AVRGameManager
                 _repo.noteUnawardedTime(_gameId, totalMins);
             }
         });
+        
+        if (_shutdownObserver != null) {
+            _shutdownObserver.avrGameDidShutdown(_content.game);
+        }
     }
 
     // from interface OidListListener
@@ -736,6 +785,34 @@ public class AVRGameManager
         return String.valueOf(_gameId);
     }
 
+    protected void checkForShutdown ()
+    {
+        int agents = _gameAgentObj != null ? 1 : 0;
+        if (_gameObj.getSubscriberCount() == agents) {
+            shutdown();
+        }
+    }   
+        
+    protected AVRGameAgentObject createGameAgentObject (Game game, MsoyGameDefinition def)
+    {   
+        String code = def.getServerMediaPath(game.gameId);
+        if (code == null) {
+            log.warning("No server code for avrg", "game", game);
+            return null;
+        }
+            
+        AVRGameAgentObject agent = new AVRGameAgentObject();
+        agent.bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + game.gameId;
+        agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
+        agent.code = code;
+        if (StringUtil.isBlank(def.server)) {
+            agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
+        } else {
+            agent.className = def.server;
+        }
+        return agent;
+    }
+
     protected class Player
     {
         public PlayerObject playerObject;
@@ -818,6 +895,9 @@ public class AVRGameManager
         }
     };
 
+    /** Timed task to check if we are ready to shut down. */
+    protected Interval _shutdownCheck;
+    
     /** The gameId of this particular AVRG. */
     protected int _gameId;
 
@@ -842,6 +922,9 @@ public class AVRGameManager
 
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;
+    
+    /** Observer of our shutdown. */
+    protected ShutdownObserver _shutdownObserver;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
@@ -852,10 +935,15 @@ public class AVRGameManager
     @Inject protected AVRGameRepository _repo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected BureauRegistry _breg;
+    @Inject protected RootDObjectManager _omgr;
 
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;
 
     /** The maximum number of tickers allowed at one time. */
     protected static final int MAX_TICKERS = 3;
+
+    /** idle time before shutting down the manager. */
+    protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms
 }

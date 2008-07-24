@@ -3,9 +3,12 @@
 
 package com.threerings.msoy.game.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.xml.sax.SAXException;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -67,8 +70,6 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
@@ -81,11 +82,13 @@ import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.whirled.bureau.data.BureauTypes;
 
@@ -96,7 +99,8 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class GameGameRegistry
-    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver
+    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner, 
+    LobbyManager.ShutdownObserver, AVRGameManager.ShutdownObserver
 {
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
@@ -346,9 +350,8 @@ public class GameGameRegistry
         list.add(joinListener);
 
         final AVRGameManager fmgr = _injector.getInstance(AVRGameManager.class);
-        final AVRGameObject gameObj = fmgr.createGameObject();
-        final AVRGameAgentObject gameAgentObj = fmgr.createGameAgentObject();
-
+        fmgr.setShutdownObserver(this);
+        
         _invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
@@ -369,10 +372,21 @@ public class GameGameRegistry
                     return;
                 }
 
-                _omgr.registerObject(gameObj);
-                _omgr.registerObject(gameAgentObj);
-                fmgr.startup(gameId, gameObj, gameAgentObj, _content, _recs);
-
+                MsoyGameDefinition def;
+                try {
+                    def = (MsoyGameDefinition)new MsoyGameParser().parseGame(_content.game);
+                    
+                } catch (IOException ioe) {
+                    log.warning("Error parsing game config", "game", _content.game, ioe);
+                    return;
+                    
+                } catch (SAXException saxe) {
+                    log.warning("Error parsing game config", "game", _content.game, saxe);
+                    return;
+                    
+                }
+                
+                fmgr.startup(gameId, _content, def, _recs);
                 _avrgManagers.put(gameId, fmgr);
 
                 ResultListenerList list = _loadingAVRGames.remove(gameId);
@@ -620,7 +634,7 @@ public class GameGameRegistry
         }
 
         for (AVRGameManager amgr : _avrgManagers.values()) {
-            amgr.shutdown();
+            amgr.shutdown(); // this will also call avrGameDidShutdown
         }
     }
 
@@ -640,6 +654,25 @@ public class GameGameRegistry
         // flush any modified percentile distributions
         flushPercentiler(-Math.abs(game.gameId)); // single-player
         flushPercentiler(Math.abs(game.gameId)); // multiplayer
+    }
+    
+    public void avrGameDidShutdown (final Game game)
+    {
+        // destroy our record of that avrg
+        AVRGameManager mgr = _avrgManagers.remove(game.gameId);
+        _loadingAVRGames.remove(game.gameId);
+        
+        if (mgr != null && mgr.getGameAgentObject() != null) {
+            _bureauReg.destroyAgent(mgr.getGameAgentObject());
+        }
+        
+        // kill the bureau session
+        killBureauSession(game.gameId);
+        
+        // let our world server know we're audi
+        _worldClient.stoppedHostingGame(game.gameId);
+        
+        // TODO: do avrg's need to flush percentilers
     }
 
     protected GameContent assembleGameContent (final int gameId)
