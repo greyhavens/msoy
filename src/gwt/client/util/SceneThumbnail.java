@@ -23,12 +23,13 @@ public class SceneThumbnail extends Image
             public void onError (Widget sender)
             {
                 removeLoadListener(this);
-                setUrl(SNAPSHOT_DIR + "default.jpg");
+                setUrl(DEFAULT_SNAPSHOT);
             }
         });
         
         setUrl(SNAPSHOT_DIR + sceneId + ".jpg");
     }
     
-    protected static final String SNAPSHOT_DIR = DeploymentConfig.staticMediaURL + "/snapshot/";
+    protected static final String SNAPSHOT_DIR = DeploymentConfig.mediaURL + "/snapshot/";
+    protected static final String DEFAULT_SNAPSHOT = DeploymentConfig.staticMediaURL + "snapshot/default.jpg";
 }
