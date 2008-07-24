@@ -17,6 +17,8 @@
 
   <!-- define various packaging properties -->
   <property name="msoy.user"        value="_msoy"/>
+  <property name="burl.user"        value="_burl"/>
+  <property name="msoy.group"       value="_msoy"/>
   <property name="maintainer.name"  value="Three Rings Design"/>
   <property name="maintainer.email" value="msoy-dev@threerings.net"/>
 
@@ -270,7 +272,8 @@
     <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
     <copy tofile="${deploy.dir}/log4j-game.properties" file="${basedir}/${log4j_game_config}"/>
     <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
-    <copy tofile="${deploy.dir}/log4j-bureaulauncher.properties" file="${basedir}/${log4j_bureau_config}"/>
+    <copy tofile="${deploy.dir}/log4j-bureaulauncher.properties"
+          file="${basedir}/${log4j_bureau_config}"/>
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
     <!-- generate our index.html and crossdomain.xml -->
@@ -1189,7 +1192,7 @@
 
     <!-- create out bureau launcher startup script -->
     <mkdir dir="${approot.burlserver}/etc/rc.d"/>
-    <startupscript name="msoy_bureau" runas="${msoy.user}"
+    <startupscript name="msoy_bureau" runas="${burl.user}"
                    output="${approot.burlserver}/etc/rc.d/${app.name}-bureau.sh">
       <commands>
         <start cmdline="${app.prefix}/bin/burl start"/>
@@ -1200,8 +1203,7 @@
     <!-- build the actual Debian packages -->
 
     <!-- msoy-server-code -->
-    <dpkg output="${package.output}" prefix="${app.prefix}"
-          distribution="${ooo.distribution}">
+    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server.code}">
         <info>
           <name>${app.name}-server-code</name>
@@ -1214,7 +1216,7 @@
           </maintainer>
         </info>
         <permissions>
-          <permission user="${msoy.user}" group="${msoy.user}" mode="775" recursive="false">
+          <permission group="${msoy.group}" mode="775" recursive="false">
             <path>log/</path>
             <path>logs/</path>
             <path>run/</path>
@@ -1228,8 +1230,7 @@
     </dpkg>
 
     <!-- msoy-server -->
-    <dpkg output="${package.output}" prefix="${app.prefix}"
-          distribution="${ooo.distribution}">
+    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server}">
         <info>
           <name>${app.name}-server</name>
@@ -1242,12 +1243,12 @@
           </maintainer>
         </info>
         <dependencies>
-            <require package="msoy-server-code">
-              <equalTo>${version}</equalTo>
-            </require>
+          <require package="msoy-server-code">
+            <equalTo>${version}</equalTo>
+          </require>
         </dependencies>
         <permissions>
-          <permission user="${msoy.user}" group="${msoy.user}" mode="755" recursive="false">
+          <permission user="${msoy.user}" group="${msoy.group}" mode="755" recursive="false">
             <path>pages/media/</path>
             <path>pages/buildresults/</path>
             <path>data/swiftly/projects/</path>
@@ -1259,13 +1260,15 @@
             <path>tools/bin/</path>
             <path>data/swiftly/flex_sdk_bin/bin</path>
           </permission>
+          <permission user="${msoy.user}" group="${msoy.group}" mode="550">
+            <path>dist/msoy-server.properties</path>
+          </permission>
         </permissions>
       </package>
     </dpkg>
 
     <!-- burl-server -->
-    <dpkg output="${package.output}" prefix="${app.prefix}"
-          distribution="${ooo.distribution}">
+    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.burlserver}">
         <info>
           <name>burl-server</name>
@@ -1278,14 +1281,17 @@
           </maintainer>
         </info>
         <dependencies>
-            <require package="msoy-server-code">
-              <equalTo>${version}</equalTo>
-            </require>
+          <require package="msoy-server-code">
+            <equalTo>${version}</equalTo>
+          </require>
         </dependencies>
         <permissions>
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/rc.d/</path>
+          </permission>
+          <permission user="${burl.user}" group="${msoy.group}" mode="550">
+            <path>dist/burl-server.properties</path>
           </permission>
         </permissions>
       </package>
