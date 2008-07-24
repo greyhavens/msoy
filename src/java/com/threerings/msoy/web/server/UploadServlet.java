@@ -96,14 +96,25 @@ public class UploadServlet extends AbstractUploadServlet
                 String text = null;
                 try {
                     text = fitem.getString("UTF-8");
-                    client = Enum.valueOf(Client.class, text.toUpperCase());
+                    client = Client.valueOf(text.toUpperCase());
                 } catch (Exception e) {
                     log.warning("Invalid client identifier [text=" + text + ", error=" + e + "].");
                 }
             }
         }
 
-        // finally write out the magical incantations that are needed to cause our magical little
+        // now that we have published the file, post a response back to the caller
+        sendResponse(rsp, client, mediaId, info, tinfo);
+    }
+
+    /**
+     * Send the response back to the caller.
+     */
+    protected void sendResponse (
+        HttpServletResponse rsp, Client client, String mediaId, MediaInfo info, MediaInfo tinfo)
+        throws IOException
+    {
+        // write out the magical incantations that are needed to cause our magical little
         // frame to communicate the newly assigned mediaHash to the ItemEditor widget
         PrintStream out = null;
         try {

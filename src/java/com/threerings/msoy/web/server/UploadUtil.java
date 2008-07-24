@@ -94,7 +94,7 @@ public class UploadUtil
     {
         // name it using the hash value and the suffix
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
-        publishStream (input, null, name, MediaDesc.mimeTypeToString(mimeType), EXPIRES_2038);
+        publishStream(input, null, name, MediaDesc.mimeTypeToString(mimeType), EXPIRES_2038);
     }
 
     /**

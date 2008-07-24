@@ -33,6 +33,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
@@ -60,72 +61,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo;
-
-        // validate the item
-        if (!item.isConsistent()) {
-            log.warning("Got inconsistent item for upload? [from=" + memrec.who() +
-                        ", item=" + item + "].");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        // create the persistent item record
-        repo = _itemMan.getRepository(item.getType());
-        final ItemRecord record = repo.newItemRecord(item);
-
-        // configure the item's creator and owner
-        record.creatorId = memrec.memberId;
-        record.ownerId = memrec.memberId;
-
-        // determine this item's suite id if it is a subitem
-        if (item instanceof SubItem) {
-            if (parent == null) {
-                log.warning("Requested to create sub-item with no parent [who=" + memrec.who() +
-                            ", item=" + item + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-            ItemRepository<ItemRecord, ?, ?, ?> prepo = _itemMan.getRepository(parent.type);
-            ItemRecord prec = null;
-            try {
-                prec = prepo.loadItem(parent.itemId);
-            } catch (PersistenceException pe) {
-                log.warning("Failed to load parent in createItem [who=" + memrec.who() +
-                        ", item=" + item.getIdent() + ", parent=" + parent + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-            if (prec == null) {
-                log.warning("Requested to make item with missing parent [who=" + memrec.who() +
-                            ", parent=" + parent + ", item=" + item + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-            if (prec.ownerId != memrec.memberId) {
-                log.warning("Requested to make item with invalid parent [who=" + memrec.who() +
-                            ", parent=" + prec + ", item=" + item + "].");
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-            }
-
-            // if everything is kosher, we can initialize the subitem with info from its parent
-            ((SubItemRecord)record).initFromParent(prec);
-        }
-
-        // TODO: validate anything else?
-
-        // write the item to the database
-        try {
-            repo.insertOriginalItem(record, false);
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create item " + item + ".", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        // let the item manager know that we've created this item
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemCreated(record);
-            }
-        });
-
-        return record.toItem();
+        return _itemLogic.createItem(memrec, item, parent);
     }
 
     // from interface ItemService
@@ -858,6 +794,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
