@@ -31,7 +31,10 @@ import com.threerings.msoy.world.client.WorldContext;
  */
 public class SnapshotController extends Controller
 {
-    public static const SERVICE_ENTRY_POINT :String = "/snapshotsvc";
+    public static const CANONICAL_THUMBNAIL_SERVICE :String = "/snapshotsvc";
+    
+    // todo: set the actual servlet name for scene snapshots
+    public static const SCENE_SNAPSHOT_SERVICE :String = "/NOT-DEFINED-YET";
 
     public function SnapshotController (ctx :WorldContext, panel :SnapshotPanel)
     {
@@ -51,7 +54,12 @@ public class SnapshotController extends Controller
     {
         if (doUpload) {
             if (panel.canonical.bitmap) {
-                uploadCanonical(panel.canonical.bitmap, sceneId);
+                upload (panel.canonical.bitmap, sceneId, CANONICAL_THUMBNAIL_SERVICE);
+            }
+            
+            if (panel.snapshot.bitmap) {
+                // todo: uncomment this once the scene snapshot service is implemented.
+                //upload (panel.canonical.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
             }
             
             //todo: save the ordinary file here... depends on 
@@ -59,8 +67,8 @@ public class SnapshotController extends Controller
         }
         _panel = null;
     }
-
-    protected function uploadCanonical (bitmap :BitmapData, sceneId :int) :void
+    
+    protected function upload (bitmap :BitmapData, sceneId :int, service :String) :void    
     {
         const encoder :JPGEncoder = new JPGEncoder(80);
         const mimeBody :ByteArray = makeMimeBody(sceneId, encoder.encode(bitmap));
@@ -68,7 +76,7 @@ public class SnapshotController extends Controller
         // TODO: display a progress dialog during uploading
         // These should be local, or the dialog is a new thing. Fuck this controller, actually.
         _request = new URLRequest();
-        _request.url = DeploymentConfig.serverURL + SERVICE_ENTRY_POINT;
+        _request.url = DeploymentConfig.serverURL + service;
         _request.method = URLRequestMethod.POST;
         _request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
         _request.data = mimeBody;
