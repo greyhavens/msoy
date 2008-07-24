@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: FriendsListPanel.as 9910 2008-07-18 23:24:40Z nathan $
 
 package com.threerings.msoy.world.client {
 
@@ -52,25 +52,24 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.PeerList;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.PeerEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-public class FriendsListPanel extends TitleWindow
-    implements AttributeChangeListener
+public class PartyListPanel extends TitleWindow
+    implements SetListener, AttributeChangeListener
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
 
-    public function FriendsListPanel (ctx :WorldContext) :void
+    public function PartyListPanel (ctx :WorldContext) :void
     {
         _ctx = ctx;
         _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
-        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopFriendsList);
+        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopPartyList);
     }
 
     public function show () :void
@@ -83,7 +82,6 @@ public class FriendsListPanel extends TitleWindow
     {
         systemManager.removeEventListener(Event.RESIZE, stageResized);
         _ctx.getMemberObject().removeListener(this);
-        _ctx.getMemberObject().removeListener(_friendsList);
         PopUpManager.removePopUp(this);
     }
 
@@ -92,11 +90,40 @@ public class FriendsListPanel extends TitleWindow
         init(memObj);
     }
 
+    // from SetListener
+    public function entryAdded (event :EntryAddedEvent) :void
+    {
+        if (event.getName() == MemberObject.FRIENDS) {
+            addFriend(event.getEntry() as PeerEntry);
+        }
+    }
+
+    // from SetListener
+    public function entryUpdated (event :EntryUpdatedEvent) :void
+    {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var newEntry :PeerEntry = event.getEntry() as PeerEntry;
+            var oldEntry :PeerEntry = event.getOldEntry() as PeerEntry;
+            removeFriend(oldEntry);
+            //if (newEntry.online) {
+                addFriend(newEntry);
+            //}
+        }
+    }
+
+    // from SetListener
+    public function entryRemoved (event :EntryRemovedEvent) :void
+    {
+        if (event.getName() == MemberObject.FRIENDS) {
+            removeFriend(event.getOldEntry() as PeerEntry);
+        }
+    }
+
     // from AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.HEADLINE) {
-            setStatus(event.getValue() as String);
+            //setStatus(event.getValue() as String);
         }
     }
 
@@ -118,13 +145,25 @@ public class FriendsListPanel extends TitleWindow
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, FriendRenderer);
-        _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
-            // Only show online friends
-            return friend.online;
-        }
-
+        _friendsList = new List();
+        _friendsList.styleName = "friendList";
+        _friendsList.horizontalScrollPolicy = ScrollPolicy.OFF;
+        // I'd love to make this AUTO, but labels are stupid and can't deal with growing only
+        // up to a dynamic size, so I've got to make all the widths static.  
+        _friendsList.verticalScrollPolicy = ScrollPolicy.ON;
+        _friendsList.percentWidth = 100;
+        _friendsList.percentHeight = 100;
+        _friendsList.itemRenderer = new ClassFactory(FriendRenderer);
+        _friendsList.dataProvider = _friends;
+        _friendsList.selectable = false;
+        _friendsList.variableRowHeight = true;
         addChild(_friendsList);
+
+        // set up the sort for the collection
+        var sort :Sort = new Sort();
+        sort.compareFunction = sortFunction;
+        _friends.sort = sort;
+        _friends.refresh();
 
         // add a little separator
         var separator :VBox = new VBox();
@@ -138,32 +177,9 @@ public class FriendsListPanel extends TitleWindow
         box.percentWidth = 100;
         box.styleName = "friendsListEditorBox";
         addChild(box);
-
-        // Create a display name label and a status editor
-        var me :MemberObject = _ctx.getMemberObject();
-        _nameLabel = new Label();
-        _nameLabel.styleName = "friendLabel";
-        _nameLabel.setStyle("fontWeight", "bold");
-        _nameLabel.text = me.memberName.toString();
-        box.addChild(_nameLabel);
-        _statusEdit = new TextInput();
-        _statusEdit.editable = true;
-        setStatus(me.headline);
-        _statusEdit.styleName = "statusEdit";
-        _statusEdit.percentWidth = 100;
-        _statusEdit.height = 17;
-        _statusEdit.maxChars = PROFILE_MAX_STATUS_LENGTH;
-        _statusEdit.addEventListener(MouseEvent.MOUSE_OVER, editMouseOver);
-        _statusEdit.addEventListener(MouseEvent.MOUSE_OUT, editMouseOut);
-        _statusEdit.addEventListener(FocusEvent.FOCUS_IN, editFocusIn);
-        _statusEdit.addEventListener(FocusEvent.FOCUS_OUT, editFocusOut);
-        _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
-        _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
-        _statusEdit.addEventListener(KeyboardEvent.KEY_UP, keyUp);
-        box.addChild(_statusEdit);
     
         // initialize with currently online friends
-        init(me);
+        init(_ctx.getMemberObject());
     }
 
     override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
@@ -177,58 +193,57 @@ public class FriendsListPanel extends TitleWindow
     protected function init (memObj :MemberObject) :void
     {
         memObj.addListener(this);
-        memObj.addListener(_friendsList);
 
-        _friendsList.init(memObj.friends.toArray());
-    }
+        var currentEntries :Array = _friends.toArray();
+        for each (var friend :PeerEntry in memObj.friends.toArray()) {
+            /*if (!friend.online) {
+                continue;
+            }*/
 
-    protected function editMouseOver (...ignored) :void
-    {
-        _statusEdit.styleName = "statusEditHover";
-    }
+            if (!containsFriend(friend)) {
+                addFriend(friend);
+            } else {
+                var original :Object = _originals[friend.getMemberId()];
+                currentEntries.splice(currentEntries.indexOf(original), 1);
+            }
+        }
 
-    protected function editMouseOut (...ignored) :void
-    {
-        _statusEdit.styleName = "statusEdit";
-    }
-
-    protected function editFocusIn (...ignored) :void
-    {
-        if (_statusEdit.text == Msgs.GENERAL.get("l.emptyStatus")) {
-            _statusEdit.text = Msgs.GENERAL.get("l.statusPrompt");
-        } else {
-            // highlight everything in there so you can just type in your new status
-            var selectionEnd :int = _statusEdit.text == null ? 0 : _statusEdit.text.length;
-            _statusEdit.setSelection(0, selectionEnd);
+        // anything left in currentEntries wasn't found on the new MemberObject
+        for each (var entry :Array in currentEntries) {
+            removeFriend(entry[1] as PeerEntry);
         }
     }
 
-    protected function editFocusOut (...ignored) :void
+    protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
     {
-        // quick check
-        if (_statusEdit.text == Msgs.GENERAL.get("l.statusPrompt") || 
-            _statusEdit.text == "") {
-            setStatus("");
+        if (!(o1 is Array) || !(o2 is Array)) {
+            return 0;
         }
+
+        var friend1 :PeerEntry = (o1 as Array)[1] as PeerEntry;
+        var friend2 :PeerEntry = (o2 as Array)[1] as PeerEntry;
+        return MemberName.BY_DISPLAY_NAME(friend1.getName(), friend2.getName());
     }
 
-    protected function commitEdit (...ignored) :void
+    protected function containsFriend (friend :PeerEntry) :Boolean
     {
-        _statusEdit.setSelection(0, 0);
-        // delay losing focus by a frame so the selection has time to get set correctly.
-        callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
-        var newStatus :String = _statusEdit.text;
-        if (newStatus != _ctx.getMemberObject().headline) {
-            var msvc :MemberService =
-                (_ctx.getClient().requireService(MemberService) as MemberService);
-            msvc.updateStatus(_ctx.getClient(), newStatus, new InvocationAdapter(
-                function (cause :String) :void {
-                    _ctx.displayFeedback(null, cause);
-                    // revert to old status
-                    var me :MemberObject = _ctx.getMemberObject();
-                    setStatus(me.headline);
-                }));
+        return _originals[friend.getMemberId()] !== undefined;
+    }
+
+    protected function addFriend (friend :PeerEntry) :void
+    {
+        var data :Array = [ _ctx, friend ];
+        _originals[friend.getMemberId()] = data;
+        _friends.addItem(data);
+    }
+
+    protected function removeFriend (friend :PeerEntry) :void
+    {
+        var data :Array = _originals[friend.getMemberId()] as Array;
+        if (data != null) {
+            _friends.removeItemAt(_friends.getItemIndex(data));
         }
+        delete _originals[friend.getMemberId()];
     }
 
     protected function stageResized (...ignored) :void
@@ -253,24 +268,7 @@ public class FriendsListPanel extends TitleWindow
         }
     }
 
-    protected function keyUp (event :KeyboardEvent) :void
-    {
-        if (event.keyCode == Keyboard.ESCAPE) {
-            var me :MemberObject = _ctx.getMemberObject();
-            setStatus(me.headline);
-            _statusEdit.setSelection(0, 0);
-            // delay losing focus by a frame so the selection has time to get set correctly.
-            callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
-        }
-    }
-
-    protected function setStatus (status :String) :void
-    {
-        _statusEdit.text = 
-            status == "" || status == null ?  Msgs.GENERAL.get("l.emptyStatus") : status;
-    }
-
-    private static const log :Log = Log.getLog(FriendsListPanel);
+    private static const log :Log = Log.getLog(PartyListPanel);
 
     protected static const PADDING :int = 10;
 
@@ -278,9 +276,9 @@ public class FriendsListPanel extends TitleWindow
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
     protected var _ctx :WorldContext;
-    protected var _friendsList :PeerList;
-    protected var _nameLabel :Label;
-    protected var _statusEdit :TextInput;
+    protected var _friendsList :List;
+    protected var _friends :ArrayCollection = new ArrayCollection();
+    protected var _originals :Dictionary = new Dictionary();
     protected var _currentX :int = 0;
 }
 }

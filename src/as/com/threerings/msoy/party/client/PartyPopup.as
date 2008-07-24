@@ -1,7 +1,7 @@
 //
-// $Id$
+// $Id: FriendsListPanel.as 10001 2008-07-24 00:41:36Z bruno $
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.party.client {
 
 import flash.events.Event;
 import flash.events.FocusEvent;
@@ -59,18 +59,19 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-public class FriendsListPanel extends TitleWindow
-    implements AttributeChangeListener
+import com.threerings.msoy.world.client.WorldContext;
+
+public class PartyPopup extends TitleWindow
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
 
-    public function FriendsListPanel (ctx :WorldContext) :void
+    public function PartyPopup (ctx :WorldContext) :void
     {
         _ctx = ctx;
         _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
-        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopFriendsList);
+        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopParty);
     }
 
     public function show () :void
@@ -82,7 +83,6 @@ public class FriendsListPanel extends TitleWindow
     public function shutdown () :void
     {
         systemManager.removeEventListener(Event.RESIZE, stageResized);
-        _ctx.getMemberObject().removeListener(this);
         _ctx.getMemberObject().removeListener(_friendsList);
         PopUpManager.removePopUp(this);
     }
@@ -90,14 +90,6 @@ public class FriendsListPanel extends TitleWindow
     public function memberObjectUpdated (memObj :MemberObject) :void
     {
         init(memObj);
-    }
-
-    // from AttributeChangeListener
-    public function attributeChanged (event :AttributeChangedEvent) :void
-    {
-        if (event.getName() == MemberObject.HEADLINE) {
-            setStatus(event.getValue() as String);
-        }
     }
 
     override protected function createChildren () :void
@@ -118,15 +110,12 @@ public class FriendsListPanel extends TitleWindow
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, FriendRenderer);
-        _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
-            // Only show online friends
-            return friend.online;
-        }
+        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, PartyRenderer);
 
         addChild(_friendsList);
 
-        // add a little separator
+        var me :MemberObject = _ctx.getMemberObject();
+        /*// add a little separator
         var separator :VBox = new VBox();
         separator.percentWidth = 100;
         separator.height = 1;
@@ -140,7 +129,6 @@ public class FriendsListPanel extends TitleWindow
         addChild(box);
 
         // Create a display name label and a status editor
-        var me :MemberObject = _ctx.getMemberObject();
         _nameLabel = new Label();
         _nameLabel.styleName = "friendLabel";
         _nameLabel.setStyle("fontWeight", "bold");
@@ -160,7 +148,7 @@ public class FriendsListPanel extends TitleWindow
         _statusEdit.addEventListener(MouseEvent.CLICK, editMouseOut);
         _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
         _statusEdit.addEventListener(KeyboardEvent.KEY_UP, keyUp);
-        box.addChild(_statusEdit);
+        box.addChild(_statusEdit);*/
     
         // initialize with currently online friends
         init(me);
@@ -176,59 +164,9 @@ public class FriendsListPanel extends TitleWindow
 
     protected function init (memObj :MemberObject) :void
     {
-        memObj.addListener(this);
         memObj.addListener(_friendsList);
 
         _friendsList.init(memObj.friends.toArray());
-    }
-
-    protected function editMouseOver (...ignored) :void
-    {
-        _statusEdit.styleName = "statusEditHover";
-    }
-
-    protected function editMouseOut (...ignored) :void
-    {
-        _statusEdit.styleName = "statusEdit";
-    }
-
-    protected function editFocusIn (...ignored) :void
-    {
-        if (_statusEdit.text == Msgs.GENERAL.get("l.emptyStatus")) {
-            _statusEdit.text = Msgs.GENERAL.get("l.statusPrompt");
-        } else {
-            // highlight everything in there so you can just type in your new status
-            var selectionEnd :int = _statusEdit.text == null ? 0 : _statusEdit.text.length;
-            _statusEdit.setSelection(0, selectionEnd);
-        }
-    }
-
-    protected function editFocusOut (...ignored) :void
-    {
-        // quick check
-        if (_statusEdit.text == Msgs.GENERAL.get("l.statusPrompt") || 
-            _statusEdit.text == "") {
-            setStatus("");
-        }
-    }
-
-    protected function commitEdit (...ignored) :void
-    {
-        _statusEdit.setSelection(0, 0);
-        // delay losing focus by a frame so the selection has time to get set correctly.
-        callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
-        var newStatus :String = _statusEdit.text;
-        if (newStatus != _ctx.getMemberObject().headline) {
-            var msvc :MemberService =
-                (_ctx.getClient().requireService(MemberService) as MemberService);
-            msvc.updateStatus(_ctx.getClient(), newStatus, new InvocationAdapter(
-                function (cause :String) :void {
-                    _ctx.displayFeedback(null, cause);
-                    // revert to old status
-                    var me :MemberObject = _ctx.getMemberObject();
-                    setStatus(me.headline);
-                }));
-        }
     }
 
     protected function stageResized (...ignored) :void
@@ -253,24 +191,7 @@ public class FriendsListPanel extends TitleWindow
         }
     }
 
-    protected function keyUp (event :KeyboardEvent) :void
-    {
-        if (event.keyCode == Keyboard.ESCAPE) {
-            var me :MemberObject = _ctx.getMemberObject();
-            setStatus(me.headline);
-            _statusEdit.setSelection(0, 0);
-            // delay losing focus by a frame so the selection has time to get set correctly.
-            callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
-        }
-    }
-
-    protected function setStatus (status :String) :void
-    {
-        _statusEdit.text = 
-            status == "" || status == null ?  Msgs.GENERAL.get("l.emptyStatus") : status;
-    }
-
-    private static const log :Log = Log.getLog(FriendsListPanel);
+    private static const log :Log = Log.getLog(PartyPopup);
 
     protected static const PADDING :int = 10;
 
@@ -279,6 +200,7 @@ public class FriendsListPanel extends TitleWindow
 
     protected var _ctx :WorldContext;
     protected var _friendsList :PeerList;
+    protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
     protected var _currentX :int = 0;

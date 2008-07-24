@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.client {
 
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;

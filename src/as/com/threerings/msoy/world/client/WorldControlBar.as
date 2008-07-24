@@ -44,6 +44,8 @@ import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
+import com.threerings.msoy.party.client.PartyPopup;
+
 /**
  * Configures the control bar with World-specific stuff.
  */
@@ -160,6 +162,17 @@ public class WorldControlBar extends ControlBar
         friendBtn.enabled = true;
         friendBtn.focusEnabled = false;
         _friendBtnBox.addChild(friendBtn);
+
+        // Not ready for consumption
+        if (_ctx.getTokens().isAdmin()) {
+            var partyBtn :CommandButton = new CommandButton();
+            partyBtn.toolTip = Msgs.GENERAL.get("i.party");
+            partyBtn.setCommand(MsoyController.POP_PARTY);
+            partyBtn.styleName = "controlBarPartyButton";
+            partyBtn.enabled = true;
+            partyBtn.focusEnabled = false;
+            _friendBtnBox.addChild(partyBtn);
+        }
     }
 
     // from ControlBar

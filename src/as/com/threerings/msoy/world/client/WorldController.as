@@ -37,6 +37,8 @@ import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.party.client.PartyPopup;
+
 import com.threerings.msoy.avrg.client.AVRGamePanel;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -1060,6 +1062,20 @@ public class WorldController extends MsoyController
         }
     }
 
+    /** 
+     * Handles the POP_PARTY_LIST command.
+     */
+    public function handlePopParty (...ignored) :void
+    {
+        if (_partyPopup != null) {
+            _partyPopup.shutdown();
+            _partyPopup = null;
+        } else {
+            _partyPopup = new PartyPopup(_wctx);
+            _partyPopup.show();
+        }
+    }
+
     // from MsoyController
     override public function handleLogon (creds :Credentials) :void
     {
@@ -1362,6 +1378,9 @@ public class WorldController extends MsoyController
 
     /** Our friends list. */
     protected var _friendsList :FriendsListPanel;
+
+    /** Our party panel. */
+    protected var _partyPopup :PartyPopup;
 
     private static const log :Log = Log.getLog(WorldController);
 }
