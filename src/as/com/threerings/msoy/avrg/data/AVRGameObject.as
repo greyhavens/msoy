@@ -14,6 +14,7 @@ import com.threerings.presents.dobj.OidList;
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
 
+import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
@@ -69,6 +70,7 @@ public class AVRGameObject extends DObject
      * requests.
      */
     public var playerLocs :DSet = new DSet();
+    PlayerLocation;
 
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
