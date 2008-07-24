@@ -5,7 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
@@ -54,47 +54,14 @@ public class MsoyHttpServer extends Server
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
-        HttpServlet servlet;
-        for (int ii = 0; ii < SERVLETS.size(); ii++) {
-            servlet = injector.getInstance(SERVLETS.get(ii));
-            context.addServlet(new ServletHolder(servlet), "/" + SERVLET_NAMES[ii]);
+        for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
+            HttpServlet servlet = injector.getInstance(entry.getValue());
+            context.addServlet(new ServletHolder(servlet), entry.getKey());
         }
-
-        servlet = injector.getInstance(EmbedRouterServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/embed/*");
-
-        servlet = injector.getInstance(StatusServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/status/*");
-
-        servlet = injector.getInstance(MyStatsServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/mystats/*");
-
-        servlet = injector.getInstance(GameTraceLogServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/gamelogs/*");
-
-        servlet = injector.getInstance(PublicInfoServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/info/*");
-
-        servlet = injector.getInstance(RSSServlet.class);
-        context.addServlet(new ServletHolder(servlet), "/rss/*");
-
-        servlet = injector.getInstance(MediaProxyServlet.class);
-        context.addServlet(new ServletHolder(servlet),
-                           DeploymentConfig.PROXY_PREFIX + "*");
 
         // wire up serving of static content
         context.setWelcomeFiles(new String[] { "index.html" });
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
-
-        // if -Dthrottle=true is set, serve up files as if we were on a slow connection
-        if (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia")) {
-            log.info("NOTE: Serving static media via throttled servlet.");
-            servlet = injector.getInstance(MsoyThrottleServlet.class);
-            context.addServlet(new ServletHolder(servlet), "/*");
-        } else {
-            servlet = injector.getInstance(MsoyDefaultServlet.class);
-            context.addServlet(new ServletHolder(servlet), "/*");
-        }
 
         HandlerCollection handlers = new HandlerCollection();
         handlers.addHandler(contexts);
@@ -219,52 +186,39 @@ public class MsoyHttpServer extends Server
         protected ServletOutputStream _out;
     }
 
-    protected static final String[] SERVLET_NAMES = {
-        "usersvc",
-        "adminsvc",
-        "itemsvc",
-        "catalogsvc",
-        "profilesvc",
-        "membersvc",
-        "groupsvc",
-        "mailsvc",
-        "uploadsvc",
-        "remixuploadsvc",
-        "gamesvc",
-        "swiftlysvc",
-        "swiftlyuploadsvc",
-        "facebook",
-        "snapshotsvc",
-        "commentsvc",
-        "worldsvc",
-        "forumsvc",
-        "issuesvc",
-        "undersvc",
-        "gamestubsvc",
-    };
-
-    protected static final List<Class<? extends HttpServlet>> SERVLETS = Lists.newArrayList();
+    protected static final Map<String, Class<? extends HttpServlet>> SERVLETS = Maps.newHashMap();
     static {
-        SERVLETS.add(WebUserServlet.class);
-        SERVLETS.add(AdminServlet.class);
-        SERVLETS.add(ItemServlet.class);
-        SERVLETS.add(CatalogServlet.class);
-        SERVLETS.add(ProfileServlet.class);
-        SERVLETS.add(MemberServlet.class);
-        SERVLETS.add(GroupServlet.class);
-        SERVLETS.add(MailServlet.class);
-        SERVLETS.add(UploadServlet.class);
-        SERVLETS.add(UploadRemixMediaServlet.class);
-        SERVLETS.add(GameServlet.class);
-        SERVLETS.add(SwiftlyServlet.class);
-        SERVLETS.add(SwiftlyUploadServlet.class);
-        SERVLETS.add(FacebookServlet.class);
-        SERVLETS.add(SnapshotServlet.class);
-        SERVLETS.add(CommentServlet.class);
-        SERVLETS.add(WorldServlet.class);
-        SERVLETS.add(ForumServlet.class);
-        SERVLETS.add(IssueServlet.class);
-        SERVLETS.add(MsoyUnderwireServlet.class);
-        SERVLETS.add(GameStubServlet.class);
-    }
+        SERVLETS.put("/usersvc", WebUserServlet.class);
+        SERVLETS.put("/adminsvc", AdminServlet.class);
+        SERVLETS.put("/itemsvc", ItemServlet.class);
+        SERVLETS.put("/catalogsvc", CatalogServlet.class);
+        SERVLETS.put("/profilesvc", ProfileServlet.class);
+        SERVLETS.put("/membersvc", MemberServlet.class);
+        SERVLETS.put("/groupsvc", GroupServlet.class);
+        SERVLETS.put("/mailsvc", MailServlet.class);
+        SERVLETS.put("/uploadsvc", UploadServlet.class);
+        SERVLETS.put("/remixuploadsvc", UploadRemixMediaServlet.class);
+        SERVLETS.put("/gamesvc", GameServlet.class);
+        SERVLETS.put("/swiftlysvc", SwiftlyServlet.class);
+        SERVLETS.put("/swiftlyuploadsvc", SwiftlyUploadServlet.class);
+        SERVLETS.put("/facebook", FacebookServlet.class);
+        SERVLETS.put("/snapshotsvc", SnapshotServlet.class);
+        SERVLETS.put("/commentsvc", CommentServlet.class);
+        SERVLETS.put("/worldsvc", WorldServlet.class);
+        SERVLETS.put("/forumsvc", ForumServlet.class);
+        SERVLETS.put("/issuesvc", IssueServlet.class);
+        SERVLETS.put("/undersvc", MsoyUnderwireServlet.class);
+        SERVLETS.put("/gamestubsvc", GameStubServlet.class);
+        SERVLETS.put("/embed/*", EmbedRouterServlet.class);
+        SERVLETS.put("/status/*", StatusServlet.class);
+        SERVLETS.put("/mystats/*", MyStatsServlet.class);
+        SERVLETS.put("/gamelogs/*", GameTraceLogServlet.class);
+        SERVLETS.put("/info/*", PublicInfoServlet.class);
+        SERVLETS.put("/rss/*", RSSServlet.class);
+        SERVLETS.put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class);
+        // if -Dthrottle=true is set, serve up files as if we were on a slow connection
+        SERVLETS.put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))
+            ? MsoyThrottleServlet.class
+            : MsoyDefaultServlet.class);
+    } // end: static initializer
 }
