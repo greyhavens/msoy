@@ -64,5 +64,5 @@ public class MyRoomsPanel extends VerticalPanel
         }
     }
 
-    protected static final int ROOM_COLUMNS = 2;
+    protected static final int ROOM_COLUMNS = 1;
 }
