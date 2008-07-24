@@ -38,6 +38,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -120,6 +121,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.accFlow = member.accFlow;
         userObj.level = member.level;
 
+        // Ensure that the StatType enum is loaded before StatRepo.loadStats() is called
+        @SuppressWarnings("unused") StatType dummy = StatType.UNUSED;
         // load up this member's persistent stats
         List<Stat> stats = _statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
