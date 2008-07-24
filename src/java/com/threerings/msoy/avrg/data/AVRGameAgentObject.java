@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.threerings.presents.dobj.DObject;
+import com.threerings.bureau.data.AgentObject;
 import com.threerings.presents.dobj.DSet;
 
 /**
  * The data shared between server and agent for an AVR game.
  */
-public class AVRGameAgentObject extends DObject
+public class AVRGameAgentObject extends AgentObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>scenes</code> field. */
@@ -18,6 +18,9 @@ public class AVRGameAgentObject extends DObject
 
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
     public DSet<SceneInfo> scenes = new DSet<SceneInfo>();
+    
+    /** ID of the game object. */
+    public int gameOid;
 
     // AUTO-GENERATED: METHODS START
     /**
