@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
+import com.threerings.util.Log;
+
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.world.client.RoomView;
@@ -26,7 +28,8 @@ public class Snapshot
         _view = view;
         _width = width;
         _height = height;
-        bitmap = new BitmapData(width, height);        
+        bitmap = new BitmapData(width, height);  
+//        Log.getLog(this).info("created snapshot with size: "+width+"x"+height);
     }
     
     /**

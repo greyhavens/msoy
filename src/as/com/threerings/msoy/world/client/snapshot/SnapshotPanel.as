@@ -50,7 +50,7 @@ public class SnapshotPanel extends FloatingPanel
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.canManageRoom();
         
-        Log.getLog(this).warning("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
+        Log.getLog(this).debug("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
         
         sceneThumbnail = new Snapshot(view, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
         sceneThumbnail.updateSnapshot();

@@ -58,6 +58,10 @@ public class SnapshotController extends Controller
             }
             
             if (panel.shouldSaveGalleryImage) {
+                Log.getLog(this).debug(
+                    "saving gallery image size: " +
+                    panel.galleryImage.bitmap.width + "x" +
+                    panel.galleryImage.bitmap.height);                
                 upload(panel.galleryImage.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
             }
             
