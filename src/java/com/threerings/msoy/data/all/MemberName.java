@@ -16,9 +16,9 @@ public class MemberName extends Name
     implements DSet.Entry
 {
     /** A comparator for sorting Names by their display portion, case insensitively. */
-    public static final Comparator BY_DISPLAY_NAME = new Comparator() {
-        public int compare (Object o1, Object o2) {
-            return compareNames((MemberName)o1, (MemberName)o2);
+    public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
+        public int compare (MemberName name1, MemberName name2) {
+            return compareNames(name1, name2);
         }
     };
 
