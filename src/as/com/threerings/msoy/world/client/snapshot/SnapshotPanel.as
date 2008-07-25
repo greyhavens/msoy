@@ -39,16 +39,15 @@ public class SnapshotPanel extends FloatingPanel
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
 
-    public function SnapshotPanel (ctx :WorldContext, sceneId :int, view :RoomView)
+    public function SnapshotPanel (ctx :WorldContext, view :RoomView)
     {
         super(ctx, Msgs.WORLD.get("t.snap"));
 
-        _sceneId = sceneId;
         _view = view;
         _ctrl = new SnapshotController(ctx, this);
-        
+
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
-        _sceneThumbnailPermitted = _view.canManageRoom();
+        _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
         
         Log.getLog(this).debug("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
         
@@ -171,12 +170,11 @@ public class SnapshotPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         super.buttonClicked(buttonId);
-        _ctrl.close(buttonId == OK_BUTTON, this, _sceneId);
+        _ctrl.close(buttonId == OK_BUTTON, this);
     }
 
     protected var _sceneThumbnailPermitted :Boolean;
 
-    protected var _sceneId :int;
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;

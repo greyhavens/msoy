@@ -244,7 +244,7 @@ public class RoomObjectController extends RoomController
      */
     public function takeSnapshot () :void
     {
-        new SnapshotPanel(_wdctx, _scene.getId(), _roomView);
+        new SnapshotPanel(_wdctx, _roomView);
         // TODO: have button dim while a snapper is up. etc.
     }
 

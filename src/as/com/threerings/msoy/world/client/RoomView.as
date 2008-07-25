@@ -611,14 +611,6 @@ public class RoomView extends Sprite
     }
     
     /**
-     * Does the user of this view have management permission over the room being displayed?
-     */
-    public function canManageRoom () :Boolean
-    {
-        return _ctrl.canManageRoom();
-    }
-
-    /**
      * Populate the context menu for a sprite.
      */
     protected function populateSpriteContextMenu (sprite :MsoySprite, menuItems :Array) :void

@@ -18,7 +18,10 @@ import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Log;
 
+import com.threerings.whirled.data.Scene;
+
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -50,19 +53,20 @@ public class SnapshotController extends Controller
     /** Called when after the screenshot panel was closed. If doUpload is true, the snapshots
      *  taken by snapshotPanel will be uploaded to the server.  The canonical one will be
      *  used as the new snapshot for the scene. */
-    public function close (doUpload :Boolean, panel :SnapshotPanel, sceneId :int = 0) :void
+    public function close (doUpload :Boolean, panel :SnapshotPanel) :void
     {
         if (doUpload) {
             if (panel.shouldSaveSceneThumbnail) {
-                upload (panel.sceneThumbnail.bitmap, sceneId, SCENE_THUMBNAIL_SERVICE);
+                upload(panel.sceneThumbnail.bitmap, SCENE_THUMBNAIL_SERVICE);
             }
             
             if (panel.shouldSaveGalleryImage) {
-                Log.getLog(this).debug(
+                upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
+                Log.testing(
                     "saving gallery image size: " +
                     panel.galleryImage.bitmap.width + "x" +
                     panel.galleryImage.bitmap.height);                
-                upload(panel.galleryImage.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
+                upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
             }
             
             //todo: save the ordinary file here... depends on 
@@ -71,10 +75,10 @@ public class SnapshotController extends Controller
         _panel = null;
     }
     
-    protected function upload (bitmap :BitmapData, sceneId :int, service :String) :void    
+    protected function upload (bitmap :BitmapData, service :String) :void    
     {
         const encoder :JPGEncoder = new JPGEncoder(80);
-        const mimeBody :ByteArray = makeMimeBody(sceneId, encoder.encode(bitmap));
+        const mimeBody :ByteArray = makeMimeBody(encoder.encode(bitmap));
 
         // TODO: display a progress dialog during uploading
         // These should be local, or the dialog is a new thing. Fuck this controller, actually.
@@ -92,9 +96,10 @@ public class SnapshotController extends Controller
     }
 
     /** Creates an HTTP POST upload request. */
-    protected function makeMimeBody (sceneId :int, data :ByteArray) :ByteArray
+    protected function makeMimeBody (data :ByteArray) :ByteArray
     {
         var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
+        var scene :Scene = _ctx.getSceneDirector().getScene();
 
         const b :String = "--" + BOUNDARY + "\r\n";
         var output :ByteArray = new ByteArray();
@@ -105,8 +110,10 @@ public class SnapshotController extends Controller
             "Content-Disposition: form-data; name=\"member\"\r\n" +
             "\r\n" + String(memberId) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"scene\"\r\n" +
-            "\r\n" + String(sceneId) + "\r\n" + b +
-            "Content-Disposition: form-data; name=\"snapshot\"; " +
+            "\r\n" + String(scene.getId()) + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"name\"\r\n" +
+            "\r\n" + escape(Msgs.WORLD.get("m.sceneItemName", scene.getName())) + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"snapshot_plus_thumb\"; " +
             "filename=\"snapshot.jpg\"\r\n" +
             "Content-Type: image/jpeg\r\n" +
             "\r\n");
