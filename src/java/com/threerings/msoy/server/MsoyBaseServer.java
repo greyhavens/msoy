@@ -254,7 +254,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             String token) {
             ClientObject launcher = selectLauncher();
             BureauLauncherSender.launchThane(
-                launcher, bureauId, token, ServerConfig.serverHost,
+                launcher, bureauId, token, ServerConfig.backChannelHost,
                 getListenPorts()[0]);
         }
     }
