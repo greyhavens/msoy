@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.io.File;
 import java.security.Security;
 
 import com.google.inject.Inject;
@@ -13,14 +12,12 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Invoker;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
@@ -117,13 +114,13 @@ public abstract class MsoyBaseServer extends WhirledServer
             // hook up thane as a local command
             log.info("Running thane bureaus locally");
             _bureauReg.setCommandGenerator(
-                BureauTypes.THANE_BUREAU_TYPE, new ThaneCommandGenerator());
+                BureauTypes.THANE_BUREAU_TYPE, new ThaneCommandGenerator(), BUREAU_TIMEOUT);
 
         } else {
             // hook up bureau launching system for thane
             log.info("Running thane bureaus remotely");
             _bureauReg.setLauncher(
-                BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher());
+                BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher(), BUREAU_TIMEOUT);
             _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
             _invmgr.registerDispatcher(new BureauLauncherDispatcher(this),
                 BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
@@ -269,4 +266,7 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
+    
+    /** Time to wait for bureaus to connect back. */
+    protected static final int BUREAU_TIMEOUT = 30 * 1000;
 }
