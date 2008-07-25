@@ -312,7 +312,12 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSupport ()
     {
-        return isSet(Flag.SUPPORT) || isSet(Flag.ADMIN);
+        return isSupportOnly() || isAdmin();
+    }
+
+    public boolean isSupportOnly ()
+    {
+        return isSet(Flag.SUPPORT);
     }
 
     /**

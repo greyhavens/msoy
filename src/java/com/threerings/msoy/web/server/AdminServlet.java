@@ -98,7 +98,7 @@ public class AdminServlet extends MsoyServiceServlet
             info.name = tgtrec.getName();
             info.accountName = tgtrec.accountName;
             info.permaName = tgtrec.permaName;
-            info.isSupport = tgtrec.isSupport();
+            info.isSupport = tgtrec.isSupportOnly();
             info.isAdmin = tgtrec.isAdmin();
             info.flow = tgtrec.flow;
             info.accFlow = tgtrec.accFlow;
