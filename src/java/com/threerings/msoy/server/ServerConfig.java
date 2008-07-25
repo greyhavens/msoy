@@ -228,10 +228,18 @@ public class ServerConfig
         gameServerPort = config.getValue("game_server_port", 47625);
         socketPolicyPort = config.getValue("socket_policy_port", 47623);
 
+        String hostname = System.getProperty("hostname");
+        // we tell other local machines to connect to us using our back channel hostname
+        backChannelHost = hostname;
+
         // if we're a server node (not the webapp or a tool) do some extra stuff
         if (Boolean.getBoolean("is_node")) {
             List<String> errors = Lists.newArrayList();
-            String hostname = System.getProperty("hostname");
+
+            // in a clustered configuration we must have a back channel
+            if (StringUtil.isBlank(backChannelHost)) {
+                errors.add("Missing 'hostname' system property.");
+            }
 
             // if we have a host node pattern, use that to determine our node id and name
             String hostNodePattern = config.getValue("host_node_pattern", "");
@@ -267,12 +275,6 @@ public class ServerConfig
                     errors.add("Unable to determine node id from name [name=" + nodeName + "]. " +
                                "Node name must match pattern '" + NODE_ID_PATTERN + "'.");
                 }
-            }
-
-            // we tell other nodes to connect to us using our back channel hostname
-            backChannelHost = hostname;
-            if (StringUtil.isBlank(backChannelHost)) {
-                errors.add("Missing 'hostname' system property.");
             }
 
             // configure our server hostname based on our server_host_pattern
