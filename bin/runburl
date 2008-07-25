@@ -41,6 +41,7 @@ fi
 
 CLASS=com.threerings.msoy.bureau.client.BureauLauncher
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
+    -Dhostname=$HOSTNAME \
     -Djava.rmi.server.hostname=$HOSTNAME \
     -Dlog4j.configuration=log4j-bureaulauncher.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
