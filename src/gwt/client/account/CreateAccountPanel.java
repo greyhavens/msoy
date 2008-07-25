@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
@@ -55,13 +56,15 @@ public class CreateAccountPanel extends FlowPanel
     {
         _regListener = regListener;
         setStyleName("createAccount");
-
+        
         FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
         add(loginLink);
-        loginLink.add(new InlineLabel(CAccount.msgs.createAlreadyMember()));
-        loginLink.add(MsoyUI.createActionLabel(
-            CAccount.msgs.createLoginLink(), "inline", 
-            Application.createLinkListener(Page.ACCOUNT, "login")));
+        loginLink.add(new Label(CAccount.msgs.createAlreadyMember()));
+        PushButton loginButton = MsoyUI.createButton(
+            MsoyUI.SHORT_THIN, CAccount.msgs.createLoginLink(), 
+            Application.createLinkListener(Page.ACCOUNT, "login"));
+        loginButton.addClickListener(MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
+        loginLink.add(loginButton);
         
         add(MsoyUI.createLabel(CAccount.msgs.createIntro(), "Intro"));
         add(MsoyUI.createLabel(CAccount.msgs.createCoins(), "Coins"));

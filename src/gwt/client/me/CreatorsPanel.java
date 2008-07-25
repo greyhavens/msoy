@@ -1,6 +1,7 @@
 package client.me;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import client.shell.Application;
@@ -23,10 +24,13 @@ public class CreatorsPanel extends SimplePanel
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
         getStartedButton.addClickListener(Application.createLinkListener(Page.ACCOUNT, "create"));
+        getStartedButton.addClickListener(MsoyUI.createTrackingListener("creatorsGetStartedClicked", null));
         content.add(getStartedButton, 342, 381);
         
-        content.add(MsoyUI.createActionImage("/images/landing/creators_info.jpg", 
-            Application.createLinkListener(Page.ACCOUNT, "create")), 15, 504);
+        Image infoImage = MsoyUI.createActionImage("/images/landing/creators_info.jpg", 
+            Application.createLinkListener(Page.ACCOUNT, "create"));
+        infoImage.addClickListener(MsoyUI.createTrackingListener("creatorsInfoImageClicked", null));
+        content.add(infoImage, 15, 504);
                 
         content.add(new LandingCopyright(), 0, 1085);
     }

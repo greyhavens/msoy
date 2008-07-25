@@ -5,6 +5,7 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.web.client.GameService;
@@ -75,9 +76,13 @@ public class index extends MsgsEntryPoint
                     public void onSuccess (Integer group) {
                         Frame.closeClient(false); // fullscreen
                         if (group == 1) {
-                            setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);                                                        
+                            setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);
+                        } else if (group == 2) {
+                            setContent(CMe.msgs.titleCreators(), new CreatorsLinksPanel(), false);
+                        } else if (group == 3) {
+                            Application.go(Page.ME, "");
                         } else {
-                            // if test is not running visitors see info page
+                            // group 4, and if test is not running visitors see info page
                             setContent(CMe.msgs.titleCreators(), new CreatorsPanel(), false);
                         }
                     }
@@ -90,6 +95,14 @@ public class index extends MsgsEntryPoint
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsinfotest")) {
             setContent(CMe.msgs.titleCreators(), new CreatorsPanel(), false);
+
+        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorslinkstest")) {
+            setContent(CMe.msgs.titleCreators(), new CreatorsLinksPanel(), false);
+
+        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorsoldlandingtest")) {
+            Application.go(Page.ME, "");
 
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
