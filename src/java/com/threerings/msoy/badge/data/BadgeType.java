@@ -66,7 +66,7 @@ public enum BadgeType
      */
     public BadgeProgress getProgress (MemberObject user)
     {
-        return new BadgeProgress(_unitName, _requiredUnits, this.getAcquiredUnits(user));
+        return new BadgeProgress(_unitName, _requiredUnits, getAcquiredUnits(user));
     }
 
     /**
