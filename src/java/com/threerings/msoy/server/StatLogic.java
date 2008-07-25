@@ -34,9 +34,9 @@ public class StatLogic
      * @exception ClassCastException thrown if the registered type of the specified stat is not a
      * {@link IntStat}.
      */
-    public void incrementStat (int playerId, Stat.Type type, int delta)
+    public void incrementStat (int memberId, Stat.Type type, int delta)
     {
-        updateStat(playerId, new IntStatIncrementer(type, delta));
+        updateStat(memberId, new IntStatIncrementer(type, delta));
     }
 
     /**
@@ -45,16 +45,16 @@ public class StatLogic
      * @exception ClassCastException thrown if the registered type of the specified stat is not a
      * {@link IntSetStat}.
      */
-    public void addToSetStat (int playerId, Stat.Type type, int value)
+    public void addToSetStat (int memberId, Stat.Type type, int value)
     {
-        updateStat(playerId, new IntSetStatAdder(type, value));
+        updateStat(memberId, new IntSetStatAdder(type, value));
     }
 
     /**
      * Attempts to apply the given stat modification. If the stat modification fails MAX_TRIES
      * times, a warning will be logged; otherwise, a MemberNodeAction will be posted.
      */
-    protected <T extends Stat> void updateStat (int playerId, StatModifier<T> modifier)
+    protected <T extends Stat> void updateStat (int memberId, StatModifier<T> modifier)
     {
         if (!DeploymentConfig.devDeployment) {
             return; // TODO remove this when the Passport system goes live
@@ -62,15 +62,13 @@ public class StatLogic
 
         try {
             // first update the stat in the database
-            if (_statRepo.updateStat(playerId, modifier)) {
-                // TODO: send this stat modifier to the server that is hosting this member's
-                // runtime stats, if any (note: this functionality may also be provided by the
-                // Vilya Stat system)
-                log.info("updateStat succeeded", "playerId", playerId,
+            if (_statRepo.updateStat(memberId, modifier)) {
+                MemberNodeActions.statUpdated(memberId, modifier);
+                log.info("updateStat succeeded", "memberId", memberId,
                     "statType", modifier.getType().name());
             }
         } catch (PersistenceException pe) {
-            log.warning("updateStat failed", "playerId", playerId, "type", modifier.getType(), pe);
+            log.warning("updateStat failed", "memberId", memberId, "type", modifier.getType(), pe);
         }
     }
 

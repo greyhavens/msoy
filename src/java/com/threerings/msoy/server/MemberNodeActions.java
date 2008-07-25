@@ -8,6 +8,8 @@ import com.google.inject.Inject;
 import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
@@ -142,6 +144,14 @@ public class MemberNodeActions
     public static void badgeAwarded (BadgeRecord record)
     {
         _peerMan.invokeNodeAction(new BadgeAwarded(record));
+    }
+
+    /**
+     * Update a member's StatSet.
+     */
+    public static <T extends Stat> void statUpdated (int memberId, StatModifier<T> modifier)
+    {
+        _peerMan.invokeNodeAction(new StatUpdated<T>(memberId, modifier));
     }
 
     protected static class InfoChanged extends MemberNodeAction
@@ -314,6 +324,20 @@ public class MemberNodeActions
         protected void execute (MemberObject memobj) {
             // TODO something magical happens here
         }
+    }
+
+    protected static class StatUpdated<T extends Stat> extends MemberNodeAction
+    {
+        public StatUpdated (int memberId, StatModifier<T> modifier) {
+            super(memberId);
+            _modifier = modifier;
+        }
+
+        protected void execute (MemberObject memobj) {
+            memobj.getStats().updateStat(_modifier);
+        }
+
+        protected StatModifier<T> _modifier;
     }
 
     protected static class FriendEntryUpdate extends PeerManager.NodeAction
