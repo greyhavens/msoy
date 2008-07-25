@@ -472,7 +472,7 @@ public class MsoyEvents
             this.timestamp = new Date();
             this.tracker = tracker;
             this.actionName = actionName;
-            this.details = details != null ? details : "";
+            this.details = toValue(details);
         }
     }
 

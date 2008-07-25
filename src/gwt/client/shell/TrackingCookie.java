@@ -26,7 +26,9 @@ public class TrackingCookie
     public static ReferralInfo get ()
     {
         if (! contains()) {
-            return null;
+            ReferralInfo ref = new ReferralInfo("", "", "", ReferralInfo.makeRandomTracker());
+            CShell.log("Could not locate referralInfo (cookies disabled?), loaded blank info.");
+            return ref;
         }
 
         ReferralInfo ref = ReferralInfo.makeInstance(
