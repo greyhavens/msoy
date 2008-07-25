@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +17,12 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.common.collect.Maps;
+
 import com.samskivert.io.StreamUtil;
 import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -30,23 +35,25 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        FileItem[] items = null;
+        UploadContext ctx = new UploadContext(req, rsp);
         try {
             // validate the content length is sane
-            int length = validateContentLength(req);
-
             // attempt to extract the FileItem from the servlet request and also verify the upload
             // is not larger than our maximum allowed size
-            items = extractFileItems(req);
-            FileItem file = findFile(items);
-            if (file == null) {
+            ctx.uploadLength = validateContentLength(req);
+            ctx.allItems = extractFileItems(req);
+            ctx.formFields = parseFormFields(ctx.allItems);
+            ctx.file = findFile(ctx.allItems);
+            validateAccess(ctx);
+
+            if (ctx.file == null) {
                 log.warning("Failed to extract file from upload request. [req= " + req + "].");
                 internalError(rsp);
                 return;
             }
 
             // pass the extracted file to the concrete class
-            handleFileItems(file, items, length, req, rsp);
+            handleFileItems(ctx);
 
         } catch (ServletFileUpload.SizeLimitExceededException slee) {
             log.info(slee.getMessage() + " [size=" + slee.getActualSize() + " allowed=" +
@@ -72,8 +79,8 @@ public abstract class AbstractUploadServlet extends HttpServlet
         } finally {
             // delete the temporary upload file data.
             // items may be null if extractFileItem throws an exception
-            if (items != null) {
-                for (FileItem item : items) {
+            if (ctx.allItems != null) {
+                for (FileItem item : ctx.allItems) {
                     if (item != null) {
                         item.delete();
                     }
@@ -83,10 +90,20 @@ public abstract class AbstractUploadServlet extends HttpServlet
     }
 
     /**
+     * Validate that this user has permission to upload, and populate the MemberRecord
+     * in the context, if desired.
+     */
+    protected void validateAccess (UploadContext ctx)
+        throws AccessDeniedException
+    {
+        // no validation here
+        // ctx.memrec = null;
+    }
+
+    /**
      * Handles the extracted UploadFile in a concrete class specific way.
      */
-    protected abstract void handleFileItems (FileItem file, FileItem[] allItems, int uploadLength,
-                                             HttpServletRequest req, HttpServletResponse rsp)
+    protected abstract void handleFileItems (UploadContext ctx)
         throws IOException, FileUploadException, AccessDeniedException;
 
     /**
@@ -117,6 +134,30 @@ public abstract class AbstractUploadServlet extends HttpServlet
             items.add((FileItem)obj);
         }
         return items.toArray(new FileItem[]{});
+    }
+
+    /**
+     * Converts all uploaded form fields into a map of field names to field values.
+     */
+    protected Map<String, String> parseFormFields (FileItem[] items)
+    {
+        Map<String, String> fields = Maps.newHashMap();
+        for (FileItem item : items) {
+            try {
+                if (item.isFormField()) {
+                    String name = item.getFieldName();
+//                    BufferedReader in =
+//                        new BufferedReader(new InputStreamReader(item.getInputStream()));
+//                    String value = in.readLine();
+// TODO: check this? does getString() always work?
+                    String value = item.getString("UTF-8");
+                    fields.put(name, value);
+                }
+            } catch (IOException ie) {
+                // just skip this item
+            }
+        }
+        return fields;
     }
 
     /** Returns the first form element that actually contains a file. */
@@ -200,6 +241,38 @@ public abstract class AbstractUploadServlet extends HttpServlet
         AccessDeniedException (String reason)
         {
             super(reason);
+        }
+    }
+
+    /**
+     * A holder for a bunch of the objects we pass around.
+     * Your subclass may leave some of these fields null.
+     */
+    protected static class UploadContext
+    {
+        public HttpServletRequest req;
+
+        public HttpServletResponse rsp;
+
+        public int uploadLength;
+
+        /** The member record. */
+        public MemberRecord memrec;
+
+        public FileItem file;
+
+        public FileItem[] allItems;
+
+        public Map<String, String> formFields;
+
+        /** Arbitrary data you may store here. */
+        public Object data;
+
+        /** Construct */
+        public UploadContext (HttpServletRequest req, HttpServletResponse rsp)
+        {
+            this.req = req;
+            this.rsp = rsp;
         }
     }
 

@@ -15,6 +15,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -27,41 +29,40 @@ import static com.threerings.msoy.Log.log;
  */
 public class UploadServlet extends AbstractUploadServlet
 {
+    // TODO: override validateAccess. check that the user is logged in.
+    // This will require the various item editors to pass a WebIdent down here.
+
     /**
      * Generates the MediaInfo object for this FileItem and publishes the data into the media store
      * and returns the results via Javascript to the GWT client.
      */
     @Override // from AbstractUploadServlet
-    protected void handleFileItems (FileItem item, FileItem[] allItems, int uploadLength,
-                                    HttpServletRequest req, HttpServletResponse rsp)
+    protected void handleFileItems (UploadContext ctx)
         throws IOException, FileUploadException, AccessDeniedException
     {
         // wrap the FileItem in an UploadFile for publishing
-        UploadFile uploadFile = new FileItemUploadFile(item);
+        UploadFile uploadFile = new FileItemUploadFile(ctx.file);
 
         // attempt to extract the mediaId
-        String mediaId = item.getFieldName();
+        String mediaId = ctx.file.getFieldName();
         if (mediaId == null) {
             throw new FileUploadException("Failed to extract mediaId from upload request.");
         }
 
-        // TODO: check that the user is logged in. This will require the various item editors to
-        // pass a WebIdent down here.
-
         // TODO: check that this is a supported content type
-        log.info("Received file: [type: " + item.getContentType() +
-                 ", size=" + item.getSize() + ", id=" + item.getFieldName() + "].");
+        log.info("Received file: [type: " + ctx.file.getContentType() +
+                 ", size=" + ctx.file.getSize() + ", id=" + ctx.file.getFieldName() + "].");
 
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.
         byte mimeType = uploadFile.getMimeType();
         if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
             // now we can validate the file size
-            validateFileLength(mimeType, uploadLength);
+            validateFileLength(mimeType, ctx.uploadLength);
 
         } else {
             throw new FileUploadException("Received upload of unknown mime type [type=" +
-                item.getContentType() + ", name=" + item.getName() + "].");
+                ctx.file.getContentType() + ", name=" + ctx.file.getName() + "].");
         }
 
         // determine whether they also want a thumbnail media generated
@@ -91,34 +92,31 @@ public class UploadServlet extends AbstractUploadServlet
 
         // determine whether we're responding to the mchooser or a GWT upload
         Client client = Client.GWT;
-        for (FileItem fitem : allItems) {
-            if (fitem.getFieldName().equals("client")) {
-                String text = null;
-                try {
-                    text = fitem.getString("UTF-8");
-                    client = Client.valueOf(text.toUpperCase());
-                } catch (Exception e) {
-                    log.warning("Invalid client identifier [text=" + text + ", error=" + e + "].");
-                }
+        String cliStr = ctx.formFields.get("client");
+        if (cliStr != null) {
+            try {
+                client = Client.valueOf(cliStr.toUpperCase());
+            } catch (Exception e) {
+                log.warning("Invalid client identifier [text=" + cliStr + ", error=" + e + "].");
             }
         }
 
         // now that we have published the file, post a response back to the caller
-        sendResponse(rsp, client, mediaId, info, tinfo);
+        sendResponse(ctx, client, mediaId, info, tinfo);
     }
 
     /**
      * Send the response back to the caller.
      */
     protected void sendResponse (
-        HttpServletResponse rsp, Client client, String mediaId, MediaInfo info, MediaInfo tinfo)
+        UploadContext ctx, Client client, String mediaId, MediaInfo info, MediaInfo tinfo)
         throws IOException
     {
         // write out the magical incantations that are needed to cause our magical little
         // frame to communicate the newly assigned mediaHash to the ItemEditor widget
         PrintStream out = null;
         try {
-            out = new PrintStream(rsp.getOutputStream());
+            out = new PrintStream(ctx.rsp.getOutputStream());
             switch (client) {
             case GWT:
                 out.println("<html>");

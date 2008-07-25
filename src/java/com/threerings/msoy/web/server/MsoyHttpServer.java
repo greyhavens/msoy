@@ -202,7 +202,8 @@ public class MsoyHttpServer extends Server
         SERVLETS.put("/swiftlysvc", SwiftlyServlet.class);
         SERVLETS.put("/swiftlyuploadsvc", SwiftlyUploadServlet.class);
         SERVLETS.put("/facebook", FacebookServlet.class);
-        SERVLETS.put("/snapshotsvc", SnapshotServlet.class);
+        SERVLETS.put("/scenethumbsvc", SceneThumbnailUploadServlet.class);
+        SERVLETS.put("/snapshotsvc", SnapshotItemUploadServlet.class);
         SERVLETS.put("/commentsvc", CommentServlet.class);
         SERVLETS.put("/worldsvc", WorldServlet.class);
         SERVLETS.put("/forumsvc", ForumServlet.class);
