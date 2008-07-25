@@ -13,6 +13,7 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
@@ -29,7 +30,8 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (int memberId, BadgeType type, long whenEarned)
+    public void awardBadge (int memberId, BadgeType type, long whenEarned,
+        boolean sendMemberNodeAction)
         throws PersistenceException
     {
         BadgeRecord brec = new BadgeRecord();
@@ -38,8 +40,12 @@ public class BadgeLogic
         brec.whenEarned = new Timestamp(whenEarned);
         _badgeRepo.storeBadge(brec);
 
-        _feedRepo.publishMemberMessage(
-            memberId, FeedMessageType.FRIEND_WON_BADGE, "some data here");
+        _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_BADGE,
+            "some data here");
+
+        if (sendMemberNodeAction) {
+            MemberNodeActions.badgeAwarded(brec);
+        }
     }
 
     @Inject protected BadgeRepository _badgeRepo;

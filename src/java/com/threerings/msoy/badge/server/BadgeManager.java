@@ -80,8 +80,10 @@ public class BadgeManager
             public void invokePersist () throws PersistenceException {
                 for (BadgeType badgeType : badgeTypes) {
                     // BadgeLogic.awardBadge handles putting the badge in the repository and
-                    // publishing a member feed about the event
-                    _badgeLogic.awardBadge(user.getMemberId(), badgeType, whenEarned);
+                    // publishing a member feed about the event. We don't need awardBadge()
+                    // to send a MemberNodeAction about this badge being earned, because we
+                    // already know about it.
+                    _badgeLogic.awardBadge(user.getMemberId(), badgeType, whenEarned, false);
                 }
             }
             public void handleFailure (Exception error) {

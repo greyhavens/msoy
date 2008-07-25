@@ -11,6 +11,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
+import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.GroupMembership;
@@ -319,11 +320,14 @@ public class MemberNodeActions
     {
         public BadgeAwarded (BadgeRecord record) {
             super(record.memberId);
+            _badge = record.toBadge();
         }
 
         protected void execute (MemberObject memobj) {
-            // TODO something magical happens here
+            memobj.badges.addBadge(_badge);
         }
+
+        protected EarnedBadge _badge;
     }
 
     protected static class StatUpdated<T extends Stat> extends MemberNodeAction
