@@ -4,10 +4,11 @@
 package com.threerings.msoy.bureau.client {
 
 import com.threerings.bureau.client.BureauDirector;
+import com.threerings.bureau.util.BureauContext;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.whirled.bureau.client.UserCodeLoader;
 import com.whirled.bureau.client.WhirledBureauClient;
-import com.whirled.bureau.util.WhirledBureauContext;
 
 /** Msoy-specific subclass. */
 public class MsoyBureauClient extends WhirledBureauClient
@@ -34,6 +35,13 @@ public class MsoyBureauClient extends WhirledBureauClient
         token :String, bureauId :String, userCodeLoader :UserCodeLoader, cleanup :Function)
     {
         super(token, bureauId, userCodeLoader, cleanup);
+        _windowDirector = new WindowDirector(bureauId);
+    }
+
+    /** Access this client's window director. */
+    public function getWindowDirector () :WindowDirector
+    {
+        return _windowDirector;
     }
 
     /** @inheritDoc */
@@ -41,8 +49,67 @@ public class MsoyBureauClient extends WhirledBureauClient
     protected override function createDirector () :BureauDirector
     {
         // create the msoy-specific subclass
-        return new MsoyBureauDirector(_ctx as WhirledBureauContext);
+        return new MsoyBureauDirector(_ctx as MsoyBureauContext);
     }
+
+    /** @inheritDoc */
+    // from BureauClient
+    protected override function createContext () :BureauContext
+    {
+        // create the msoy-specific subclass
+        return new ContextImpl(this);
+    }
+
+    protected var _windowDirector :WindowDirector;
 }
 
+}
+
+import com.threerings.bureau.client.BureauDirector;
+import com.threerings.msoy.bureau.client.MsoyBureauClient;
+import com.threerings.msoy.bureau.client.WindowDirector;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObjectManager;
+import com.whirled.bureau.client.UserCodeLoader;
+
+class ContextImpl
+    implements MsoyBureauContext
+{
+    public function ContextImpl (client :MsoyBureauClient)
+    {
+        _client = client;
+    }
+
+    public function getBureauDirector () :BureauDirector
+    {
+        return _client.getBureauDirector();
+    }
+
+    public function getDObjectManager () :DObjectManager
+    {
+        return _client.getDObjectManager();
+    }
+
+    public function getClient () :Client
+    {
+        return _client;
+    }
+
+    public function getBureauId () :String
+    {
+        return _client.getBureauId();
+    }
+
+    public function getUserCodeLoader () :UserCodeLoader
+    {
+        return _client.getUserCodeLoader();
+    }
+
+    public function getWindowDirector () :WindowDirector
+    {
+        return _client.getWindowDirector();
+    }
+
+    protected var _client :MsoyBureauClient;
 }

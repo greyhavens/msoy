@@ -5,23 +5,23 @@
 
 package com.threerings.msoy.bureau.client {
 
-import com.threerings.bureau.client.Agent;
 import com.threerings.bureau.Log;
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.bureau.client.Agent;
+import com.threerings.crowd.data.ManagerCaller;
+import com.threerings.msoy.avrg.client.ThaneAVRGameController;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.SubscriberAdapter;
 import com.threerings.presents.util.SafeSubscriber;
 import com.whirled.bureau.client.UserCode;
-import com.whirled.bureau.util.WhirledBureauContext;
-import com.threerings.msoy.avrg.client.ThaneAVRGameController;
-import com.threerings.crowd.data.ManagerCaller;
 
 /** The container for a user's avr game control code. */
 public class AVRGameAgent extends Agent
 {
-    public function AVRGameAgent (ctx :WhirledBureauContext)
+    public function AVRGameAgent (ctx :MsoyBureauContext)
     {
         _ctx = ctx;
     }
@@ -152,7 +152,7 @@ public class AVRGameAgent extends Agent
     }
 
     protected var _subscriber :SafeSubscriber;
-    protected var _ctx :WhirledBureauContext;
+    protected var _ctx :MsoyBureauContext;
     protected var _gameObj :AVRGameObject;
     protected var _userCode :UserCode;
     protected var _controller :ThaneAVRGameController;
