@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.world.client.WatcherDecoder;
-import com.threerings.msoy.world.client.WatcherReceiver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationSender;
 
