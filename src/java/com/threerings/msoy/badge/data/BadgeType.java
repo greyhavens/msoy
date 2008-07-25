@@ -14,17 +14,24 @@ import com.threerings.stats.Log;
 public enum BadgeType
 {
     // social badges
-    FRIEND_1(Category.SOCIAL, 1000) {
-        public boolean getProgress (MemberObject user) {
-            return user.stats.getIntStat(StatType.FRIENDS_MADE) >= 1;
+    FRIEND_1(Category.SOCIAL, 1000, "Friends", 1) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
 
-    FRIEND_2(Category.SOCIAL, 1000) {
-        public boolean getProgress (MemberObject user) {
-            return user.stats.getIntStat(StatType.FRIENDS_MADE) >= 5;
+    FRIEND_2(Category.SOCIAL, 2000, "Friends", 5) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
+
+    // game badges
+    GAMER_1(Category.GAME, 1000, "Games", 5) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
+        }
+    }
 
     ;
 
@@ -55,14 +62,11 @@ public enum BadgeType
     }
 
     /**
-     * Overridden by badge types to indicate whether the specified user qualifies
-     * for this badge.
-     * TODO: eventually, this function will be changed to return a String indicating
-     * how much progress has been made. For now, it returns true if the Badge has been earned.
+     * Returns the progress that the specified user has made on this badge.
      */
-    public boolean getProgress (MemberObject user)
+    public BadgeProgress getProgress (MemberObject user)
     {
-        return false;
+        return new BadgeProgress(_unitName, _requiredUnits, this.getAcquiredUnits(user));
     }
 
     /**
@@ -71,7 +75,7 @@ public enum BadgeType
      */
     public boolean hasEarned (MemberObject user)
     {
-        return this.getProgress(user);
+        return getProgress(user).isComplete();
     }
 
     /**
@@ -98,10 +102,21 @@ public enum BadgeType
         return _coinValue;
     }
 
-    BadgeType (Category category, int coinValue)
+    /**
+     * Overridden by badge types to indicate how many units of the stat that this badge tracks
+     * (games played, friends made, etc) the user has acquired.
+     */
+    protected int getAcquiredUnits (MemberObject user)
+    {
+        return 0;
+    }
+
+    BadgeType (Category category, int coinValue, String unitName, int requiredUnits)
     {
         _category = category;
         _coinValue = coinValue;
+        _unitName = unitName;
+        _requiredUnits = requiredUnits;
     }
 
     /**
@@ -142,6 +157,8 @@ public enum BadgeType
     protected Category _category;
     protected int _coinValue;
     protected int _code;
+    protected String _unitName;
+    protected int _requiredUnits;
 
     /** The table mapping stat codes to enumerated types. */
     protected static HashIntMap<BadgeType> _codeToType;

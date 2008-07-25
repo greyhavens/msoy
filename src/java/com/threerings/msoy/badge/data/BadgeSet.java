@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.badge.data;
 
-import java.util.Collection;
-
-import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.presents.dobj.DSet;
 
 /**
