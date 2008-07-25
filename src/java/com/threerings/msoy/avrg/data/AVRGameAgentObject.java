@@ -14,6 +14,9 @@ public class AVRGameAgentObject extends AgentObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>scenes</code> field. */
     public static final String SCENES = "scenes";
+
+    /** The field name of the <code>gameOid</code> field. */
+    public static final String GAME_OID = "gameOid";
     // AUTO-GENERATED: FIELDS END
 
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
@@ -69,6 +72,22 @@ public class AVRGameAgentObject extends AgentObject
         @SuppressWarnings("unchecked") DSet<SceneInfo> clone =
             (value == null) ? null : value.typedClone();
         this.scenes = clone;
+    }
+
+    /**
+     * Requests that the <code>gameOid</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGameOid (int value)
+    {
+        int ovalue = this.gameOid;
+        requestAttributeChange(
+            GAME_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.gameOid = value;
     }
     // AUTO-GENERATED: METHODS END
 }
