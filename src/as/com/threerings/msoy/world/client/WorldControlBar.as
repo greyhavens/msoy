@@ -64,17 +64,10 @@ public class WorldControlBar extends ControlBar
      */
     public function set sceneEditPossible (value :Boolean) :void
     {
-        var editButtons :Array = [ _roomeditBtn, _snapBtn ];
-        editButtons.forEach(function (button :CommandButton, i :*, a :*) :void {
-            if (button != null) {
-                button.enabled = value;
-            }
-        });
-
-        // TODO: testing only (robert)
-        if (_ctx.getTokens().isAdmin() && _snapBtn != null) {
-            _snapBtn.enabled = value;
-        }
+        // currently we just enable or disable the room edit button
+        if (_roomeditBtn != null) {
+            _roomeditBtn.enabled = value;
+        }                
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
@@ -204,9 +197,9 @@ public class WorldControlBar extends ControlBar
         addGroupChild(_roomeditBtn, [ UI_STD ]);
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit
-        if (_ctx.getTokens() != null && _ctx.getTokens().isAdmin()) {
+//        if (_ctx.getTokens() != null && _ctx.getTokens().isAdmin()) {
             addGroupChild(_snapBtn, [ UI_STD ]);
-        }
+//        }
     }
 
     // from ControlBar

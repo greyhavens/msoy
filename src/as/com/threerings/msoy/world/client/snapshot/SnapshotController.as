@@ -31,7 +31,7 @@ import com.threerings.msoy.world.client.WorldContext;
  */
 public class SnapshotController extends Controller
 {
-    public static const CANONICAL_THUMBNAIL_SERVICE :String = "/scenethumbsvc";
+    public static const SCENE_THUMBNAIL_SERVICE :String = "/scenethumbsvc";
     
     // todo: set the actual servlet name for scene snapshots
     public static const SCENE_SNAPSHOT_SERVICE :String = "/snapshotsvc";
@@ -53,12 +53,12 @@ public class SnapshotController extends Controller
     public function close (doUpload :Boolean, panel :SnapshotPanel, sceneId :int = 0) :void
     {
         if (doUpload) {
-            if (panel.canonical.bitmap) {
-                upload(panel.canonical.bitmap, sceneId, CANONICAL_THUMBNAIL_SERVICE);
+            if (panel.shouldSaveSceneThumbnail) {
+                upload (panel.sceneThumbnail.bitmap, sceneId, SCENE_THUMBNAIL_SERVICE);
             }
             
-            if (panel.fullRoom.bitmap) {
-                upload(panel.canonical.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
+            if (panel.shouldSaveGalleryImage) {
+                upload(panel.galleryImage.bitmap, sceneId, SCENE_SNAPSHOT_SERVICE);                
             }
             
             //todo: save the ordinary file here... depends on 

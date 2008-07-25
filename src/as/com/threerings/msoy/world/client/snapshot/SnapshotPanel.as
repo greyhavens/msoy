@@ -10,6 +10,7 @@ import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 import mx.core.BitmapAsset;
+import mx.core.UIComponent;
 import mx.controls.Image;
 import mx.controls.Text;
 
@@ -32,11 +33,11 @@ import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    public static const CANONICAL_WIDTH :int = 350; // old: 320;
-    public static const CANONICAL_HEIGHT :int = 200; // old: 180;
+    public static const SCENE_THUMBNAIL_WIDTH :int = 350; // old: 320;
+    public static const SCENE_THUMBNAIL_HEIGHT :int = 200; // old: 180;
 
-    public var fullRoom :Snapshot;
-    public var canonical :Snapshot
+    public var galleryImage :Snapshot;
+    public var sceneThumbnail :Snapshot;
 
     public function SnapshotPanel (ctx :WorldContext, sceneId :int, view :RoomView)
     {
@@ -47,19 +48,33 @@ public class SnapshotPanel extends FloatingPanel
         _ctrl = new SnapshotController(ctx, this);
         
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
-        _canonicalEnabled = _view.canManageRoom();
+        _sceneThumbnailPermitted = _view.canManageRoom();
         
-        Log.getLog(this).warning("_canonicalEnabled = "+_canonicalEnabled);        
+        Log.getLog(this).warning("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
         
-        if (_canonicalEnabled) {
-            canonical = new Snapshot(view, CANONICAL_WIDTH, CANONICAL_HEIGHT);
-            canonical.updateSnapshot();
-        }
+        sceneThumbnail = new Snapshot(view, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+        sceneThumbnail.updateSnapshot();
         
-        fullRoom = new Snapshot(view, view.width, view.height);
-        fullRoom.updateSnapshot();
-        
+        galleryImage = new Snapshot(view, view.width, view.height);
+        galleryImage.updateSnapshot();
+                
         open();
+    }
+
+    /**
+     * Return true if the controller should save a scene thumbnail when the panel is closed.
+     */
+    public function get shouldSaveSceneThumbnail () :Boolean
+    {
+        return _useAsSceneThumbnail.selected;
+    }
+
+    /**
+     * Return true if the controller should save a gallery image when the panel is closed.
+     */
+    public function get shouldSaveGalleryImage () :Boolean
+    {
+        return _takeGalleryImage.selected;
     }
 
     protected function takeNewSnapshot (... ignored) :void
@@ -70,36 +85,60 @@ public class SnapshotPanel extends FloatingPanel
         }
         _showChat.enabled = occs;
         
-        if (_canonicalEnabled) {
-            canonical.updateSnapshot(occs, _showChat.selected);
-        }
-        
-        fullRoom.updateSnapshot(occs, _showChat.selected);
+        sceneThumbnail.updateSnapshot(occs, _showChat.selected);        
+        galleryImage.updateSnapshot(occs, _showChat.selected);        
     }
+
+    /**
+     * Should be called if the user changes an option that means we should update other UI elements.
+     * Does not take a new snapshot.
+     */
+    protected function enforceUIInterlocks (... ignored) :void
+    {
+        getButton(OK_BUTTON).enabled = canSave();
+    }
+
+    /**
+     * We can save an image if either one or both of the image saving options are selected.
+     */
+    protected function canSave () :Boolean {
+        return shouldSaveGalleryImage || shouldSaveSceneThumbnail;
+    }
+
+    protected function addChildIndented (component :UIComponent) :void
+    {
+        var hbox :HBox = new HBox();
+        hbox.addChild(FlexUtil.createSpacer(10));
+        hbox.addChild(component);
+        addChild(hbox);        
+    } 
 
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
-        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
-        _showOccs.selected = true;
-        _showChat.selected = true;
-
-        addChild(_showOccs);
-
-        var hbox :HBox = new HBox();
-        hbox.addChild(FlexUtil.createSpacer(10));
-        hbox.addChild(_showChat);
-        addChild(hbox);
+        // take gallery image
+        _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), enforceUIInterlocks);
+        _takeGalleryImage.selected = true;
+        addChild(_takeGalleryImage);
 
         // only add the button to take the canonical snapshot if it's enabled.
-        if (_canonicalEnabled) {
-            _useAsCanonical = new CommandCheckBox(Msgs.WORLD.get("b.snap_canonical"), 
-                takeNewSnapshot);
-            _useAsCanonical.selected = false;
-            addChild(_useAsCanonical);
+        if (_sceneThumbnailPermitted) {
+            _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
+                enforceUIInterlocks);
+            _useAsSceneThumbnail.selected = false;
+            addChild(_useAsSceneThumbnail);
         }
+
+        // show occupants
+        _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
+        _showOccs.selected = true;
+        addChildIndented(_showOccs);
+        
+        // show chat is indented
+        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
+        _showChat.selected = true;
+        addChildIndented(_showChat);
 
         addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
@@ -115,7 +154,7 @@ public class SnapshotPanel extends FloatingPanel
 //        addChild(url);
 
         _preview = new Image();
-        _preview.source = new BitmapAsset(canonical.bitmap);
+        _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
         addChild(_preview);
 
 //        if (!_success) {
@@ -126,6 +165,7 @@ public class SnapshotPanel extends FloatingPanel
 //        }
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
+        enforceUIInterlocks();        
     }
 
     override protected function buttonClicked (buttonId :int) :void
@@ -134,15 +174,18 @@ public class SnapshotPanel extends FloatingPanel
         _ctrl.close(buttonId == OK_BUTTON, this, _sceneId);
     }
 
+    protected var _sceneThumbnailPermitted :Boolean;
+
     protected var _sceneId :int;
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;
-    protected var _canonicalEnabled :Boolean;
 
+    // UI Elements
     protected var _showOccs :CommandCheckBox;
     protected var _showChat :CommandCheckBox;
-    protected var _useAsCanonical :CommandCheckBox;
+    protected var _useAsSceneThumbnail :CommandCheckBox;
+    protected var _takeGalleryImage :CommandCheckBox;
 
 //    /** Were we successful in snapshotting every single scene element? */
 //    protected var _success :Boolean;
