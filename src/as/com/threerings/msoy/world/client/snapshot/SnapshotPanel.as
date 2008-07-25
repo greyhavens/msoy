@@ -33,8 +33,8 @@ import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    public static const SCENE_THUMBNAIL_WIDTH :int = 350; // old: 320;
-    public static const SCENE_THUMBNAIL_HEIGHT :int = 200; // old: 180;
+    public static const SCENE_THUMBNAIL_WIDTH :int = 350;
+    public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
 
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
