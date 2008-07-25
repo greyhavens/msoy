@@ -33,6 +33,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.impl.MoneyModule;
+import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -367,6 +368,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages our external game servers. */
     @Inject protected MsoyGameRegistry _gameReg;
+
+    /** Manages our parties. */
+    @Inject protected PartyRegistry _partyReg;
 
     /** Our runtime swiftly editor manager. */
     @Inject protected SwiftlyManager _swiftlyMan;
