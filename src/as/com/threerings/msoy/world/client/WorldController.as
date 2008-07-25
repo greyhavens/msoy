@@ -161,6 +161,12 @@ public class WorldController extends MsoyController
     /** Command to toggle the client to full browser height. */
     public static const TOGGLE_HEIGHT :String = "ToggleHeight";
 
+    /** Command to boot a partymate from the party. */
+    public static const BOOT_PARTYMATE :String = "BootPartymate";
+
+    /** Command to promote a partymate to leader. */
+    public static const PROMOTE_PARTYMATE :String = "PromotePartymate";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -968,6 +974,23 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.visit_member"),
                              command: VISIT_MEMBER, arg: memId });
         }
+    }
+
+    override public function addPartymateMenuItems (member :MemberName, menuItems :Array) :void
+    {
+        // TODO: i18n
+        menuItems.push({ label: "Boot", command: BOOT_PARTYMATE, arg: member.getMemberId() });
+        menuItems.push({ label: "Promote", command: PROMOTE_PARTYMATE, arg: member.getMemberId() });
+
+        addFriendMenuItems(member, menuItems);
+    }
+
+    public function handleBootPartymate (memberId :int) :void
+    {
+    }
+
+    public function handlePromotePartymate (memberId :int) :void
+    {
     }
 
     // from MsoyController

@@ -39,6 +39,8 @@ public class PartyRenderer extends HBox
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+
+        addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     override public function set data (value :Object) :void
@@ -104,6 +106,13 @@ public class PartyRenderer extends HBox
         labelBox.addChild(friendLabel);
 
         addChild(MediaWrapper.createView(_mate.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
+    }
+
+    protected function handleClick (event :MouseEvent) :void
+    {
+        var menuItems :Array = [];
+        mctx.getMsoyController().addPartymateMenuItems(_mate.getName(), menuItems);
+        CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
     }
 
     protected var _mate :PeerEntry; // PartymateEntry

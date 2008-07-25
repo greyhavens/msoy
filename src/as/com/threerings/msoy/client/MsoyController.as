@@ -329,6 +329,15 @@ public class MsoyController extends Controller
         // nothing by default
     }
 
+    /**
+     * Requests that standard menu items be added to the supplied menu which is being popped up as
+     * a result of clicking on a partymate somewhere in Whirled.  
+     */
+    public function addPartymateMenuItems (member :MemberName, menuItems :Array) :void
+    {
+        // nothing by default
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
