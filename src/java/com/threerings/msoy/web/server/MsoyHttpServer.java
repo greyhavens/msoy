@@ -33,8 +33,6 @@ import org.mortbay.jetty.servlet.ServletHolder;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */
@@ -106,6 +104,20 @@ public class MsoyHttpServer extends Server
                             _out = new ThrottleOutputStream(super.getOutputStream());
                         }
                         return _out;
+                    }
+                    // We explicitly mirror our parent class' deprecation of these methods to 
+                    // prevent the compiler from complaining.
+                    @Deprecated
+                    public String encodeRedirectUrl (String arg0) {
+                        return super.encodeRedirectUrl(arg0);
+                    }
+                    @Deprecated
+                    public String encodeUrl (String arg0) {
+                        return super.encodeUrl(arg0);
+                    }
+                    @Deprecated
+                    public void setStatus (int arg0, String arg1) {
+                        super.setStatus(arg0, arg1);
                     }
                     protected ServletOutputStream _out;
                 };
