@@ -22,6 +22,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -29,6 +30,7 @@ import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -440,6 +442,9 @@ public class GroupServlet extends MsoyServiceServlet
             gm.group = grec.toGroupName();
             gm.rank = GroupMembership.RANK_MANAGER;
             MemberNodeActions.joinedGroup(grec.creatorId, gm);
+
+            // update player stats
+            _statLogic.incrementStat(mrec.memberId, StatType.WHIRLEDS_CREATED, 1);
 
             return grec.toGroupObject();
 
@@ -902,4 +907,5 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected StatLogic _statLogic;
 }
