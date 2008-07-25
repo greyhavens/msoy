@@ -36,6 +36,7 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -547,6 +548,24 @@ public class MsoyPeerManager extends CrowdPeerManager
                 _guestIdCounter = Math.max(_guestIdCounter, maxGuestId);
             }
         }
+        
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 && 
+                ServerConfig.nodeId == 1) {
+            _msoyServer.addPortsToPolicy(
+                ServerConfig.getServerPorts(peer.nodeobj.nodeName));
+        }
+    }
+    
+    @Override // from PeerManager
+    protected void peerDidLogoff (PeerNode peer)
+    {
+        super.peerDidLogoff(peer);
+        
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 && 
+                ServerConfig.nodeId == 1) {
+            _msoyServer.removePortsFromPolicy(
+                ServerConfig.getServerPorts(peer.nodeobj.nodeName));
+        }
     }
 
     // internal method for notifying observers of a member scene change - this is called
@@ -609,6 +628,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     // dependencies
     @Inject protected InvocationManager _invmgr;
     @Inject protected ClientManager _clmgr;
+    @Inject protected MsoyServer _msoyServer;
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;

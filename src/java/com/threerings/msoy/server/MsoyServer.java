@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import static com.threerings.msoy.Log.log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.mina.common.IoAcceptor;
@@ -16,6 +17,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.servlet.user.UserRepository;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.threerings.admin.server.ConfigRegistry;
@@ -161,6 +163,56 @@ public class MsoyServer extends MsoyBaseServer
 
         // initialize our HTTP server
         _httpServer.init(injector, new File(ServerConfig.serverRoot, "log"));
+    }
+    
+    /**
+     * On dev deployments, restart the policy server, including these ports from another node
+     * on this machine.
+     */
+    public void addPortsToPolicy (int[] ports) 
+    {
+        if (!DeploymentConfig.devDeployment) {
+            return;
+        }
+        
+        if (_otherNodePorts == null) {
+            _otherNodePorts = new ArrayIntSet();
+        }
+        _otherNodePorts.add(ports);
+        
+        if (_policyServer != null) {
+            _policyServer.unbindAll();
+        }
+        try {
+            _policyServer = MsoyPolicyServer.init(_otherNodePorts.toIntArray());
+        } catch (IOException ioe) {
+            log.warning("Failed to restart MsoyPolicyServer with new ports", ioe);
+        }
+    }
+    
+    /**
+     * On dev deployments, restarts the policy server, removing these ports from another node
+     * on this machine.
+     */
+    public void removePortsFromPolicy (int[] ports)
+    {
+        if (!DeploymentConfig.devDeployment) {
+            return;
+        }
+       
+        if (_otherNodePorts == null) {
+            _otherNodePorts = new ArrayIntSet();
+        }
+        _otherNodePorts.remove(ports);
+        
+        if (_policyServer != null) {
+            _policyServer.unbindAll();
+        }
+        try {
+            _policyServer = MsoyPolicyServer.init(_otherNodePorts.toIntArray());
+        } catch (IOException ioe) {
+            log.warning("Failed to restart MsoyPolicyServer with ports removed", ioe);
+        }
     }
 
     @Override // from BureauLauncherProvider
@@ -351,6 +403,10 @@ public class MsoyServer extends MsoyBaseServer
 
     /** A policy server used on dev deployments. */
     protected IoAcceptor _policyServer;
+    
+    /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
+     * that need to be accepted by the policy server. */
+    protected ArrayIntSet _otherNodePorts;
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

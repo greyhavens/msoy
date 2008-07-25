@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
@@ -166,6 +167,35 @@ public class ServerConfig
     public static int getHttpPort (String nodeName)
     {
         return config.getValue(nodeName + ".http_port", httpPort);
+    }
+    
+    /**
+     * Returns the server and game ports the specified node should be using.  This is only used on
+     * individual developers servers where they're running multiple nodes on one machine.
+     */
+    public static int[] getServerPorts (String nodeName)
+    {
+        String nodePortOffset = config.getValue("node_port_offset", "");
+        ArrayIntSet ports = new ArrayIntSet();
+        if (!StringUtil.isBlank(nodePortOffset)) {
+            try {
+                // obtain the node id from the node name
+                Matcher m = NODE_ID_PATTERN.matcher(nodeName);
+                if (m.matches()) {
+                    int nodeId = Integer.parseInt(m.group(1));
+                    int offset = Integer.valueOf(nodePortOffset);
+                    int[] serverPorts = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
+                    int gameServerPort = config.getValue("game_server_port", 47265);
+                    for (int port : serverPorts) {
+                        ports.add(port + offset + nodeId);
+                    }
+                    ports.add(gameServerPort + offset + nodeId);
+                }
+            } catch (Exception e) {
+                log.error("Bad nodePortOffset when asked for serverPorts", e);
+            }
+        }
+        return ports.toIntArray();
     }
 
     /**
