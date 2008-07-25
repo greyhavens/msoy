@@ -28,15 +28,14 @@ import com.threerings.presents.dobj.RootDObjectManager;
 public class SwiftlyUploadServlet extends AbstractUploadServlet
 {
     @Override // from AbstractUploadServlet
-    protected void handleFileItems (FileItem item, FileItem[] allItems, int uploadLength,
-                                    HttpServletRequest req, HttpServletResponse rsp)
+    protected void handleFileItems (UploadContext ctx)
         throws IOException, FileUploadException, AccessDeniedException
     {
         // wrap the FileItem in an UploadFile for publishing
-        final UploadFile uploadFile = new FileItemUploadFile(item);
+        final UploadFile uploadFile = new FileItemUploadFile(ctx.file);
 
         // attempt to extract the projectId and auth token from the field name
-        String field = item.getFieldName();
+        String field = ctx.file.getFieldName();
         if (field == null) {
             throw new FileUploadException("Failed to extract form field from the upload request.");
         }
@@ -70,8 +69,8 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         // verify this user is logged in and is a collaborator
         checkPermissions(ident, projectId);
 
-        log.info("Swiftly upload: [type=" + item.getContentType() + ", size=" +
-            item.getSize() + ", projectId=" + projectId + "].");
+        log.info("Swiftly upload: [type=" + ctx.file.getContentType() + ", size=" +
+            ctx.file.getSize() + ", projectId=" + projectId + "].");
 
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then commits the file to svn and adds it to the room
