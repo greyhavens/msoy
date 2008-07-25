@@ -157,7 +157,7 @@ public class WorldControlBar extends ControlBar
         _friendBtnBox.addChild(friendBtn);
 
         // Not ready for consumption
-        //if (_ctx.getTokens().isAdmin()) {
+        if (_ctx.getTokens().isAdmin()) {
         {
             var partyBtn :CommandButton = new CommandButton();
             partyBtn.toolTip = Msgs.GENERAL.get("i.party");
