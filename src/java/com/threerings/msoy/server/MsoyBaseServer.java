@@ -249,13 +249,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected class RemoteBureauLauncher
         implements BureauRegistry.Launcher
     {
-        public void launchBureau (
-            String bureauId,
-            String token) {
+        public void launchBureau (String bureauId, String token) {
             ClientObject launcher = selectLauncher();
-            BureauLauncherSender.launchThane(
-                launcher, bureauId, token, ServerConfig.backChannelHost,
-                getListenPorts()[0]);
+            BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
 

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.bureau.client;
 
-import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
 import com.threerings.presents.client.InvocationDecoder;
 
 /**
@@ -43,13 +42,13 @@ public class BureauLauncherDecoder extends InvocationDecoder
         switch (methodId) {
         case LAUNCH_THANE:
             ((BureauLauncherReceiver)receiver).launchThane(
-                (String)args[0], (String)args[1], (String)args[2], ((Integer)args[3]).intValue()
+                (String)args[0], (String)args[1]
             );
             return;
 
         case SHUTDOWN_LAUNCHER:
             ((BureauLauncherReceiver)receiver).shutdownLauncher(
-
+                
             );
             return;
 

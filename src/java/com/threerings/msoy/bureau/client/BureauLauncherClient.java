@@ -45,8 +45,20 @@ public class BureauLauncherClient extends Client
             BureauLauncherConfig.bureauSharedSecret), launcher.getRunner());
 
         _target = target;
+        _launcher = launcher;
         addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
-        getInvocationDirector().registerReceiver(new BureauLauncherDecoder(launcher));
+        BureauLauncherReceiver receiver = new BureauLauncherReceiver () {
+            public void launchThane (String bureauId, String token)
+            {
+                _launcher.launchThane(bureauId, token, getHostname(), getPorts()[0]);
+            }
+
+            public void shutdownLauncher ()
+            {
+                _launcher.shutdownLauncher();
+            }
+        };
+        getInvocationDirector().registerReceiver(new BureauLauncherDecoder(receiver));
     }
 
     @Override // from Client
@@ -121,5 +133,6 @@ public class BureauLauncherClient extends Client
 
     protected BureauLauncherService _service;
     protected Connections _target;
+    protected BureauLauncher _launcher;
 }
 

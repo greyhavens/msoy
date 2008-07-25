@@ -24,7 +24,7 @@ import static com.threerings.msoy.Log.log;
  * Operates a bureau launcher client for an msoy server.
  */
 public class BureauLauncher
-    implements BureauLauncherReceiver, ShutdownManager.Shutdowner
+    implements ShutdownManager.Shutdowner
 {
     /** Guice module for bureau launcher. */
     public static class Module extends AbstractModule
@@ -180,11 +180,7 @@ public class BureauLauncher
     }
 
     // from BureauLauncherReceiver
-    public void launchThane (
-        String bureauId,
-        String token,
-        String server,
-        int port)
+    public void launchThane (String bureauId, String token, String server, int port)
     {
         // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be
         // called when the first instance of a game is played since the last server restart, so it
