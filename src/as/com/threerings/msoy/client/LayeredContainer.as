@@ -12,7 +12,7 @@ import mx.core.Container;
 import mx.core.UIComponent;
 
 import com.threerings.flex.FlexWrapper;
-
+import com.threerings.msoy.world.client.snapshot.Framer;
 import com.threerings.util.Log;
 
 /**
@@ -49,13 +49,13 @@ public class LayeredContainer extends Container
     /**
      * Snapshot all the overlays.
      */
-    public function snapshotOverlays (bitmapData :BitmapData, scale :Number) :void
+    public function snapshotOverlays (bitmapData :BitmapData, framer :Framer) :void
     {
         for (var ii :int = 0; ii < numChildren; ii++) {
             var disp :DisplayObject = getChildAt(ii);
             if (disp != _base) {
                 var m :Matrix = disp.transform.matrix; // clone the matrix
-                m.scale(scale, scale); // scale it based on the passed in value
+                framer.applyTo(m); // apply the framing transformation to the matrix
                 bitmapData.draw(disp, m, null, null, null, true);
             }
         }

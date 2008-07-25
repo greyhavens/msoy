@@ -117,7 +117,8 @@ public class SnapshotPanel extends FloatingPanel
         super.createChildren();
 
         // take gallery image
-        _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), enforceUIInterlocks);
+        _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
+            enforceUIInterlocks);
         _takeGalleryImage.selected = true;
         addChild(_takeGalleryImage);
 

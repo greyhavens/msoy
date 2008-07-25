@@ -15,7 +15,6 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.OccupantSprite;
 
-
 /**
  * Represents a particular snapshot
  */ 
@@ -23,13 +22,16 @@ public class Snapshot
 {    
     public var bitmap :BitmapData;
 
+    /**
+     * Create a 'Snapshot' of the provided view.  With a frame of the provided size.
+     */
     public function Snapshot (view :RoomView, width :int, height :int)
     {
         _view = view;
-        _width = width;
-        _height = height;
+                
+        _frame = new Rectangle(0, 0, width, height);
+        _framer = new Framer(view.getScrollBounds(), _frame);
         bitmap = new BitmapData(width, height);  
-//        Log.getLog(this).info("created snapshot with size: "+width+"x"+height);
     }
     
     /**
@@ -39,18 +41,17 @@ public class Snapshot
         includeOccupants :Boolean = true, includeOverlays :Boolean = true) :Boolean
     {
         // first let's fill the bitmap with black or something
-        bitmap.fillRect(new Rectangle(0, 0, _width, _height), 0x000000);
+        bitmap.fillRect(_frame, 0x000000);
 
         // draw the room, scaling down to the appropriate size
-        var newScale :Number = _height / _view.getScrollBounds().height;
         var allSuccess :Boolean = true;
 
-        if (!renderChildren(bitmap, newScale, includeOccupants)) {
+        if (!renderChildren(includeOccupants)) {
             allSuccess = false;
         }
 
         if (includeOverlays) {
-            renderOverlays(bitmap, newScale);
+            renderOverlays();
         }
 
         return allSuccess;
@@ -59,7 +60,7 @@ public class Snapshot
     /**
      * Render the overlays 
      */ 
-    protected function renderOverlays (bitmap :BitmapData, newScale :Number) :void {        
+    protected function renderOverlays () :void {        
         var d :DisplayObject = _view;
         
         // search up through the containment hierarchy until you find the LayeredContainer
@@ -68,15 +69,14 @@ public class Snapshot
             d = d.parent;
         }
         if (d is LayeredContainer) {
-            (d as LayeredContainer).snapshotOverlays(bitmap, newScale);
+            (d as LayeredContainer).snapshotOverlays(bitmap, _framer);
         }
     }
 
     /**
      * Render the children
      */
-    protected function renderChildren (
-        bitmap :BitmapData, newScale :Number, includeOccupants :Boolean) :Boolean 
+    protected function renderChildren (includeOccupants :Boolean) :Boolean 
     {
         var allSuccess:Boolean = true;
         
@@ -84,7 +84,7 @@ public class Snapshot
             var child :DisplayObject = _view.getChildAt(ii);
 
             var matrix :Matrix = child.transform.matrix; // makes a clone...
-            matrix.scale(newScale, newScale); // scales the matrix taken from that child object
+            _framer.applyTo(matrix); // apply the framing transformation to the matrix
 
             if (child is MsoySprite) {
                 if (!includeOccupants && (child is OccupantSprite)) {
@@ -110,7 +110,7 @@ public class Snapshot
     }
     
     protected var _view :RoomView;
-    protected var _width :int;
-    protected var _height :int;
+    protected var _frame :Rectangle;
+    protected var _framer :Framer;
 }
 }
