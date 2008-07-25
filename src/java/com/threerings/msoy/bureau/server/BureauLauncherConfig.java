@@ -7,6 +7,8 @@ import java.io.File;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.Config;
+import com.samskivert.util.StringUtil;
+import com.threerings.msoy.Log;
 
 /**
  * Provides access to installation specific configuration. Properties that
@@ -45,7 +47,15 @@ public class BureauLauncherConfig
      */
     static {
         // these will be overridden if we're running in cluster mode
-        serverHost = config.getValue("server_host", "localhost");
+        serverHost = config.getValue("server_host", "");
+
+        if (StringUtil.isBlank(serverHost)) {
+            serverHost = System.getProperty("hostname");
+            if (StringUtil.isBlank(serverHost)) {
+                Log.log.warning("Neither server_host nor hostname is configured, using localhost");
+                serverHost = "localhost";
+            }
+        }
 
         // fill in our standard properties
         serverRoot = new File(config.getValue("server_root", "/tmp"));
