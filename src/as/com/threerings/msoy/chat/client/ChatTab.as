@@ -25,6 +25,7 @@ import com.threerings.msoy.chat.data.ChatChannel
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.MemberName;
 
 [Style(name="buttonSkin", type="Class", inherit="no")]
 [Event(name="tabClick", type="flash.events.Event")]
@@ -100,6 +101,20 @@ public class ChatTab extends HBox
     public function get localtype () :String
     {
         return _channel != null ? _channel.toLocalType() : ChatCodes.PLACE_CHAT_TYPE;
+    }
+    
+    /**
+     * Returns to the member id of the person that this tab is a tell tab for, if it is.  If it's
+     * not, returns 0.
+     */
+    public function getTellMemberId () :int
+    {
+    	if (_channel == null) {
+    		return 0;
+    	}
+    	
+    	return _channel.type != ChatChannel.MEMBER_CHANNEL ? 0 : 
+    	   (_channel.ident as MemberName).getMemberId();
     }
 
     public function displayCloseBox (display :Boolean) :void

@@ -1125,6 +1125,8 @@ public class WorldController extends MsoyController
             if (_friendsList != null) {
                 _friendsList.memberObjectUpdated(memberObj);
             }
+            
+            _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
 
         } else {
             // if we are a guest, let the GWT application know the guest id as whom we're

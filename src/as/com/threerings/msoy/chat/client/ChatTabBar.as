@@ -24,6 +24,11 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.SetListener;
+
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.UserMessage;
@@ -39,13 +44,16 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 
+import com.threerings.msoy.data.MemberObject;
+
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
 public class ChatTabBar extends HBox
-    implements ChatDisplay
+    implements ChatDisplay, SetListener
 {
     public function ChatTabBar (ctx :MsoyContext)
     {
@@ -127,7 +135,41 @@ public class ChatTabBar extends HBox
             selectedIndex = 0;
         }
     }
-
+    
+    public function memberObjectUpdated (obj :MemberObject) :void
+    {
+        obj.addListener(this);
+    }
+    
+    // from SetListener
+    public function entryAdded (event :EntryAddedEvent) :void
+    {
+        // NOOP
+    }
+    
+    // from SetListener
+    public function entryUpdated (event :EntryUpdatedEvent) :void
+    {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var newEntry :FriendEntry = event.getEntry() as FriendEntry;
+            var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
+            if (MemberName.BY_DISPLAY_NAME(newEntry.name, oldEntry.name) != 0) {
+                for each (var tab :ChatTab in _tabs) {
+                    if (tab.getTellMemberId() == newEntry.name.getMemberId()) {
+                        tab.text = newEntry.name.toString();
+                        break;
+                    }
+                }
+            }   
+        }   
+    }
+    
+    // from SetListener
+    public function entryRemoved (event :EntryRemovedEvent) :void
+    {
+        // NOOP
+    }
+    
     public function selectChannelTab (channel :ChatChannel, inFront :Boolean = false) :void
     {
         var index :int = getLocalTypeIndex(channel.toLocalType());
