@@ -88,7 +88,7 @@ public class GameDetailPanel extends SmartTable
                                       detail.playingNow), 1, "Play");
 
         // note that they're playing the developer version if so
-        if (_gameId < 0) {
+        if (Game.isDeveloperVersion(gameId)) {
             addText(CGames.msgs.gdpDevVersion(), 3, "InDevTip");
         }
 
