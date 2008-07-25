@@ -17,9 +17,29 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<location>/export/ooo-libs/whirled/src/as</location>
+		</link>
+		<link>
+			<name>[source path] narya-src-as</name>
+			<type>2</type>
+			<location>/export/ooo-libs/narya/src/as</location>
+		</link>
+		<link>
 			<name>[source path] i18n</name>
 			<type>2</type>
 			<location>/export/msoy/rsrc/en_US/i18n</location>
+		</link>
+		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<location>/export/ooo-libs/nenya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] vilya-src-as</name>
+			<type>2</type>
+			<location>/export/ooo-libs/vilya/src/as</location>
 		</link>
 	</linkedResources>
 </projectDescription>
