@@ -18,9 +18,9 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -52,7 +52,7 @@ public class TrophyComparePanel extends SmartTable
             return;
         }
 
-        ClickListener onClick = Application.createLinkListener(
+        ClickListener onClick = Link.createListener(
             Page.GAMES, Args.compose("d", gameId));
         setWidget(0, 0, new ThumbBox(result.gameThumb, onClick));
         setWidget(1, 0, MsoyUI.createActionLabel(result.gameName, "Game", onClick));
@@ -64,10 +64,10 @@ public class TrophyComparePanel extends SmartTable
             if (card == null) {
                 continue;
             }
-            setWidget(0, pp+1, new ThumbBox(card.photo, Application.createLinkListener(
+            setWidget(0, pp+1, new ThumbBox(card.photo, Link.createListener(
                                                 Page.PEOPLE, "" + card.name.getMemberId())));
             centerCell(0, pp+1);
-            setWidget(1, pp+1, Application.memberViewLink(card.name));
+            setWidget(1, pp+1, Link.memberView(card.name));
             centerCell(1, pp+1);
         }
 

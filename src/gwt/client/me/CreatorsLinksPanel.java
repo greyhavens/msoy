@@ -1,11 +1,16 @@
+//
+// $Id$
+
 package client.me;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+
 import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -20,33 +25,39 @@ public class CreatorsLinksPanel extends SimplePanel
         AbsolutePanel content = new AbsolutePanel();
         content.setStyleName("Content");
         setWidget(content);
-        
+
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
-        getStartedButton.addClickListener(Application.createLinkListener(Page.ACCOUNT, "create"));
-        getStartedButton.addClickListener(MsoyUI.createTrackingListener("creatorsLinksGetStartedClicked", null));
+        getStartedButton.addClickListener(Link.createListener(Page.ACCOUNT, "create"));
+        getStartedButton.addClickListener(
+            MsoyUI.createTrackingListener("creatorsLinksGetStartedClicked", null));
         content.add(getStartedButton, 342, 381);
-        
-        Image furniImage = MsoyUI.createActionImage("/images/landing/creators_info_furni.jpg", 
-            Application.createLinkListener(Page.SHOP, "3"));
-        furniImage.addClickListener(MsoyUI.createTrackingListener("creatorsLinksFurniClicked", null));
+
+        Image furniImage = MsoyUI.createActionImage("/images/landing/creators_info_furni.jpg",
+            Link.createListener(Page.SHOP, "3"));
+        furniImage.addClickListener(
+            MsoyUI.createTrackingListener("creatorsLinksFurniClicked", null));
         content.add(furniImage, 7, 502);
-        
-        Image avatarsImage = MsoyUI.createActionImage("/images/landing/creators_info_avatars.jpg", 
-            Application.createLinkListener(Page.SHOP, "5"));
-        avatarsImage.addClickListener(MsoyUI.createTrackingListener("creatorsLinksAvatarsClicked", null));
+
+        Image avatarsImage = MsoyUI.createActionImage("/images/landing/creators_info_avatars.jpg",
+            Link.createListener(Page.SHOP, "5"));
+        avatarsImage.addClickListener(
+            MsoyUI.createTrackingListener("creatorsLinksAvatarsClicked", null));
         content.add(avatarsImage, 311, 502);
 
-        Image whirledsImage = MsoyUI.createActionImage("/images/landing/creators_info_whirleds.jpg", 
-            Application.createLinkListener(Page.WHIRLEDS, ""));
-        whirledsImage.addClickListener(MsoyUI.createTrackingListener("creatorsLinksWhirledsClicked", null));
+        Image whirledsImage =
+            MsoyUI.createActionImage("/images/landing/creators_info_whirleds.jpg",
+            Link.createListener(Page.WHIRLEDS, ""));
+        whirledsImage.addClickListener(
+            MsoyUI.createTrackingListener("creatorsLinksWhirledsClicked", null));
         content.add(whirledsImage, 7, 751);
-        
-        Image friendsImage = MsoyUI.createActionImage("/images/landing/creators_info_friends.jpg", 
-            Application.createLinkListener(Page.WHIRLEDS, ""));
-        friendsImage.addClickListener(MsoyUI.createTrackingListener("creatorsLinksFriendsClicked", null));
+
+        Image friendsImage = MsoyUI.createActionImage("/images/landing/creators_info_friends.jpg",
+            Link.createListener(Page.WHIRLEDS, ""));
+        friendsImage.addClickListener(
+            MsoyUI.createTrackingListener("creatorsLinksFriendsClicked", null));
         content.add(friendsImage, 311, 751);
-        
+
         content.add(new LandingCopyright(), 0, 1085);
     }
 }

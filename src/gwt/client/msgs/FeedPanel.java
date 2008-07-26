@@ -36,6 +36,7 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
 
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.TongueBox;
@@ -271,17 +272,17 @@ public class FeedPanel extends TongueBox
                 return profileLink(message.data[0], message.data[1]);
 
             case 101: // FRIEND_UPDATED_ROOM
-                return Application.createLinkHtml(
+                return Link.createHtml(
                         message.data[1], Page.WORLD, "s" + message.data[0]);
 
             case 102: // FRIEND_WON_TROPHY
-                return Application.createLinkHtml(message.data[0], Page.GAMES,
+                return Link.createHtml(message.data[0], Page.GAMES,
                     Args.compose("d", message.data[1], GameDetailPanel.TROPHIES_TAB));
 
             case 103: // FRIEND_LISTED_ITEM
                 return CMsgs.mmsgs.descCombine(
                             CShell.dmsgs.getString("itemType" + message.data[1]),
-                            Application.createLinkHtml(message.data[0], Page.SHOP,
+                            Link.createHtml(message.data[0], Page.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
 
             case 104: // FRIEND_GAINED_LEVEL
@@ -306,7 +307,7 @@ public class FeedPanel extends TongueBox
                 }
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.GAMES, Args.compose("d", message.data[1],
+                        Link.go(Page.GAMES, Args.compose("d", message.data[1],
                                                                 GameDetailPanel.TROPHIES_TAB));
                     }
                 };
@@ -322,7 +323,7 @@ public class FeedPanel extends TongueBox
                 }
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(
+                        Link.go(
                             Page.SHOP, Args.compose("l", message.data[1], message.data[2]));
                     }
                 };
@@ -481,7 +482,7 @@ public class FeedPanel extends TongueBox
         {
             switch (message.type) {
             case 200: // GROUP_ANNOUNCEMENT
-                String threadLink = Application.createLinkHtml(
+                String threadLink = Link.createHtml(
                     message.data[1], Page.WHIRLEDS, Args.compose("t", message.data[2]));
                 add(new BasicWidget(CMsgs.mmsgs.groupAnnouncement(message.data[0], threadLink)));
                 break;
@@ -495,9 +496,9 @@ public class FeedPanel extends TongueBox
                 if (message.actor == null) {
                     return; // TEMP: skip old pre-actor messages
                 }
-                String roomPageLink = Application.createLinkHtml(CMsgs.mmsgs.selfRoomCommented(),
+                String roomPageLink = Link.createHtml(CMsgs.mmsgs.selfRoomCommented(),
                     Page.WORLD, Args.compose("room", message.data[0]));
-                String roomLink = Application.createLinkHtml(
+                String roomLink = Link.createHtml(
                     message.data[1], Page.WORLD, "s" + message.data[0]);
                 add(new BasicWidget(CMsgs.mmsgs.selfRoomComment(
                                         profileLink(message.actor), roomPageLink, roomLink)));
@@ -509,7 +510,7 @@ public class FeedPanel extends TongueBox
         {
             switch (message.type) {
             case 1: // GLOBAL_ANNOUNCEMENT
-                String threadLink = Application.createLinkHtml(
+                String threadLink = Link.createHtml(
                     message.data[0], Page.WHIRLEDS, Args.compose("t", message.data[1]));
                 add(new BasicWidget(CMsgs.mmsgs.globalAnnouncement(threadLink)));
                 break;
@@ -523,7 +524,7 @@ public class FeedPanel extends TongueBox
 
         protected String profileLink (String name, String id)
         {
-            return Application.createLinkHtml(name, Page.PEOPLE, id);
+            return Link.createHtml(name, Page.PEOPLE, id);
         }
     }
 

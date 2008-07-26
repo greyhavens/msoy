@@ -12,10 +12,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.MemberAdminInfo;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -43,7 +43,7 @@ public class MemberInfoPanel extends SmartTable
         }
 
         int row;
-        setWidget(0, 0, Application.memberViewLink(info.name), 2, "Name");
+        setWidget(0, 0, Link.memberView(info.name), 2, "Name");
 
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);
@@ -130,7 +130,6 @@ public class MemberInfoPanel extends SmartTable
 
     protected Widget infoLink (MemberName name)
     {
-        return Application.createLink(
-            "" + name, Page.ADMIN, Args.compose("info", name.getMemberId()));
+        return Link.create("" + name, Page.ADMIN, Args.compose("info", name.getMemberId()));
     }
 }

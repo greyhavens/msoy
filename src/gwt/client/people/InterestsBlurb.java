@@ -19,10 +19,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.web.client.ProfileService;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -159,7 +159,7 @@ public class InterestsBlurb extends Blurb
                 panel.add(new InlineLabel(",", false, false, true));
             }
             String interest = ivec[ii].trim();
-            panel.add(Application.createLink(interest, Page.PEOPLE,
+            panel.add(Link.create(interest, Page.PEOPLE,
                 Args.compose("search", "0", interest)));
         }
 

@@ -21,6 +21,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -36,10 +37,10 @@ public class SearchControls extends SmartTable
         PushButton action;
         if (CPeople.isGuest()) {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchJoin(),
-                                         Application.createLinkListener(Page.ACCOUNT, "create"));
+                                         Link.createListener(Page.ACCOUNT, "create"));
         } else {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchInvite(),
-                                         Application.createLinkListener(Page.PEOPLE, "invites"));
+                                         Link.createListener(Page.PEOPLE, "invites"));
         }
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -76,7 +77,7 @@ public class SearchControls extends SmartTable
     public void onClick (Widget sender)
     {
         FlashClients.tutorialEvent("friendsSought");
-        Application.go(Page.PEOPLE, Args.compose("search", "0", getQuery()));
+        Link.go(Page.PEOPLE, Args.compose("search", "0", getQuery()));
     }
 
     @Override // from Widget

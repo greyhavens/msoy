@@ -20,8 +20,8 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Application;
 import client.shell.Frame;
+import client.util.Link;
 import client.util.MsoyCallback;
 
 /**
@@ -125,7 +125,7 @@ public class SwiftlyPanel extends FlexTable
     protected void updateProjectLink ()
     {
         _projectLink.setTargetHistoryToken(
-            Application.createLinkToken("swiftly", String.valueOf(_project.projectId)));
+            Link.createToken("swiftly", String.valueOf(_project.projectId)));
         _projectLink.setText(_project.projectName);
     }
 
@@ -135,7 +135,7 @@ public class SwiftlyPanel extends FlexTable
             CSwiftly.ident, _project.projectId, new MsoyCallback<MemberName>() {
                 public void onSuccess (MemberName owner) {
                     _ownerLinkPanel.clear();
-                    _ownerLinkPanel.add(Application.memberViewLink(owner));
+                    _ownerLinkPanel.add(Link.memberView(owner));
                 }
             });
     }

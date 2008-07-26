@@ -11,16 +11,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.WorldService;
 
-import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.SceneThumbnail;
-import client.util.ThumbBox;
 import client.util.TongueBox;
 
 /**
@@ -55,7 +52,7 @@ public class MyRoomsPanel extends VerticalPanel
         public RoomWidget (final WorldService.Room room)
         {
             super("Room", 0, 2);
-            ClickListener onClick = Application.createLinkListener(Page.WORLD, "s"+room.sceneId);
+            ClickListener onClick = Link.createListener(Page.WORLD, "s"+room.sceneId);
             SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId);
             sceneImage.addClickListener(onClick);
             setWidget(0, 0, sceneImage);

@@ -3,6 +3,8 @@
 
 package client.msgs;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,10 +20,8 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.data.Issue;
 
-import client.shell.Application;
 import client.shell.Page;
-
-import java.util.List;
+import client.util.Link;
 
 /**
  * Displays a list of issues.
@@ -120,7 +120,7 @@ public class IssueListPanel extends PagedGrid<Issue>
             setCellSpacing(0);
 
             int col = 0;
-            Hyperlink toIssue = Application.createLink(
+            Hyperlink toIssue = Link.create(
                     issue.description, Page.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
@@ -138,13 +138,13 @@ public class IssueListPanel extends PagedGrid<Issue>
             Hyperlink creator;
             if (issue.state == Issue.STATE_OPEN) {
                 created.add(new Label(_pdate.format(issue.createdTime)));
-                creator = Application.createLink(
+                creator = Link.create(
                     issue.creator.toString(), Page.PEOPLE, "" + issue.creator.getMemberId());
             } else {
                 if (issue.closedTime != null) {
                     created.add(new Label(_pdate.format(issue.closedTime)));
                 }
-                creator = Application.createLink(
+                creator = Link.create(
                     issue.owner.toString(), Page.PEOPLE, "" + issue.owner.getMemberId());
             }
             created.add(creator);

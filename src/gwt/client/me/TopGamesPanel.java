@@ -25,9 +25,9 @@ import client.games.CGames;
 import client.games.GameBitsPanel;
 import client.games.GameNamePanel;
 import client.games.PlayButton;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -145,7 +145,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         SmartTable gameInfoTable = new SmartTable("FeaturedGame", 0, 0);
 
-        ClickListener onClick = Application.createLinkListener(
+        ClickListener onClick = Link.createListener(
             Page.GAMES, Args.compose("d", game.gameId));
 
         VerticalPanel left = new VerticalPanel();
@@ -194,7 +194,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         // more games button
         PushButton moreGamesButton = makePlayButton(
-            "MoreGames", Application.createLinkListener(Page.GAMES, ""));
+            "MoreGames", Link.createListener(Page.GAMES, ""));
         moreGamesButton.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
         right.add(moreGamesButton);
 

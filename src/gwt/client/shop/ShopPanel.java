@@ -18,10 +18,10 @@ import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ShopData;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.HeaderBox;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.Stars;
@@ -123,7 +123,7 @@ public class ShopPanel extends HorizontalPanel
 
     protected static ClickListener makeClick (ListingCard card)
     {
-        return Application.createLinkListener(
+        return Link.createListener(
             Page.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
     }
 

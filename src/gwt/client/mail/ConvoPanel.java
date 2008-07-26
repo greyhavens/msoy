@@ -19,8 +19,8 @@ import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.ConvMessage;
 
-import client.shell.Application;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -127,7 +127,7 @@ public class ConvoPanel extends FlowPanel
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
             FlowPanel info = new FlowPanel();
-            info.add(Application.memberViewLink(msg.author.name));
+            info.add(Link.memberView(msg.author.name));
             info.add(MsoyUI.createLabel(MailPanel._fmt.format(msg.sent), "Sent"));
             setWidget(0, 1, info);
             getFlexCellFormatter().setWidth(0, 1, "150px");

@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 
@@ -37,7 +38,7 @@ public class TrophyGrid extends FlexTable
             final Trophy trophy = trophies[ii];
             ClickListener trophyClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAMES, Args.compose("d", ""+trophy.gameId,
+                    Link.go(Page.GAMES, Args.compose("d", ""+trophy.gameId,
                                                             GameDetailPanel.TROPHIES_TAB));
                 }
             };

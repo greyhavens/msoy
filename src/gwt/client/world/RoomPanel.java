@@ -13,9 +13,9 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.web.data.RoomInfo;
 
-import client.shell.Application;
 import client.shell.CommentsPanel;
 import client.shell.Frame;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.StyledTabPanel;
 
@@ -47,10 +47,10 @@ public class RoomPanel extends SmartTable
         obits.add(new InlineLabel(CWorld.msgs.owner(), false, false, true));
         if (info.owner instanceof MemberName) {
             MemberName name = (MemberName)info.owner;
-            obits.add(Application.memberViewLink(name.toString(), name.getMemberId()));
+            obits.add(Link.memberView(name.toString(), name.getMemberId()));
         } else if (info.owner instanceof GroupName) {
             GroupName name = (GroupName)info.owner;
-            obits.add(Application.groupViewLink(name.toString(), name.getGroupId()));
+            obits.add(Link.groupView(name.toString(), name.getGroupId()));
         }
         addWidget(obits, 1, null);
 

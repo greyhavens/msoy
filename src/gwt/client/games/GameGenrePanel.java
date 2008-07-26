@@ -27,6 +27,7 @@ import com.threerings.msoy.web.data.GameInfo;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -54,11 +55,11 @@ public class GameGenrePanel extends FlowPanel
             public void onChange (Widget widget) {
                 byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
                 if (query == null) {
-                    Application.go(Page.GAMES, Args.compose(
+                    Link.go(Page.GAMES, Args.compose(
                         new String[] {"g", genre+"", newSortMethod+""}));
                 }
                 else {
-                    Application.go(Page.GAMES, Args.compose(
+                    Link.go(Page.GAMES, Args.compose(
                         new String[] {"g", genre+"", newSortMethod+"", query}));
                 }
 
@@ -148,7 +149,7 @@ public class GameGenrePanel extends FlowPanel
          * Creates a title for display in the grid header that performs a sort action onclick
          */
         protected Widget createTitle (String text, String styleName, byte sortMethod) {
-            Hyperlink link = Application.createLink(text, Page.GAMES,
+            Hyperlink link = Link.create(text, Page.GAMES,
                 Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
             link.addStyleName(styleName);
             return link;
@@ -177,7 +178,7 @@ public class GameGenrePanel extends FlowPanel
 
                 ClickListener gameClick = new ClickListener() {
                     public void onClick (Widget widget) {
-                        Application.go(Page.GAMES, Args.compose("d", game.gameId));
+                        Link.go(Page.GAMES, Args.compose("d", game.gameId));
                     }
                 };
                 setWidget(0, col++, MediaUtil.createMediaView(
@@ -203,7 +204,7 @@ public class GameGenrePanel extends FlowPanel
                 if (game.minPlayers == 1) {
                     ClickListener singleClick = new ClickListener() {
                         public void onClick (Widget sender) {
-                            Application.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
+                            Link.go(Page.WORLD, Args.compose("game", "s", "" + game.gameId));
                         }
                     };
                     PushButton single = MsoyUI.createButton(
@@ -218,7 +219,7 @@ public class GameGenrePanel extends FlowPanel
                 if (game.maxPlayers > 1) {
                     ClickListener multiClick = new ClickListener() {
                         public void onClick (Widget sender) {
-                            Application.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
+                            Link.go(Page.WORLD, Args.compose("game", "l", "" + game.gameId));
                         }
                     };
                     PushButton multi = MsoyUI.createButton(

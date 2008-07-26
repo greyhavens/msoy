@@ -14,6 +14,7 @@ import com.threerings.msoy.web.data.Invitation;
 
 import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 
 public class OptOutPanel extends FlexTable
@@ -53,7 +54,7 @@ public class OptOutPanel extends FlexTable
         footer.add(WidgetUtil.makeShim(10, 10));
         footer.add(new Button(CAccount.msgs.optOutReject(), new ClickListener() {
             public void onClick (Widget widget) {
-                Application.go(Page.ME, "");
+                Link.go(Page.ME, "");
             }
         }));
 

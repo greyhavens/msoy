@@ -32,6 +32,7 @@ import client.images.next.NextImages;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.RoundBox;
 import client.util.ThumbBox;
@@ -61,7 +62,7 @@ public class WhatsNextPanel extends SmartTable
         RoundBox box = new RoundBox(RoundBox.BLUE);
         box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         Image shot = GAME_SHOTS[Random.nextInt(GAME_SHOTS.length)].createImage();
-        ClickListener onClick = Application.createLinkListener(Page.GAMES, "");
+        ClickListener onClick = Link.createListener(Page.GAMES, "");
         ClickListener trackListener = MsoyUI.createTrackingListener("mePlayGames", null);
         Image image = MsoyUI.makeActionImage(shot, null, onClick);
         image.addClickListener(trackListener);
@@ -80,7 +81,7 @@ public class WhatsNextPanel extends SmartTable
         RoundBox box = new RoundBox(RoundBox.BLUE);
         box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         Image shot = WHIRLED_SHOTS[Random.nextInt(WHIRLED_SHOTS.length)].createImage();
-        ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "");
+        ClickListener onClick = Link.createListener(Page.WHIRLEDS, "");
         ClickListener trackListener = MsoyUI.createTrackingListener("meMakeFriends", null);
         Image image = MsoyUI.makeActionImage(shot, null, onClick);
         image.addClickListener(trackListener);
@@ -98,7 +99,7 @@ public class WhatsNextPanel extends SmartTable
     {
         RoundBox box = new RoundBox(RoundBox.BLUE);
         SmartTable contents = new SmartTable(0, 0);
-        ClickListener onClick = Application.createLinkListener(Page.WORLD, "m" + CMe.getMemberId());
+        ClickListener onClick = Link.createListener(Page.WORLD, "m" + CMe.getMemberId());
         ClickListener trackListener = MsoyUI.createTrackingListener("meDecorate", null);
         Image image = MsoyUI.makeActionImage(_images.home_shot().createImage(), null, onClick);
         image.addClickListener(trackListener);
@@ -119,7 +120,7 @@ public class WhatsNextPanel extends SmartTable
         friends.setHeight("100%");
         friends.setText(0, 0, CMe.msgs.nextFriends(), 1, "Title");
         friends.setText(1, 0, CMe.msgs.nextNoFriends(), 1, "NoFriends");
-        Hyperlink imageLink = Application.createImageLink(
+        Hyperlink imageLink = Link.createImage(
             "/images/me/invite_friends.png", CMe.msgs.nextInviteTip(), Page.PEOPLE, "invites");
         imageLink.addClickListener(MsoyUI.createTrackingListener("meInviteFriends", null));
         friends.setWidget(2, 0, imageLink);
@@ -135,7 +136,7 @@ public class WhatsNextPanel extends SmartTable
             public void onClick (Widget sender) {
                 String query = search.getText().trim();
                 if (query.length() > 0) {
-                    Application.go(Page.PEOPLE, Args.compose("search", "0", query));
+                    Link.go(Page.PEOPLE, Args.compose("search", "0", query));
                 }
             }
         };
@@ -166,7 +167,7 @@ public class WhatsNextPanel extends SmartTable
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
                     rooms, sceneId, ((MemberCard.InScene)card.status).sceneName);
-                ClickListener onClick = Application.createLinkListener(Page.WORLD, "s"+sceneId);
+                ClickListener onClick = Link.createListener(Page.WORLD, "s"+sceneId);
                 Widget member = makeMemberWidget(card, size, onClick);
                 member.addStyleName("MemberRoom");
                 room.add(member);
@@ -175,7 +176,7 @@ public class WhatsNextPanel extends SmartTable
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(
                     games, gameId, ((MemberCard.InGame)card.status).gameName);
-                ClickListener onClick = Application.createLinkListener(
+                ClickListener onClick = Link.createListener(
                     Page.WORLD, Args.compose("game", "l", ""+gameId));
                 Widget member = makeMemberWidget(card, size, onClick);
                 member.addStyleName("MemberGame");

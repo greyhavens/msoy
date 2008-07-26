@@ -16,6 +16,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -63,7 +64,7 @@ public class FriendsBlurb extends Blurb
             setStyleName("Friend");
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.PEOPLE, "" + card.name.getMemberId());
+                    Link.go(Page.PEOPLE, "" + card.name.getMemberId());
                 }
             };
             add(new ThumbBox(card.photo, profileClick));

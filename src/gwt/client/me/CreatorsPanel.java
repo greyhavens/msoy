@@ -1,11 +1,15 @@
+//
+// $Id$
+
 package client.me;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import client.shell.Application;
+
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -20,18 +24,19 @@ public class CreatorsPanel extends SimplePanel
         AbsolutePanel content = new AbsolutePanel();
         content.setStyleName("Content");
         setWidget(content);
-        
+
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
-        getStartedButton.addClickListener(Application.createLinkListener(Page.ACCOUNT, "create"));
-        getStartedButton.addClickListener(MsoyUI.createTrackingListener("creatorsGetStartedClicked", null));
+        getStartedButton.addClickListener(Link.createListener(Page.ACCOUNT, "create"));
+        getStartedButton.addClickListener(
+            MsoyUI.createTrackingListener("creatorsGetStartedClicked", null));
         content.add(getStartedButton, 342, 381);
-        
-        Image infoImage = MsoyUI.createActionImage("/images/landing/creators_info.jpg", 
-            Application.createLinkListener(Page.ACCOUNT, "create"));
+
+        Image infoImage = MsoyUI.createActionImage("/images/landing/creators_info.jpg",
+            Link.createListener(Page.ACCOUNT, "create"));
         infoImage.addClickListener(MsoyUI.createTrackingListener("creatorsInfoImageClicked", null));
         content.add(infoImage, 15, 504);
-                
+
         content.add(new LandingCopyright(), 0, 1085);
     }
 }

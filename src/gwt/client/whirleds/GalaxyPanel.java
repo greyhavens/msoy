@@ -28,6 +28,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemBox;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -59,7 +60,7 @@ public class GalaxyPanel extends VerticalPanel
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WHIRLEDS, Args.compose("search", "0", _searchInput.getText()));
+                Link.go(Page.WHIRLEDS, Args.compose("search", "0", _searchInput.getText()));
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
@@ -76,7 +77,7 @@ public class GalaxyPanel extends VerticalPanel
         contents.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         contents.setWidget(0, 2, _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
-                Application.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
+                Link.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
             protected Widget createWidget (GroupCard card) {
                 return new GroupWidget(card);
@@ -95,7 +96,7 @@ public class GalaxyPanel extends VerticalPanel
         create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");
         create.setText(1, 0, CWhirleds.msgs.galaxyCreateBlurb(), 1, "Pitch");
         create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
-        ClickListener onClick = Application.createLinkListener(Page.WHIRLEDS, "edit");
+        ClickListener onClick = Link.createListener(Page.WHIRLEDS, "edit");
         create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
         add(create);
 
@@ -144,7 +145,7 @@ public class GalaxyPanel extends VerticalPanel
             _popularTags.add(MsoyUI.createLabel(CWhirleds.msgs.galaxyNoPopularTags(), "Link"));
         } else {
             for (String tag : data.popularTags) {
-                Widget link = Application.createLink(
+                Widget link = Link.create(
                     tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
                 link.addStyleName("Link");
                 link.removeStyleName("inline");
@@ -163,7 +164,7 @@ public class GalaxyPanel extends VerticalPanel
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Widget clear = Application.createLink(CWhirleds.msgs.galaxyTagClear(), Page.WHIRLEDS, "");
+        Widget clear = Link.create(CWhirleds.msgs.galaxyTagClear(), Page.WHIRLEDS, "");
         clear.addStyleName("inline");
         _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));

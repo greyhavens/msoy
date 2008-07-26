@@ -19,6 +19,7 @@ import client.shell.Application;
 import client.shell.CShell;
 import client.shell.Page;
 import client.util.BorderedDialog;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -50,7 +51,6 @@ public class ABTestEditorDialog extends BorderedDialog
 
         FlowPanel contents = MsoyUI.createFlowPanel("abTestEditorDialog");
         setContents(contents);
-
 
         final TextBox name = new TextBox();
         contents.add(new FormElement(CAdmin.msgs.abTestNameLabel(), name));
@@ -186,7 +186,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     if (_parent != null) {
                         _parent.refresh();
                     } else {
-                        Application.go(Page.ADMIN, "testlist");
+                        Link.go(Page.ADMIN, "testlist");
                     }
                 }
             });
@@ -201,7 +201,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     if (_parent != null) {
                         _parent.refresh();
                     } else {
-                        Application.go(Page.ADMIN, "testlist");
+                        Link.go(Page.ADMIN, "testlist");
                     }
                 }
             });

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.me;
 
 import com.google.gwt.core.client.GWT;
@@ -19,9 +22,9 @@ import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.LandingData;
 
 import client.images.landing.LandingImages;
-import client.shell.Application;
 import client.shell.LogonPanel;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
@@ -51,9 +54,10 @@ public class LandingPanel extends SimplePanel
 
         // join now
         final Button joinButton =
-            new Button("", Application.createLinkListener(Page.ACCOUNT, "create"));
+            new Button("", Link.createListener(Page.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
-        joinButton.addClickListener(MsoyUI.createTrackingListener("landingJoinButtonClicked", null));
+        joinButton.addClickListener(
+            MsoyUI.createTrackingListener("landingJoinButtonClicked", null));
         content.add(joinButton, 475, 0);
 
         // login box
@@ -79,7 +83,8 @@ public class LandingPanel extends SimplePanel
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/play_screen.png", CMe.msgs.landingClickToStart(), onClick);
-        clickToPlayImage.addClickListener(MsoyUI.createTrackingListener("landingVideoPlayed", null));
+        clickToPlayImage.addClickListener(
+            MsoyUI.createTrackingListener("landingVideoPlayed", null));
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 

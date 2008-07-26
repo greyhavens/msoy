@@ -27,6 +27,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -222,7 +223,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
             String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
-            ClickListener onClick = Application.createLinkListener(Page.MAIL, Args.compose(args));
+            ClickListener onClick = Link.createListener(Page.MAIL, Args.compose(args));
             _giftBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick);
             _details.add(_giftBtn);
         }

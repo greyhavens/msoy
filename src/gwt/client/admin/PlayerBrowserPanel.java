@@ -29,6 +29,7 @@ import client.shell.Args;
 import client.shell.Page;
 
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
@@ -54,7 +55,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     displayPlayersInvitedBy(_childList.getResult().memberId);
                 } else {
                     int memberId = _parentList.getResult().memberId;
-                    Application.go(Page.ADMIN, Args.compose("browser", memberId));
+                    Link.go(Page.ADMIN, Args.compose("browser", memberId));
                 }
             }
         }));
@@ -71,7 +72,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     return;
                 }
                 int memberId = _playerLists.get(index +1).getResult().memberId;
-                Application.go(Page.ADMIN, Args.compose("browser", memberId));
+                Link.go(Page.ADMIN, Args.compose("browser", memberId));
             }
         }));
         _forwardButton.setEnabled(false);
@@ -195,7 +196,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.addStyleName("Buttons");
                 buttons.add(new Button("View Profile", new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.PEOPLE, "" + _result.memberId);
+                        Link.go(Page.PEOPLE, "" + _result.memberId);
                     }
                 }));
                 Widget shim = WidgetUtil.makeShim(1, 25);
@@ -272,7 +273,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(Page.ADMIN, Args.compose("browser", member.memberId));
+                        Link.go(Page.ADMIN, Args.compose("browser", member.memberId));
                     }
                 });
                 nameLabel.addStyleName("Clickable");

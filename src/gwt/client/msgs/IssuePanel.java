@@ -15,6 +15,7 @@ import com.threerings.msoy.fora.data.Issue;
 
 import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -59,7 +60,7 @@ public class IssuePanel extends TitledListPanel
 
     public void redisplayIssues ()
     {
-        Application.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
+        Link.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
     }
 
     public void displayIssue (int issueId, int owned)
@@ -149,7 +150,8 @@ public class IssuePanel extends TitledListPanel
         header.setText(0, col++, CMsgs.mmsgs.iPriority(), 1, "Column");
         header.setText(0, col++, CMsgs.mmsgs.iCategory(), 1, "Column");
         header.setText(0, col++, CMsgs.mmsgs.iOwner(), 1, "Column");
-        String htext = (_state == Issue.STATE_OPEN) ? CMsgs.mmsgs.iCreator() : CMsgs.mmsgs.iCloser();
+        String htext = (_state == Issue.STATE_OPEN) ?
+            CMsgs.mmsgs.iCreator() : CMsgs.mmsgs.iCloser();
         header.setText(0, col++, htext, 1, "Created");
 
         return header;

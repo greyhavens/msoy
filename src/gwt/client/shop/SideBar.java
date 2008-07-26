@@ -12,8 +12,8 @@ import com.threerings.msoy.web.data.CatalogQuery;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ShopUtil;
 
@@ -46,7 +46,7 @@ public class SideBar extends SmartTable
                 if (query.itemType == type) {
                     add(MsoyUI.createLabel(name, "Selected"));
                 } else {
-                    Widget link = Application.createLink(
+                    Widget link = Link.create(
                         name, Page.SHOP, toLinkArguments(query, type, 0));
                     link.removeStyleName("inline");
                     add(link);

@@ -22,11 +22,11 @@ import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
 import client.images.msgs.MsgsImages;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
@@ -217,7 +217,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             if (!CMsgs.isGuest() && CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
                 info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(),
-                                       Application.createLinkListener(Page.MAIL, args)));
+                                       Link.createListener(Page.MAIL, args)));
             }
 
             if (_postReply.isEnabled()) {
@@ -266,7 +266,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             if (_message.issueId > 0) {
-                ClickListener viewClick = Application.createLinkListener(
+                ClickListener viewClick = Link.createListener(
                     Page.WHIRLEDS, Args.compose("i", _message.issueId));
                 info.add(makeInfoImage(_images.view_issue(),
                                                 CMsgs.mmsgs.inlineIssue(), viewClick));
@@ -280,7 +280,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 info.add(makeInfoImage(_images.new_issue(),
                                                 CMsgs.mmsgs.inlineNewIssue(), newClick));
                 info.add(makeInfoImage(_images.assign_issue(), CMsgs.mmsgs.inlineAssignIssue(),
-                                       Application.createLinkListener(
+                                       Link.createListener(
                                            Page.WHIRLEDS, Args.compose(
                                                "assign", ""+_message.messageId, ""+_page))));
             }

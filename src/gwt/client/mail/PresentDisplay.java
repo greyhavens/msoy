@@ -12,9 +12,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.data.PresentPayload;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -43,7 +43,7 @@ public class PresentDisplay extends MailPayloadDisplay
 
             ClickListener onClick = null;
             if (recipient) {
-                onClick = Application.createLinkListener(
+                onClick = Link.createListener(
                     Page.STUFF, Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId));
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
                 setText(0, 2, CMail.msgs.presentRecipTip());

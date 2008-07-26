@@ -24,6 +24,7 @@ import com.threerings.msoy.web.data.GameInfo;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -50,7 +51,7 @@ public class GameHeaderPanel extends FlowPanel
                 ListBox listBox = (ListBox) widget;
                 String selectedValue = listBox.getValue(listBox.getSelectedIndex());
                 if (!selectedValue.equals("")) {
-                    Application.go(Page.GAMES, Args.compose(new String[] {"d", selectedValue}));
+                    Link.go(Page.GAMES, Args.compose(new String[] {"d", selectedValue}));
                 }
             }
         });
@@ -68,7 +69,7 @@ public class GameHeaderPanel extends FlowPanel
         ClickListener searchListener = new ClickListener() {
             public void onClick (Widget sender) {
                 String newQuery = searchBox.getText().trim();
-                Application.go(Page.GAMES, Args.compose(
+                Link.go(Page.GAMES, Args.compose(
                     new String[] {"g", genre+"", sortMethod+"", newQuery}));
             }
         };
@@ -98,7 +99,7 @@ public class GameHeaderPanel extends FlowPanel
         add(genreLinks);
         for (int i = 0; i < Game.GENRES.length; i++) {
             byte genreCode = Game.GENRES[i];
-            genreLinks.add(Application.createLink(CGames.dmsgs.getString("genre" + genreCode),
+            genreLinks.add(Link.create(CGames.dmsgs.getString("genre" + genreCode),
                 Page.GAMES, Args.compose("g", genreCode)));
             if (i+1 < Game.GENRES.length) {
                 genreLinks.add(new InlineLabel("|"));

@@ -20,6 +20,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -37,7 +38,7 @@ public class MessagePanel extends FlexTable
 
     public void setMessage (final MemberCard poster, Date whenPosted, String text)
     {
-        ClickListener onClick = Application.createLinkListener(
+        ClickListener onClick = Link.createListener(
             Page.PEOPLE, "" + poster.name.getMemberId());
         setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(), onClick));
         getFlexCellFormatter().setRowSpan(0, 0, 2);

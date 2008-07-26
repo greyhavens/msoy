@@ -32,6 +32,7 @@ import client.stuff.CStuff;
 import client.stuff.DoListItemPopup;
 import client.util.ClickCallback;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
 import client.util.ShopUtil;
@@ -62,7 +63,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             public boolean callService () {
                 if (CShop.isGuest()) {
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
-                                      Application.createLinkListener(Page.ACCOUNT, "create"));
+                                      Link.createListener(Page.ACCOUNT, "create"));
                 } else {
                     CShop.catalogsvc.purchaseItem(
                         CShop.ident, _item.getType(), _listing.catalogId,
@@ -147,7 +148,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
                 String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
-                info.addWidget(Application.createLink(CShop.msgs.listingViewOrig(),
+                info.addWidget(Link.create(CShop.msgs.listingViewOrig(),
                                                       Page.STUFF, args), 2, null);
             }
         }
@@ -196,7 +197,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         } else {
             _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));
             String ptype = CShop.dmsgs.getString("pItemType" + itype);
-            _buyPanel.add(Application.createLink(
+            _buyPanel.add(Link.create(
                               CShop.msgs.boughtGoNow(ptype), Page.STUFF, ""+itype));
         }
     }
@@ -221,7 +222,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     {
         menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
             public void execute() {
-                Application.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
+                Link.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
             }
         });
     }

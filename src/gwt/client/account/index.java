@@ -10,6 +10,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -71,7 +72,7 @@ public class index extends Page
     protected void didLogon (WebCreds creds)
     {
         if (_onLogonPage != null) {
-            Application.go(_onLogonPage, _onLogonArgs);
+            Link.go(_onLogonPage, _onLogonArgs);
         } else {
             super.didLogon(creds);
         }

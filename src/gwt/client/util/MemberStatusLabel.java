@@ -11,7 +11,6 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
@@ -32,13 +31,13 @@ public class MemberStatusLabel extends FlowPanel
         } else if (status instanceof MemberCard.InGame) {
             MemberCard.InGame gs = (MemberCard.InGame)status;
             add(new InlineLabel(CShell.cmsgs.mslOnlinePlaying(gs.gameName), false, false, true));
-            add(Application.createLink(CShell.cmsgs.mslJoin(), Page.WORLD,
+            add(Link.create(CShell.cmsgs.mslJoin(), Page.WORLD,
                                        Args.compose("game", gs.gameId)));
 
         } else if (status instanceof MemberCard.InScene) {
             MemberCard.InScene ss = (MemberCard.InScene)status;
             add(new InlineLabel(CShell.cmsgs.mslOnlineIn(ss.sceneName), false, false, true));
-            add(Application.createLink(CShell.cmsgs.mslJoin(), Page.WORLD, "s" + ss.sceneId));
+            add(Link.create(CShell.cmsgs.mslJoin(), Page.WORLD, "s" + ss.sceneId));
         }
     }
 

@@ -4,9 +4,12 @@
 package client.shell;
 
 import java.util.ArrayList;
+
 import client.images.navi.NaviImages;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyUI;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -31,6 +34,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -187,7 +191,7 @@ public class Frame
         String curToken = History.getToken();
         if (curToken.startsWith(Page.WORLD)) {
             // if we were in a game, go to the games page, otherwise go to me
-            Application.go(curToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
+            Link.go(curToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
         }
     }
 
@@ -487,19 +491,19 @@ public class Frame
             if (iconPath != null) {
                 add(MsoyUI.createActionImage(iconPath, new ClickListener() {
                     public void onClick (Widget sender) {
-                        Application.go(page, args);
+                        Link.go(page, args);
                     }
                 }));
                 add(new HTML("&nbsp;"));
             }
-            add(Application.createLink(label, page, args));
+            add(Link.create(label, page, args));
         }
 
         public Image addImageLink (String path, String tip, final String page, final String args) {
             addSeparator();
             Image icon = MsoyUI.createActionImage(path, new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(page, args);
+                    Link.go(page, args);
                 }
             });
             icon.setTitle(tip);
@@ -630,7 +634,7 @@ public class Frame
                 if (CShell.isGuest()) {
                     History.newItem("");
                 } else {
-                    Application.go(Page.WORLD, "m" + CShell.getMemberId());
+                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
                 }
             }
         }
@@ -652,7 +656,7 @@ public class Frame
             super(0, 0);
             PushButton signup = new PushButton(
                 CShell.cmsgs.headerSignup(),
-                Application.createLinkListener(Page.ACCOUNT, "create"));
+                Link.createListener(Page.ACCOUNT, "create"));
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
@@ -698,9 +702,9 @@ public class Frame
                 public void onClick (Widget sender) {
                     // if a guest clicks on "me", send them to create account
                     if (pageId.equals(Page.ME) && CShell.isGuest()) {
-                        Application.go(Page.ACCOUNT, "create");
+                        Link.go(Page.ACCOUNT, "create");
                     } else {
-                        Application.go(pageId, "");
+                        Link.go(pageId, "");
                     }
                 }
             };

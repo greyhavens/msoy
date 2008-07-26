@@ -23,6 +23,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 
@@ -98,8 +99,7 @@ public class index extends Page
                                 // We didn't have access to that specific item, but have been given
                                 // the catalog id for the prototype.
                                 ItemIdent id = result.ident;
-                                Application.go(Page.SHOP,
-                                    Args.compose("l", "" + id.type, "" + id.itemId));
+                                Link.go(Page.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
                             }
                         }
                     });
@@ -158,7 +158,7 @@ public class index extends Page
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.updateItem(item);
-                    Application.go(Page.STUFF,
+                    Link.go(Page.STUFF,
                         Args.compose("d", "" + item.getType(), "" + item.itemId));
                 } else {
                     History.back();

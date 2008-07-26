@@ -28,12 +28,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.ProfileService;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.DateFields;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -132,7 +132,7 @@ public class ProfileBlurb extends Blurb
             String since = _sfmt.format(new Date(_profile.memberSince));
             if (CPeople.isSupport()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
-                          Application.createLink(
+                          Link.create(
                               since, Page.ADMIN, Args.compose("info", _name.getMemberId())));
             } else {
                 addDetail(dbits, CPeople.msgs.memberSince(), since);
@@ -169,8 +169,8 @@ public class ProfileBlurb extends Blurb
 
     protected void addButton (SmartTable table, String path, String text, String page, String args)
     {
-        int row = table.addWidget(Application.createImageLink(path, text, page, args), 1, null);
-        table.setWidget(row, 1, Application.createLink(text, page, args), 1, null);
+        int row = table.addWidget(Link.createImage(path, text, page, args), 1, null);
+        table.setWidget(row, 1, Link.create(text, page, args), 1, null);
     }
 
     protected void addButton (SmartTable table, String path, String text, ClickListener listener)

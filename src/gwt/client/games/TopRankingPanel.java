@@ -11,7 +11,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.PlayerRating;
 
-import client.shell.Application;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -115,7 +115,7 @@ public class TopRankingPanel extends VerticalPanel
             _grid.getFlexCellFormatter().setVerticalAlignment(
                 row, col+1, HasAlignment.ALIGN_MIDDLE);
 
-            _grid.setWidget(row, col+2, Application.memberViewLink(rating.name), 1, "Cell");
+            _grid.setWidget(row, col+2, Link.memberView(rating.name), 1, "Cell");
 
             _grid.setText(row, col+3, ""+rating.rating, 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(

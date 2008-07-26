@@ -31,6 +31,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import client.msgs.StartConvoCallback;
 import client.shell.Application;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -87,7 +88,7 @@ public class ComposePanel extends FlowPanel
                 // if we just mailed an item as a gift, we can't go back to the item detail page
                 // because we no longer have access to it, so go to the STUFF page instead
                 if (_payload instanceof PresentPayload) {
-                    Application.go(Page.STUFF, ""+((PresentPayload)_payload).ident.type);
+                    Link.go(Page.STUFF, ""+((PresentPayload)_payload).ident.type);
                 } else {
                     History.back();
                 }

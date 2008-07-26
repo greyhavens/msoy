@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.shell.Application;
-
 /**
  * Displays content with a tongue label header and an optional right-aligned footer widget.
  */
@@ -74,7 +72,7 @@ public class TongueBox extends SmartTable
 
     public void setFooterLink (String text, String page, String args)
     {
-        setFooter(Application.createLink(text, page, args));
+        setFooter(Link.create(text, page, args));
     }
 
     public Label setFooterLabel (String text, ClickListener onClick)

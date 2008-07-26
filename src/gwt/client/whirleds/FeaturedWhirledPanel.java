@@ -16,8 +16,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GroupCard;
 
-import client.shell.Application;
 import client.shell.WorldClient;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 
@@ -114,7 +114,7 @@ public class FeaturedWhirledPanel extends FlowPanel
             _flashPanel.add(clickToPlayImage);
         }
 
-        Widget link = Application.groupViewLink(group.name.toString(), group.name.getGroupId());
+        Widget link = Link.groupView(group.name.toString(), group.name.getGroupId());
         _info.setWidget(0, 1, link, 1, "Name");
         if (group.population > 0) {
             Label onlineCount = new Label(CWhirleds.msgs.featuredOnline(""+group.population));

@@ -17,11 +17,11 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -49,7 +49,7 @@ public class ReviewItem extends FlowPanel
         // the name displays an item inspector
         String name = _item.name + " - " + detail.creator.toString();
         String args = Args.compose("d", ""+_item.getType(), ""+_item.itemId);
-        add(Application.createLink(name, Page.STUFF, args));
+        add(Link.create(name, Page.STUFF, args));
 
         add(MsoyUI.createLabel(_item.description, null));
 

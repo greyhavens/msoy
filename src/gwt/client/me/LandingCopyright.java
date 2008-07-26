@@ -1,10 +1,14 @@
+//
+// $Id$
+
 package client.me;
 
 import java.util.Date;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import client.shell.Application;
+
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -29,6 +33,6 @@ public class LandingCopyright extends FlowPanel
         add(MsoyUI.createExternalAnchor(
             "http://www.threerings.net/about/privacy.html", CMe.msgs.landingPrivacy()));
         add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        add(Application.createLink(CMe.msgs.landingHelp(), Page.HELP, ""));
+        add(Link.create(CMe.msgs.landingHelp(), Page.HELP, ""));
     }
 }

@@ -10,10 +10,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.CreatorLabel;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.Stars;
 import client.util.ThumbBox;
@@ -35,11 +35,13 @@ public class FeaturedGamePanel extends AbsolutePanel
         clear();
         final FeaturedGameInfo game = _games[index];
 
-        ClickListener detailsClick = Application.createLinkListener(
+        ClickListener detailsClick = Link.createListener(
             Page.GAMES, Args.compose("d", game.gameId));
-        add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, detailsClick), 10, 37);
+        add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT,
+                         detailsClick), 10, 37);
         if (game.playersOnline > 0) {
-            add(MsoyUI.createLabel(CGames.msgs.featuredOnline("" + game.playersOnline), "Online"), 10, 170);
+            add(MsoyUI.createLabel(
+                    CGames.msgs.featuredOnline("" + game.playersOnline), "Online"), 10, 170);
         }
 
         // prev and next buttons are positioned in css
@@ -56,7 +58,8 @@ public class FeaturedGamePanel extends AbsolutePanel
         add(MsoyUI.createLabel(game.name, "Name"), 200, 40);
         add(MsoyUI.createLabel(CGames.dmsgs.getString("genre" + game.genre), "Genre"), 200, 65);
         add(new CreatorLabel(game.creator), 200, 85);
-        add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
+        add(MsoyUI.createLabel(
+                MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
 
         add(new Stars(game.rating, true, false, null), 210, 180);
         PlayButton play = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);

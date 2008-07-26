@@ -24,11 +24,11 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.data.ForumThread;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -185,10 +185,10 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             if (thread.hasUnreadMessages()) {
                 String args = threadArgs(
                     thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
-                toThread = Application.createLink(thread.subject, Page.WHIRLEDS, args);
+                toThread = Link.create(thread.subject, Page.WHIRLEDS, args);
                 toThread.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
             } else {
-                toThread = Application.createLink(
+                toThread = Link.create(
                     thread.subject, Page.WHIRLEDS, threadArgs(thread.threadId, 0, 0));
             }
             bits.add(toThread);
@@ -209,7 +209,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
             VerticalPanel mrp = new VerticalPanel();
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
-            Hyperlink latest = Application.createLink(
+            Hyperlink latest = Link.create(
                 CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
                 thread.mostRecentPostId));

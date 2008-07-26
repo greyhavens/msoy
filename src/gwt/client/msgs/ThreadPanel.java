@@ -22,12 +22,12 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.fora.data.ForumMessage;
 import com.threerings.msoy.fora.data.ForumThread;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.MessagePanel;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.SearchBox;
@@ -79,7 +79,7 @@ public class ThreadPanel extends TitledListPanel
     {
         _thread = thread;
         _theader.setText(0, 2, _thread.subject);
-        _theader.setWidget(0, 1, Application.createLink(
+        _theader.setWidget(0, 1, Link.create(
                                _thread.group + ":", Page.WHIRLEDS,
                                Args.compose("f", _thread.group.getGroupId())));
     }

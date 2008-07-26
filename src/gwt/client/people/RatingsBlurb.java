@@ -20,6 +20,7 @@ import client.games.GameDetailPanel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 
@@ -81,7 +82,7 @@ public class RatingsBlurb extends Blurb
 
             ClickListener gameClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.GAMES, Args.compose("d", ""+entry.gameId,
+                    Link.go(Page.GAMES, Args.compose("d", ""+entry.gameId,
                                                             GameDetailPanel.MYRANKINGS_TAB));
                 }
             };

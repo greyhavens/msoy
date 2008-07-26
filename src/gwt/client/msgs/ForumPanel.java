@@ -17,11 +17,11 @@ import com.threerings.msoy.data.all.GroupName;
 
 import client.images.msgs.MsgsImages;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.SearchBox;
 
@@ -103,7 +103,7 @@ public class ForumPanel extends TitledListPanel
         if (groupId > 0) {
             String title = CMsgs.mmsgs.groupThreadListHeader(groupName);
             Label titleLink = MsoyUI.createActionLabel(
-                title, Application.createLinkListener(Page.WHIRLEDS, Args.compose("d", groupId)));
+                title, Link.createListener(Page.WHIRLEDS, Args.compose("d", groupId)));
             _title.setWidget(titleLink);
         }
     }

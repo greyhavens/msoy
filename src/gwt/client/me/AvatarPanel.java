@@ -10,10 +10,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ListingCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.shop.CShop;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -49,13 +49,14 @@ public class AvatarPanel extends FlowPanel
         public AvatarBox (ListingCard card) {
             super("AvatarBox", 0, 0);
 
-            ClickListener click = Application.createLinkListener(
+            ClickListener click = Link.createListener(
                 Page.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
             setWidget(0, 0, new ThumbBox(
                 card.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, click), 1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, MsoyUI.createLabel(card.name, "Name"));
-            setWidget(1, 0, MsoyUI.createLabel(CShop.msgs.itemBy(card.creator.toString()), "Creator"));
+            setWidget(1, 0, MsoyUI.createLabel(
+                          CShop.msgs.itemBy(card.creator.toString()), "Creator"));
         }
     }
 }

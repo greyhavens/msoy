@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.person.data.GameAwardPayload;
 
 import client.games.GameDetailPanel;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.ThumbBox;
 
 /**
@@ -30,7 +30,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.setText(0, 1, CMail.msgs.awardTitle());
         String args = Args.compose(new String[] {
                 "d", "" + _payload.gameId, GameDetailPanel.TROPHIES_TAB });
-        table.setWidget(0, 2, Application.createLink(_payload.gameName, Page.GAMES, args));
+        table.setWidget(0, 2, Link.create(_payload.gameName, Page.GAMES, args));
 
         switch (_payload.awardType) {
         case GameAwardPayload.TROPHY:

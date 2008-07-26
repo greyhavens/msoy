@@ -19,6 +19,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -45,7 +46,7 @@ public class GroupsBlurb extends Blurb
     {
         FlowPanel bits = new FlowPanel();
         bits.add(new InlineLabel(message, false, false, true));
-        bits.add(Application.createLink(link, page, args));
+        bits.add(Link.create(link, page, args));
         return bits;
     }
 
@@ -118,7 +119,7 @@ public class GroupsBlurb extends Blurb
 
             ClickListener groupClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
+                    Link.go(Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 }
             };
             add(new ThumbBox(card.logo, groupClick));

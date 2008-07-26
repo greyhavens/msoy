@@ -39,6 +39,7 @@ import client.shell.Application;
 import client.shell.Page;
 import client.shell.TrackingCookie;
 import client.util.DateFields;
+import client.util.Link;
 import client.util.MsoyUI;
 
 /**
@@ -56,16 +57,17 @@ public class CreateAccountPanel extends FlowPanel
     {
         _regListener = regListener;
         setStyleName("createAccount");
-        
+
         FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
         add(loginLink);
         loginLink.add(new Label(CAccount.msgs.createAlreadyMember()));
         PushButton loginButton = MsoyUI.createButton(
-            MsoyUI.SHORT_THIN, CAccount.msgs.createLoginLink(), 
-            Application.createLinkListener(Page.ACCOUNT, "login"));
-        loginButton.addClickListener(MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
+            MsoyUI.SHORT_THIN, CAccount.msgs.createLoginLink(),
+            Link.createListener(Page.ACCOUNT, "login"));
+        loginButton.addClickListener(
+            MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
         loginLink.add(loginButton);
-        
+
         add(MsoyUI.createLabel(CAccount.msgs.createIntro(), "Intro"));
         add(MsoyUI.createLabel(CAccount.msgs.createCoins(), "Coins"));
 
@@ -79,19 +81,19 @@ public class CreateAccountPanel extends FlowPanel
         }
 
         add(new LabeledBox(
-            CAccount.msgs.createRealName(), _rname = new TextBox(), 
+            CAccount.msgs.createRealName(), _rname = new TextBox(),
             CAccount.msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
         add(new LabeledBox(
-            CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(), 
+            CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
             CAccount.msgs.createDateOfBirthTip()));
 
         add(new LabeledBox(
-            CAccount.msgs.createPassword(), _password = new PasswordTextBox(), 
+            CAccount.msgs.createPassword(), _password = new PasswordTextBox(),
             CAccount.msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
-        
+
         add(new LabeledBox(
             CAccount.msgs.createConfirm(), _confirm = new PasswordTextBox(),
             CAccount.msgs.createConfirmTip()));
@@ -108,9 +110,9 @@ public class CreateAccountPanel extends FlowPanel
                 CAccount.msgs.createCaptcha(), new HTML("<div id=\"recaptchaDiv\"></div>"), null));
             add(new HTML("<div id=\"recaptchaDiv\"></div>"));
         }
-        
-        add(new LabeledBox(
-            CAccount.msgs.createTOS(), _tosBox = new CheckBox(CAccount.msgs.createTOSAgree()), null));
+
+        add(new LabeledBox(CAccount.msgs.createTOS(),
+                           _tosBox = new CheckBox(CAccount.msgs.createTOSAgree()), null));
 
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("500px");

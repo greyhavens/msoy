@@ -27,6 +27,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
 
@@ -100,7 +101,7 @@ public class MailPanel extends VerticalPanel
         @Override // from PagedGrid
         protected void displayPageFromClick (int page)
         {
-            Application.go(Page.MAIL, ""+page);
+            Link.go(Page.MAIL, ""+page);
         }
 
         @Override // from PagedGrid
@@ -120,7 +121,7 @@ public class MailPanel extends VerticalPanel
                         ((ConvosModel)_model).reset();
                         displayPage(0, true);
                     } else {
-                        Application.go(Page.MAIL, "");
+                        Link.go(Page.MAIL, "");
                     }
                 }
             }));
@@ -165,7 +166,7 @@ public class MailPanel extends VerticalPanel
                 name = MsoyUI.createLabel("<unknown>", null);
             } else {
                 photo = convo.other.photo;
-                name = Application.memberViewLink(convo.other.name);
+                name = Link.memberView(convo.other.name);
             }
 
             setWidget(0, 1, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE, null), 1, "Photo");
@@ -174,7 +175,7 @@ public class MailPanel extends VerticalPanel
             setWidget(0, 2, name, 1, "Name");
             setText(1, 0, _fmt.format(convo.lastSent), 1, "Sent");
 
-            Widget link = Application.createLink(
+            Widget link = Link.create(
                 (convo.subject.length() == 0) ? CMail.msgs.mailNoSubject() : convo.subject,
                 Page.MAIL, Args.compose("c", convo.conversationId));
             setWidget(0, 3, link, 1, "Subject");

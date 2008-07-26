@@ -19,6 +19,7 @@ import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
 
+import client.util.Link;
 import client.util.MsoyCallback;
 
 /**
@@ -49,7 +50,7 @@ public class DashboardPanel extends FlexTable
             }));
             controls.add(new Button(CAdmin.msgs.browserPlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.ADMIN, "browser");
+                    Link.go(Page.ADMIN, "browser");
                 }
             }));
             controls.add(new Button(CAdmin.msgs.spamPlayers(), new ClickListener() {
@@ -60,7 +61,7 @@ public class DashboardPanel extends FlexTable
         }
         controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.ADMIN, "review");
+                Link.go(Page.ADMIN, "review");
             }
         }));
 
@@ -84,7 +85,7 @@ public class DashboardPanel extends FlexTable
         if (CAdmin.isAdmin()) {
             controls.add(new Button(CAdmin.msgs.viewABTests(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.ADMIN, "testlist");
+                    Link.go(Page.ADMIN, "testlist");
                 }
             }));
         }

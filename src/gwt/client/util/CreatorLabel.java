@@ -9,7 +9,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.shell.Application;
 import client.shell.CShell;
 
 /**
@@ -43,7 +42,7 @@ public class CreatorLabel extends FlowPanel
 
         add(new InlineLabel(CShell.cmsgs.creatorBy() + " "));
         if (menu == null) {
-            add(Application.memberViewLink(name.toString(), name.getMemberId()));
+            add(Link.memberView(name.toString(), name.getMemberId()));
         } else {
             InlineLabel text = new InlineLabel(name.toString());
             text.addStyleName("LabelLink");

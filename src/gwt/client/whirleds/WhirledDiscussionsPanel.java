@@ -20,9 +20,9 @@ import com.threerings.msoy.fora.data.ForumThread;
 import com.threerings.msoy.group.data.GroupDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 
@@ -95,7 +95,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             date.setStyleName("Date");
             add(date);
 
-            Widget subject = Application.createLink(
+            Widget subject = Link.create(
                 thread.subject, Page.WHIRLEDS, Args.compose("t", thread.threadId));
             subject.setStyleName("Subject");
             add(subject);
@@ -104,7 +104,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             text.setStyleName("Text");
             add(text);
 
-            ClickListener posterClick = Application.createLinkListener(
+            ClickListener posterClick = Link.createListener(
                 Page.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
             Widget posterIcon = MediaUtil.createMediaView(
                 thread.firstPost.poster.photo, MediaDesc.HALF_THUMBNAIL_SIZE, posterClick);
@@ -132,7 +132,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
                 // 0 or 2+ replies
                 repliesText = CWhirleds.msgs.discussionReplies("" + (thread.posts-1));
             }
-            Widget replies = Application.createLink(
+            Widget replies = Link.create(
                 repliesText, Page.WHIRLEDS, Args.compose("t", thread.threadId));
             replies.setStyleName("Replies");
             add(replies);

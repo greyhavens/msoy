@@ -27,6 +27,7 @@ import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.StuffNaviBar;
@@ -66,7 +67,7 @@ public class ItemPanel extends VerticalPanel
             _shop.add(WidgetUtil.makeShim(5, 5));
             ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.SHOP, ""+_type);
+                    Link.go(Page.SHOP, ""+_type);
                 }
             };
             _shop.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
@@ -88,7 +89,7 @@ public class ItemPanel extends VerticalPanel
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
-                Application.go(Page.STUFF, Args.compose(new String[] { ""+_type, ""+page }));
+                Link.go(Page.STUFF, Args.compose(new String[] { ""+_type, ""+page }));
             }
             protected Widget createWidget (Item item) {
                 return new ItemEntry(item);

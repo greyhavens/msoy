@@ -6,6 +6,7 @@ package client.msgs;
 import java.util.List;
 
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyUI;
 
 import client.shell.Application;
@@ -118,7 +119,7 @@ public class EditIssuePanel extends TableFooterPanel
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    Application.go(Page.WHIRLEDS,
+                    Link.go(Page.WHIRLEDS,
                             "t_" + _message.threadId + "_" + _page + "_" + _messageId);
                     return false;
                 }

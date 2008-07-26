@@ -36,6 +36,7 @@ import client.shell.Page;
 
 import client.shop.CShop;
 
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.ThumbBox;
@@ -59,7 +60,7 @@ public class MyWhirleds extends AbsolutePanel
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
-                Application.go(Page.WHIRLEDS, Args.compose("mywhirleds", newSortMethod));
+                Link.go(Page.WHIRLEDS, Args.compose("mywhirleds", newSortMethod));
             }
         });
 
@@ -140,7 +141,7 @@ public class MyWhirleds extends AbsolutePanel
                 setStyleName("WhirledWidget");
 
                 // logo links to whirled
-                ClickListener whirledClick = Application.createLinkListener(
+                ClickListener whirledClick = Link.createListener(
                     Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 ThumbBox logo = new ThumbBox(card.logo, whirledClick);
                 SimplePanel logoBox = new SimplePanel();
@@ -151,7 +152,7 @@ public class MyWhirleds extends AbsolutePanel
                 // name links to whirled
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
-                Hyperlink nameText = Application.createLink(
+                Hyperlink nameText = Link.create(
                     card.name.toString(), Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 nameText.addStyleName("inline");
                 name.add(nameText);
@@ -174,7 +175,7 @@ public class MyWhirleds extends AbsolutePanel
                 // latest thread subject links to thread
                 if (card.latestThread != null) {
 
-                    Hyperlink latestThreadSubject = Application.createLink(
+                    Hyperlink latestThreadSubject = Link.create(
                         card.latestThread.subject,
                         Page.WHIRLEDS, Args.compose("t", card.latestThread.threadId));
                     latestThreadSubject.setStyleName("LatestThreadSubject");
@@ -187,7 +188,7 @@ public class MyWhirleds extends AbsolutePanel
                     postedBy.add(new InlineLabel(CWhirleds.msgs.myPostedBy()+" "));
                     String memberName = card.latestThread.firstPost.poster.name.toString();
                     int memberId = card.latestThread.firstPost.poster.name.getMemberId();
-                    postedBy.add(Application.memberViewLink(memberName, memberId));
+                    postedBy.add(Link.memberView(memberName, memberId));
 
                     FlowPanel date = new FlowPanel();
                     date.setStyleName("Date");
@@ -214,12 +215,12 @@ public class MyWhirleds extends AbsolutePanel
                 }
 
                 // #threads and #posts link to discussions
-                Hyperlink numThreads = Application.createLink(
+                Hyperlink numThreads = Link.create(
                     card.numThreads+"",
                     Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numThreads.addStyleName("NumThreads");
                 add(numThreads);
-                Hyperlink numPosts = Application.createLink(
+                Hyperlink numPosts = Link.create(
                     card.numPosts+"",
                     Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numPosts.addStyleName("NumPosts");

@@ -32,6 +32,7 @@ import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.LimitedTextArea;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
@@ -126,8 +127,8 @@ public class GroupEdit extends FlexTable
         footer.add(WidgetUtil.makeShim(5, 5));
         footer.add(new Button(CWhirleds.cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Application.go(Page.WHIRLEDS, _group.groupId == 0 ? "" :
-                               Args.compose("d", _group.groupId));
+                Link.go(Page.WHIRLEDS, _group.groupId == 0 ? "" :
+                        Args.compose("d", _group.groupId));
             }
         }));
         int frow = getRowCount();
@@ -158,7 +159,7 @@ public class GroupEdit extends FlexTable
                 public void addMenuItems (final String tag, PopupMenu menu) {
                     menu.addMenuItem(CWhirleds.msgs.detailTagLink(), new Command() {
                         public void execute () {
-                            Application.go(Page.WHIRLEDS, Args.compose("tag", "0", tag));
+                            Link.go(Page.WHIRLEDS, Args.compose("tag", "0", tag));
                         }
                     });
                 }
@@ -203,13 +204,13 @@ public class GroupEdit extends FlexTable
 
         final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
-                Application.go(
+                Link.go(
                     Page.WHIRLEDS, Args.compose("d", String.valueOf(_group.groupId), "r"));
             }
         };
         final MsoyCallback<Group> createCallback = new MsoyCallback<Group>() {
             public void onSuccess (Group group) {
-                Application.go(
+                Link.go(
                     Page.WHIRLEDS, Args.compose("d", String.valueOf(group.groupId), "r"));
             }
         };

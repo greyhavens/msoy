@@ -16,10 +16,10 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
@@ -81,12 +81,12 @@ public class MemberList extends PagedGrid<MemberCard>
             super("memberWidget", 0, 5);
 
             setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE,
-                                                      Application.createLinkListener(
+                                                      Link.createListener(
                                                       Page.PEOPLE, "" + card.name.getMemberId())),
                       1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-            setWidget(0, 1, Application.createLink(card.name.toString(), Page.PEOPLE,
+            setWidget(0, 1, Link.create(card.name.toString(), Page.PEOPLE,
                                                    ""+card.name.getMemberId()), 1, "Name");
 
             // we'll overwrite these below if we have anything to display
@@ -114,7 +114,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // if we're not a guest, we can send them mail
             if (isNotMe && !CPeople.isGuest()) {
-                onClick = Application.createLinkListener(
+                onClick = Link.createListener(
                     Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
@@ -123,7 +123,7 @@ public class MemberList extends PagedGrid<MemberCard>
             }
 
             // always show the visit home button
-            onClick = Application.createLinkListener(Page.WORLD, "m" + card.name.getMemberId());
+            onClick = Link.createListener(Page.WORLD, "m" + card.name.getMemberId());
             extras.setWidget(row, 0,
                 MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1,

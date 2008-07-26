@@ -19,6 +19,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.Link;
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
@@ -158,7 +159,7 @@ public class StatusPanel extends SmartTable
             String mpath = "/images/header/symbol_mail.png";
             setWidget(0, idx++, MsoyUI.createActionImage(mpath, new ClickListener() {
                 public void onClick (Widget sender) {
-                    Application.go(Page.MAIL, "");
+                    Link.go(Page.MAIL, "");
                 }
             }), 1, "Icon");
             _mailIx = idx; // the next cell will hold our count

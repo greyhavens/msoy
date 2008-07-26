@@ -24,6 +24,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.StyledTabPanel;
 import client.util.ThumbBox;
@@ -130,7 +131,7 @@ public class GameDetailPanel extends SmartTable
         // route tab selection through the URL
         String tabCode = getTabCode(tabIndex);
         if (!tabCode.equals(_seltab)) {
-            Application.go(Page.GAMES, Args.compose("d", ""+_gameId, tabCode));
+            Link.go(Page.GAMES, Args.compose("d", ""+_gameId, tabCode));
             return false;
         } else {
             return true;

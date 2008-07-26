@@ -29,7 +29,7 @@ public class ItemBox extends SmartTable
 
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget widget) {
-                Application.go(page, args);
+                Link.go(page, args);
             }
         };
 

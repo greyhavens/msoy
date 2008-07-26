@@ -28,12 +28,12 @@ import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -135,7 +135,7 @@ public class WhirledDetailPanel extends FlowPanel
         established.add(new InlineLabel(
             CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
         established.add(new InlineLabel(CShell.cmsgs.creatorBy(), false, false, true));
-        Hyperlink creator = Application.memberViewLink(
+        Hyperlink creator = Link.memberView(
             _detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
         established.add(creator);
@@ -155,12 +155,12 @@ public class WhirledDetailPanel extends FlowPanel
 
         // enter and discussions buttons
         PushButton enterButton = MsoyUI.createButton(
-            MsoyUI.LONG_THIN, CWhirleds.msgs.detailEnter(), Application.createLinkListener(
+            MsoyUI.LONG_THIN, CWhirleds.msgs.detailEnter(), Link.createListener(
                 Page.WORLD, "s"+_group.homeSceneId));
         enterButton.addStyleName("EnterButton");
         mainDetails.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(), Application.createLinkListener(
+            MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(), Link.createListener(
                 Page.WHIRLEDS, Args.compose("f", _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         mainDetails.add(discussionsButton);
@@ -189,7 +189,7 @@ public class WhirledDetailPanel extends FlowPanel
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             String args = Args.compose("w", "g", ""+_detail.group.groupId);
             actions.add(MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailInvite(), Application.createLinkListener(Page.MAIL, args)));
+                CWhirleds.msgs.detailInvite(), Link.createListener(Page.MAIL, args)));
         }
 
         // shop
@@ -197,7 +197,7 @@ public class WhirledDetailPanel extends FlowPanel
             String args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailShop(), Application.createLinkListener(Page.SHOP, args)));
+                CWhirleds.msgs.detailShop(), Link.createListener(Page.SHOP, args)));
         }
 
         // read charter
@@ -219,7 +219,7 @@ public class WhirledDetailPanel extends FlowPanel
 
             String args = Args.compose("edit", _group.groupId);
             Label editWhirled = MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailEdit(), Application.createLinkListener(Page.WHIRLEDS, args));
+                CWhirleds.msgs.detailEdit(), Link.createListener(Page.WHIRLEDS, args));
             editWhirled.addStyleName("inline");
             managerActions.add(editWhirled);
 
@@ -301,7 +301,6 @@ public class WhirledDetailPanel extends FlowPanel
             }
         };
     }
-
 
     /**
      * Displays multiple panels: Discussions, Charter, Members, Rooms.  Panels
@@ -411,7 +410,7 @@ public class WhirledDetailPanel extends FlowPanel
             content.add(members);
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
-                ClickListener iconClick = Application.createLinkListener(
+                ClickListener iconClick = Link.createListener(
                     Page.PEOPLE, "" + member.name.getMemberId());
                 ThumbBox icon =
                     new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE, iconClick);
@@ -422,7 +421,7 @@ public class WhirledDetailPanel extends FlowPanel
                         ii * 2, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(
-                  "Name", Application.memberViewLink("" + member.name, member.name.getMemberId()));
+                  "Name", Link.memberView("" + member.name, member.name.getMemberId()));
                 members.setWidget((ii * 2) + 1, 0, name);
             }
 
