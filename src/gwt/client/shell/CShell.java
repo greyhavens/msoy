@@ -12,7 +12,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.ItemServiceAsync;
-import com.threerings.msoy.web.client.MemberServiceAsync;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -34,9 +33,6 @@ public class CShell
 
     /** This member's current level. */
     public static int level;
-
-    /** Provides member-related service. */
-    public static MemberServiceAsync membersvc;
 
     /** Provides comment-related service. */
     public static CommentServiceAsync commentsvc;

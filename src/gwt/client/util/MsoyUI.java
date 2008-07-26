@@ -23,9 +23,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.admin.CAdmin;
+import client.util.ServiceUtil;
 import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
@@ -380,7 +383,7 @@ public class MsoyUI
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
-                CAdmin.membersvc.trackClientAction(
+                _membersvc.trackClientAction(
                     TrackingCookie.get(), action, details != null ? details : "", null);
             }
         };
@@ -392,12 +395,12 @@ public class MsoyUI
      * @param action String identifier for the action to be logged
      * @param testName Optional string identifier for the a/b test if associated with one
      */
-    public static ClickListener createTestTrackingListener (final String action, final String testName)
+    public static ClickListener createTestTrackingListener (
+        final String action, final String testName)
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
-                CAdmin.membersvc.trackTestAction(
-                    TrackingCookie.get(), action, testName, null);
+                _membersvc.trackTestAction(TrackingCookie.get(), action, testName, null);
             }
         };
     }
@@ -491,8 +494,8 @@ public class MsoyUI
     }
 
     /**
-     * Truncate a paragraph to the maximum number of full sentences, or to the
-     * max number of characters followed by "..."
+     * Truncate a paragraph to the maximum number of full sentences, or to the max number of
+     * characters followed by "..."
      */
     public static String truncateParagraph (String text, int maxLen)
     {
@@ -509,4 +512,6 @@ public class MsoyUI
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

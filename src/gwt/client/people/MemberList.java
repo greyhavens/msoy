@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -13,7 +14,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
@@ -25,6 +27,7 @@ import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
+import client.util.ServiceUtil;
 
 /**
  * Displays a list of members.
@@ -63,7 +66,7 @@ public class MemberList extends PagedGrid<MemberCard>
     {
         return new Command() {
             public void execute () {
-                CPeople.membersvc.removeFriend(
+                _membersvc.removeFriend(
                     CPeople.ident, card.name.getMemberId(), new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(CPeople.msgs.mlRemoved(card.name.toString()));
@@ -147,4 +150,7 @@ public class MemberList extends PagedGrid<MemberCard>
     }
 
     protected String _emptyMessage;
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

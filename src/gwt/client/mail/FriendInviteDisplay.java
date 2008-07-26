@@ -3,15 +3,19 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.person.data.ConvMessage;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays a friend invitation.
@@ -35,7 +39,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void refreshUI (final boolean roundtrip)
         {
             int friendId = _message.author.name.getMemberId();
-            CMail.membersvc.getFriendStatus(CMail.ident, friendId, new MsoyCallback<Boolean>() {
+            _membersvc.getFriendStatus(CMail.ident, friendId, new MsoyCallback<Boolean>() {
                 public void onSuccess (Boolean result) {
                     buildUI(result, roundtrip);
                 }
@@ -55,8 +59,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
                 Button ayeButton = new Button(CMail.msgs.friendBtnAccept());
                 new ClickCallback<Void>(ayeButton) {
                     public boolean callService () {
-                        CMail.membersvc.addFriend(
-                            CMail.ident, _message.author.name.getMemberId(), this);
+                        _membersvc.addFriend(CMail.ident, _message.author.name.getMemberId(), this);
                         return true;
                     }
                     public boolean gotResult (Void result) {
@@ -82,4 +85,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
         protected boolean _thirdPerson;
     }
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

@@ -23,8 +23,6 @@ import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
@@ -271,8 +269,6 @@ public class Application
         CShell.app = this;
 
         // wire up our remote services
-        CShell.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
-        ((ServiceDefTarget)CShell.membersvc).setServiceEntryPoint("/membersvc");
         CShell.commentsvc = (CommentServiceAsync)GWT.create(CommentService.class);
         ((ServiceDefTarget)CShell.commentsvc).setServiceEntryPoint("/commentsvc");
         CShell.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);

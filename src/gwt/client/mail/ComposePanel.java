@@ -5,6 +5,7 @@ package client.mail;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -25,6 +26,8 @@ import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
@@ -33,6 +36,7 @@ import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 import client.util.ThumbBox;
 
 /**
@@ -123,7 +127,7 @@ public class ComposePanel extends FlowPanel
 
     public void setRecipientId (int recipientId)
     {
-        CMail.membersvc.getMemberCard(recipientId, new MsoyCallback<MemberCard>() {
+        _membersvc.getMemberCard(recipientId, new MsoyCallback<MemberCard>() {
             public void onSuccess (MemberCard result) {
                 if (result != null) {
                     setRecipient(result, true);
@@ -198,4 +202,7 @@ public class ComposePanel extends FlowPanel
     protected TextBox _subject;
     protected TextArea _body;
     protected Button _send;
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

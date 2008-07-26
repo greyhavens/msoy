@@ -3,6 +3,7 @@
 
 package client.account;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -10,11 +11,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 public class OptOutPanel extends FlexTable
 {
@@ -22,7 +27,7 @@ public class OptOutPanel extends FlexTable
     {
         setCellSpacing(10);
         setStyleName("invitation"); // mimic the styles on InvitationPanel
-        CAccount.membersvc.getInvitation(inviteId, false, new MsoyCallback<Invitation>() {
+        _membersvc.getInvitation(inviteId, false, new MsoyCallback<Invitation>() {
             public void onSuccess (Invitation invite) {
                 init(invite);
             }
@@ -42,7 +47,7 @@ public class OptOutPanel extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CAccount.msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                CAccount.membersvc.optOut(invite.inviteId, new MsoyCallback<Void>() {
+                _membersvc.optOut(invite.inviteId, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         clear();
                         setText(1, 0, CAccount.msgs.optOutSuccessful(invite.inviteeEmail));
@@ -60,4 +65,7 @@ public class OptOutPanel extends FlexTable
         getFlexCellFormatter().setColSpan(row, 0, 2);
         setWidget(row++, 0, footer);
     }
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

@@ -23,10 +23,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.EmailContact;
-import com.threerings.msoy.web.data.MemberInvites;
-import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.MemberInvites;
 
 import client.shell.ShellMessages;
 import client.util.BorderedDialog;
@@ -36,6 +39,7 @@ import client.util.DefaultTextListener;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
+import client.util.ServiceUtil;
 
 /**
  * Display a UI allowing users to send out the invites that have been granted to them, as well as
@@ -161,7 +165,7 @@ public class InvitePanel extends VerticalPanel
         _penders.setText(2, 0, CPeople.msgs.inviteNoPending());
         add(_penders);
 
-        CPeople.membersvc.getInvitationsStatus(CPeople.ident, new MsoyCallback<MemberInvites>() {
+        _membersvc.getInvitationsStatus(CPeople.ident, new MsoyCallback<MemberInvites>() {
             public void onSuccess (MemberInvites invites) {
                 gotStatus(invites);
             }
@@ -209,8 +213,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void removeInvite (final Invitation inv)
     {
-        CPeople.membersvc.removeInvitation(
-            CPeople.ident, inv.inviteId, new MsoyCallback<Void>() {
+        _membersvc.removeInvitation(CPeople.ident, inv.inviteId, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 for (int ii = 2, nn = _penders.getRowCount(); ii < nn; ii++) {
                     if (inv.inviteeEmail.equals(_penders.getText(ii, 1))) {
@@ -243,7 +246,7 @@ public class InvitePanel extends VerticalPanel
             msg = "";
         }
         boolean anon = _anonymous.isChecked();
-        CPeople.membersvc.sendInvites(
+        _membersvc.sendInvites(
             CPeople.ident, invited, from, msg, anon, new MsoyCallback<InvitationResults>() {
             public void onSuccess (InvitationResults ir) {
                 addPendingInvites(ir.pendingInvitations);
@@ -455,6 +458,8 @@ public class InvitePanel extends VerticalPanel
     protected InviteList _emailList;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 
     protected static final int MAX_FROM_LEN = 40;
     protected static final int MAX_WEBMAIL_LENGTH = 30;

@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.client.WorldServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
@@ -25,6 +27,7 @@ import client.shell.TrackingCookie;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 public class index extends MsgsEntryPoint
 {
@@ -61,7 +64,7 @@ public class index extends MsgsEntryPoint
                 Application.activeInvite.inviteId.equals(inviteId)) {
                 Link.go(Page.ME, "");
             } else {
-                CMe.membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
+                _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
                     public void onSuccess (Invitation invite) {
                         Application.activeInvite = invite;
                         Link.go(Page.ME, "");
@@ -71,7 +74,7 @@ public class index extends MsgsEntryPoint
 
         // landing page for creators (a/b test: half see signup, half see info - default is info)
         } else if (action.equals("creators")) {
-            CAdmin.membersvc.getABTestGroup(
+            _membersvc.getABTestGroup(
                 TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
                         Frame.closeClient(false); // fullscreen
@@ -147,4 +150,7 @@ public class index extends MsgsEntryPoint
     {
         Link.go(ME, "");
     }
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

@@ -14,14 +14,18 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
+
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.ABTest;
 
-import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Display a dialog for admins to issue invitations to the player base.
@@ -96,7 +100,7 @@ public class ABTestListPanel extends FlowPanel
             Button testButton = new Button("Test");
             testButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    CAdmin.membersvc.getABTestGroup(
+                    _membersvc.getABTestGroup(
                         TrackingCookie.get(), test.name, true, new MsoyCallback<Integer>() {
                             public void onSuccess (Integer group) {
                                 MsoyUI.info("You are in group #" + group);
@@ -115,4 +119,6 @@ public class ABTestListPanel extends FlowPanel
 
     protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("yyyy-MM-dd");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

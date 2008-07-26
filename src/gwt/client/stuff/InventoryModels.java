@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
@@ -18,6 +20,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 
 /**
  * Maintains information on our member's inventory.
@@ -44,17 +48,16 @@ public class InventoryModels
             return;
         }
 
-        CStuff.membersvc.loadInventory(
-            CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
-                public void onSuccess (List<Item> result) {
-                    SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
-                    _models.put(key, model);
-                    cb.onSuccess(model);
-                }
-                public void onFailure (Throwable caught) {
-                    cb.onFailure(caught);
-                }
-            });
+        _membersvc.loadInventory(CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
+            public void onSuccess (List<Item> result) {
+                SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
+                _models.put(key, model);
+                cb.onSuccess(model);
+            }
+            public void onFailure (Throwable caught) {
+                cb.onFailure(caught);
+            }
+        });
     }
 
     public SimpleDataModel<Item> getModel (byte type, int suiteId)
@@ -132,4 +135,7 @@ public class InventoryModels
     }
 
     protected Map<Key, SimpleDataModel<Item>> _models = new HashMap<Key, SimpleDataModel<Item>>();
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

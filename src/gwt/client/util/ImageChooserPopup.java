@@ -24,10 +24,13 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 
 import client.editem.EditorHost;
 
 import client.util.MediaUtil;
+import client.util.ServiceUtil;
 
 import client.shell.CShell;
 import client.shell.Frame;
@@ -47,16 +50,15 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        CShell.membersvc.loadInventory(
-            CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
-                public void onSuccess (List<Item> items) {
-                    Frame.showDialog(_cmsgs.icTitle(),
-                                    new ImageChooserPopup(items, thumbnail, callback));
-                }
-                public void onFailure (Throwable caught) {
-                    callback.onFailure(caught);
-                }
-            });
+        _membersvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
+            public void onSuccess (List<Item> items) {
+                Frame.showDialog(_cmsgs.icTitle(),
+                                 new ImageChooserPopup(items, thumbnail, callback));
+            }
+            public void onFailure (Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
     }
 
     protected ImageChooserPopup (
@@ -179,4 +181,6 @@ public class ImageChooserPopup extends VerticalPanel
     protected AsyncCallback<MediaDesc> _callback;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }
