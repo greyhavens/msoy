@@ -13,7 +13,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

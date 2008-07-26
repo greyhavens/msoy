@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

@@ -4,10 +4,7 @@
 package client.games;
 
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

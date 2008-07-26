@@ -26,7 +26,6 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.TagHistory;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;

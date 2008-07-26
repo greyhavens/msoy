@@ -27,7 +27,6 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.TagHistory;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;

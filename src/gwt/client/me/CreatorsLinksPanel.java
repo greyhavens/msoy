@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import client.shell.Application;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyUI;

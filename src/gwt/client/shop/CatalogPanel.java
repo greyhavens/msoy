@@ -29,7 +29,6 @@ import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 
 import client.item.TagCloud;
-import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.Link;

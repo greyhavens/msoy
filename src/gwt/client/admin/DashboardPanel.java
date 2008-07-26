@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 
-import client.shell.Application;
 import client.shell.Frame;
 import client.shell.Page;
 

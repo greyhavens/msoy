@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

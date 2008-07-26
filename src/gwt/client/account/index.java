@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

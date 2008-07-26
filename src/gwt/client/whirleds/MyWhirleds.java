@@ -30,7 +30,6 @@ import com.threerings.msoy.group.data.GroupMembership;
 
 import com.threerings.msoy.web.data.MyGroupCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 

@@ -29,7 +29,6 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.StartConvoCallback;
-import client.shell.Application;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyCallback;

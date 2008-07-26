@@ -24,7 +24,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ItemBox;

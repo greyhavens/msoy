@@ -19,7 +19,6 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.GameDetail;
 
 import client.item.ItemRating;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Frame;

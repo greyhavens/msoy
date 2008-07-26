@@ -6,7 +6,6 @@ package client.stuff;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;

@@ -24,7 +24,6 @@ import com.threerings.msoy.web.data.MemberInviteResult;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 

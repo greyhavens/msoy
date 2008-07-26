@@ -9,7 +9,6 @@ import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyUI;
 
-import client.shell.Application;
 import client.shell.Page;
 
 import com.google.gwt.user.client.ui.Button;

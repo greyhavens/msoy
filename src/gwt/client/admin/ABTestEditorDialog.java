@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.ABTest;
 
-import client.shell.Application;
 import client.shell.CShell;
 import client.shell.Page;
 import client.util.BorderedDialog;

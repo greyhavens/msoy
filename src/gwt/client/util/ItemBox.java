@@ -13,7 +13,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.Application;
 import client.shell.CShell;
 
 /**

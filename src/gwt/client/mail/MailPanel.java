@@ -23,7 +23,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.Conversation;
 import com.threerings.msoy.person.data.Profile;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.ClickCallback;

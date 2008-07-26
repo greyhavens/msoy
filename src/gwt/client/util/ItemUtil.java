@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;

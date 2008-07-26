@@ -439,7 +439,6 @@ public class WhirledDetailPanel extends FlowPanel
         }
     }
 
-
     protected Group _group;
     protected GroupDetail _detail;
     protected GroupExtras _extras;

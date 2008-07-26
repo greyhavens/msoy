@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
-import client.shell.Application;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.Link;

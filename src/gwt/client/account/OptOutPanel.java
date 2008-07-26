@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.Invitation;
 
-import client.shell.Application;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyCallback;

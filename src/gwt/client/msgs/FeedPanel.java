@@ -31,7 +31,6 @@ import com.threerings.msoy.person.data.SelfFeedMessage;
 
 import client.games.GameDetailPanel;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;

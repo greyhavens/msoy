@@ -21,7 +21,6 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.GameInfo;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;

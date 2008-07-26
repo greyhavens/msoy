@@ -22,7 +22,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;

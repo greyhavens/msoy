@@ -5,7 +5,6 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.web.client.GameService;

@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.data.Issue;
 
-import client.shell.Application;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyUI;

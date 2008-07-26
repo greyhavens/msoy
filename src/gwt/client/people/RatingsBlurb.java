@@ -17,7 +17,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.games.GameDetailPanel;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.util.Link;
