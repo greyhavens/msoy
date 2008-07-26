@@ -3,16 +3,19 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.item.ItemMessages;
 import client.shell.CShell;
 
 /**
@@ -38,7 +41,7 @@ public class ItemBox extends SmartTable
         if (remixable) {
             // add a wee icon indicating remixable
             Image remix = new Image("/images/item/remixable_icon.png");
-            remix.setTitle(CShell.imsgs.remixTip());
+            remix.setTitle(_imsgs.remixTip());
 
             // arrange it next to the thumbnail
             HorizontalPanel hpan = new HorizontalPanel();
@@ -49,7 +52,8 @@ public class ItemBox extends SmartTable
         }
 
         addWidget(mainWidget, getColumns(), null);
-        getFlexCellFormatter().setHorizontalAlignment(getRowCount()-1, 0, HasAlignment.ALIGN_CENTER);
+        getFlexCellFormatter().setHorizontalAlignment(
+            getRowCount()-1, 0, HasAlignment.ALIGN_CENTER);
         addWidget(MsoyUI.createActionLabel(name, "Name", onClick), getColumns(), null);
     }
 
@@ -57,4 +61,6 @@ public class ItemBox extends SmartTable
     {
         return 1;
     }
+
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
 }

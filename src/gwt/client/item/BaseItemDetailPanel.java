@@ -5,6 +5,7 @@ package client.item;
 
 import java.util.Collection;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,9 +24,12 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.TagHistory;
 
+import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
@@ -37,6 +41,7 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
+import client.util.ServiceUtil;
 import client.util.RoundBox;
 import client.util.ShopUtil;
 import client.util.StyledTabPanel;
@@ -77,12 +82,12 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
-                this.addMenuItem(CShell.imsgs.viewProfile(), new Command() {
+                this.addMenuItem(_imsgs.viewProfile(), new Command() {
                     public void execute () {
                         Link.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
                     }
                 });
-                this.addMenuItem(CShell.imsgs.browseCatalogFor(), new Command() {
+                this.addMenuItem(_imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
                         CatalogQuery query = new CatalogQuery();
                         query.itemType = _detail.item.getType();
@@ -97,7 +102,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_item.catalogId != 0 && _item.ownerId != 0) {
             _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("l", "" + _item.getType(), "" + _item.catalogId);
-            _details.add(Link.create(CShell.imsgs.viewInShop(), Page.SHOP, args));
+            _details.add(Link.create(_imsgs.viewInShop(), Page.SHOP, args));
         }
 
         _details.add(WidgetUtil.makeShim(10, 10));
@@ -110,7 +115,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             HorizontalPanel panel = new HorizontalPanel();
             panel.add(new Image("images/item/remixable_icon.png"));
             panel.add(WidgetUtil.makeShim(10, 10));
-            panel.add(new Label(CShell.imsgs.remixTip()));
+            panel.add(new Label(_imsgs.remixTip()));
             _indeets.add(WidgetUtil.makeShim(10, 10));
             _indeets.add(panel);
         }
@@ -118,30 +123,30 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_item instanceof Game) {
             _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("d" , ((Game)_item).gameId);
-            _details.add(Link.create(CShell.imsgs.bidPlay(), Page.GAMES, args));
+            _details.add(Link.create(_imsgs.bidPlay(), Page.GAMES, args));
         }
 
         // add our tag business at the bottom
         getFlexCellFormatter().setHeight(1, 0, "10px");
         setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
-                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
+                _itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
             }
             public void untag (String tag, AsyncCallback<TagHistory> callback) {
-                CShell.itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
+                _itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
             }
             public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback) {
-                CShell.itemsvc.getRecentTags(CShell.ident, callback);
+                _itemsvc.getRecentTags(CShell.ident, callback);
             }
             public void getTags (AsyncCallback<Collection<String>> callback) {
-                CShell.itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
+                _itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
             }
             public boolean supportFlags () {
                 return true;
             }
             public void setFlags (final byte flag) {
                 ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-                CShell.itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback<Void>() {
+                _itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         _item.flagged |= flag;
                     }
@@ -235,7 +240,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // persist our new scale to the server
         if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
-            CShell.itemsvc.scaleAvatar(
+            _itemsvc.scaleAvatar(
                 CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     // nada
@@ -275,4 +280,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     /** Have we updated the scale (of an avatar?) */
     protected boolean _scaleUpdated;
+
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

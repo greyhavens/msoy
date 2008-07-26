@@ -7,10 +7,13 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.ShopUtil;
 
 /**
@@ -35,7 +38,7 @@ public class index extends Page
         if (action.equals("l")) {
             byte type = (byte)args.get(1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
-            CShop.catalogsvc.loadListing(
+            _catalogsvc.loadListing(
                 CShop.ident, type, catalogId, new MsoyCallback<CatalogListing>() {
                     public void onSuccess (CatalogListing listing) {
                         setContent(new ListingDetailPanel(_models, listing));
@@ -73,4 +76,7 @@ public class index extends Page
 
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

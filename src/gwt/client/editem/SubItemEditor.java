@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -29,9 +30,9 @@ public abstract class SubItemEditor extends ItemEditor
         super.addInfo();
 
         addSpacer();
-        addRow(CShell.emsgs.subIdent(), _ident = new TextBox());
+        addRow(_emsgs.subIdent(), _ident = new TextBox());
         _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
-        addTip(CShell.emsgs.subIdentTip());
+        addTip(_emsgs.subIdentTip());
     }
 
     @Override // from ItemEditor
@@ -42,10 +43,12 @@ public abstract class SubItemEditor extends ItemEditor
 
         _subi.ident = _ident.getText();
         if (!nonBlank(_subi.ident, SubItem.MAX_IDENT_LENGTH)) {
-            throw new Exception(CShell.emsgs.subIdentMissing(""+SubItem.MAX_IDENT_LENGTH));
+            throw new Exception(_emsgs.subIdentMissing(""+SubItem.MAX_IDENT_LENGTH));
         }
     }
 
     protected SubItem _subi;
     protected TextBox _ident;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

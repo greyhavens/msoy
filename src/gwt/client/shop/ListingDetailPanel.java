@@ -20,6 +20,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.data.CostUpdatedException;
 
 import client.item.BaseItemDetailPanel;
@@ -37,6 +39,7 @@ import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyUI;
 import client.util.PopupMenu;
+import client.util.ServiceUtil;
 import client.util.ShopUtil;
 
 /**
@@ -67,7 +70,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
                                       Link.createListener(Page.ACCOUNT, "create"));
                 } else {
-                    CShop.catalogsvc.purchaseItem(
+                    _catalogsvc.purchaseItem(
                         CShop.ident, _item.getType(), _listing.catalogId,
                         _listing.flowCost, _listing.goldCost, this);
                 }
@@ -134,7 +137,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback<Void>(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
-                    CShop.catalogsvc.removeListing(
+                    _catalogsvc.removeListing(
                         CShop.ident, _item.getType(), _listing.catalogId, this);
                     return true;
                 }
@@ -236,4 +239,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

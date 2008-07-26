@@ -4,11 +4,8 @@
 package client.remix;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.http.client.URL;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,12 +18,16 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.DeploymentConfig;
-
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.data.CostUpdatedException;
 
 import client.shell.CShell;
 
+import client.editem.EditemMessages;
 import client.editem.EditorHost;
 
 import client.shop.CShop;
@@ -35,6 +36,7 @@ import client.shop.PriceLabel;
 import client.util.ImageChooserPopup;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 
 public class ItemRemixer extends FlexTable
@@ -63,7 +65,7 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (byte type, int itemId)
     {
-        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId),
+        _itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     setItem(result);
@@ -144,7 +146,7 @@ public class ItemRemixer extends FlexTable
         }
 
         if (_catalogId != 0) {
-            CShop.catalogsvc.purchaseItem(
+            _catalogsvc.purchaseItem(
                 CShop.ident, _item.getType(), _catalogId, _flowCost, _goldCost,
                 new AsyncCallback<Item>() {
                     public void onSuccess (Item result) {
@@ -173,9 +175,9 @@ public class ItemRemixer extends FlexTable
 
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
-        CShell.itemsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
+        _itemsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
             public void onSuccess (Item item) {
-                MsoyUI.info(CShell.emsgs.msgItemUpdated());
+                MsoyUI.info(_emsgs.msgItemUpdated());
                 _parent.editComplete(item);
             }
         });
@@ -251,4 +253,10 @@ public class ItemRemixer extends FlexTable
     protected int _flowCost, _goldCost;
 
     protected PriceLabel _priceLabel;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

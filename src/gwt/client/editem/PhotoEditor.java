@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
@@ -33,10 +34,10 @@ public class PhotoEditor extends ItemEditor
     {
         super.addInfo();
 
-        addRow(CShell.emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
+        addRow(_emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
-                    return CShell.emsgs.errPhotoNotImage();
+                    return _emsgs.errPhotoNotImage();
                 }
                 _photo.photoMedia = desc;
                 _photo.photoWidth = width;
@@ -44,8 +45,10 @@ public class PhotoEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.photoTip());
+        }), _emsgs.photoTip());
     }
 
     protected Photo _photo;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

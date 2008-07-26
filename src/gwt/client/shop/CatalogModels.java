@@ -7,15 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 
+import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 
 /**
@@ -39,7 +42,7 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            CShop.catalogsvc.loadCatalog(
+            _catalogsvc.loadCatalog(
                 CShop.ident, _query, start, count, _listingCount == -1,
                 new MsoyCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
@@ -86,4 +89,7 @@ public class CatalogModels
     }
 
     protected Map<CatalogQuery, Listings> _models = new HashMap<CatalogQuery, Listings>();
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

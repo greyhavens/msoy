@@ -17,15 +17,18 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+
 import com.threerings.msoy.fora.data.Comment;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.CommentService;
+import com.threerings.msoy.web.client.CommentServiceAsync;
 
 import client.msgs.ComplainPopup;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 import client.util.ServiceBackedDataModel;
+import client.util.ServiceUtil;
 
 /**
  * Displays comments on a particular entity and allows posting.
@@ -126,8 +129,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected void postComment (String text)
     {
-        CShell.commentsvc.postComment(CShell.ident, _etype, _entityId, text,
-            new MsoyCallback<Comment>() {
+        _commentsvc.postComment(CShell.ident, _etype, _entityId, text, new MsoyCallback<Comment>() {
                 public void onSuccess (Comment result) {
                     postedComment(result);
                 }
@@ -155,7 +157,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         return new Command() {
             public void execute () {
-                CShell.commentsvc.deleteComment(
+                _commentsvc.deleteComment(
                     CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
                     public void onSuccess (Boolean deleted) {
                         if (deleted) {
@@ -181,7 +183,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount) {
-            CShell.commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
+            _commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
         }
         @Override
         protected int getCount (CommentService.CommentResult result) {
@@ -232,7 +234,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
         protected boolean callService ()
         {
-            CShell.commentsvc.complainComment(
+            _commentsvc.complainComment(
                 CShell.ident, _description.getText(), _type, _id, _comment.posted, this);
             return true;
         }
@@ -248,4 +250,6 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected Button _post;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final CommentServiceAsync _commentsvc = (CommentServiceAsync)
+        ServiceUtil.bind(GWT.create(CommentService.class), CommentService.ENTRY_POINT);
 }

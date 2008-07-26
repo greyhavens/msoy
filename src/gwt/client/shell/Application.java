@@ -16,21 +16,13 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.ReferralInfo;
 
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.client.CatalogServiceAsync;
-import com.threerings.msoy.web.client.CommentService;
-import com.threerings.msoy.web.client.CommentServiceAsync;
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
 
-import client.editem.EditemMessages;
-import client.item.ItemMessages;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -268,17 +260,7 @@ public class Application
     {
         CShell.app = this;
 
-        // wire up our remote services
-        CShell.commentsvc = (CommentServiceAsync)GWT.create(CommentService.class);
-        ((ServiceDefTarget)CShell.commentsvc).setServiceEntryPoint("/commentsvc");
-        CShell.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)CShell.itemsvc).setServiceEntryPoint("/itemsvc");
-        CShell.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)CShell.catalogsvc).setServiceEntryPoint("/catalogsvc");
-
         // load up our translation dictionaries
-        CShell.imsgs = (ItemMessages)GWT.create(ItemMessages.class);
-        CShell.emsgs = (EditemMessages)GWT.create(EditemMessages.class);
         CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }

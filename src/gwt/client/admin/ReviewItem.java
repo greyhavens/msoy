@@ -3,6 +3,7 @@
 
 package client.admin;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,11 +17,16 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
+import client.util.ServiceUtil;
 import client.util.Link;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -61,7 +67,7 @@ public class ReviewItem extends FlowPanel
 //                 Button button = new Button("Delist");
 //                 new ClickCallback<Integer>(button) {
 //                     public boolean callService () {
-//                         CAdmin.catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
+//                         _catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
 //                         return true;
 //                     }
 //                     public boolean gotResult (Integer result) {
@@ -85,7 +91,7 @@ public class ReviewItem extends FlowPanel
                         // should not happen, but let's be careful
                         return false;
                     }
-                    CAdmin.itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
+                    _itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -119,7 +125,7 @@ public class ReviewItem extends FlowPanel
                     return false;
                 }
                 byte flags = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
-                CAdmin.itemsvc.setFlags(CAdmin.ident, _item.getIdent(), flags, (byte) 0, this);
+                _itemsvc.setFlags(CAdmin.ident, _item.getIdent(), flags, (byte) 0, this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -181,7 +187,7 @@ public class ReviewItem extends FlowPanel
                 return; // you just never know
             }
 
-            CAdmin.itemsvc.deleteItemAdmin(
+            _itemsvc.deleteItemAdmin(
                 CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
                 CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                 new AsyncCallback<Integer>() {
@@ -212,4 +218,9 @@ public class ReviewItem extends FlowPanel
     protected ReviewPanel _parent;
     protected Item _item;
     protected Button _mark, _delete, _done;
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

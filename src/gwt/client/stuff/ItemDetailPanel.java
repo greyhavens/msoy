@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -18,6 +19,10 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
@@ -30,6 +35,7 @@ import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
@@ -202,7 +208,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, null);
                 new ClickCallback<CatalogListing>(button) {
                     public boolean callService () {
-                        CStuff.catalogsvc.loadListing(
+                        _catalogsvc.loadListing(
                             CStuff.ident, _item.getType(), _item.catalogId, this);
                         return true;
                     }
@@ -288,7 +294,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Void>(trigger, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
-                CStuff.itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                _itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -312,7 +318,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Item>(trigger, CStuff.msgs.detailConfirmRevert()) {
             public boolean callService () {
-                CStuff.itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
+                _itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Item item) {
@@ -333,4 +339,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected PushButton _deleteBtn;
     protected PushButton _listBtn;
     protected PushButton _giftBtn;
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

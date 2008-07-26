@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -32,17 +33,17 @@ public class AvatarEditor extends ItemEditor
     protected void addExtras ()
     {
         addSpacer();
-        addRow(CShell.emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false,
+        addRow(_emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false,
             new MediaUpdater() {
                 public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     if (!isValidPrimaryMedia(desc)) {
-                        return CShell.emsgs.errAvatarNotFlash();
+                        return _emsgs.errAvatarNotFlash();
                     }
                     _avatar.avatarMedia = desc;
                     _avatar.scale = 1f;
                     return null;
                 }
-            }), CShell.emsgs.avatarTip());
+            }), _emsgs.avatarTip());
 
         super.addExtras();
     }
@@ -54,4 +55,6 @@ public class AvatarEditor extends ItemEditor
     }
 
     protected Avatar _avatar;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

@@ -26,6 +26,8 @@ import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
@@ -138,7 +140,7 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        CMail.itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
+        _itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     PresentPayload payload = new PresentPayload(result);
@@ -205,4 +207,6 @@ public class ComposePanel extends FlowPanel
 
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

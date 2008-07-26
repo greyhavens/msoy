@@ -5,6 +5,7 @@ package client.admin;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -13,8 +14,11 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.RowPanel;
 import client.util.ThumbBox;
 
@@ -48,7 +52,7 @@ public class ReviewPanel extends FlowPanel
             remove(_contents);
         }
         add(_contents = new FlexTable());
-        CAdmin.itemsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
+        _itemsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
             public void onSuccess (List<ItemDetail> items) {
                 populateUI(items);
             }
@@ -73,4 +77,7 @@ public class ReviewPanel extends FlowPanel
     }
 
     protected FlexTable _contents;
+
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

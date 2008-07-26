@@ -22,12 +22,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.util.LimitedTextArea;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
 
@@ -152,7 +155,7 @@ public abstract class ItemEditor extends FlexTable
      */
     public void setItem (int itemId)
     {
-        CShell.itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId),
+        _itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     setItem(result);
@@ -167,7 +170,7 @@ public abstract class ItemEditor extends FlexTable
     public void setItem (Item item)
     {
         _item = item;
-        _esubmit.setText(CShell.emsgs.editorSave());
+        _esubmit.setText(_emsgs.editorSave());
 
         safeSetText(_name, _item.name);
         if (_description != null && _item.description != null) {
@@ -211,7 +214,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void addInfo ()
     {
-        addRow(CShell.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+        addRow(_emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -232,7 +235,7 @@ public abstract class ItemEditor extends FlexTable
                 _item.description = text;
             }
         });
-        addRow(CShell.emsgs.editorDescrip(), _description, CShell.emsgs.editorDescripTip());
+        addRow(_emsgs.editorDescrip(), _description, _emsgs.editorDescripTip());
     }
 
     /**
@@ -252,36 +255,36 @@ public abstract class ItemEditor extends FlexTable
      */
     protected String getThumbnailHint ()
     {
-        return CShell.emsgs.editorThumbHint(
+        return _emsgs.editorThumbHint(
             String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT));
     }
 
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
+        addRow(_emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
-                    return CShell.emsgs.errFurniNotFlash();
+                    return _emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.editorFurniTitle());
+        }), _emsgs.editorFurniTitle());
     }
 
     protected void addThumbUploader ()
     {
         addSpacer();
-        addRow(CShell.emsgs.editorThumbTab(), createThumbUploader(new MediaUpdater() {
+        addRow(_emsgs.editorThumbTab(), createThumbUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
-                    return CShell.emsgs.errThumbNotImage();
+                    return _emsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.editorThumbTitle());
+        }), _emsgs.editorThumbTitle());
     }
 
     /**
@@ -522,7 +525,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected static void uploadError ()
     {
-        MsoyUI.error(CShell.emsgs.errUploadError());
+        MsoyUI.error(_emsgs.errUploadError());
     }
 
     /**
@@ -531,7 +534,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected static void uploadTooLarge ()
     {
-        MsoyUI.error(CShell.emsgs.errUploadTooLarge());
+        MsoyUI.error(_emsgs.errUploadTooLarge());
     }
 
     /**
@@ -548,22 +551,22 @@ public abstract class ItemEditor extends FlexTable
 
         // make sure the item is consistent
         if (_item == null || !_item.isConsistent()) {
-            MsoyUI.error(CShell.emsgs.editorNotConsistent());
+            MsoyUI.error(_emsgs.editorNotConsistent());
             return;
         }
 
         if (_item.itemId == 0) {
-            CShell.itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
+            _itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
                 public void onSuccess (Item item) {
-                    MsoyUI.info(CShell.emsgs.msgItemCreated());
+                    MsoyUI.info(_emsgs.msgItemCreated());
                     _parent.editComplete(item);
                 }
             });
 
         } else {
-            CShell.itemsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
+            _itemsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
-                    MsoyUI.info(CShell.emsgs.msgItemUpdated());
+                    MsoyUI.info(_emsgs.msgItemUpdated());
                     _parent.editComplete(_item);
                 }
             });
@@ -658,6 +661,9 @@ public abstract class ItemEditor extends FlexTable
     protected static ItemEditor _singleton;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 
     protected static final String TYPE_IMAGE = "image";
     protected static final String TYPE_AUDIO = "audio";

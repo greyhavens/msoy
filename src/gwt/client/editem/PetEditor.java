@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -32,16 +33,18 @@ public class PetEditor extends ItemEditor
     {
         // pets are special; their furni media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.petLabel(), createFurniUploader(false, new MediaUpdater() {
+        addRow(_emsgs.petLabel(), createFurniUploader(false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
-                    return CShell.emsgs.errPetNotFlash();
+                    return _emsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.petTip());
+        }), _emsgs.petTip());
     }
 
     protected Pet _pet;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

@@ -28,9 +28,12 @@ import com.threerings.msoy.data.all.TagCodes;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.CShell;
+import client.util.ServiceUtil;
 import client.shell.ShellMessages;
 
 /**
@@ -147,7 +150,7 @@ public class TagDetailPanel extends VerticalPanel
 //             return;
 //         }
 
-//         CShell.itemsvc.getTagHistory(
+//         _itemsvc.getTagHistory(
 //             CShell.ident, _itemId, new AsyncCallback<Collection<TagHistory>>() {
 //             public void onSuccess (Collection<TagHistory> result) {
 //                 _tagHistory = new FlexTable();
@@ -314,4 +317,6 @@ public class TagDetailPanel extends VerticalPanel
     protected FlexTable _tagHistory;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

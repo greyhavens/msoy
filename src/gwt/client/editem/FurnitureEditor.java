@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Furniture;
@@ -36,23 +37,23 @@ public class FurnitureEditor extends ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(CShell.emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
+        addRow(_emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
-                    return CShell.emsgs.errFurniNotFlash();
+                    return _emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.editorFurniTitle());
+        }), _emsgs.editorFurniTitle());
 
         RowPanel hsrow = new RowPanel();
         hsrow.add(_hotSpotX = new TextBox());
         hsrow.add(_hotSpotY = new TextBox());
         _hotSpotX.setVisibleLength(5);
         _hotSpotY.setVisibleLength(5);
-        addRow(CShell.emsgs.furniHotSpot(), hsrow);
-        addTip(CShell.emsgs.furniHotSpotTip());
+        addRow(_emsgs.furniHotSpot(), hsrow);
+        addTip(_emsgs.furniHotSpotTip());
     }
 
     @Override // from ItemEditor
@@ -86,4 +87,6 @@ public class FurnitureEditor extends ItemEditor
     protected Furniture _furniture;
     protected TextBox _hotSpotX;
     protected TextBox _hotSpotY;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

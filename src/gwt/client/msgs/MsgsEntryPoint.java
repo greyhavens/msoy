@@ -12,8 +12,6 @@ import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.IssueService;
 import com.threerings.msoy.web.client.IssueServiceAsync;
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
@@ -38,8 +36,6 @@ public abstract class MsgsEntryPoint extends Page
         ((ServiceDefTarget)CMsgs.mailsvc).setServiceEntryPoint("/mailsvc");
         CMsgs.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
         ((ServiceDefTarget)CMsgs.groupsvc).setServiceEntryPoint("/groupsvc");
-        CMsgs.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)CMsgs.itemsvc).setServiceEntryPoint("/itemsvc");
         CMsgs.forumsvc = (ForumServiceAsync)GWT.create(ForumService.class);
         ((ServiceDefTarget)CMsgs.forumsvc).setServiceEntryPoint("/forumsvc");
         CMsgs.issuesvc = (IssueServiceAsync)GWT.create(IssueService.class);

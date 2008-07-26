@@ -3,15 +3,19 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.person.data.ItemGiftPayload;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import client.util.ItemThumbnail;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 
 /**
@@ -59,7 +63,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
             }
 
-            CMail.itemsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback<Item>() {
+            _itemsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     add(new ItemThumbnail(result, _enabled ? new ClickListener() {
                         public void onClick (Widget sender) {
@@ -78,7 +82,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 // click
                 return;
             }
-            CMail.itemsvc.wrapItem(CMail.ident, _giftPayload.item, false, new MsoyCallback<Void>() {
+            _itemsvc.wrapItem(CMail.ident, _giftPayload.item, false, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     // the item is unwrapped, just update the payload
                     _giftPayload.item = null;
@@ -96,4 +100,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
     }
 
     protected ItemGiftPayload _giftPayload;
+
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

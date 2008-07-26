@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,12 +17,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 
 import client.shell.Frame;
 import client.util.ClickCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
@@ -155,7 +160,7 @@ public class DoListItemPopup extends VerticalPanel
                 CStuff.msgs.doListListed() : CStuff.msgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
-                    CStuff.catalogsvc.listItem(
+                    _catalogsvc.listItem(
                         CStuff.ident, _item.getIdent(), _description.getText(), getPricing(),
                         getSalesTarget(), getFlowCost(), getGoldCost(), this);
                     return true;
@@ -178,7 +183,7 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(CStuff.msgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    CStuff.catalogsvc.updatePricing(
+                    _catalogsvc.updatePricing(
                         CStuff.ident, _item.getType(), _item.catalogId, pricing,
                         salesTarget, getFlowCost(), getGoldCost(), this);
                     return true;
@@ -194,7 +199,7 @@ public class DoListItemPopup extends VerticalPanel
         } else {
             new ClickCallback<Void>(_doIt) {
                 public boolean callService () {
-                    CStuff.catalogsvc.updateListing(
+                    _catalogsvc.updateListing(
                         CStuff.ident, _item.getIdent(), _description.getText(), this);
                     return true;
                 }
@@ -245,6 +250,9 @@ public class DoListItemPopup extends VerticalPanel
 
     protected Label _status;
     protected Button _doIt;
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 
     protected static final int DEFAULT_FLOW_COST = 100;
     protected static final int DEFAULT_GOLD_COST = 0;

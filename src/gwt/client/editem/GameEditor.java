@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -131,10 +132,10 @@ public class GameEditor extends ItemEditor
         for (int ii = 0; ii < Game.GENRES.length; ii++) {
             _genre.addItem(CShell.dmsgs.getString("genre" + Game.GENRES[ii]));
         }
-        addRow(CShell.emsgs.gameGenre(), _genre);
+        addRow(_emsgs.gameGenre(), _genre);
 
         // seated continuous games are disabled for
-        addRow(CShell.emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
+        addRow(_emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
@@ -143,53 +144,53 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(CShell.dmsgs.getString("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something
-        addRow(CShell.emsgs.gameMinPlayers(), _minPlayers = new TextBox());
+        addRow(_emsgs.gameMinPlayers(), _minPlayers = new TextBox());
         _minPlayers.setText("1");
         _minPlayers.setVisibleLength(5);
 
-        addRow(CShell.emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
+        addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
         _maxPlayers.setText("1");
         _maxPlayers.setVisibleLength(5);
 
-        addRow(CShell.emsgs.gameWatchable(), _watchable = new CheckBox());
+        addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
 
         // add a tab for uploading the game media
         addSpacer();
-        addRow(CShell.emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
+        addRow(_emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.gameTip());
+        }), _emsgs.gameTip());
 
         // add a tab for uploading the game screenshot
         MediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
-                    return CShell.emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
+                    return _emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
                 }
                 _game.shotMedia = desc;
                 return null;
             }
         });
-        shotter.setHint(CShell.emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
+        shotter.setHint(_emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
         addSpacer();
-        addRow(CShell.emsgs.gameShotTab(), shotter, CShell.emsgs.gameShotTitle());
+        addRow(_emsgs.gameShotTab(), shotter, _emsgs.gameShotTitle());
 
         super.addExtras();
 
         addSpacer();
-        addRow(CShell.emsgs.gameDefinition(), _extras = new TextArea());
+        addRow(_emsgs.gameDefinition(), _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
-        addRow(CShell.emsgs.gameAVRG(), _avrg = new CheckBox());
+        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
         addSpacer();
 
         // add a tab for uploading the game server code
         addSpacer();
-        addTip(CShell.emsgs.gameServerHeadingTip());
+        addTip(_emsgs.gameServerHeadingTip());
         MediaUpdater serverMediaUpdater = new MediaUpdater() {
             public String updateMedia (
                 String name,
@@ -207,13 +208,13 @@ public class GameEditor extends ItemEditor
             MediaUploader.NORMAL,
             serverMediaUpdater);
         addRow(
-            CShell.emsgs.gameServerMediaLabel(),
+            _emsgs.gameServerMediaLabel(),
             serverMediaUploader,
-            CShell.emsgs.gameServerMediaTip());
+            _emsgs.gameServerMediaTip());
         addRow(
-            CShell.emsgs.gameServerClass(),
+            _emsgs.gameServerClass(),
             _serverClass = new TextBox(),
-            CShell.emsgs.gameServerClassTip());
+            _emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
     }
 
@@ -284,7 +285,7 @@ public class GameEditor extends ItemEditor
                 }
 
             } catch (DOMException de) {
-                throw new Exception(CShell.emsgs.gameDefinitionError(de.getMessage()));
+                throw new Exception(_emsgs.gameDefinitionError(de.getMessage()));
             }
         }
 
@@ -308,4 +309,6 @@ public class GameEditor extends ItemEditor
     protected TextBox _serverClass;
     protected CheckBox _avrg;
     protected TextArea _extras;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

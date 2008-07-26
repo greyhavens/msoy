@@ -3,6 +3,7 @@
 
 package client.shop;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -13,7 +14,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ShopData;
@@ -24,6 +27,7 @@ import client.util.HeaderBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 import client.util.Stars;
 import client.util.ThumbBox;
 
@@ -52,7 +56,7 @@ public class ShopPanel extends HorizontalPanel
         _contents.add(WidgetUtil.makeShim(10, 10));
 
         // now load up our shop data
-        CShop.catalogsvc.loadShopData(CShop.ident, new MsoyCallback<ShopData>() {
+        _catalogsvc.loadShopData(CShop.ident, new MsoyCallback<ShopData>() {
             public void onSuccess (ShopData data) {
                 init(data);
             }
@@ -140,4 +144,7 @@ public class ShopPanel extends HorizontalPanel
     }
 
     protected FlowPanel _contents;
+
+    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
+        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

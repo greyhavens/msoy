@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -36,15 +37,15 @@ public class TrophySourceEditor extends SubItemEditor
     protected void addInfo ()
     {
         super.addInfo();
-        addTip(CShell.emsgs.trophyNameTip());
+        addTip(_emsgs.trophyNameTip());
 
         addSpacer();
-        addRow(CShell.emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
-        addTip(CShell.emsgs.trophyOrderTip());
+        addRow(_emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
+        addTip(_emsgs.trophyOrderTip());
 
         addSpacer();
-        addRow(CShell.emsgs.trophySecret(), _secret = new CheckBox());
-        addTip(CShell.emsgs.trophySecretTip());
+        addRow(_emsgs.trophySecret(), _secret = new CheckBox());
+        addTip(_emsgs.trophySecretTip());
     }
 
     @Override // from ItemEditor
@@ -58,11 +59,11 @@ public class TrophySourceEditor extends SubItemEditor
     {
         // trophy' thumb media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.trophyLabel(), createThumbUploader(new MediaUpdater() {
+        addRow(_emsgs.trophyLabel(), createThumbUploader(new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != TrophySource.TROPHY_WIDTH || height != TrophySource.TROPHY_HEIGHT ||
                     !desc.isImage()) {
-                    return CShell.emsgs.errInvalidTrophy();
+                    return _emsgs.errInvalidTrophy();
                 }
                 _item.thumbMedia = desc;
                 return null;
@@ -73,7 +74,7 @@ public class TrophySourceEditor extends SubItemEditor
     @Override // from ItemEditor
     protected String getThumbnailHint ()
     {
-        return CShell.emsgs.trophyTip();
+        return _emsgs.trophyTip();
     }
 
     @Override // from ItemEditor
@@ -88,4 +89,6 @@ public class TrophySourceEditor extends SubItemEditor
     protected TrophySource _tsource;
     protected NumberTextBox _order;
     protected CheckBox _secret;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

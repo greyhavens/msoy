@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prop;
@@ -32,16 +33,18 @@ public class PropEditor extends SubItemEditor
     {
         // props are special; their furni media are their primary media
         addSpacer();
-        addRow(CShell.emsgs.propLabel(), createFurniUploader(true, new MediaUpdater() {
+        addRow(_emsgs.propLabel(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
-                    return CShell.emsgs.errPropNotFlash();
+                    return _emsgs.errPropNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
-        }), CShell.emsgs.propTip());
+        }), _emsgs.propTip());
     }
 
     protected Prop _prop;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

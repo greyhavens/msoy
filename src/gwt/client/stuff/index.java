@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
 import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -24,6 +25,7 @@ import client.shell.Page;
 
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 
 /**
@@ -86,7 +88,7 @@ public class index extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                CStuff.itemsvc.loadItemDetail(CStuff.ident, ident,
+                _itemsvc.loadItemDetail(CStuff.ident, ident,
                     new MsoyCallback<ItemService.DetailOrIdent>() {
                         public void onSuccess (ItemService.DetailOrIdent result) {
                             if (result.detail != null) {
@@ -199,4 +201,7 @@ public class index extends Page
     protected InventoryModels _models = new InventoryModels();
     protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
+
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

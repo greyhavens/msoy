@@ -12,9 +12,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 import client.util.Stars;
 
@@ -96,7 +99,7 @@ public class ItemRating extends FlexTable
 
         _playerStars.setRating(_memberRating = newRating);
         ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-        CShell.itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback<Float>() {
+        _itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback<Float>() {
             public void onSuccess (Float result) {
                 _averageStars.setRating(_item.rating = result);
 
@@ -145,6 +148,8 @@ public class ItemRating extends FlexTable
     protected Label _ratingCount, _ratingTip, _ratingDesc;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 
     protected static final String [] RATING_DESCRIPTIONS = {
         _cmsgs.descRating1(),
@@ -154,6 +159,6 @@ public class ItemRating extends FlexTable
         _cmsgs.descRating5()
     };
 
-    protected static final String STYLE_RATING = "ratingText",
-                                  STYLE_COUNT = "ratingCount";
+    protected static final String STYLE_RATING = "ratingText";
+    protected static final String STYLE_COUNT = "ratingCount";
 }

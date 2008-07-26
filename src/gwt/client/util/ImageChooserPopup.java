@@ -27,6 +27,7 @@ import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 
+import client.editem.EditemMessages;
 import client.editem.EditorHost;
 
 import client.util.MediaUtil;
@@ -155,7 +156,7 @@ public class ImageChooserPopup extends VerticalPanel
                     if (!desc.isImage()) {
                         _upload.setEnabled(false);
                         _preview.setWidget(null);
-                        MsoyUI.error(CShell.emsgs.errPhotoNotImage());
+                        MsoyUI.error(_emsgs.errPhotoNotImage());
                         return;
                     }
                     _media = desc;
@@ -181,6 +182,7 @@ public class ImageChooserPopup extends VerticalPanel
     protected AsyncCallback<MediaDesc> _callback;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -31,19 +32,21 @@ public class AudioEditor extends ItemEditor
     @Override // from ItemEditor
     protected void addExtras ()
     {
-        addRow(CShell.emsgs.audioLabel(), createMainUploader(TYPE_AUDIO, false, new MediaUpdater() {
+        addRow(_emsgs.audioLabel(), createMainUploader(TYPE_AUDIO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
-                    return CShell.emsgs.errAudioNotAudio();
+                    return _emsgs.errAudioNotAudio();
                 }
                 _audio.audioMedia = desc;
                 maybeSetNameFromFilename(name);
                 return null;
             }
-        }), CShell.emsgs.audioTip());
+        }), _emsgs.audioTip());
 
         super.addExtras();
     }
 
     protected Audio _audio;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

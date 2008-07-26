@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import client.editem.EditemMessages;
 import client.shell.CShell;
 
 /**
@@ -138,7 +139,7 @@ public class MediaUploader extends FormPanel
      */
     protected static void uploadError ()
     {
-        MsoyUI.error(CShell.emsgs.errUploadError());
+        MsoyUI.error(_emsgs.errUploadError());
     }
 
     /**
@@ -147,7 +148,7 @@ public class MediaUploader extends FormPanel
      */
     protected static void uploadTooLarge ()
     {
-        MsoyUI.error(CShell.emsgs.errUploadTooLarge());
+        MsoyUI.error(_emsgs.errUploadTooLarge());
     }
 
     /**
@@ -173,4 +174,6 @@ public class MediaUploader extends FormPanel
 
     protected static HashMap<String, MediaUploader> _uploaders =
         new HashMap<String, MediaUploader>();
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

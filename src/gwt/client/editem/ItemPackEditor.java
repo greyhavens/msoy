@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -31,8 +32,8 @@ public class ItemPackEditor extends SubItemEditor
         CheckBox box = new CheckBox();
         box.setChecked(true);
         box.setEnabled(false);
-        addRow(CShell.emsgs.packPremium(), box);
-        addTip(CShell.emsgs.ipackPremiumTip());
+        addRow(_emsgs.packPremium(), box);
+        addTip(_emsgs.ipackPremiumTip());
     }
 
     @Override // from ItemEditor
@@ -48,6 +49,8 @@ public class ItemPackEditor extends SubItemEditor
                 return null;
             }
         });
-        addRow(CShell.emsgs.ipackLabel(), upper, CShell.emsgs.ipackTip());
+        addRow(_emsgs.ipackLabel(), upper, _emsgs.ipackTip());
     }
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

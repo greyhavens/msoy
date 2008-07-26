@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
@@ -38,10 +39,10 @@ public class DecorEditor extends ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(CShell.emsgs.decorLabel(), createFurniUploader(true, new MediaUpdater() {
+        addRow(_emsgs.decorLabel(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
-                    return CShell.emsgs.errFurniNotFlash();
+                    return _emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 if (width > 0 && height > 0) {
@@ -56,10 +57,10 @@ public class DecorEditor extends ItemEditor
                 }
                 return null;
             }
-        }), CShell.emsgs.decorTip());
+        }), _emsgs.decorTip());
 
         addSpacer();
-        addRow(new Label(CShell.emsgs.decorConfigTab()));
+        addRow(new Label(_emsgs.decorConfigTab()));
         HTML viewer = new HTML();
         // note: the container has to be added to the DOM *before* we add the flash viewer
         addRow(viewer);
@@ -85,10 +86,10 @@ public class DecorEditor extends ItemEditor
         // the following is useful while debugging gwt/flash interop
 
         /*
-        String typelabel = CShell.emsgs.decorType_None();
+        String typelabel = _emsgs.decorType_None();
         switch (_decor.type) {
-        case Decor.IMAGE_OVERLAY: typelabel = CShell.emsgs.decorType_Standard(); break;
-        case Decor.FIXED_IMAGE: typelabel = CShell.emsgs.decorType_Fixed(); break;
+        case Decor.IMAGE_OVERLAY: typelabel = _emsgs.decorType_Standard(); break;
+        case Decor.FIXED_IMAGE: typelabel = _emsgs.decorType_Fixed(); break;
         }
 
         // GWT doesn't emulate java.text.NumberFormat...
@@ -96,11 +97,11 @@ public class DecorEditor extends ItemEditor
         String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
 
         MsoyUI.info(
-            CShell.emsgs.decorDimensions() + " " + _decor.width + " x " +
+            _emsgs.decorDimensions() + " " + _decor.width + " x " +
             _decor.height + " x " + _decor.depth + "<br/>" +
-            CShell.emsgs.decorHorizon() + " " + horizon + " / " +
+            _emsgs.decorHorizon() + " " + horizon + " / " +
             _decor.offsetX + ", " + _decor.offsetY + ", " + _decor.hideWalls + "<br/>" +
-            CShell.emsgs.decorType() + " " + typelabel);
+            _emsgs.decorType() + " " + typelabel);
         */
     }
 
@@ -167,4 +168,6 @@ public class DecorEditor extends ItemEditor
     }-*/;
 
     protected Decor _decor;
+
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }

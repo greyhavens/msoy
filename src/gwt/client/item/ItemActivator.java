@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.item.ItemMessages;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
 import client.util.events.FlashEvents;
@@ -92,14 +94,14 @@ public class ItemActivator extends FlowPanel
         ClickListener onClick = null;
 
         if (!hasClient) {
-            tip = isUsed ? CShell.imsgs.inUse() : CShell.imsgs.notInUse();
+            tip = isUsed ? _imsgs.inUse() : _imsgs.notInUse();
         }
 
         byte type = _item.getType();
         final boolean fUsedHere = usedHere;
         if (type == Item.AVATAR) {
             if (hasClient) {
-                tip = usedHere ? CShell.imsgs.removeAvatar() : CShell.imsgs.wearAvatar();
+                tip = usedHere ? _imsgs.removeAvatar() : _imsgs.wearAvatar();
                 onClick = new ClickListener () {
                     public void onClick (Widget sender) {
                         if (fUsedHere) {
@@ -116,12 +118,12 @@ public class ItemActivator extends FlowPanel
         } else {
             if (hasClient) {
                 if (usedHere) {
-                    tip = CShell.imsgs.removeFromRoom();
+                    tip = _imsgs.removeFromRoom();
                     suff = "usedhere.png";
                 } else if (isUsed) {
-                    tip = CShell.imsgs.moveToRoom();
+                    tip = _imsgs.moveToRoom();
                 } else {
-                    tip = CShell.imsgs.addToRoom();
+                    tip = _imsgs.addToRoom();
                 }
                 onClick = new ClickListener () {
                     public void onClick (Widget sender) {
@@ -147,4 +149,6 @@ public class ItemActivator extends FlowPanel
 
     protected boolean _bigAss;
     protected Item _item;
+
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
 }
