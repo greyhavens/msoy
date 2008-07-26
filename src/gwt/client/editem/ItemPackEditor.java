@@ -10,8 +10,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.CShell;
-
 /**
  * A class for creating and editing {@link ItemPack} digital items.
  */

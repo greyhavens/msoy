@@ -8,7 +8,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.HashIntMap;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -20,9 +19,7 @@ import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.InvocationProvider;
 
-import com.threerings.msoy.party.client.PartyService;
 import com.threerings.msoy.party.data.PartyObject;
 
 import com.threerings.msoy.data.MemberObject;

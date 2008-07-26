@@ -10,7 +10,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.CShell;
 import client.util.NumberTextBox;
 
 /**

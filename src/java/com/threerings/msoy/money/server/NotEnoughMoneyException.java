@@ -32,7 +32,6 @@ public class NotEnoughMoneyException extends MoneyException
         this.memberId = memberId;
     }
 
-
     public int getMemberId ()
     {
         return memberId;

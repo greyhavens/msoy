@@ -166,7 +166,6 @@ public interface MoneyService
     int exchangeBlingForBars (int memberId, double blingAmount)
         throws NotEnoughMoneyException;
 
-
     // Customer Representative actions
 
     /**

@@ -11,7 +11,6 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.CShell;
 import client.util.FlashClients;
 
 /**

@@ -49,7 +49,6 @@ public class Decor extends Item
     /** Bitmap offset along the y axis, in room units. */
     public float offsetY;
 
-
     @Override // from Item
     public byte getType ()
     {

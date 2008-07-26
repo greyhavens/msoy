@@ -19,7 +19,6 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.web.data.ABTest;
 
-import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.util.BorderedDialog;

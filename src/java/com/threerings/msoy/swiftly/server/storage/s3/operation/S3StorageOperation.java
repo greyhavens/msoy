@@ -33,7 +33,6 @@ abstract class S3StorageOperation {
         return _lockManager;
     }
 
-
     /**
      * @return The operation's S3Connection.
      */

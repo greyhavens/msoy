@@ -14,7 +14,6 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
 import client.shell.ShellMessages;
-import client.shell.CShell;
 import client.shell.Page;
 
 /**

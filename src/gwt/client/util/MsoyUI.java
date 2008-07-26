@@ -27,9 +27,7 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.admin.CAdmin;
 import client.util.ServiceUtil;
-import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;

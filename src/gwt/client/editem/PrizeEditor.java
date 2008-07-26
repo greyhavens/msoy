@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 
-import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.util.NumberTextBox;
 

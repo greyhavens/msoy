@@ -11,7 +11,6 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;

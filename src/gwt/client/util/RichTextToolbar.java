@@ -44,7 +44,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.images.editor.RichTextToolbarImages;
 

@@ -7,7 +7,6 @@ import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;

@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.shell.CShell;
 import client.shell.ShellMessages;
 
 /**

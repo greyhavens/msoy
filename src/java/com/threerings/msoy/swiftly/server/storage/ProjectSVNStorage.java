@@ -205,7 +205,6 @@ public class ProjectSVNStorage
         }
     }
 
-
     // from interface ProjectStorage
     // Recurse over the entirety of the subversion repository, building a list
     // of project path elements.

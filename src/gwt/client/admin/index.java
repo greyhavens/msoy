@@ -4,12 +4,10 @@
 package client.admin;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
-import client.util.ServiceUtil;
 
 /**
  * Displays an admin dashboard with various server status information and administrative

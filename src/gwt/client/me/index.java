@@ -16,7 +16,6 @@ import com.threerings.msoy.web.client.WorldServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.admin.CAdmin;
 import client.games.CGames;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Application;

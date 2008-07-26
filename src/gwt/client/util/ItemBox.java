@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.item.ItemMessages;
-import client.shell.CShell;
 
 /**
  * Displays an item (or anything with a thumbnail image, a name and potentially extra info below)

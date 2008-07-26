@@ -17,7 +17,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;

@@ -18,7 +18,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-
 import static com.threerings.msoy.Log.log;
 
 /**

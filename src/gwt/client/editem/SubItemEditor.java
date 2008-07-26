@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
-import client.shell.CShell;
-
 /**
  * Handles the editing of sub-items.
  */

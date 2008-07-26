@@ -51,6 +51,4 @@ public class MyGroupCard
 
     /** Most recent thread for this Whirled on the My Discussions page */
     public ForumThread latestThread;
-
-
 }

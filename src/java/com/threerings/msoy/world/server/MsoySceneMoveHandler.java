@@ -14,7 +14,6 @@ import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneMoveHandler;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 

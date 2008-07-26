@@ -30,7 +30,6 @@ import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.ShellMessages;

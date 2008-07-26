@@ -8,8 +8,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import client.shell.CShell;
-
 /**
  * A class for creating and editing {@link Pet} digital items.
  */

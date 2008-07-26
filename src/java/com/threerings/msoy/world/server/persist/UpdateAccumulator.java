@@ -21,7 +21,6 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.FurniUpdate;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 

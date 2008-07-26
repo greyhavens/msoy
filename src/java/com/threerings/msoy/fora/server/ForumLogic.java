@@ -14,8 +14,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
 

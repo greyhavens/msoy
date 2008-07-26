@@ -10,7 +10,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.shell.CShell;
 import client.shell.ShellMessages;
 
 /**

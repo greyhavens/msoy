@@ -13,7 +13,6 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 

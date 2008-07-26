@@ -8,8 +8,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 
-import client.shell.CShell;
-
 /**
  * A class for creating and editing {@link Photo} digital items.
  */

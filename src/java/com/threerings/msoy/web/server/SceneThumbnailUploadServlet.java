@@ -3,24 +3,15 @@
 
 package com.threerings.msoy.web.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;

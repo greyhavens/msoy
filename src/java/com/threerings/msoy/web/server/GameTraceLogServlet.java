@@ -20,7 +20,6 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
-import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.WebIdent;
 

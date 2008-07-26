@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.images.stuff.StuffImages;
-import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;

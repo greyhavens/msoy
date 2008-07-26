@@ -5,21 +5,16 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.inject.Inject;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.ItemLogic;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**
