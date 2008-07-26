@@ -695,7 +695,7 @@ public class ProjectController
         if (name == null) {
             return; // if the user hit cancel do no more
         }
-        PathElement element = PathElement.createDirectory(name, parent);
+        // PathElement element = PathElement.createDirectory(name, parent);
         // _docModel.addPathElement(element, this);
     }
 

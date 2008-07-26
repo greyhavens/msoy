@@ -20,7 +20,7 @@ public class S3InitStorageOperationUnitTest {
 
     @Test
     public void testInitStorage () {
-        S3InitStorageOperation op = new S3InitStorageOperation(new S3StorageLocalLockManager(), _conn, _bucket, "");
+        new S3InitStorageOperation(new S3StorageLocalLockManager(), _conn, _bucket, "");
     }
 
     /** S3 Connection. */

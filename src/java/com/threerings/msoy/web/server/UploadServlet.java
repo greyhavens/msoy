@@ -6,7 +6,6 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 

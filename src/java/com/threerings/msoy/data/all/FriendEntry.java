@@ -5,8 +5,6 @@ package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**

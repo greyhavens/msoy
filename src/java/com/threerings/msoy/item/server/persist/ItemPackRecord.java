@@ -119,7 +119,7 @@ public class ItemPackRecord extends SubItemRecord
     {
         super.fromItem(item);
 
-        ItemPack pack = (ItemPack)item;
+        // ItemPack pack = (ItemPack)item;
         // nothing to do
     }
 

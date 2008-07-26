@@ -31,7 +31,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.game.server.GameManagerDelegate;
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 

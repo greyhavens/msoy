@@ -38,8 +38,6 @@ public class WindowClientFactory implements ClientFactory
     // from interface ClientFactory
     public Class<? extends ClientResolver> getClientResolverClass (Name username)
     {
-        String prefix = WindowCredentials.PREFIX;
-
         // Just give bureau windows a vanilla ClientResolver.
         if (WindowCredentials.isWindow(username)) {
             return ClientResolver.class;

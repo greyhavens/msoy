@@ -8,7 +8,6 @@ import com.threerings.msoy.swiftly.server.storage.s3.S3UnitTestConnectionFactory
 
 import org.junit.Test;
 import org.junit.Before;
-import static org.junit.Assert.*;
 
 public class ProjectS3StorageUnitTest {
 

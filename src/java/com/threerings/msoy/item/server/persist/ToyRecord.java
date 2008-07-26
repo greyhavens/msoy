@@ -113,7 +113,7 @@ public class ToyRecord extends ItemRecord
     {
         super.fromItem(item);
 
-        Toy toy = (Toy)item;
+        // Toy toy = (Toy)item;
         // nothing for now
     }
 

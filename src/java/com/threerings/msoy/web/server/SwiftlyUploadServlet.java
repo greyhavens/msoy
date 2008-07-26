@@ -7,7 +7,6 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.inject.Inject;

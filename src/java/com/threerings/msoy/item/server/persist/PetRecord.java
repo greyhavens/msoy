@@ -112,7 +112,7 @@ public class PetRecord extends ItemRecord
     {
         super.fromItem(item);
 
-        Pet pet = (Pet)item;
+        // Pet pet = (Pet)item;
         // nothing custom to extract
     }
 

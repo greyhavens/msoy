@@ -146,7 +146,7 @@ public class PropRecord extends SubItemRecord
     {
         super.fromItem(item);
 
-        Prop temp = (Prop)item;
+        // Prop temp = (Prop)item;
         // gameId is not extracted here, we get it from our parent
     }
 
