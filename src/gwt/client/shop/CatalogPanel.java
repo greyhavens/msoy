@@ -6,6 +6,7 @@ package client.shop;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -28,6 +29,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 
+import client.shell.DynamicMessages;
 import client.item.TagCloud;
 import client.shell.Frame;
 import client.shell.Page;
@@ -97,7 +99,7 @@ public class CatalogPanel extends SmartTable
                 return new ListingBox(card);
             }
             protected String getEmptyMessage () {
-                String name = CShop.dmsgs.getString("itemType" + _query.itemType);
+                String name = _dmsgs.getString("itemType" + _query.itemType);
                 if (_query.tag != null) {
                     return CShop.msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {
@@ -134,7 +136,7 @@ public class CatalogPanel extends SmartTable
     {
         _query = query;
 
-        String tname = CShop.dmsgs.getString("pItemType" + _query.itemType);
+        String tname = _dmsgs.getString("pItemType" + _query.itemType);
         // TODO: add logo image
         _listings.setWidget(0, 1, new Marquee(null, tname));
 
@@ -174,7 +176,7 @@ public class CatalogPanel extends SmartTable
         setWidget(0, 0, new SideBar(_query, cloud));
 
         // set up our page title
-        Frame.setTitle(CShop.dmsgs.getString("pItemType" + _query.itemType));
+        Frame.setTitle(_dmsgs.getString("pItemType" + _query.itemType));
     }
 
     // from interface TagCloud.TagListener
@@ -186,7 +188,7 @@ public class CatalogPanel extends SmartTable
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-            String blurb = CShop.dmsgs.getString("catIntro" + _query.itemType);
+            String blurb = _dmsgs.getString("catIntro" + _query.itemType);
             _listings.setText(0, 0, blurb, 1, "Blurb");
 
         } else {
@@ -209,6 +211,8 @@ public class CatalogPanel extends SmartTable
     protected TextBox _searchBox;
     protected ListBox _sortBox;
     protected PagedGrid<ListingCard> _items;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     /** The number of columns of items to display. */
     protected static final int COLUMNS = 4;

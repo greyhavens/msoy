@@ -20,6 +20,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.CShell;
+import client.shell.DynamicMessages;
 
 /**
  * A class for creating and editing {@link Game} digital items.
@@ -130,7 +131,7 @@ public class GameEditor extends ItemEditor
     {
         _genre = new ListBox();
         for (int ii = 0; ii < Game.GENRES.length; ii++) {
-            _genre.addItem(CShell.dmsgs.getString("genre" + Game.GENRES[ii]));
+            _genre.addItem(_dmsgs.getString("genre" + Game.GENRES[ii]));
         }
         addRow(_emsgs.gameGenre(), _genre);
 
@@ -140,8 +141,8 @@ public class GameEditor extends ItemEditor
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
         }));
-        _matchType.addItem(CShell.dmsgs.getString("gameType0"));
-        _matchType.addItem(CShell.dmsgs.getString("gameType2"));
+        _matchType.addItem(_dmsgs.getString("gameType0"));
+        _matchType.addItem(_dmsgs.getString("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something
         addRow(_emsgs.gameMinPlayers(), _minPlayers = new TextBox());
@@ -311,4 +312,5 @@ public class GameEditor extends ItemEditor
     protected TextArea _extras;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

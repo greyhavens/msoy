@@ -21,6 +21,7 @@ import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 
 import client.util.Link;
@@ -78,7 +79,7 @@ public class index extends Page
             // otherwise we're display a particular item's details
             ItemIdent ident = new ItemIdent(type, itemId);
 
-            final String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
+            final String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
                 // update the detail with the one in our models
                 Item item = _models.findItem(type, itemId);
@@ -146,7 +147,7 @@ public class index extends Page
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
-            String title = CStuff.msgs.stuffTitle(CStuff.dmsgs.getString("pItemType" + type));
+            String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
             ItemPanel panel = getItemPanel(type);
             panel.setPage(args.get(1, -1));
             setContent(title, panel);
@@ -202,6 +203,7 @@ public class index extends Page
     protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
 
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

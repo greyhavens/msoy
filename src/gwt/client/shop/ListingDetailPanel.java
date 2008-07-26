@@ -30,6 +30,7 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.CShell;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.stuff.CStuff;
@@ -168,7 +169,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         byte[] types = _item.getSalableSubTypes();
 //         if (types.length > 0) {
 //             for (int ii = 0; ii < types.length; ii++) {
-//                 addTabBelow(CShop.dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+//                 addTabBelow(_dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
 //             }
 //         }
     }
@@ -193,7 +194,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         // change the buy button into a "you bought it" display
-        String type = CShop.dmsgs.getString("itemType" + itype);
+        String type = _dmsgs.getString("itemType" + itype);
         _buyPanel.add(MsoyUI.createLabel(CShop.msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists() && !(item instanceof SubItem)) {
@@ -201,7 +202,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _buyPanel.add(new Label(getUsageMessage(itype)));
         } else {
             _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));
-            String ptype = CShop.dmsgs.getString("pItemType" + itype);
+            String ptype = _dmsgs.getString("pItemType" + itype);
             _buyPanel.add(Link.create(
                               CShop.msgs.boughtGoNow(ptype), Page.STUFF, ""+itype));
         }
@@ -239,6 +240,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

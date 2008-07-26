@@ -5,6 +5,7 @@ package client.games;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -25,6 +26,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -67,7 +69,7 @@ public class GameGenrePanel extends FlowPanel
 
         String titleText;
         if (genre >= 0) {
-            String genreTitle = CGames.dmsgs.getString("genre" + genre);
+            String genreTitle = _dmsgs.getString("genre" + genre);
             if (genreTitle.length() > 8) {
                 titleText = genreTitle;
             }
@@ -194,7 +196,7 @@ public class GameGenrePanel extends FlowPanel
                 ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""),
                                 "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
-                setText(0, col++, CGames.dmsgs.getString("genre" + game.genre), 1, "Category");
+                setText(0, col++, _dmsgs.getString("genre" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
                 FlowPanel playButtonsPanel = new FlowPanel();
@@ -259,6 +261,8 @@ public class GameGenrePanel extends FlowPanel
 
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     protected static final int GAMES_PER_PAGE = 10;
 }

@@ -24,6 +24,7 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 
+import client.shell.DynamicMessages;
 import client.shell.Frame;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
@@ -96,7 +97,7 @@ public class DoListItemPopup extends VerticalPanel
             int selectedPricing = (_item instanceof SubItem) ? 0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
-                _pricingBox.addItem(CStuff.dmsgs.getString(key));
+                _pricingBox.addItem(_dmsgs.getString(key));
                 if (listing != null && listing.pricing == CatalogListing.PRICING[ii]) {
                     selectedPricing = ii;
                 }
@@ -104,7 +105,7 @@ public class DoListItemPopup extends VerticalPanel
             ChangeListener tipper = new ChangeListener() {
                 public void onChange (Widget sender) {
                     int pricing = getPricing();
-                    _pricingTip.setText(CStuff.dmsgs.getString("listingPricingTip" + pricing));
+                    _pricingTip.setText(_dmsgs.getString("listingPricingTip" + pricing));
                     boolean showSalesTarget = (pricing == CatalogListing.PRICING_ESCALATE ||
                                                pricing == CatalogListing.PRICING_LIMITED_EDITION);
                     _salesTargetLabel.setVisible(showSalesTarget);
@@ -251,6 +252,7 @@ public class DoListItemPopup extends VerticalPanel
     protected Label _status;
     protected Button _doIt;
 
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 

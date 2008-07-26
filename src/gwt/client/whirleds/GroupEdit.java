@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.ShellMessages;
@@ -110,7 +111,7 @@ public class GroupEdit extends FlexTable
 
         _catalogType = new ListBox();
         for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            _catalogType.addItem(CWhirleds.dmsgs.getString("itemType" + Item.TYPES[ii]));
+            _catalogType.addItem(_dmsgs.getString("itemType" + Item.TYPES[ii]));
             if (_extras.catalogItemType == Item.TYPES[ii]) {
                 _catalogType.setSelectedIndex(ii);
             }
@@ -250,4 +251,5 @@ public class GroupEdit extends FlexTable
     protected Button _submit;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

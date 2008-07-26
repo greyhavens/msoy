@@ -13,9 +13,6 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
-import client.editem.EditemMessages;
-import client.item.ItemMessages;
-
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
  */
@@ -29,18 +26,6 @@ public class CShell
 
     /** This member's current level. */
     public static int level;
-
-    /** Messages used by the item interfaces. */
-    public static ItemMessages imsgs;
-
-    /** Messages used by the editor interfaces. */
-    public static EditemMessages emsgs;
-
-    /** Messages that must be looked up dynamically. */
-    public static DynamicMessages dmsgs;
-
-    /** Contains translations for server-supplied messages. */
-    public static ServerMessages smsgs;
 
     /** The application that's running. */
     public static Application app;
@@ -85,7 +70,7 @@ public class CShell
         if (error instanceof ServiceException) {
             return serverError(error.getMessage());
         } else {
-            return smsgs.getString("internal_error");
+            return _smsgs.getString("internal_error");
         }
     }
 
@@ -99,7 +84,7 @@ public class CShell
             error = error.substring(2);
         }
         try {
-            return smsgs.getString(error);
+            return _smsgs.getString(error);
         } catch (MissingResourceException e) {
             // looking up a missing translation message throws an exception, yay!
             return "[" + error + "]";
@@ -139,4 +124,6 @@ public class CShell
             $wnd.console.log(message);
         }
     }-*/;
+
+    protected static final ServerMessages _smsgs = GWT.create(ServerMessages.class);
 }

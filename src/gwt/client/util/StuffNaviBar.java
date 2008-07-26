@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.images.stuff.StuffImages;
 import client.shell.CShell;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
 
@@ -34,7 +35,7 @@ public class StuffNaviBar extends SmartTable
 
         for (int ii = 0; ii < Item.TYPES.length; ii++) {
             byte type = Item.TYPES[ii];
-            final String tip = CShell.dmsgs.getString("pItemType" + type);
+            final String tip = _dmsgs.getString("pItemType" + type);
             final FocusPanel link = new FocusPanel();
             if (selectedType == type) {
                 link.setWidget(SELECTED[ii].createImage());
@@ -64,6 +65,7 @@ public class StuffNaviBar extends SmartTable
 
     protected static final StuffImages _simgs = (StuffImages)GWT.create(StuffImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     /** Our normal item images, in the same order as {@link Item#TYPES}. */
     protected static final AbstractImagePrototype[] NORMAL = {

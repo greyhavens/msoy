@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -14,6 +15,7 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import client.shell.DynamicMessages;
 import client.util.MsoyCallback;
 
 /**
@@ -58,7 +60,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
+        return CStuff.msgs.panelNoItems(_dmsgs.getString("itemType" + _type));
     }
 
     @Override // from PagedGrid
@@ -82,6 +84,8 @@ public class SubItemPanel extends PagedGrid<Item>
     protected byte _type;
     protected Item _parent;
     protected Button _create;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     protected static final int ROWS = 2;
 }

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,6 +23,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyUI;
@@ -98,7 +100,7 @@ public class GameHeaderPanel extends FlowPanel
         add(genreLinks);
         for (int i = 0; i < Game.GENRES.length; i++) {
             byte genreCode = Game.GENRES[i];
-            genreLinks.add(Link.create(CGames.dmsgs.getString("genre" + genreCode),
+            genreLinks.add(Link.create(_dmsgs.getString("genre" + genreCode),
                 Page.GAMES, Args.compose("g", genreCode)));
             if (i+1 < Game.GENRES.length) {
                 genreLinks.add(new InlineLabel("|"));
@@ -119,4 +121,6 @@ public class GameHeaderPanel extends FlowPanel
 
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

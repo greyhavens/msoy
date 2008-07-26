@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -23,6 +24,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.FlashClients;
@@ -94,7 +96,7 @@ public class ItemPanel extends VerticalPanel
                 return new ItemEntry(item);
             }
             protected String getEmptyMessage () {
-                return CStuff.msgs.panelNoItems(CStuff.dmsgs.getString("itemType" + _type));
+                return CStuff.msgs.panelNoItems(_dmsgs.getString("itemType" + _type));
             }
             protected boolean displayNavi (int items) {
                 return true;
@@ -142,7 +144,7 @@ public class ItemPanel extends VerticalPanel
     {
         // this will allow us to create new items
         _upload = new SmartTable("Upload", 0, 0);
-        _upload.setText(0, 0, CStuff.dmsgs.getString("itemUploadTitle" + _type), 2, "Header");
+        _upload.setText(0, 0, _dmsgs.getString("itemUploadTitle" + _type), 2, "Header");
 
         // add the various "why to upload" pitches
         String why = getPitch("a") + "<br>" + getPitch("b") + "<br>" + getPitch("c");
@@ -160,7 +162,7 @@ public class ItemPanel extends VerticalPanel
 
     protected String getPitch (String postfix)
     {
-        String pitch = CStuff.dmsgs.getString("itemUploadPitch" + _type + postfix);
+        String pitch = _dmsgs.getString("itemUploadPitch" + _type + postfix);
         if (-1 != pitch.indexOf("@MEMBER_ID@")) {
             return pitch.replaceAll("@MEMBER_ID@", "" + CStuff.getMemberId());
         }
@@ -217,6 +219,8 @@ public class ItemPanel extends VerticalPanel
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     protected static final String[] FLABELS = {
         CStuff.msgs.ipfAll(),

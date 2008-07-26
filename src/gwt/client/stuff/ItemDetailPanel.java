@@ -29,6 +29,7 @@ import client.item.ItemActivator;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.FlashClients;
@@ -67,7 +68,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             if (_item.sourceId != 0 && !types[ii].isSalable()) {
                 continue;
             }
-            addTabBelow(CStuff.dmsgs.getString("pItemType" + types[ii].getType()),
+            addTabBelow(_dmsgs.getString("pItemType" + types[ii].getType()),
                         new SubItemPanel(models, types[ii].getType(), _item), false);
         }
     }
@@ -340,6 +341,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected PushButton _listBtn;
     protected PushButton _giftBtn;
 
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)

@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -10,6 +11,7 @@ import com.threerings.msoy.web.data.ArcadeData;
 import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -81,7 +83,8 @@ public class ArcadePanel extends FlowPanel
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            header.add(MsoyUI.createActionLabel(CGames.dmsgs.getString("genre" + genre.genre), genreClick));
+            header.add(MsoyUI.createActionLabel(
+                           _dmsgs.getString("genre" + genre.genre), genreClick));
 
             // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
@@ -93,13 +96,18 @@ public class ArcadePanel extends FlowPanel
                 // display the first larger than the rest
                 if (i == 0) {
                     genreGame.addStyleName("First");
-                    genreGame.add(new ThumbBox(game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick));
-                    genreGame.add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, gameClick)));
-                    genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50), "Description"));
+                    genreGame.add(
+                        new ThumbBox(game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick));
+                    genreGame.add(MsoyUI.createSimplePanel(
+                                      "Name", MsoyUI.createActionLabel(game.name, gameClick)));
+                    genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
+                                                     "Description"));
                 }
                 else {
-                    genreGame.add(new ThumbBox(game.getThumbMedia(), MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
-                    genreGame.add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, gameClick)));
+                    genreGame.add(new ThumbBox(game.getThumbMedia(),
+                                               MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
+                    genreGame.add(MsoyUI.createSimplePanel(
+                                      "Name", MsoyUI.createActionLabel(game.name, gameClick)));
                 }
             }
 
@@ -109,7 +117,8 @@ public class ArcadePanel extends FlowPanel
             }
 
             add(MsoyUI.createSimplePanel("ViewAll", Link.create(
-                CGames.msgs.genreMore(""+genre.gameCount), Page.GAMES, Args.compose("g", genre.genre))));
+                                             CGames.msgs.genreMore(""+genre.gameCount), Page.GAMES,
+                                             Args.compose("g", genre.genre))));
 
         }
     }
@@ -131,4 +140,6 @@ public class ArcadePanel extends FlowPanel
 
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -11,6 +12,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.CreatorLabel;
 import client.util.Link;
@@ -56,7 +58,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         }));
 
         add(MsoyUI.createLabel(game.name, "Name"), 200, 40);
-        add(MsoyUI.createLabel(CGames.dmsgs.getString("genre" + game.genre), "Genre"), 200, 65);
+        add(MsoyUI.createLabel(_dmsgs.getString("genre" + game.genre), "Genre"), 200, 65);
         add(new CreatorLabel(game.creator), 200, 85);
         add(MsoyUI.createLabel(
                 MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
@@ -68,4 +70,6 @@ public class FeaturedGamePanel extends AbsolutePanel
     }
 
     protected FeaturedGameInfo[] _games;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

@@ -3,6 +3,7 @@
 
 package client.shop;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,6 +13,7 @@ import com.threerings.msoy.web.data.CatalogQuery;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyUI;
@@ -41,7 +43,7 @@ public class SideBar extends SmartTable
             setStyleName("NaviPanel");
             for (int ii = 0; ii < Item.TYPES.length; ii++) {
                 byte type = Item.TYPES[ii];
-                String name = CShop.dmsgs.getString("pItemType" + type);
+                String name = _dmsgs.getString("pItemType" + type);
 
                 if (query.itemType == type) {
                     add(MsoyUI.createLabel(name, "Selected"));
@@ -62,4 +64,6 @@ public class SideBar extends SmartTable
             return ShopUtil.composeArgs(copy, page);
         }
     }
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

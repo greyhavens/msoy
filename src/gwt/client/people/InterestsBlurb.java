@@ -21,6 +21,7 @@ import com.threerings.msoy.person.data.Interest;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Args;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.util.ClickCallback;
@@ -54,7 +55,7 @@ public class InterestsBlurb extends Blurb
         SmartTable contents = new SmartTable("Interests", 0, 5);
         for (int ii = 0; ii < _interests.size(); ii++) {
             Interest interest = _interests.get(ii);
-            contents.setText(ii, 0, CPeople.dmsgs.getString("interest" + interest.type), 1, "Type");
+            contents.setText(ii, 0, _dmsgs.getString("interest" + interest.type), 1, "Type");
             if (Interest.isLinkedType(interest.type)) {
                 contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
             } else {
@@ -84,7 +85,7 @@ public class InterestsBlurb extends Blurb
         int row = 0;
         for (int ii = 0; ii < _iEditors.length; ii++) {
             int type = Interest.TYPES[ii];
-            editor.setText(row, 0, CPeople.dmsgs.getString("interest" + type), 1, "Type");
+            editor.setText(row, 0, _dmsgs.getString("interest" + type), 1, "Type");
             _iEditors[ii] = MsoyUI.createTextBox(
                 getCurrentInterest(type), Interest.MAX_INTEREST_LENGTH, -1);
             _iEditors[ii].addStyleName("Editor");
@@ -172,4 +173,5 @@ public class InterestsBlurb extends Blurb
     protected TextBox[] _iEditors;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

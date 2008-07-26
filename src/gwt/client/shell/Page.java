@@ -3,12 +3,14 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.shell.DynamicMessages;
 import client.util.Link;
 
 /**
@@ -43,7 +45,7 @@ public abstract class Page
     public static String getDefaultTitle (String pageId)
     {
         try {
-            return CShell.dmsgs.getString(pageId + "Title");
+            return _dmsgs.getString(pageId + "Title");
         } catch (Exception e) {
             return null;
         }
@@ -177,4 +179,5 @@ public abstract class Page
     }
 
     protected Widget _content;
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

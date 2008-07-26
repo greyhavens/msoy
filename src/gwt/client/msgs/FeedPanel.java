@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -33,6 +34,7 @@ import client.games.GameDetailPanel;
 
 import client.shell.Args;
 import client.shell.CShell;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 
 import client.util.Link;
@@ -280,7 +282,7 @@ public class FeedPanel extends TongueBox
 
             case 103: // FRIEND_LISTED_ITEM
                 return CMsgs.mmsgs.descCombine(
-                            CShell.dmsgs.getString("itemType" + message.data[1]),
+                            _dmsgs.getString("itemType" + message.data[1]),
                             Link.createHtml(message.data[0], Page.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
 
@@ -711,6 +713,8 @@ public class FeedPanel extends TongueBox
     protected String _emptyMessage;
     protected boolean _fullPage;
     protected FeedLoader _feedLoader;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     /** The default number of days of feed information to show. */
     protected static final int SHORT_CUTOFF = 2;

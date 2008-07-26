@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -80,7 +82,7 @@ public class ProjectSelectionPanel extends FlexTable
         });
         for (int i = 0; i < SwiftlyProject.PROJECT_TYPES.length; i++) {
             byte type = SwiftlyProject.PROJECT_TYPES[i];
-            _projectTypes.addItem(CSwiftly.dmsgs.getString("itemType" + type),
+            _projectTypes.addItem(_dmsgs.getString("itemType" + type),
                 String.valueOf(type));
         }
         updateSelectedProjectType();
@@ -259,4 +261,6 @@ public class ProjectSelectionPanel extends FlexTable
     protected ListBox _projectTypes;
     protected CheckBox _remixable;
     protected byte _selectedProjectType;
+
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

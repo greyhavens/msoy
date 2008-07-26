@@ -259,10 +259,6 @@ public class Application
     protected void initContext ()
     {
         CShell.app = this;
-
-        // load up our translation dictionaries
-        CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
-        CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }
 
     /**
