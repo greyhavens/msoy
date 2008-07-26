@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.fora.server;
 
 import java.util.List;
 
@@ -17,28 +17,28 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.fora.gwt.IssueCodes;
+import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRecord;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 
-import com.threerings.msoy.fora.gwt.ForumMessage;
-import com.threerings.msoy.fora.gwt.Issue;
-import com.threerings.msoy.fora.gwt.IssueCodes;
-
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.web.client.IssueService;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
-import com.threerings.msoy.server.persist.MemberCardRecord;
 
 /**
  * Provides the server implementation of {@link IssueService}.
@@ -47,8 +47,8 @@ public class IssueServlet extends MsoyServiceServlet
     implements IssueService
 {
     // from interface IssueService
-    public IssueResult loadIssues (
-            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+    public IssueResult loadIssues (WebIdent ident, int type, int state, int offset, int count,
+                                   boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
@@ -56,8 +56,8 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public IssueResult loadOwnedIssues (
-            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+    public IssueResult loadOwnedIssues (WebIdent ident, int type, int state, int offset, int count,
+                                        boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);

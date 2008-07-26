@@ -6,7 +6,6 @@ package client.msgs;
 import client.shell.CShell;
 
 import com.threerings.msoy.web.client.GroupServiceAsync;
-import com.threerings.msoy.web.client.IssueServiceAsync;
 import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 
@@ -23,9 +22,6 @@ public class CMsgs extends CShell
 
     /** Provides mail-related services. */
     public static MailServiceAsync mailsvc;
-
-    /** Provides issue-related services. */
-    public static IssueServiceAsync issuesvc;
 
     /** Messages used by the msgs interfaces. */
     public static MsgsMessages mmsgs;

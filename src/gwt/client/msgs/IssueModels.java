@@ -6,9 +6,13 @@ package client.msgs;
 import java.util.List;
 import java.util.HashMap;
 
-import com.threerings.msoy.fora.gwt.Issue;
-import com.threerings.msoy.web.client.IssueService;
+import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.fora.gwt.IssueService;
+import com.threerings.msoy.fora.gwt.IssueServiceAsync;
+
+import client.util.ServiceUtil;
 import client.util.ServiceBackedDataModel;
 
 /**
@@ -56,7 +60,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            CMsgs.issuesvc.loadIssues(CMsgs.ident, _type, _state, start, count, needCount, this);
+            _issuesvc.loadIssues(CMsgs.ident, _type, _state, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -88,7 +92,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            CMsgs.issuesvc.loadOwnedIssues(
+            _issuesvc.loadOwnedIssues(
                     CMsgs.ident, _type, _state, start, count, needCount, this);
         }
     }
@@ -182,4 +186,7 @@ public class IssueModels
     /** A cached OwnedIssues data model. */
     protected HashMap<Integer, HashMap<Integer, OwnedIssues>> _ownedModel =
         new HashMap<Integer, HashMap<Integer, OwnedIssues>>();
+
+    protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
+        ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
 }

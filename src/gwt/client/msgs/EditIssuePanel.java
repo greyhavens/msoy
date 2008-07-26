@@ -11,6 +11,7 @@ import client.util.MsoyUI;
 
 import client.shell.Page;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -22,10 +23,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.fora.gwt.IssueService;
+import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
+import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 
 /**
@@ -72,7 +75,7 @@ public class EditIssuePanel extends TableFooterPanel
         } else {
             fillViewPanel();
         }
-        CMsgs.issuesvc.loadMessages(
+        _issuesvc.loadMessages(
             CMsgs.ident, _issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
                 public void onSuccess (List<ForumMessage> messages) {
                     if (messages != null) {
@@ -114,7 +117,7 @@ public class EditIssuePanel extends TableFooterPanel
             Button assign = new Button(CMsgs.mmsgs.assign());
             new ClickCallback<Void>(assign) {
                 public boolean callService () {
-                    CMsgs.issuesvc.assignMessage(CMsgs.ident, _issue.issueId, _messageId, this);
+                    _issuesvc.assignMessage(CMsgs.ident, _issue.issueId, _messageId, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -140,7 +143,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row++, 1, _issue.creator.toString());
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(CMsgs.mmsgs.iNoOwner());
-        CMsgs.issuesvc.loadOwners(CMsgs.ident, new MsoyCallback<List<MemberName>>() {
+        _issuesvc.loadOwners(CMsgs.ident, new MsoyCallback<List<MemberName>>() {
             public void onSuccess (List<MemberName> owners) {
                 if (owners != null) {
                     setOwners(owners);
@@ -277,10 +280,10 @@ public class EditIssuePanel extends TableFooterPanel
         }
 
         if (create) {
-            CMsgs.issuesvc.createIssue(
+            _issuesvc.createIssue(
                     CMsgs.ident, _issue, (_message == null ? 0 : _message.messageId), callback);
         } else {
-            CMsgs.issuesvc.updateIssue(CMsgs.ident, _issue, callback);
+            _issuesvc.updateIssue(CMsgs.ident, _issue, callback);
         }
         return true;
     }
@@ -304,4 +307,7 @@ public class EditIssuePanel extends TableFooterPanel
     protected Hyperlink _threadLink;
 
     protected int _messagesRow;
+
+    protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
+        ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
 }

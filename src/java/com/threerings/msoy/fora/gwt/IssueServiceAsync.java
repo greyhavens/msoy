@@ -1,16 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.fora.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.fora.gwt.Issue;
-import com.threerings.msoy.fora.gwt.ForumMessage;
 
 import com.threerings.msoy.web.data.WebIdent;
 

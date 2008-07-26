@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -13,10 +14,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.fora.gwt.IssueService;
+import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
 import client.shell.Page;
 import client.util.Link;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays issues.
@@ -83,7 +87,7 @@ public class IssuePanel extends TitledListPanel
             setContents(CMsgs.mmsgs.viewIssue(issue.description), _ipanel, true);
 
         } else {
-            CMsgs.issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback<Issue>() {
+            _issuesvc.loadIssue(CMsgs.ident, issueId, new AsyncCallback<Issue>() {
                 public void onSuccess (Issue issue) {
                     _state = issue.state;
                     _type = issue.type;
@@ -168,4 +172,7 @@ public class IssuePanel extends TitledListPanel
 
     /** The issue viewing/editing panel. */
     protected EditIssuePanel _ipanel;
+
+    protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
+        ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
 }
