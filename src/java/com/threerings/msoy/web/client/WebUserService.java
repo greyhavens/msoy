@@ -18,6 +18,9 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface WebUserService extends RemoteService
 {
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/usersvc";
+
     /**
      * Requests that the client be logged in as the specified user with the supplied (MD5-encoded)
      * password.

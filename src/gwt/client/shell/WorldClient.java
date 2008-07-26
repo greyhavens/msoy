@@ -3,16 +3,20 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Manages our World client (which also handles Flash games).
@@ -26,7 +30,7 @@ public class WorldClient extends Widget
     public static void displayFeaturedPlace (final int sceneId, final Panel container)
     {
         if (_defaultServer == null) {
-            CShell.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+            _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
                     _defaultServer = config;
                     displayFeaturedPlace(sceneId, container);
@@ -57,7 +61,7 @@ public class WorldClient extends Widget
         // if we have not yet determined our default server, find that out now
         if (_defaultServer == null) {
             final String savedArgs = flashArgs;
-            CShell.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+            _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
                     _defaultServer = config;
                     displayFlash(savedArgs, pageToken);
@@ -204,4 +208,7 @@ public class WorldClient extends Widget
 
     /** Our default world server. Configured the first time Flash is used. */
     protected static ConnectConfig _defaultServer;
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

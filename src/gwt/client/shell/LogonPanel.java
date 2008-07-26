@@ -20,11 +20,14 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.util.ClickCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays a logon user interface.
@@ -130,8 +133,7 @@ public class LogonPanel extends SmartTable
             return;
         }
 
-        CShell.usersvc.login(
-            DeploymentConfig.version, account, CShell.md5hex(password), 1, this);
+        _usersvc.login(DeploymentConfig.version, account, CShell.md5hex(password), 1, this);
     }
 
     public void onSuccess (SessionData data)
@@ -178,7 +180,7 @@ public class LogonPanel extends SmartTable
                     if (account.length() <= 0) {
                         return false;
                     }
-                    CShell.usersvc.sendForgotPasswordEmail(account, this);
+                    _usersvc.sendForgotPasswordEmail(account, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -197,4 +199,6 @@ public class LogonPanel extends SmartTable
     protected PasswordTextBox _password;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

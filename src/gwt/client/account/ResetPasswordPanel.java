@@ -3,6 +3,7 @@
 
 package client.account;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
@@ -16,11 +17,14 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import client.shell.Args;
 
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Handles resetting of a user's password.
@@ -105,7 +109,7 @@ public class ResetPasswordPanel extends FlexTable
     protected void sendResetRequest ()
     {
         String password = CAccount.md5hex(_password.getText().trim());
-        CAccount.usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
+        _usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
             public void onSuccess (Boolean result) {
                 if (result) {
                     MsoyUI.info(CAccount.msgs.resetReset());
@@ -132,4 +136,7 @@ public class ResetPasswordPanel extends FlexTable
     protected PasswordTextBox _password, _confirm;
     protected Button _submit;
     protected Label _status;
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

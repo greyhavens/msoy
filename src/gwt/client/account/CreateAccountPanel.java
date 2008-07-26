@@ -5,6 +5,7 @@ package client.account;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -30,6 +31,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
@@ -40,6 +43,7 @@ import client.shell.TrackingCookie;
 import client.util.DateFields;
 import client.util.Link;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays an interface for creating a new account.
@@ -230,7 +234,7 @@ public class CreateAccountPanel extends FlowPanel
         setStatus(CAccount.msgs.creatingAccount());
         String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
         String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
-        CAccount.usersvc.register(
+        _usersvc.register(
             DeploymentConfig.version, email, CAccount.md5hex(password), name,
             _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
@@ -357,4 +361,7 @@ public class CreateAccountPanel extends FlowPanel
     protected CheckBox _tosBox;
     protected Label _status;
     protected RegisterListener _regListener;
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

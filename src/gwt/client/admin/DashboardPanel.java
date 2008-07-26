@@ -3,6 +3,7 @@
 
 package client.admin;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -13,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.Frame;
@@ -20,6 +23,7 @@ import client.shell.Page;
 
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -93,7 +97,7 @@ public class DashboardPanel extends FlexTable
     protected void displayDashboard ()
     {
         // load up the information needed to display the dashboard applet
-        CAdmin.usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+        _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
             public void onSuccess (ConnectConfig config) {
                 finishDisplayDashboard(config);
             }
@@ -118,4 +122,7 @@ public class DashboardPanel extends FlexTable
                                      "port", "" + config.port,
                                      "authtoken", CAdmin.ident.token }));
     }
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

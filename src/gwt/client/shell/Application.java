@@ -34,6 +34,7 @@ import com.threerings.msoy.web.data.WebIdent;
 import client.editem.EditemMessages;
 import client.item.ItemMessages;
 import client.util.Link;
+import client.util.ServiceUtil;
 
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
@@ -270,8 +271,6 @@ public class Application
         CShell.app = this;
 
         // wire up our remote services
-        CShell.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ((ServiceDefTarget)CShell.usersvc).setServiceEntryPoint("/usersvc");
         CShell.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
         ((ServiceDefTarget)CShell.membersvc).setServiceEntryPoint("/membersvc");
         CShell.commentsvc = (CommentServiceAsync)GWT.create(CommentService.class);
@@ -294,19 +293,19 @@ public class Application
     protected void validateSession (String token)
     {
         if (token != null) {
-            CShell.usersvc.validateSession(
-                DeploymentConfig.version, token, 1, new AsyncCallback<SessionData>() {
-                    public void onSuccess (SessionData data) {
-                        if (data == null) {
-                            didLogoff();
-                        } else {
-                            didLogon(data);
-                        }
-                    }
-                    public void onFailure (Throwable t) {
+            _usersvc.validateSession(DeploymentConfig.version, token, 1,
+                                     new AsyncCallback<SessionData>() {
+                public void onSuccess (SessionData data) {
+                    if (data == null) {
                         didLogoff();
+                    } else {
+                        didLogon(data);
                     }
-                });
+                }
+                public void onFailure (Throwable t) {
+                    didLogoff();
+                }
+            });
         } else {
             didLogoff();
         }
@@ -394,4 +393,7 @@ public class Application
     protected StatusPanel _status;
 
     protected static String _currentToken = "";
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

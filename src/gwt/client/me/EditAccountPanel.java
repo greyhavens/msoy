@@ -21,6 +21,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
 
 import client.shell.ShellMessages;
@@ -28,6 +30,7 @@ import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RowPanel;
+import client.util.ServiceUtil;
 
 /**
  * Displays account information, allows twiddling.
@@ -39,7 +42,7 @@ public class EditAccountPanel extends SmartTable
         setCellSpacing(10);
         setStyleName("editAccount");
 
-        CMe.usersvc.getAccountInfo(CMe.ident, new MsoyCallback<AccountInfo>() {
+        _usersvc.getAccountInfo(CMe.ident, new MsoyCallback<AccountInfo>() {
             public void onSuccess (AccountInfo info) {
                 init(info);
             }
@@ -176,7 +179,7 @@ public class EditAccountPanel extends SmartTable
         _accountInfo.realName = _rname.getText().trim();
         _uprname.setEnabled(false);
         _rname.setEnabled(false);
-        CMe.usersvc.updateAccountInfo(CMe.ident, _accountInfo, new AsyncCallback<Void>() {
+        _usersvc.updateAccountInfo(CMe.ident, _accountInfo, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
@@ -195,7 +198,7 @@ public class EditAccountPanel extends SmartTable
     {
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
-        CMe.usersvc.updateEmail(CMe.ident, email, new AsyncCallback<Void>() {
+        _usersvc.updateEmail(CMe.ident, email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CMe.creds.accountName = email;
                 setStatus(CMe.msgs.emailUpdated());
@@ -210,8 +213,8 @@ public class EditAccountPanel extends SmartTable
     protected void updateEmailPrefs ()
     {
         _upeprefs.setEnabled(false);
-        CMe.usersvc.updateEmailPrefs(CMe.ident, _whirledEmail.isChecked(),
-                                     _announceEmail.isChecked(), new AsyncCallback<Void>() {
+        _usersvc.updateEmailPrefs(CMe.ident, _whirledEmail.isChecked(),
+                                  _announceEmail.isChecked(), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _upeprefs.setEnabled(true);
                 setStatus(CMe.msgs.eprefsUpdated());
@@ -229,7 +232,7 @@ public class EditAccountPanel extends SmartTable
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        CMe.usersvc.updatePassword(CMe.ident, password, new AsyncCallback<Void>() {
+        _usersvc.updatePassword(CMe.ident, password, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _password.setText("");
                 _password.setEnabled(true);
@@ -251,7 +254,7 @@ public class EditAccountPanel extends SmartTable
         final String pname = _pname.getText().trim();
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
-        CMe.usersvc.configurePermaName(CMe.ident, pname, new AsyncCallback<Void>() {
+        _usersvc.configurePermaName(CMe.ident, pname, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CMe.creds.permaName = pname;
                 getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
@@ -414,4 +417,6 @@ public class EditAccountPanel extends SmartTable
     protected Label _status;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }
