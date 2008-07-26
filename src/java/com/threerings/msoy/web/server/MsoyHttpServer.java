@@ -30,13 +30,14 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.server.AdminServlet;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
 import com.threerings.msoy.fora.server.IssueServlet;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;

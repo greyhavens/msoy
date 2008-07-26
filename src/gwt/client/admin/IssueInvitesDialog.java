@@ -9,15 +9,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 
 import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
+import client.util.ServiceUtil;
 
 /**
  * Display a dialog for admins to issue invitations to the player base.
@@ -29,7 +32,7 @@ public class IssueInvitesDialog extends BorderedDialog
         setHeaderTitle(CAdmin.msgs.invitesTitle());
 
         FlexTable contents = new FlexTable();
-        FlexCellFormatter formatter = contents.getFlexCellFormatter();
+        FlexTable.FlexCellFormatter formatter = contents.getFlexCellFormatter();
         contents.setCellSpacing(10);
         contents.setStyleName("sendInvites");
 
@@ -62,7 +65,7 @@ public class IssueInvitesDialog extends BorderedDialog
                     // one week ago
                     activeSince = new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
                 }
-                CAdmin.adminsvc.grantInvitations(CAdmin.ident, _numberInvites.getValue().intValue(),
+                _adminsvc.grantInvitations(CAdmin.ident, _numberInvites.getValue().intValue(),
                     activeSince, new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             IssueInvitesDialog.this.hide();
@@ -80,4 +83,6 @@ public class IssueInvitesDialog extends BorderedDialog
     protected ListBox _issueToSelection;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

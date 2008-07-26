@@ -14,6 +14,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.web.data.ABTest;
 
 import client.shell.CShell;
@@ -23,6 +26,7 @@ import client.util.BorderedDialog;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Display a dialog for admins to create or edit an a/b test record
@@ -180,7 +184,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         if (_isNewTest) {
-            CAdmin.adminsvc.createTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+            _adminsvc.createTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(CAdmin.msgs.abTestCreated());
                     ABTestEditorDialog.this.hide();
@@ -195,7 +199,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         else {
-            CAdmin.adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+            _adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(CAdmin.msgs.abTestUpdated());
                     ABTestEditorDialog.this.hide();
@@ -230,4 +234,6 @@ public class ABTestEditorDialog extends BorderedDialog
     protected final ABTestListPanel _parent;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

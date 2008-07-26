@@ -6,12 +6,10 @@ package client.admin;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.web.client.AdminService;
-import com.threerings.msoy.web.client.AdminServiceAsync;
-
 import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays an admin dashboard with various server status information and administrative
@@ -75,10 +73,6 @@ public class index extends Page
     protected void initContext ()
     {
         super.initContext();
-
-        // wire up our remote services
-        CAdmin.adminsvc = (AdminServiceAsync)GWT.create(AdminService.class);
-        ((ServiceDefTarget)CAdmin.adminsvc).setServiceEntryPoint("/adminsvc");
 
         // load up our translation dictionaries
         CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);

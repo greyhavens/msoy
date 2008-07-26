@@ -8,7 +8,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.web.data.MemberInviteStatus;
+import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 
 /**
  * A computed persistent entity that's used to fetch (and cache) information about members and

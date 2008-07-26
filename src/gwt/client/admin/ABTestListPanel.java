@@ -17,6 +17,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.ABTest;
@@ -54,7 +56,7 @@ public class ABTestListPanel extends FlowPanel
 
         add(_contents = new SmartTable("Tests", 10, 0));
 
-        CAdmin.adminsvc.getABTests(CAdmin.ident, new MsoyCallback<List<ABTest>>() {
+        _adminsvc.getABTests(CAdmin.ident, new MsoyCallback<List<ABTest>>() {
             public void onSuccess (List<ABTest> tests) {
                 displayTests(tests);
             }
@@ -121,4 +123,6 @@ public class ABTestListPanel extends FlowPanel
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

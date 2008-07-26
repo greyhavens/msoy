@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
@@ -19,8 +20,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.MemberInviteStatus;
-import com.threerings.msoy.web.data.MemberInviteResult;
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
+import com.threerings.msoy.admin.gwt.MemberInviteResult;
+import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -29,6 +32,7 @@ import client.shell.Page;
 
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
@@ -114,7 +118,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             _playerLists = new ArrayList<PlayerList>();
         }
 
-        CAdmin.adminsvc.getPlayerList(
+        _adminsvc.getPlayerList(
             CAdmin.ident, memberIdToFetch, new MsoyCallback<MemberInviteResult>() {
                 public void onSuccess (MemberInviteResult res) {
                     PlayerList newList = new PlayerList(res);
@@ -206,7 +210,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 Button grantInvites = new Button(CAdmin.msgs.browserGrantInv());
                 new ClickCallback<Void>(grantInvites) {
                     public boolean callService () {
-                        CAdmin.adminsvc.grantInvitations(
+                        _adminsvc.grantInvitations(
                             CAdmin.ident, numInvites.getValue().intValue(), _result.memberId, this);
                         return true;
                     }
@@ -428,4 +432,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
     protected ArrayList<PlayerList> _playerLists;
     protected PlayerList _parentList, _childList;
     protected Button _backButton, _forwardButton;
+
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

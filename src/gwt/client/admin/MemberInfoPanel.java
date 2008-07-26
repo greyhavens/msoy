@@ -3,14 +3,17 @@
 
 package client.admin;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
+import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.MemberAdminInfo;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -18,6 +21,7 @@ import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays admin info for a particular member.
@@ -28,7 +32,7 @@ public class MemberInfoPanel extends SmartTable
     {
         super("memberInfo", 0, 5);
 
-        CAdmin.adminsvc.getMemberInfo(CAdmin.ident, memberId, new MsoyCallback<MemberAdminInfo>() {
+        _adminsvc.getMemberInfo(CAdmin.ident, memberId, new MsoyCallback<MemberAdminInfo>() {
             public void onSuccess (MemberAdminInfo info) {
                 init(info);
             }
@@ -63,7 +67,7 @@ public class MemberInfoPanel extends SmartTable
                     if (_isSupport == info.isSupport) {
                         return false; // we're reverting due to failure, so do nothing
                     }
-                    CAdmin.adminsvc.setIsSupport(
+                    _adminsvc.setIsSupport(
                         CAdmin.ident, info.name.getMemberId(), _isSupport, this);
                     return true;
                 }
@@ -132,4 +136,7 @@ public class MemberInfoPanel extends SmartTable
     {
         return Link.create("" + name, Page.ADMIN, Args.compose("info", name.getMemberId()));
     }
+
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

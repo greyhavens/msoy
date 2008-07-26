@@ -10,7 +10,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
+
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 
 import client.shell.ShellMessages;
 import client.util.BorderedDialog;
@@ -18,6 +22,7 @@ import client.util.ClickCallback;
 import client.util.MsoyUI;
 import client.util.NumberTextBox;
 import client.util.RowPanel;
+import client.util.ServiceUtil;
 
 /**
  * Sends an "announcement message" to all registered players (who have not opted out of
@@ -58,7 +63,7 @@ public class SpamPlayersDialog extends BorderedDialog
                 String subject = _subject.getText().trim();
                 String body = _body.getText().trim();
                 int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
-                CAdmin.adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, this);
+                _adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, this);
                 MsoyUI.info(CAdmin.msgs.spammingPleaseWait());
                 return true;
             }
@@ -83,4 +88,6 @@ public class SpamPlayersDialog extends BorderedDialog
     protected NumberTextBox _startId, _endId;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

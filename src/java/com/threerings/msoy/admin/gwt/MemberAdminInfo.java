@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.admin.gwt;
 
 import java.util.Date;
 import java.util.List;

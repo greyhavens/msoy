@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.admin.gwt;
 
 import java.util.Date;
 import java.util.List;
@@ -9,8 +9,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ABTest;
-import com.threerings.msoy.web.data.MemberAdminInfo;
-import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 

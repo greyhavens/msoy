@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.admin.server;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -15,9 +15,6 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
-import com.threerings.msoy.admin.data.MsoyAdminCodes;
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -26,14 +23,19 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.person.server.persist.MailRepository;
 
-import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.ABTest;
-import com.threerings.msoy.web.data.MemberAdminInfo;
-import com.threerings.msoy.web.data.MemberInviteResult;
-import com.threerings.msoy.web.data.MemberInviteStatus;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.admin.data.MsoyAdminCodes;
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.MemberAdminInfo;
+import com.threerings.msoy.admin.gwt.MemberInviteResult;
+import com.threerings.msoy.admin.gwt.MemberInviteStatus;
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.admin.server.persist.ABTestRepository;
 
 import static com.threerings.msoy.Log.log;
 
