@@ -42,6 +42,9 @@ public interface ItemService extends RemoteService
         public ItemIdent ident;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/itemsvc";
+
     /**
      * Requests that the supplied item be created and inserted into the creating user's inventory.
      *

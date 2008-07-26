@@ -47,6 +47,9 @@ public interface MailService extends RemoteService
         public List<ConvMessage> messages;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/mailsvc";
+
     /**
      * Loads the specified range of conversations in which the caller is a participant.
      */

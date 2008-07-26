@@ -86,6 +86,9 @@ public interface ProfileService extends RemoteService
         public List<MemberCard> friends;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/profilesvc";
+
     /**
      * Loads the specified member's profile information.
      */

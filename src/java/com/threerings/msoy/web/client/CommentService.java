@@ -28,6 +28,9 @@ public interface CommentService extends RemoteService
         public List<Comment> comments;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/commentsvc";
+
     /**
      * Loads recent comments made about the specified entity.
      */

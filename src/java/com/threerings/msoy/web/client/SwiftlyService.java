@@ -20,6 +20,9 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface SwiftlyService extends RemoteService
 {
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/swiftlysvc";
+
     /**
      * Returns the SwiftlyConnectConfig used by the applet for connecting to the server.
      */

@@ -51,6 +51,9 @@ public interface ForumService extends RemoteService
         public List<ForumMessage> messages;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/forumsvc";
+
     /**
      * Loads up to <code>maximum</code> threads from groups of which the caller is a member for
      * which there are messages not yet read by same. The threads are sorted from most to least

@@ -34,18 +34,21 @@ public interface IssueService extends RemoteService
         public List<Issue> issues;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/issuesvc";
+
     /**
      * Loads issues of specific types, states.
      */
-    public IssueResult loadIssues (
-            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+    public IssueResult loadIssues (WebIdent ident, int type, int state, int offset, int count,
+                                   boolean needTotalCount)
         throws ServiceException;
 
     /**
      * Loads issues of specific types, states owned by the user.
      */
-    public IssueResult loadOwnedIssues (
-            WebIdent ident, int type, int state, int offset, int count, boolean needTotalCount)
+    public IssueResult loadOwnedIssues (WebIdent ident, int type, int state, int offset, int count,
+                                        boolean needTotalCount)
         throws ServiceException;
 
     /**

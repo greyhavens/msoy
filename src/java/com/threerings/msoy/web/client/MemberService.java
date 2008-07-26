@@ -23,6 +23,9 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface MemberService extends RemoteService
 {
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/membersvc";
+
     /**
      * Looks up a member's card.
      */

@@ -79,6 +79,9 @@ public interface GroupService extends RemoteService
         public byte rank;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/groupsvc";
+
     /**
      * Loads the information displayed on the Galaxy page.
      */

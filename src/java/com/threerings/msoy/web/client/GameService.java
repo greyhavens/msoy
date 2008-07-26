@@ -48,6 +48,9 @@ public interface GameService extends RemoteService
         public Long[][] whenEarneds;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/gamesvc";
+
     /**
      * Loads the details for the specified game.
      */

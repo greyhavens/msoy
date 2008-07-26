@@ -36,6 +36,9 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> listings;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/catalogsvc";
+
     /**
      * Loads the featured items shown on the top-level catalog page.
      */

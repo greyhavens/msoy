@@ -31,7 +31,22 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.web.client.AdminService;
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.client.ForumService;
+import com.threerings.msoy.web.client.GameService;
+import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.client.IssueService;
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.MailService;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.web.client.SwiftlyService;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WorldService;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -200,26 +215,26 @@ public class MsoyHttpServer extends Server
 
     protected static final Map<String, Class<? extends HttpServlet>> SERVLETS = Maps.newHashMap();
     static {
-        SERVLETS.put("/usersvc", WebUserServlet.class);
-        SERVLETS.put("/adminsvc", AdminServlet.class);
-        SERVLETS.put("/itemsvc", ItemServlet.class);
-        SERVLETS.put("/catalogsvc", CatalogServlet.class);
-        SERVLETS.put("/profilesvc", ProfileServlet.class);
-        SERVLETS.put("/membersvc", MemberServlet.class);
-        SERVLETS.put("/groupsvc", GroupServlet.class);
-        SERVLETS.put("/mailsvc", MailServlet.class);
+        SERVLETS.put(WebUserService.ENTRY_POINT, WebUserServlet.class);
+        SERVLETS.put(AdminService.ENTRY_POINT, AdminServlet.class);
+        SERVLETS.put(ItemService.ENTRY_POINT, ItemServlet.class);
+        SERVLETS.put(CatalogService.ENTRY_POINT, CatalogServlet.class);
+        SERVLETS.put(ProfileService.ENTRY_POINT, ProfileServlet.class);
+        SERVLETS.put(MemberService.ENTRY_POINT, MemberServlet.class);
+        SERVLETS.put(GroupService.ENTRY_POINT, GroupServlet.class);
+        SERVLETS.put(MailService.ENTRY_POINT, MailServlet.class);
         SERVLETS.put("/uploadsvc", UploadServlet.class);
         SERVLETS.put("/remixuploadsvc", UploadRemixMediaServlet.class);
-        SERVLETS.put("/gamesvc", GameServlet.class);
-        SERVLETS.put("/swiftlysvc", SwiftlyServlet.class);
+        SERVLETS.put(GameService.ENTRY_POINT, GameServlet.class);
+        SERVLETS.put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class);
         SERVLETS.put("/swiftlyuploadsvc", SwiftlyUploadServlet.class);
         SERVLETS.put("/facebook", FacebookServlet.class);
         SERVLETS.put("/scenethumbsvc", SceneThumbnailUploadServlet.class);
         SERVLETS.put("/snapshotsvc", SnapshotItemUploadServlet.class);
-        SERVLETS.put("/commentsvc", CommentServlet.class);
-        SERVLETS.put("/worldsvc", WorldServlet.class);
-        SERVLETS.put("/forumsvc", ForumServlet.class);
-        SERVLETS.put("/issuesvc", IssueServlet.class);
+        SERVLETS.put(CommentService.ENTRY_POINT, CommentServlet.class);
+        SERVLETS.put(WorldService.ENTRY_POINT, WorldServlet.class);
+        SERVLETS.put(ForumService.ENTRY_POINT, ForumServlet.class);
+        SERVLETS.put(IssueService.ENTRY_POINT, IssueServlet.class);
         SERVLETS.put("/undersvc", MsoyUnderwireServlet.class);
         SERVLETS.put("/gamestubsvc", GameStubServlet.class);
         SERVLETS.put("/embed/*", EmbedRouterServlet.class);

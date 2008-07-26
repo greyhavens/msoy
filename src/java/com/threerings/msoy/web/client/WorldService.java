@@ -37,6 +37,9 @@ public interface WorldService extends RemoteService
         public MediaDesc decor;
     }
 
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/worldsvc";
+
     /**
      * Loads the data for the landing page.
      */
