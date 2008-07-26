@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 
@@ -40,10 +42,10 @@ public abstract class ComplainPopup extends BorderedDialog
 
         setContents(vbox);
 
-        Button submit = new Button(CMsgs.cmsgs.send(), sendComplain);
+        Button submit = new Button(_cmsgs.send(), sendComplain);
         addButton(submit);
 
-        addButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
@@ -94,4 +96,6 @@ public abstract class ComplainPopup extends BorderedDialog
     }
 
     protected TextBox _description;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

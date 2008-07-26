@@ -5,6 +5,7 @@ package client.shell;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -45,7 +46,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         _etype = entityType;
         _entityId = entityId;
 
-        add(new Label(CShell.cmsgs.loadingComments()));
+        add(new Label(_cmsgs.loadingComments()));
     }
 
     @Override // from UIObject
@@ -66,7 +67,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CShell.cmsgs.noComments();
+        return _cmsgs.noComments();
     }
 
     @Override // from PagedGrid
@@ -82,7 +83,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
         // if we're logged in, display a button for posting a comment
         if (!CShell.isGuest()) {
-            _post = new Button(CShell.cmsgs.postComment(), new ClickListener() {
+            _post = new Button(_cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _post.setEnabled(false);
                     showPostPanel();
@@ -140,7 +141,7 @@ public class CommentsPanel extends PagedGrid<Comment>
             _commentCount = -1;
             displayPage(0, true);
         } else {
-            MsoyUI.info(CShell.cmsgs.commentPosted());
+            MsoyUI.info(_cmsgs.commentPosted());
         }
     }
 
@@ -158,11 +159,11 @@ public class CommentsPanel extends PagedGrid<Comment>
                     CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
                     public void onSuccess (Boolean deleted) {
                         if (deleted) {
-                            MsoyUI.info(CShell.cmsgs.commentDeleted());
+                            MsoyUI.info(_cmsgs.commentDeleted());
                             _commentCount = -1;
                             removeItem(comment);
                         } else {
-                            MsoyUI.error(CShell.cmsgs.commentDeletionNotAllowed());
+                            MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
                         }
                     }
                 });
@@ -195,18 +196,18 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected class PostPanel extends VerticalPanel
     {
         public PostPanel () {
-            add(new Label(CShell.cmsgs.commentText()));
+            add(new Label(_cmsgs.commentText()));
             add(_text = new TextArea());
             _text.setCharacterWidth(40);
             _text.setVisibleLines(3);
             add(_status = new Label(""));
             RowPanel buttons = new RowPanel();
-            buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
+            buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearPostPanel(PostPanel.this);
                 }
             }));
-            buttons.add(new Button(CShell.cmsgs.send(), new ClickListener() {
+            buttons.add(new Button(_cmsgs.send(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearPostPanel(PostPanel.this);
                     postComment(_text.getText());
@@ -245,4 +246,6 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected VerticalPanel _comments;
     protected Button _post;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

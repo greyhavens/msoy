@@ -136,7 +136,7 @@ public class Frame
         if (_bar != null && title != null) {
             _bar.setTitle(title);
         }
-        Window.setTitle(title == null ? CShell.cmsgs.bareTitle() : CShell.cmsgs.windowTitle(title));
+        Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
     }
 
     /**
@@ -593,17 +593,17 @@ public class Frame
 
             String lpath = "/images/header/header_logo.png";
             setWidget(col++, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
-            addButton(col++, Page.ME, CShell.cmsgs.menuMe(), _images.me(), _images.ome(),
+            addButton(col++, Page.ME, _cmsgs.menuMe(), _images.me(), _images.ome(),
                       _images.sme());
-            addButton(col++, Page.PEOPLE, CShell.cmsgs.menuFriends(), _images.friends(),
+            addButton(col++, Page.PEOPLE, _cmsgs.menuFriends(), _images.friends(),
                       _images.ofriends(), _images.sfriends());
-            addButton(col++, Page.GAMES, CShell.cmsgs.menuGames(), _images.games(),
+            addButton(col++, Page.GAMES, _cmsgs.menuGames(), _images.games(),
                       _images.ogames(), _images.sgames());
-            addButton(col++, Page.WHIRLEDS, CShell.cmsgs.menuWorlds(), _images.worlds(),
+            addButton(col++, Page.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(),
                       _images.oworlds(), _images.sworlds());
-            addButton(col++, Page.SHOP, CShell.cmsgs.menuShop(), _images.shop(), _images.oshop(),
+            addButton(col++, Page.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                       _images.sshop());
-            addButton(col++, Page.HELP, CShell.cmsgs.menuHelp(), _images.help(), _images.ohelp(),
+            addButton(col++, Page.HELP, _cmsgs.menuHelp(), _images.help(), _images.ohelp(),
                       _images.shelp());
             _statusCol = col;
         }
@@ -655,14 +655,14 @@ public class Frame
         public SignOrLogonPanel () {
             super(0, 0);
             PushButton signup = new PushButton(
-                CShell.cmsgs.headerSignup(),
+                _cmsgs.headerSignup(),
                 Link.createListener(Page.ACCOUNT, "create"));
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            PushButton logon = new PushButton(CShell.cmsgs.headerLogon(), new ClickListener() {
+            PushButton logon = new PushButton(_cmsgs.headerLogon(), new ClickListener() {
                 public void onClick (Widget sender) {
                     setWidget(0, 2, new LogonPanel(true));
                 }
@@ -747,8 +747,8 @@ public class Frame
     protected static Dialog _dialog;
     protected static PopupDialog _popup;
 
-    /** Our navigation menu images. */
-    protected static NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
+    protected static final NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     /** Enumerates our Javascript dependencies. */
     protected static final String[] JS_DEPENDS = {

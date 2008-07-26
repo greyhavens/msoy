@@ -3,6 +3,7 @@
 
 package client.whirleds;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -32,6 +33,7 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.shell.WorldClient;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -134,7 +136,7 @@ public class WhirledDetailPanel extends FlowPanel
         established.setStyleName("Established");
         established.add(new InlineLabel(
             CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
-        established.add(new InlineLabel(CShell.cmsgs.creatorBy(), false, false, true));
+        established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
         Hyperlink creator = Link.memberView(
             _detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
@@ -445,5 +447,6 @@ public class WhirledDetailPanel extends FlowPanel
     protected SimplePanel _whirledViewPanel;
     protected ContentPanel _contentPanel;
 
-    protected static SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

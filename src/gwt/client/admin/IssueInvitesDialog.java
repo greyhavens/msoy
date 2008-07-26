@@ -5,6 +5,7 @@ package client.admin;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -48,7 +50,7 @@ public class IssueInvitesDialog extends BorderedDialog
         contents.setText(row, 0, CAdmin.msgs.activeUsersTip());
         setContents(contents);
 
-        addButton(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
+        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget widget) {
                 hide();
             }
@@ -76,4 +78,6 @@ public class IssueInvitesDialog extends BorderedDialog
 
     protected NumberTextBox _numberInvites;
     protected ListBox _issueToSelection;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

@@ -282,7 +282,6 @@ public class Application
         ((ServiceDefTarget)CShell.catalogsvc).setServiceEntryPoint("/catalogsvc");
 
         // load up our translation dictionaries
-        CShell.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
         CShell.imsgs = (ItemMessages)GWT.create(ItemMessages.class);
         CShell.emsgs = (EditemMessages)GWT.create(EditemMessages.class);
         CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);

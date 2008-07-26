@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.Item;
 import client.images.stuff.StuffImages;
 import client.shell.CShell;
 import client.shell.Page;
+import client.shell.ShellMessages;
 
 /**
  * Displays a way to navigate our stuff. Used on the Me page and the My Stuff page which is why it
@@ -48,7 +49,7 @@ public class StuffNaviBar extends SmartTable
                         link.setWidget(hover);
                     }
                     public void onMouseLeave (Widget sender) {
-                        setText(1, 0, CShell.cmsgs.snbTitle());
+                        setText(1, 0, _cmsgs.snbTitle());
                         link.setWidget(normal);
                     }
                 });
@@ -58,21 +59,21 @@ public class StuffNaviBar extends SmartTable
 
         setWidget(0, col++, WidgetUtil.makeShim(55, 10));
 
-        setText(1, 0, CShell.cmsgs.snbTitle(), col, "Label");
+        setText(1, 0, _cmsgs.snbTitle(), col, "Label");
     }
 
-    /** Our navigation menu images. */
-    protected static StuffImages _images = (StuffImages)GWT.create(StuffImages.class);
+    protected static final StuffImages _simgs = (StuffImages)GWT.create(StuffImages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     /** Our normal item images, in the same order as {@link Item#TYPES}. */
     protected static final AbstractImagePrototype[] NORMAL = {
-        _images.avatar(), _images.furniture(), _images.decor(), _images.toy(),
-        _images.pet(), _images.game(), _images.photo(), _images.audio(), _images.video()
+        _simgs.avatar(), _simgs.furniture(), _simgs.decor(), _simgs.toy(),
+        _simgs.pet(), _simgs.game(), _simgs.photo(), _simgs.audio(), _simgs.video()
     };
 
     /** Our selected item images, in the same order as {@link Item#TYPES}. */
     protected static final AbstractImagePrototype[] SELECTED = {
-        _images.avatar_s(), _images.furniture_s(), _images.decor_s(), _images.toy_s(),
-        _images.pet_s(), _images.game_s(), _images.photo_s(), _images.audio_s(), _images.video_s()
+        _simgs.avatar_s(), _simgs.furniture_s(), _simgs.decor_s(), _simgs.toy_s(),
+        _simgs.pet_s(), _simgs.game_s(), _simgs.photo_s(), _simgs.audio_s(), _simgs.video_s()
     };
 }

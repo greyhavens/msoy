@@ -5,6 +5,7 @@ package client.shell;
 
 import client.util.MsoyUI;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -40,15 +41,15 @@ public class BrowserTest
             message = null;
         }
         else if (browserType.equals(OLD_MSIE)) {
-            message = CShell.cmsgs.browserOldMsie();
+            message = _cmsgs.browserOldMsie();
         }
         else if (browserType.equals(OLD_FIREFOX)) {
             // TODO implement once the number of ff2 users is under 10%
-            //message = CShell.msgs.browserOldFirefox();
+            //message = _cmsgs.browserOldFirefox();
             message = null;
         }
         else {
-            message = CShell.cmsgs.browserUnsupported();
+            message = _cmsgs.browserUnsupported();
         }
 
         FlowPanel browserTestWidget = null;
@@ -56,14 +57,18 @@ public class BrowserTest
             browserTestWidget = MsoyUI.createFlowPanel("browserTest");
             FlowPanel messageBox = MsoyUI.createFlowPanel("Message");
             browserTestWidget.add(messageBox);
-            messageBox.add(MsoyUI.createLabel(CShell.cmsgs.browserTitle(), "Title"));
+            messageBox.add(MsoyUI.createLabel(_cmsgs.browserTitle(), "Title"));
             messageBox.add(new HTML(message));
 
-            messageBox.add(MsoyUI.createActionImage(
-                "/images/landing/get_firefox_button.png", CShell.cmsgs.browserGetFirefox(), new ClickListener() {
-                public void onClick (Widget widget) { Window.open("http://getfirefox.com", "_blank", ""); } }));
-            messageBox.add(MsoyUI.createActionImage(
-                "/images/landing/continue_button.png", CShell.cmsgs.browserClose(), continueClicked));
+            ClickListener getFF = new ClickListener() {
+                public void onClick (Widget widget) {
+                    Window.open("http://getfirefox.com", "_blank", "");
+                }
+            };
+            messageBox.add(MsoyUI.createActionImage("/images/landing/get_firefox_button.png",
+                                                    _cmsgs.browserGetFirefox(), getFF));
+            messageBox.add(MsoyUI.createActionImage("/images/landing/continue_button.png",
+                                                    _cmsgs.browserClose(), continueClicked));
         }
 
         // set a cookie so they don't see this warning again
@@ -109,6 +114,8 @@ public class BrowserTest
 
             return "unknown";
     }-*/;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final String OLD_MSIE = "old_msie";
     protected static final String SUPPORTED_MSIE = "supported_msie";

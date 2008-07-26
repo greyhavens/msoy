@@ -3,6 +3,7 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
@@ -25,6 +26,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.util.LimitedTextArea;
 import client.util.MsoyUI;
 import client.util.MsoyCallback;
@@ -128,7 +130,7 @@ public abstract class ItemEditor extends FlexTable
         });
         footer.add(WidgetUtil.makeShim(5, 5));
         Button ecancel;
-        footer.add(ecancel = new Button(CShell.cmsgs.cancel()));
+        footer.add(ecancel = new Button(_cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 _parent.editComplete(null);
@@ -654,6 +656,8 @@ public abstract class ItemEditor extends FlexTable
     protected HashMap<String, MediaUploader> _uploaders = new HashMap<String, MediaUploader>();
 
     protected static ItemEditor _singleton;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final String TYPE_IMAGE = "image";
     protected static final String TYPE_AUDIO = "audio";

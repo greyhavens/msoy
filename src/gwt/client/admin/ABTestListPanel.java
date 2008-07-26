@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,6 +18,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.data.ABTest;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -79,10 +81,12 @@ public class ABTestListPanel extends FlowPanel
             col = 0;
             _contents.setWidget(row, col++, new Label(test.name));
             _contents.setWidget(row, col++, new Label(String.valueOf(test.enabled)));
-            _contents.setWidget(row, col++, new Label(test.started != null ? dateFormat.format(test.started) : ""));
-            _contents.setWidget(row, col++, new Label(test.ended != null ? dateFormat.format(test.ended) : ""));
+            _contents.setWidget(row, col++, new Label(
+                                    test.started != null ? _dfmt.format(test.started) : ""));
+            _contents.setWidget(row, col++, new Label(
+                                    test.ended != null ? _dfmt.format(test.ended) : ""));
 
-            Button editButton = new Button(CShell.cmsgs.edit());
+            Button editButton = new Button(_cmsgs.edit());
             editButton.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
                     new ABTestEditorDialog(test, ABTestListPanel.this).show();
@@ -108,5 +112,7 @@ public class ABTestListPanel extends FlowPanel
     }
 
     protected FlexTable _contents;
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("yyyy-MM-dd");
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

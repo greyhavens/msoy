@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 
 /**
  * A class that will prompt the user, and take action on affirmative or negative response. A
@@ -28,7 +30,7 @@ public class PromptPopup extends BorderedPopup
      */
     public PromptPopup (String prompt, Command onAffirmative)
     {
-        this(prompt, CShell.cmsgs.yes(), CShell.cmsgs.no(), onAffirmative);
+        this(prompt, _cmsgs.yes(), _cmsgs.no(), onAffirmative);
     }
 
     /**
@@ -64,7 +66,7 @@ public class PromptPopup extends BorderedPopup
         VerticalPanel content = new VerticalPanel();
         content.setStyleName("promptPopup");
 
-        Label headerLabel = new Label(CShell.cmsgs.promptTitle());
+        Label headerLabel = new Label(_cmsgs.promptTitle());
         headerLabel.setStyleName("Header");
         content.add(headerLabel);
         content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -132,4 +134,6 @@ public class PromptPopup extends BorderedPopup
     protected String _affirmative;
     protected String _negative;
     protected Command _onAffirmative;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

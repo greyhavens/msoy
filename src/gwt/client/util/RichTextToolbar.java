@@ -45,6 +45,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.images.editor.RichTextToolbarImages;
 
 /**
@@ -368,13 +369,13 @@ public class RichTextToolbar extends Composite
         contents.setWidget(2, 1, bgcolor);
 
         HorizontalPanel buttons = new HorizontalPanel();
-        buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
+        buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 popup.hide();
             }
         }));
         buttons.add(WidgetUtil.makeShim(5, 5));
-        buttons.add(new Button(CShell.cmsgs.update(), new ClickListener() {
+        buttons.add(new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget sender) {
                 setPanelColors(tcolor.getText().trim().toLowerCase(),
                                bgcolor.getText().trim().toLowerCase());
@@ -543,7 +544,10 @@ public class RichTextToolbar extends Composite
 
     protected String _tcolor, _bgcolor;
 
-    protected static final RichTextArea.FontSize[] fontSizesConstants = new RichTextArea.FontSize[] {
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+
+    protected static final RichTextArea.FontSize[] fontSizesConstants =
+        new RichTextArea.FontSize[] {
         RichTextArea.FontSize.XX_SMALL, RichTextArea.FontSize.X_SMALL,
         RichTextArea.FontSize.SMALL, RichTextArea.FontSize.MEDIUM,
         RichTextArea.FontSize.LARGE, RichTextArea.FontSize.X_LARGE,

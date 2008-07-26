@@ -6,6 +6,7 @@ package client.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.Button;
@@ -30,6 +31,7 @@ import client.util.MediaUtil;
 
 import client.shell.CShell;
 import client.shell.Frame;
+import client.shell.ShellMessages;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy
@@ -48,7 +50,7 @@ public class ImageChooserPopup extends VerticalPanel
         CShell.membersvc.loadInventory(
             CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
                 public void onSuccess (List<Item> items) {
-                    Frame.showDialog(CShell.cmsgs.icTitle(),
+                    Frame.showDialog(_cmsgs.icTitle(),
                                     new ImageChooserPopup(items, thumbnail, callback));
                 }
                 public void onFailure (Throwable caught) {
@@ -65,12 +67,12 @@ public class ImageChooserPopup extends VerticalPanel
         setStyleName("imageChooser");
 
         if (images.size() > 0) {
-            add(MsoyUI.createLabel(CShell.cmsgs.icPickPhoto(), "Title"));
+            add(MsoyUI.createLabel(_cmsgs.icPickPhoto(), "Title"));
             add(new PhotoGrid(images));
-            add(MsoyUI.createLabel(CShell.cmsgs.icOr(), "Or"));
+            add(MsoyUI.createLabel(_cmsgs.icOr(), "Or"));
         }
 
-        add(MsoyUI.createLabel(CShell.cmsgs.icUploadPhoto(), "Title"));
+        add(MsoyUI.createLabel(_cmsgs.icUploadPhoto(), "Title"));
         add(new PhotoUploader(_thumbnail));
     }
 
@@ -160,7 +162,7 @@ public class ImageChooserPopup extends VerticalPanel
                     _preview.setWidget(MediaUtil.createMediaView(_media, size));
                 }
             }));
-            setWidget(1, 1, _upload = new Button(CShell.cmsgs.icUploadGo(), new ClickListener() {
+            setWidget(1, 1, _upload = new Button(_cmsgs.icUploadGo(), new ClickListener() {
                 public void onClick (Widget sender) {
                     imageChosen(_media);
                 }
@@ -175,4 +177,6 @@ public class ImageChooserPopup extends VerticalPanel
 
     protected boolean _thumbnail;
     protected AsyncCallback<MediaDesc> _callback;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

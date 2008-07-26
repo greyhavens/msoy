@@ -6,6 +6,7 @@ package client.msgs;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,6 +26,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 import client.shell.Args;
 import client.shell.MessagePanel;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -146,8 +148,8 @@ public class ThreadPanel extends TitledListPanel
             if (inReplyTo != null) {
                 // set the quote text if available
                 if (quote) {
-                    _editor.setHTML(
-                        CMsgs.mmsgs.replyQuote(inReplyTo.poster.name.toString(), inReplyTo.message));
+                    _editor.setHTML(CMsgs.mmsgs.replyQuote(inReplyTo.poster.name.toString(),
+                                                           inReplyTo.message));
                     DeferredCommand.addCommand(new Command() {
                         public void execute () {
                             _editor.getTextArea().getBasicFormatter().selectAll();
@@ -170,12 +172,12 @@ public class ThreadPanel extends TitledListPanel
                 setWidget(row++, 0, reply);
             }
 
-            addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     showMessages();
                 }
             }));
-            Button submit = new Button(CMsgs.cmsgs.send());
+            Button submit = new Button(_cmsgs.send());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
             new ForumCallback<ForumMessage>(submit) {
                 public boolean callService () {
@@ -214,13 +216,13 @@ public class ThreadPanel extends TitledListPanel
             _content.setWidget(0, 0, _editor = new MessageEditor());
             _editor.setHTML(message.message);
 
-            addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     showMessages();
                 }
             }));
 
-            Button submit = new Button(CMsgs.cmsgs.change());
+            Button submit = new Button(_cmsgs.change());
             new ForumCallback<Void>(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
@@ -284,13 +286,13 @@ public class ThreadPanel extends TitledListPanel
             _locked.setChecked(_thread.isLocked());
             setContents(main);
 
-            addButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+            addButton(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget widget) {
                     ThreadFlagsEditorPanel.this.hide();
                 }
             }));
 
-            Button update = new Button(CMsgs.cmsgs.update());
+            Button update = new Button(_cmsgs.update());
             new ClickCallback<Void>(update) {
                 public boolean callService () {
                     _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
@@ -321,6 +323,8 @@ public class ThreadPanel extends TitledListPanel
     protected SmartTable _theader;
     protected SearchBox _search;
     protected MessagesPanel _mpanel;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final int MAX_RESULTS = 20;
 }

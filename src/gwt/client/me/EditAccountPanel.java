@@ -3,6 +3,7 @@
 
 package client.me;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,6 +23,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
 
+import client.shell.ShellMessages;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
@@ -57,7 +59,7 @@ public class EditAccountPanel extends SmartTable
             setText(row, 0, CMe.msgs.editPermaName(), 1, "rightLabel");
             setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
-            _uppname = new Button(CMe.cmsgs.set(), new ClickListener() {
+            _uppname = new Button(_cmsgs.set(), new ClickListener() {
                 public void onClick (Widget widget) {
                     configurePermaName();
                 }
@@ -79,7 +81,7 @@ public class EditAccountPanel extends SmartTable
         setWidget(row, 1, _email = new TextBox());
         _email.setText(CMe.creds.accountName);
         _email.addKeyboardListener(_valemail);
-        _upemail = new Button(CMe.cmsgs.update(), new ClickListener() {
+        _upemail = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmail();
             }
@@ -104,7 +106,7 @@ public class EditAccountPanel extends SmartTable
         setWidget(row++, 1, bits, 2, null);
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
-        _upeprefs = new Button(CMe.cmsgs.update(), new ClickListener() {
+        _upeprefs = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmailPrefs();
             }
@@ -118,7 +120,7 @@ public class EditAccountPanel extends SmartTable
         setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(_valrname);
-        _uprname = new Button(CMe.cmsgs.update(), new ClickListener() {
+        _uprname = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateRealName();
             }
@@ -143,7 +145,7 @@ public class EditAccountPanel extends SmartTable
         setText(row, 0, CMe.msgs.editConfirm(), 1, "rightLabel");
         setWidget(row, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(_valpass);
-        _uppass = new Button(CMe.cmsgs.update(), new ClickListener() {
+        _uppass = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updatePassword();
             }
@@ -410,4 +412,6 @@ public class EditAccountPanel extends SmartTable
     protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname;
 
     protected Label _status;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

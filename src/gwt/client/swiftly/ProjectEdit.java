@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import client.shell.ShellMessages;
 import client.util.ClickCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -140,7 +142,7 @@ public class ProjectEdit extends FlexTable
 
         cell = new HorizontalPanel();
         // Submit button
-        Button submit = new Button(CSwiftly.cmsgs.change());
+        Button submit = new Button(_cmsgs.change());
         cell.add(submit);
         new ClickCallback<Void>(submit) {
             public boolean callService () {
@@ -154,7 +156,7 @@ public class ProjectEdit extends FlexTable
         };
 
         // Close button
-        cell.add(new Button(CSwiftly.cmsgs.cancel(), new ClickListener() {
+        cell.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }
@@ -313,4 +315,6 @@ public class ProjectEdit extends FlexTable
     protected CheckBox _remixable;
     protected ListBox _collaboratorsList;
     protected ListBox _friendList;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

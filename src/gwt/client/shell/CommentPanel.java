@@ -5,6 +5,7 @@ package client.shell;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,8 +39,8 @@ public class CommentPanel extends MessagePanel
         super.addInfo(info);
 
         if (_parent.canDelete(_comment)) {
-            InlineLabel delete = new InlineLabel(CShell.cmsgs.deletePost(), false, true, false);
-            delete.addClickListener(new PromptPopup(CShell.cmsgs.deletePostConfirm(),
+            InlineLabel delete = new InlineLabel(_cmsgs.deletePost(), false, true, false);
+            delete.addClickListener(new PromptPopup(_cmsgs.deletePostConfirm(),
                                                     _parent.deleteComment(_comment)).
                                     setContext("\"" + _comment.text + "\""));
             delete.addStyleName("Posted");
@@ -48,7 +49,7 @@ public class CommentPanel extends MessagePanel
         }
 
         if (_parent.canComplain(_comment)) {
-            InlineLabel complain = new InlineLabel(CShell.cmsgs.complainPost(), false, true, false);
+            InlineLabel complain = new InlineLabel(_cmsgs.complainPost(), false, true, false);
             complain.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _parent.complainComment(_comment);
@@ -68,4 +69,6 @@ public class CommentPanel extends MessagePanel
 
     protected CommentsPanel _parent;
     protected Comment _comment;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

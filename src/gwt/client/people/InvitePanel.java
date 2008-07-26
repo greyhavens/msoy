@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -27,6 +28,7 @@ import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.BorderedPopup;
 import client.util.ClickCallback;
@@ -349,7 +351,7 @@ public class InvitePanel extends VerticalPanel
             scroll.setStyleName("ScrollPanel");
             setContents(scroll);
 
-            addButton(new Button(CPeople.cmsgs.dismiss(), new ClickListener() {
+            addButton(new Button(_cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }
@@ -451,6 +453,8 @@ public class InvitePanel extends VerticalPanel
     protected TextBox _friendName;
     protected TextBox _friendEmail;
     protected InviteList _emailList;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final int MAX_FROM_LEN = 40;
     protected static final int MAX_WEBMAIL_LENGTH = 30;

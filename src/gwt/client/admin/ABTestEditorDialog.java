@@ -5,6 +5,7 @@ package client.admin;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -17,6 +18,7 @@ import com.threerings.msoy.web.data.ABTest;
 
 import client.shell.CShell;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -155,7 +157,7 @@ public class ABTestEditorDialog extends BorderedDialog
             }
         });
 
-        Button cancel = new Button(CShell.cmsgs.cancel());
+        Button cancel = new Button(_cmsgs.cancel());
         cancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 ABTestEditorDialog.this.hide();
@@ -226,4 +228,6 @@ public class ABTestEditorDialog extends BorderedDialog
 
     /** Parent panel needs to have data refreshed after create/update */
     protected final ABTestListPanel _parent;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

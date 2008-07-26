@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,6 +20,7 @@ import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.data.ConvMessage;
 
+import client.shell.ShellMessages;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -171,7 +173,7 @@ public class ConvoPanel extends FlowPanel
             _repmsg.setVisibleLines(4);
             _repmsg.setWidth("350px");
 
-            reply.setWidget(1, 0, new Button(CMail.cmsgs.cancel(), new ClickListener() {
+            reply.setWidget(1, 0, new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _contents.remove(reply);
                     _contents.add(_reply);
@@ -217,4 +219,6 @@ public class ConvoPanel extends FlowPanel
 
     protected ConvosModel _model;
     protected int _convoId;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

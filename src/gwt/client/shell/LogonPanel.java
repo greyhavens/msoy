@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ButtonBase;
@@ -33,7 +34,7 @@ public class LogonPanel extends SmartTable
 {
     public LogonPanel (boolean headerMode)
     {
-        this(headerMode, new Button(CShell.cmsgs.logonLogon()));
+        this(headerMode, new Button(_cmsgs.logonLogon()));
     }
 
     /**
@@ -71,15 +72,15 @@ public class LogonPanel extends SmartTable
                 doLogon();
             }
         }));
-        String lbl = CShell.cmsgs.forgotPassword();
+        String lbl = _cmsgs.forgotPassword();
         Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
             public void onClick (Widget widget) {
                 String forgottenTitle = "Forgot your password?";
-                ForgotPasswordDialog forgottenDialog = new ForgotPasswordDialog(_email.getText().trim());
-                if(showFloatingForgot) {
+                ForgotPasswordDialog forgottenDialog =
+                    new ForgotPasswordDialog(_email.getText().trim());
+                if (showFloatingForgot) {
                     Frame.showPopupDialog(forgottenTitle, forgottenDialog);
-                }
-                else {
+                } else {
                     Frame.showDialog(forgottenTitle, forgottenDialog);
                 }
             }
@@ -92,18 +93,18 @@ public class LogonPanel extends SmartTable
 
         // now stick them in the right places
         if (headerMode) {
-            setText(0, 0, CShell.cmsgs.logonEmail(), 1, "rightLabel");
+            setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
             setWidget(0, 1, _email);
             setWidget(0, 3, forgot);
-            setText(1, 0, CShell.cmsgs.logonPassword(), 1, "rightLabel");
+            setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
             setWidget(1, 1, _password);
             setWidget(1, 3, logon);
 
         } else {
             int row = 0;
-            setText(row++, 0, CShell.cmsgs.logonEmail());
+            setText(row++, 0, _cmsgs.logonEmail());
             setWidget(row++, 0, _email);
-            setText(row++, 0, CShell.cmsgs.logonPassword());
+            setText(row++, 0, _cmsgs.logonPassword());
             setWidget(row, 0, _password);
             setWidget(row, 1, WidgetUtil.makeShim(3, 3));
             setWidget(row++, 2, forgot);
@@ -145,7 +146,7 @@ public class LogonPanel extends SmartTable
         String message = null;
         if (caught instanceof BannedException) {
             BannedException be = (BannedException)caught;
-            message = CShell.cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+            message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
         } else {
             message = CShell.serverError(caught);
         }
@@ -165,11 +166,11 @@ public class LogonPanel extends SmartTable
             int col = 0;
             getFlexCellFormatter().setStyleName(0, col, "rightLabel");
             getFlexCellFormatter().setVerticalAlignment(0, col, HasAlignment.ALIGN_MIDDLE);
-            setText(0, col++, CShell.cmsgs.logonEmail());
+            setText(0, col++, _cmsgs.logonEmail());
             setWidget(0, col++, _email = new TextBox());
             _email.setText(oemail);
 
-            Button forgot = new Button(CShell.cmsgs.send());
+            Button forgot = new Button(_cmsgs.send());
             setWidget(0, col++, forgot);
             new ClickCallback<Void>(forgot) {
                 public boolean callService () {
@@ -181,17 +182,19 @@ public class LogonPanel extends SmartTable
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    MsoyUI.info(CShell.cmsgs.forgotEmailSent());
+                    MsoyUI.info(_cmsgs.forgotEmailSent());
                     Frame.clearDialog();
                     return false;
                 }
             };
 
             getFlexCellFormatter().setStyleName(0, col, "tipLabel");
-            setText(0, col++, CShell.cmsgs.forgotPasswordHelp());
+            setText(0, col++, _cmsgs.forgotPasswordHelp());
         }
     }
 
     protected TextBox _email;
     protected PasswordTextBox _password;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

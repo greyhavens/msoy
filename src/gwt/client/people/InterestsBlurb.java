@@ -6,6 +6,7 @@ package client.people;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -21,6 +22,7 @@ import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyUI;
@@ -89,12 +91,12 @@ public class InterestsBlurb extends Blurb
             editor.setWidget(row++, 1, _iEditors[ii]);
         }
 
-        Button cancel = new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+        Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayInterests();
             }
         });
-        Button update = new Button(CPeople.cmsgs.update());
+        Button update = new Button(_cmsgs.update());
         new ClickCallback<Void>(update) {
             public boolean callService () {
                 _newInterests = getNewInterests();
@@ -168,4 +170,6 @@ public class InterestsBlurb extends Blurb
 
     protected List<Interest> _interests;
     protected TextBox[] _iEditors;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

@@ -5,6 +5,7 @@ package client.whirleds;
 
 import java.util.Collection;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -30,6 +31,7 @@ import com.threerings.msoy.web.data.TagHistory;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.LimitedTextArea;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -118,13 +120,13 @@ public class GroupEdit extends FlexTable
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(_submit = new Button(CWhirleds.cmsgs.change(), new ClickListener() {
+        footer.add(_submit = new Button(_cmsgs.change(), new ClickListener() {
             public void onClick (Widget sender) {
                 commitEdit();
             }
         }));
         footer.add(WidgetUtil.makeShim(5, 5));
-        footer.add(new Button(CWhirleds.cmsgs.cancel(), new ClickListener() {
+        footer.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 Link.go(Page.WHIRLEDS, _group.groupId == 0 ? "" :
                         Args.compose("d", _group.groupId));
@@ -246,4 +248,6 @@ public class GroupEdit extends FlexTable
     protected ListBox _policy, _thread, _post, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

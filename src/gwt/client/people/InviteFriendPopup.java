@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.TextBox;
@@ -16,6 +17,7 @@ import com.threerings.msoy.person.data.FriendInvitePayload;
 import com.threerings.msoy.person.data.MailPayload;
 
 import client.msgs.StartConvoCallback;
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 
@@ -70,7 +72,7 @@ public class InviteFriendPopup extends BorderedDialog
         };
         addButton(send);
 
-        addButton(new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
@@ -86,4 +88,6 @@ public class InviteFriendPopup extends BorderedDialog
 
     protected TextBox _subject;
     protected TextArea _body;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

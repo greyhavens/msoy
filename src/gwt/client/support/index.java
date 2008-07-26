@@ -18,6 +18,7 @@ import com.threerings.underwire.web.data.AccountName;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
@@ -100,4 +101,6 @@ public class index extends MsgsEntryPoint
     }
 
     protected WebContext _webctx;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

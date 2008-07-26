@@ -3,6 +3,7 @@
 
 package client.whirleds;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -16,6 +17,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.GroupCard;
 
+import client.shell.ShellMessages;
 import client.shell.WorldClient;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -42,7 +44,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         add(_info = new SmartTable("pagedGrid", 0, 5)); // hijack PagedGrid styles
         _info.setWidth("400px");
 
-        Button prev = new Button(CWhirleds.cmsgs.prev());
+        Button prev = new Button(_cmsgs.prev());
         prev.setStyleName("Button");
         prev.addStyleName("PrevButton");
         prev.addClickListener(new ClickListener() {
@@ -53,7 +55,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         _info.setWidget(0, 0, prev);
         _info.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-        Button next = new Button(CWhirleds.cmsgs.next());
+        Button next = new Button(_cmsgs.next());
         next.setStyleName("Button");
         next.addStyleName("NextButton");
         next.addClickListener(new ClickListener() {
@@ -142,7 +144,8 @@ public class FeaturedWhirledPanel extends FlowPanel
             };
 
             // put the icon in a box with the whirled name beneath it
-            Widget image = MediaUtil.createMediaView(card.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupClick);
+            Widget image = MediaUtil.createMediaView(
+                card.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupClick);
             FlowPanel iconBox = new FlowPanel();
             iconBox.setStyleName("IconBox");
             iconBox.add(image);
@@ -159,4 +162,6 @@ public class FeaturedWhirledPanel extends FlowPanel
 
     protected SmartTable _info;
     protected SimplePanel _flashPanel;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

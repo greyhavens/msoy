@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -30,6 +31,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 
 /**
  * Displays tagging information for a particular item.
@@ -71,16 +73,16 @@ public class TagDetailPanel extends VerticalPanel
 
         _tags = new FlowPanel();
         _tags.setStyleName("Tags");
-        _tags.add(new Label(CShell.cmsgs.tagLoading()));
+        _tags.add(new Label(_cmsgs.tagLoading()));
         add(_tags);
 
         if (_canEdit) {
             RowPanel addRow = new RowPanel();
-            addRow.add(new InlineLabel(CShell.cmsgs.tagAddTag(), false, false, false),
+            addRow.add(new InlineLabel(_cmsgs.tagAddTag(), false, false, false),
                        HasAlignment.ALIGN_MIDDLE);
             addRow.add(new NewTagBox());
 
-//             addRow.add(_quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd()));
+//             addRow.add(_quickTagLabel = new Label(_cmsgs.tagQuickAdd()));
 //             addRow.add(_quickTags = new ListBox());
 //             _quickTags.addChangeListener(new ChangeListener() {
 //                 public void onChange (Widget sender) {
@@ -99,17 +101,17 @@ public class TagDetailPanel extends VerticalPanel
 //             });
 
             if (_service.supportFlags()) {
-                InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
+                InlineLabel flagLabel = new InlineLabel(_cmsgs.tagFlag());
                 new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
-                        addFlag(CShell.cmsgs.tagMatureFlag(), CShell.cmsgs.tagMaturePrompt(),
+                        addFlag(_cmsgs.tagMatureFlag(), _cmsgs.tagMaturePrompt(),
                                 updateFlag(Item.FLAG_FLAGGED_MATURE));
-                        addFlag(CShell.cmsgs.tagCopyrightFlag(), CShell.cmsgs.tagCopyrightPrompt(),
+                        addFlag(_cmsgs.tagCopyrightFlag(), _cmsgs.tagCopyrightPrompt(),
                                 updateFlag(Item.FLAG_FLAGGED_COPYRIGHT));
                     }
                     protected void addFlag (String label, String prompt, Command action) {
-                        addMenuItem(label, new PromptPopup(prompt, CShell.cmsgs.tagFlagFlag(),
-                                                           CShell.cmsgs.cancel(), action));
+                        addMenuItem(label, new PromptPopup(prompt, _cmsgs.tagFlagFlag(),
+                                                           _cmsgs.cancel(), action));
                     }
                 };
                 addRow.add(flagLabel, HasAlignment.ALIGN_MIDDLE);
@@ -127,7 +129,7 @@ public class TagDetailPanel extends VerticalPanel
         return new Command() {
             public void execute () {
                 _service.setFlags(flag);
-                MsoyUI.info(CShell.cmsgs.tagThanks());
+                MsoyUI.info(_cmsgs.tagThanks());
             }
         };
     }
@@ -227,8 +229,8 @@ public class TagDetailPanel extends VerticalPanel
                 new PopupMenu(tagLabel) {
                     protected void addMenuItems () {
                         _service.addMenuItems(tag, this);
-                        addMenuItem(CShell.cmsgs.tagRemove(),
-                            new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag), remove));
+                        addMenuItem(_cmsgs.tagRemove(),
+                            new PromptPopup(_cmsgs.tagRemoveConfirm(tag), remove));
                     }
                 };
             }
@@ -247,7 +249,7 @@ public class TagDetailPanel extends VerticalPanel
 //             _service.getRecentTags(new MsoyCallback<Collection<TagHistory>>() {
 //                 public void onSuccess (Collection<TagHistory> result) {
 //                     _quickTags.clear();
-//                     _quickTags.addItem(CShell.cmsgs.tagSelectOne());
+//                     _quickTags.addItem(_cmsgs.tagSelectOne());
 //                     for (TagHistory history : result) {
 //                         String tag = history.tag;
 //                         if (tag != null && !addedTags.contains(tag) &&
@@ -279,11 +281,11 @@ public class TagDetailPanel extends VerticalPanel
                 return;
             }
             if (tagName.length() < TagCodes.MIN_TAG_LENGTH) {
-                MsoyUI.error(CShell.cmsgs.errTagTooShort("" + TagCodes.MIN_TAG_LENGTH));
+                MsoyUI.error(_cmsgs.errTagTooShort("" + TagCodes.MIN_TAG_LENGTH));
                 return;
             }
             if (tagName.length() > TagCodes.MAX_TAG_LENGTH) {
-                MsoyUI.error(CShell.cmsgs.errTagTooLong("" + TagCodes.MAX_TAG_LENGTH));
+                MsoyUI.error(_cmsgs.errTagTooLong("" + TagCodes.MAX_TAG_LENGTH));
                 return;
             }
             for (int ii = 0; ii < tagName.length(); ii ++) {
@@ -291,7 +293,7 @@ public class TagDetailPanel extends VerticalPanel
                 if (c == '_' || Character.isLetterOrDigit(c)) {
                     continue;
                 }
-                MsoyUI.error(CShell.cmsgs.errTagInvalidCharacters());
+                MsoyUI.error(_cmsgs.errTagInvalidCharacters());
                 return;
             }
             _service.tag(tagName, new MsoyCallback<TagHistory>() {
@@ -310,4 +312,6 @@ public class TagDetailPanel extends VerticalPanel
     protected ListBox _quickTags;
     protected Label _quickTagLabel;
     protected FlexTable _tagHistory;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

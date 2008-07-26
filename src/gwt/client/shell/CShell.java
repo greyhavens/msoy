@@ -51,9 +51,6 @@ public class CShell
     /** Provides catalog-related services. */
     public static CatalogServiceAsync catalogsvc;
 
-    /** Messages shared by all client interfaces. */
-    public static ShellMessages cmsgs;
-
     /** Messages used by the item interfaces. */
     public static ItemMessages imsgs;
 

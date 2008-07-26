@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
@@ -117,7 +118,7 @@ public class StatusPanel extends SmartTable
                 TrackingCookie.clear();
             }
         };
-        setWidget(0, idx++, MsoyUI.createActionLabel(CShell.cmsgs.statusLogoff(), doLogoff));
+        setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), doLogoff));
     }
 
     protected void didLogoff ()
@@ -186,16 +187,16 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeSymbol("coins", CShell.cmsgs.coinsTip()), 1, "Icon");
+            setWidget(0, idx++, makeSymbol("coins", _cmsgs.coinsTip()), 1, "Icon");
             setText(0, _flowIdx = idx++, "0");
 
             // TODO: display once we've implemented gold!
 //             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-//             setWidget(0, idx++, makeSymbol("gold", CShell.cmsgs.goldTip()), 1, "Icon");
+//             setWidget(0, idx++, makeSymbol("gold", _cmsgs.goldTip()), 1, "Icon");
 //             setText(0, _goldIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeSymbol("level", CShell.cmsgs.levelTip()), 1, "Icon");
+            setWidget(0, idx++, makeSymbol("level", _cmsgs.levelTip()), 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
@@ -237,4 +238,6 @@ public class StatusPanel extends SmartTable
 
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

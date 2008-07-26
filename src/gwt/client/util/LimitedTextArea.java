@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 
 /**
  * A text area with a character limit that displays the limit to the user.
@@ -58,7 +60,7 @@ public class LimitedTextArea extends VerticalPanel
         if (text.length() > _maxChars) {
             _area.setText(text = text.substring(0, _maxChars));
         }
-        _remaining.setText(CShell.cmsgs.charRemaining(String.valueOf(_maxChars - text.length())));
+        _remaining.setText(_cmsgs.charRemaining(String.valueOf(_maxChars - text.length())));
     }
 
     protected KeyboardListenerAdapter _limiter = new KeyboardListenerAdapter() {
@@ -70,4 +72,6 @@ public class LimitedTextArea extends VerticalPanel
     protected int _maxChars;
     protected TextArea _area;
     protected Label _remaining;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

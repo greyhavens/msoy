@@ -5,6 +5,7 @@ package client.shell;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -63,7 +64,7 @@ public class MessagePanel extends FlexTable
         info.add(author);
 
         // TODO: switch to "XX days/minutes ago"
-        String when = CShell.cmsgs.postedOn(_pfmt.format(whenPosted));
+        String when = _cmsgs.postedOn(_pfmt.format(whenPosted));
         InlineLabel posted = new InlineLabel(when, false, true, false);
         posted.addStyleName("Posted");
         info.add(posted);
@@ -120,7 +121,8 @@ public class MessagePanel extends FlexTable
     {
     }
 
-    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 
     protected static final String WHIRLED_REGEX = "([^>\\\"])http://.*\\.whirled\\.com/#([^ <]+)";
     protected static final String WHIRLED_REPLACE = "$1<a href=\"#$2\">link</a>";

@@ -3,6 +3,7 @@
 
 package client.swiftly;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
+import client.shell.ShellMessages;
 import client.util.MsoyUI;
 
 /**
@@ -93,7 +95,7 @@ public class UploadDialog extends FlexTable
                 form.submit();
             }
         });
-        Button cancel = new Button(CSwiftly.cmsgs.cancel(), new ClickListener() {
+        Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }
@@ -121,4 +123,6 @@ public class UploadDialog extends FlexTable
     protected final Label _status;
     protected final UploadDialogListener _listener;
     protected boolean _wasError;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

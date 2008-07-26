@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -18,6 +19,7 @@ import com.threerings.msoy.item.data.all.Item;
 import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 
@@ -71,9 +73,9 @@ public class RenameHandler extends ClickCallback<String>
                 HorizontalPanel buts = new HorizontalPanel();
                 buts.setSpacing(10);
 
-                Button noButton = new Button(CStuff.cmsgs.cancel());
+                Button noButton = new Button(_cmsgs.cancel());
                 final Button revertButton = new Button(CStuff.msgs.renameRevert());
-                final Button yesButton = new Button(CStuff.cmsgs.change());
+                final Button yesButton = new Button(_cmsgs.change());
                 ClickListener listener = new ClickListener() {
                     public void onClick (Widget sender) {
                         if (sender == revertButton) {
@@ -107,4 +109,6 @@ public class RenameHandler extends ClickCallback<String>
     protected Item _item;
     protected InventoryModels _models;
     protected TextBox _name;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

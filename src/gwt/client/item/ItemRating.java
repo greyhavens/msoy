@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -13,6 +14,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.util.MsoyCallback;
 import client.util.Stars;
 
@@ -50,7 +52,7 @@ public class ItemRating extends FlexTable
             starMouseOff();
         }
 
-        Label ratingAverage = new Label(CShell.cmsgs.averageRating());
+        Label ratingAverage = new Label(_cmsgs.averageRating());
         ratingAverage.setStyleName(STYLE_RATING);
 
         HTML nbsp = new HTML("&#160;");
@@ -120,8 +122,7 @@ public class ItemRating extends FlexTable
     {
         _ratingDesc.setVisible(false);
         _ratingTip.setVisible(true);
-        _ratingTip.setText(_memberRating > 0 ?
-                CShell.cmsgs.playerRating() : CShell.cmsgs.playerUnrated());
+        _ratingTip.setText(_memberRating > 0 ? _cmsgs.playerRating() : _cmsgs.playerUnrated());
     }
 
     protected void updateRatingCount ()
@@ -129,9 +130,9 @@ public class ItemRating extends FlexTable
         String s = String.valueOf(_item.ratingCount);
 
         if (_item.ratingCount == 1) {
-            _ratingCount.setText(CShell.cmsgs.numberOfRatingsOne(s));
+            _ratingCount.setText(_cmsgs.numberOfRatingsOne(s));
         } else {
-            _ratingCount.setText(CShell.cmsgs.numberOfRatings(s));
+            _ratingCount.setText(_cmsgs.numberOfRatings(s));
         }
     }
 
@@ -143,12 +144,14 @@ public class ItemRating extends FlexTable
     protected Stars _averageStars, _playerStars;
     protected Label _ratingCount, _ratingTip, _ratingDesc;
 
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+
     protected static final String [] RATING_DESCRIPTIONS = {
-        CShell.cmsgs.descRating1(),
-        CShell.cmsgs.descRating2(),
-        CShell.cmsgs.descRating3(),
-        CShell.cmsgs.descRating4(),
-        CShell.cmsgs.descRating5()
+        _cmsgs.descRating1(),
+        _cmsgs.descRating2(),
+        _cmsgs.descRating3(),
+        _cmsgs.descRating4(),
+        _cmsgs.descRating5()
     };
 
     protected static final String STYLE_RATING = "ratingText",

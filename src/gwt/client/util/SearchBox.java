@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusListenerAdapter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 
 /**
  * A text box to use for search fields. It says "<search>" in it (which is cleared out when it is
@@ -38,7 +40,7 @@ public class SearchBox extends HorizontalPanel
         });
         _input.addFocusListener(new FocusListenerAdapter() {
             public void onFocus (Widget sender) {
-                if (_input.getText().equals(CShell.cmsgs.searchDefault())) {
+                if (_input.getText().equals(_cmsgs.searchDefault())) {
                     _input.removeStyleName("Faded");
                     _input.setText("");
                 }
@@ -67,7 +69,7 @@ public class SearchBox extends HorizontalPanel
 
     protected void clearSearch (boolean informListener)
     {
-        _input.setText(CShell.cmsgs.searchDefault());
+        _input.setText(_cmsgs.searchDefault());
         _input.addStyleName("Faded");
         _input.setFocus(false);
         if (informListener) {
@@ -81,4 +83,6 @@ public class SearchBox extends HorizontalPanel
     protected Listener _listener;
     protected TextBox _input;
     protected Widget _close;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

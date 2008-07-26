@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -11,6 +12,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.CommentsPanel;
+import client.shell.ShellMessages;
 
 /**
  * Displays a comment wall on a member's profile.
@@ -35,7 +37,7 @@ public class CommentsBlurb extends Blurb
 
     protected void restorePostFooter ()
     {
-        setFooterLabel(CPeople.cmsgs.postComment(), new ClickListener() {
+        setFooterLabel(_cmsgs.postComment(), new ClickListener() {
             public void onClick (Widget sender) {
                 _wall.startPost();
                 setFooter(null);
@@ -74,4 +76,6 @@ public class CommentsBlurb extends Blurb
     }
 
     protected WallPanel _wall;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

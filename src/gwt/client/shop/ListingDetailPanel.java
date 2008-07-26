@@ -3,6 +3,7 @@
 
 package client.shop;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -28,6 +29,7 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.CShell;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.stuff.CStuff;
 import client.stuff.DoListItemPopup;
 import client.util.ClickCallback;
@@ -220,7 +222,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     @Override
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
-        menu.addMenuItem(CShell.cmsgs.tagSearch(), new Command() {
+        menu.addMenuItem(_cmsgs.tagSearch(), new Command() {
             public void execute() {
                 Link.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
             }
@@ -229,10 +231,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected CatalogModels _models;
     protected CatalogListing _listing;
-
     protected FlowPanel _buyPanel;
-
     protected PriceLabel _priceLabel;
 
-    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

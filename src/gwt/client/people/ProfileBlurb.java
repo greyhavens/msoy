@@ -5,6 +5,7 @@ package client.people;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -30,6 +31,7 @@ import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.ShellMessages;
 import client.util.DateFields;
 import client.util.FlashClients;
 import client.util.ImageChooserPopup;
@@ -259,12 +261,12 @@ public class ProfileBlurb extends Blurb
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
 
-        Button cancel = new Button(CPeople.cmsgs.cancel(), new ClickListener() {
+        Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayProfile();
             }
         });
-        Button commit = new Button(CPeople.cmsgs.update(), new ClickListener() {
+        Button commit = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget source) {
                 commitEdit();
             }
@@ -341,8 +343,9 @@ public class ProfileBlurb extends Blurb
     protected ListBox _esex;
     protected DateFields _ebirthday;
 
-    protected static SimpleDateFormat _sfmt = new SimpleDateFormat("MMM dd, yyyy");
-    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
+    protected static final SimpleDateFormat _sfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
 }

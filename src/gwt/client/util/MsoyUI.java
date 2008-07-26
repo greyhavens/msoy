@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -27,6 +28,7 @@ import com.threerings.msoy.web.data.SessionData;
 import client.admin.CAdmin;
 import client.shell.CShell;
 import client.shell.LogonPanel;
+import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
 
 /**
@@ -257,13 +259,13 @@ public class MsoyUI
     {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setStyleName("pagedGrid"); // hijack PagedGrid styles
-        Button prev = new Button(CShell.cmsgs.prev());
+        Button prev = new Button(_cmsgs.prev());
         prev.setStyleName("Button");
         prev.addStyleName("PrevButton");
         prev.addClickListener(onPrev);
         panel.add(prev);
         panel.add(WidgetUtil.makeShim(5, 5));
-        Button next = new Button(CShell.cmsgs.next());
+        Button next = new Button(_cmsgs.next());
         next.setStyleName("Button");
         next.addStyleName("NextButton");
         next.addClickListener(onNext);
@@ -277,7 +279,7 @@ public class MsoyUI
      */
     public static Button createCrUpdateButton (boolean creating, ClickListener listener)
     {
-        Button button = new Button(creating ? CShell.cmsgs.create() : CShell.cmsgs.update());
+        Button button = new Button(creating ? _cmsgs.create() : _cmsgs.update());
         button.addClickListener(listener);
         return button;
     }
@@ -448,7 +450,7 @@ public class MsoyUI
             panel.add(button);
             panel.add(WidgetUtil.makeShim(5, 10));
         }
-        panel.add(new Button(CShell.cmsgs.dismiss(), hider));
+        panel.add(new Button(_cmsgs.dismiss(), hider));
         popup.show();
     }
 
@@ -505,4 +507,6 @@ public class MsoyUI
         }
         return text.substring(0, maxLen-3) + "...";
     }
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

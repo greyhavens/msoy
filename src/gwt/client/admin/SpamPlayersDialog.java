@@ -3,6 +3,7 @@
 
 package client.admin;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
+import client.shell.ShellMessages;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.MsoyUI;
@@ -69,7 +71,7 @@ public class SpamPlayersDialog extends BorderedDialog
             }
         };
         addButton(spam);
-        addButton(new Button(CAdmin.cmsgs.cancel(), new ClickListener() {
+        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
@@ -79,4 +81,6 @@ public class SpamPlayersDialog extends BorderedDialog
     protected TextBox _subject;
     protected TextArea _body;
     protected NumberTextBox _startId, _endId;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

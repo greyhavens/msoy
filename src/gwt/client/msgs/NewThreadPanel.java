@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -13,6 +14,7 @@ import com.threerings.msoy.fora.data.ForumThread;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.shell.ShellMessages;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -45,7 +47,7 @@ public class NewThreadPanel extends TableFooterPanel
         addRow(CMsgs.mmsgs.ntpFirstMessage());
         addRow(_message = new MessageEditor());
 
-        addFooterButton(new Button(CMsgs.cmsgs.cancel(), new ClickListener() {
+        addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
@@ -92,4 +94,6 @@ public class NewThreadPanel extends TableFooterPanel
     protected TextBox _subject;
     protected CheckBox _announce, _sticky;
     protected MessageEditor _message;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }
