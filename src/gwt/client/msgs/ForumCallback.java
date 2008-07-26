@@ -5,7 +5,7 @@ package client.msgs;
 
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 
-import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.web.data.MessageTooLongException;
 
 import client.util.ClickCallback;

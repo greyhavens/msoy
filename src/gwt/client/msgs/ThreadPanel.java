@@ -20,8 +20,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumServiceAsync;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
 import client.shell.MessagePanel;
@@ -31,6 +33,7 @@ import client.util.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.SearchBox;
 
@@ -110,7 +113,7 @@ public class ThreadPanel extends TitledListPanel
     // from interface SearchBox.Listener
     public void search (String query)
     {
-        CMsgs.forumsvc.findMessages(
+        _forumsvc.findMessages(
             CMsgs.ident, _threadId, query, MAX_RESULTS, new MsoyCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
                 _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);
@@ -185,7 +188,7 @@ public class ThreadPanel extends TitledListPanel
                     if (!checkMessageText(text)) {
                         return false;
                     }
-                    CMsgs.forumsvc.postMessage(CMsgs.ident, _threadId, replyId, text, this);
+                    _forumsvc.postMessage(CMsgs.ident, _threadId, replyId, text, this);
                     return true;
                 }
                 public boolean gotResult (ForumMessage result) {
@@ -229,7 +232,7 @@ public class ThreadPanel extends TitledListPanel
                     if (!checkMessageText(_text)) {
                         return false;
                     }
-                    CMsgs.forumsvc.editMessage(CMsgs.ident, _message.messageId, _text, this);
+                    _forumsvc.editMessage(CMsgs.ident, _message.messageId, _text, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -298,7 +301,7 @@ public class ThreadPanel extends TitledListPanel
                     _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
                     _flags |= (_sticky.isChecked() ? ForumThread.FLAG_STICKY : 0);
                     _flags |= (_locked.isChecked() ? ForumThread.FLAG_LOCKED : 0);
-                    CMsgs.forumsvc.updateThreadFlags(CMsgs.ident, _thread.threadId, _flags, this);
+                    _forumsvc.updateThreadFlags(CMsgs.ident, _thread.threadId, _flags, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -325,6 +328,8 @@ public class ThreadPanel extends TitledListPanel
     protected MessagesPanel _mpanel;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
+        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
     protected static final int MAX_RESULTS = 20;
 }

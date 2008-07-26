@@ -11,7 +11,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.msoy.group.data.GroupMembership;
 

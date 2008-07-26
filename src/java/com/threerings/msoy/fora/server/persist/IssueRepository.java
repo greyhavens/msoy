@@ -36,7 +36,7 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.Issue;
 
 /**
  * Manages issues.

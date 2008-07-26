@@ -5,7 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 
 import com.threerings.msoy.web.client.CommentService;
 

@@ -29,7 +29,7 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.server.persist.CountRecord;
 
 import static com.threerings.msoy.Log.log;

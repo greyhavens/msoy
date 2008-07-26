@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.msoy.data.all.GroupName;
 

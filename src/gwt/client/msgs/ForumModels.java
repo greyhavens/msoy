@@ -6,17 +6,20 @@ package client.msgs;
 import java.util.List;
 import java.util.HashMap;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
-import com.threerings.msoy.web.client.ForumService;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumServiceAsync;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.gwt.util.ListenerList;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import client.util.ServiceBackedDataModel;
+import client.util.ServiceUtil;
 
 /**
  * Various data models used by the forum services.
@@ -95,7 +98,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            CMsgs.forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this);
+            _forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -164,7 +167,7 @@ public class ForumModels
                 return;
             }
 
-            CMsgs.forumsvc.loadUnreadThreads(
+            _forumsvc.loadUnreadThreads(
                 CMsgs.ident, MAX_UNREAD_THREADS, new AsyncCallback<ForumService.ThreadResult>() {
                     public void onSuccess (ForumService.ThreadResult result) {
                         _items = result.threads;
@@ -259,7 +262,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            CMsgs.forumsvc.loadMessages(CMsgs.ident, _threadId, _thread.lastReadPostId,
+            _forumsvc.loadMessages(CMsgs.ident, _threadId, _thread.lastReadPostId,
                                         start, count, needCount, this);
         }
 
@@ -348,6 +351,9 @@ public class ForumModels
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;
+
+    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
+        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
     /** The maximum number of unread threads we'll download at once. */
     protected static final int MAX_UNREAD_THREADS = 100;

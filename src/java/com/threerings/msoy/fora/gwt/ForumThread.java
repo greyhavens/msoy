@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.fora.data;
+package com.threerings.msoy.fora.gwt;
 
 import java.util.Date;
 

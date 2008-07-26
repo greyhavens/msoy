@@ -24,9 +24,9 @@ import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRecord;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.Issue;
-import com.threerings.msoy.fora.data.IssueCodes;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.fora.gwt.IssueCodes;
 
 import com.threerings.msoy.group.data.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;

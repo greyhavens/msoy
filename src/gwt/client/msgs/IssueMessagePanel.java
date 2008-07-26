@@ -1,9 +1,12 @@
+//
+// $Id$
+
 package client.msgs;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumMessage;
 
 import client.shell.Page;
 import client.util.Link;

@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.Issue;
 
 /**
  * Contains issue tracking information for bugs and features.

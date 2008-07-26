@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,10 +20,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
-
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumServiceAsync;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -30,6 +32,7 @@ import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 import client.util.SearchBox;
@@ -65,7 +68,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        CMsgs.forumsvc.findThreads(
+        _forumsvc.findThreads(
             CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
                 setModel(new SimpleDataModel<ForumThread>(threads), 0);
@@ -224,7 +227,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
                 new ClickCallback<Void>(ignoreThread) {
                     public boolean callService () {
-                        CMsgs.forumsvc.ignoreThread(CMsgs.ident, thread.threadId, this);
+                        _forumsvc.ignoreThread(CMsgs.ident, thread.threadId, this);
                         return true;
                     }
                     public boolean gotResult (Void result) {
@@ -267,8 +270,9 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     /** A button for refreshing the current model. */
     protected Button _refresh;
 
-    /** Used to format the most recent post date. */
-    protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
+        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
     /** The number of threads displayed per page (TODO: base this on browser height). */
     protected static final int THREADS_PER_PAGE = 10;

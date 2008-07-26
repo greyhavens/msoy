@@ -6,7 +6,7 @@ package client.msgs;
 import java.util.List;
 import java.util.HashMap;
 
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.web.client.IssueService;
 
 import client.util.ServiceBackedDataModel;

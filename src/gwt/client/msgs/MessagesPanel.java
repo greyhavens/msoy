@@ -18,8 +18,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumServiceAsync;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.images.msgs.MsgsImages;
 import client.shell.Args;
@@ -28,6 +30,7 @@ import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.PromptPopup;
 
@@ -93,7 +96,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         _ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
         new ClickCallback<Void>(_ignoreThread) {
             public boolean callService () {
-                CMsgs.forumsvc.ignoreThread(CMsgs.ident, _parent.getThreadId(), this);
+                _forumsvc.ignoreThread(CMsgs.ident, _parent.getThreadId(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -166,7 +169,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             public void execute () {
                 // TODO: if forum admin, make them send a mail to the poster explaining why their
                 // post was deleted?
-                CMsgs.forumsvc.deleteMessage(
+                _forumsvc.deleteMessage(
                     CMsgs.ident, message.messageId, new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(message);
@@ -307,7 +310,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
         protected boolean callService ()
         {
-            CMsgs.forumsvc.complainMessage(
+            _forumsvc.complainMessage(
                     CMsgs.ident, _description.getText(), _message.messageId, this);
             return true;
         }
@@ -337,8 +340,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     /** A button for editing this thread's flags. */
     protected Button _editFlags;
 
-    /** Our action icon images. */
-    protected static MsgsImages _images = GWT.create(MsgsImages.class);
+    protected static final MsgsImages _images = GWT.create(MsgsImages.class);
+    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
+        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
     protected static final int MESSAGES_PER_PAGE = 10;
 }

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.util.PromptPopup;

@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.msoy.fora.data.Issue;
+
+import com.threerings.msoy.fora.gwt.Issue;
 
 import client.shell.Page;
 import client.util.Link;

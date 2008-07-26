@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.web.data.MemberCard;
 
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 
 /**
  * Contains a comment made on an entity of some sort (item, profile, room, etc.).

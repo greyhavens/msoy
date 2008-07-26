@@ -15,7 +15,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.fora.server.persist.CommentRecord;
 import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.notify.server.NotificationManager;

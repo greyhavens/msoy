@@ -6,8 +6,6 @@ package client.msgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.web.client.ForumService;
-import com.threerings.msoy.web.client.ForumServiceAsync;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.IssueService;
@@ -36,8 +34,6 @@ public abstract class MsgsEntryPoint extends Page
         ((ServiceDefTarget)CMsgs.mailsvc).setServiceEntryPoint("/mailsvc");
         CMsgs.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
         ((ServiceDefTarget)CMsgs.groupsvc).setServiceEntryPoint("/groupsvc");
-        CMsgs.forumsvc = (ForumServiceAsync)GWT.create(ForumService.class);
-        ((ServiceDefTarget)CMsgs.forumsvc).setServiceEntryPoint("/forumsvc");
         CMsgs.issuesvc = (IssueServiceAsync)GWT.create(IssueService.class);
         ((ServiceDefTarget)CMsgs.issuesvc).setServiceEntryPoint("/issuesvc");
 

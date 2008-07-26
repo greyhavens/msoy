@@ -20,7 +20,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.web.data.MemberCard;
 
-import com.threerings.msoy.fora.data.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumMessage;
 
 /**
  * Contains information on a single post to a thread.

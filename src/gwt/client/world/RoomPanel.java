@@ -10,7 +10,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.web.data.RoomInfo;
 
 import client.shell.CommentsPanel;

@@ -23,8 +23,8 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.Issue;
 
 import client.util.MsoyCallback;
 

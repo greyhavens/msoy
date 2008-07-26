@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,21 +35,21 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import com.threerings.msoy.fora.data.ForumCodes;
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
-import com.threerings.msoy.fora.server.ForumLogic;
-import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
-import com.threerings.msoy.fora.server.persist.ForumRepository;
-import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
-
-import com.threerings.msoy.web.client.ForumService;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MessageTooLongException;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.fora.gwt.ForumCodes;
+import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
 import static com.threerings.msoy.Log.log;
 

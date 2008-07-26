@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.msoy.fora.data.Comment;
+import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.CommentServiceAsync;

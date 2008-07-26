@@ -18,7 +18,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.Issue;
 
 import client.shell.Page;
 import client.util.Link;

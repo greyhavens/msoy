@@ -3,7 +3,7 @@
 
 package client.msgs;
 
-import com.threerings.msoy.fora.data.Issue;
+import com.threerings.msoy.fora.gwt.Issue;
 
 /**
  * A helper class for translating the type, category, priority and state messages of an issue.

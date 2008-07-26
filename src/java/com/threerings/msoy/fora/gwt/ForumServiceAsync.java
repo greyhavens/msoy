@@ -1,16 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.fora.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
-
-import com.threerings.msoy.fora.data.ForumMessage;
-import com.threerings.msoy.fora.data.ForumThread;
 
 /**
  * The asynchronous (client-side) version of {@link ForumService}.

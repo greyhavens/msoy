@@ -10,11 +10,14 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.fora.data.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumServiceAsync;
+import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.ShellMessages;
+import client.util.ServiceUtil;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 
@@ -86,7 +89,7 @@ public class NewThreadPanel extends TableFooterPanel
         if (_sticky != null && _sticky.isChecked()) {
             flags |= ForumThread.FLAG_STICKY;
         }
-        CMsgs.forumsvc.createThread(CMsgs.ident, _groupId, flags, subject, message, callback);
+        _forumsvc.createThread(CMsgs.ident, _groupId, flags, subject, message, callback);
         return true;
     }
 
@@ -96,4 +99,6 @@ public class NewThreadPanel extends TableFooterPanel
     protected MessageEditor _message;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
+        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 }
