@@ -789,7 +789,7 @@
     <!-- now generate the associated files -->
     <service header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
       <fileset dir="${src.dir}">
-        <include name="**/*Service.java"/>
+        <include name="**/client/*Service.java"/>
         <exclude name="**/web/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
