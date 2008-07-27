@@ -19,7 +19,7 @@ import com.threerings.msoy.swiftly.client.event.OccupantListener;
 import com.threerings.msoy.swiftly.client.model.ProjectModelDelegate.FailureCode;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.dobj.AttributeChangeListener;

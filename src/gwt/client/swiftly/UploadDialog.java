@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.SwiftlyConnectConfig;
+import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 import client.shell.ShellMessages;

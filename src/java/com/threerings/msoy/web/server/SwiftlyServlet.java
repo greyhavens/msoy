@@ -24,6 +24,9 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
+import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
+import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
@@ -31,12 +34,9 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
-import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.SwiftlyConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**

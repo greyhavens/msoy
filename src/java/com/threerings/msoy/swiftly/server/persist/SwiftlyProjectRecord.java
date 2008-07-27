@@ -14,7 +14,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 /**
  * Contains the definition of a swiftly project.

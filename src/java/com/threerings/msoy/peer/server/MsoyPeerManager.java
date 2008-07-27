@@ -38,7 +38,6 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.bureau.server.BureauLauncherServerClient;
 import com.threerings.msoy.bureau.server.WindowServerClient;
@@ -49,6 +48,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;

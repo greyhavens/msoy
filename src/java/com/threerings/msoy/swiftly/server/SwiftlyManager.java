@@ -39,7 +39,6 @@ import com.threerings.msoy.peer.server.PeerProjectDispatcher;
 import com.threerings.msoy.peer.server.PeerProjectProvider;
 
 import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 
@@ -50,6 +49,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;

@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 
 import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
@@ -17,7 +18,6 @@ import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorageUnitTest;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageUnitTest;
 
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 public class LocalProjectBuilderUnitTest extends TestCase
 {

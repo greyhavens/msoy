@@ -7,7 +7,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 /**
  * Re-usable static methods for testing ProjectStorage implementations.

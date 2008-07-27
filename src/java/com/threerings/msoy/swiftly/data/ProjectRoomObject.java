@@ -5,7 +5,7 @@ package com.threerings.msoy.swiftly.data;
 
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.presents.dobj.DSet;
 
 /**

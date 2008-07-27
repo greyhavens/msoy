@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.swiftly.gwt;
 
 import java.util.List;
 
@@ -10,9 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.SwiftlyConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**

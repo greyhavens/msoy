@@ -3,7 +3,7 @@
 
 package client.swiftly;
 
-import com.threerings.msoy.web.client.SwiftlyServiceAsync;
+import com.threerings.msoy.swiftly.gwt.SwiftlyServiceAsync;
 
 import client.shell.CShell;
 

@@ -8,9 +8,9 @@ import java.util.List;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.storage.s3.S3StorageConnectionFactory;
 import com.threerings.msoy.swiftly.server.storage.s3.S3StorageLockManager;
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Implements an S3-backed project storage repository.

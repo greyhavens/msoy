@@ -40,7 +40,6 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 
@@ -50,6 +49,7 @@ import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;

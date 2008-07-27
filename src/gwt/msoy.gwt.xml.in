@@ -22,6 +22,8 @@
   <source path="com/threerings/msoy/person/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
+  <source path="com/threerings/msoy/swiftly/data/all"/>
+  <source path="com/threerings/msoy/swiftly/gwt"/>
   <source path="com/threerings/underwire/web/data"/>
   <source path="com/threerings/underwire/web/client"/>
   <source path="com/threerings/underwire/gwt/client"/>

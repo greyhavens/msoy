@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Server-local project builder.

@@ -19,8 +19,8 @@ import com.threerings.msoy.swiftly.client.view.PositionLocation;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 public class ProjectSVNStorageUnitTest extends TestCase
 {

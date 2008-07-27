@@ -47,10 +47,10 @@ import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
 
 import com.google.common.collect.Maps;
 
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.server.SwiftlyMimeTypeIdentifier;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 

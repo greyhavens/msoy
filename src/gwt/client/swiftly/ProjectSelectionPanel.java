@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 import client.shell.DynamicMessages;
 import client.shell.Page;
