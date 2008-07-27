@@ -4,10 +4,8 @@
 package com.threerings.msoy.web.server;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
@@ -22,10 +20,6 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.client.MemberService;
@@ -87,43 +81,6 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         _memberLogic.clearFriendship(memrec.memberId, friendId);
-    }
-
-    // from interface MemberService
-    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
-        throws ServiceException
-    {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-
-        // convert the string they supplied to an item enumeration
-        if (Item.getClassForType(type) == null) {
-            log.warning("Requested to load inventory for invalid item type " +
-                        "[who=" + ident + ", type=" + type + "].");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
-        try {
-            List<Item> items = Lists.newArrayList();
-            for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
-                items.add(record.toItem());
-            }
-            for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
-                items.add(record.toItem());
-            }
-
-            // when Item becomes a type-safe Comparable this Comparator can go away
-            Collections.sort(items, new Comparator<Item>() {
-                public int compare (Item one, Item two) {
-                    return one.compareTo(two);
-                }
-            });
-            return items;
-
-        } catch (PersistenceException pe) {
-            log.warning("loadInventory failed [for=" + memrec.memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
     }
 
     // from MemberService
@@ -212,9 +169,9 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
     }
 
+    // our dependencies
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
-    @Inject protected ItemManager _itemMan;
     @Inject protected MemberLogic _memberLogic;
 
     /** Maximum number of members to return for the leader board */

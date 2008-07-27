@@ -22,8 +22,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#createItem}.
      */
-    public void createItem (WebIdent ident, Item item, ItemIdent parent,
-                            AsyncCallback<Item> callback);
+    void createItem (WebIdent ident, Item item, ItemIdent parent, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#updateItem}.
@@ -38,14 +37,19 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#revertRemixClone}.
      */
-    public void revertRemixedClone (WebIdent ident, ItemIdent itemIdent,
-                                    AsyncCallback<Item> callback);
+    void revertRemixedClone (WebIdent ident, ItemIdent itemIdent, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link ItemService#renameClone}.
      */
-    public void renameClone (WebIdent ident, ItemIdent itemIdent, String name,
-                             AsyncCallback<String> callback);
+    void renameClone (WebIdent ident, ItemIdent itemIdent, String name,
+                      AsyncCallback<String> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#loadInventory}.
+     */
+    void loadInventory (WebIdent ident, byte type, int suiteId,
+                        AsyncCallback<List<Item>> callback);
 
     /**
      * Loads the details of a particular item.
@@ -55,14 +59,14 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#loadItemDetail}.
      */
-    public void loadItemDetail (
-        WebIdent ident, ItemIdent item, AsyncCallback<ItemService.DetailOrIdent> callback);
+    void loadItemDetail (WebIdent ident, ItemIdent item,
+                         AsyncCallback<ItemService.DetailOrIdent> callback);
 
     /**
      * The asynchronous version of {@link ItemService#scaleAvatar}.
      */
-    public void scaleAvatar (WebIdent ident, int avatarId, float newScale,
-                             AsyncCallback<Void> callback);
+    void scaleAvatar (WebIdent ident, int avatarId, float newScale,
+                      AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#deleteItem}.
@@ -72,20 +76,18 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */
-    public void rateItem (WebIdent ident, ItemIdent item, byte rating,
-                          AsyncCallback<Float> callback);
+    void rateItem (WebIdent ident, ItemIdent item, byte rating, AsyncCallback<Float> callback);
 
     /**
      * The asynchronous version of {@link ItemService#getTags}.
      */
-    public void getTags (WebIdent ident, ItemIdent item,
-                         AsyncCallback<Collection<String>> callback);
+    void getTags (WebIdent ident, ItemIdent item, AsyncCallback<Collection<String>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getTagHistory}.
      */
-    public void getTagHistory (WebIdent ident, ItemIdent item,
-                               AsyncCallback<Collection<TagHistory>> callback);
+    void getTagHistory (WebIdent ident, ItemIdent item,
+                        AsyncCallback<Collection<TagHistory>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getRecentTags}.
@@ -95,37 +97,33 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#tagItem}.
      */
-    public void tagItem (WebIdent ident, ItemIdent item, String tag, boolean set,
-                         AsyncCallback<TagHistory> callback);
+    void tagItem (WebIdent ident, ItemIdent item, String tag, boolean set,
+                  AsyncCallback<TagHistory> callback);
 
     /**
      * The asynchronous version of {@link ItemService.wrapItem}.
      */
-    public void wrapItem (WebIdent ident, ItemIdent item, boolean wrap,
-                          AsyncCallback<Void> callback);
+    void wrapItem (WebIdent ident, ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setFlags}.
      */
-    public void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values,
-                          AsyncCallback<Void> callback);
+    void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values,
+                   AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setMature}.
      */
-    public void setMature (WebIdent ident, ItemIdent item, boolean value,
-                           AsyncCallback<Void> callback);
+    void setMature (WebIdent ident, ItemIdent item, boolean value, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.getFlaggedItems}.
      */
-    public void getFlaggedItems (WebIdent ident, int count,
-                                 AsyncCallback<List<ItemDetail>> callback);
+    void getFlaggedItems (WebIdent ident, int count, AsyncCallback<List<ItemDetail>> callback);
 
     /**
      * The asynchronous version of {@link ItemService.deleteItemAdmin}.
      */
-    public void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
-                                 AsyncCallback<Integer> callback);
-
+    void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
+                          AsyncCallback<Integer> callback);
 }

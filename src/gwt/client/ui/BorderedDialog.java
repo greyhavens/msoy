@@ -3,7 +3,6 @@
 
 package client.ui;
 
-
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;

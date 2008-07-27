@@ -26,6 +26,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import client.item.StuffNaviBar;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Frame;
@@ -34,7 +35,6 @@ import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.StuffNaviBar;
 
 /**
  * Displays all items of a particular type in a player's inventory.

@@ -33,6 +33,7 @@ import client.editem.ImageChooserPopup;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.shop.ShopUtil;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -40,7 +41,6 @@ import client.util.FlashClients;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.ShopUtil;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
 

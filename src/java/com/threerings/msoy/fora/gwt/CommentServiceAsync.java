@@ -5,8 +5,6 @@ package com.threerings.msoy.fora.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-
 import com.threerings.msoy.web.data.WebIdent;
 
 /**

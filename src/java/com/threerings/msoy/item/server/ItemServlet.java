@@ -7,6 +7,7 @@ import static com.threerings.msoy.Log.log;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -157,6 +158,37 @@ public class ItemServlet extends MsoyServiceServlet
             }
         });
         return rec.name;
+    }
+
+    // from interface ItemService
+    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
+        throws ServiceException
+    {
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+
+        // convert the string they supplied to an item enumeration
+        if (Item.getClassForType(type) == null) {
+            log.warning("Requested to load inventory for invalid item type " +
+                        "[who=" + ident + ", type=" + type + "].");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+        try {
+            List<Item> items = Lists.newArrayList();
+            for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
+                items.add(record.toItem());
+            }
+            for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
+                items.add(record.toItem());
+            }
+            Collections.sort(items);
+            return items;
+
+        } catch (PersistenceException pe) {
+            log.warning("loadInventory failed [for=" + memrec.memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -45,13 +44,6 @@ public interface MemberService extends RemoteService
      * Remove a friend.
      */
     public void removeFriend (WebIdent ident, int friendId)
-        throws ServiceException;
-
-    /**
-     * Loads all items in a player's inventory of the specified type and optionally restricted to
-     * the specified suite.
-     */
-    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException;
 
     /**

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.item;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,6 +37,7 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PromptPopup;
 import client.ui.RowPanel;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 import client.shell.ShellMessages;
 

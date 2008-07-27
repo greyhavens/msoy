@@ -36,9 +36,9 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
+import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.ServletWaiter;

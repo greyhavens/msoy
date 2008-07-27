@@ -5,7 +5,6 @@ package client.msgs;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
-
 /**
  * A message panel that displays a forum message with a last edited date.
  */

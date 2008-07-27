@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -38,12 +37,6 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
     void removeFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#loadInventory}.
-     */
-    public void loadInventory (WebIdent ident, byte type, int suiteId,
-                               AsyncCallback<List<Item>> callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.

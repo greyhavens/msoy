@@ -34,7 +34,6 @@ import client.item.TagCloud;
 import client.shell.Frame;
 import client.shell.Page;
 import client.util.Link;
-import client.util.ShopUtil;
 
 /**
  * Displays a tabbed panel containing the catalog.

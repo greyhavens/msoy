@@ -36,7 +36,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.data.ServiceException;
 
-
 import static com.threerings.msoy.Log.log;
 
 /**

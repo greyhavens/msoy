@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.shop;
 
 import java.util.ArrayList;
 

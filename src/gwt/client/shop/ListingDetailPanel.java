@@ -39,7 +39,6 @@ import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.ServiceUtil;
-import client.util.ShopUtil;
 
 /**
  * Displays a detail view of an item from the catalog.

@@ -14,7 +14,6 @@ import client.shell.Args;
 import client.shell.Page;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.ShopUtil;
 
 /**
  * Handles the MetaSOY inventory application.

@@ -17,7 +17,6 @@ import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.ShopUtil;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.

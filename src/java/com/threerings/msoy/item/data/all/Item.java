@@ -18,7 +18,7 @@ import com.threerings.presents.dobj.DSet;
  * as they must be translatable into JavaScript ({@link IsSerializable}) and must work with the
  * Presents streaming system ({@link Streamable}).
  */
-public abstract class Item implements Comparable, Streamable, IsSerializable, DSet.Entry
+public abstract class Item implements Comparable<Item>, Streamable, IsSerializable, DSet.Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     public static final byte OCCUPANT = (byte) -1; // runtime only
@@ -447,10 +447,10 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
         return false;
     }
 
-    // from Comparable
-    public int compareTo (Object other)
+    // from Comparable<Item>
+    public int compareTo (Item other)
     {
-        double thatTouched = ((Item) other).lastTouched;
+        double thatTouched = other.lastTouched;
         if (lastTouched > thatTouched) {
             return -1;
 

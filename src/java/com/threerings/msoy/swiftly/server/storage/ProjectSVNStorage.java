@@ -471,7 +471,6 @@ public class ProjectSVNStorage
         }
     }
 
-
     /** Rename a document in the repository. */
     public void renameDocument (PathElement pathElement, String newName, String logMessage)
         throws ProjectStorageException
@@ -549,7 +548,6 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
     }
-
 
     // from interface ProjectStorage
     public void export (File exportPath)

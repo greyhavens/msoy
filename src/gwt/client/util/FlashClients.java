@@ -4,7 +4,6 @@
 package client.util;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
@@ -13,15 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.UberClientModes;
-
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Furniture;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.item.data.all.Toy;
 
 import client.shell.Frame;
 
@@ -120,85 +110,42 @@ public class FlashClients
     }
 
     /**
-     * Creates a generic item viewer, mostly using the UberClient!
+     * Returns some code to display if flash isn't configured properly, or null if the default
+     * flash code should be used.
      */
-    public static HTML createViewer (Item item, boolean userOwnsItem)
+    public static String getUpgradeString (int width, int height)
     {
-        int w = 360;
-        int h = 385;
-        int mode;
-        if (item instanceof Avatar) {
-            mode = UberClientModes.AVATAR_VIEWER;
-
-        } else if (item instanceof Pet) {
-            mode = UberClientModes.PET_VIEWER;
-
-        } else if (item instanceof Decor) {
-            mode = UberClientModes.DECOR_VIEWER;
-
-        } else if (item instanceof Furniture) {
-            mode = UberClientModes.FURNI_VIEWER;
-
-        } else if (item instanceof Toy) {
-            mode = UberClientModes.TOY_VIEWER;
-
-        } else {
-            w = 320;
-            h = 240;
-            mode = UberClientModes.GENERIC_VIEWER;
+        // If they have the required flash, we're happy
+        // If they're using IE, we'll let it handle upgrading/installing the flash activex control
+        // since that works in most cases and we can't easily detect the cases where it doesn't
+        if (hasFlashVersionNative(FULL_VERSION) || isIeNative()) {
+            return null;
         }
-
-        // see if we need to display an upgrade message
-        String definition = getUpgradeString(w, h);
-        if (definition != null) {
-            return new HTML(definition);
-        }
-
-        MediaDesc preview = item.getPreviewMedia();
-        String encodedPath = URL.encodeComponent(preview.getMediaPath());
-
-        // A special case for video, for now...
-        if (preview.isWhirledVideo()) {
-            return WidgetUtil.createFlashContainer(
-                "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
-                320, 240, "video=" + encodedPath);
-        }
-
-        // set up the flashvars
-        String flashVars = "mode=" + mode + "&media=" + encodedPath +
-            "&name=" + URL.encodeComponent(item.name);
-        switch (mode) {
-        case UberClientModes.AVATAR_VIEWER:
-            flashVars += "&scale=" + ((Avatar) item).scale;
-            if (userOwnsItem) {
-                flashVars += "&scaling=true";
+        if (isVistaNative()) {
+            // Only flash 9 is fully compatible with the express installer
+            if (hasFlashVersionNative(VISTA_VERSION)) {
+                return getExpressInstallerString(width, height);
             }
-            break;
 
-        case UberClientModes.DECOR_VIEWER:
-            flashVars += "&" + createDecorViewerParams((Decor) item);
-            break;
+            // otherwise they'll need to do a manual upgrade
+            return getFlashDownloadString(width, height);
         }
-
-        if (mode != UberClientModes.AVATAR_VIEWER) {
-            flashVars += "&username=Tester";
+        // some mac flash plugins are booched and can't express install
+        boolean mac = isMacNative();
+        if (mac && !hasFlashVersionNative(MAC_PASSTHROUGH_MAX) &&
+                hasFlashVersionNative(MAC_PASSTHROUGH_MIN)) {
+            return null;
         }
-
-        // and emit the widget
-        return WidgetUtil.createFlashContainer("viewer",
-            "/clients/" + DeploymentConfig.version + "/world-client.swf", w, h, flashVars);
-    }
-
-    /**
-     * Exposed. Also called from ItemRemixer.
-     */
-    public static String createDecorViewerParams (Decor decor)
-    {
-        return "decorType=" + decor.type + "&decorWidth=" + decor.width +
-            "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +
-            "&decorHorizon=" + decor.horizon + "&decorHideWalls=" + decor.hideWalls +
-            "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY +
-            "&username=Test%20Avatar"; // add a name for the test avatar..
+        // only some system can run the upgrade script
+        if (hasFlashVersionNative(UPGRADE_VERSION) && (mac || isWindowsNative())) {
+            return getExpressInstallerString(width, height);
+        }
+        // if they have any version of flash we need to show the manual link
+        if (hasFlashVersionNative(ANY_VERSION)) {
+            return getFlashDownloadString(width, height);
+        }
+        // otherwise we'll rely on the browser to do the right thing when they don't have the plugin
+        return null;
     }
 
     /**
@@ -334,45 +281,6 @@ public class FlashClients
             return false;
         }
         return true;
-    }
-
-    /**
-     * Returns some code to display if flash isn't configured properly, or null if the default
-     * flash code should be used.
-     */
-    protected static String getUpgradeString (int width, int height)
-    {
-        // If they have the required flash, we're happy
-        // If they're using IE, we'll let it handle upgrading/installing the flash activex control
-        // since that works in most cases and we can't easily detect the cases where it doesn't
-        if (hasFlashVersionNative(FULL_VERSION) || isIeNative()) {
-            return null;
-        }
-        if (isVistaNative()) {
-            // Only flash 9 is fully compatible with the express installer
-            if (hasFlashVersionNative(VISTA_VERSION)) {
-                return getExpressInstallerString(width, height);
-            }
-
-            // otherwise they'll need to do a manual upgrade
-            return getFlashDownloadString(width, height);
-        }
-        // some mac flash plugins are booched and can't express install
-        boolean mac = isMacNative();
-        if (mac && !hasFlashVersionNative(MAC_PASSTHROUGH_MAX) &&
-                hasFlashVersionNative(MAC_PASSTHROUGH_MIN)) {
-            return null;
-        }
-        // only some system can run the upgrade script
-        if (hasFlashVersionNative(UPGRADE_VERSION) && (mac || isWindowsNative())) {
-            return getExpressInstallerString(width, height);
-        }
-        // if they have any version of flash we need to show the manual link
-        if (hasFlashVersionNative(ANY_VERSION)) {
-            return getFlashDownloadString(width, height);
-        }
-        // otherwise we'll rely on the browser to do the right thing when they don't have the plugin
-        return null;
     }
 
     /**

@@ -28,6 +28,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.TagHistory;
 
+import client.item.TagDetailPanel;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Frame;
@@ -38,7 +39,6 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.TagDetailPanel;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.

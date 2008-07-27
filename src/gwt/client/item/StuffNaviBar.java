@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -18,6 +18,7 @@ import client.images.stuff.StuffImages;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.util.Link;
 
 /**
  * Displays a way to navigate our stuff. Used on the Me page and the My Stuff page which is why it

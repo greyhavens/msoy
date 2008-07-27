@@ -24,18 +24,14 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
-
-import client.shell.CShell;
-
 import client.editem.EditemMessages;
 import client.editem.EditorHost;
 import client.editem.ImageChooserPopup;
-
+import client.item.ItemUtil;
+import client.shell.CShell;
 import client.shop.CShop;
 import client.shop.PriceLabel;
-
 import client.ui.MsoyUI;
-import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -65,12 +61,11 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (byte type, int itemId)
     {
-        _itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId),
-            new MsoyCallback<Item>() {
-                public void onSuccess (Item result) {
-                    setItem(result);
-                }
-            });
+        _itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+            public void onSuccess (Item result) {
+                setItem(result);
+            }
+        });
     }
 
     public void setItem (Item item)
@@ -105,7 +100,7 @@ public class ItemRemixer extends FlexTable
             "&auth=" + URL.encodeComponent(CShell.ident.token);
 
         if (item instanceof Decor) {
-            flashVars += "&" + FlashClients.createDecorViewerParams((Decor) item);
+            flashVars += "&" + ItemUtil.createDecorViewerParams((Decor) item);
         }
         if (_catalogId != 0) {
             flashVars += "&mustBuy=true";
@@ -240,10 +235,6 @@ public class ItemRemixer extends FlexTable
         };
     }-*/;
 
-    protected static final int WIDTH = 680;
-
-    protected static ItemRemixer _singleton;
-
     protected EditorHost _parent;
 
     /** The item we're remixing. */
@@ -254,9 +245,13 @@ public class ItemRemixer extends FlexTable
 
     protected PriceLabel _priceLabel;
 
+    protected static ItemRemixer _singleton;
+
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+
+    protected static final int WIDTH = 680;
 }

@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -43,7 +43,8 @@ public class MediaUtil
      * must be in the same ratio as the ratio between {@link MediaDesc#THUMBNAIL_WIDTH} and {@link
      * MediaDesc#THUMBNAIL_HEIGHT}.
      */
-    public static Widget createMediaView (MediaDesc desc, int width, int height, ClickListener click)
+    public static Widget createMediaView (
+        MediaDesc desc, int width, int height, ClickListener click)
     {
         String path = desc.getMediaPath();
         Widget view;
@@ -83,8 +84,7 @@ public class MediaUtil
             break;
 
         default:
-            // TODO: create a default image for media we don't know how to display
-            view = new Image(Item.getDefaultThumbnailMediaFor(Item.DOCUMENT).getMediaPath());
+            view = new Image(UNKNOWN_DESC.getMediaPath());
             break;
         }
 
@@ -96,4 +96,8 @@ public class MediaUtil
 
         return view;
     }
+
+    // TODO: create a proper default image for media we don't know how to display
+    protected static final MediaDesc UNKNOWN_DESC = new StaticMediaDesc(
+        MediaDesc.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 }

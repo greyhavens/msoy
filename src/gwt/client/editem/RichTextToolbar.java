@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package client.ui;
+package client.editem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
@@ -45,7 +45,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.ShellMessages;
-import client.editem.ImageChooserPopup;
+import client.ui.BorderedPopup;
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.images.editor.RichTextToolbarImages;
 
 /**

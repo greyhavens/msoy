@@ -33,18 +33,16 @@ import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
+import client.shop.ShopUtil;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
-import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.ShopUtil;
-import client.util.TagDetailPanel;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
@@ -61,7 +59,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
         HeaderBox bits = new HeaderBox(null, _item.name);
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("ItemPreview");
-        preview.setWidget(FlashClients.createViewer(_item, userOwnsItem()));
+
+        preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem()));
         bits.add(preview);
         if (_item.isRatable()) {
             ItemRating rating = new ItemRating(_detail.item, _detail.memberRating, true);
