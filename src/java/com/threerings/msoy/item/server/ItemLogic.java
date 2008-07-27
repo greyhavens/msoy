@@ -19,12 +19,12 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.ListingCard;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.gwt.ListingCard;
 
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;

@@ -5,7 +5,7 @@ package client.util;
 
 import java.util.ArrayList;
 
-import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.item.gwt.CatalogQuery;
 
 import client.shell.Args;
 

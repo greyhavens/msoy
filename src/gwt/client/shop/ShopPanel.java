@@ -15,11 +15,11 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.web.data.CatalogQuery;
-import com.threerings.msoy.web.data.ListingCard;
-import com.threerings.msoy.web.data.ShopData;
+import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.gwt.ShopData;
 
 import client.shell.Args;
 import client.shell.Page;

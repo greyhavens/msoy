@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.CatalogQuery;
+import com.threerings.msoy.item.gwt.CatalogQuery;
 
 import com.threerings.gwt.ui.SmartTable;
 

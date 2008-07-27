@@ -42,6 +42,9 @@ import com.threerings.msoy.chat.server.ChatChannelManager;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -75,18 +78,15 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.WorldService;
-import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.LandingData;
 import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;

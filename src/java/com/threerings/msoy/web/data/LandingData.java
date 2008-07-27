@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.item.gwt.ListingCard;
 
 /**
  * Contains the data for the new visitor landing page.

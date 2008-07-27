@@ -12,10 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.web.data.CatalogQuery;
-import com.threerings.msoy.web.data.ListingCard;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.ShopData;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
