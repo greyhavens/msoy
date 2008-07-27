@@ -106,7 +106,7 @@ public class CanvasDrawingStyle {
 	 */
 	public boolean equals(Object o)
 	{
-		if (GWT.getTypeName(o).equals(GWT.getTypeName(this))) {
+		if (o.getClass().getName().equals(getClass().getName())) {
 			return equals((CanvasDrawingStyle) o);
 		}
 		return false;

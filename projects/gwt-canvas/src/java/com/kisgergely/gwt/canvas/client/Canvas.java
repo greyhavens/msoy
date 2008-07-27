@@ -38,8 +38,8 @@ public class Canvas extends FocusWidget implements SourcesMouseEvents {
 	{
 		super(DOM.createElement("canvas"));
 		if (getElement() == null) throw new RuntimeException("Canvas could not be created");
-		DOM.setAttribute(getElement(),"width",new Integer(width).toString());
-		DOM.setAttribute(getElement(),"height",new Integer(height).toString());
+		DOM.setElementProperty(getElement(),"width",new Integer(width).toString());
+		DOM.setElementProperty(getElement(),"height",new Integer(height).toString());
 		setStyleName(DEFAULT_STYLE_NAME);
 		sinkEvents(Event.MOUSEEVENTS);
 
