@@ -20,8 +20,8 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.Comment;
-import com.threerings.msoy.web.client.CommentService;
-import com.threerings.msoy.web.client.CommentServiceAsync;
+import com.threerings.msoy.fora.gwt.CommentService;
+import com.threerings.msoy.fora.gwt.CommentServiceAsync;
 
 import client.msgs.ComplainPopup;
 import client.util.MsoyCallback;
