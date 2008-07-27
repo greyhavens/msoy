@@ -27,9 +27,9 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.GroupInvitePayload;
 import com.threerings.msoy.person.gwt.MailPayload;
 import com.threerings.msoy.person.gwt.PresentPayload;
+import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
-import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.StartConvoCallback;

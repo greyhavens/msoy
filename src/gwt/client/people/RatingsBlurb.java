@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameRating;
-import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileService;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;

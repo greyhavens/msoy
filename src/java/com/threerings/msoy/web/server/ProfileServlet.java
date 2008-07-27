@@ -53,12 +53,12 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.gwt.ProfileCodes;
+import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;

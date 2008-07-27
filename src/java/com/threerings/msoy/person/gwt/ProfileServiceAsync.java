@@ -1,16 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.Profile;
 
-import com.threerings.msoy.web.client.ProfileService;
 
 import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.MemberCard;

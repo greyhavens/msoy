@@ -10,8 +10,8 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.person.gwt.MailService;
 import com.threerings.msoy.person.gwt.MailServiceAsync;
-import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.client.ProfileServiceAsync;
+import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
 import client.shell.Page;
 

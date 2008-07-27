@@ -27,7 +27,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.person.gwt.Profile;
-import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileService;
 
 import client.shell.Args;
 import client.shell.Page;

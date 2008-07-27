@@ -41,13 +41,13 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WorldService;
 

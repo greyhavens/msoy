@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileService;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;

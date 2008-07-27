@@ -7,7 +7,7 @@ import client.shell.CShell;
 
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.person.gwt.MailServiceAsync;
-import com.threerings.msoy.web.client.ProfileServiceAsync;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
 /**
  * Extends {@link CShell} and provides mail-message-specific services.

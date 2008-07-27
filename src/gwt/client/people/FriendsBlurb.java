@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
