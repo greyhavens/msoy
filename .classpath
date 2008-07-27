@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/.svn/**|com/threerings/msoy/game/chiyogami/**" kind="src" path="src/java"/>
-	<classpathentry excluding="**/.svn/**|com/kisgergely/gwt/canvas/test/**|com/threerings/io/**|com/threerings/presents/**|com/threerings/util/**" kind="src" path="src/gwt"/>
+	<classpathentry excluding="com/kisgergely/gwt/canvas/test/**" kind="src" path="projects/gwt-canvas/src/java"/>
+	<classpathentry excluding="**/.svn/**|com/kisgergely/**|com/threerings/io/**|com/threerings/presents/**|com/threerings/util/**" kind="src" path="src/gwt"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="dist/lib/abimporter.jar"/>
 	<classpathentry kind="lib" path="dist/lib/activation.jar"/>
