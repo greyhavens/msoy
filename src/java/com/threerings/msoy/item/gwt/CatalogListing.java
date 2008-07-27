@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-
 /**
  * Represents a catalog listing of an item.
  */

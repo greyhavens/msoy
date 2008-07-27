@@ -11,7 +11,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.samskivert.io.StreamUtil;
 
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 

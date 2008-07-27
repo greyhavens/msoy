@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.landing.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;

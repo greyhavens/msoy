@@ -11,6 +11,7 @@ import com.samskivert.jdbc.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -20,7 +21,6 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;

@@ -5,7 +5,6 @@ package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-
 /**
  * Represents a friend connection.
  */

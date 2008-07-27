@@ -7,13 +7,10 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
 import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.group.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.FeedMessage;
 
-import com.threerings.msoy.web.data.LandingData;
-import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -21,11 +18,6 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface WorldServiceAsync
 {
-    /**
-     * The asynchronous version of {@link WorldService#getLandingData}.
-     */
-    void getLandingData (AsyncCallback<LandingData> callback);
-
     /**
      * The asynchronous version of {@link WorldService#serializePopularPlaces}.
      */

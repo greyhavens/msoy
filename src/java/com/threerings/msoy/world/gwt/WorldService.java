@@ -12,10 +12,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.group.gwt.MyWhirledData;
 
-import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.LandingData;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 
@@ -39,12 +37,6 @@ public interface WorldService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/worldsvc";
-
-    /**
-     * Loads the data for the landing page.
-     */
-    public LandingData getLandingData ()
-        throws ServiceException;
 
     /**
      * Fetch the n most Popular Places data in JSON-serialized form.

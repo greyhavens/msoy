@@ -15,7 +15,7 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.threerings.msoy.web.data.ABTest;
+import com.threerings.msoy.admin.gwt.ABTest;
 
 /**
  * Contains details on a single game "title" including the development and published game item ids

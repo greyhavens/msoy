@@ -23,13 +23,13 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.person.server.persist.MailRepository;
 
-import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
+import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;

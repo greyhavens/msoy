@@ -174,7 +174,6 @@ public interface MoneyService
      */
     void deductBling (int memberId, double amount);
 
-
     // Administrator actions
 
     /**

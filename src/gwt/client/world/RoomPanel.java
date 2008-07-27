@@ -11,7 +11,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.Comment;
-import com.threerings.msoy.web.data.RoomInfo;
+import com.threerings.msoy.world.gwt.RoomInfo;
 
 import client.shell.CommentsPanel;
 import client.shell.Frame;

@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.web.data.ABTest;
+import com.threerings.msoy.admin.gwt.ABTest;
 
 /**
  * Maintains persistent data for a/b tests

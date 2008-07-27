@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-
 /**
  * Contains information displayed on the Galaxy page.
  */

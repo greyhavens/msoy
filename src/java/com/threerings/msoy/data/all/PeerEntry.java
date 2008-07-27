@@ -2,7 +2,6 @@ package com.threerings.msoy.data.all;
 
 import com.threerings.presents.dobj.DSet;
 
-
 /**
  * Represents a player's connection to another person of interest.
  */

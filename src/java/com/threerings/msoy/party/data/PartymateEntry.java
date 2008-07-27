@@ -8,7 +8,6 @@ import com.threerings.msoy.data.all.PeerEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.VizMemberName;
 
-
 public class PartymateEntry
     implements PeerEntry
 {

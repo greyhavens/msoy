@@ -19,7 +19,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.data.LandingData;
+import com.threerings.msoy.landing.gwt.LandingData;
+import com.threerings.msoy.landing.gwt.LandingService;
+import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 
 import client.images.landing.LandingImages;
 import client.shell.LogonPanel;
@@ -28,6 +30,7 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
 import client.util.RoundBox;
+import client.util.ServiceUtil;
 import client.whirleds.FeaturedWhirledPanel;
 
 /**
@@ -124,7 +127,7 @@ public class LandingPanel extends SimplePanel
         content.add(new LandingCopyright(), 48, 970);
 
         // collect the data for this page
-        CMe.worldsvc.getLandingData(new MsoyCallback<LandingData>() {
+        _landingsvc.getLandingData(new MsoyCallback<LandingData>() {
             public void onSuccess (LandingData data) {
                 topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
                 _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
@@ -136,6 +139,7 @@ public class LandingPanel extends SimplePanel
     protected FeaturedWhirledPanel _featuredWhirled;
     protected AvatarPanel _avatarPanel;
 
-    /** Our screenshot images. */
-    protected static LandingImages _images = (LandingImages)GWT.create(LandingImages.class);
+    protected static final LandingImages _images = GWT.create(LandingImages.class);
+    protected static final LandingServiceAsync _landingsvc = (LandingServiceAsync)
+        ServiceUtil.bind(GWT.create(LandingService.class), LandingService.ENTRY_POINT);
 }

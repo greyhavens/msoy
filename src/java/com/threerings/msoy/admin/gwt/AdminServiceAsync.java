@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.ABTest;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**

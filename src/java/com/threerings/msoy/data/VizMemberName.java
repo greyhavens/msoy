@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.data;
 
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 

@@ -18,7 +18,6 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameUtil;
 
-
 /**
  * Extends Item with game info.
  */

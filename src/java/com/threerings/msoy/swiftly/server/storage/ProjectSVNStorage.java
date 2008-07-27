@@ -47,7 +47,6 @@ import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
 
 import com.google.common.collect.Maps;
 
-
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
@@ -244,7 +243,6 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.InternalError("A subversion failure occured while recursing over the directory tree: " + svne, svne);
         }
     }
-
 
     // from interface ProjectStorage
     public SwiftlyDocument getDocument (PathElement path)
