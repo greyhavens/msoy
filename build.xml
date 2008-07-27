@@ -316,17 +316,20 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <target name="gshell">
+  <target name="gshell" depends="config">
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
 
     <path id="gwt.classpath">
-      <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
-      <fileset dir="lib/gwt" includes="*.jar"/>
-      <pathelement location="${classes.dir}"/>
       <pathelement location="${src.dir}"/>
       <pathelement location="${gsrc.dir}"/>
+      <pathelement location="${classes.dir}"/>
+      <fileset dir="${deploy.dir}/lib">
+        <include name="gwt-widgets.jar"/>
+        <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
+      </fileset>
+      <fileset dir="lib/gwt" includes="*.jar"/>
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
                classpathref="gwt.classpath"/>
@@ -407,7 +410,11 @@
 
   <!-- builds our GWT web client -->
   <property name="gwtc.style" value="OBF"/>
-  <property name="pages" value="msoy"/>
+  <if><isset property="full"/><then>
+    <property name="pages" value="msoy,frame"/>
+  </then><else>
+    <property name="pages" value="msoy"/>
+  </else></if>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
     <for list="${pages}" param="page"><sequential>

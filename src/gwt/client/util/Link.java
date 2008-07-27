@@ -123,6 +123,15 @@ public class Link
     }
 
     /**
+     * Replace the current page with the one specified.
+     */
+    public static void replace (String page, String args)
+    {
+        History.back();
+        go(page, args);
+    }
+
+    /**
      * A helper function for both {@link #getImageLink}s.
      */
     protected static Hyperlink createHyperlink (String html, String tip, String page, String args)

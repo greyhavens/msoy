@@ -37,8 +37,8 @@ import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.shell.Application;
 import client.shell.Page;
+import client.shell.Session;
 import client.shell.TrackingCookie;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -77,10 +77,10 @@ public class CreateAccountPanel extends FlowPanel
         add(new LabeledBox(
             CAccount.msgs.createEmail(), _email = new TextBox(), CAccount.msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
-        if (Application.activeInvite != null &&
-            Application.activeInvite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
+        if (CAccount.activeInvite != null &&
+            CAccount.activeInvite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
             // provide the invitation email as the default
-            _email.setText(Application.activeInvite.inviteeEmail);
+            _email.setText(CAccount.activeInvite.inviteeEmail);
         }
 
         add(new LabeledBox(
@@ -225,8 +225,7 @@ public class CreateAccountPanel extends FlowPanel
 
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
-        String inviteId = (Application.activeInvite == null) ?
-            null : Application.activeInvite.inviteId;
+        String inviteId = (CAccount.activeInvite == null) ? null : CAccount.activeInvite.inviteId;
         int guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
@@ -243,13 +242,12 @@ public class CreateAccountPanel extends FlowPanel
                     if (_regListener != null) {
                         _regListener.didRegister();
                     }
-                    // clear our current token otherwise didLogon() will try to load it
-                    Application.setCurrentToken(null);
-                    // pass our credentials into the application (which will trigger a redirect)
-                    CAccount.app.didLogon(result);
+                    result.justCreated = true;
+                    // pass our credentials into the session (which will trigger a redirect)
+                    Session.didLogon(result);
                 }
                 public void onFailure (Throwable caught) {
-                if (hasRecaptchaKey()) {
+                    if (hasRecaptchaKey()) {
                         reloadRecaptcha();
                         if (caught instanceof CaptchaException) {
                             focusRecaptcha();

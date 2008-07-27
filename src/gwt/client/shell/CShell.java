@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
@@ -27,8 +28,9 @@ public class CShell
     /** This member's current level. */
     public static int level;
 
-    /** The application that's running. */
-    public static Application app;
+    /** Our active invitation if we landed at Whirled from an invite, null otherwise (for use if
+     * and when we create an account). */
+    public static Invitation activeInvite;
 
     /**
      * Returns our member id if we're logged in, 0 if we are not.
@@ -60,6 +62,26 @@ public class CShell
     public static boolean isAdmin ()
     {
         return (creds != null) && creds.isAdmin;
+    }
+
+    /**
+     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
+     * if the guest creates an account we can transfer anything they earned as a guest to their
+     * newly created account. This is also called if a player attempts to play a game without
+     * having first logged into the server.
+     */
+    public static void setGuestId (int guestId)
+    {
+        if (getMemberId() > 0) {
+            log("Warning: got guest id but appear to be logged in? " +
+                "[memberId=" + getMemberId() + ", guestId=" + guestId + "].");
+        } else {
+            ident = new WebIdent();
+            ident.memberId = guestId;
+            // TODO: the code that knows how to do this is in MsoyCredentials which is not
+            // accessible to GWT currently for unrelated technical reasons
+            ident.token = "G" + guestId;
+        }
     }
 
     /**
@@ -110,6 +132,14 @@ public class CShell
             GWT.log(message, error);
         }
     }
+
+    /**
+     * Returns a partner identifier when we're running in partner cobrand mode, null when we're
+     * running in the full Whirled environment.
+     */
+    public static native String getPartner () /*-{
+        return $doc.whirledPartner;
+    }-*/;
 
     /** MD5 hashes the supplied text and returns the hex encoded hash value. */
     public native static String md5hex (String text) /*-{

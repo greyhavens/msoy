@@ -32,11 +32,13 @@ import client.util.events.StatusChangeListener;
  * Displays basic player status (name, flow count) and handles logging on and logging off.
  */
 public class StatusPanel extends SmartTable
+    implements Session.Observer
 {
-    public StatusPanel (Application app)
+    public StatusPanel ()
     {
         super("statusPanel", 0, 0);
-        _app = app;
+
+        Session.addObserver(this);
 
         FlashEvents.addListener(new StatusChangeListener() {
             public void statusChanged (StatusChangeEvent event) {
@@ -86,7 +88,8 @@ public class StatusPanel extends SmartTable
         _mail.setCount(unread);
     }
 
-    protected void didLogon (SessionData data)
+    // from interface Session.Observer
+    public void didLogon (SessionData data)
     {
         _creds = data.creds;
         setCookie("creds", _creds.token);
@@ -109,19 +112,19 @@ public class StatusPanel extends SmartTable
             new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
 
         // add a logoff link
-        ClickListener doLogoff = new ClickListener() {
+        setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
-                CShell.app.didLogoff();
+                Session.didLogoff();
                 // this button is only visible to logged-in players, who decide to log off.
                 // let's clear out their browser-side referral info, so that any future
                 // guests are tracked afresh.
                 TrackingCookie.clear();
             }
-        };
-        setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), doLogoff));
+        }));
     }
 
-    protected void didLogoff ()
+    // from interface Session.Observer
+    public void didLogoff ()
     {
         _creds = null;
         clearCookie("creds");
@@ -233,7 +236,6 @@ public class StatusPanel extends SmartTable
         protected int _flowIdx, _goldIdx, _levelIdx;
     }
 
-    protected Application _app;
     protected WebCreds _creds;
 
     protected LevelsDisplay _levels = new LevelsDisplay();

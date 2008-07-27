@@ -18,7 +18,6 @@ import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.games.CGames;
 import client.msgs.MsgsEntryPoint;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
@@ -59,13 +58,12 @@ public class index extends MsgsEntryPoint
         } else if (action.equals("i") && CMe.isGuest()) {
             // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");
-            if (Application.activeInvite != null &&
-                Application.activeInvite.inviteId.equals(inviteId)) {
+            if (CMe.activeInvite != null && CMe.activeInvite.inviteId.equals(inviteId)) {
                 Link.go(Page.ME, "");
             } else {
                 _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
                     public void onSuccess (Invitation invite) {
-                        Application.activeInvite = invite;
+                        CMe.activeInvite = invite;
                         Link.go(Page.ME, "");
                     }
                 });
@@ -116,7 +114,13 @@ public class index extends MsgsEntryPoint
     }
 
     @Override // from Page
-    protected String getPageId ()
+    public void didLogon (WebCreds creds)
+    {
+        Link.go(ME, "");
+    }
+
+    @Override
+    public String getPageId ()
     {
         return ME;
     }
@@ -142,12 +146,6 @@ public class index extends MsgsEntryPoint
     {
         Frame.closeClient(false); // no client on the main guest landing page
         setContent(CMe.msgs.landingTitle(), new LandingPanel(), false);
-    }
-
-    @Override // from Page
-    protected void didLogon (WebCreds creds)
-    {
-        Link.go(ME, "");
     }
 
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)

@@ -139,7 +139,7 @@ public class LogonPanel extends SmartTable
     public void onSuccess (SessionData data)
     {
         _password.setText("");
-        CShell.app.didLogon(data);
+        Session.didLogon(data);
     }
 
     public void onFailure (Throwable caught)

@@ -1,9 +1,10 @@
 //
 // $Id$
 
-package client.shell;
+package client;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -18,11 +19,17 @@ import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
 
-import client.util.Link;
+import client.shell.Analytics;
+import client.shell.Args;
+import client.shell.CShell;
+import client.shell.Frame;
+import client.shell.Page;
+import client.shell.Session;
+import client.shell.TrackingCookie;
+import client.shell.WorldClient;
 import client.util.ServiceUtil;
 
 /**
@@ -30,21 +37,8 @@ import client.util.ServiceUtil;
  * Page}. Some day it may also do fancy on-demand loading of JavaScript.
  */
 public class Application
-    implements EntryPoint, HistoryListener
+    implements EntryPoint, HistoryListener, Session.Observer
 {
-    /** Our active invitation if we landed at Whirled from an invite, null otherwise (for use if
-     * and when we create an account). */
-    public static Invitation activeInvite;
-
-    /**
-     * Replace the current page with the one specified.
-     */
-    public static void replace (String page, String args)
-    {
-        History.back();
-        Link.go(page, args);
-    }
-
     /**
      * Configures our current history token (normally this is done automatically as the user
      * navigates, but sometimes we want to override the current token). This does not take any
@@ -56,102 +50,19 @@ public class Application
         _currentToken = token;
     }
 
-    /**
-     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
-     * if the guest creates an account we can transfer anything they earned as a guest to their
-     * newly created account. This is also called if a player attempts to play a game without
-     * having first logged into the server.
-     */
-    public static void setGuestId (int guestId)
-    {
-        if (CShell.getMemberId() > 0) {
-            CShell.log("Warning: got guest id but appear to be logged in? " +
-                       "[memberId=" + CShell.getMemberId() + ", guestId=" + guestId + "].");
-        } else {
-            CShell.ident = new WebIdent();
-            CShell.ident.memberId = guestId;
-            // TODO: the code that knows how to do this is in MsoyCredentials which is not
-            // accessible to GWT currently for unrelated technical reasons
-            CShell.ident.token = "G" + guestId;
-        }
-    }
-
-    /**
-     * Returns a partner identifier when we're running in partner cobrand mode, null when we're
-     * running in the full Whirled environment.
-     */
-    public static native String getPartner () /*-{
-        return $doc.whirledPartner;
-    }-*/;
-
-    /**
-     * Returns a reference to the status panel.
-     */
-    public StatusPanel getStatusPanel ()
-    {
-        return _status;
-    }
-
-    /**
-     * Reports a page view event to our analytics engine.
-     */
-    public void reportEvent (String path)
-    {
-        _analytics.report(path);
-    }
-
-    /**
-     * Called when the player logs on (or when our session is validated).
-     */
-    public void didLogon (SessionData data)
-    {
-        CShell.creds = data.creds;
-        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
-        _status.didLogon(data);
-        WorldClient.didLogon(data.creds);
-        Frame.didLogon();
-
-        if (_page != null) {
-            _page.didLogon(data.creds);
-        } else if (_currentToken != null) {
-            onHistoryChanged(_currentToken);
-        }
-    }
-
-    /**
-     * Called when the player logs off.
-     */
-    public void didLogoff ()
-    {
-        CShell.creds = null;
-        CShell.ident = null;
-        _status.didLogoff();
-        Frame.didLogoff();
-
-        if (_page == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
-        } else {
-            Frame.closeClient(false);
-            _page.didLogoff();
-        }
-    }
-
     // from interface EntryPoint
     public void onModuleLoad ()
     {
-        // create our static page mappings (we can't load classes by name in wacky JavaScript land
-        // so we have to hardcode the mappings)
+        // create our static page mappings
         createMappings();
-
-        // initialize our top-level context references
-        initContext();
 
         // set up the callbackd that our flash clients can call
         configureCallbacks(this);
 
-        // create our status panel and initialize the frame
-        _status = new StatusPanel(this);
+        // register as a session observer
+        Session.addObserver(this);
+
+        // initialize the frame
         Frame.init();
 
         // initialize our GA handler
@@ -252,12 +163,38 @@ public class Application
         }
 
         // convert the page to GA format and report it to Google Analytics
-        reportEvent(args.toPath(page));
+        _analytics.report(args.toPath(page));
     }
 
-    protected void initContext ()
+    // from interface Session.Observer
+    public void didLogon (SessionData data)
     {
-        CShell.app = this;
+        CShell.creds = data.creds;
+        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
+        WorldClient.didLogon(data.creds);
+        Frame.didLogon();
+
+        if (_page != null) {
+            _page.didLogon(data.creds);
+        } else if (_currentToken != null && !data.justCreated) {
+            onHistoryChanged(_currentToken);
+        }
+    }
+
+    // from interface Session.Observer
+    public void didLogoff ()
+    {
+        CShell.creds = null;
+        CShell.ident = null;
+        Frame.didLogoff();
+
+        if (_page == null) {
+            // we can now load our starting page
+            onHistoryChanged(_currentToken);
+        } else {
+            Frame.closeClient(false);
+            _page.didLogoff();
+        }
     }
 
     /**
@@ -270,27 +207,18 @@ public class Application
                                      new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData data) {
                     if (data == null) {
-                        didLogoff();
+                        Session.didLogoff();
                     } else {
-                        didLogon(data);
+                        Session.didLogon(data);
                     }
                 }
                 public void onFailure (Throwable t) {
-                    didLogoff();
+                    Session.didLogoff();
                 }
             });
         } else {
-            didLogoff();
+            Session.didLogoff();
         }
-    }
-
-    /**
-     * Called when a web page component wants to request a chat channel opened in the Flash
-     * client, of the given type and name.
-     */
-    protected boolean openChannelRequest (int type, String name, int id)
-    {
-        return openChannelNative(type, name, id);
     }
 
     protected void createMappings ()
@@ -311,11 +239,20 @@ public class Application
     }
 
     /**
+     * Called when a web page component wants to request a chat channel opened in the Flash
+     * client, of the given type and name.
+     */
+    protected boolean openChannelRequest (int type, String name, int id)
+    {
+        return openChannelNative(type, name, id);
+    }
+
+    /**
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app) /*-{
        $wnd.openChannel = function (type, name, id) {
-           app.@client.shell.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
+           app.@client.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
        };
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");
@@ -334,7 +271,7 @@ public class Application
            @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
        $wnd.setGuestId = function (guestId) {
-           @client.shell.Application::setGuestId(I)(guestId);
+           @client.shell.CShell::setGuestId(I)(guestId);
        };
        $wnd.getReferral = function () {
            return @client.shell.TrackingCookie::getAsObject()();
@@ -360,10 +297,9 @@ public class Application
     }-*/;
 
     protected Page _page;
-    protected HashMap<String, Page.Creator> _creators = new HashMap<String, Page.Creator>();
     protected Analytics _analytics = new Analytics();
 
-    protected StatusPanel _status;
+    protected Map<String, Page.Creator> _creators = new HashMap<String, Page.Creator>();
 
     protected static String _currentToken = "";
 

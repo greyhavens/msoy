@@ -68,7 +68,7 @@ public class index extends MsgsEntryPoint
     }
 
     @Override // from Page
-    protected void didLogoff ()
+    public void didLogoff ()
     {
         super.didLogoff();
 
@@ -78,8 +78,8 @@ public class index extends MsgsEntryPoint
         }
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return SUPPORT;
     }

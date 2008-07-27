@@ -68,7 +68,7 @@ public class index extends Page
     }
 
     @Override // from Page
-    protected void didLogon (WebCreds creds)
+    public void didLogon (WebCreds creds)
     {
         if (_onLogonPage != null) {
             Link.go(_onLogonPage, _onLogonArgs);
@@ -77,8 +77,8 @@ public class index extends Page
         }
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return ACCOUNT;
     }

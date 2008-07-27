@@ -18,11 +18,11 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
+import client.util.Link;
 import client.util.ServiceUtil;
 import client.util.ClickCallback;
 
@@ -51,8 +51,9 @@ public class RenameHandler extends ClickCallback<String>
         _item.name = result;
         _models.updateItem(_item);
         // just force a reload of the detail page
-        Application.replace(Page.STUFF, Args.compose(new String[] {
-            "d", "" + _item.getType(), "" + _item.itemId, _item.name.replaceAll(" ", "-") }));
+        Link.replace(Page.STUFF, Args.compose(new String[] {
+                    "d", "" + _item.getType(), "" + _item.itemId,
+                    _item.name.replaceAll(" ", "-") }));
         return true;
     }
 

@@ -611,7 +611,7 @@ public class Frame
         public void didLogon () {
             getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
             getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_BOTTOM);
-            setWidget(0, _statusCol, CShell.app.getStatusPanel(), 1, "Right");
+            setWidget(0, _statusCol, _status, 1, "Right");
         }
 
         public void didLogoff () {
@@ -739,6 +739,7 @@ public class Frame
     protected static Header _header;
     protected static String _closeToken;
 
+    protected static StatusPanel _status = new StatusPanel();
     protected static TitleBar _bar;
 
     protected static FlowPanel _contlist;

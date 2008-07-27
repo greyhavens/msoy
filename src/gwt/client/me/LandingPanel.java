@@ -77,8 +77,6 @@ public class LandingPanel extends SimplePanel
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 video.remove(0);
-                // TODO analytics not needed now that we have panopticon, but leave for comparaison
-                CMe.app.reportEvent("/me/video");
                 // slideshow actual size is 360x260
                 video.add(WidgetUtil.createFlashContainer(
                         "preview", "/images/landing/slideshow.swf", 200, 140, null), 38, 9);

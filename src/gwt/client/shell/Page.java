@@ -84,17 +84,40 @@ public abstract class Page
     }
 
     /**
+     * Called when we the player logs on while viewing this page. The default implementation
+     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.
+     */
+    public void didLogon (WebCreds creds)
+    {
+        History.onHistoryChanged(History.getToken());
+    }
+
+    /**
+     * Called when the player logs off while viewing this page. The default implementation sends
+     * the user to the landing page.
+     */
+    public void didLogoff ()
+    {
+        // go to the landing page by hook or crook
+        if (History.getToken().equals("")) {
+            Link.replace("", "");
+        } else {
+            History.newItem("");
+        }
+    }
+
+    /**
+     * Returns the identifier of this page (used for navigation).
+     */
+    public abstract String getPageId ();
+
+    /**
      * Called during initialization to give our entry point and derived classes a chance to
      * initialize their respective context classes.
      */
     protected void initContext ()
     {
     }
-
-    /**
-     * Returns the identifier of this page (used for navigation).
-     */
-    protected abstract String getPageId ();
 
     /**
      * Returns the identifier the page whose tab should be showing when this page is showing.
@@ -153,29 +176,6 @@ public abstract class Page
         Frame.setHeaderVisible(withHeader);
         Frame.showContent(withHeader ? getTabPageId() : null, _content = content);
         Frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
-    }
-
-    /**
-     * Called when we the player logs on while viewing this page. The default implementation
-     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.
-     */
-    protected void didLogon (WebCreds creds)
-    {
-        History.onHistoryChanged(History.getToken());
-    }
-
-    /**
-     * Called when the player logs off while viewing this page. The default implementation sends
-     * the user to the landing page.
-     */
-    protected void didLogoff ()
-    {
-        // go to the landing page by hook or crook
-        if (History.getToken().equals("")) {
-            CShell.app.onHistoryChanged("");
-        } else {
-            History.newItem("");
-        }
     }
 
     protected Widget _content;

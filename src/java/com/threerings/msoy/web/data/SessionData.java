@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class SessionData implements IsSerializable
 {
+    /** Our session credentials. */
     public WebCreds creds;
 
     /** This member's flow at the time of session start. */
@@ -23,4 +24,7 @@ public class SessionData implements IsSerializable
 
     /** This member's new mail message count at the time of session start. */
     public int newMailCount;
+
+    /** If we've just created an account, this will be set to true. */
+    public transient boolean justCreated;
 }

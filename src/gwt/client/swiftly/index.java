@@ -37,8 +37,8 @@ public class index extends Page
         updateInterface(args);
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return SWIFTLY;
     }

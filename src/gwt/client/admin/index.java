@@ -55,8 +55,8 @@ public class index extends Page
         }
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return ADMIN;
     }

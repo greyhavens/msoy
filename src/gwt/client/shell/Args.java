@@ -157,7 +157,7 @@ public class Args
     }
 
     /**
-     * Called by {@link Application} when configuring our arguments.
+     * Called by the application when configuring our arguments.
      */
     public void setToken (String token)
     {

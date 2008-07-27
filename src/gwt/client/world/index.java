@@ -17,7 +17,6 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
@@ -124,8 +123,8 @@ public class index extends Page
         CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return WORLD;
     }
@@ -151,9 +150,9 @@ public class index extends Page
 
     protected void launchGame (final LaunchConfig config, final int gameOid, String action)
     {
-        // if we were assigned a guest id, let the application know about that
+        // if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
-            Application.setGuestId(config.guestId);
+            CWorld.setGuestId(config.guestId);
         }
 
         switch (config.type) {

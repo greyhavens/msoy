@@ -32,7 +32,7 @@
   <source path="client"/>
   <public path="public"/>
 
-  <entry-point class="client.shell.Application"/>
+  <entry-point class="client.Application"/>
 
   <replace-with class="client.ui.PopupImplMozillaHack">
     <when-type-is class="com.google.gwt.user.client.ui.impl.PopupImpl"/>

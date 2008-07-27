@@ -26,8 +26,8 @@ public class index extends Page
         setContent(new HelpPanel());
     }
 
-    @Override // from Page
-    protected String getPageId ()
+    @Override
+    public String getPageId ()
     {
         return HELP;
     }

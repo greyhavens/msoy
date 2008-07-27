@@ -26,7 +26,6 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
-import client.shell.Application;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
@@ -328,8 +327,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 _detail.item = item;
 
                 // redisplay the item detail with the reverted version.
-                Application.replace(Page.STUFF, Args.compose(new String[]
-                    { "d", "" + item.getType(), "" + item.itemId, "revert" }));
+                Link.replace(Page.STUFF, Args.compose(new String[] {
+                            "d", "" + item.getType(), "" + item.itemId, "revert" }));
                 return false;
             }
         };
