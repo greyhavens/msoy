@@ -39,7 +39,6 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.ServletWaiter;
@@ -149,7 +148,7 @@ public class GameLogic
         // determine the games people are playing right now
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
-        for (PlaceCard card : pps.getTopGames()) {
+        for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
             GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
             GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
             if (game != null && game.rating >= 4 && detail.gamesPlayed > 0) {

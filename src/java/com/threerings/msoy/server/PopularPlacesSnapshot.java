@@ -7,9 +7,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.SortableArrayList;
 
 import com.threerings.msoy.data.MemberLocation;
 
@@ -23,7 +25,6 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
@@ -33,6 +34,25 @@ public class PopularPlacesSnapshot
 {
     /** We keep track of only this many top scenes and games. */
     public static final int MAX_TRACKED_PLACES = 50;
+
+    /** Contains id, name and population of a place. */
+    public static class Place implements Comparable<Place> {
+        /** The place id. */
+        public int placeId;
+
+        /** The place's name. */
+        public String name;
+
+        /** The place's population (as of the last snapshot calculation). */
+        public int population;
+
+        // from interface Comparable<Place>
+        public int compareTo (Place other) {
+            // higher population sorts first, then sort alphabetically
+            int rv = Comparators.compare(other.population, population);
+            return (rv == 0) ? name.compareTo(other.name) : rv;
+        }
+    }
 
     /**
      * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
@@ -50,17 +70,17 @@ public class PopularPlacesSnapshot
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular scenes in the world, sorted
      * in descending order of population.
      */
-    public Iterable<PlaceCard> getTopScenes ()
+    public Iterable<Place> getTopScenes ()
     {
         return _sclist;
     }
 
     /**
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular whirleds in the world, sorted
-     * in descending order of population. <em>Note:</em> the {@link PlaceCard#name} field for these
-     * records is not valid and the {@link PlaceCard#placeId} field is the Whirled's id.
+     * in descending order of population. <em>Note:</em> the {@link Place#name} field for these
+     * records is not valid and the {@link Place#placeId} field is the Whirled's id.
      */
-    public Iterable<PlaceCard> getTopWhirleds ()
+    public Iterable<Place> getTopWhirleds ()
     {
         return _whlist;
     }
@@ -69,7 +89,7 @@ public class PopularPlacesSnapshot
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular games in the world, sorted in
      * descending order of population.
      */
-    public Iterable<PlaceCard> getTopGames ()
+    public Iterable<Place> getTopGames ()
     {
         return _glist;
     }
@@ -77,7 +97,7 @@ public class PopularPlacesSnapshot
     /**
      * Returns the place summary information for the specified whirled.
      */
-    public PlaceCard getWhirled (int whirledId)
+    public Place getWhirled (int whirledId)
     {
         return _whirleds.get(whirledId);
     }
@@ -85,7 +105,7 @@ public class PopularPlacesSnapshot
     /**
      * Returns the place summary information for the specified scene.
      */
-    public PlaceCard getScene (int sceneId)
+    public Place getScene (int sceneId)
     {
         return _scenes.get(sceneId);
     }
@@ -93,7 +113,7 @@ public class PopularPlacesSnapshot
     /**
      * Returns the place summary information for the specified game.
      */
-    public PlaceCard getGame (int gameId)
+    public Place getGame (int gameId)
     {
         return _games.get(gameId);
     }
@@ -148,11 +168,11 @@ public class PopularPlacesSnapshot
                 }
             }
 
-            protected void increment (IntMap<PlaceCard> places, List<PlaceCard> plist,
+            protected void increment (IntMap<Place> places, List<Place> plist,
                                       int placeId, HostedPlace hp) {
-                PlaceCard place = places.get(placeId);
+                Place place = places.get(placeId);
                 if (place == null) {
-                    place = new PlaceCard();
+                    place = new Place();
                     place.placeId = placeId;
                     place.name = hp.name;
                     places.put(placeId, place);
@@ -168,9 +188,9 @@ public class PopularPlacesSnapshot
         sortAndPrune(_glist);
     }
 
-    protected static void sortAndPrune (SortableArrayList<PlaceCard> list)
+    protected static void sortAndPrune (List<Place> list)
     {
-        list.sort(Collections.reverseOrder(PLACE_COMP));
+        Collections.sort(list);
         while (list.size() > MAX_TRACKED_PLACES) {
             list.remove(list.size()-1);
         }
@@ -180,28 +200,20 @@ public class PopularPlacesSnapshot
     protected int _totalPopulation;
 
     /** A mapping of all resolved whirleds in the whole wide Whirled. */
-    protected IntMap<PlaceCard> _whirleds = IntMaps.newHashIntMap();
+    protected IntMap<Place> _whirleds = IntMaps.newHashIntMap();
 
     /** A mapping of all resolved scenes in the whole wide Whirled. */
-    protected IntMap<PlaceCard> _scenes = IntMaps.newHashIntMap();
+    protected IntMap<Place> _scenes = IntMaps.newHashIntMap();
 
     /** A mapping of all resolved games in the whole wide Whirled. */
-    protected IntMap<PlaceCard> _games = IntMaps.newHashIntMap();
+    protected IntMap<Place> _games = IntMaps.newHashIntMap();
 
     /** The most popular whirleds, sorted. */
-    protected SortableArrayList<PlaceCard> _whlist = new SortableArrayList<PlaceCard>();
+    protected List<Place> _whlist = Lists.newArrayList();
 
     /** The most popular scenes, sorted. */
-    protected SortableArrayList<PlaceCard> _sclist = new SortableArrayList<PlaceCard>();
+    protected List<Place> _sclist = Lists.newArrayList();
 
     /** The most popular games, sorted. */
-    protected SortableArrayList<PlaceCard> _glist = new SortableArrayList<PlaceCard>();
-
-    /** Used to sort places. */
-    protected static final Comparator<PlaceCard> PLACE_COMP = new Comparator<PlaceCard>() {
-        public int compare (PlaceCard one, PlaceCard two) {
-            int rv = (one.population - two.population);
-            return (rv == 0) ? one.name.compareTo(two.name) : rv;
-        }
-    };
+    protected List<Place> _glist = Lists.newArrayList();
 }

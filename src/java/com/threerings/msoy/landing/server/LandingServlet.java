@@ -32,7 +32,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -62,7 +61,7 @@ public class LandingServlet extends MsoyServiceServlet
             // determine our featured whirled based on who's online now
             PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             List<GroupCard> popWhirleds = Lists.newArrayList();
-            for (PlaceCard card : pps.getTopWhirleds()) {
+            for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
                 GroupRecord group = _groupRepo.loadGroup(card.placeId);
                 if (group != null) {
                     GroupCard gcard = group.toGroupCard();

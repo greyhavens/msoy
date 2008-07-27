@@ -75,7 +75,6 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -373,7 +372,7 @@ public class WorldServlet extends MsoyServiceServlet
             }
 
             protected void noteFriend (IntMap<PlaceDetail> dplaces, FriendEntry entry,
-                                       PlaceCard place) {
+                                       PopularPlacesSnapshot.Place place) {
                 if (place == null) {
                     return;
                 }
@@ -399,7 +398,7 @@ public class WorldServlet extends MsoyServiceServlet
                 home = new PlaceDetail();
                 home.place = snap.getScene(mrec.homeSceneId);
                 if (home.place == null) {
-                    home.place = new PlaceCard();
+                    home.place = new PopularPlacesSnapshot.Place();
                     home.place.placeId = mrec.homeSceneId;
                 }
             }
@@ -426,10 +425,11 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     @EventThread
-    protected void addTopPopularPlaces (Iterable<PlaceCard> top, IntMap<PlaceDetail> map)
+    protected void addTopPopularPlaces (Iterable<PopularPlacesSnapshot.Place> top,
+                                        IntMap<PlaceDetail> map)
     {
         int n = 3; // TODO: totally ad-hoc
-        for (PlaceCard place : top) {
+        for (PopularPlacesSnapshot.Place place : top) {
             if (map.containsKey(place.placeId)) {
                 continue;
             }
@@ -461,7 +461,7 @@ public class WorldServlet extends MsoyServiceServlet
 
     protected static class PlaceDetail
     {
-        public PlaceCard place;
+        public PopularPlacesSnapshot.Place place;
         public List<MemberName> friends = Lists.newArrayList();
     }
 

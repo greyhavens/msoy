@@ -34,7 +34,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -233,7 +232,7 @@ public class MemberHelper
                     // get those from the popular places snapshot
                     if (status instanceof MemberCard.InGame) {
                         MemberCard.InGame gstatus = (MemberCard.InGame)status;
-                        PlaceCard place = pps.getGame(gstatus.gameId);
+                        PopularPlacesSnapshot.Place place = pps.getGame(gstatus.gameId);
                         if (place != null) {
                             gstatus.gameName = place.name;
                         }

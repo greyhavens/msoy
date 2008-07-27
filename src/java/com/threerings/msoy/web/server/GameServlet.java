@@ -71,7 +71,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -121,7 +120,7 @@ public class GameServlet extends MsoyServiceServlet
                 }
             }
 
-            PlaceCard game = _memberMan.getPPSnapshot().getGame(gameId);
+            PopularPlacesSnapshot.Place game = _memberMan.getPPSnapshot().getGame(gameId);
             if (game != null) {
                 detail.playingNow = game.population;
             }
@@ -421,7 +420,7 @@ public class GameServlet extends MsoyServiceServlet
             // determine the "featured" games
             List<FeaturedGameInfo> featured = Lists.newArrayList();
             ArrayIntSet have = new ArrayIntSet();
-            for (PlaceCard card : pps.getTopGames()) {
+            for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
                 GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
                 GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
                 if (game != null) {
@@ -492,7 +491,7 @@ public class GameServlet extends MsoyServiceServlet
                 genre.games = new GameInfo[goodGames.size()];
                 for (int ii = 0; ii < genre.games.length; ii++) {
                     genre.games[ii] = goodGames.get(ii).toGameInfo();
-                    PlaceCard ppg = pps.getGame(genre.games[ii].gameId);
+                    PopularPlacesSnapshot.Place ppg = pps.getGame(genre.games[ii].gameId);
                     if (ppg != null) {
                         genre.games[ii].playersOnline = ppg.population;
                     }
@@ -525,7 +524,7 @@ public class GameServlet extends MsoyServiceServlet
             for (GameRecord grec : games) {
                 GameInfo info = grec.toGameInfo();
                 // add the players online
-                PlaceCard gameCard = pps.getGame(grec.gameId);
+                PopularPlacesSnapshot.Place gameCard = pps.getGame(grec.gameId);
                 if (gameCard != null) {
                     info.playersOnline = gameCard.population;
                 }

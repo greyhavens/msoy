@@ -60,7 +60,6 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
@@ -84,7 +83,7 @@ public class GroupServlet extends MsoyServiceServlet
             // determine our featured whirled based on who's online now
             PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             List<GroupCard> popWhirleds = Lists.newArrayList();
-            for (PlaceCard card : pps.getTopWhirleds()) {
+            for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
                 GroupRecord group = _groupRepo.loadGroup(card.placeId);
                 if (group != null) {
                     GroupCard gcard = group.toGroupCard();
@@ -133,7 +132,7 @@ public class GroupServlet extends MsoyServiceServlet
             // fill in the current population of these groups
             PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             for (GroupCard group : groups) {
-                PlaceCard card = pps.getWhirled(group.name.getGroupId());
+                PopularPlacesSnapshot.Place card = pps.getWhirled(group.name.getGroupId());
                 if (card != null) {
                     group.population = card.population;
                 }
@@ -188,7 +187,7 @@ public class GroupServlet extends MsoyServiceServlet
 
             // fill in the current population of the group
             PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-            PlaceCard card = pps.getWhirled(groupId);
+            PopularPlacesSnapshot.Place card = pps.getWhirled(groupId);
             if (card != null) {
                 detail.population = card.population;
             }
@@ -724,7 +723,7 @@ public class GroupServlet extends MsoyServiceServlet
                 }
 
                 // fetch current population from PopularPlacesSnapshot
-                PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
+                PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
                 if (pcard != null) {
                     card.population = pcard.population;
                 }
@@ -843,7 +842,7 @@ public class GroupServlet extends MsoyServiceServlet
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         for (GroupCard card : groups) {
-            PlaceCard pcard = pps.getWhirled(card.name.getGroupId());
+            PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
             if (pcard != null) {
                 card.population = pcard.population;
             }
