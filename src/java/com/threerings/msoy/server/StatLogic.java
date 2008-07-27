@@ -18,7 +18,7 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 

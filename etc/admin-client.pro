@@ -22,8 +22,7 @@
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
     **/msoy/group/data/GroupMembership.class,**/msoy/badge/data/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/notify/data/**,
-    **/msoy/game/data/GameSummary.class,**/msoy/world/data/WorldOccupantInfo.class,
-    **/msoy/web/data/ServiceCodes.class)
+    **/msoy/game/data/GameSummary.class,**/msoy/world/data/WorldOccupantInfo.class)
 
 -dontskipnonpubliclibraryclasses
 -outjars ../dist/admin-client.jar

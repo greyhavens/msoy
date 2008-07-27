@@ -392,8 +392,8 @@
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
     <!-- then overwrite with values read from msoy-server.properties -->
-    <copy file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java.tmpl"
-          tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
+    <copy file="${src.dir}/com/threerings/msoy/data/all/DeploymentConfig.java.tmpl"
+          tofile="${src.dir}/com/threerings/msoy/data/all/DeploymentConfig.java" overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
         <filter token="build_version" value="${version}"/>
@@ -425,9 +425,12 @@
       <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
-          <pathelement location="${classes.dir}"/>
           <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-          <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+          <fileset dir="${deploy.dir}/lib">
+            <include name="gwt-user.jar"/>
+            <include name="gwt-widgets.jar"/>
+            <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
+          </fileset>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
         </classpath>
@@ -970,7 +973,7 @@
   <!-- cleans out the compiled code -->
   <target name="clean" description="Cleans out compiled code.">
     <delete dir="${classes.dir}/com"/>
-    <delete file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java"/>
+    <delete file="${src.dir}/com/threerings/msoy/data/all/DeploymentConfig.java"/>
   </target>
 
   <!-- cleans out the compiled ActionScript code and caches -->

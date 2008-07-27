@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LoadListener;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 /**
  * Displays a thumbnail for a scene, or a default if none has been taken so far.

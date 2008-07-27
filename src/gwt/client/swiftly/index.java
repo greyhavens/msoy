@@ -6,10 +6,10 @@ package client.swiftly;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 import com.threerings.msoy.swiftly.gwt.SwiftlyServiceAsync;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import client.shell.Args;
 import client.shell.Page;

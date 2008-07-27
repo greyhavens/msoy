@@ -13,10 +13,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import com.threerings.gwt.ui.WidgetUtil;
 

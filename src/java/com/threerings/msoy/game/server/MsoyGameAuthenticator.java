@@ -21,12 +21,12 @@ import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.data.MsoyGameCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;

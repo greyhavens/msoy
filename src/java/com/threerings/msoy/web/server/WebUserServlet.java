@@ -32,6 +32,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
@@ -55,7 +56,6 @@ import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;

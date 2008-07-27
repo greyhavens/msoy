@@ -15,7 +15,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.util.AdminContext;

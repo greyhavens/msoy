@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.samskivert.io.StreamUtil;
-import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 

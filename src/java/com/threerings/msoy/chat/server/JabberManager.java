@@ -58,12 +58,12 @@ import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ContactEntry;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.chat.client.JabberService;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 

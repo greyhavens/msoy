@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.gwt.LaunchConfig;
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 

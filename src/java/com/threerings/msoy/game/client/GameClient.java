@@ -44,8 +44,8 @@ import com.threerings.toybox.client.ToyBoxDirector;
 import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 

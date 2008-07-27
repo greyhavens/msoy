@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;

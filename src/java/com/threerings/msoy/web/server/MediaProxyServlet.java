@@ -20,8 +20,8 @@ import org.apache.commons.io.IOUtils;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.web.client.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
 

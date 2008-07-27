@@ -31,6 +31,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.ServerMessages;
@@ -40,7 +41,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.ServiceException;
 

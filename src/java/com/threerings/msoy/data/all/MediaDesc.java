@@ -9,8 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
-
 /**
  * Contains information about a piece of media.
  */

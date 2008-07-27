@@ -34,6 +34,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.fora.gwt.CommentService;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
@@ -67,7 +68,6 @@ import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.world.server.WorldServlet;
 
-import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.WebUserService;
 

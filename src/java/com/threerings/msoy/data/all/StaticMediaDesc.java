@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.data.all;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.client.DeploymentConfig;
-
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).
@@ -45,8 +42,7 @@ public class StaticMediaDesc extends MediaDesc
     }
 
     /**
-     * Returns the media type for which we're obtaining the static default. For example {@link
-     * Item#MAIN_MEDIA}.
+     * Returns the media type for which we're obtaining the static default.
      */
     public String getMediaType ()
     {
