@@ -19,6 +19,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * Contains a member's profile data.
@@ -262,7 +263,7 @@ public class ProfileRecord extends PersistentRecord
     public MediaDesc getPhoto ()
     {
         return (photoHash != null) ?
-            new MediaDesc(photoHash, photoMimeType, photoConstraint) : Profile.DEFAULT_PHOTO;
+            new MediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
     }
 
     @Override // from Object

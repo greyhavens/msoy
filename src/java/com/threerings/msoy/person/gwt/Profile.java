@@ -5,21 +5,14 @@ package com.threerings.msoy.person.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * Contains all member profile data for display on the profile page.
  */
 public class Profile implements IsSerializable
 {
-    /** The default profile photo. */
-    public static final MediaDesc DEFAULT_PHOTO =
-        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
-                            // we know that we're 50x60
-                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
-
     /** The minimum length for a display name. */
     public static final int MIN_DISPLAY_NAME_LENGTH = 3;
 
@@ -42,7 +35,7 @@ public class Profile implements IsSerializable
     public static final byte SEX_FEMALE = 2;
 
     /** The the member's selected profile picture. */
-    public MediaDesc photo = DEFAULT_PHOTO;
+    public MediaDesc photo = MemberCard.DEFAULT_PHOTO;
 
     /** A member provided profile status. */
     public String headline;

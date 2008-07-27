@@ -23,6 +23,7 @@ import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ReferralRecord;
+import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -71,7 +72,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         playerObj.memberName = new VizMemberName(
             member.name, member.memberId,
-            (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
+            (precord == null) ? MemberCard.DEFAULT_PHOTO : precord.getPhoto());
 
         // configure various bits directly from their member record
         playerObj.humanity = member.humanity;
@@ -100,7 +101,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // our auth username has our assigned name and member id, so use those
         MemberName aname = (MemberName)_username;
         playerObj.memberName = new VizMemberName(
-            aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
+            aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
 
         // guests operate at the default new user humanity level
         playerObj.humanity = MsoyCodes.STARTING_HUMANITY;

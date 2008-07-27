@@ -6,7 +6,9 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.person.gwt.Profile;
 
 /**
@@ -62,6 +64,12 @@ public class MemberCard
         }
     }
 
+    /** The default profile photo. */
+    public static final MediaDesc DEFAULT_PHOTO =
+        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
+                            // we know that we're 50x60
+                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+
     /**
      * Compares two status records based on potential user interset. People in rooms are first (and
      * compare equally to other people in rooms to allow for a secondary sort key), people in games
@@ -91,7 +99,7 @@ public class MemberCard
     public MemberName name;
 
     /** The member's profile photo (or the default). */
-    public MediaDesc photo = Profile.DEFAULT_PHOTO;
+    public MediaDesc photo = DEFAULT_PHOTO;
 
     /** The member's headline, status, whatever you want to call it. */
     public String headline;

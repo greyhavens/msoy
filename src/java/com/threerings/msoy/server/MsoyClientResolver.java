@@ -21,10 +21,10 @@ import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -84,11 +84,11 @@ public class MsoyClientResolver extends CrowdClientResolver
             // our auth username has our assigned name and member id, so use those
             MemberName aname = (MemberName)_username;
             userObj.memberName = new VizMemberName(
-                aname.toString(), aname.getMemberId(), Profile.DEFAULT_PHOTO);
+                aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
-            userObj.memberName = new VizMemberName("", 0, Profile.DEFAULT_PHOTO);
+            userObj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
 
         } else {
             resolveMember(userObj);
@@ -112,7 +112,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         userObj.memberName = new VizMemberName(
             member.name, member.memberId,
-            (precord == null) ? Profile.DEFAULT_PHOTO : precord.getPhoto());
+            (precord == null) ? MemberCard.DEFAULT_PHOTO : precord.getPhoto());
         if (precord != null) {
             userObj.headline = precord.headline;
         }
