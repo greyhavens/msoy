@@ -1,6 +1,5 @@
 package com.kisgergely.gwt.canvas.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
