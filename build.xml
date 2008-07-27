@@ -993,6 +993,7 @@
   <target name="gclean">
     <delete dir=".gwt-cache"/>
     <delete dir="pages/msoy"/>
+    <delete dir="pages/frame"/>
     <delete dir="pages/msoy-aux"/>
     <delete dir="pages/.gwt-tmp"/>
     <delete file="${gsrc.dir}/msoy.gwt.xml"/>
