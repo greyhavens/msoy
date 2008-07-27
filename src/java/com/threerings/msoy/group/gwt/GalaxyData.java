@@ -1,13 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.group.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.web.data.GroupCard;
 
 /**
  * Contains information displayed on the Galaxy page.

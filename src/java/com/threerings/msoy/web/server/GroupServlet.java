@@ -48,18 +48,18 @@ import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupCodes;
-import com.threerings.msoy.group.data.GroupDetail;
-import com.threerings.msoy.group.data.GroupExtras;
-import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.gwt.GalaxyData;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.group.gwt.GroupMemberCard;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.web.client.GroupService;
-import com.threerings.msoy.web.data.GalaxyData;
-import com.threerings.msoy.web.data.GroupCard;
-import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;

@@ -1,7 +1,7 @@
 //
 // $Id: GroupCard.java 8844 2008-04-15 17:05:43Z nathan $
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.group.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

@@ -1,13 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.group.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * Contains the data that we need for the My Whirled views.

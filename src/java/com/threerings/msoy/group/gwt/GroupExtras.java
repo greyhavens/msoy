@@ -1,17 +1,16 @@
 //
 // $Id$
 
-package com.threerings.msoy.group.data;
+package com.threerings.msoy.group.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.io.Streamable;
 
 /**
  * Contains extra information about a group.  This should be used to hold information that is only
  * needed on the GroupView page itself, and not in other places that Groups are fetched.
  */
 public class GroupExtras
-    implements Streamable, IsSerializable
+    implements IsSerializable
 {
     /** The group's charter, or null if one has yet to be set. */
     public String charter;

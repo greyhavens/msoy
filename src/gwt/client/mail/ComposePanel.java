@@ -19,13 +19,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.person.data.GroupInvitePayload;
 import com.threerings.msoy.person.data.MailPayload;
 import com.threerings.msoy.person.data.PresentPayload;
 import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MemberService;

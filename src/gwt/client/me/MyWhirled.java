@@ -8,11 +8,11 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.group.gwt.MyWhirledData;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.person.data.FeedMessage;
 
-import com.threerings.msoy.web.data.MyWhirledData;
 
 import client.msgs.FeedPanel;
 

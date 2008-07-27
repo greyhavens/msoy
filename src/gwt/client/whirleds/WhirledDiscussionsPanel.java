@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.group.data.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Args;

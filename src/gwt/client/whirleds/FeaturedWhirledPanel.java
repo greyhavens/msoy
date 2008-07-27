@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.GroupCard;
 
 import client.shell.ShellMessages;
 import client.shell.WorldClient;

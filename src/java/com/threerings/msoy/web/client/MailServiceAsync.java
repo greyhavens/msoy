@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.person.data.ConvMessage;
 import com.threerings.msoy.person.data.MailPayload;
 

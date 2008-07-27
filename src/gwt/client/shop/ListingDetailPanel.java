@@ -21,8 +21,8 @@ import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.CostUpdatedException;
 
-import com.threerings.msoy.web.data.CostUpdatedException;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;

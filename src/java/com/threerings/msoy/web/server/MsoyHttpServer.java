@@ -37,12 +37,12 @@ import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
 import com.threerings.msoy.fora.server.IssueServlet;
 import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.client.MemberService;

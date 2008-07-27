@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.group.data;
+package com.threerings.msoy.group.gwt;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 
+import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
 
 /**

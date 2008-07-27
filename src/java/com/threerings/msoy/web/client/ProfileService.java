@@ -16,9 +16,9 @@ import com.threerings.msoy.person.data.Profile;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.group.gwt.GroupCard;
 
 import com.threerings.msoy.web.data.EmailContact;
-import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;

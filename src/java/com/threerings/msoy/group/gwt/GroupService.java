@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.group.gwt;
 
 import java.util.List;
 import java.util.Collection;
@@ -13,14 +13,8 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupDetail;
-import com.threerings.msoy.group.data.GroupExtras;
-import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
 
-import com.threerings.msoy.web.data.GalaxyData;
-import com.threerings.msoy.web.data.GroupCard;
-import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;

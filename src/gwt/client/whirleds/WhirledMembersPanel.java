@@ -15,10 +15,10 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupDetail;
-import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
-import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.group.gwt.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupMemberCard;
+import com.threerings.msoy.group.gwt.GroupService;
 
 import client.shell.Args;
 import client.shell.Page;

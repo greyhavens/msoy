@@ -17,9 +17,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.group.data.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupService;
 
-import com.threerings.msoy.web.client.GroupService;
 
 import client.util.Link;
 import client.util.MsoyCallback;

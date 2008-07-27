@@ -21,8 +21,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.data.GalaxyData;
-import com.threerings.msoy.web.data.GroupCard;
+import com.threerings.msoy.group.gwt.GalaxyData;
+import com.threerings.msoy.group.gwt.GroupCard;
 
 import client.shell.Args;
 import client.shell.Page;

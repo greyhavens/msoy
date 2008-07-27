@@ -22,7 +22,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.gwt.GroupExtras;
 
 import com.threerings.msoy.item.data.all.Item;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.group.data;
+package com.threerings.msoy.group.gwt;
 
 import com.threerings.msoy.web.data.MemberCard;
 

@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.GroupCard;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;

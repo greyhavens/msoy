@@ -27,8 +27,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.gwt.MyGroupCard;
 
-import com.threerings.msoy.web.data.MyGroupCard;
 
 import client.shell.Args;
 import client.shell.Page;

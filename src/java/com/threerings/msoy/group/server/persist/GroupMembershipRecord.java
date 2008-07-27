@@ -17,8 +17,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 
-import com.threerings.msoy.group.data.GroupMemberCard;
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupMemberCard;
 
 /**
  * Contains the details of person's membership in a group.

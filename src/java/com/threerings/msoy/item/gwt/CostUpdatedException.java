@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.item.gwt;
+
+import com.threerings.msoy.web.data.ServiceException;
 
 /**
  * An exception thrown by things that might have a cost associated with them.

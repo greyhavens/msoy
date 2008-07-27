@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.group.gwt;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,16 +9,10 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupDetail;
-import com.threerings.msoy.group.data.GroupExtras;
 import com.threerings.msoy.group.data.GroupMembership;
 
-import com.threerings.msoy.web.client.GroupService;
 
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.data.GalaxyData;
-import com.threerings.msoy.web.data.GroupCard;
-import com.threerings.msoy.web.data.MyGroupCard;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**

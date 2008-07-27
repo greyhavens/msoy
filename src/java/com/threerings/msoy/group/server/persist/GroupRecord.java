@@ -25,10 +25,10 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.GroupCard;
 
 import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupExtras;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupExtras;
 
 /**
  * Contains the details of a group.

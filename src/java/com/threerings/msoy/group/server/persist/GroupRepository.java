@@ -46,7 +46,6 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
@@ -59,6 +58,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.group.data.Group;
 import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupCard;
 
 import static com.threerings.msoy.Log.log;
 
