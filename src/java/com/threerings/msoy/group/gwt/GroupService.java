@@ -12,8 +12,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;

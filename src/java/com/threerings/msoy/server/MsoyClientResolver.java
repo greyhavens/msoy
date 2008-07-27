@@ -19,7 +19,7 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.data.Profile;
 import com.threerings.msoy.person.server.persist.MailRepository;

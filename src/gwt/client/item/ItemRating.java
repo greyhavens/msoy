@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

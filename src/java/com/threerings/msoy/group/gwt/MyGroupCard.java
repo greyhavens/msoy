@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**

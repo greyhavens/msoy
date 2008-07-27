@@ -13,8 +13,8 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership;
 
 /**
  * Contains the details of a group.

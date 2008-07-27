@@ -6,7 +6,7 @@ package client.whirleds;
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.fora.gwt.Issue;
-import com.threerings.msoy.group.data.Group;
+import com.threerings.msoy.group.data.all.Group;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;

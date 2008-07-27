@@ -37,8 +37,8 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerChatDispatcher;
 import com.threerings.msoy.peer.server.PeerChatProvider;
 
-import com.threerings.msoy.group.data.Group;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 

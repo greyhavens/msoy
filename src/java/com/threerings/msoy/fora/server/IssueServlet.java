@@ -29,7 +29,7 @@ import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.IssueRecord;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 

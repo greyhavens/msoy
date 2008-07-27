@@ -21,8 +21,8 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;

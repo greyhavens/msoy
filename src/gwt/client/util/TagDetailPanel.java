@@ -27,9 +27,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.TagCodes;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.CShell;

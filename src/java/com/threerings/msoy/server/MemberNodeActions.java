@@ -14,7 +14,7 @@ import com.threerings.stats.data.StatModifier;
 import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.Notification;

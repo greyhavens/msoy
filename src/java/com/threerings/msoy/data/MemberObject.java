@@ -20,7 +20,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ObserverInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.badge.data.BadgeSet;
 
 import com.threerings.msoy.data.all.ContactEntry;
