@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
@@ -63,6 +66,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.client.ItemService;
@@ -73,9 +77,7 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
-
 
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.WorldContext;

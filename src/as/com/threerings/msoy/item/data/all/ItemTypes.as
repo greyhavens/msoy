@@ -1,6 +1,11 @@
+//
+// $Id$
+
 package com.threerings.msoy.item.data.all {
 
-/** Collection of static constants and functions related to the type of an item. */
+/**
+ * Collection of static constants and functions related to the type of an item.
+ */
 public class ItemTypes
 {
     // WARNING: DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS

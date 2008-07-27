@@ -21,6 +21,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -30,7 +31,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.ItemLogic;

@@ -33,11 +33,11 @@ import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 

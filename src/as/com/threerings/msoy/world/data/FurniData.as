@@ -14,9 +14,9 @@ import com.threerings.io.Streamable;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class FurniData
     implements Cloneable, Hashable, Streamable, DSet_Entry

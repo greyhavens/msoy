@@ -5,9 +5,9 @@ package com.threerings.msoy.item.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains a smidgen of information on an item.

@@ -6,9 +6,9 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;

@@ -6,8 +6,8 @@ package com.threerings.msoy.world.data;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains published information about an actor in a scene (members and pets).

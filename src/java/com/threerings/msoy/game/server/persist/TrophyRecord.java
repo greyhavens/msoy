@@ -11,8 +11,8 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 import java.sql.Timestamp;

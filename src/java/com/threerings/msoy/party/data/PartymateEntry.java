@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.party.data;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.PeerEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.VizMemberName;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class PartymateEntry
     implements PeerEntry

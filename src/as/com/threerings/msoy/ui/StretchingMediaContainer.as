@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.ui {
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * A MediaContainer that will stretch its underlying image to take up the full area allotted to it
  * by the surrounding MediaWrapper.

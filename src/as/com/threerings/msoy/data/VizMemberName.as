@@ -7,7 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Exetnds MemberName with a profile photo.

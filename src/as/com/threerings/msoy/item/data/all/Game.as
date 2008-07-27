@@ -8,6 +8,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Extends Item with game info.
  */

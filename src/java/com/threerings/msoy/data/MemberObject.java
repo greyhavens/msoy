@@ -12,7 +12,6 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemListInfo;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.world.data.MemberInfo;
@@ -26,6 +25,7 @@ import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 

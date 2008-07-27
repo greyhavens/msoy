@@ -6,6 +6,8 @@ package com.threerings.msoy.item.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Represents an interactive piece of furniture. Something that lives permanently in a room but
  * which is interactive in some way.

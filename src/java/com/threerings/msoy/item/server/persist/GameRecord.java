@@ -12,8 +12,8 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameUtil;

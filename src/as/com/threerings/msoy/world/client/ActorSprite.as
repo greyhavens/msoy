@@ -8,7 +8,7 @@ import com.threerings.util.Util;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;

@@ -7,7 +7,7 @@ import flash.display.Loader;
 
 import com.threerings.flash.MediaContainer;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 public class MiniGameContainer extends MediaContainer
 {

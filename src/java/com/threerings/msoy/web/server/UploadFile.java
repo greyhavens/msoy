@@ -22,7 +22,7 @@ import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifie
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Wrap various file objects and provide useful methods for dealing with uploaded file data.

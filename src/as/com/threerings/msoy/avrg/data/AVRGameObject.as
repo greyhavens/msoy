@@ -15,7 +15,7 @@ import com.threerings.util.Iterator;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Holds game state for an AVRGame.

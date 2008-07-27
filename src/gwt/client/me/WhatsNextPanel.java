@@ -24,8 +24,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.MyWhirledData;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.images.next.NextImages;

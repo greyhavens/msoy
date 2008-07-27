@@ -10,11 +10,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
-
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains the basic data of a group.
@@ -90,7 +88,7 @@ public class Group
      */
     public static MediaDesc getDefaultGroupLogoMedia ()
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "group_logo",
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "photo", "group_logo",
                                    // we know that we're 66x60
                                    MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }

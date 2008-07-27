@@ -10,8 +10,8 @@ import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.GameState;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * The data shared between server, clients and agent for an AVR game.

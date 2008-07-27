@@ -5,8 +5,8 @@ package com.threerings.msoy.game.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains summary information for a game being displayed on the arcade page.

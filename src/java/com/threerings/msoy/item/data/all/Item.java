@@ -8,6 +8,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -176,7 +177,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public static MediaDesc getDefaultFurniMediaFor (byte itemType)
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
+        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
     }
 
     /**
@@ -185,8 +186,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public static MediaDesc getDefaultThumbnailMediaFor (byte itemType)
     {
-        return new StaticMediaDesc(
-            MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA, MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA,
+                                        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 
     /**

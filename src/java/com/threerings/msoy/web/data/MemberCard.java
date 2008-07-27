@@ -5,11 +5,9 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
-import com.threerings.msoy.person.gwt.Profile;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 /**
  * Contains a member's name, profile picture and other bits.
@@ -66,7 +64,7 @@ public class MemberCard
 
     /** The default profile photo. */
     public static final MediaDesc DEFAULT_PHOTO =
-        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
+        new StaticMediaDesc(MediaDesc.IMAGE_PNG, "photo", "profile_photo",
                             // we know that we're 50x60
                             MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 

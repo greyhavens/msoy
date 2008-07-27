@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Args;
 import client.shell.Page;

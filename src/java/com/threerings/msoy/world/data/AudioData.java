@@ -5,9 +5,9 @@ package com.threerings.msoy.world.data;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains information on background audio in a scene.
@@ -43,7 +43,6 @@ public class AudioData extends SimpleStreamableObject
         return itemId != 0;
     }
 
-    // documentation inherited
     @Override
     public boolean equals (Object other)
     {
@@ -55,7 +54,6 @@ public class AudioData extends SimpleStreamableObject
         return false;
     }
 
-    // documentation inherited
     @Override
     public String toString ()
     {
@@ -76,6 +74,5 @@ public class AudioData extends SimpleStreamableObject
 
     /** Media descriptor that represents invalid background audio (temporary). */
     protected static final MediaDesc invalidMedia =
-        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
-
+        new DefaultItemMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
 }

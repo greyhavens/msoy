@@ -21,9 +21,8 @@ import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 //import com.threerings.msoy.party.data.PartymateEntry;
 import com.threerings.msoy.data.all.PeerEntry;

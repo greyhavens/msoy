@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.game.gwt;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Extends {@link GameInfo} with information on a featured game.

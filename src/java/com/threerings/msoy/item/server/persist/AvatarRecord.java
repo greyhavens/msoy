@@ -8,9 +8,9 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Represents an uploaded avatar.

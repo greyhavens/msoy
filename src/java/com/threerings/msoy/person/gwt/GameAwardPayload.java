@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.person.gwt;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Contains information on an awarded trophy.

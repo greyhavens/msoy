@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.shell.Args;

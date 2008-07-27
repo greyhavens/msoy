@@ -16,9 +16,10 @@ import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 public class MsoyMediaContainer extends MediaContainer
     implements ContextMenuProvider
@@ -105,7 +106,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         var desc :MediaDesc;
         if (blocked) {
-            desc = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, Item.FURNITURE, "blocked");
+            desc = new DefaultItemMediaDesc(MediaDesc.IMAGE_JPEG, Item.FURNITURE, "blocked");
         } else {
             desc = _desc;
         }

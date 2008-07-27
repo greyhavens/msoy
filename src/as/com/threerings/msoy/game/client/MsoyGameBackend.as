@@ -79,7 +79,7 @@ import com.threerings.util.Log;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * We use a MsoyMediaContainer so that the headshot can be bleeped, but we wrap

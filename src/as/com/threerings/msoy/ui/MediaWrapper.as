@@ -7,7 +7,7 @@ import mx.core.Container;
 
 import com.threerings.flash.MediaContainer;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Wraps a MediaContainer into a UIComponent.

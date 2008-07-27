@@ -31,7 +31,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.ui.SimpleGrid;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -167,10 +166,8 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.VizMemberName;
-
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;

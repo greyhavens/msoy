@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data.all {
+package com.threerings.msoy.data.all {
 
 import flash.geom.Point;
 

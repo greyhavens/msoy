@@ -5,8 +5,8 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;

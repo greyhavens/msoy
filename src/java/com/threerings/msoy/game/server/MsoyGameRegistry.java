@@ -31,26 +31,25 @@ import com.threerings.parlor.game.data.GameCodes;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.bureau.data.ServerRegistryObject;
-
+import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.bureau.data.ServerRegistryObject;
+import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
@@ -76,7 +75,7 @@ public class MsoyGameRegistry
             this.gameId = TUTORIAL_GAME_ID;
             this.name = "Whirled Tutorial";
             this.config = "<avrg/>";
-            this.gameMedia = new StaticMediaDesc(
+            this.gameMedia = new DefaultItemMediaDesc(
                 MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
             // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
             this.thumbMedia = getDefaultThumbnailMediaFor(GAME);

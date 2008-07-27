@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyLocation;

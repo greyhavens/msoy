@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Represents an uploaded photograph for display in albumns or for use as a
  * profile picture.

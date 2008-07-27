@@ -22,7 +22,7 @@ import javax.swing.event.TreeSelectionListener;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.swiftly.client.ShutdownNotifier;
 import com.threerings.msoy.swiftly.client.SwiftlyApplication;

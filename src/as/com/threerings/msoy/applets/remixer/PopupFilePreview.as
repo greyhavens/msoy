@@ -40,7 +40,7 @@ import com.threerings.flex.PopUpUtil;
 
 import com.whirled.remix.data.EditableDataPack;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.DisplayCanvas;

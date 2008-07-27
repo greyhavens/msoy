@@ -7,9 +7,9 @@ import java.io.Serializable;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains metadata about a game for which a player is currently matchmaking.

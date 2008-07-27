@@ -23,7 +23,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 public class FriendRenderer extends HBox 
 {

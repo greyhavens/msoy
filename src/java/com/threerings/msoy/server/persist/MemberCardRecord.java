@@ -12,8 +12,8 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
 

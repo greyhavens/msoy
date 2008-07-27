@@ -14,13 +14,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.UberClientModes;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Toy;
 

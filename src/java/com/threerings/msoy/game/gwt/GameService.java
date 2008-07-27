@@ -8,8 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;

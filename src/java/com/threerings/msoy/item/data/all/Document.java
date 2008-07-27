@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * A digital item representing a simple text document.
  */

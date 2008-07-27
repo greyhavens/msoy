@@ -1,8 +1,9 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data.all;
+package com.threerings.msoy.data.all;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 /**
@@ -19,7 +20,7 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public StaticMediaDesc (byte mimeType, byte itemType, String mediaType)
+    public StaticMediaDesc (byte mimeType, String itemType, String mediaType)
     {
         this(mimeType, itemType, mediaType, NOT_CONSTRAINED);
     }
@@ -27,7 +28,7 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public StaticMediaDesc (byte mimeType, byte itemType, String mediaType, byte constraint)
+    public StaticMediaDesc (byte mimeType, String itemType, String mediaType, byte constraint)
     {
         super(null, mimeType);
         _itemType = itemType;
@@ -38,7 +39,7 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Returns the type of item for which we're providing static media.
      */
-    public byte getItemType ()
+    public String getItemType ()
     {
         return _itemType;
     }
@@ -55,10 +56,10 @@ public class StaticMediaDesc extends MediaDesc
     @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return DeploymentConfig.staticMediaURL +
-            Item.getTypeName(_itemType) + "/" + _mediaType + mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
+            mimeTypeToSuffix(mimeType);
     }
 
-    protected byte _itemType;
+    protected String _itemType;
     protected String _mediaType;
 }

@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Conversation;
 import com.threerings.msoy.web.data.MemberCard;
 

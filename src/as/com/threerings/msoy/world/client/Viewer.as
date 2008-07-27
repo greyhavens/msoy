@@ -15,8 +15,6 @@ import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.client.MsoyParameters;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 import com.threerings.msoy.data.UberClientModes;
 
 /**

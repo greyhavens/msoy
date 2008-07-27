@@ -27,8 +27,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import com.google.common.collect.ImmutableMap;
 
 import com.samskivert.util.StringUtil;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.s3.client.S3Connection;
 import com.threerings.s3.client.S3Exception;

@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.StringUtil;
 
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.ItemLogic;
 

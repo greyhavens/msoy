@@ -56,6 +56,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
@@ -67,7 +68,6 @@ import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.world.client.RoomService;

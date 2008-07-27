@@ -17,10 +17,10 @@ import com.threerings.whirled.data.SceneModel;
 
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
+import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
+import com.threerings.msoy.item.data.all.Item;
 
 public class MsoySceneModel extends SceneModel
 {
@@ -247,7 +247,8 @@ public class MsoySceneModel extends SceneModel
     {
         var decor :Decor = new Decor();
         decor.itemId = 0; // doesn't correspond to an object
-        decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
+        decor.furniMedia = new DefaultItemMediaDesc(
+            MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
         decor.type = Decor.IMAGE_OVERLAY;
         decor.depth = 400;
         decor.width = 800;

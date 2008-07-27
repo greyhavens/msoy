@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 public class FileItemUploadFile extends UploadFile
 {

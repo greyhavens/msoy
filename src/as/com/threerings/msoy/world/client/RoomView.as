@@ -47,7 +47,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.layout.RoomLayout;
 import com.threerings.msoy.world.client.layout.RoomLayoutFactory;

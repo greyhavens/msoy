@@ -5,9 +5,9 @@ package com.threerings.msoy.world.server.persist;
 
 import java.nio.ByteBuffer;
 
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Scene related utility methods.
@@ -37,8 +37,8 @@ public class SceneUtil
      */
     public static byte[] flattenMediaDesc (MediaDesc desc)
     {
-        if (desc instanceof StaticMediaDesc) {
-            StaticMediaDesc sdesc = (StaticMediaDesc)desc;
+        if (desc instanceof DefaultItemMediaDesc) {
+            DefaultItemMediaDesc sdesc = (DefaultItemMediaDesc)desc;
 
             // sanity check; if we later need to flatten other static types than furni, we can have
             // the type constant map to an integer and stuff that into the byte array as well
@@ -48,7 +48,7 @@ public class SceneUtil
             }
 
             ByteBuffer data = ByteBuffer.allocate(4);
-            data.asIntBuffer().put(sdesc.getItemType());
+            data.asIntBuffer().put(sdesc.getItemTypeCode());
             return data.array();
 
         } else {

@@ -22,8 +22,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;

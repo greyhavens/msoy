@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Hacktacular. Do not emulate. I should hide this class somewhere.

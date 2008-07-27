@@ -15,7 +15,6 @@ import com.threerings.msoy.badge.data.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -25,6 +24,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 

@@ -7,8 +7,8 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains published information about an actor in a scene (members and pets).

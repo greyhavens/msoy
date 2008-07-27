@@ -6,9 +6,9 @@ package com.threerings.msoy.group.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Detailed information on a single Group/Whirled for the "My Whirleds" page.

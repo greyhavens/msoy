@@ -7,7 +7,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Represents a friend connection.

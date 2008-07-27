@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Represents an avatar that's usable in the msoy system.
  */
@@ -19,7 +21,7 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultMemberAvatarMedia ()
     {
-        return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
+        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
     }
 
     /**
@@ -27,7 +29,7 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultGuestAvatarMedia ()
     {
-        return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
+        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
     }
 
     @Override // from Item
