@@ -21,7 +21,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Conversation;
-import com.threerings.msoy.person.gwt.Profile;
+import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -161,7 +161,7 @@ public class MailPanel extends VerticalPanel
             MediaDesc photo;
             Widget name;
             if (convo.other == null) {
-                photo = Profile.DEFAULT_PHOTO;
+                photo = MemberCard.DEFAULT_PHOTO;
                 name = MsoyUI.createLabel("<unknown>", null);
             } else {
                 photo = convo.other.photo;

@@ -27,7 +27,6 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.GroupInvitePayload;
 import com.threerings.msoy.person.gwt.MailPayload;
 import com.threerings.msoy.person.gwt.PresentPayload;
-import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
@@ -60,7 +59,7 @@ public class ComposePanel extends FlowPanel
         add(header);
 
         _contents = new SmartTable("Contents", 0, 5);
-        _contents.setWidget(0, 0, new ThumbBox(Profile.DEFAULT_PHOTO, null));
+        _contents.setWidget(0, 0, new ThumbBox(MemberCard.DEFAULT_PHOTO, null));
         _contents.getFlexCellFormatter().setRowSpan(0, 0, 5);
         _contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
