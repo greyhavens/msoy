@@ -13,7 +13,7 @@ import com.threerings.msoy.web.client.ItemServiceAsync;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;

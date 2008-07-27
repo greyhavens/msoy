@@ -4,27 +4,27 @@
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.xml.XML"/>
 
-  <public path="public"/>
-  <source path="client"/>
   <source path="org/gwtwidgets/client"/>
   <source path="com/kisgergely/gwt/canvas/client"/>
-  <source path="com/threerings/presents/dobj"/>
   <source path="com/threerings/io"/>
   <source path="com/threerings/gwt"/>
   <source path="com/threerings/util"/>
+  <source path="com/threerings/presents/dobj"/>
+  <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/data/all"/>
   <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/data/gwt"/>
+  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/admin/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/group/data"/>
   <source path="com/threerings/msoy/person/data"/>
   <source path="com/threerings/msoy/game/data/all"/>
-  <source path="com/threerings/msoy/web/client"/>
-  <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/underwire/web/client"/>
   <source path="com/threerings/underwire/web/data"/>
+  <source path="com/threerings/underwire/web/client"/>
   <source path="com/threerings/underwire/gwt/client"/>
+  <source path="client"/>
+  <public path="public"/>
 
   <entry-point class="client.shell.Application"/>
 

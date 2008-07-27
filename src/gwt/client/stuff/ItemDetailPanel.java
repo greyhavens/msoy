@@ -17,8 +17,8 @@ import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.ItemService;

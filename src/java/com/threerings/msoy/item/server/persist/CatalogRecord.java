@@ -21,8 +21,8 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ListingCard;
 
-import com.threerings.msoy.item.data.gwt.CatalogListing;
-import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.ItemDetail;
 
 /**
  * Represents a catalog listing of an item.

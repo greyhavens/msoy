@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data.gwt;
+package com.threerings.msoy.item.gwt;
 
 import java.util.Date;
 
@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 /**
  * Represents a catalog listing of an item.

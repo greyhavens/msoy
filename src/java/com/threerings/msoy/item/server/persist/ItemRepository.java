@@ -67,7 +67,7 @@ import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogListing;
 
 import static com.threerings.msoy.Log.log;
 

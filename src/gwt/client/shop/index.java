@@ -6,7 +6,7 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 
