@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.UberClientModes;

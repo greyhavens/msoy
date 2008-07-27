@@ -1077,27 +1077,21 @@ img, embed, applet, object {
   width: 300px;
 }
 
-.itemBox {
+.clickBox {
   border: 1px solid #CCCCCC;
   margin: 5px;
   padding: 5px; /* TODO: IE won't like */
 }
 
-.itemBox .Name, .itemBox .Creator {
+.clickBox .Label {
   white-space: nowrap;
   width: 110px;
   overflow: hidden;
 }
 
-.itemBox .Name {
+.clickBox .Name {
   font-size: 14px;
   padding-top: 5px;
-}
-
-.itemBox .Creator {
-  font-size: 12px;
-  padding-top: 2px;
-  color: #AABDC8;
 }
 
 .stuffNaviBar {

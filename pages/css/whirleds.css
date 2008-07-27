@@ -400,11 +400,11 @@
   margin: 0px 10px;
 }
 
-.galaxy .itemBox .Name {
+.galaxy .clickBox .Name {
   text-align: center;
 }
 
-.galaxy .itemBox .Population {
+.galaxy .clickBox .Population {
   font-size: 12px;
 }
 

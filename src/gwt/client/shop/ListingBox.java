@@ -10,9 +10,9 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import client.item.ItemBox;
 import client.shell.Args;
 import client.shell.Page;
-import client.ui.ItemBox;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 

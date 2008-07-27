@@ -170,6 +170,12 @@
   background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
 }
 
+.catalogPanel .itemBox .Creator {
+  font-size: 12px;
+  padding-top: 2px;
+  color: #AABDC8;
+}
+
 .catalogPanel .itemBox .Rating {
   width: 60px;
 }

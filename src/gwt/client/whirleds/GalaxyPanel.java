@@ -26,7 +26,7 @@ import com.threerings.msoy.group.gwt.GroupCard;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.ui.ItemBox;
+import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -211,18 +211,18 @@ public class GalaxyPanel extends VerticalPanel
         void loadModel (MsoyCallback<List<GroupCard>> callback);
     }
 
-    protected class GroupWidget extends ItemBox
+    protected class GroupWidget extends ClickBox
     {
         public GroupWidget (GroupCard group) {
             super(group.logo, group.name.toString(), Page.WHIRLEDS,
-                  Args.compose("d", group.name.getGroupId()), false);
+                  Args.compose("d", group.name.getGroupId()));
             int row = getRowCount();
             if (group.population == 0) {
-                setHTML(row, 0, "&nbsp;");
+                setHTML(row, 0, "&nbsp;", 1, "Population");
             } else {
-                setText(row, 0, CWhirleds.msgs.galaxyMemberCount("" + group.population));
+                String popstr = CWhirleds.msgs.galaxyMemberCount("" + group.population);
+                setText(row, 0, popstr, 1, "Population");
             }
-            getFlexCellFormatter().setStyleName(row, 0, "Population");
         }
     }
 
