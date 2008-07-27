@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.game.gwt.GameDetail;
 
 /**
  * Contains details on a single game "title" including the development and published game item ids

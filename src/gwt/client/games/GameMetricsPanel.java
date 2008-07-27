@@ -14,8 +14,8 @@ import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameMetrics;
+import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameMetrics;
 
 import client.util.ClickCallback;
 import client.util.MsoyUI;

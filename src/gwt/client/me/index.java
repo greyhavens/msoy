@@ -7,8 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.web.client.GameService;
-import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WorldService;

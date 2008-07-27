@@ -12,10 +12,10 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.client.WorldServiceAsync;
-import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.shell.Application;
 import client.shell.Args;

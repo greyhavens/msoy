@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.GameInfo;
 
 import client.shell.Args;
 import client.shell.Page;

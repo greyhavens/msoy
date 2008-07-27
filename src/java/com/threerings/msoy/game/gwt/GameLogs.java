@@ -1,7 +1,7 @@
 //
 // $Id: GameLogs.java 8844 2008-04-15 17:05:43Z nathan $
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.game.gwt;
 
 import java.util.Date;
 

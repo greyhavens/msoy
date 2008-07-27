@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.LandingData;
 

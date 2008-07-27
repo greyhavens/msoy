@@ -1,20 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.game.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.ArcadeData;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
-import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameInfo;
-import com.threerings.msoy.web.data.GameLogs;
-import com.threerings.msoy.web.data.GameMetrics;
-import com.threerings.msoy.web.data.PlayerRating;
-import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.game.data.all.Trophy;

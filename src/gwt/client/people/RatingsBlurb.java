@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.GameRating;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;

@@ -8,9 +8,9 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.ServiceException;

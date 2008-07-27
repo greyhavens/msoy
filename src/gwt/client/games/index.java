@@ -6,8 +6,8 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.web.client.GameService;
-import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;

@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.web.data.GameDetail;
 
 import client.item.ItemRating;
 import client.shell.Args;

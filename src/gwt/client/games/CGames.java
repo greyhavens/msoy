@@ -3,7 +3,7 @@
 
 package client.games;
 
-import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.CShell;
 

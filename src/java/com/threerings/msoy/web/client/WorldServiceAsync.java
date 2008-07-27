@@ -9,10 +9,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.client.WorldService;
 
+import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.person.data.FeedMessage;
 
 import com.threerings.msoy.web.data.LandingData;
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.RoomInfo;
 import com.threerings.msoy.web.data.WebIdent;

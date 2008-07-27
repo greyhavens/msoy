@@ -14,8 +14,8 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;

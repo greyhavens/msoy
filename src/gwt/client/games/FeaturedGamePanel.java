@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;

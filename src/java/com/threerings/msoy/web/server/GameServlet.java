@@ -48,6 +48,15 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.gwt.ArcadeData;
+import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.GameLogs;
+import com.threerings.msoy.game.gwt.GameMetrics;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.PlayerRating;
+import com.threerings.msoy.game.gwt.TrophyCase;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
@@ -61,19 +70,10 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 
-import com.threerings.msoy.web.client.GameService;
-import com.threerings.msoy.web.data.ArcadeData;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
-import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameInfo;
-import com.threerings.msoy.web.data.GameLogs;
-import com.threerings.msoy.web.data.GameMetrics;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.PlaceCard;
-import com.threerings.msoy.web.data.PlayerRating;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.TrophyCase;
 import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;

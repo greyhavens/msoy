@@ -59,6 +59,8 @@ import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
@@ -78,11 +80,9 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.WorldService;
-import com.threerings.msoy.web.data.FeaturedGameInfo;
 import com.threerings.msoy.web.data.GalaxyData;
 import com.threerings.msoy.web.data.GroupCard;
 import com.threerings.msoy.web.data.LandingData;
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.MyWhirledData;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.RoomInfo;

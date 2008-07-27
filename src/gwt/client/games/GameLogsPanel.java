@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.msoy.web.data.GameDetail;
-import com.threerings.msoy.web.data.GameLogs;
+import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameLogs;
 
 import client.util.MsoyUI;
 

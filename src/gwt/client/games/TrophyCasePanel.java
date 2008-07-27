@@ -5,7 +5,7 @@ package client.games;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.web.data.TrophyCase;
+import com.threerings.msoy.game.gwt.TrophyCase;
 
 import client.shell.Args;
 import client.shell.Frame;

@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.web.data.PlayerRating;
 
 import client.util.Link;
 import client.util.MsoyUI;

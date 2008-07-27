@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.GameDetail;
+import com.threerings.msoy.game.gwt.GameDetail;
 
 import client.util.MsoyCallback;
 import client.util.MsoyUI;
