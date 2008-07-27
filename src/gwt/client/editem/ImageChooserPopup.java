@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.editem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +27,12 @@ import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 
-import client.editem.EditemMessages;
-import client.editem.EditorHost;
 
 import client.ui.MsoyUI;
+import client.util.MediaUploader;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
+import client.util.MediaUploader.Listener;
 
 import client.shell.CShell;
 import client.shell.Frame;

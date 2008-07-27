@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.msgs;
 
 import java.util.Date;
 
@@ -21,6 +21,8 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.shell.Page;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -76,7 +78,8 @@ public class MessagePanel extends FlexTable
         scroller.addStyleName("Scroller");
         if (textIsHTML()) {
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
-            text = text.replaceAll("href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
+            text = text.replaceAll(
+                "href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
             scroller.add(new HTML(text));
         } else {
             scroller.add(MsoyUI.createRestrictedHTML(text));

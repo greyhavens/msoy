@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.msgs;
 
 import java.util.List;
 
@@ -23,7 +23,8 @@ import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.fora.gwt.CommentService;
 import com.threerings.msoy.fora.gwt.CommentServiceAsync;
 
-import client.msgs.ComplainPopup;
+import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.MsoyCallback;

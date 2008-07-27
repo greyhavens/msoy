@@ -44,8 +44,8 @@ public class LevelPackEditor extends SubItemEditor
     {
         // level packs' furni media are their primary media
         addSpacer();
-        MediaUploader upper = createUploader(
-            Item.FURNI_MEDIA, TYPE_ANY, MediaUploader.NORMAL, new MediaUpdater() {
+        ItemMediaUploader upper = createUploader(
+            Item.FURNI_MEDIA, TYPE_ANY, ItemMediaUploader.NORMAL, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _item.furniMedia = desc;

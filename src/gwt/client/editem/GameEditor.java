@@ -167,7 +167,7 @@ public class GameEditor extends ItemEditor
         }), _emsgs.gameTip());
 
         // add a tab for uploading the game screenshot
-        MediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
+        ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
                     return _emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
@@ -203,10 +203,10 @@ public class GameEditor extends ItemEditor
                 return null;
             }
         };
-        MediaUploader serverMediaUploader = createUploader(
+        ItemMediaUploader serverMediaUploader = createUploader(
             Game.SERVER_CODE_MEDIA,
             TYPE_CODE,
-            MediaUploader.NORMAL,
+            ItemMediaUploader.NORMAL,
             serverMediaUpdater);
         addRow(
             _emsgs.gameServerMediaLabel(),

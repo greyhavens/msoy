@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.world.gwt.RoomInfo;
 
-import client.shell.CommentsPanel;
+import client.msgs.CommentsPanel;
 import client.shell.Frame;
 import client.ui.StyledTabPanel;
 import client.util.Link;

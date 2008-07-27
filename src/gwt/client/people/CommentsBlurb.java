@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.person.gwt.ProfileService;
 
-import client.shell.CommentsPanel;
+import client.msgs.CommentsPanel;
 import client.shell.ShellMessages;
 
 /**

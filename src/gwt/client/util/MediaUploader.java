@@ -4,6 +4,7 @@
 package client.util;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -17,8 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.msoy.data.all.MediaDesc;
 
-import client.editem.EditemMessages;
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 
 /**
@@ -140,7 +141,7 @@ public class MediaUploader extends FormPanel
      */
     protected static void uploadError ()
     {
-        MsoyUI.error(_emsgs.errUploadError());
+        MsoyUI.error(_cmsgs.errUploadError());
     }
 
     /**
@@ -149,7 +150,7 @@ public class MediaUploader extends FormPanel
      */
     protected static void uploadTooLarge ()
     {
-        MsoyUI.error(_emsgs.errUploadTooLarge());
+        MsoyUI.error(_cmsgs.errUploadTooLarge());
     }
 
     /**
@@ -173,8 +174,7 @@ public class MediaUploader extends FormPanel
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected static HashMap<String, MediaUploader> _uploaders =
-        new HashMap<String, MediaUploader>();
+    protected static Map<String, MediaUploader> _uploaders = new HashMap<String, MediaUploader>();
 
-    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

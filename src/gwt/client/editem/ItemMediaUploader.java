@@ -26,9 +26,10 @@ import client.ui.MsoyUI;
 import client.util.MediaUtil;
 
 /**
- * Helper class, used in ItemEditor.
+ * Helper class, used in ItemEditor. TODO: this should be removed and we should switch to the new
+ * general purpose MediaUploader in util.
  */
-public class MediaUploader extends FlexTable
+public class ItemMediaUploader extends FlexTable
 {
     public static final int NORMAL = 0;
     public static final int THUMBNAIL = 1;
@@ -42,7 +43,7 @@ public class MediaUploader extends FlexTable
      * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (String mediaId, String type, int mode, ItemEditor.MediaUpdater updater)
+    public ItemMediaUploader (String mediaId, String type, int mode, ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
         setCellPadding(0);

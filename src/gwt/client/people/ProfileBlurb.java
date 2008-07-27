@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.gwt.ProfileService;
 
+import client.editem.ImageChooserPopup;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
@@ -36,7 +37,6 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.FlashClients;
-import client.util.ImageChooserPopup;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;

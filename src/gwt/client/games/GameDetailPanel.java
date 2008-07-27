@@ -19,8 +19,8 @@ import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.item.data.all.Game;
 
 import client.item.ItemRating;
+import client.msgs.CommentsPanel;
 import client.shell.Args;
-import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
 import client.ui.StyledTabPanel;

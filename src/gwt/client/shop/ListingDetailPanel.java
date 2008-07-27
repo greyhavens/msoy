@@ -25,9 +25,9 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
+import client.msgs.CommentsPanel;
 import client.shell.Application;
 import client.shell.Args;
-import client.shell.CommentsPanel;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;

@@ -372,9 +372,9 @@ public abstract class ItemEditor extends FlexTable
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
      */
-    protected MediaUploader createMainUploader (String type, boolean thumb, MediaUpdater updater)
+    protected ItemMediaUploader createMainUploader (String type, boolean thumb, MediaUpdater updater)
     {
-        int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
+        int mode = thumb ? ItemMediaUploader.NORMAL_PLUS_THUMBNAIL : ItemMediaUploader.NORMAL;
         return createUploader(Item.MAIN_MEDIA, type, mode, updater);
     }
 
@@ -382,34 +382,34 @@ public abstract class ItemEditor extends FlexTable
      * This should be called by item editors that are used for editing media that has an additional
      * piece of media in addition to main, furni and thumbnail.
      */
-    protected MediaUploader createAuxUploader (String type, MediaUpdater updater)
+    protected ItemMediaUploader createAuxUploader (String type, MediaUpdater updater)
     {
-        return createUploader(Item.AUX_MEDIA, type, MediaUploader.NORMAL, updater);
+        return createUploader(Item.AUX_MEDIA, type, ItemMediaUploader.NORMAL, updater);
     }
 
     /**
      * This should be called if item editors want to create a custom furni uploader.
      */
-    protected MediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
+    protected ItemMediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
     {
-        int mode = thumb ? MediaUploader.NORMAL_PLUS_THUMBNAIL : MediaUploader.NORMAL;
+        int mode = thumb ? ItemMediaUploader.NORMAL_PLUS_THUMBNAIL : ItemMediaUploader.NORMAL;
         return createUploader(Item.FURNI_MEDIA, TYPE_FLASH, mode, updater);
     }
 
     /**
      * This should be called if item editors want to create a custom thumbnail uploader.
      */
-    protected MediaUploader createThumbUploader (MediaUpdater updater)
+    protected ItemMediaUploader createThumbUploader (MediaUpdater updater)
     {
-        return createUploader(Item.THUMB_MEDIA, TYPE_IMAGE, MediaUploader.THUMBNAIL, updater);
+        return createUploader(Item.THUMB_MEDIA, TYPE_IMAGE, ItemMediaUploader.THUMBNAIL, updater);
     }
 
     /**
      * Creates and configures a media uploader.
      */
-    protected MediaUploader createUploader (String id, String type, int mode, MediaUpdater updater)
+    protected ItemMediaUploader createUploader (String id, String type, int mode, MediaUpdater updater)
     {
-        MediaUploader uploader = new MediaUploader(id, type, mode, updater);
+        ItemMediaUploader uploader = new ItemMediaUploader(id, type, mode, updater);
         _uploaders.put(id, uploader);
         return uploader;
     }
@@ -419,7 +419,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void setUploaderMedia (String id, MediaDesc desc)
     {
-        MediaUploader uploader = _uploaders.get(id);
+        ItemMediaUploader uploader = _uploaders.get(id);
         if (uploader != null) {
             uploader.setMedia(desc);
         }
@@ -469,7 +469,7 @@ public abstract class ItemEditor extends FlexTable
     protected void setHash (String id, String mediaHash, int mimeType, int constraint,
                             int width, int height)
     {
-        MediaUploader mu = _uploaders.get(id);
+        ItemMediaUploader mu = _uploaders.get(id);
         if (mu == null) {
             CShell.log("Got setHash() request for unknown uploader [id=" + id + "].");
             return;
@@ -656,7 +656,7 @@ public abstract class ItemEditor extends FlexTable
     protected LimitedTextArea _description;
     protected Button _esubmit;
 
-    protected HashMap<String, MediaUploader> _uploaders = new HashMap<String, MediaUploader>();
+    protected HashMap<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
 
     protected static ItemEditor _singleton;
 

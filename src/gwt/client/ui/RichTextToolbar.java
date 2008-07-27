@@ -45,7 +45,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.ShellMessages;
-import client.util.ImageChooserPopup;
+import client.editem.ImageChooserPopup;
 import client.images.editor.RichTextToolbarImages;
 
 /**
