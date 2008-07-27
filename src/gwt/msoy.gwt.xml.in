@@ -34,7 +34,7 @@
 
   <entry-point class="client.shell.Application"/>
 
-  <replace-with class="client.util.PopupImplMozillaHack">
+  <replace-with class="client.ui.PopupImplMozillaHack">
     <when-type-is class="com.google.gwt.user.client.ui.impl.PopupImpl"/>
     <any>
       <when-property-is name="user.agent" value="gecko"/>
