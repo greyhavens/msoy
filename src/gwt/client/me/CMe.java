@@ -5,7 +5,7 @@ package client.me;
 
 import client.msgs.CMsgs;
 
-import com.threerings.msoy.web.client.WorldServiceAsync;
+import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 /**
  * Extends {@link CShell} and provides me-specific services.

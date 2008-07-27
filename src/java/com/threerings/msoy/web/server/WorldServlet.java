@@ -55,6 +55,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
@@ -82,7 +83,6 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.client.WorldService;
 import com.threerings.msoy.web.data.LandingData;
 import com.threerings.msoy.web.data.PlaceCard;
 import com.threerings.msoy.web.data.RoomInfo;

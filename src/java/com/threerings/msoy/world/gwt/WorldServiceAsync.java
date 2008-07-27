@@ -1,13 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.world.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.client.WorldService;
 
 import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.group.gwt.MyWhirledData;

@@ -11,10 +11,10 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
-import com.threerings.msoy.web.client.WorldService;
-import com.threerings.msoy.web.client.WorldServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.world.gwt.WorldService;
+import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.games.CGames;
 import client.msgs.MsgsEntryPoint;

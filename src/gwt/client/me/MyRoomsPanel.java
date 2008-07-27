@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.web.client.WorldService;
+import com.threerings.msoy.world.gwt.WorldService;
 
 import client.shell.Page;
 import client.util.Link;

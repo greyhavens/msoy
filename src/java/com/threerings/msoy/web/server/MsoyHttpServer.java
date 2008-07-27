@@ -49,7 +49,7 @@ import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WorldService;
+import com.threerings.msoy.world.gwt.WorldService;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
