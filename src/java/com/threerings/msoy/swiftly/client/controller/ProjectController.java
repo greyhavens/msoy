@@ -679,25 +679,25 @@ public class ProjectController
         _docModel.addDocument(_requestFactory.generateId(), newElement, this);
     }
 
-    /**
-     * Adds a directory to the project.
-     */
-    @Deprecated // not yet used, possibly remove for now
-    private void addDirectory ()
-    {
-        PathElement parent = _projectPanel.getCurrentParent();
-        if (parent == null) {
-            _notifier.showError(_translator.xlate("e.directory_no_parent"));
-        }
+    // not yet used, possibly remove
+//     /**
+//      * Adds a directory to the project.
+//      */
+//     private void addDirectory ()
+//     {
+//         PathElement parent = _projectPanel.getCurrentParent();
+//         if (parent == null) {
+//             _notifier.showError(_translator.xlate("e.directory_no_parent"));
+//         }
 
-        // prompt the user for the name of the path element
-        String name = _window.showSelectPathElementNameDialog(PathElement.Type.DIRECTORY);
-        if (name == null) {
-            return; // if the user hit cancel do no more
-        }
-        // PathElement element = PathElement.createDirectory(name, parent);
-        // _docModel.addPathElement(element, this);
-    }
+//         // prompt the user for the name of the path element
+//         String name = _window.showSelectPathElementNameDialog(PathElement.Type.DIRECTORY);
+//         if (name == null) {
+//             return; // if the user hit cancel do no more
+//         }
+//         PathElement element = PathElement.createDirectory(name, parent);
+//         _docModel.addPathElement(element, this);
+//     }
 
     /**
      * Removes a document [referenced by a path element] from the project.

@@ -143,7 +143,8 @@ public class ItemServlet extends MsoyServiceServlet
 
         final String fname = newName;
         ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
-            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+            public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
+                              ItemRepository<ItemRecord, ?, ?, ?> repo)
                 throws PersistenceException
             {
                 if (StringUtil.isBlank(fname) || fname.equals(orig.name)) {
@@ -708,7 +709,8 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
-            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+            public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
+                              ItemRepository<ItemRecord, ?, ?, ?> repo)
                 throws PersistenceException
             {
                 if (item == null) {
@@ -743,7 +745,7 @@ public class ItemServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemIdent.type);
         try {
             // load up the old version of the item
-            CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
+            CloneRecord<ItemRecord> record = repo.loadCloneRecord(itemIdent.itemId);
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
@@ -787,7 +789,8 @@ public class ItemServlet extends MsoyServiceServlet
      */
     protected static interface CloneEditOp
     {
-        public void doOp (CloneRecord record, ItemRecord orig, ItemRepository repo)
+        public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
+                          ItemRepository<ItemRecord, ?, ?, ?> repo)
             throws PersistenceException;
     }
 

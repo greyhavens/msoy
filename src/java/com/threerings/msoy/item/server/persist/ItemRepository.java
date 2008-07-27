@@ -666,7 +666,7 @@ public abstract class ItemRepository<
      * Updates a clone item's override media in the database. This is done when we remix.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneMedia (CloneRecord cloneRec)
+    public void updateCloneMedia (CloneRecord<?> cloneRec)
         throws PersistenceException
     {
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -683,7 +683,7 @@ public abstract class ItemRepository<
      * Updates a clone item's override name in the database.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneName (CloneRecord cloneRec)
+    public void updateCloneName (CloneRecord<?> cloneRec)
         throws PersistenceException
     {
         cloneRec.lastTouched = new Timestamp(System.currentTimeMillis());

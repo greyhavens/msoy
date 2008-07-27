@@ -23,9 +23,10 @@ public class ProjectS3Storage implements ProjectStorage
     public ProjectS3Storage (SwiftlyProject project, S3StorageConnectionFactory connectionFactory,
     		S3StorageLockManager lockMgr, String storageBucket)
     {
-        _factory = connectionFactory;
-        _lockMgr = lockMgr;
-        _bucket = storageBucket;
+// TODO
+//        _factory = connectionFactory;
+//        _lockMgr = lockMgr;
+//        _bucket = storageBucket;
     }
 
     public void deleteDocument (PathElement pathElement, String logMessage)
@@ -68,11 +69,11 @@ public class ProjectS3Storage implements ProjectStorage
     }
 
     /** S3Connection factory. */
-    private final S3StorageConnectionFactory _factory;
+//    private final S3StorageConnectionFactory _factory;
 
     /** S3 Lock Manager. */
-    private final S3StorageLockManager _lockMgr;
+//    private final S3StorageLockManager _lockMgr;
 
     /** S3 storage bucket. */
-    private final String _bucket;
+//    private final String _bucket;
 }

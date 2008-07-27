@@ -3,6 +3,9 @@
 
 package client.stuff;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -57,7 +60,7 @@ public class ItemPanel extends VerticalPanel
         }
         _filters.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                showInventory(0, FILTERS[_filters.getSelectedIndex()]);
+                showInventory(0, FILTERS.get(_filters.getSelectedIndex()));
             }
         });
 
@@ -230,29 +233,29 @@ public class ItemPanel extends VerticalPanel
         CStuff.msgs.ipfUsed()
     };
 
-    protected static final Predicate[] FILTERS = {
-        new Predicate.TRUE<Item>(), // show all
-        new Predicate<Item>() { // uploaded
+    protected static final List<Predicate<Item>> FILTERS = new ArrayList<Predicate<Item>>(); {
+        FILTERS.add(new Predicate.TRUE<Item>()); // show all
+        FILTERS.add(new Predicate<Item>() { // uploaded
             public boolean isMatch (Item item) {
                 return item.sourceId == 0;
             }
-        },
-        new Predicate<Item>() { // purchased
+        });
+        FILTERS.add(new Predicate<Item>() { // purchased
             public boolean isMatch (Item item) {
                 return item.sourceId != 0;
             }
-        },
-        new Predicate<Item>() { // unused
+        });
+        FILTERS.add(new Predicate<Item>() { // unused
             public boolean isMatch (Item item) {
                 return !item.isUsed();
             }
-        },
-        new Predicate<Item>() { // used
+        });
+        FILTERS.add(new Predicate<Item>() { // used
             public boolean isMatch (Item item) {
                 return item.isUsed();
             }
-        }
-    };
+        });
+    }
 
     protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
         29 /* grid navi */ + 20 /* margin */;

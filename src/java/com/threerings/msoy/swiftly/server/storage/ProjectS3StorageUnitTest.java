@@ -18,7 +18,7 @@ public class ProjectS3StorageUnitTest {
 
     @Test
     public void testSomething () {
-
+        assert(_storage != null); // TODO
     }
 
     /** Our test storage instance. */

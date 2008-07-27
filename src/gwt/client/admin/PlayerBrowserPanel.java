@@ -267,7 +267,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             if (_result.invitees == null) {
                 return;
             }
-            _rows = new Object[_result.invitees.size()];
+            _rows = new Element[_result.invitees.size()];
             int ii = 0;
             Iterator iter = _result.invitees.iterator();
             while (iter.hasNext()) {
@@ -342,16 +342,16 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getRowFormatter().removeStyleName(rowCount-1, "Bottom");
             Element table = getBodyElement();
             for (int ii = 0; ii < _rows.length; ii++) {
-                DOM.removeChild(table, (Element) _rows[ii]);
+                DOM.removeChild(table, _rows[ii]);
             }
             Arrays.sort(_rows, new RowComparator(column, type, order));
             for (int ii = 0; ii < _rows.length; ii++) {
-                DOM.appendChild(table, (Element) _rows[ii]);
+                DOM.appendChild(table, _rows[ii]);
             }
             getRowFormatter().addStyleName(rowCount-1, "Bottom");
         }
 
-        protected class RowComparator implements Comparator
+        protected class RowComparator implements Comparator<Element>
         {
             public static final int SORT_TYPE_STRING = 1;
             public static final int SORT_TYPE_INT = 2;
@@ -375,15 +375,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     other._sortOrder == _sortOrder;
             }
 
-            public int compare (Object o1, Object o2)
+            public int compare (Element o1, Element o2)
             {
-                if (!(o1 instanceof Element) || !(o2 instanceof Element)) {
-                    CAdmin.log("Received non-Element when sorting player list! " +
-                        "|" + o1 + "|" + o2 + "|");
-                    return 0;
-                }
-                String s1 = getCellContents((Element) o1);
-                String s2 = getCellContents((Element) o2);
+                String s1 = getCellContents(o1);
+                String s2 = getCellContents(o2);
 
                 int result = 0;
                 if (_sortType == SORT_TYPE_INT) {
@@ -418,12 +413,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected static final int USED_INVITES_COLUMN = 2;
         protected static final int TOTAL_INVITES_COLUMN = 3;
 
-        // Something super weird is going on here (possibly a bug with the GWT compiler).
-        // This array holds only Elements, but if it is declared as Element[], then the
-        // comparator's compare() method fails when checking if the objects it receives are
-        // instanceof Element.  If the array is declared as Object[], and every time an
-        // element is accessed it is casted to Element, everything works fine.
-        protected Object[] _rows;
+        protected Element[] _rows;
         protected MemberInviteResult _result;
         protected Label _activeLabel, _activeHeader;
         protected Map<Integer, Label> _memberIds = new HashMap<Integer, Label>();
