@@ -7,8 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;

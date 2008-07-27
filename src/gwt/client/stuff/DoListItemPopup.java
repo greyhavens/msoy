@@ -21,8 +21,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.DynamicMessages;
 import client.shell.Frame;

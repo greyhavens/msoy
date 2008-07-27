@@ -13,8 +13,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.web.data.CatalogQuery;
 import com.threerings.msoy.web.data.ListingCard;
 

@@ -36,9 +36,9 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
 import com.threerings.msoy.fora.server.IssueServlet;
+import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.GameService;
