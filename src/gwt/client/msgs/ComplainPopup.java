@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 import client.shell.ShellMessages;
-import client.util.BorderedDialog;
-import client.util.MsoyUI;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
 
 /**
  * Displays a popup for complaining about a message.

@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays an admin dashboard with various server status information and administrative

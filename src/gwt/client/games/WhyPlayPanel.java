@@ -6,7 +6,7 @@ package client.games;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays some reasons to play games.

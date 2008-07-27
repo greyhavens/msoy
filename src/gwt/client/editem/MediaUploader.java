@@ -22,8 +22,8 @@ import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Helper class, used in ItemEditor.

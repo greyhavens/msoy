@@ -17,10 +17,10 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
+import client.ui.RowPanel;
+import client.ui.ThumbBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.RowPanel;
-import client.util.ThumbBox;
 
 /**
  * An interface for dealing with flagged items: mark them mature if they were flagged thus,

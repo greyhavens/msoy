@@ -6,7 +6,7 @@ package client.account;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import client.shell.LogonPanel;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * A plain page wrapper for the login interface.

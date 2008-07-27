@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import client.account.CreateAccountPanel;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays a summary of what Whirled is aimed at people who like to create things, then

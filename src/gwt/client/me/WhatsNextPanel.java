@@ -31,10 +31,10 @@ import com.threerings.msoy.web.data.MemberCard;
 import client.images.next.NextImages;
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.RoundBox;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.RoundBox;
-import client.util.ThumbBox;
 
 /**
  * Displays blurbs about things to do and a player's online friends.

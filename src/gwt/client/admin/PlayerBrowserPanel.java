@@ -30,12 +30,12 @@ import com.threerings.gwt.ui.WidgetUtil;
 import client.shell.Args;
 import client.shell.Page;
 
+import client.ui.MsoyUI;
+import client.ui.NumberTextBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.NumberTextBox;
 
 /**
  * Displays the various services available to support and admin personnel.

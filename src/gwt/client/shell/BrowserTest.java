@@ -3,7 +3,7 @@
 
 package client.shell;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;

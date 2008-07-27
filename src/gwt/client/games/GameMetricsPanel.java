@@ -17,9 +17,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameMetrics;
 
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.util.ClickCallback;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * Displays the metrics like score distributions for a particular game.

@@ -15,9 +15,9 @@ import com.threerings.msoy.world.gwt.RoomInfo;
 
 import client.shell.CommentsPanel;
 import client.shell.Frame;
+import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.StyledTabPanel;
 
 /**
  * Displays information about a room, allows commenting.

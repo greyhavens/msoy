@@ -1,7 +1,10 @@
 //
 // $Id$
 
-package client.util;
+package client.item;
+
+import client.ui.MsoyUI;
+import client.util.MediaUtil;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;

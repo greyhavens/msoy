@@ -22,8 +22,8 @@ import client.shell.Application;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.ui.BorderedDialog;
 import client.util.ServiceUtil;
-import client.util.BorderedDialog;
 import client.util.ClickCallback;
 
 public class RenameHandler extends ClickCallback<String>

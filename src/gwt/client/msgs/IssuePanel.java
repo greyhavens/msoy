@@ -18,8 +18,8 @@ import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

@@ -6,7 +6,7 @@ package client.people;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.ProfileService;
 
-import client.util.TongueBox;
+import client.ui.TongueBox;
 
 /**
  * Contains a chunk of content that a user would want to display on their personal page.

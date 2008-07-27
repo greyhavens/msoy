@@ -14,11 +14,11 @@ import com.threerings.msoy.item.data.all.Game;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
-import client.util.CreatorLabel;
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
+import client.ui.Stars;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.Stars;
-import client.util.ThumbBox;
 
 /**
  * Displays a list of featured games, defaulting to the first one

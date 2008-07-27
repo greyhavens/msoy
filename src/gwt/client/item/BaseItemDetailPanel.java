@@ -33,18 +33,17 @@ import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.util.CreatorLabel;
+import client.ui.CreatorLabel;
+import client.ui.HeaderBox;
+import client.ui.MsoyUI;
+import client.ui.PopupMenu;
+import client.ui.RoundBox;
+import client.ui.StyledTabPanel;
 import client.util.FlashClients;
-import client.util.HeaderBox;
-import client.util.ItemUtil;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.PopupMenu;
 import client.util.ServiceUtil;
-import client.util.RoundBox;
 import client.util.ShopUtil;
-import client.util.StyledTabPanel;
 import client.util.TagDetailPanel;
 
 /**

@@ -10,7 +10,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 
 import client.shell.DynamicMessages;
-import client.util.NumberTextBox;
+import client.ui.NumberTextBox;
 
 /**
  * A class for creating and editing {@link Prize} digital items.

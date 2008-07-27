@@ -15,8 +15,8 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.person.gwt.GroupInvitePayload;
 
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays a group invitation payload.

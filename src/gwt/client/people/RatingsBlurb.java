@@ -19,9 +19,9 @@ import com.threerings.gwt.util.SimpleDataModel;
 import client.games.GameDetailPanel;
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays a person's game ratings.

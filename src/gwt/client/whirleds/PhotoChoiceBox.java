@@ -10,10 +10,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import client.ui.MsoyUI;
 import client.util.ImageChooserPopup;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays a small preview image and allows the selection of an image from the user's inventory.

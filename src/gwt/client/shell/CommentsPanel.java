@@ -24,9 +24,9 @@ import com.threerings.msoy.fora.gwt.CommentService;
 import com.threerings.msoy.fora.gwt.CommentServiceAsync;
 
 import client.msgs.ComplainPopup;
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 

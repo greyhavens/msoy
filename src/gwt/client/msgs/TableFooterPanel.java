@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.util.ContentFooterPanel;
-import client.util.MsoyUI;
+import client.ui.ContentFooterPanel;
+import client.ui.MsoyUI;
 
 /**
  * A content footer panel customized for use by our forum bits.

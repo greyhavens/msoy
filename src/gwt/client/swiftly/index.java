@@ -13,8 +13,8 @@ import com.threerings.msoy.swiftly.gwt.SwiftlyServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.

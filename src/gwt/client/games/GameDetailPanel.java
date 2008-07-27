@@ -23,10 +23,10 @@ import client.shell.Args;
 import client.shell.CommentsPanel;
 import client.shell.Frame;
 import client.shell.Page;
+import client.ui.StyledTabPanel;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.StyledTabPanel;
-import client.util.ThumbBox;
 
 /**
  * Displays detail information on a particular game.

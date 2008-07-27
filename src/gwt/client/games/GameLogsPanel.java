@@ -14,7 +14,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameLogs;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays the server-side logs for a particular game, if any.

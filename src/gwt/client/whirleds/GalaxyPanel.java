@@ -26,10 +26,10 @@ import com.threerings.msoy.group.gwt.GroupCard;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.util.ItemBox;
+import client.ui.ItemBox;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that

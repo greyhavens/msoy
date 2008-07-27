@@ -19,6 +19,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import client.editem.EditemMessages;
 import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * Provides a simple "Upload" button that uploads a piece of media to the server and provides the

@@ -21,11 +21,11 @@ import com.threerings.msoy.person.gwt.ConvMessage;
 import com.threerings.msoy.person.gwt.MailService;
 
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays a single conversation.

@@ -29,9 +29,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.util.LimitedTextArea;
+import client.ui.LimitedTextArea;
+import client.ui.MsoyUI;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
 import client.util.MsoyCallback;
 
 import java.util.HashMap;

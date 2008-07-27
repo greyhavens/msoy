@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
 
 import java.util.Date;
 

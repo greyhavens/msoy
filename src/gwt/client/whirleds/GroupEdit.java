@@ -33,11 +33,11 @@ import client.shell.DynamicMessages;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.ShellMessages;
-import client.util.LimitedTextArea;
+import client.ui.LimitedTextArea;
+import client.ui.MsoyUI;
+import client.ui.PopupMenu;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.PopupMenu;
 import client.util.TagDetailPanel;
 
 /**

@@ -10,7 +10,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 
-import client.util.NumberTextBox;
+import client.ui.NumberTextBox;
 
 /**
  * A class for creating and editing {@link TrophySource} digital items.

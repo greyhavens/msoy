@@ -28,11 +28,11 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.Stars;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.Stars;
 
 /**
  * Displays games in a particular genre, or of all genres for the "All Games" page.

@@ -19,9 +19,9 @@ import com.threerings.msoy.group.gwt.GroupCard;
 
 import client.shell.ShellMessages;
 import client.shell.WorldClient;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays info on a featured Whirled.

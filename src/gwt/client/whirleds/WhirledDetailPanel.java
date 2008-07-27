@@ -34,14 +34,14 @@ import client.shell.Frame;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.shell.WorldClient;
+import client.ui.MsoyUI;
+import client.ui.PrettyTextPanel;
+import client.ui.PromptPopup;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.PrettyTextPanel;
-import client.util.PromptPopup;
 import client.util.ShopUtil;
-import client.util.ThumbBox;
 
 /**
  * Displays the details of a Whirled.

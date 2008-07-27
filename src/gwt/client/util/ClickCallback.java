@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.ui.PromptPopup;
 
 /**
  * Allows one to wire up a button and a service call into one concisely specified little chunk of

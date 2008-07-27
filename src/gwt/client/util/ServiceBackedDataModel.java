@@ -13,7 +13,7 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.data.all.GwtAuthCodes;
 
 import client.shell.CShell;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * A data model that can be customized for components that obtain their data by calling a service

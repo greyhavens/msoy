@@ -13,10 +13,10 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.ItemGiftPayload;
 
-import client.util.ItemThumbnail;
+import client.item.ItemThumbnail;
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays item gift mail payloads.

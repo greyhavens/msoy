@@ -26,11 +26,11 @@ import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.PromptPopup;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.

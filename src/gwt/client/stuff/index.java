@@ -23,10 +23,10 @@ import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY inventory application.

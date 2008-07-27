@@ -8,7 +8,7 @@ import com.google.gwt.core.client.GWT;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 public class index extends MsgsEntryPoint
 {

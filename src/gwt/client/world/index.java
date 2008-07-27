@@ -22,9 +22,9 @@ import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
+import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY main page.

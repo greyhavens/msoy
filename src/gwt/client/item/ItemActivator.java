@@ -12,12 +12,12 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.item.ItemMessages;
+import client.ui.MsoyUI;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
 import client.util.events.FlashEvents;
 
 import client.util.FlashClients;
-import client.util.MsoyUI;
 
 /**
  * Displays an interface for activating an item (wearing an avatar, adding furni to a room, etc.).

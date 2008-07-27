@@ -20,8 +20,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
 import client.util.events.NameChangeListener;

@@ -31,11 +31,11 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;

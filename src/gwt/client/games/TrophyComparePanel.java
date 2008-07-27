@@ -20,10 +20,10 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays a side-by-side comparison of the caller's trophies in a particular game with another

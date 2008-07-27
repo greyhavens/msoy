@@ -27,10 +27,10 @@ import client.games.GameNamePanel;
 import client.games.PlayButton;
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays a summary of what Whirled is and calls to action.

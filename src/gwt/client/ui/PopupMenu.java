@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;

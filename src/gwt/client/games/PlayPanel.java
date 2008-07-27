@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Does something extraordinary.

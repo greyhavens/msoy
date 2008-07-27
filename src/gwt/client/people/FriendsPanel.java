@@ -11,9 +11,9 @@ import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Frame;
-import client.util.HeaderBox;
+import client.ui.HeaderBox;
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays all of a member's friends. Allows a member to edit their friends list.

@@ -14,11 +14,11 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.world.gwt.WorldService;
 
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.SceneThumbnail;
-import client.util.TongueBox;
 
 /**
  * Displays this member's rooms.

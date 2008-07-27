@@ -21,9 +21,9 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Abstract display of a message posted by a member.

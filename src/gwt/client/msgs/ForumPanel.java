@@ -21,9 +21,9 @@ import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
 
+import client.ui.MsoyUI;
+import client.ui.SearchBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.SearchBox;
 
 /**
  * Displays forum threads and messages.

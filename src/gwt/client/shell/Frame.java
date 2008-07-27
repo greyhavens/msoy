@@ -6,9 +6,9 @@ package client.shell;
 import java.util.ArrayList;
 
 import client.images.navi.NaviImages;
+import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
-import client.util.MsoyUI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;

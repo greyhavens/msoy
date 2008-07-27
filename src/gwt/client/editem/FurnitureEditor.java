@@ -10,7 +10,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.util.RowPanel;
+import client.ui.RowPanel;
 
 /**
  * A class for creating and editing {@link Furniture} digital items.

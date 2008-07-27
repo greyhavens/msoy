@@ -20,11 +20,11 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
+import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
-import client.util.TongueBox;
 
 import client.shell.Page;
 

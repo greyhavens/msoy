@@ -16,7 +16,7 @@ import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 public class index extends MsgsEntryPoint
 {

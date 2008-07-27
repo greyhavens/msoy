@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
+
+import client.util.MediaUtil;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ClickListener;

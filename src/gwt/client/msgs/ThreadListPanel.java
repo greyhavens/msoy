@@ -29,13 +29,13 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import client.shell.Args;
 import client.shell.Page;
 
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
+import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
-import client.util.RowPanel;
-import client.util.SearchBox;
 
 /**
  * Displays a list of threads.

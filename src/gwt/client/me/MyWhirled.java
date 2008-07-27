@@ -15,8 +15,8 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 
 import client.msgs.FeedPanel;
 
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.StuffNaviBar;
 
 public class MyWhirled extends VerticalPanel

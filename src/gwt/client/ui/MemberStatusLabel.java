@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
 
 import java.util.Date;
 
@@ -15,6 +15,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import client.shell.Args;
 import client.shell.ShellMessages;
 import client.shell.Page;
+import client.util.Link;
 
 /**
  * Displays a member's online (or last logon) status.

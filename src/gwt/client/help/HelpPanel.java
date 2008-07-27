@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.util.RoundBox;
-import client.util.TongueBox;
+import client.ui.RoundBox;
+import client.ui.TongueBox;
 
 /**
  * Displays various help related information.

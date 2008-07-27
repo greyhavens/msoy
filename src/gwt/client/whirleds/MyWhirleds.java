@@ -34,10 +34,10 @@ import client.shell.Page;
 
 import client.shop.CShop;
 
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays a list of threads.

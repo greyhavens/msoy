@@ -17,9 +17,9 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * Displays an interface for creating a new thread.

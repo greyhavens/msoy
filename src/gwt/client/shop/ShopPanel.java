@@ -23,13 +23,13 @@ import com.threerings.msoy.item.gwt.ShopData;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.util.HeaderBox;
+import client.ui.HeaderBox;
+import client.ui.MsoyUI;
+import client.ui.Stars;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
-import client.util.Stars;
-import client.util.ThumbBox;
 
 /**
  * Displays the main catalog landing page.

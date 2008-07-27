@@ -9,8 +9,8 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays account information.

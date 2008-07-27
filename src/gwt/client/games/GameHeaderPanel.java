@@ -25,8 +25,8 @@ import com.threerings.msoy.item.data.all.Game;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays the title of the page, "find a game fast" and "search for games" boxes

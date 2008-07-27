@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.Item;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.util.Link;
 
 /**
  * Contains utility methods for item related user interface business.

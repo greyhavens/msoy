@@ -22,9 +22,9 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.

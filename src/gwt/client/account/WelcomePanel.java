@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.util.MsoyUI;
-import client.util.RoundBox;
+import client.ui.MsoyUI;
+import client.ui.RoundBox;
 
 /**
  * Displays a welcome message to newly registered users.

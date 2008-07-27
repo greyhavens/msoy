@@ -18,8 +18,8 @@ import com.threerings.msoy.person.gwt.MailPayload;
 
 import client.msgs.StartConvoCallback;
 import client.shell.ShellMessages;
-import client.util.BorderedDialog;
-import client.util.MsoyUI;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
 
 /**
  * Displays a popup requesting to invite someone as your friend.

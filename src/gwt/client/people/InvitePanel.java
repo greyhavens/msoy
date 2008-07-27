@@ -32,13 +32,13 @@ import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
 
 import client.shell.ShellMessages;
-import client.util.BorderedDialog;
-import client.util.BorderedPopup;
+import client.ui.BorderedDialog;
+import client.ui.BorderedPopup;
+import client.ui.DefaultTextListener;
+import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.util.ClickCallback;
-import client.util.DefaultTextListener;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.RoundBox;
 import client.util.ServiceUtil;
 
 /**

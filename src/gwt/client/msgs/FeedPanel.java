@@ -37,10 +37,10 @@ import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 
+import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.TongueBox;
 
 public class FeedPanel extends TongueBox
 {

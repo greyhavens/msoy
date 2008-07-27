@@ -24,12 +24,12 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.util.BorderedDialog;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
+import client.ui.RowPanel;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * Displays an item to be reviewed.

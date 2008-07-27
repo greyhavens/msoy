@@ -14,9 +14,9 @@ import com.threerings.msoy.person.gwt.PresentPayload;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays item gift mail payloads.

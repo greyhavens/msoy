@@ -29,13 +29,13 @@ import client.shell.Args;
 import client.shell.MessagePanel;
 import client.shell.Page;
 import client.shell.ShellMessages;
-import client.util.BorderedDialog;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
+import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
-import client.util.SearchBox;
 
 /**
  * Displays a thread header and either its messages or a post creation or editing panel.

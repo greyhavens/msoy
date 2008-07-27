@@ -1,7 +1,8 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
+
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;

@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays a summary of what Whirled is aimed at people who like to create things.

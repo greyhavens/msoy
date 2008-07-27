@@ -12,7 +12,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
-import client.util.HeaderBox;
+import client.ui.HeaderBox;
 import client.util.MsoyCallback;
 
 public class SearchPanel extends FlowPanel

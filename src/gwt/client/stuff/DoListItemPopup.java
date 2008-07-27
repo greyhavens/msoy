@@ -26,10 +26,10 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.DynamicMessages;
 import client.shell.Frame;
+import client.ui.MsoyUI;
+import client.ui.NumberTextBox;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
-import client.util.NumberTextBox;
 
 public class DoListItemPopup extends VerticalPanel
 {

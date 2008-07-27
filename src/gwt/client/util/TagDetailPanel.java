@@ -33,6 +33,10 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.ui.PopupMenu;
+import client.ui.PromptPopup;
+import client.ui.RowPanel;
 import client.util.ServiceUtil;
 import client.shell.ShellMessages;
 

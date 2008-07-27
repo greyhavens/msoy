@@ -11,9 +11,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.PlayerRating;
 
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays top-rankings for a particular game.

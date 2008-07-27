@@ -27,12 +27,12 @@ import client.images.msgs.MsgsImages;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.PromptPopup;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 /**
  * Displays the messages in a particular thread.

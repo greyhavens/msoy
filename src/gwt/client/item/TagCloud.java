@@ -17,7 +17,7 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.item.ItemMessages;
 import client.shell.CShell;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

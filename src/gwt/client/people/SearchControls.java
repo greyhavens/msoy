@@ -19,9 +19,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays controls that can be used to search for people in Whirled.

@@ -6,6 +6,7 @@ package client.util;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * Reports a callback error via {@link MsoyUI}.

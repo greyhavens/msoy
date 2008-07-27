@@ -15,8 +15,8 @@ import com.threerings.gwt.ui.SmartTable;
 
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 import client.util.ShopUtil;
 
 /**

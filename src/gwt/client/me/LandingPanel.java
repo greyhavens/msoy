@@ -26,10 +26,10 @@ import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import client.images.landing.LandingImages;
 import client.shell.LogonPanel;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.RoundBox;
 import client.util.ServiceUtil;
 import client.whirleds.FeaturedWhirledPanel;
 

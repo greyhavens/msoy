@@ -21,7 +21,7 @@ import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 import client.shell.ShellMessages;
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Display a dialog to upload a file into a Swiftly project.

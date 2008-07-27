@@ -22,12 +22,12 @@ import com.threerings.msoy.group.gwt.GroupService;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MemberStatusLabel;
+import client.ui.MsoyUI;
+import client.ui.PromptPopup;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MemberStatusLabel;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
-import client.util.ThumbBox;
 
 /**
  * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.

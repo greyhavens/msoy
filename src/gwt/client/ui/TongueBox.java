@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
+
+import client.util.Link;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;

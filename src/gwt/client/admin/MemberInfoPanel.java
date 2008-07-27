@@ -17,10 +17,10 @@ import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

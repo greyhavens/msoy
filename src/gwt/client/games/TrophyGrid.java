@@ -12,9 +12,9 @@ import com.threerings.msoy.game.data.all.Trophy;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays a grid of trophies, each of which link to their respective game's detail page.

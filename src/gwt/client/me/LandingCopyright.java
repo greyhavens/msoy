@@ -8,8 +8,8 @@ import java.util.Date;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays a summary of what Whirled is, featuring games, avatars and whirleds.

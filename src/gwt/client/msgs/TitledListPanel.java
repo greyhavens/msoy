@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays a list of messages or threads things with a title and possibly a back button.

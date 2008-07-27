@@ -22,8 +22,8 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import client.shell.Args;
 
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

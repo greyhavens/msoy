@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.person.gwt.MailPayload;
 
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.MsoyUI;
 
 /**
  * A callback that handles starting a conversation.

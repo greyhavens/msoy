@@ -25,8 +25,8 @@ import com.threerings.msoy.web.client.MemberServiceAsync;
 
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

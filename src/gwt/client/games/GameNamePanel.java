@@ -11,8 +11,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.DynamicMessages;
-import client.util.CreatorLabel;
-import client.util.MsoyUI;
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
 
 /**
  * Displays a game's name, genre, creator and description.

@@ -16,10 +16,10 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 
 import client.shell.ShellMessages;
-import client.util.BorderedDialog;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
+import client.ui.NumberTextBox;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.NumberTextBox;
 import client.util.ServiceUtil;
 
 /**

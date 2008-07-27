@@ -10,8 +10,8 @@ import com.threerings.msoy.game.gwt.TrophyCase;
 import client.shell.Args;
 import client.shell.Frame;
 import client.shell.Page;
+import client.ui.TongueBox;
 import client.util.MsoyCallback;
-import client.util.TongueBox;
 
 /**
  * Displays all trophies owned by the specified player.

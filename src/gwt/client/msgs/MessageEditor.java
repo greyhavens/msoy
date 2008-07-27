@@ -6,7 +6,7 @@ package client.msgs;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
 
-import client.util.RichTextToolbar;
+import client.ui.RichTextToolbar;
 
 /**
  * A {@link RichTextArea} with toolbar for editing forum messages.

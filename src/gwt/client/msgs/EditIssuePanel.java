@@ -5,9 +5,9 @@ package client.msgs;
 
 import java.util.List;
 
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyUI;
 
 import client.shell.Page;
 

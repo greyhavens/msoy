@@ -13,10 +13,10 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Main game display.

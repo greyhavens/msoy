@@ -13,9 +13,9 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import client.shell.Args;
 import client.shell.Page;
 import client.shop.CShop;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyUI;
-import client.util.ThumbBox;
 
 /**
  * Displays the current most popular avatars

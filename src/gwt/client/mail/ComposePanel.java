@@ -34,11 +34,11 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.StartConvoCallback;
 import client.shell.Page;
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
-import client.util.ThumbBox;
 
 /**
  * Provides an interface for starting a new conversation with another member.

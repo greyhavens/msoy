@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays the cost of an item.

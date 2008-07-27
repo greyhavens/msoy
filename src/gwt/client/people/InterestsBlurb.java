@@ -24,9 +24,9 @@ import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyUI;
 
 /**
  * Displays a member's interests and other random bits.

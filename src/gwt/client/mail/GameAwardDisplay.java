@@ -11,8 +11,8 @@ import com.threerings.msoy.person.gwt.GameAwardPayload;
 import client.games.GameDetailPanel;
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.ThumbBox;
 
 /**
  * Displays game award mail payloads.

@@ -25,8 +25,8 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.SessionData;
 
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

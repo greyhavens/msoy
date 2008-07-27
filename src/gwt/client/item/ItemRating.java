@@ -17,9 +17,9 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.ui.Stars;
 import client.util.ServiceUtil;
 import client.util.MsoyCallback;
-import client.util.Stars;
 
 public class ItemRating extends FlexTable
     implements Stars.StarMouseListener

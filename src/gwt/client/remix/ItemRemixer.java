@@ -33,11 +33,11 @@ import client.editem.EditorHost;
 import client.shop.CShop;
 import client.shop.PriceLabel;
 
+import client.ui.MsoyUI;
 import client.util.ImageChooserPopup;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.MsoyUI;
 
 public class ItemRemixer extends FlexTable
 {

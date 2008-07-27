@@ -13,9 +13,9 @@ import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyUI;
 
 /**
  * Displays some info on a game.

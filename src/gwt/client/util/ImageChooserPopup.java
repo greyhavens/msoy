@@ -30,6 +30,7 @@ import com.threerings.msoy.web.client.MemberServiceAsync;
 import client.editem.EditemMessages;
 import client.editem.EditorHost;
 
+import client.ui.MsoyUI;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
 

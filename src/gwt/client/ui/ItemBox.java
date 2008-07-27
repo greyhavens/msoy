@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,6 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import client.item.ItemMessages;
+import client.util.Link;
 
 /**
  * Displays an item (or anything with a thumbnail image, a name and potentially extra info below)

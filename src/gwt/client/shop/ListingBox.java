@@ -12,9 +12,9 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.util.ItemBox;
-import client.util.MsoyUI;
-import client.util.Stars;
+import client.ui.ItemBox;
+import client.ui.MsoyUI;
+import client.ui.Stars;
 
 /**
  * Displays a catalog listing.

@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
-import client.util.MsoyUI;
+import client.ui.MsoyUI;
 
 /**
  * Displays a marquee with a fancy background.
