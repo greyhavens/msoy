@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.client.ProfileService;
 
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Frame;

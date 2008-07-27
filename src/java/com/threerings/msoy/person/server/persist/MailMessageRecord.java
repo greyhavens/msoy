@@ -23,9 +23,9 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
-import com.threerings.msoy.person.data.MailHeaders;
-import com.threerings.msoy.person.data.MailMessage;
-import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.gwt.MailHeaders;
+import com.threerings.msoy.person.gwt.MailMessage;
+import com.threerings.msoy.person.gwt.MailPayload;
 
 /**
  * Represents a message, with some meta-data, in a folder belonging to a member.

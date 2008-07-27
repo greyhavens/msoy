@@ -10,9 +10,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.Interest;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.person.gwt.Profile;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;

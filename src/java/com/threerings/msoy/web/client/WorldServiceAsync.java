@@ -11,7 +11,7 @@ import com.threerings.msoy.web.client.WorldService;
 
 import com.threerings.msoy.game.gwt.LaunchConfig;
 import com.threerings.msoy.group.gwt.MyWhirledData;
-import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
 
 import com.threerings.msoy.web.data.LandingData;
 import com.threerings.msoy.web.data.RoomInfo;

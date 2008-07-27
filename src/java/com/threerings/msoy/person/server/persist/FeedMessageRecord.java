@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 
-import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
 
 /**
  * Contains information on a feed message.

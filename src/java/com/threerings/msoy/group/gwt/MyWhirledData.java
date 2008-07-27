@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.web.data.MemberCard;
 
 /**

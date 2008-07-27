@@ -10,7 +10,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 

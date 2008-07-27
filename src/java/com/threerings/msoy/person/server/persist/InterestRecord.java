@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.threerings.msoy.person.data.Interest;
+import com.threerings.msoy.person.gwt.Interest;
 
 @Entity(fullTextIndices={
     @FullTextIndex(name=InterestRecord.FTS_INTERESTS, fields={ InterestRecord.INTERESTS })

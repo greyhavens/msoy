@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 /**

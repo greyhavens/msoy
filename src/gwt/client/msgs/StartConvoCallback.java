@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.gwt.MailPayload;
 
 import client.util.ClickCallback;
 import client.util.MsoyUI;

@@ -29,9 +29,9 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 
-import com.threerings.msoy.person.data.FriendInvitePayload;
-import com.threerings.msoy.person.data.MailPayload;
-import com.threerings.msoy.person.data.PresentPayload;
+import com.threerings.msoy.person.gwt.FriendInvitePayload;
+import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.person.gwt.PresentPayload;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;

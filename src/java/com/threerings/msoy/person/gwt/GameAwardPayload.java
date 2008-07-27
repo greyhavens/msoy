@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.data;
+package com.threerings.msoy.person.gwt;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 

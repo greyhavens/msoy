@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.Profile;
 
 import com.threerings.msoy.web.client.ProfileService;
 

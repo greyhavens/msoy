@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.FriendFeedMessage;
-import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.data.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.GroupFeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
 import client.games.GameDetailPanel;
 

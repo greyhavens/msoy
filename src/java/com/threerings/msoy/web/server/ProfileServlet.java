@@ -49,10 +49,10 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.Interest;
-import com.threerings.msoy.person.data.Profile;
-import com.threerings.msoy.person.data.ProfileCodes;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.person.gwt.Profile;
+import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;

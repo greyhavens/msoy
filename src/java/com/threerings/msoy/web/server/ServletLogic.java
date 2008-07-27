@@ -26,10 +26,10 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.person.data.FeedMessage;
-import com.threerings.msoy.person.data.FriendFeedMessage;
-import com.threerings.msoy.person.data.GroupFeedMessage;
-import com.threerings.msoy.person.data.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.GroupFeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;

@@ -17,7 +17,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.LandingData;
 
-import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
 
 /**
  * Provides information related to the world (and the whirled).

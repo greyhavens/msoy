@@ -13,7 +13,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
-import com.threerings.msoy.person.data.GroupInvitePayload;
+import com.threerings.msoy.person.gwt.GroupInvitePayload;
 
 import client.util.MsoyCallback;
 import client.util.MsoyUI;

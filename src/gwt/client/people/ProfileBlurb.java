@@ -26,7 +26,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Args;

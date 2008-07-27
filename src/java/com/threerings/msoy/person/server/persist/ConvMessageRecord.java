@@ -14,8 +14,8 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.person.data.ConvMessage;
-import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.gwt.ConvMessage;
+import com.threerings.msoy.person.gwt.MailPayload;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
 import static com.threerings.msoy.Log.log;

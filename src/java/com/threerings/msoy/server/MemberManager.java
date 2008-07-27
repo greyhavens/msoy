@@ -44,7 +44,7 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;

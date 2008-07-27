@@ -49,7 +49,7 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;

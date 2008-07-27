@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
-import com.threerings.msoy.person.data.ItemGiftPayload;
+import com.threerings.msoy.person.gwt.ItemGiftPayload;
 
 import client.util.ItemThumbnail;
 import client.util.MsoyCallback;

@@ -37,9 +37,9 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
-import com.threerings.msoy.person.data.Conversation;
-import com.threerings.msoy.person.data.GameAwardPayload;
-import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.person.gwt.GameAwardPayload;
+import com.threerings.msoy.person.gwt.MailPayload;
 
 /**
  * Manages the persistent store of mail and mailboxes.

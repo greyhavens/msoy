@@ -20,15 +20,15 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
-import com.threerings.msoy.person.data.ConvMessage;
-import com.threerings.msoy.person.data.Conversation;
-import com.threerings.msoy.person.data.MailPayload;
+import com.threerings.msoy.person.gwt.ConvMessage;
+import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.person.gwt.MailService;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ConvMessageRecord;
 import com.threerings.msoy.person.server.persist.ConversationRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
 
-import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;

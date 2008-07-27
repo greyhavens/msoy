@@ -20,8 +20,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.Conversation;
-import com.threerings.msoy.person.data.Profile;
+import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.person.gwt.Profile;
 
 import client.shell.Args;
 import client.shell.Page;

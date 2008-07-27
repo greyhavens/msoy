@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.person.data.Interest;
+import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.web.client.ProfileService;
 
 import client.shell.Args;

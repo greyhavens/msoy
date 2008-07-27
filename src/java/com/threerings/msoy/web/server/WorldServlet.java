@@ -69,7 +69,7 @@ import com.threerings.msoy.group.gwt.MyWhirledData;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.data.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 
 import com.threerings.msoy.data.MemberLocation;

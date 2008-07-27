@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.data.ConvMessage;
+import com.threerings.msoy.person.gwt.ConvMessage;
+import com.threerings.msoy.person.gwt.MailService;
 
 import client.shell.ShellMessages;
 import client.util.ClickCallback;

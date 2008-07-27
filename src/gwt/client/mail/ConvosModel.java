@@ -9,9 +9,9 @@ import client.util.ServiceBackedDataModel;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 
-import com.threerings.msoy.person.data.ConvMessage;
-import com.threerings.msoy.person.data.Conversation;
-import com.threerings.msoy.web.client.MailService;
+import com.threerings.msoy.person.gwt.ConvMessage;
+import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.person.gwt.MailService;
 
 /**
  * A data model that provides a member's conversations.

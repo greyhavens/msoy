@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.web.client.MailService;
-import com.threerings.msoy.web.client.MailServiceAsync;
+import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 

@@ -23,7 +23,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.person.data.Interest;
+import com.threerings.msoy.person.gwt.Interest;
 
 /**
  * Manages the persistent store of profile profile data.

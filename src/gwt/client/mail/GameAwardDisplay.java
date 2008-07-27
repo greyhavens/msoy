@@ -6,7 +6,7 @@ package client.mail;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.person.data.GameAwardPayload;
+import com.threerings.msoy.person.gwt.GameAwardPayload;
 
 import client.games.GameDetailPanel;
 import client.shell.Args;
