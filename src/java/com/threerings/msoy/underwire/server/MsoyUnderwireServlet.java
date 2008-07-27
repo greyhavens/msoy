@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.underwire.server;
 
 import com.google.inject.Inject;
 
@@ -36,8 +36,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.data.ServiceException;
 
-import com.threerings.msoy.underwire.server.MsoyGameActionHandler;
-import com.threerings.msoy.underwire.server.MsoyGameInfoProvider;
 
 import static com.threerings.msoy.Log.log;
 

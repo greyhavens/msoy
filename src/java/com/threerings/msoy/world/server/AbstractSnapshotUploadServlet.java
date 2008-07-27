@@ -9,11 +9,11 @@ import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
 
+import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
-import com.threerings.msoy.web.server.UploadServlet;
 
-public abstract class AbstractSnapshotUploadServlet extends UploadServlet
+public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServlet
 {
     @Override
     protected void validateAccess (UploadContext ctx)

@@ -20,8 +20,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.google.common.collect.Maps;
 
 import com.samskivert.io.StreamUtil;
-import com.threerings.msoy.server.ServerConfig;
 
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import static com.threerings.msoy.Log.log;

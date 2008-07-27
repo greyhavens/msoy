@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.item.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -14,6 +14,10 @@ import com.samskivert.io.StreamUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.web.server.AbstractUploadServlet;
+import com.threerings.msoy.web.server.FileItemUploadFile;
+import com.threerings.msoy.web.server.UploadFile;
+import com.threerings.msoy.web.server.UploadUtil;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -21,7 +25,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles the uploading of digital media for later use by a digital item.
  */
-public class UploadServlet extends AbstractUploadServlet
+public class ItemMediaUploadServlet extends AbstractUploadServlet
 {
     // TODO: override validateAccess. check that the user is logged in.
     // This will require the various item editors to pass a WebIdent down here.
