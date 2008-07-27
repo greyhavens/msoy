@@ -13,7 +13,6 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 
-
 import client.msgs.FeedPanel;
 
 import client.util.MsoyCallback;

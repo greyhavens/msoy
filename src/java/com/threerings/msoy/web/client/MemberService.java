@@ -10,11 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -58,34 +55,12 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Return the invitation details for the given ident.
-     */
-    public MemberInvites getInvitationsStatus (WebIdent ident)
-        throws ServiceException;
-
-    /**
-     * Send out some of this person's available invites.
-     *
-     * @param anonymous if true, the invitations will not be from the caller but will be
-     * anonymous. This is only allowed for admin callers.
-     */
-    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses,
-        String fromName, String customMessage, boolean anonymous)
-        throws ServiceException;
-
-    /**
-     * Grabs the details for an Invitation for the use of the InvitationDialog.
+     * Loads up the details of an invitation.
      *
      * @param viewing If true, this will ensure that the viewed date in the database has been set.
      * If false, the viewdate will be left alone.
      */
     public Invitation getInvitation (String inviteId, boolean viewing)
-        throws ServiceException;
-
-    /**
-     * Removes a pending invitation.
-     */
-    public void removeInvitation (WebIdent ident, String inviteId)
         throws ServiceException;
 
     /**

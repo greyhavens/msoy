@@ -8,7 +8,6 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;

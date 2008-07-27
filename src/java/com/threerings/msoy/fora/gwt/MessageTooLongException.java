@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.fora.gwt;
+
+import com.threerings.msoy.web.data.ServiceException;
 
 /**
  * Thrown when a forum message that is too long is submitted.

@@ -14,7 +14,6 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.GroupCard;
 
-import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
@@ -114,12 +113,6 @@ public interface ProfileService extends RemoteService
      * Loads up all friends for the specified member.
      */
     public FriendsResult loadFriends (WebIdent ident, int memberId)
-        throws ServiceException;
-
-    /**
-     * Loads up e-mail addresses from a user's webmail account.
-     */
-    public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
         throws ServiceException;
 
     /**

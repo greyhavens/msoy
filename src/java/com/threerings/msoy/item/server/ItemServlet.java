@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.item.server;
 
 import static com.threerings.msoy.Log.log;
 
@@ -33,8 +33,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -46,6 +44,7 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 /**

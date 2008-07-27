@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.group.server;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -64,6 +64,8 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

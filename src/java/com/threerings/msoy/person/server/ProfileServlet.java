@@ -1,22 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.person.server;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.sql.Timestamp;
-
-import octazen.addressbook.AddressBookAuthenticationException;
-import octazen.addressbook.AddressBookException;
-import octazen.addressbook.Contact;
-import octazen.addressbook.SimpleAddressBookImporter;
-import octazen.addressbook.UnexpectedFormatException;
-import octazen.http.HttpException;
-import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -24,7 +15,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -52,18 +42,19 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.Profile;
-import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.ServletLogic;
 
 import static com.threerings.msoy.Log.log;
 
@@ -274,64 +265,6 @@ public class ProfileServlet extends MsoyServiceServlet
         }
     }
 
-    // from ProfileService
-    public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
-        throws ServiceException
-    {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-
-        try {
-            // don't let someone attempt more than 5 imports in a 5 minute period
-            long now = System.currentTimeMillis();
-            if (now > _waCleared + WEB_ACCESS_CLEAR_INTERVAL) {
-                _webmailAccess.clear();
-                _waCleared = now;
-            }
-            if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
-                throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
-            }
-            List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
-            List<EmailContact> results = Lists.newArrayList();
-
-            for (Contact contact : contacts) {
-                EmailContact ec = new EmailContact();
-                ec.name = contact.getName();
-                ec.email = contact.getEmail();
-                MemberRecord member = _memberRepo.loadMember(ec.email);
-                if (member != null) {
-                    if (_memberRepo.getFriendStatus(memrec.memberId, member.memberId)) {
-                        // just skip people who are already friends
-                        continue;
-                    }
-                    ec.mname = member.getName();
-                }
-                results.add(ec);
-            }
-
-            return results;
-
-        } catch (AddressBookAuthenticationException e) {
-            throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
-        } catch (UnexpectedFormatException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (AddressBookException e) {
-            throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
-        } catch (UserInputRequiredException e) {
-            throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
-        } catch (IOException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (HttpException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (PersistenceException pe) {
-            log.warning("getWebMailAddresses failed [who=" + memrec.who() +
-                    ", email=" + email + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
     // from interface ProfileService
     public List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException
@@ -461,9 +394,6 @@ public class ProfileServlet extends MsoyServiceServlet
         return list;
     }
 
-    protected IntIntMap _webmailAccess = new IntIntMap();
-    protected long _waCleared = System.currentTimeMillis();
-
     // our dependencies
     @Inject protected ServletLogic _servletLogic;
     @Inject protected FeedRepository _feedRepo;
@@ -477,9 +407,6 @@ public class ProfileServlet extends MsoyServiceServlet
     protected static final int MAX_PROFILE_FRIENDS = 6;
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
-
-    protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
-    protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
 
     protected static final int DEFAULT_FEED_DAYS = 2;
 }

@@ -1,11 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.world.server;
 
 import java.io.IOException;
 
 import org.apache.commons.fileupload.FileItem;
+
+import com.threerings.msoy.web.server.FileItemUploadFile;
 
 public class SnapshotUploadFile extends FileItemUploadFile
 {

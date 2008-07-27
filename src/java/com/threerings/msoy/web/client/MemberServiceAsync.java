@@ -11,9 +11,7 @@ import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -48,26 +46,10 @@ public interface MemberServiceAsync
                                AsyncCallback<List<Item>> callback);
 
     /**
-     * The asynchronous version of {@link MemberService#getInvitationsStatus}.
-     */
-    void getInvitationsStatus (WebIdent ident, AsyncCallback<MemberInvites> callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#sendInvites}.
-     */
-    public void sendInvites (WebIdent ident, List addresses, String fromName, String customMessage,
-                             boolean anonymous, AsyncCallback<InvitationResults> callback);
-
-    /**
      * The asynchronous version of {@link MemberService#getInvitation}.
      */
     public void getInvitation (String inviteId, boolean viewing,
                                AsyncCallback<Invitation> callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#removeInvitation}.
-     */
-    void removeInvitation (WebIdent ident, String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MemberService#optOut}.

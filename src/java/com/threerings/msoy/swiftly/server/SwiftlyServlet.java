@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.swiftly.server;
 
 import static com.threerings.msoy.Log.log;
 
@@ -27,7 +27,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
-import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
@@ -38,6 +37,8 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 /**
  * Provides the server implementation of {@link SwiftlyService}.

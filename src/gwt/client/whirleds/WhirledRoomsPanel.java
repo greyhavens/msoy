@@ -20,7 +20,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 
-
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.MsoyUI;

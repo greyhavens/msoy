@@ -1,13 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Contains result information on the invitations that were requested.

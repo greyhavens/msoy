@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.game.server;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,9 +56,6 @@ import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
-import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.game.server.GameUtil;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -74,6 +71,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

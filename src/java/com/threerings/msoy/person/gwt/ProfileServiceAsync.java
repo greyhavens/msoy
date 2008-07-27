@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -44,12 +43,6 @@ public interface ProfileServiceAsync
      */
     public void loadFriends (WebIdent ident, int memberId,
                              AsyncCallback<ProfileService.FriendsResult> callback);
-
-    /**
-     * The asynchronous version of {@link ProfileService#getWebMailAddresses}.
-     */
-    public void getWebMailAddresses (WebIdent ident, String email, String password,
-                                     AsyncCallback<List<EmailContact>> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#loadSelfFeed}.

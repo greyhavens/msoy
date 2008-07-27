@@ -36,7 +36,6 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.MessageTooLongException;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -45,6 +44,7 @@ import com.threerings.msoy.fora.gwt.ForumCodes;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.gwt.MessageTooLongException;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;

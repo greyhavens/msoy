@@ -30,6 +30,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.world.server.SnapshotUploadFile;
 import com.threerings.s3.client.S3Connection;
 import com.threerings.s3.client.S3Exception;
 import com.threerings.s3.client.S3FileObject;

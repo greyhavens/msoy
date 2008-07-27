@@ -23,7 +23,6 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
 
-
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
 import client.shell.Application;

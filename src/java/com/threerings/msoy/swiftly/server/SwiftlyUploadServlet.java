@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.swiftly.server;
 
 import static com.threerings.msoy.Log.log;
 
@@ -14,12 +14,19 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.swiftly.server.SwiftlyManager;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
+import com.threerings.presents.dobj.RootDObjectManager;
+
 import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.msoy.web.server.AbstractUploadServlet;
+import com.threerings.msoy.web.server.FileItemUploadFile;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.ServletWaiter;
+import com.threerings.msoy.web.server.UploadFile;
+
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 
 public class SwiftlyUploadServlet extends AbstractUploadServlet
 {

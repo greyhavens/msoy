@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.world.server;
 
 import java.net.URLEncoder;
 import java.sql.Timestamp;
@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ExpiringReference;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -41,11 +40,8 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.landing.gwt.LandingData;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.gwt.RoomInfo;
@@ -77,6 +73,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.ServletLogic;
 
 import static com.threerings.msoy.Log.log;
 

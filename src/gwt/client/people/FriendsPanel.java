@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 

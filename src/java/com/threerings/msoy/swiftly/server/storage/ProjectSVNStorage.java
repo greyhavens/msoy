@@ -281,7 +281,6 @@ public class ProjectSVNStorage
         return swiftlyDoc;
     }
 
-
     /** Store a document in the repository. */
     public void putDocument (SwiftlyDocument document, String logMessage)
         throws ProjectStorageException
@@ -396,7 +395,6 @@ public class ProjectSVNStorage
         // if we made it this far, the element is now in the repository, mark it as such
         pathElement.inRepo = true;
     }
-
 
     /** Delete a document from the repository. */
     public void deleteDocument (PathElement pathElement, String logMessage)

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.game.server;
 
 import java.io.IOException;
 import java.io.PrintStream;

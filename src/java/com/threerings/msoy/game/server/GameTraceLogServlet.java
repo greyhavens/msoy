@@ -1,7 +1,7 @@
 //
 // $Id: MyStatsServlet.java 9295 2008-05-28 14:47:15Z mdb $
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.game.server;
 
 import static com.threerings.msoy.Log.log;
 
@@ -22,6 +22,7 @@ import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MemberHelper;
 
 /**
  * Exports trace logs for server-side game components.

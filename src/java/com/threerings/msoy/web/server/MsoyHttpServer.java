@@ -30,6 +30,8 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.threerings.msoy.server.ServerConfig;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -37,21 +39,34 @@ import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
 import com.threerings.msoy.fora.server.IssueServlet;
 import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.server.GameServlet;
+import com.threerings.msoy.game.server.GameStubServlet;
+import com.threerings.msoy.game.server.GameTraceLogServlet;
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.server.GroupServlet;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.server.CatalogServlet;
+import com.threerings.msoy.item.server.ItemServlet;
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.server.LandingServlet;
+import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.MailService;
 import com.threerings.msoy.person.gwt.ProfileService;
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.person.server.InviteServlet;
+import com.threerings.msoy.person.server.MailServlet;
+import com.threerings.msoy.person.server.ProfileServlet;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
+import com.threerings.msoy.swiftly.server.SwiftlyServlet;
+import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
+import com.threerings.msoy.world.gwt.WorldService;
+import com.threerings.msoy.world.server.SnapshotItemUploadServlet;
+import com.threerings.msoy.world.server.WorldServlet;
 
 import com.threerings.msoy.web.client.CommentService;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.world.gwt.WorldService;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -226,6 +241,7 @@ public class MsoyHttpServer extends Server
         SERVLETS.put(ForumService.ENTRY_POINT, ForumServlet.class);
         SERVLETS.put(GameService.ENTRY_POINT, GameServlet.class);
         SERVLETS.put(GroupService.ENTRY_POINT, GroupServlet.class);
+        SERVLETS.put(InviteService.ENTRY_POINT, InviteServlet.class);
         SERVLETS.put(IssueService.ENTRY_POINT, IssueServlet.class);
         SERVLETS.put(ItemService.ENTRY_POINT, ItemServlet.class);
         SERVLETS.put(LandingService.ENTRY_POINT, LandingServlet.class);

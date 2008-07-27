@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.item.server;
 
 import java.util.List;
 import java.util.Map;
@@ -39,8 +39,6 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -52,6 +50,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 
