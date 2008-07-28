@@ -140,7 +140,9 @@ class GameContextImpl extends MsoyContext
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
-        return (getPlayerObject() == null) ? null : getPlayerObject().tokens;
+        // if we're not logged in, claim to have no tokens
+        var pobj :PlayerObject = getPlayerObject();
+        return (pobj == null) ? new MsoyTokenRing() : pobj.tokens;
     }
 
     // from MsoyContext
