@@ -592,14 +592,14 @@ public class AwardDelegate extends RatingDelegate
     }
 
     protected List<Integer> playerOidsToMemberIds (
-        Iterable<Integer> playerOids, boolean filterNonGuests)
+        Iterable<Integer> playerOids, boolean pruneGuests)
     {
         final List<Integer> memberIds = Lists.newArrayList();
         for (int playerOid : playerOids) {
             DObject dobj = _omgr.getObject(playerOid);
             if (dobj instanceof PlayerObject) {
                 int memberId = ((PlayerObject)dobj).getMemberId();
-                if (!MemberName.isGuest(memberId) || !filterNonGuests) {
+                if (!MemberName.isGuest(memberId) || !pruneGuests) {
                     memberIds.add(memberId);
                 }
             }
