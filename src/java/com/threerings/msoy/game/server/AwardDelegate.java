@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Comparators;
@@ -16,6 +17,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
+import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
@@ -223,9 +226,11 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // TEMP? Log scores.
+        List<Integer> playerOidList = CollectionUtil.addAll(
+            new ArrayList<Integer>(), IntListUtil.box(playerOids));
         log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
-                 "payoutType", payoutType,
-                 "playerIds", playerOidsToMemberIds(new ArrayIntSet(playerOids)), "scores", scores);
+                 "payoutType", payoutType, "playerOids", playerOids,
+                 "playerIds", playerOidsToMemberIds(playerOidList, false), "scores", scores);
 
         int now = now();
 
@@ -552,8 +557,8 @@ public class AwardDelegate extends RatingDelegate
         }
 
         final boolean isMultiplayer = isMultiplayer();
-        final List<Integer> playerIds = playerOidsToMemberIds(playerOids);
-        final List<Integer> winnerIds = playerOidsToMemberIds(winnerOids);
+        final List<Integer> playerIds = playerOidsToMemberIds(playerOids, true);
+        final List<Integer> winnerIds = playerOidsToMemberIds(winnerOids, true);
         _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
             public void invokePersist () throws PersistenceException {
                 for (int playerId : playerIds) {
@@ -566,8 +571,8 @@ public class AwardDelegate extends RatingDelegate
                         // track unique game partners
                         for (int otherPlayerId : playerIds) {
                             if (otherPlayerId != playerId) {
-                                _statLogic.addToSetStat(playerId, StatType.MP_GAME_PARTNERS,
-                                    otherPlayerId);
+                                _statLogic.addToSetStat(
+                                    playerId, StatType.MP_GAME_PARTNERS, otherPlayerId);
                             }
                         }
                     }
@@ -586,23 +591,20 @@ public class AwardDelegate extends RatingDelegate
         });
     }
 
-    protected List<Integer> playerOidsToMemberIds (Iterable<Integer> playerOids)
+    protected List<Integer> playerOidsToMemberIds (
+        Iterable<Integer> playerOids, boolean filterNonGuests)
     {
         final List<Integer> memberIds = Lists.newArrayList();
         for (int playerOid : playerOids) {
-            int memberId = playerOidToMemberId(playerOid);
-            if (memberId > 0) {
-                memberIds.add(memberId);
+            DObject dobj = _omgr.getObject(playerOid);
+            if (dobj instanceof PlayerObject) {
+                int memberId = ((PlayerObject)dobj).getMemberId();
+                if (!MemberName.isGuest(memberId) || !filterNonGuests) {
+                    memberIds.add(memberId);
+                }
             }
         }
-
         return memberIds;
-    }
-
-    protected int playerOidToMemberId (int playerOid)
-    {
-        DObject dobj = _omgr.getObject(playerOid);
-        return (dobj instanceof PlayerObject ? ((PlayerObject)dobj).getMemberId() : 0);
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
