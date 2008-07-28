@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.person.gwt.PresentPayload;
+import com.threerings.msoy.mail.gwt.PresentPayload;
 
 import client.shell.Args;
 import client.shell.Page;

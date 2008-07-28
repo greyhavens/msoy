@@ -12,10 +12,10 @@ import client.util.ServiceUtil;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 
-import com.threerings.msoy.person.gwt.ConvMessage;
-import com.threerings.msoy.person.gwt.Conversation;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
+import com.threerings.msoy.mail.gwt.ConvMessage;
+import com.threerings.msoy.mail.gwt.Conversation;
+import com.threerings.msoy.mail.gwt.MailService;
+import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 /**
  * A data model that provides a member's conversations.

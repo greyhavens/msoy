@@ -36,7 +36,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
@@ -48,11 +47,12 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.MailLogic;
-import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 

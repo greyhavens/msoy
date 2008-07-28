@@ -1,7 +1,8 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.gwt;
+package com.threerings.msoy.mail.gwt;
+
 
 /**
  * This object holds the extra data associated with a single friend invitation message.

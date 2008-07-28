@@ -7,10 +7,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.person.gwt.ConvMessage;
-import com.threerings.msoy.person.gwt.MailPayload;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
+import com.threerings.msoy.mail.gwt.ConvMessage;
+import com.threerings.msoy.mail.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.MailService;
+import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.util.ServiceUtil;
 

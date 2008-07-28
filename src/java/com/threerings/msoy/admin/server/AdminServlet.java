@@ -21,7 +21,7 @@ import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.person.server.persist.MailRepository;
+import com.threerings.msoy.mail.server.persist.MailRepository;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;

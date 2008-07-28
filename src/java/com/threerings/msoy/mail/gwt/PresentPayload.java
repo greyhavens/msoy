@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.gwt;
+package com.threerings.msoy.mail.gwt;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;

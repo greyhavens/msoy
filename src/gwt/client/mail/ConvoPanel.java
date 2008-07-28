@@ -17,9 +17,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.person.gwt.ConvMessage;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
+import com.threerings.msoy.mail.gwt.ConvMessage;
+import com.threerings.msoy.mail.gwt.MailService;
+import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

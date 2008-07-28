@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.person.gwt.GroupInvitePayload;
+import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;

@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.person.gwt.FriendInvitePayload;
-import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.FriendInvitePayload;
+import com.threerings.msoy.mail.gwt.MailPayload;
 
 import client.mail.StartConvoCallback;
 import client.shell.ShellMessages;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.server.persist;
+package com.threerings.msoy.mail.server.persist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -37,9 +36,9 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
-import com.threerings.msoy.person.gwt.Conversation;
-import com.threerings.msoy.person.gwt.GameAwardPayload;
-import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.Conversation;
+import com.threerings.msoy.mail.gwt.GameAwardPayload;
+import com.threerings.msoy.mail.gwt.MailPayload;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -292,27 +291,6 @@ public class MailRepository extends DepotRepository
         classes.add(ConvMessageRecord.class);
         classes.add(ParticipantRecord.class);
     }
-
-    // TEMP
-    protected static class MigratedMessage
-    {
-        public long sent;
-        public int authorId;
-        public String body;
-        public int payloadType;
-        public byte[] payloadState;
-        public String toString () { return StringUtil.fieldsToString(this); }
-    }
-
-    protected static class MigratedConvo
-    {
-        public int initiatorId;
-        public int targetId;
-        public String subject;
-        public List<MigratedMessage> messages = Lists.newArrayList();
-        public String toString () { return StringUtil.fieldsToString(this); }
-    }
-    // END TEMP
 
     @Inject protected MsoyEventLogger _eventLog;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.gwt;
+package com.threerings.msoy.mail.gwt;
 
 import java.util.List;
 

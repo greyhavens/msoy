@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.server.persist;
+package com.threerings.msoy.mail.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,8 +14,8 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.person.gwt.ConvMessage;
-import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.ConvMessage;
+import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
 import static com.threerings.msoy.Log.log;

@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.person.gwt.MailPayload;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
+import com.threerings.msoy.mail.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.MailService;
+import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;

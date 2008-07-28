@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.server.persist;
+package com.threerings.msoy.mail.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -15,7 +15,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.mail.gwt.Conversation;
 
 /**
  * Contains information on a conversation between two members.
