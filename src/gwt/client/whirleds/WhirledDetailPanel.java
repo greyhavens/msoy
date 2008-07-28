@@ -30,7 +30,6 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.shell.WorldClient;
@@ -105,7 +104,7 @@ public class WhirledDetailPanel extends FlowPanel
             add(MsoyUI.createLabel("That Whirled could not be found.", "infoLabel"));
             return;
         }
-        Frame.setTitle(_detail.group.name);
+        CWhirleds.frame.setTitle(_detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
 

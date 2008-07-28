@@ -56,14 +56,14 @@ public class Application
         // create our static page mappings
         createMappings();
 
+        // initialize the frame
+        CShell.frame = new Frame();
+
         // set up the callbackd that our flash clients can call
-        configureCallbacks(this);
+        configureCallbacks(this, CShell.frame);
 
         // register as a session observer
         Session.addObserver(this);
-
-        // initialize the frame
-        Frame.init();
 
         // initialize our GA handler
         _analytics.init();
@@ -128,7 +128,7 @@ public class Application
             TrackingCookie.save(ref, false);
 
         } else {
-            if (! TrackingCookie.contains()) {
+            if (! TrackingCookie.exists()) {
                 TrackingCookie.save(ReferralInfo.makeInstance(
                     "", "", "", ReferralInfo.makeRandomTracker()), false);
             }
@@ -172,7 +172,6 @@ public class Application
         CShell.creds = data.creds;
         CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
         WorldClient.didLogon(data.creds);
-        Frame.didLogon();
 
         if (_page != null) {
             _page.didLogon(data.creds);
@@ -186,13 +185,12 @@ public class Application
     {
         CShell.creds = null;
         CShell.ident = null;
-        Frame.didLogoff();
 
         if (_page == null) {
             // we can now load our starting page
             onHistoryChanged(_currentToken);
         } else {
-            Frame.closeClient(false);
+            CShell.frame.closeClient(false);
             _page.didLogoff();
         }
     }
@@ -250,7 +248,7 @@ public class Application
     /**
      * Configures top-level functions that can be called by Flash.
      */
-    protected static native void configureCallbacks (Application app) /*-{
+    protected static native void configureCallbacks (Application app, Frame frame) /*-{
        $wnd.openChannel = function (type, name, id) {
            app.@client.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
        };
@@ -265,7 +263,7 @@ public class Application
             return true;
        };
        $wnd.setWindowTitle = function (title) {
-            @client.shell.Frame::setTitle(Ljava/lang/String;)(title);
+            frame.@client.shell.Frame::setTitle(Ljava/lang/String;)(title);
        };
        $wnd.displayPage = function (page, args) {
            @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);

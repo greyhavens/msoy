@@ -13,11 +13,10 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.item.ItemMessages;
 import client.ui.MsoyUI;
+import client.util.FlashClients;
+import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
-import client.util.events.FlashEvents;
-
-import client.util.FlashClients;
 
 /**
  * Displays an interface for activating an item (wearing an avatar, adding furni to a room, etc.).
@@ -107,7 +106,7 @@ public class ItemActivator extends FlowPanel
                             FlashClients.useAvatar(0, 0);
                         } else {
                             FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
-                            // Frame.closeContent();
+                            // CItem.frame.closeContent();
                         }
                     }
                 };
@@ -130,7 +129,7 @@ public class ItemActivator extends FlowPanel
                             FlashClients.clearItem(_item.getType(), _item.itemId);
                         } else {
                             FlashClients.useItem(_item.getType(), _item.itemId);
-                            // Frame.closeContent();
+                            // CItem.frame.closeContent();
                         }
                     }
                 };

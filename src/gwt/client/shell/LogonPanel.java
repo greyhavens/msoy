@@ -82,9 +82,9 @@ public class LogonPanel extends SmartTable
                 ForgotPasswordDialog forgottenDialog =
                     new ForgotPasswordDialog(_email.getText().trim());
                 if (showFloatingForgot) {
-                    Frame.showPopupDialog(forgottenTitle, forgottenDialog);
+                    CShell.frame.showPopupDialog(forgottenTitle, forgottenDialog);
                 } else {
-                    Frame.showDialog(forgottenTitle, forgottenDialog);
+                    CShell.frame.showDialog(forgottenTitle, forgottenDialog);
                 }
             }
         });
@@ -185,7 +185,7 @@ public class LogonPanel extends SmartTable
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(_cmsgs.forgotEmailSent());
-                    Frame.clearDialog();
+                    CShell.frame.clearDialog();
                     return false;
                 }
             };

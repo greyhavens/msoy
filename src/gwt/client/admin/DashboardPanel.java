@@ -18,9 +18,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 
-import client.shell.Frame;
 import client.shell.Page;
-
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -106,7 +104,7 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        Frame.closeClient(false);
+        CAdmin.frame.closeClient(false);
 
         // we have to serve admin-client.jar from the server to which it will connect back due to
         // security restrictions and proxy the game jar through there as well

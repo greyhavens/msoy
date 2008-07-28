@@ -18,7 +18,6 @@ import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.ui.MsoyUI;
@@ -186,7 +185,7 @@ public class index extends Page
 
             } else {
                 // clear out the client as we're going into Java land
-                Frame.closeClient(false);
+                CWorld.frame.closeClient(false);
 
                 // prepare a command to be invoked once we know Java is loaded
                 _javaReadyCommand = new Command() {

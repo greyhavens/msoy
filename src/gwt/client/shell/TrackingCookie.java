@@ -15,7 +15,7 @@ public class TrackingCookie
     /**
      * Does the client cookie already contain referral information?
      */
-    public static boolean contains ()
+    public static boolean exists ()
     {
         return (CookieUtil.get(AFFILIATE_ID) != null);
     }
@@ -25,7 +25,7 @@ public class TrackingCookie
      */
     public static ReferralInfo get ()
     {
-        if (! contains()) {
+        if (!exists()) {
             ReferralInfo ref = new ReferralInfo("", "", "", ReferralInfo.makeRandomTracker());
             CShell.log("Could not locate referralInfo (cookies disabled?), loaded blank info.");
             return ref;
@@ -48,7 +48,7 @@ public class TrackingCookie
      */
     public static void save (ReferralInfo referral, boolean overwrite)
     {
-        if (contains() && !overwrite) {
+        if (exists() && !overwrite) {
             return; // we're not overwriting
         }
 
@@ -77,33 +77,32 @@ public class TrackingCookie
      * Flattens a ReferralInfo object into a Java object.
      */
     public static native Object getAsObject () /*-{
-      var referral = @client.shell.TrackingCookie::get()();
-      var result = new Object();
-      if (referral != null) {
-        result.affiliate = referral.@com.threerings.msoy.data.all.ReferralInfo::affiliate;
-        result.vector = referral.@com.threerings.msoy.data.all.ReferralInfo::vector;
-        result.creative = referral.@com.threerings.msoy.data.all.ReferralInfo::creative;
-        result.tracker = referral.@com.threerings.msoy.data.all.ReferralInfo::tracker;
-      }
-      return result;
+        var referral = @client.shell.TrackingCookie::get()();
+        var result = new Object();
+        if (referral != null) {
+            result.affiliate = referral.@com.threerings.msoy.data.all.ReferralInfo::affiliate;
+            result.vector = referral.@com.threerings.msoy.data.all.ReferralInfo::vector;
+            result.creative = referral.@com.threerings.msoy.data.all.ReferralInfo::creative;
+            result.tracker = referral.@com.threerings.msoy.data.all.ReferralInfo::tracker;
+        }
+        return result;
     }-*/;
 
     /**
      * Saves a ReferralInfo object from a Java object, overwriting the old one if desired.
      */
     public static native void saveAsObject (Object obj, boolean overwrite) /*-{
-      var ref =
-        @com.threerings.msoy.data.all.ReferralInfo::makeInstance(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(obj.affiliate, obj.vector, obj.creative, obj.tracker);
-
-      @client.shell.TrackingCookie::save(Lcom/threerings/msoy/data/all/ReferralInfo;Z)(ref,overwrite);
+        var ref = @com.threerings.msoy.data.all.ReferralInfo::makeInstance(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(
+            obj.affiliate, obj.vector, obj.creative, obj.tracker);
+        @client.shell.TrackingCookie::save(Lcom/threerings/msoy/data/all/ReferralInfo;Z)(ref,overwrite);
     }-*/;
 
-    public static String makeReferralParams (String affiliate, String vector, String creative) 
+    public static String makeReferralParams (String affiliate, String vector, String creative)
     {
-        return "aid_" + (affiliate != null ? affiliate : "") + 
+        return "aid_" + (affiliate != null ? affiliate : "") +
             "_" + (vector != null ? vector : "") + "_" + (creative != null ? creative : "");
     }
-    
+
     private static final String AFFILIATE_ID = "aff";
     private static final String VECTOR_ID = "vec";
     private static final String CREATIVE_ID = "cre";

@@ -20,7 +20,6 @@ import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Frame;
 import client.util.Link;
 import client.util.MsoyCallback;
 
@@ -119,7 +118,7 @@ public class SwiftlyPanel extends FlexTable
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
         // clear out any world client because Swiftly currently kills it anyway
-        Frame.closeClient(false);
+        CSwiftly.frame.closeClient(false);
     }
 
     protected void updateProjectLink ()

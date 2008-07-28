@@ -71,7 +71,7 @@ public class WorldClient extends Widget
         }
 
         // let the frame know that we're displaying a client (this clears out the content)
-        Frame.setShowingClient(pageToken);
+        CShell.frame.setShowingClient(pageToken);
 
         // if we're currently already displaying exactly what we've been asked to display; then
         // stop here because we're just restoring our client after closing a GWT page
@@ -91,7 +91,7 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            FlashClients.embedWorldClient(Frame.getClientContainer(), flashArgs);
+            FlashClients.embedWorldClient(CShell.frame.getClientContainer(), flashArgs);
 
         } else {
             // note our new current flash args
@@ -103,7 +103,7 @@ public class WorldClient extends Widget
     public static void displayFlashLobby (LaunchConfig config, String action)
     {
         // let the page know that we're displaying a client
-        Frame.setShowingClient(History.getToken());
+        CShell.frame.setShowingClient(History.getToken());
 
         clientWillClose(); // clear our Java or Flash client if we have one
 
@@ -115,20 +115,20 @@ public class WorldClient extends Widget
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }
-        FlashClients.embedGameClient(Frame.getClientContainer(), flashArgs);
+        FlashClients.embedGameClient(CShell.frame.getClientContainer(), flashArgs);
     }
 
     public static void displayJava (Widget client)
     {
         // let the page know that we're displaying a client
-        Frame.setShowingClient(History.getToken());
+        CShell.frame.setShowingClient(History.getToken());
 
         // clear out any flash page args
         _curFlashArgs = null;
 
         if (_jclient != client) {
             clientWillClose(); // clear out our flash client if we have one
-            Frame.getClientContainer().add(_jclient = client);
+            CShell.frame.getClientContainer().add(_jclient = client);
         } else {
             clientMinimized(false);
         }

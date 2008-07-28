@@ -175,7 +175,7 @@ public class CatalogPanel extends SmartTable
         setWidget(0, 0, new SideBar(_query, cloud));
 
         // set up our page title
-        Frame.setTitle(_dmsgs.getString("pItemType" + _query.itemType));
+        CShop.frame.setTitle(_dmsgs.getString("pItemType" + _query.itemType));
     }
 
     // from interface TagCloud.TagListener

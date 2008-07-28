@@ -4,11 +4,7 @@
 package client.shell;
 
 import java.util.ArrayList;
-
-import client.images.navi.NaviImages;
-import client.ui.MsoyUI;
-import client.util.FlashClients;
-import client.util.Link;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -37,12 +33,19 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.web.data.SessionData;
+
+import client.images.navi.NaviImages;
+import client.ui.MsoyUI;
+import client.util.FlashClients;
+import client.util.Link;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
  * and the various clients.
  */
 public class Frame
+    implements Session.Observer, WindowResizeListener
 {
     /** The height of our frame navigation header. */
     public static final int NAVI_HEIGHT = 50 /* header */;
@@ -62,13 +65,16 @@ public class Frame
     /**
      * Called by the Application to initialize us once in the lifetime of the app.
      */
-    public static void init ()
+    public Frame ()
     {
         // listen for window resize so that we can adjust the size of our scrollers
-        Window.addWindowResizeListener(_resizer);
+        Window.addWindowResizeListener(this);
 
         // set up the callbackd that our flash clients can call
-        configureCallbacks();
+        configureCallbacks(this);
+
+        // listen for logon/logff
+        Session.addObserver(this);
 
         // load up various JavaScript dependencies
         for (int ii = 0; ii < JS_DEPENDS.length; ii += 2) {
@@ -112,26 +118,9 @@ public class Frame
     }
 
     /**
-     * Called when the user logs on.
-     */
-    public static void didLogon ()
-    {
-        _header.didLogon();
-        clearDialog();
-    }
-
-    /**
-     * Called when the user logs off.
-     */
-    public static void didLogoff ()
-    {
-        _header.didLogoff();
-    }
-
-    /**
      * Sets the title of the browser window and the page.
      */
-    public static void setTitle (String title)
+    public void setTitle (String title)
     {
         if (_bar != null && title != null) {
             _bar.setTitle(title);
@@ -144,7 +133,7 @@ public class Frame
      * token for the current page so that it can be restored in the event that we open a normal
      * page and then later close it.
      */
-    public static void setShowingClient (String closeToken)
+    public void setShowingClient (String closeToken)
     {
         // note the current history token so that we can restore it if needed
         _closeToken = closeToken;
@@ -165,7 +154,7 @@ public class Frame
     /**
      * Clears any open client and restores the content display.
      */
-    public static void closeClient (boolean deferred)
+    public void closeClient (boolean deferred)
     {
         if (deferred) {
             DeferredCommand.addCommand(new Command() {
@@ -200,7 +189,7 @@ public class Frame
      *
      * @return true if the content was closed, false if we were not displaying content.
      */
-    public static boolean closeContent ()
+    public boolean closeContent ()
     {
         if (_closeToken == null) {
             return false;
@@ -229,7 +218,7 @@ public class Frame
     /**
      * Shows or hides the navigation header as desired.
      */
-    public static void setHeaderVisible (boolean visible)
+    public void setHeaderVisible (boolean visible)
     {
         RootPanel.get(HEADER).remove(_header);
         if (visible) {
@@ -240,7 +229,7 @@ public class Frame
     /**
      * Requests that the specified widget be scrolled into view.
      */
-    public static void ensureVisible (Widget widget)
+    public void ensureVisible (Widget widget)
     {
         if (_scroller != null) {
             _scroller.ensureVisible(widget);
@@ -250,7 +239,7 @@ public class Frame
     /**
      * Displays the supplied dialog in the frame.
      */
-    public static void showDialog (String title, Widget dialog)
+    public void showDialog (String title, Widget dialog)
     {
         // remove any existing content
         clearDialog();
@@ -263,7 +252,7 @@ public class Frame
     /**
      * Displays the supplied dialog in the frame or floating over the page.
      */
-    public static void showPopupDialog (String title, Widget dialog)
+    public void showPopupDialog (String title, Widget dialog)
     {
         _popup.setVisible(false);
         _popup.update(title, dialog);
@@ -274,7 +263,7 @@ public class Frame
     /**
      * Hides the current dialog contents.
      */
-    public static void clearDialog ()
+    public void clearDialog ()
     {
         RootPanel.get(HEADER).remove(_dialog);
     }
@@ -283,7 +272,7 @@ public class Frame
      * Clears out the client section of the frame and creates a new scroll pane to contain a new
      * client (and other bits if desired).
      */
-    public static Panel getClientContainer ()
+    public Panel getClientContainer ()
     {
         RootPanel.get(CLIENT).clear();
         if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
@@ -296,10 +285,34 @@ public class Frame
         }
     }
 
+    // from interface Session.Observer
+    public void didLogon (SessionData data)
+    {
+        _header.didLogon();
+        clearDialog();
+    }
+
+    // from interface Session.Observer
+    public void didLogoff ()
+    {
+        _header.didLogoff();
+    }
+
+    // from interface WindowResizeListener
+    public void onWindowResized (int width, int height)
+    {
+        if (_scroller != null) {
+            _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+        }
+        if (_cscroller != null) {
+            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+        }
+    }
+
     /**
      * Displays the supplied page content.
      */
-    protected static void showContent (String pageId, Widget pageContent)
+    protected void showContent (String pageId, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
         _bar = null;
@@ -357,7 +370,7 @@ public class Frame
         }
     }
 
-    protected static TitleBar createTitleBar (String pageId)
+    protected TitleBar createTitleBar (String pageId)
     {
         SubNaviPanel subnavi = new SubNaviPanel();
         int memberId = CShell.getMemberId();
@@ -416,12 +429,12 @@ public class Frame
     /**
      * Configures top-level functions that can be called by Flash.
      */
-    protected static native void configureCallbacks () /*-{
+    protected static native void configureCallbacks (Frame frame) /*-{
        $wnd.restoreClient = function () {
-            @client.shell.Frame::closeContent()();
+            frame.@client.shell.Frame::closeContent()();
        };
        $wnd.clearClient = function () {
-            @client.shell.Frame::closeClient(Z)(true);
+            frame.@client.shell.Frame::closeClient(Z)(true);
        };
     }-*/;
 
@@ -429,12 +442,12 @@ public class Frame
         return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
     }-*/;
 
-    protected static class Dialog extends SimplePanel
+    protected class Dialog extends SimplePanel
     {
         public Dialog () {
             init(new ClickListener() {
                 public void onClick (Widget sender) {
-                    Frame.clearDialog();
+                    clearDialog();
                 }
             });
         }
@@ -460,10 +473,9 @@ public class Frame
         protected SmartTable _innerTable;
     }
 
-    protected static class PopupDialog extends PopupPanel
+    protected class PopupDialog extends PopupPanel
     {
         public PopupDialog () {
-
             super(false);
             setAnimationEnabled(true);
             setStyleName("floatingDialogBox");
@@ -476,12 +488,11 @@ public class Frame
             setWidget(_innerDialog);
         }
 
-        public void update(String title, Widget content) {
+        public void update (String title, Widget content) {
             _innerDialog.update(title, content);
         }
 
         protected Dialog _innerDialog;
-
     }
 
     protected static class SubNaviPanel extends FlowPanel
@@ -518,7 +529,7 @@ public class Frame
         }
     }
 
-    protected static class TitleBar extends SmartTable
+    protected class TitleBar extends SmartTable
     {
         public TitleBar (String pageId, String title, SubNaviPanel subnavi) {
             super("pageTitle", 0, 0);
@@ -583,7 +594,7 @@ public class Frame
         protected Widget _closeBox, _closeShim;
     }
 
-    protected static class Header extends SmartTable
+    protected class Header extends SmartTable
         implements ClickListener
     {
         public Header () {
@@ -647,7 +658,8 @@ public class Frame
         }
 
         protected int _statusCol;
-        protected ArrayList<NaviButton> _buttons = new ArrayList<NaviButton>();
+        protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
+        protected StatusPanel _status = new StatusPanel();
     }
 
     protected static class SignOrLogonPanel extends SmartTable
@@ -655,8 +667,7 @@ public class Frame
         public SignOrLogonPanel () {
             super(0, 0);
             PushButton signup = new PushButton(
-                _cmsgs.headerSignup(),
-                Link.createListener(Page.ACCOUNT, "create"));
+                _cmsgs.headerSignup(), Link.createListener(Page.ACCOUNT, "create"));
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
@@ -725,28 +736,16 @@ public class Frame
         protected Image _upImage, _overImage, _downImage;
     }
 
-    protected static WindowResizeListener _resizer = new WindowResizeListener() {
-        public void onWindowResized (int width, int height) {
-            if (_scroller != null) {
-                _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-            }
-            if (_cscroller != null) {
-                _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-            }
-        }
-    };
+    protected Header _header;
+    protected String _closeToken;
 
-    protected static Header _header;
-    protected static String _closeToken;
+    protected TitleBar _bar;
 
-    protected static StatusPanel _status = new StatusPanel();
-    protected static TitleBar _bar;
-
-    protected static FlowPanel _contlist;
-    protected static ScrollPanel _scroller;
-    protected static ScrollPanel _cscroller;
-    protected static Dialog _dialog;
-    protected static PopupDialog _popup;
+    protected FlowPanel _contlist;
+    protected ScrollPanel _scroller;
+    protected ScrollPanel _cscroller;
+    protected Dialog _dialog;
+    protected PopupDialog _popup;
 
     protected static final NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

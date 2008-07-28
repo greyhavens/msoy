@@ -10,7 +10,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Frame;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -47,8 +46,8 @@ public class FriendsPanel extends FlowPanel
         }
 
         boolean self = (CPeople.getMemberId() == _memberId);
-        Frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() :
-                       CPeople.msgs.friendsOtherTitle(data.name.toString()));
+        CPeople.frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() :
+                               CPeople.msgs.friendsOtherTitle(data.name.toString()));
         _friends = new MemberList(
             self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
         String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());

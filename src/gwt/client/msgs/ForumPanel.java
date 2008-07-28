@@ -18,9 +18,7 @@ import com.threerings.msoy.data.all.GroupName;
 import client.images.msgs.MsgsImages;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
-
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.Link;
@@ -47,7 +45,7 @@ public class ForumPanel extends TitledListPanel
         // set up a callback to configure our page title when we learn this group's name
         _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
             public void onSuccess (GroupName result) {
-                Frame.setTitle(result.toString());
+                CMsgs.frame.setTitle(result.toString());
                 setGroupTitle(groupId, result.toString());
             }
             public void onFailure (Throwable error) { /* not used */ }

@@ -32,6 +32,9 @@ public class CShell
      * and when we create an account). */
     public static Invitation activeInvite;
 
+    /** Used to communicate with the frame. */
+    public static Frame frame;
+
     /**
      * Returns our member id if we're logged in, 0 if we are not.
      */

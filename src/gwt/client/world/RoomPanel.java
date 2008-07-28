@@ -14,7 +14,6 @@ import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.world.gwt.RoomInfo;
 
 import client.msgs.CommentsPanel;
-import client.shell.Frame;
 import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -41,7 +40,7 @@ public class RoomPanel extends SmartTable
             setText(0, 0, "That room does not exist.");
             return;
         }
-        Frame.setTitle(info.name);
+        CWorld.frame.setTitle(info.name);
 
         FlowPanel obits = new FlowPanel();
         obits.add(new InlineLabel(CWorld.msgs.owner(), false, false, true));

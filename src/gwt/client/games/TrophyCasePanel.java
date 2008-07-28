@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.game.gwt.TrophyCase;
 
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
@@ -42,7 +41,7 @@ public class TrophyCasePanel extends VerticalPanel
             return;
         }
 
-        Frame.setTitle(CGames.msgs.caseTitle(tcase.owner.toString()));
+        CGames.frame.setTitle(CGames.msgs.caseTitle(tcase.owner.toString()));
         if (tcase.shelves.length == 0) {
             setHeader((CGames.getMemberId() == tcase.owner.getMemberId()) ?
                      CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());

@@ -173,9 +173,9 @@ public abstract class Page
      */
     protected void setContent (String title, Widget content, boolean withHeader)
     {
-        Frame.setHeaderVisible(withHeader);
-        Frame.showContent(withHeader ? getTabPageId() : null, _content = content);
-        Frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
+        CShell.frame.setHeaderVisible(withHeader);
+        CShell.frame.showContent(withHeader ? getTabPageId() : null, _content = content);
+        CShell.frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
     }
 
     protected Widget _content;

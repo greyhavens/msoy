@@ -19,7 +19,6 @@ import com.threerings.msoy.world.gwt.WorldServiceAsync;
 import client.games.CGames;
 import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.shell.TrackingCookie;
 import client.util.FlashClients;
@@ -74,7 +73,7 @@ public class index extends MsgsEntryPoint
             _membersvc.getABTestGroup(
                 TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
-                        Frame.closeClient(false); // fullscreen
+                        CMe.frame.closeClient(false); // fullscreen
                         if (group == 1) {
                             setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);
                         } else if (group == 2) {
@@ -144,7 +143,7 @@ public class index extends MsgsEntryPoint
 
     protected void displayWhat ()
     {
-        Frame.closeClient(false); // no client on the main guest landing page
+        CMe.frame.closeClient(false); // no client on the main guest landing page
         setContent(CMe.msgs.landingTitle(), new LandingPanel(), false);
     }
 

@@ -25,7 +25,6 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.images.msgs.MsgsImages;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
@@ -133,7 +132,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         if (_scrollToPanel != null) {
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    Frame.ensureVisible(_scrollToPanel);
+                    CMsgs.frame.ensureVisible(_scrollToPanel);
                     _scrollToPanel = null;
                 }
             });

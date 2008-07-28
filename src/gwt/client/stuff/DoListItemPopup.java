@@ -25,7 +25,6 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.DynamicMessages;
-import client.shell.Frame;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ClickCallback;
@@ -42,7 +41,7 @@ public class DoListItemPopup extends VerticalPanel
     {
         String title = item.catalogId == 0 ?
             CStuff.msgs.doListCreateTitle() : CStuff.msgs.doListUpdateTitle();
-        Frame.showDialog(title, new DoListItemPopup(item, listing, listener));
+        CStuff.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
     }
 
     protected DoListItemPopup (Item item, final CatalogListing listing, ListedListener listener)
@@ -146,7 +145,7 @@ public class DoListItemPopup extends VerticalPanel
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Frame.clearDialog();
+                CStuff.frame.clearDialog();
             }
         }));
         footer.add(WidgetUtil.makeShim(10, 10));
@@ -169,7 +168,7 @@ public class DoListItemPopup extends VerticalPanel
                 public boolean gotResult (Integer result) {
                     _item.catalogId = result;
                     MsoyUI.info(resultMsg);
-                    Frame.clearDialog();
+                    CStuff.frame.clearDialog();
                     _listener.itemListed(_item, false);
                     return false;
                 }
@@ -191,7 +190,7 @@ public class DoListItemPopup extends VerticalPanel
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    Frame.clearDialog();
+                    CStuff.frame.clearDialog();
                     _listener.itemListed(_item, true);
                     return false;
                 }
@@ -206,7 +205,7 @@ public class DoListItemPopup extends VerticalPanel
                 }
                 public boolean gotResult (Void result) {
                     MsoyUI.info(CStuff.msgs.doListUpdated());
-                    Frame.clearDialog();
+                    CStuff.frame.clearDialog();
                     return false;
                 }
             };

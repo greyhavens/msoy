@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.person.gwt.ProfileService;
 
-import client.shell.Frame;
-
 /**
  * Displays a member's profile.
  */
@@ -34,8 +32,9 @@ public class ProfilePanel extends VerticalPanel
 
     protected void init (ProfileService.ProfileResult pdata)
     {
-        Frame.setTitle((_memberId == CPeople.getMemberId()) ? CPeople.msgs.profileSelfTitle() :
-                       CPeople.msgs.profileOtherTitle(pdata.name.toString()));
+        CPeople.frame.setTitle((_memberId == CPeople.getMemberId()) ?
+                               CPeople.msgs.profileSelfTitle() :
+                               CPeople.msgs.profileOtherTitle(pdata.name.toString()));
 
         for (int ii = 0; ii < _blurbs.length; ii++) {
             if (_blurbs[ii].shouldDisplay(pdata)) {

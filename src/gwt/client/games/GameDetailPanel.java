@@ -21,7 +21,6 @@ import com.threerings.msoy.item.data.all.Game;
 import client.item.ItemRating;
 import client.msgs.CommentsPanel;
 import client.shell.Args;
-import client.shell.Frame;
 import client.shell.Page;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
@@ -66,7 +65,7 @@ public class GameDetailPanel extends SmartTable
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
         _gameId = gameId;
-        Frame.setTitle(detail.getGame().name);
+        CGames.frame.setTitle(detail.getGame().name);
 
         Game game = detail.getGame();
         VerticalPanel shot = new VerticalPanel();

@@ -33,7 +33,6 @@ import client.util.MediaUtil;
 import client.util.ServiceUtil;
 
 import client.shell.CShell;
-import client.shell.Frame;
 import client.shell.ShellMessages;
 
 /**
@@ -52,8 +51,8 @@ public class ImageChooserPopup extends VerticalPanel
     {
         _itemsvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
             public void onSuccess (List<Item> items) {
-                Frame.showDialog(_cmsgs.icTitle(),
-                                 new ImageChooserPopup(items, thumbnail, callback));
+                CShell.frame.showDialog(
+                    _cmsgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));
             }
             public void onFailure (Throwable caught) {
                 callback.onFailure(caught);
@@ -81,7 +80,7 @@ public class ImageChooserPopup extends VerticalPanel
     protected void imageChosen (MediaDesc media)
     {
         _callback.onSuccess(media);
-        Frame.clearDialog();
+        CShell.frame.clearDialog();
     }
 
     protected class PhotoGrid extends PagedGrid<Photo>
