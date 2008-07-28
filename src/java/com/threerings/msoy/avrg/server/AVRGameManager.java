@@ -158,11 +158,9 @@ public class AVRGameManager
 
         int agents = _gameAgentObj != null ? 1 : 0;
         if (target.getSubscriberCount() <= agents) {
-            log.info("Scheduling shutdown check", "subs", _gameObj.getSubscriberCount());
             _shutdownCheck.schedule(IDLE_UNLOAD_PERIOD);
             
         } else {
-            log.info("Cancelling shutdown check", "subs", _gameObj.getSubscriberCount());
             _shutdownCheck.cancel();            
         }
     }
@@ -803,7 +801,6 @@ public class AVRGameManager
     {
         int agents = _gameAgentObj != null ? 1 : 0;
         if (_gameObj.getSubscriberCount() <= agents) {
-            log.info("Shutting down avrg", "subs", _gameObj.getSubscriberCount());
             shutdown();
         }
     }   
