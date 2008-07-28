@@ -803,7 +803,7 @@
         <exclude name="**/web/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
-        <exclude name="**/bureau/**"/>
+        <exclude name="**/MoneyService.java"/>
         <exclude name="**/GameServerService.java"/>
       </fileset>
     </service>
