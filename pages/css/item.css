@@ -4,6 +4,43 @@
  * CSS styles for the (shared) Item interfaces.
  */
 
+.itemThumbnail {
+  padding-left: 5px;
+  width: 80px;
+}
+
+.itemThumbnail .Image {
+  height: 60px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.itemThumbnail .Text {
+  font-size: small;
+  text-align: center;
+}
+
+.ratingText {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.stuffNaviBar {
+  background-image: url(/images/me/stuff_bg.png);
+}
+
+.stuffNaviBar .Link {
+  width: 64px;
+}
+
+.stuffNaviBar .Label {
+  background-image: none;
+  text-align: center;
+  font-weight: bold;
+  color: #FFFFFF;
+  height: 25px;
+}
+
 .tagCloud {
   background: url(/images/item/top_tags.png) no-repeat top;
   font-size: 12px;

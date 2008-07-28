@@ -250,141 +250,6 @@ img, embed, applet, object {
   margin-bottom: 5px;
 }
 
-/** Header styles. */
-.frameHeader {
-  color: #EAEFF1;
-  background: #000000;
-  height: 50px;
-}
-
-.frameHeader .Logo .gwt-Image {
-  width: 126px;
-}
-
-.frameHeader .NaviButton {
-  height: 32px;
-  margin-left: 0px;
-  margin-right: 4px;
-  padding-top: 18px;
-}
-
-.frameHeader .Right {
-  background: url(/images/header/header_right.png) no-repeat right;
-  width: 100%;
-  vertical-align: bottom;
-}
-
-.frameHeader .Button {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  padding: 5px 0px;
-  height: 30px;
-}
-
-.frameHeader .LogonButton {
-  background: url(/images/header/logon_button.png) no-repeat bottom;
-  width: 129px;
-}
-
-.frameHeader .SignupButton {
-  background: url(/images/header/signup_button.png) no-repeat bottom;
-  width: 155px;
-}
-
-.frameHeader .LogonButton-up-hovering, .frameHeader .LogonButton-down-hovering,
-.frameHeader .SignupButton-up-hovering, .frameHeader .SignupButton-down-hovering {
-  padding-top: 10px;
-  cursor: pointer;
-}
-
-.logonPanel .gwt-TextBox,
-.logonPanel .gwt-PasswordTextBox {
-  background: #FFFFFF;
-  border: 1px solid #000000;
-}
-
-.frameHeader .logonPanel {
-  font-size: 10px;
-  background: url(/images/header/logon_bg.png) no-repeat bottom;
-  width: 211px;
-  padding: 0px 5px 5px 5px;
-}
-
-.frameHeader .logonPanel td {
-  vertical-align: middle;
-}
-
-.frameHeader .logonPanel .gwt-TextBox,
-.frameHeader .logonPanel .gwt-PasswordTextBox {
-  font-size: 10px;
-  width: 100px;
-  border: 1px solid #CCCCCC;
-}
-
-.statusPanel {
-  padding-right: 40px;
-  padding-bottom: 2px;
-  color: #AAB5B9;
-  font-family: Helvetica, sans-serif;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.statusPanel .Icon {
-  padding-right: 3px;
-}
-
-.statusPanel .Mail {
-  padding-right: 25px;
-}
-
-.statusPanel a {
-  color: #AAB5B9;
-}
-
-/** Page styles */
-.pageTitle {
-  background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
-}
-
-.pageTitle .Title {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  height: 34px;
-  color: white;
-  white-space: nowrap;
-  opacity: 0.6; /* Firefox and Safari */
-  filter: alpha(opacity=60); /* IE */
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.pageTitle .SubNavi {
-  font-size: 12px;
-  color: white;
-  white-space: nowrap;
-  vertical-align: bottom;
-  text-align: right;
-  padding: 0px 5px 5px 0px;
-}
-
-.pageTitle .SubNavi a {
-  color: white;
-}
-
-.pageTitle .SubNavi img, .pageTitle .SubNavi div {
-  display: inline;
-  vertical-align: bottom;
-}
-
-.pageTitle .Close {
-  padding-bottom: 12px;
-  padding-left: 5px;
-}
-
 .pageDialog {
   margin: 0px 0px 5px 0px;
   width: 100%;
@@ -564,22 +429,6 @@ img, embed, applet, object {
   background-image: url(/images/item/detail_preview_bg.png);
   width: 320px;
   height: 240px;
-}
-
-.itemThumbnail {
-  padding-left: 5px;
-  width: 80px;
-}
-
-.itemThumbnail .Image {
-  height: 60px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.itemThumbnail .Text {
-  font-size: small;
-  text-align: center;
 }
 
 /** Standard paged grid configuration. */
@@ -875,35 +724,9 @@ img, embed, applet, object {
   max-width: 500px;
 }
 
-.itemPopup {
-  border: 2px solid #0066FF;
-  background: #6699CC;
-  padding: 5px;
-}
-
-.itemDetailErrors {
-  font-weight: bold;
-  background: #FFFFFF;
-}
-
-.headerValueTable {
-  border: 1px solid black;
-}
-
 .headerRow {
   font-style: italic;
   background: #6699CC;
-}
-
-.groupLogoPopup {
-  border: 2px solid #0066FF;
-  background: #6699CC;
-  padding: 5px;
-}
-
-.groupLogoThumbnail {
-  border: 1px solid black;
-  height: 50px;
 }
 
 .StyledTabs .gwt-TabBar {
@@ -985,70 +808,6 @@ img, embed, applet, object {
   width: 400px;
 }
 
-.messagePanel .Photo {
-  background: #EDEDED;
-  padding: 5px;
-}
-
-.messagePanel .Info {
-  padding-top: 5px;
-}
-
-.messagePanel .Author {
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.messagePanel .Icon, .messagePanel .ActionIcon {
-  vertical-align: middle;
-  display: inline;
-}
-
-.messagePanel .Icon {
-  margin-right: 5px;
-}
-
-.messagePanel .ActionIcon {
-  margin-left: 5px;
-}
-
-.messagePanel .Posted {
-  font-size: 12px;
-  color: #999999;
-}
-
-.messagePanel .Scroller {
-  width: 565px;
-}
-
-.messagePanel .Text {
-  padding: 5px 5px 0px 0px;
-  vertical-align: top;
-}
-
-.messagePanel .LeftPad {
-  padding-left: 10px;
-}
-
-.messagePanel .BottomPad {
-  padding-bottom: 5px;
-}
-
-.commentsPanel .Status {
-  font-size: 12px;
-}
-
-.characterLimiter {
-  font-size: 10px;
-  color: #666666;
-}
-
-.photoChoiceBox .Preview {
-  width: 40px;
-  height: 30px;
-  padding-right: 5px;
-}
-
 .contentFooterPanel {
   width: 100%;
   height: 100%;
@@ -1094,22 +853,6 @@ img, embed, applet, object {
   padding-top: 5px;
 }
 
-.stuffNaviBar {
-  background-image: url(/images/me/stuff_bg.png);
-}
-
-.stuffNaviBar .Link {
-  width: 64px;
-}
-
-.stuffNaviBar .Label {
-  background-image: none;
-  text-align: center;
-  font-weight: bold;
-  color: #FFFFFF;
-  height: 25px;
-}
-
 .memberStatus {
   font-size: 14px;
 }
@@ -1150,57 +893,3 @@ img, embed, applet, object {
 .searchBox .closeButton {
   margin-top: 3px;
 }
-
-.ratingText {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.ratingCount {
-    font-size: 12px;
-    font-style: italic;
-}
-
-
-/* ------------------------------------
-   BROWSER TEST DIALOG
--------------------------------------*/
-
-.browserTest {
-  z-index: 10;
-  position: absolute;
-  top: 100px;
-  left: 0;
-  width: 100%;
-  text-align: left;
-}
-
-.browserTest .Message {
-  background: url(/images/landing/browser_test_bg.png) no-repeat top center;
-  width: 576px;
-  height: 138px; /* 218 minus 80 padding */
-  margin: auto;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  padding: 40px;
-  color: #000000;
-}
-
-.browserTest .Message .Center {
-  padding: 15px;
-}
-
-.browserTest .Title {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #3e6f98;
-}
-
-.browserTest .actionLabel {
-  float: left;
-  margin-top: 15px;
-  margin-right: 10px;
-}
-

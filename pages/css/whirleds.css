@@ -623,3 +623,9 @@
 	padding: 10px;
 	border: solid black 1px;
 }
+
+.photoChoiceBox .Preview {
+  width: 40px;
+  height: 30px;
+  padding-right: 5px;
+}

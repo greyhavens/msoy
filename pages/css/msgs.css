@@ -4,72 +4,53 @@
  * CSS styles for the common Msgs components.
  */
 
-.MailComposer {
-  padding: 8px;
-}
-
-.MailComposer .Headers {
-  background: white;
-  padding-top: 3px;
-  height: 2em;
-  width: 100%;
-}
-
-.MailComposer .Label {
-  text-align: right;
-  width: 7em;
-}
-
-.MailComposer .Value {
-  text-align: left;
-}
-
-.MailComposer .Headers .SubjectBox {
-  width: 100%;
-}
-
-.MailComposer .Payload {
-  border: none;
-  width: 100%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.MailComposer .Body {
-  padding: 4px;
-}
-
-.MailComposer .Bar {
-  background-image: url(/images/mail/box_tile.png);
-  height: 27px;
-  width: 100%;
-}
-
-.MailComposer .Bar .Star {
-  background-image: url(/images/mail/box_left.png);
-  height: 27px;
-  width: 33px;
-  float: left;
-}
-
-.MailControls .gwt-Button {
-  margin-right: 5px;
-}
-
-.itemGift {
-  width: 100%;
+.messagePanel .Photo {
+  background: #EDEDED;
   padding: 5px;
 }
 
-.itemGift .Title {
-  border-bottom: black solid 2px;
-  margin-bottom: 5px;
+.messagePanel .Info {
+  padding-top: 5px;
 }
 
-.itemGift .ControlButton {
-  margin-left: 4px;
-  margin-top: 4px;
-  float: right;
+.messagePanel .Author {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.messagePanel .Icon, .messagePanel .ActionIcon {
+  vertical-align: middle;
+  display: inline;
+}
+
+.messagePanel .Icon {
+  margin-right: 5px;
+}
+
+.messagePanel .ActionIcon {
+  margin-left: 5px;
+}
+
+.messagePanel .Posted {
+  font-size: 12px;
+  color: #999999;
+}
+
+.messagePanel .Scroller {
+  width: 565px;
+}
+
+.messagePanel .Text {
+  padding: 5px 5px 0px 0px;
+  vertical-align: top;
+}
+
+.messagePanel .LeftPad {
+  padding-left: 10px;
+}
+
+.messagePanel .BottomPad {
+  padding-bottom: 5px;
 }
 
 .titledListPanel {

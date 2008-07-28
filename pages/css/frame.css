@@ -1,0 +1,146 @@
+/**
+ * $Id$
+ *
+ * CSS styles used by our top-level frame and header.
+ */
+
+.frameHeader {
+  color: #EAEFF1;
+  background: #000000;
+  height: 50px;
+}
+
+.frameHeader .Logo .gwt-Image {
+  width: 126px;
+}
+
+.frameHeader .NaviButton {
+  height: 32px;
+  margin-left: 0px;
+  margin-right: 4px;
+  padding-top: 18px;
+}
+
+.frameHeader .Right {
+  background: url(/images/header/header_right.png) no-repeat right;
+  width: 100%;
+  vertical-align: bottom;
+}
+
+.frameHeader .Button {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 0px;
+  height: 30px;
+}
+
+.frameHeader .LogonButton {
+  background: url(/images/header/logon_button.png) no-repeat bottom;
+  width: 129px;
+}
+
+.frameHeader .SignupButton {
+  background: url(/images/header/signup_button.png) no-repeat bottom;
+  width: 155px;
+}
+
+.frameHeader .LogonButton-up-hovering, .frameHeader .LogonButton-down-hovering,
+.frameHeader .SignupButton-up-hovering, .frameHeader .SignupButton-down-hovering {
+  padding-top: 10px;
+  cursor: pointer;
+}
+
+.logonPanel .gwt-TextBox,
+.logonPanel .gwt-PasswordTextBox {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+}
+
+.frameHeader .logonPanel {
+  font-size: 10px;
+  background: url(/images/header/logon_bg.png) no-repeat bottom;
+  width: 211px;
+  padding: 0px 5px 5px 5px;
+}
+
+.frameHeader .logonPanel td {
+  vertical-align: middle;
+}
+
+.frameHeader .logonPanel .gwt-TextBox,
+.frameHeader .logonPanel .gwt-PasswordTextBox {
+  font-size: 10px;
+  width: 100px;
+  border: 1px solid #CCCCCC;
+}
+
+.statusPanel {
+  padding-right: 40px;
+  padding-bottom: 2px;
+  color: #AAB5B9;
+  font-family: Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.statusPanel .Icon {
+  padding-right: 3px;
+}
+
+.statusPanel .Mail {
+  padding-right: 25px;
+}
+
+.statusPanel a {
+  color: #AAB5B9;
+}
+
+.pageIFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ------------------------------------
+   BROWSER TEST DIALOG
+-------------------------------------*/
+
+.browserTest {
+  z-index: 10;
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.browserTest .Message {
+  background: url(/images/landing/browser_test_bg.png) no-repeat top center;
+  width: 576px;
+  height: 138px; /* 218 minus 80 padding */
+  margin: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  padding: 40px;
+  color: #000000;
+}
+
+.browserTest .Message .Center {
+  padding: 15px;
+}
+
+.browserTest .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #3e6f98;
+}
+
+.browserTest .actionLabel {
+  float: left;
+  margin-top: 15px;
+  margin-right: 10px;
+}

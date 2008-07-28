@@ -3,9 +3,6 @@
 
 package client.shell;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -14,16 +11,12 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -33,7 +26,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.images.navi.NaviImages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
@@ -68,7 +60,19 @@ public class ShellFrameImpl
         }
 
         // create our header, dialog and popup
-        _header = new Header();
+        _header = new FrameHeader(new ClickListener() {
+            public void onClick (Widget sender) {
+                if (closeContent()) {
+                    // peachy, nothing else to do
+                } else {
+                    if (CShell.isGuest()) {
+                        History.newItem("");
+                    } else {
+                        Link.go(Page.WORLD, "m" + CShell.getMemberId());
+                    }
+                }
+            }
+        });
         _dialog = new Dialog();
         _popup = new PopupDialog();
 
@@ -241,33 +245,7 @@ public class ShellFrameImpl
         }
     }
 
-    // from interface Session.Observer
-    public void didLogon (SessionData data)
-    {
-        _header.didLogon();
-        clearDialog();
-    }
-
-    // from interface Session.Observer
-    public void didLogoff ()
-    {
-        _header.didLogoff();
-    }
-
-    // from interface WindowResizeListener
-    public void onWindowResized (int width, int height)
-    {
-        if (_scroller != null) {
-            _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-        }
-        if (_cscroller != null) {
-            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        }
-    }
-
-    /**
-     * Displays the supplied page content.
-     */
+    // from interface Frame
     public void showContent (String pageId, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
@@ -327,6 +305,28 @@ public class ShellFrameImpl
         }
         if (_bar != null) {
             _bar.setCloseVisible(FlashClients.clientExists());
+        }
+    }
+
+    // from interface Session.Observer
+    public void didLogon (SessionData data)
+    {
+        clearDialog();
+    }
+
+    // from interface Session.Observer
+    public void didLogoff ()
+    {
+    }
+
+    // from interface WindowResizeListener
+    public void onWindowResized (int width, int height)
+    {
+        if (_scroller != null) {
+            _scroller.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+        }
+        if (_cscroller != null) {
+            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         }
     }
 
@@ -399,149 +399,7 @@ public class ShellFrameImpl
         protected Dialog _innerDialog;
     }
 
-    protected class Header extends SmartTable
-        implements ClickListener
-    {
-        public Header () {
-            super("frameHeader", 0, 0);
-            setWidth("100%");
-            int col = 0;
-
-            String lpath = "/images/header/header_logo.png";
-            setWidget(col++, 0, MsoyUI.createActionImage(lpath, this), 1, "Logo");
-            addButton(col++, Page.ME, _cmsgs.menuMe(), _images.me(), _images.ome(),
-                      _images.sme());
-            addButton(col++, Page.PEOPLE, _cmsgs.menuFriends(), _images.friends(),
-                      _images.ofriends(), _images.sfriends());
-            addButton(col++, Page.GAMES, _cmsgs.menuGames(), _images.games(),
-                      _images.ogames(), _images.sgames());
-            addButton(col++, Page.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(),
-                      _images.oworlds(), _images.sworlds());
-            addButton(col++, Page.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
-                      _images.sshop());
-            addButton(col++, Page.HELP, _cmsgs.menuHelp(), _images.help(), _images.ohelp(),
-                      _images.shelp());
-            _statusCol = col;
-        }
-
-        public void didLogon () {
-            getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
-            getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_BOTTOM);
-            setWidget(0, _statusCol, _status, 1, "Right");
-        }
-
-        public void didLogoff () {
-            getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_CENTER);
-            getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
-            setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
-        }
-
-        public void selectTab (String pageId) {
-            for (NaviButton button : _buttons) {
-                button.setSelected(button.pageId.equals(pageId));
-            }
-        }
-
-        // from Header
-        public void onClick (Widget sender) {
-            if (closeContent()) {
-                // peachy, nothing else to do
-            } else {
-                if (CShell.isGuest()) {
-                    History.newItem("");
-                } else {
-                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
-                }
-            }
-        }
-
-        protected void addButton (int col, String pageId, String text, AbstractImagePrototype up,
-                                  AbstractImagePrototype over, AbstractImagePrototype down) {
-            NaviButton button = new NaviButton(pageId, text, up, over, down);
-            setWidget(0, col, button);
-            _buttons.add(button);
-        }
-
-        protected int _statusCol;
-        protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
-        protected StatusPanel _status = new StatusPanel();
-    }
-
-    protected static class SignOrLogonPanel extends SmartTable
-    {
-        public SignOrLogonPanel () {
-            super(0, 0);
-            PushButton signup = new PushButton(
-                _cmsgs.headerSignup(), Link.createListener(Page.ACCOUNT, "create"));
-            signup.setStyleName("SignupButton");
-            signup.addStyleName("Button");
-            setWidget(0, 0, signup);
-            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-            setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            PushButton logon = new PushButton(_cmsgs.headerLogon(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    setWidget(0, 2, new LogonPanel(true));
-                }
-            });
-            logon.setStyleName("LogonButton");
-            logon.addStyleName("Button");
-            setWidget(0, 2, logon);
-            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        }
-    }
-
-    protected static class NaviButton extends SimplePanel
-    {
-        public final String pageId;
-
-        public NaviButton (String page, String text, AbstractImagePrototype up,
-                           AbstractImagePrototype over, AbstractImagePrototype down) {
-            setStyleName("NaviButton");
-            pageId = page;
-
-            _upImage = up.createImage();
-            _upImage.addStyleName("actionLabel");
-            _upImage.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseEnter (Widget sender) {
-                    setWidget(_overImage);
-                }
-            });
-
-            _overImage = over.createImage();
-            _overImage.addStyleName("actionLabel");
-            _overImage.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseLeave (Widget sender) {
-                    setWidget(_upImage);
-                }
-            });
-            ClickListener go = new ClickListener() {
-                public void onClick (Widget sender) {
-                    // if a guest clicks on "me", send them to create account
-                    if (pageId.equals(Page.ME) && CShell.isGuest()) {
-                        Link.go(Page.ACCOUNT, "create");
-                    } else {
-                        Link.go(pageId, "");
-                    }
-                }
-            };
-            _overImage.addClickListener(go);
-
-            _downImage = down.createImage();
-            _downImage.addStyleName("actionLabel");
-            _downImage.addClickListener(go);
-
-            setWidget(_upImage);
-        }
-
-        public void setSelected (boolean selected)
-        {
-            setWidget(selected ? _downImage : _upImage);
-        }
-
-        protected Image _upImage, _overImage, _downImage;
-    }
-
-    protected Header _header;
+    protected FrameHeader _header;
     protected String _closeToken;
 
     protected TitleBar _bar;
@@ -552,7 +410,6 @@ public class ShellFrameImpl
     protected Dialog _dialog;
     protected PopupDialog _popup;
 
-    protected static final NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     /** Enumerates our Javascript dependencies. */

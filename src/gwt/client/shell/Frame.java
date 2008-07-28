@@ -29,60 +29,60 @@ public interface Frame
     /**
      * Sets the title of the browser window and the page.
      */
-    public void setTitle (String title);
+    void setTitle (String title);
 
     /**
      * Switches the frame into client display mode (clearing out any content) and notes the history
      * token for the current page so that it can be restored in the event that we open a normal
      * page and then later close it.
      */
-    public void setShowingClient (String closeToken);
+    void setShowingClient (String closeToken);
 
     /**
      * Clears any open client and restores the content display.
      */
-    public void closeClient (boolean deferred);
+    void closeClient (boolean deferred);
 
     /**
      * Clears the open content and restores the client to its full glory.
      *
      * @return true if the content was closed, false if we were not displaying content.
      */
-    public boolean closeContent ();
+    boolean closeContent ();
 
     /**
      * Shows or hides the navigation header as desired.
      */
-    public void setHeaderVisible (boolean visible);
+    void setHeaderVisible (boolean visible);
 
     /**
      * Requests that the specified widget be scrolled into view.
      */
-    public void ensureVisible (Widget widget);
+    void ensureVisible (Widget widget);
 
     /**
      * Displays the supplied dialog in the frame.
      */
-    public void showDialog (String title, Widget dialog);
+    void showDialog (String title, Widget dialog);
 
     /**
      * Displays the supplied dialog in the frame or floating over the page.
      */
-    public void showPopupDialog (String title, Widget dialog);
+    void showPopupDialog (String title, Widget dialog);
 
     /**
      * Hides the current dialog contents.
      */
-    public void clearDialog ();
+    void clearDialog ();
 
     /**
      * Clears out the client section of the frame and creates a new scroll pane to contain a new
      * client (and other bits if desired).
      */
-    public Panel getClientContainer ();
+    Panel getClientContainer ();
 
     /**
      * Displays the supplied page content.
      */
-    public void showContent (String pageId, Widget pageContent);
+    void showContent (String pageId, Widget pageContent);
 }

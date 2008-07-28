@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="/css/global.css" type="text/css"/>
   <link rel="stylesheet" href="/css/gwt.css" type="text/css"/>
+  <link rel="stylesheet" href="/css/frame.css" type="text/css"/>
+  <link rel="stylesheet" href="/css/page.css" type="text/css"/>
   <link rel="stylesheet" href="/css/account.css" type="text/css"/>
   <link rel="stylesheet" href="/css/admin.css" type="text/css"/>
   <link rel="stylesheet" href="/css/games.css" type="text/css"/>
