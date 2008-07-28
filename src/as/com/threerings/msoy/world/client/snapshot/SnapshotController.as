@@ -82,17 +82,17 @@ public class SnapshotController extends Controller
 
         // TODO: display a progress dialog during uploading
         // These should be local, or the dialog is a new thing. Fuck this controller, actually.
-        _request = new URLRequest();
-        _request.url = DeploymentConfig.serverURL + service;
-        _request.method = URLRequestMethod.POST;
-        _request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
-        _request.data = mimeBody;
+        const request :URLRequest = new URLRequest();
+        request.url = DeploymentConfig.serverURL + service;
+        request.method = URLRequestMethod.POST;
+        request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
+        request.data = mimeBody;
 
-        _loader = new URLLoader();
-        _loader.addEventListener(Event.COMPLETE, handleResult);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
-        _loader.load(_request);
+        const loader :URLLoader = new URLLoader();
+        loader.addEventListener(Event.COMPLETE, handleResult);
+        loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+        loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
+        loader.load(request);
     }
 
     /** Creates an HTTP POST upload request. */
@@ -133,9 +133,6 @@ public class SnapshotController extends Controller
     }
 
     protected var _panel :SnapshotPanel;
-    protected var _encoder :JPGEncoder;
-    protected var _loader :URLLoader;
-    protected var _request :URLRequest;
     protected var _ctx :WorldContext;
 
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
