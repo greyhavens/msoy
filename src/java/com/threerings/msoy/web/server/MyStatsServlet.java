@@ -26,6 +26,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -39,7 +40,7 @@ public class MyStatsServlet extends HttpServlet
     {
         try {
             // pull out session token from the request header
-            String token = CookieUtil.getCookieValue(req, "creds");
+            String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;

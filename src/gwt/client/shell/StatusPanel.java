@@ -92,8 +92,7 @@ public class StatusPanel extends SmartTable
     public void didLogon (SessionData data)
     {
         _creds = data.creds;
-        setCookie("creds", _creds.token);
-        setCookie("who", _creds.accountName);
+        CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
 
         // configure our levels
         int idx = 0;
@@ -127,18 +126,7 @@ public class StatusPanel extends SmartTable
     public void didLogoff ()
     {
         _creds = null;
-        clearCookie("creds");
         CShell.level = 0;
-    }
-
-    protected void setCookie (String name, String value)
-    {
-        CookieUtil.set("/", 7, name, value);
-    }
-
-    protected void clearCookie (String name)
-    {
-        CookieUtil.clear("/", name);
     }
 
     protected static boolean isIncrease (StatusChangeEvent event)

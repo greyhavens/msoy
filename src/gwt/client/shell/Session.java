@@ -6,7 +6,19 @@ package client.shell;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import com.threerings.gwt.util.CookieUtil;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
+
+import client.util.ServiceUtil;
 
 /**
  * A central place where we keep track of whether or not we've logged on or logged off.
@@ -21,6 +33,9 @@ public class Session
         /** Called when we have just logged off. */
         void didLogoff ();
     }
+
+    /** The lifespan of our session cookie. */
+    public static final int SESSION_DAYS = 7;
 
     /**
      * Registers to be notified when we logon or logoff.
@@ -39,11 +54,48 @@ public class Session
     }
 
     /**
+     * Confirms that our existing credentials are still valid. This results in a call to either
+     * {@link #didLogon} or {@link #didLogoff} when the validity of our credentials are known.
+     */
+    public static void validate ()
+    {
+        // if we have no creds token, we are definitely not logged in
+        String token = CookieUtil.get(WebCreds.CREDS_COOKIE);
+        if (token == null) {
+            didLogoff();
+            return;
+        }
+
+        // if we do have a creds token, we need to check with the server to see if it has expired
+        AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
+            public void onSuccess (SessionData data) {
+                if (data == null) {
+                    didLogoff();
+                } else {
+                    didLogon(data);
+                }
+            }
+            public void onFailure (Throwable t) {
+                didLogoff();
+            }
+        };
+        _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
+    }
+
+    /**
      * Call this method if you know we've just logged on and want to let everyone who cares know
      * about it.
      */
     public static void didLogon (SessionData data)
     {
+        // store our session information in a cookie
+        CookieUtil.set("/", SESSION_DAYS, WebCreds.CREDS_COOKIE, data.creds.token);
+
+        // fill in our global creds info
+        CShell.creds = data.creds;
+        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
+
+        // let our observers know that we've just logged on
         for (Observer observer : _observers) {
             try {
                 observer.didLogon(data);
@@ -59,14 +111,25 @@ public class Session
      */
     public static void didLogoff ()
     {
+        // clear out our credentials cookie
+        CookieUtil.clear("/", WebCreds.CREDS_COOKIE);
+
+        // clear out our global creds info
+        CShell.creds = null;
+        CShell.ident = null;
+
+        // let our observers know that we've just logged off
         for (Observer observer : _observers) {
             try {
                 observer.didLogoff();
             } catch (Exception e) {
-                CShell.log("Observer choked in didLogon [observer=" + observer + "]", e);
+                CShell.log("Observer choked in didLogoff [observer=" + observer + "]", e);
             }
         }
     }
 
     protected static List<Observer> _observers = new ArrayList<Observer>();
+
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

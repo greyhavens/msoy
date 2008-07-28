@@ -17,10 +17,13 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
+import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 
@@ -38,7 +41,7 @@ public class GameTraceLogServlet extends HttpServlet
     {
         try {
             // pull out session token from the request header
-            String token = CookieUtil.getCookieValue(req, "creds");
+            String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;

@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.DynamicMessages;
 import client.util.Link;
 
 /**

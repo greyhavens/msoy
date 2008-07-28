@@ -42,7 +42,9 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 
@@ -67,7 +69,7 @@ public class FacebookServlet extends HttpServlet
         Tuple<Integer,String> creds = processAuth(req, rsp);
         if (creds == null) {
             log.info("Admitting guest user.");
-            for (String name : new String[] { "creds", "fbid" }) {
+            for (String name : new String[] { WebCreds.CREDS_COOKIE, "fbid" }) {
                 Cookie cookie = new Cookie(name, "x");
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
@@ -77,7 +79,7 @@ public class FacebookServlet extends HttpServlet
 
         } else {
             log.info("Admitting authenticated user " + creds + ".");
-            Cookie cookie = new Cookie("creds", creds.right);
+            Cookie cookie = new Cookie(WebCreds.CREDS_COOKIE, creds.right);
             cookie.setPath("/");
             cookie.setMaxAge(-1);
             rsp.addCookie(cookie);
@@ -114,7 +116,7 @@ public class FacebookServlet extends HttpServlet
         }
 
         // if they are an app user and they already have a Whirled session cookie, send them along
-        String sessionCreds = CookieUtil.getCookieValue(req, "creds");
+        String sessionCreds = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
         int sessionUserId = 0;
         try {
             sessionUserId = Integer.parseInt(CookieUtil.getCookieValue(req, "fbid"));

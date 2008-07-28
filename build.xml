@@ -336,6 +336,8 @@
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwt.present"/>
 
+    <fail message="You must specify -Dpage=(mail|stuff|shop|etc.)." unless="page"/>
+
     <if><equals arg1="${platform.darwin}" arg2="true"/><then>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
             classname="com.google.gwt.dev.GWTShell">
@@ -345,7 +347,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="frame/index.html"/>
+        <arg value="${page}/${page}.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -355,7 +357,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="frame/index.html"/>
+        <arg value="${page}/${page}.html"/>
       </java>
     </else></if>
   </target>

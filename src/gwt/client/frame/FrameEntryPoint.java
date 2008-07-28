@@ -4,26 +4,18 @@
 package client.frame;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.CookieUtil;
-
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Session;
+import client.shell.ShellFrameImpl;
 import client.shell.TrackingCookie;
-import client.util.ServiceUtil;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
@@ -35,8 +27,7 @@ public class FrameEntryPoint
     // from interface EntryPoint
     public void onModuleLoad ()
     {
-        // initialize the frame
-        CShell.frame = new Frame();
+        CShell.frame = new ShellFrameImpl();
 
         // listen for logon/logoff
         Session.addObserver(this);
@@ -44,12 +35,12 @@ public class FrameEntryPoint
         // set up the callbackd that our flash clients can call
         configureCallbacks(this, CShell.frame);
 
-        // validate our session before considering ourselves logged on
-        validateSession(CookieUtil.get("creds"));
-
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
         _currentToken = History.getToken();
+
+        // validate our session which will dispatch a didLogon or didLogoff
+        Session.validate();
     }
 
     // from interface HistoryListener
@@ -112,8 +103,6 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
-        CShell.creds = data.creds;
-        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
         // WorldClient.didLogon(data.creds);
 
         if (_pageId != null) {
@@ -129,9 +118,6 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogoff ()
     {
-        CShell.creds = null;
-        CShell.ident = null;
-
         if (_pageId == null) {
             // we can now load our starting page
             onHistoryChanged(_currentToken);
@@ -142,30 +128,6 @@ public class FrameEntryPoint
 
         // TEMP: show a header
         CShell.frame.setHeaderVisible(true);
-    }
-
-    /**
-     * Makes sure that our credentials are still valid.
-     */
-    protected void validateSession (String token)
-    {
-        if (token == null) {
-            Session.didLogoff();
-            return;
-        }
-        AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
-            public void onSuccess (SessionData data) {
-                if (data == null) {
-                    Session.didLogoff();
-                } else {
-                    Session.didLogon(data);
-                }
-            }
-            public void onFailure (Throwable t) {
-                Session.didLogoff();
-            }
-        };
-        _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
     }
 
     protected String getPageToken ()
@@ -213,7 +175,4 @@ public class FrameEntryPoint
     protected String _currentToken = "";
     protected String _pageToken = "";
     protected String _pageId;
-
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

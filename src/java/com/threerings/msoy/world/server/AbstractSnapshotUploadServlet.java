@@ -9,9 +9,11 @@ import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
 
-import com.threerings.msoy.item.server.ItemMediaUploadServlet;
+import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
+
+import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 
 public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServlet
 {
@@ -28,7 +30,7 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
         }
 
         // pull out session token from the request header
-        String token = CookieUtil.getCookieValue(ctx.req, "creds");
+        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
         if (token == null) {
             throw new AccessDeniedException("Must be logged in to upload screenshots.");
         }

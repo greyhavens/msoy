@@ -12,6 +12,9 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class WebCreds implements IsSerializable
 {
+    /** The name of the cookie in which we store our session credentials. */
+    public static final String CREDS_COOKIE = "creds";
+
     /** Our session token. */
     public String token;
 
