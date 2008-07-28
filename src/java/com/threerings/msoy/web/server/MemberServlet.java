@@ -187,6 +187,12 @@ public class MemberServlet extends MsoyServiceServlet
     // from MemberService
     public void trackClientAction (ReferralInfo info, String actionName, String details)
     {
+        if (info == null) {
+            log.warning(
+                "Failed to log client action with null referral", "actionName", actionName);
+            return;
+        } 
+        
         _eventLog.clientAction(info.tracker, actionName, details);
     }
 
@@ -201,6 +207,12 @@ public class MemberServlet extends MsoyServiceServlet
             testName = "";
         }
         _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
+    }
+    
+    // from MemberService
+    public void trackReferralCreation(ReferralInfo info)
+    {
+        _eventLog.referralCreated(info);        
     }
 
     // our dependencies

@@ -13,6 +13,8 @@ import com.google.gwt.user.client.HistoryListener;
 
 import com.threerings.msoy.data.all.ReferralInfo;
 
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
@@ -119,15 +121,10 @@ public class Application
             args.setToken(token);
 
             // save our tracking info, but don't overwrite old values
-            ReferralInfo ref = new ReferralInfo(
-                affiliate, vector, creative, ReferralInfo.makeRandomTracker());
-            TrackingCookie.save(ref, false);
-
+            maybeCreateReferral(affiliate, vector, creative);
+            
         } else {
-            if (! TrackingCookie.exists()) {
-                TrackingCookie.save(ReferralInfo.makeInstance(
-                    "", "", "", ReferralInfo.makeRandomTracker()), false);
-            }
+            maybeCreateReferral("", "", "");
         }
 
         // replace the page if necessary
@@ -186,6 +183,22 @@ public class Application
         }
     }
 
+    /**
+     * If a tracking cookie doesn't already exist, creates a brand new one
+     * with the supplied referral info and a brand new tracking number.
+     * Also tells the server to log this as an event.
+     */
+    protected void maybeCreateReferral (String affiliate, String vector, String creative)
+    {
+        if (! TrackingCookie.exists()) {
+            ReferralInfo ref =
+                ReferralInfo.makeInstance(
+                    affiliate, vector, creative, ReferralInfo.makeRandomTracker());
+            TrackingCookie.save(ref, false);
+            _membersvc.trackReferralCreation(ref, null);
+        }
+    }
+    
     protected void createMappings ()
     {
         _creators.put(Page.ACCOUNT, client.account.AccountPage.getCreator());
@@ -246,4 +259,7 @@ public class Application
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

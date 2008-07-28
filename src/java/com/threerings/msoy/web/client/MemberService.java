@@ -104,4 +104,10 @@ public interface MemberService extends RemoteService
      */
     void trackTestAction (ReferralInfo info, String actionName, String testName)
         throws ServiceException;
+
+    /**
+     * Tracks the creation of a new referral info structure, for a new visitor.
+     */
+    void trackReferralCreation (ReferralInfo info)
+        throws ServiceException;
 }

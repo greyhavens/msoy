@@ -389,6 +389,30 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="ReferralCreated")
+    public static class ReferralCreated implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public String affiliate;
+        @Field final public String vector;
+        @Field final public String creative;
+        @Index @Field final public String tracker;
+        
+        public ReferralCreated (String affiliate, String vector, String creative, String tracker) 
+        {
+            this.timestamp = new Date();
+            this.affiliate = toValue(affiliate);
+            this.vector = toValue(vector);
+            this.creative = toValue(creative);
+            this.tracker = toValue(tracker);
+        }
+        
+        public ReferralCreated () 
+        {
+            this(null, null, null, null);
+        }
+    }
+    
     @Event(name="AccountCreated")
     public static class AccountCreated implements MsoyEvent
     {

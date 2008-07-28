@@ -15,6 +15,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import com.threerings.panopticon.client.net.EventLogger;
@@ -198,6 +199,16 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteViewed(inviteId));
     }
 
+    public void referralCreated (ReferralInfo info) 
+    {
+        if (info != null) {
+            post(new MsoyEvents.ReferralCreated(
+                info.affiliate, info.vector, info.creative, info.tracker));
+        } else {
+            post(new MsoyEvents.ReferralCreated());
+        }
+    }
+    
     public void accountCreated (int newMemberId, String inviteId, String tracker)
     {
         post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));

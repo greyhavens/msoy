@@ -76,4 +76,9 @@ public interface MemberServiceAsync
      */
     void trackTestAction (ReferralInfo info, String actionName, String testName,
                           AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#trackReferral}.
+     */
+    void trackReferralCreation (ReferralInfo info, AsyncCallback<Void> callback);
 }
