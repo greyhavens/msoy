@@ -29,6 +29,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.chat.client.CurseFilter;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
+import com.threerings.msoy.party.client.PartyDirector;
+
 /**
  * Provides services shared by all clients.
  */
@@ -51,6 +53,7 @@ public /*abstract*/ class MsoyContext
         _chatDir = createChatDirector();
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
+        _partyDir = new PartyDirector(this);
 
         // the top panel's constructor will add it to the app's UI hierarchy
         _topPanel = new TopPanel(this, createControlBar());
@@ -167,6 +170,12 @@ public /*abstract*/ class MsoyContext
         return _chatDir;
     }
 
+    /** */
+    public function getPartyDirector () :PartyDirector
+    {
+        return _partyDir;
+    }
+
     /**
      * Get the message manager.
      */
@@ -233,6 +242,8 @@ public /*abstract*/ class MsoyContext
     protected var _locDir :LocationDirector;
     protected var _occDir :OccupantDirector;
     protected var _chatDir :MsoyChatDirector;
+
+    protected var _partyDir :PartyDirector;
 }
 }
 

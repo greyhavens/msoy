@@ -18,6 +18,10 @@ public class PartyObject extends DObject
 
     public var mates :DSet;
 
+    public var partyId :int;
+
+    public var name :String;
+
 //    // AUTO-GENERATED: METHODS START
 //    /**
 //     * Requests that the specified entry be added to the
@@ -73,5 +77,7 @@ public class PartyObject extends DObject
         super.readObject(ins);
 
         mates = ins.readObject() as DSet;
+        partyId = ins.readInt();
+        name = ins.readField(String) as String;
     }
 }

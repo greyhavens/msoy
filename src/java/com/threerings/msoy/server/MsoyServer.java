@@ -266,6 +266,7 @@ public class MsoyServer extends MsoyBaseServer
         _swiftlyMan.init(_invmgr);
         _petMan.init(injector);
         _gameReg.init();
+        _partyReg.init();
 
         // TEMP: give a peer manager refernce to MemberNodeActions
         MemberNodeActions.init(_peerMan);

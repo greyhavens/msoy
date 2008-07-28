@@ -191,6 +191,8 @@ public class MemberObject extends MsoyBodyObject
     /** Player's referral information. */
     public var referral :ReferralInfo;
 
+    public var partyId :int;
+
     /**
      * Return this member's unique id.
      */
@@ -337,6 +339,7 @@ public class MemberObject extends MsoyBodyObject
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
         referral = (ins.readObject() as ReferralInfo);
+        partyId = ins.readInt();
     }
 }
 }

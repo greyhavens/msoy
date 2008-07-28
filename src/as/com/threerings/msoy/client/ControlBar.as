@@ -19,6 +19,7 @@ import mx.events.FlexEvent;
 
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
@@ -220,6 +221,8 @@ public class ControlBar extends HBox
         _zoomBtn.styleName = "controlBarButtonZoom";
         _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
         _zoomBtn.setCallback(handlePopZoom);
+
+        //_partyBtn = new CommandCheckBox("Party", handleJoinLeaveParty);
     }
 
     /**
@@ -249,6 +252,9 @@ public class ControlBar extends HBox
             UI_CHATREMOVED]);
         addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT /*, UI_VIEWER*/, UI_CHATREMOVED ]);
 
+        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER,
+        //    UI_CHATREMOVED ]);
+
         // add our various control buttons
         addControlButtons();
 
@@ -264,6 +270,15 @@ public class ControlBar extends HBox
         _isMinimized = false;
         return true;
     }
+
+//    protected function handleJoinLeaveParty (state :Boolean) :void
+//    {
+//        if (state) {
+//            _ctx.getPartyDirector().joinParty();
+//        } else {
+//            _ctx.getPartyDirector().leaveParty();
+//        }
+//    }
 
     protected function addControlButtons () :void
     {
@@ -331,6 +346,8 @@ public class ControlBar extends HBox
 
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
+
+    //protected var _partyBtn :CommandCheckBox;
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
