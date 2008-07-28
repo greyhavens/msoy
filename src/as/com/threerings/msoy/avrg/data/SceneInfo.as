@@ -4,9 +4,10 @@
 package com.threerings.msoy.avrg.data {
 
 import com.threerings.io.SimpleStreamableObject;
-import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.presents.dobj.DSet_Entry;
+import com.threerings.util.StringUtil;
 
 /**
  * Helps an AVRG keep track of which world server is currently hosting a given scene.
@@ -27,6 +28,12 @@ public class SceneInfo
     public function getKey () :Object
     {
         return sceneId;
+    }
+
+    // from Object
+    public function toString () :String
+    {
+        return StringUtil.simpleToString(this);
     }
 
     // from interface Streamable
