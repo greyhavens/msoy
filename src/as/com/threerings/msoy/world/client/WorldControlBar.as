@@ -197,7 +197,7 @@ public class WorldControlBar extends ControlBar
         addGroupChild(_roomeditBtn, [ UI_STD ]);
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit
-        if (_ctx.getTokens() != null && _ctx.getTokens().isSupport()) {
+        if (_ctx.getTokens().isSupport()) {
             addGroupChild(_snapBtn, [ UI_STD ]);
         }
     }
