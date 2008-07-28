@@ -152,11 +152,17 @@ public class AVRGameManager
     //  from AVRGameObject.SubscriberListener
     public void subscriberCountChanged (AVRGameObject target)
     {
+        if (_shutdown) {
+            return;
+        }
+
         int agents = _gameAgentObj != null ? 1 : 0;
-        if (target.getSubscriberCount() == agents) {
+        if (target.getSubscriberCount() <= agents) {
+            log.info("Scheduling shutdown check", "subs", _gameObj.getSubscriberCount());
             _shutdownCheck.schedule(IDLE_UNLOAD_PERIOD);
             
         } else {
+            log.info("Cancelling shutdown check", "subs", _gameObj.getSubscriberCount());
             _shutdownCheck.cancel();            
         }
     }
@@ -174,6 +180,12 @@ public class AVRGameManager
      */
     public void shutdown ()
     {
+        if (_shutdown) {
+            return;
+        }
+
+        _shutdown = true;
+
         log.info("Shutting down avrg", "gameId", _gameId);
         
         _shutdownCheck.cancel();
@@ -790,7 +802,8 @@ public class AVRGameManager
     protected void checkForShutdown ()
     {
         int agents = _gameAgentObj != null ? 1 : 0;
-        if (_gameObj.getSubscriberCount() == agents) {
+        if (_gameObj.getSubscriberCount() <= agents) {
+            log.info("Shutting down avrg", "subs", _gameObj.getSubscriberCount());
             shutdown();
         }
     }   
@@ -899,6 +912,9 @@ public class AVRGameManager
 
     /** Timed task to check if we are ready to shut down. */
     protected Interval _shutdownCheck;
+
+    /** Set once we've shutdown to prevent multiple shudowns. */
+    protected boolean _shutdown;
     
     /** The gameId of this particular AVRG. */
     protected int _gameId;
