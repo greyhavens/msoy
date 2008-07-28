@@ -72,6 +72,7 @@ import com.threerings.msoy.data.UserActionDetails;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.server.persist.FlowRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
@@ -558,6 +559,12 @@ public class MemberManager
         });
     }
 
+    // from interface MemberProvider
+    public void trackReferralCreation (ClientObject caller, ReferralInfo info)
+    {
+        _eventLog.referralCreated(info);
+    }
+
     /**
      * Grants flow to the member identified in the supplied user action details.
      *
@@ -825,6 +832,7 @@ public class MemberManager
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected @MainInvoker Invoker _invoker;
 
     /** The required flow for the first few levels is hard-coded */

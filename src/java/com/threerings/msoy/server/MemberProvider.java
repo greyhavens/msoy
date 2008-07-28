@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -100,6 +101,11 @@ public interface MemberProvider extends InvocationProvider
      */
     void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#trackReferralCreation} request.
+     */
+    void trackReferralCreation (ClientObject caller, ReferralInfo arg1);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -58,6 +59,9 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface MemberService
+    function trackReferralCreation (arg1 :Client, arg2 :ReferralInfo) :void;
 
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;

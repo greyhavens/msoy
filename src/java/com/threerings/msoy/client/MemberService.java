@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client;
 
+import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
@@ -102,4 +104,9 @@ public interface MemberService extends InvocationService
      * Updates the status/headline for this member.
      */
     void updateStatus (Client client, String status, InvocationListener listener);
+
+    /**
+     * Tracks the creation of a new referral info structure, for a new visitor.
+     */
+    void trackReferralCreation (Client client, ReferralInfo info);
 }

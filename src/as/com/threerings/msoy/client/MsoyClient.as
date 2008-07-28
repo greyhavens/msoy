@@ -91,6 +91,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _stage = stage;
 
         setVersion(DeploymentConfig.version);
+        _referrals = [];
         _creds = createStartupCreds(null);
         
         _featuredPlaceView = UberClient.isFeaturedPlaceView();
@@ -149,6 +150,17 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         var rdata :MsoyAuthResponseData = (getAuthResponseData() as MsoyAuthResponseData);
         if (rdata.warning != null) {
             new WarningDialog(_ctx, rdata.warning);
+        }
+
+        // send over any newly created referral infos
+        var msvc :MemberService = requireService(MemberService) as MemberService;
+        while (_referrals.length > 0) {
+            var ref :ReferralInfo = _referrals.pop() as ReferralInfo;
+            if (ref != null) {
+                msvc.trackReferralCreation(this, ref);
+            } else {
+                log.info("Empty ReferralInfo in the queue - ignoring...");
+            }
         }
     }
 
@@ -406,23 +418,36 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             }
         }
 
-        // if calling GWT didn't work either, check embed parameters
+        // if calling GWT didn't work either, check embed parameters, and create a new one
         if (ref == null) {
             log.debug("Checking embed parameters for referral info");        
             var params :Object = MsoyParameters.get();
-            ref = ReferralInfo.makeInstance(
-                params["aff"], params["vec"], params["cre"], ReferralInfo.makeRandomTracker());
+            ref = makeNewReferral(params["aff"], params["vec"], params["cre"]);
         }
 
         // finally, if nothing worked, make a blank one with empty affiliate fields,
         // and a random tracking number
         if (ref == null) {
             log.debug("Queries failed - generating new group assignment");
-            ref = ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker());
+            ref = makeNewReferral("", "", "");
         }
 
         log.debug("Referral info: " + ref);
         return ref;            
+    }
+
+    /**
+     * Creates new referral info, and adds it to the queue of referrals to
+     * send over to the server, after we've finished the handshake.
+     */
+    protected function makeNewReferral (
+        affiliate :String, vector :String, creative :String) :ReferralInfo
+    {
+        var ref :ReferralInfo = ReferralInfo.makeInstance(
+            affiliate, vector, creative, ReferralInfo.makeRandomTracker());
+
+        _referrals.push(ref);
+        return ref;
     }
     
     /**
@@ -451,5 +476,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _minimized :Boolean;
     protected var _embedded :Boolean;
     protected var _featuredPlaceView :Boolean;
+
+    /** Array of ReferralInfo objects to be sent out to the server, once we finish handshake. */
+    protected var _referrals :Array; // of ReferralInfo
 }
 }

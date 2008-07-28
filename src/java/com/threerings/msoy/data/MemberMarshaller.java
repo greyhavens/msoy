@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -207,8 +208,19 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #trackReferralCreation} requests. */
+    public static final int TRACK_REFERRAL_CREATION = 16;
+
+    // from interface MemberService
+    public void trackReferralCreation (Client arg1, ReferralInfo arg2)
+    {
+        sendRequest(arg1, TRACK_REFERRAL_CREATION, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 16;
+    public static final int UPDATE_AVAILABILITY = 17;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)
@@ -219,7 +231,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 17;
+    public static final int UPDATE_STATUS = 18;
 
     // from interface MemberService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

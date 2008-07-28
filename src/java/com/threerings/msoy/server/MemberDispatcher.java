@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberMarshaller;
+import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -123,6 +124,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         case MemberMarshaller.SET_HOME_SCENE_ID:
             ((MemberProvider)provider).setHomeSceneId(
                 source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (InvocationService.ConfirmListener)args[3]
+            );
+            return;
+
+        case MemberMarshaller.TRACK_REFERRAL_CREATION:
+            ((MemberProvider)provider).trackReferralCreation(
+                source, (ReferralInfo)args[0]
             );
             return;
 
