@@ -15,14 +15,14 @@ import client.util.Link;
 /**
  * Displays account information.
  */
-public class index extends Page
+public class AccountPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new AccountPage();
             }
         };
     }

@@ -187,19 +187,19 @@ public class Application
 
     protected void createMappings ()
     {
-        _creators.put(Page.ACCOUNT, client.account.index.getCreator());
-        _creators.put(Page.ADMIN, client.admin.index.getCreator());
-        _creators.put(Page.GAMES, client.games.index.getCreator());
-        _creators.put(Page.HELP, client.help.index.getCreator());
-        _creators.put(Page.MAIL, client.mail.index.getCreator());
-        _creators.put(Page.ME, client.me.index.getCreator());
-        _creators.put(Page.PEOPLE, client.people.index.getCreator());
-        _creators.put(Page.SHOP, client.shop.index.getCreator());
-        _creators.put(Page.STUFF, client.stuff.index.getCreator());
-        _creators.put(Page.SUPPORT, client.support.index.getCreator());
-        _creators.put(Page.SWIFTLY, client.swiftly.index.getCreator());
-        _creators.put(Page.WHIRLEDS, client.whirleds.index.getCreator());
-        _creators.put(Page.WORLD, client.world.index.getCreator());
+        _creators.put(Page.ACCOUNT, client.account.AccountPage.getCreator());
+        _creators.put(Page.ADMIN, client.admin.AdminPage.getCreator());
+        _creators.put(Page.GAMES, client.games.GamesPage.getCreator());
+        _creators.put(Page.HELP, client.help.HelpPage.getCreator());
+        _creators.put(Page.MAIL, client.mail.MailPage.getCreator());
+        _creators.put(Page.ME, client.me.MePage.getCreator());
+        _creators.put(Page.PEOPLE, client.people.PeoplePage.getCreator());
+        _creators.put(Page.SHOP, client.shop.ShopPage.getCreator());
+        _creators.put(Page.STUFF, client.stuff.StuffPage.getCreator());
+        _creators.put(Page.SUPPORT, client.support.SupportPage.getCreator());
+        _creators.put(Page.SWIFTLY, client.swiftly.SwiftlyPage.getCreator());
+        _creators.put(Page.WHIRLEDS, client.whirleds.WhirledsPage.getCreator());
+        _creators.put(Page.WORLD, client.world.WorldPage.getCreator());
     }
 
     /**

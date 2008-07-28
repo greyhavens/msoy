@@ -26,14 +26,14 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-public class index extends MsgsEntryPoint
+public class MePage extends MsgsEntryPoint
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new MePage();
             }
         };
     }

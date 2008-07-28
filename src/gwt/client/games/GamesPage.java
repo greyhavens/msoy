@@ -18,14 +18,14 @@ import client.util.NaviUtil.GameDetails;
  * is shown, if it's multiplayer the lobby is first shown where the player can find opponents
  * against which to play.
  */
-public class index extends Page
+public class GamesPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new GamesPage();
             }
         };
     }

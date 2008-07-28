@@ -18,14 +18,14 @@ import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
-public class index extends MsgsEntryPoint
+public class WhirledsPage extends MsgsEntryPoint
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new WhirledsPage();
             }
         };
     }

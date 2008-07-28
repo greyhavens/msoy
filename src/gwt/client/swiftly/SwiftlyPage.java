@@ -19,14 +19,14 @@ import client.util.MsoyCallback;
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
  */
-public class index extends Page
+public class SwiftlyPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new SwiftlyPage();
             }
         };
     }

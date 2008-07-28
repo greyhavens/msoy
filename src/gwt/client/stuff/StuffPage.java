@@ -31,14 +31,14 @@ import client.util.ServiceUtil;
 /**
  * Handles the MetaSOY inventory application.
  */
-public class index extends Page
+public class StuffPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new StuffPage();
             }
         };
     }

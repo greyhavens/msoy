@@ -13,14 +13,14 @@ import client.shell.Page;
  * Displays a profile's "portal" page with their profile information, friends,
  * and whatever else they want showing on their page.
  */
-public class index extends MsgsEntryPoint
+public class PeoplePage extends MsgsEntryPoint
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new PeoplePage();
             }
         };
     }

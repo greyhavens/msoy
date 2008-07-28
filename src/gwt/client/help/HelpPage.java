@@ -8,14 +8,14 @@ import com.google.gwt.core.client.GWT;
 import client.shell.Args;
 import client.shell.Page;
 
-public class index extends Page
+public class HelpPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new HelpPage();
             }
         };
     }

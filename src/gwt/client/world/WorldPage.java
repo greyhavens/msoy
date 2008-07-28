@@ -27,14 +27,14 @@ import client.util.MsoyCallback;
 /**
  * Handles the MetaSOY main page.
  */
-public class index extends Page
+public class WorldPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new WorldPage();
             }
         };
     }
@@ -248,9 +248,9 @@ public class index extends Page
         }
     }
 
-    protected static native void configureCallbacks (index page) /*-{
+    protected static native void configureCallbacks (WorldPage page) /*-{
        $wnd.howdyPardner = function () {
-            page.@client.world.index::javaReady()();
+            page.@client.world.WorldPage::javaReady()();
        }
     }-*/;
 

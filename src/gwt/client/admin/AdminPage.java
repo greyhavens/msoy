@@ -13,14 +13,14 @@ import client.ui.MsoyUI;
  * Displays an admin dashboard with various server status information and administrative
  * functionality.
  */
-public class index extends Page
+public class AdminPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new index();
+                return new AdminPage();
             }
         };
     }
