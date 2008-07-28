@@ -19,12 +19,14 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.ConvMessage;
 import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
 
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 
 /**
@@ -45,7 +47,7 @@ public class ConvoPanel extends FlowPanel
     protected void refresh ()
     {
         clear();
-        CMail.mailsvc.loadConversation(CMail.ident, _convoId,
+        _mailsvc.loadConversation(CMail.ident, _convoId,
             new MsoyCallback<MailService.ConvoResult>() {
                 public void onSuccess (MailService.ConvoResult result) {
                     init(result);
@@ -89,7 +91,7 @@ public class ConvoPanel extends FlowPanel
         Button delete = new Button(CMail.msgs.convoDelete());
         new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
             public boolean callService () {
-                CMail.mailsvc.deleteConversation(CMail.ident, _convoId, this);
+                _mailsvc.deleteConversation(CMail.ident, _convoId, this);
                 return true;
             }
             public boolean gotResult (Boolean deleted) {
@@ -195,7 +197,7 @@ public class ConvoPanel extends FlowPanel
                     }
 
                     // deliver the message to the recipient
-                    CMail.mailsvc.continueConversation(CMail.ident, _convoId, text, null, this);
+                    _mailsvc.continueConversation(CMail.ident, _convoId, text, null, this);
                     return true;
                 }
 
@@ -221,4 +223,6 @@ public class ConvoPanel extends FlowPanel
     protected int _convoId;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
+        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

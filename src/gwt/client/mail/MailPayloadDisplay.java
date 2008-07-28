@@ -3,11 +3,16 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.person.gwt.ConvMessage;
 import com.threerings.msoy.person.gwt.MailPayload;
+import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
+
+import client.util.ServiceUtil;
 
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a
@@ -106,10 +111,12 @@ public class MailPayloadDisplay
                 }
             };
         }
-        CMail.mailsvc.updatePayload(
-            CMail.ident, _convoId, _message.sent.getTime(), payload, callback);
+        _mailsvc.updatePayload(CMail.ident, _convoId, _message.sent.getTime(), payload, callback);
     }
 
     protected int _convoId;
     protected ConvMessage _message;
+
+    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
+        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

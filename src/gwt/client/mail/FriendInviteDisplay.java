@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.person.gwt.ConvMessage;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
+import com.threerings.msoy.person.gwt.MailService;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 
@@ -74,8 +76,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
         protected void mailResponse ()
         {
-            CMail.mailsvc.continueConversation(
-                CMail.ident, _convoId, CMail.msgs.friendReplyBody(), null,
+            _mailsvc.continueConversation(CMail.ident, _convoId, CMail.msgs.friendReplyBody(), null,
                 new MsoyCallback<ConvMessage>() {
                     public void onSuccess (ConvMessage result) {
                         // Well that's nice.
@@ -88,4 +89,6 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
+        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

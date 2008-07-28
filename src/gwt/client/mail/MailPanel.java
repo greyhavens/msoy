@@ -5,6 +5,7 @@ package client.mail;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -21,6 +22,8 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Conversation;
+import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
@@ -29,6 +32,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.ServiceUtil;
 
 /**
  * Displays the main interface for mail.
@@ -141,7 +145,7 @@ public class MailPanel extends VerticalPanel
                 delete.addStyleName("actionLabel");
                 new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
                     public boolean callService () {
-                        CMail.mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
+                        _mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
                         return true;
                     }
                     public boolean gotResult (Boolean deleted) {
@@ -183,4 +187,6 @@ public class MailPanel extends VerticalPanel
     }
 
     protected static SimpleDateFormat _fmt = new SimpleDateFormat("h:mm a MMM dd");
+    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
+        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

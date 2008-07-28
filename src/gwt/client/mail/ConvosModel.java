@@ -5,13 +5,17 @@ package client.mail;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+
 import client.util.ServiceBackedDataModel;
+import client.util.ServiceUtil;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 
 import com.threerings.msoy.person.gwt.ConvMessage;
 import com.threerings.msoy.person.gwt.Conversation;
 import com.threerings.msoy.person.gwt.MailService;
+import com.threerings.msoy.person.gwt.MailServiceAsync;
 
 /**
  * A data model that provides a member's conversations.
@@ -72,7 +76,7 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
 
     @Override // from ServiceBackedDataModel
     protected void callFetchService (int start, int count, boolean needCount) {
-        CMail.mailsvc.loadConversations(CMail.ident, start, count, needCount, this);
+        _mailsvc.loadConversations(CMail.ident, start, count, needCount, this);
     }
 
     @Override // from ServiceBackedDataModel
@@ -84,4 +88,7 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
     protected List<Conversation> getRows (MailService.ConvosResult result) {
         return result.convos;
     }
+
+    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
+        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

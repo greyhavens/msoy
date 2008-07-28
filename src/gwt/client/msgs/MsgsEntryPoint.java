@@ -8,8 +8,6 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
@@ -28,8 +26,6 @@ public abstract class MsgsEntryPoint extends Page
         // wire up our remote services
         CMsgs.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
         ((ServiceDefTarget)CMsgs.profilesvc).setServiceEntryPoint("/profilesvc");
-        CMsgs.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
-        ((ServiceDefTarget)CMsgs.mailsvc).setServiceEntryPoint("/mailsvc");
         CMsgs.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
         ((ServiceDefTarget)CMsgs.groupsvc).setServiceEntryPoint("/groupsvc");
 

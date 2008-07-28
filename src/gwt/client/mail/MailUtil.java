@@ -4,7 +4,7 @@
 package client.mail;
 
 /**
- * Does something extraordinary.
+ * Mail related utility methods.
  */
 public class MailUtil
 {
