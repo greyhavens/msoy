@@ -179,7 +179,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             _mnobj.addToMemberLocs(newloc);
         }
 
-        memberEnteredScene(newloc, _self.hostName, _self.port);
+        memberEnteredScene(newloc, _self.publicHostName, _self.port);
     }
 
     /**
