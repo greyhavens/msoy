@@ -84,7 +84,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 import com.threerings.msoy.world.client.editor.RoomEditorController;
-import com.threerings.msoy.world.client.snapshot.SnapshotPanel;
+import com.threerings.msoy.world.client.snapshot.SnapshotController;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
@@ -242,12 +242,16 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Takes a snapshot of the current room.
+     * Toggle the display of the snapshot panel.
      */
-    public function takeSnapshot () :void
+    public function toggleSnapshotPanel () :void
     {
-        new SnapshotPanel(_wdctx, _roomView);
-        // TODO: have button dim while a snapper is up. etc.
+        const ctrl :SnapshotController = getSnapshotController();
+        if (ctrl.isShowing()) {
+            ctrl.destroyPanel();
+        } else {
+            ctrl.showPanel();
+        }
     }
 
     /**
@@ -1240,6 +1244,17 @@ public class RoomObjectController extends RoomController
             _editor.processUpdate(update);
         }
     }
+    
+    /**
+     * Return a SnapshotController for this room, creating a new one if necessary.
+     */
+    protected function getSnapshotController() :SnapshotController 
+    {
+        if(! _snapshotController) {
+            _snapshotController = new SnapshotController(_wdctx, _roomView);            
+        }
+        return _snapshotController;        
+    }
 
     /** A casted version of _roomView. */
     protected var _roomObjectView :RoomObjectView;
@@ -1270,5 +1285,8 @@ public class RoomObjectController extends RoomController
 
     /** A flag to indicate that the room editor should be opened when the view is un-minimized */
     protected var _openEditor :Boolean = false;
+    
+    /** Controller for taking snapshots of the room **/
+    protected var _snapshotController :SnapshotController;
 }
 }

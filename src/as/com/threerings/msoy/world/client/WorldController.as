@@ -704,7 +704,7 @@ public class WorldController extends MsoyController
     public function handleSnapshot () :void
     {
         var room :RoomObjectView = _topPanel.getPlaceView() as RoomObjectView;
-        room.getRoomObjectController().takeSnapshot();
+        room.getRoomObjectController().toggleSnapshotPanel();
     }
 
     /**

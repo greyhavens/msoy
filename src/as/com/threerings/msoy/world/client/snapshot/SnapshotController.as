@@ -30,29 +30,53 @@ import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
 
 /**
- * Captures RoomView snapshots and sends them over to the server.
+ * Controls the creation of scene snapshots.  Opens a control panel from which the user can choose
+ * options for taking a snapshot as an image item and/or a canonical thumbnail for the room.  When
+ * the panel is closed, the controller uploads any shots taken to the server.
  */
 public class SnapshotController extends Controller
 {
-    public static const SCENE_THUMBNAIL_SERVICE :String = "/scenethumbsvc";
-    
-    // todo: set the actual servlet name for scene snapshots
+    public static const SCENE_THUMBNAIL_SERVICE :String = "/scenethumbsvc";    
     public static const SCENE_SNAPSHOT_SERVICE :String = "/snapshotsvc";
-
-    public function SnapshotController (ctx :WorldContext, panel :SnapshotPanel)
+    
+    public function SnapshotController (ctx :WorldContext, view :RoomView)
     {
+        _view = view;
         _ctx = ctx;
-        setControlledPanel(panel);
     }
 
-//    public function get mediaUrl () :String
-//    {
-//        return DeploymentConfig.mediaURL + "/snapshot/" + _sceneId + ".jpg";
-//    }
+    /**
+     * Idempotent method to open a new snapshot panel if one isn't already open.
+     */
+    public function showPanel () :void 
+    {
+        if (! _panel) {
+            _panel = new SnapshotPanel(this, _ctx, _view);
+        }
+    }
 
-    /** Called when after the screenshot panel was closed. If doUpload is true, the snapshots
-     *  taken by snapshotPanel will be uploaded to the server.  The canonical one will be
-     *  used as the new snapshot for the scene. */
+    /**
+     * Idempotent method to discard the current panel.
+     */
+    public function destroyPanel () :void
+    {
+        _panel.close();
+        _panel = null;
+    }
+
+    /**
+     * Return true if this controller is currently showing a panel
+     */
+    public function isShowing () :Boolean 
+    {
+        return null != _panel;
+    }
+
+    /** 
+     * Called when after the screenshot panel was closed. If doUpload is true, the snapshots
+     * taken by snapshotPanel will be uploaded to the server.  The canonical one will be
+     * used as the new snapshot for the scene. 
+     */
     public function close (doUpload :Boolean, panel :SnapshotPanel) :void
     {
         if (doUpload) {
@@ -72,6 +96,7 @@ public class SnapshotController extends Controller
             //todo: save the ordinary file here... depends on 
             _ctx.getGameDirector().tutorialEvent("snapshotTaken");
         }
+        
         _panel = null;
     }
     
@@ -133,6 +158,7 @@ public class SnapshotController extends Controller
     }
 
     protected var _panel :SnapshotPanel;
+    protected var _view :RoomView;
     protected var _ctx :WorldContext;
 
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";

@@ -39,12 +39,13 @@ public class SnapshotPanel extends FloatingPanel
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
 
-    public function SnapshotPanel (ctx :WorldContext, view :RoomView)
+    public function SnapshotPanel (
+        controller: SnapshotController, ctx :WorldContext, view :RoomView)
     {
         super(ctx, Msgs.WORLD.get("t.snap"));
 
         _view = view;
-        _ctrl = new SnapshotController(ctx, this);
+        _ctrl = controller;
 
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
@@ -142,27 +143,9 @@ public class SnapshotPanel extends FloatingPanel
 
         addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
-//        var label :Text = new Text();
-//        label.text = Msgs.WORLD.get("l.edit_canonical_desc");
-//        label.width = int(IMAGE_WIDTH);
-//        label.selectable = false;
-//        addChild(label);
-//
-//        var url :Text = new Text();
-//        url.text = _ctrl.mediaUrl;
-//        url.width = int(IMAGE_WIDTH);
-//        addChild(url);
-
         _preview = new Image();
         _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
         addChild(_preview);
-
-//        if (!_success) {
-//            var msg :Text = new Text();
-//            msg.text = Msgs.WORLD.get("m.snapshot_some_failed");
-//            msg.width = int(IMAGE_WIDTH);
-//            addChild(msg);
-//        }
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         enforceUIInterlocks();        
@@ -186,7 +169,5 @@ public class SnapshotPanel extends FloatingPanel
     protected var _useAsSceneThumbnail :CommandCheckBox;
     protected var _takeGalleryImage :CommandCheckBox;
 
-//    /** Were we successful in snapshotting every single scene element? */
-//    protected var _success :Boolean;
 }
 }
