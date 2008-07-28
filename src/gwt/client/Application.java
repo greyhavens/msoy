@@ -23,6 +23,7 @@ import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.Session;
+import client.shell.ShellFrameImpl;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
 import client.util.ServiceUtil;
@@ -52,7 +53,7 @@ public class Application
         createMappings();
 
         // initialize the frame
-        CShell.frame = new AppFrameImpl();
+        CShell.frame = new ShellFrameImpl();
 
         // set up the callbackd that our flash clients can call
         configureCallbacks(this, CShell.frame);

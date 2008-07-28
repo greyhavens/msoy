@@ -3,19 +3,27 @@
 
 package client.shell;
 
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.FlashClients;
 import client.util.Link;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
  */
 public abstract class Page
+    implements EntryPoint
 {
     /** Used to dynamically create the appropriate page when we are loaded. */
     public static interface Creator {
@@ -49,6 +57,99 @@ public abstract class Page
             return null;
         }
     }
+
+    // NEW STUFF -- ignore for now
+
+    // from interface EntryPoint
+    public void onModuleLoad ()
+    {
+        init();
+
+        // TODO: check whether we're running in a frame or if we're in single page test mode, only
+        // do the remaining things if we're in single page test mode
+
+        // TEMP: set up a frame
+        CShell.frame = new Frame() {
+            /* Frame () */ {
+                // set up our title bar and content width
+                if (getTabPageId() != null) {
+                    TitleBar bar = TitleBar.create(getTabPageId(), new ClickListener() {
+                        public void onClick (Widget sender) {
+                            // TODO
+                        }
+                    });
+                    RootPanel.get("content").add(bar);
+                    RootPanel.get("content").setWidth(CONTENT_WIDTH + "px");
+                    _bar = bar; // have to do this here because we're not in a real constructor
+                } else {
+                    RootPanel.get("content").setWidth("");
+                }
+            }
+
+            public void setTitle (String title) {
+            }
+            public void setShowingClient (String closeToken) {
+            }
+            public void closeClient (boolean deferred) {
+            }
+            public boolean closeContent () {
+                return false;
+            }
+            public void setHeaderVisible (boolean visible) {
+            }
+            public void ensureVisible (Widget widget) {
+            }
+            public void showDialog (String title, Widget dialog) {
+            }
+            public void showPopupDialog (String title, Widget dialog) {
+            }
+            public void clearDialog () {
+            }
+            public Panel getClientContainer () {
+                return null;
+            }
+            public void showContent (String pageId, Widget pageContent) {
+                RootPanel contentDiv = RootPanel.get("content");
+                if (_pageContent != null) {
+                    contentDiv.remove(_pageContent);
+                }
+                _pageContent = pageContent;
+                if (_pageContent != null) {
+                    contentDiv.add(_pageContent);
+                }
+                if (_bar != null) {
+                    _bar.setCloseVisible(FlashClients.clientExists());
+                }
+            }
+
+            protected TitleBar _bar;
+            protected Widget _pageContent;
+        };
+
+        final HistoryListener listener = new HistoryListener() {
+            public void onHistoryChanged (String token) {
+                // this is only called when we're in single page test mode, so we assume we're
+                // staying on the same page and just pass the arguments back into ourselves
+                token = token.substring(token.indexOf("-")+1);
+                Args args = new Args();
+                args.setToken(token);
+                Page.this.onHistoryChanged(args);
+            }
+        };
+        History.addHistoryListener(listener);
+
+        Session.addObserver(new Session.Observer() {
+            public void didLogon (SessionData data) {
+                listener.onHistoryChanged(""); // TODO get our page token from the frame
+            }
+            public void didLogoff () {
+                listener.onHistoryChanged(""); // TODO get our page token from the frame
+            }
+        });
+        Session.validate();
+    }
+
+    // END NEW STUFF
 
     /**
      * Called when the page is first resolved to initialize its bits.

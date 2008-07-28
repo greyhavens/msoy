@@ -19,9 +19,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -73,6 +71,31 @@ public class ShellFrameImpl
         _header = new Header();
         _dialog = new Dialog();
         _popup = new PopupDialog();
+
+        // default to scrolling off.  In the rare case where a page wants scrolling, it gets enabled
+        // explicitly.
+        Window.enableScrolling(false);
+
+        // clear out the loading HTML so we can display a browser warning or load Whirled
+        DOM.setInnerHTML(RootPanel.get(LOADING_AND_TESTS).getElement(), "");
+
+        // If the browser is unsupported, hide the page (still being built) and show a warning.
+        ClickListener continueClicked = new ClickListener() {
+            public void onClick (Widget widget) {
+                // close the warning and show the page if the visitor choose to continue
+                RootPanel.get(LOADING_AND_TESTS).clear();
+                RootPanel.get(LOADING_AND_TESTS).setVisible(false);
+                RootPanel.get(SITE_CONTAINER).setVisible(true);
+            }
+        };
+        Widget warningDialog = BrowserTest.getWarningDialog(continueClicked);
+        if (warningDialog != null) {
+            RootPanel.get(SITE_CONTAINER).setVisible(false);
+            RootPanel.get(LOADING_AND_TESTS).add(warningDialog);
+        } else {
+            RootPanel.get(LOADING_AND_TESTS).clear();
+            RootPanel.get(LOADING_AND_TESTS).setVisible(false);
+        }
     }
 
     // from interface Frame
@@ -262,7 +285,11 @@ public class ShellFrameImpl
             // select the appropriate header tab
             _header.selectTab(pageId);
             // create our page title bar
-            _bar = createTitleBar(pageId);
+            _bar = TitleBar.create(pageId, new ClickListener() {
+                public void onClick (Widget sender) {
+                    closeContent();
+                }
+            });
         }
 
         // let the client know it about to be minimized
@@ -301,62 +328,6 @@ public class ShellFrameImpl
         if (_bar != null) {
             _bar.setCloseVisible(FlashClients.clientExists());
         }
-    }
-
-    protected TitleBar createTitleBar (String pageId)
-    {
-        SubNaviPanel subnavi = new SubNaviPanel();
-        int memberId = CShell.getMemberId();
-
-        if (pageId.equals(Page.ME)) {
-            subnavi.addLink(null, "Me", Page.ME, "");
-            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD,
-                "m" + memberId);
-            subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
-            subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + memberId);
-            subnavi.addLink(null, "Mail", Page.MAIL, "");
-            subnavi.addLink(null, "Account", Page.ME, "account");
-            if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Page.ADMIN, "");
-            }
-
-        } else if (pageId.equals(Page.PEOPLE)) {
-            if (CShell.isGuest()) {
-                subnavi.addLink(null, "Search", Page.PEOPLE, "");
-            } else {
-                subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
-                subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
-            }
-
-        } else if (pageId.equals(Page.GAMES)) {
-            subnavi.addLink(null, "Games", Page.GAMES, "");
-            if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", memberId));
-            }
-            subnavi.addLink(null, "All Games", Page.GAMES, "g");
-
-        } else if (pageId.equals(Page.WHIRLEDS)) {
-            subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
-            if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Whirleds", Page.WHIRLEDS, "mywhirleds");
-                subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
-                if (CShell.isSupport()) {
-                    subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
-                    subnavi.addLink(null, "My Issues", Page.WHIRLEDS, "owned");
-                }
-            }
-
-        } else if (pageId.equals(Page.SHOP)) {
-            subnavi.addLink(null, "Shop", Page.SHOP, "");
-
-        } else if (pageId.equals(Page.HELP)) {
-            subnavi.addLink(null, "Help", Page.HELP, "");
-            if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Page.SUPPORT, "admin");
-            }
-        }
-
-        return new TitleBar(pageId, Page.getDefaultTitle(pageId), subnavi);
     }
 
     /**
@@ -426,105 +397,6 @@ public class ShellFrameImpl
         }
 
         protected Dialog _innerDialog;
-    }
-
-    protected static class SubNaviPanel extends FlowPanel
-    {
-        public void addLink (String iconPath, String label, final String page, final String args) {
-            addSeparator();
-            if (iconPath != null) {
-                add(MsoyUI.createActionImage(iconPath, new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(page, args);
-                    }
-                }));
-                add(new HTML("&nbsp;"));
-            }
-            add(Link.create(label, page, args));
-        }
-
-        public Image addImageLink (String path, String tip, final String page, final String args) {
-            addSeparator();
-            Image icon = MsoyUI.createActionImage(path, new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(page, args);
-                }
-            });
-            icon.setTitle(tip);
-            add(icon);
-            return icon;
-        }
-
-        protected void addSeparator () {
-            if (getWidgetCount() > 0) {
-                add(new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"));
-            }
-        }
-    }
-
-    protected class TitleBar extends SmartTable
-    {
-        public TitleBar (String pageId, String title, SubNaviPanel subnavi) {
-            super("pageTitle", 0, 0);
-
-            setWidget(0, 0, createImage(pageId), 3, null);
-
-            _titleLabel = new Label(title);
-            _titleLabel.setStyleName("Title");
-
-            Widget back = MsoyUI.createImageButton("backButton", new ClickListener() {
-                public void onClick (Widget sender) {
-                    History.back();
-                }
-            });
-
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.add(WidgetUtil.makeShim(10, 1));
-            panel.add(back);
-            panel.add(WidgetUtil.makeShim(12, 1));
-            panel.add(_titleLabel);
-            panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
-
-            setWidget(1, 0, panel);
-            setWidget(1, 2, _subnavi = subnavi, 1, "SubNavi");
-            getFlexCellFormatter().setVerticalAlignment(1, 1, HasAlignment.ALIGN_BOTTOM);
-
-            _closeBox = MsoyUI.createActionImage("/images/ui/close.png", new ClickListener() {
-                public void onClick (Widget sender) {
-                    closeContent();
-                }
-            });
-            _closeBox.addStyleName("Close");
-            _closeShim = MsoyUI.createHTML("&nbsp;", "Close");
-            setCloseVisible(false);
-        }
-
-        public void setTitle (String title) {
-            if (title != null) {
-                _titleLabel.setText(title);
-            }
-        }
-
-        public void setCloseVisible (boolean visible) {
-            _subnavi.remove(_closeBox);
-            _subnavi.remove(_closeShim);
-            if (visible) {
-                _subnavi.add(_closeBox);
-            } else {
-                _subnavi.add(_closeShim);
-            }
-        }
-
-        protected Image createImage (String page) {
-            String id = (page.equals(Page.ME) || page.equals(Page.PEOPLE) ||
-                         page.equals(Page.GAMES) || page.equals(Page.WHIRLEDS) ||
-                         page.equals(Page.SHOP) || page.equals(Page.HELP)) ? page : "solid";
-            return new Image("/images/header/" + id + "_cap.png");
-        }
-
-        protected Label _titleLabel;
-        protected SubNaviPanel _subnavi;
-        protected Widget _closeBox, _closeShim;
     }
 
     protected class Header extends SmartTable
@@ -695,4 +567,6 @@ public class ShellFrameImpl
     protected static final String HEADER = "header";
     protected static final String CONTENT = "content";
     protected static final String CLIENT = "client";
+    protected static final String SITE_CONTAINER = "ctable";
+    protected static final String LOADING_AND_TESTS = "loadingAndTests";
 }
