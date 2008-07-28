@@ -13,6 +13,7 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import client.item.ShopUtil;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.ui.MsoyUI;

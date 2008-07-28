@@ -33,7 +33,6 @@ import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.shop.ShopUtil;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;

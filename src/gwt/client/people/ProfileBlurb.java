@@ -30,10 +30,10 @@ import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.gwt.ProfileService;
 
 import client.editem.ImageChooserPopup;
+import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
-import client.shop.ShopUtil;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;

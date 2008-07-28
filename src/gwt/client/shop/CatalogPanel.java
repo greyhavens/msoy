@@ -30,6 +30,7 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.shell.DynamicMessages;
+import client.item.ShopUtil;
 import client.item.TagCloud;
 import client.shell.Frame;
 import client.shell.Page;

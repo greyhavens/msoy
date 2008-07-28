@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class DateFields extends HorizontalPanel
     implements SourcesFocusEvents
 {
+    @SuppressWarnings("deprecation")
     public static Date toDate (int[] datevec)
     {
         return new Date(datevec[0] - 1900, datevec[1], datevec[2]);

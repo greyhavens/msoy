@@ -29,11 +29,11 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 
+import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.shell.WorldClient;
-import client.shop.ShopUtil;
 import client.ui.MsoyUI;
 import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;

@@ -12,8 +12,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.ItemGiftPayload;
-import com.threerings.msoy.person.gwt.MailService;
-import com.threerings.msoy.person.gwt.MailServiceAsync;
 
 import client.item.ItemThumbnail;
 import client.ui.MsoyUI;

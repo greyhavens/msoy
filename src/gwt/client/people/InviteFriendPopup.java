@@ -16,7 +16,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FriendInvitePayload;
 import com.threerings.msoy.person.gwt.MailPayload;
 
-import client.msgs.StartConvoCallback;
+import client.mail.StartConvoCallback;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;

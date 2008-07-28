@@ -67,6 +67,40 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface MemberService
+    public FriendsResult loadFriends (WebIdent ident, int memberId)
+        throws ServiceException
+    {
+        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+
+        try {
+            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
+                return null;
+            }
+
+            FriendsResult result = new FriendsResult();
+            result.name = tgtrec.getName();
+            IntSet friendIds = _memberRepo.loadFriendIds(memberId);
+            IntSet callerFriendIds = null;
+            if (mrec != null) {
+                if (mrec.memberId == memberId) {
+                    callerFriendIds = friendIds;
+                } else {
+                    callerFriendIds = _memberRepo.loadFriendIds(mrec.memberId);
+                }
+            }
+            List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
+            Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
+            result.friends = list;
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failure loading friends [memId=" + memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // from MemberService
     public void addFriend (WebIdent ident, final int friendId)
         throws ServiceException

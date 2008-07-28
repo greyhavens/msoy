@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.mail;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
@@ -34,15 +34,15 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
         String subject = _subject.getText().trim();
         String body = _body.getText().trim();
         if (subject.length() == 0) {
-            MsoyUI.error(CMsgs.mmsgs.sccMissingSubject());
+            MsoyUI.error(_msgs.sccMissingSubject());
             return false;
         }
         if (body.length() == 0) {
-            MsoyUI.error(CMsgs.mmsgs.sccMissingBody());
+            MsoyUI.error(_msgs.sccMissingBody());
             return false;
         }
         _mailsvc.startConversation(
-            CMsgs.ident, getRecipientId(), subject, body, getPayload(), this);
+            CMail.ident, getRecipientId(), subject, body, getPayload(), this);
         return true;
     }
 
@@ -56,6 +56,7 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
     protected TextBox _subject;
     protected TextArea _body;
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

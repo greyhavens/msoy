@@ -41,6 +41,9 @@ public class FrameEntryPoint
         // listen for logon/logoff
         Session.addObserver(this);
 
+        // set up the callbackd that our flash clients can call
+        configureCallbacks(this, CShell.frame);
+
         // validate our session before considering ourselves logged on
         validateSession(CookieUtil.get("creds"));
 
@@ -90,11 +93,14 @@ public class FrameEntryPoint
             }
         }
 
+        // recreate the page token which we'll pass through to the page (or if it's being loaded
+        // for the first time, it will request in a moment with a call to getPageToken)
+        _pageToken = Args.compose(args.splice(0));
+
         // replace the page if necessary
         if (_pageId == null || !_pageId.equals(page)) {
             // TODO: set our Page iframe to this page
             _pageId = page;
-
         } else {
             // TODO: pass our arguments through to our iframed page
         }
@@ -162,7 +168,50 @@ public class FrameEntryPoint
         _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
     }
 
+    protected String getPageToken ()
+    {
+        return _pageToken;
+    }
+
+    /**
+     * Configures top-level functions that can be called by Flash.
+     */
+    protected static native void configureCallbacks (FrameEntryPoint entry, Frame frame) /*-{
+       $wnd.onunload = function (event) {
+           var client = $doc.getElementById("asclient");
+           if (client) {
+               client.onUnload();
+           }
+           return true;
+       };
+       $wnd.getPageToken = function () {
+           return entry.@client.frame.FrameEntryPoint::getPageToken()();
+       };
+       $wnd.helloWhirled = function () {
+            return true;
+       };
+       $wnd.setWindowTitle = function (title) {
+            frame.@client.shell.Frame::setTitle(Ljava/lang/String;)(title);
+       };
+       $wnd.displayPage = function (page, args) {
+           @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
+       };
+       $wnd.setGuestId = function (guestId) {
+           @client.shell.CShell::setGuestId(I)(guestId);
+       };
+       $wnd.getReferral = function () {
+           return @client.shell.TrackingCookie::getAsObject()();
+       };
+       $wnd.setReferral = function (ref) {
+           @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
+       };
+       $wnd.toggleClientHeight = function () {
+           @client.util.FlashClients::toggleClientHeight()();
+       }
+    }-*/;
+
     protected String _currentToken = "";
+    protected String _pageToken = "";
     protected String _pageId;
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)

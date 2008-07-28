@@ -237,21 +237,9 @@ public class Application
     }
 
     /**
-     * Called when a web page component wants to request a chat channel opened in the Flash
-     * client, of the given type and name.
-     */
-    protected boolean openChannelRequest (int type, String name, int id)
-    {
-        return openChannelNative(type, name, id);
-    }
-
-    /**
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app, Frame frame) /*-{
-       $wnd.openChannel = function (type, name, id) {
-           app.@client.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
-       };
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");
            if (client) {
@@ -280,18 +268,6 @@ public class Application
        $wnd.toggleClientHeight = function () {
            @client.util.FlashClients::toggleClientHeight()();
        }
-    }-*/;
-
-    /**
-     * The native complement to openChannel.
-     */
-    protected static native boolean openChannelNative (int type, String name, int id) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.openChannel(type, name, id);
-            return true;
-        }
-        return false;
     }-*/;
 
     protected Page _page;

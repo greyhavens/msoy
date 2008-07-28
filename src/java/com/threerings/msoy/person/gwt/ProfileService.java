@@ -69,18 +69,6 @@ public interface ProfileService extends RemoteService
         public List<FeedMessage> feed;
     }
 
-    /** Provides results for {@link #loadFriends}. */
-    public static class FriendsResult implements IsSerializable
-    {
-        /** This user's name and member id. */
-        public MemberName name;
-
-        /**
-         * This user's friends.
-         */
-        public List<MemberCard> friends;
-    }
-
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/profilesvc";
 
@@ -107,12 +95,6 @@ public interface ProfileService extends RemoteService
      * search. Returns a (possibly empty) list of {@link MemberCard} records.
      */
     public List<MemberCard> findProfiles (WebIdent ident, String search)
-        throws ServiceException;
-
-    /**
-     * Loads up all friends for the specified member.
-     */
-    public FriendsResult loadFriends (WebIdent ident, int memberId)
         throws ServiceException;
 
     /**

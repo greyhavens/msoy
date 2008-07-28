@@ -60,8 +60,7 @@ public interface MemberService extends InvocationService
      *
      * @param newScale a new scale for the avatar, or 0 to use the last scale.
      */
-    public void setAvatar (Client client, int avatarId, float newScale,
-        ConfirmListener listener);
+    void setAvatar (Client client, int avatarId, float newScale, ConfirmListener listener);
 
     /**
      * Set the display name for this user.
@@ -81,8 +80,8 @@ public interface MemberService extends InvocationService
     /**
      * Set the given scene as the owner's home scene
      */
-    public void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
-        ConfirmListener listener);
+    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
+                         ConfirmListener listener);
 
     /**
      * Get the given group's home scene id.

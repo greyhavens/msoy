@@ -28,13 +28,10 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.GroupInvitePayload;
 import com.threerings.msoy.person.gwt.MailPayload;
 import com.threerings.msoy.person.gwt.PresentPayload;
-import com.threerings.msoy.person.gwt.ProfileService;
-import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.msgs.StartConvoCallback;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -171,9 +168,9 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            _profilesvc.loadFriends(CMail.ident, CMail.getMemberId(),
-                new MsoyCallback<ProfileService.FriendsResult>() {
-                    public void onSuccess (ProfileService.FriendsResult result) {
+            _membersvc.loadFriends(CMail.ident, CMail.getMemberId(),
+                new MsoyCallback<MemberService.FriendsResult>() {
+                    public void onSuccess (MemberService.FriendsResult result) {
                         _friends = result.friends;
                         _friendBox.addItem("Select...");
                         for (MemberCard friend : _friends) {
@@ -209,8 +206,6 @@ public class ComposePanel extends FlowPanel
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }
