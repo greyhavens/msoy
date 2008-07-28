@@ -1,9 +1,9 @@
 package com.threerings.msoy.bureau.client {
 
-import flash.utils.Dictionary;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.util.Assert;
+import com.threerings.util.HashMap;
 
 /**
  * Manages a set of {@link Window} objects, keyed by host name and port.
@@ -24,6 +24,7 @@ public class WindowDirector
      */
     public function addServiceGroup (code :String) :void
     {
+        Assert.isTrue(_windows.size()==0);
         _serviceGroups.push(code);
     }
 
@@ -37,12 +38,12 @@ public class WindowDirector
         host :String, port :int, listener :InvocationService_ResultListener) :void
     {
         var key :String = host + ":" + port;
-        var window :WindowImpl = _windows[key] as WindowImpl;
+        var window :WindowImpl = _windows.get(key) as WindowImpl;
 
         if (window == null) {
-            Assert.isTrue(_windows[key]==null);
+            Assert.isTrue(_windows.get(key)==undefined);
             window = new WindowImpl(host, port, _bureauId, _serviceGroups);
-            _windows[key] = window;
+            _windows.put(key, window);
         }
 
         window.addRef();
@@ -55,7 +56,7 @@ public class WindowDirector
         window.addListener(new ResultAdapter(
             function (cause :String) :void {
                 if (window.releaseRef()) {
-                    delete _windows[key];
+                    _windows.remove(key);
                 }
             }));
         window.addListener(listener);
@@ -71,13 +72,13 @@ public class WindowDirector
         Assert.isTrue(impl.isLoggedOn());
         if (impl.releaseRef()) {
             var key :String = impl.getHost() + ":" + impl.getPort();
-            Assert.isTrue(_windows[key] != null);
-            delete _windows[key];
+            Assert.isTrue(_windows.get(key) != undefined);
+            _windows.remove(key);
             impl.close();
         }
     }
 
-    protected var _windows :Dictionary = new Dictionary();
+    protected var _windows :HashMap = new HashMap();
     protected var _serviceGroups :Array = [];
     protected var _bureauId :String;
 }

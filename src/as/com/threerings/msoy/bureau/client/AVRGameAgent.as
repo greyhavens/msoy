@@ -5,8 +5,6 @@
 
 package com.threerings.msoy.bureau.client {
 
-import flash.utils.Dictionary;
-
 import com.threerings.bureau.Log;
 import com.threerings.bureau.client.Agent;
 import com.threerings.crowd.data.ManagerCaller;
@@ -24,6 +22,7 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.SubscriberAdapter;
 import com.threerings.presents.util.SafeSubscriber;
+import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.StringUtil;
 import com.whirled.bureau.client.UserCode;
@@ -70,17 +69,12 @@ public class AVRGameAgent extends Agent
     // from Agent
     public override function stop () :void
     {
-        var scenes :Array = [];
-        var scene :Scene;
-        for each (scene in _scenes) {
-            scenes.push(scene);
-        }
+        Log.info("Stopping agent " + _agentObj);
 
-        for each (scene in scenes) {
+        for each (var scene :Scene in _scenes.values()) {
             closeScene(scene.info);
         }
 
-        Log.info("Stopping agent " + _agentObj);
         _subscriber.unsubscribe(_ctx.getDObjectManager());
         _subscriber = null;
         _gameObj = null;
@@ -121,19 +115,19 @@ public class AVRGameAgent extends Agent
 
     protected function openScene (sceneInfo :SceneInfo) :void
     {
-        var scene :Scene = _scenes[sceneInfo.sceneId];
+        var scene :Scene = _scenes.get(sceneInfo.sceneId) as Scene;
         if (scene != null) {
             Log.warning("Request to reopen a scene " + sceneInfo);
             return;
         }
 
-        _scenes[sceneInfo.sceneId] = scene = new Scene();
+        _scenes.put(sceneInfo.sceneId, scene = new Scene());
         scene.info = sceneInfo;
 
         function gotWindow (wnd :Window) :void {
             //var service :ThaneWorldService = 
             //    wnd.requireService(ThaneWorldService) as ThaneWorldService;
-            if (_scenes[sceneInfo.sceneId] == scene) {
+            if (_scenes.get(sceneInfo.sceneId) == scene) {
                 Log.info("Opened window to " + sceneInfo);
                 scene.window = wnd;
 
@@ -159,7 +153,7 @@ public class AVRGameAgent extends Agent
 
     protected function closeScene (sceneInfo :SceneInfo) :void
     {
-        var scene :Scene = _scenes[sceneInfo.sceneId];
+        var scene :Scene = _scenes.get(sceneInfo.sceneId) as Scene;
         if (scene == null) {
             Log.warning("Closing unopened scene " + sceneInfo);
             return;
@@ -174,7 +168,7 @@ public class AVRGameAgent extends Agent
             scene.window = null;
         }
 
-        delete _scenes[sceneInfo.sceneId];
+        _scenes.remove(sceneInfo.sceneId);
     }
 
     /** Access the agent object, casted to a game agent object. */
@@ -266,7 +260,7 @@ public class AVRGameAgent extends Agent
     protected var _gameObj :AVRGameObject;
     protected var _userCode :UserCode;
     protected var _controller :ThaneAVRGameController;
-    protected var _scenes :Dictionary = new Dictionary();
+    protected var _scenes :HashMap = new HashMap();
 }
 
 }
