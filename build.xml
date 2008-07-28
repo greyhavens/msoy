@@ -789,10 +789,11 @@
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
+	  <exclude name="**/chiyogami/**/*.java"/>
     </javac>
     <!-- now generate the associated files -->
     <dobj classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/*Object.java"/>
+      <fileset dir="${src.dir}" includes="**/*Object.java" excludes="**/chiyogami/**/*.java"/>
     </dobj>
   </target>
 
