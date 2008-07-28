@@ -137,6 +137,12 @@ public class MemberName extends Name
         int otherId = ((MemberName) o)._memberId;
         return (_memberId > otherId) ? 1 : ((_memberId == otherId) ? 0 : -1);
     }
+    
+    @Override // from Name
+    public String toString ()
+    {
+        return "[name=" + _name + ", memberId=" + _memberId + "]";
+    }
 
     @Override // from Name
     protected String normalize (String name)

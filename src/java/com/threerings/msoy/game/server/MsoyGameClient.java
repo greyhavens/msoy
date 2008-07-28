@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import com.threerings.crowd.server.CrowdClient;
 
+import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyTokenRing;
 
 import com.threerings.msoy.game.data.MsoyGameCredentials;
@@ -35,6 +36,9 @@ public class MsoyGameClient extends CrowdClient
             _plobj.setReferral(credentials.referral);
         }
 
+        Log.log.info("Player session starting", "member", _plobj.memberName,
+            "playerId", _plobj.getOid());
+        
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);
     }
