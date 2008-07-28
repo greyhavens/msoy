@@ -139,12 +139,6 @@ public class MemberName extends Name
     }
     
     @Override // from Name
-    public String toString ()
-    {
-        return "[name=" + _name + ", memberId=" + _memberId + "]";
-    }
-
-    @Override // from Name
     protected String normalize (String name)
     {
         return name; // do not adjust

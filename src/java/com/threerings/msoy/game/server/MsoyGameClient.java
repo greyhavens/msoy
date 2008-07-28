@@ -36,8 +36,8 @@ public class MsoyGameClient extends CrowdClient
             _plobj.setReferral(credentials.referral);
         }
 
-        Log.log.info("Player session starting", "member", _plobj.memberName,
-            "playerId", _plobj.getOid());
+        Log.log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
+            "memberName", _plobj.memberName, "playerId", _plobj.getOid());
         
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);
