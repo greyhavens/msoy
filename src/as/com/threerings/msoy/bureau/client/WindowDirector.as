@@ -24,7 +24,6 @@ public class WindowDirector
      */
     public function addServiceGroup (code :String) :void
     {
-        Assert.isTrue(_windows.size() == 0);
         _serviceGroups.push(code);
     }
 
@@ -46,16 +45,18 @@ public class WindowDirector
             _windows[key] = window;
         }
 
+        window.addRef();
+
         if (window.isLoggedOn()) {
             listener.requestProcessed(window);
-            window.addRef();
             return;
         }
 
-        window.addRef();
         window.addListener(new ResultAdapter(
             function (cause :String) :void {
-                window.releaseRef();
+                if (window.releaseRef()) {
+                    delete _windows[key];
+                }
             }));
         window.addListener(listener);
     }
@@ -91,6 +92,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.util.Assert;
+import com.threerings.bureau.Log;
 
 /**
  * Local implementation of Window
@@ -109,9 +111,24 @@ class WindowImpl implements Window
         _client.setServer(host, [port]);
         _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, clientDidLogon);
         _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, clientFailedToLogon);
+        _client.addEventListener(ClientEvent.CLIENT_CONNECTION_FAILED, clientConnectionFailed);
+
+        var debug :Boolean = true;
+        if (debug) {
+            _client.addEventListener(ClientEvent.CLIENT_WILL_LOGON, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_OBJECT_CHANGED, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_CONNECTION_FAILED, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_WILL_LOGOFF, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_DID_LOGOFF, logEvt);
+            _client.addEventListener(ClientEvent.CLIENT_DID_CLEAR, logEvt);
+        }
+
         for each (var grp :String in serviceGroups) {
             _client.addServiceGroup(grp);
         }
+
         _client.logon();
     }
 
@@ -190,6 +207,11 @@ class WindowImpl implements Window
         return false;
     }
 
+    protected function logEvt (evt :ClientEvent) :void
+    {
+        Log.info("Event on client " + _client + ": " + evt);
+    }
+
     protected function clientDidLogon (evt :ClientEvent) :void
     {
         for each (var listener :InvocationService_ResultListener in _listeners) {
@@ -211,6 +233,11 @@ class WindowImpl implements Window
             listener.requestFailed(cause);
         }
         _listeners = null;
+    }
+
+    protected function clientConnectionFailed (evt :ClientEvent) :void
+    {
+        clientFailedToLogon(evt);
     }
 
     protected var _client :Client;
