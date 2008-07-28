@@ -20,7 +20,7 @@ import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
- * Does something extraordinary.
+ * Displays a page title and subnavigation at the top of the page content area.
  */
 public class TitleBar extends SmartTable
 {
