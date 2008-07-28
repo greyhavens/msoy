@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -13,10 +14,12 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.person.gwt.GroupInvitePayload;
 
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays a group invitation payload.
@@ -48,7 +51,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI ()
         {
-            CMail.groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId,
+            _groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId,
                 new MsoyCallback<GroupService.GroupInfo>() {
                     public void onSuccess (GroupService.GroupInfo result) {
                         _info = result;
@@ -102,4 +105,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
     }
 
     protected GroupInvitePayload _invitePayload;
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

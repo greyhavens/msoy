@@ -5,12 +5,11 @@ package client.mail;
 
 import com.google.gwt.core.client.GWT;
 
-import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
-public class index extends MsgsEntryPoint
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -28,6 +29,7 @@ import com.threerings.msoy.person.gwt.GroupInvitePayload;
 import com.threerings.msoy.person.gwt.MailPayload;
 import com.threerings.msoy.person.gwt.PresentPayload;
 import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
@@ -154,14 +156,13 @@ public class ComposePanel extends FlowPanel
 
     public void setGroupInviteId (int groupId)
     {
-        CMail.groupsvc.getGroupInfo(CMail.ident, groupId,
-            new MsoyCallback<GroupService.GroupInfo>() {
-                public void onSuccess (GroupService.GroupInfo result) {
-                    _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
-                    _contents.setText(3, 1, CMail.msgs.composeGroupDeets("" + result.name));
-                    _payload = new GroupInvitePayload(result.name.getGroupId(), false);
-                }
-            });
+        _groupsvc.getGroupInfo(CMail.ident, groupId, new MsoyCallback<GroupService.GroupInfo>() {
+            public void onSuccess (GroupService.GroupInfo result) {
+                _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
+                _contents.setText(3, 1, CMail.msgs.composeGroupDeets("" + result.name));
+                _payload = new GroupInvitePayload(result.name.getGroupId(), false);
+            }
+        });
     }
 
     protected void onLoad ()
@@ -170,7 +171,7 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            CMail.profilesvc.loadFriends(CMail.ident, CMail.getMemberId(),
+            _profilesvc.loadFriends(CMail.ident, CMail.getMemberId(),
                 new MsoyCallback<ProfileService.FriendsResult>() {
                     public void onSuccess (ProfileService.FriendsResult result) {
                         _friends = result.friends;
@@ -208,4 +209,8 @@ public class ComposePanel extends FlowPanel
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }
