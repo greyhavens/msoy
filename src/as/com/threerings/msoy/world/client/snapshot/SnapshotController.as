@@ -61,7 +61,6 @@ public class SnapshotController extends Controller
     public function destroyPanel () :void
     {
         _panel.close();
-        _panel = null;
     }
 
     /**
@@ -73,30 +72,33 @@ public class SnapshotController extends Controller
     }
 
     /** 
-     * Called when after the screenshot panel was closed. If doUpload is true, the snapshots
-     * taken by snapshotPanel will be uploaded to the server.  The canonical one will be
-     * used as the new snapshot for the scene. 
+     * Called by the panel when the user clicks OK. The snapshots taken by snapshotPanel will be
+     * uploaded to the server. The canonical one will be used as the new snapshot for the scene. 
      */
-    public function close (doUpload :Boolean, panel :SnapshotPanel) :void
+    public function doUpload (panel :SnapshotPanel) :void
     {
-        if (doUpload) {
-            if (panel.shouldSaveSceneThumbnail) {
-                upload(panel.sceneThumbnail.bitmap, SCENE_THUMBNAIL_SERVICE);
-            }
-            
-            if (panel.shouldSaveGalleryImage) {
-                upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
-                Log.testing(
-                    "saving gallery image size: " +
-                    panel.galleryImage.bitmap.width + "x" +
-                    panel.galleryImage.bitmap.height);                
-                upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
-            }
-            
-            //todo: save the ordinary file here... depends on 
-            _ctx.getGameDirector().tutorialEvent("snapshotTaken");
+        if (panel.shouldSaveSceneThumbnail) {
+            upload(panel.sceneThumbnail.bitmap, SCENE_THUMBNAIL_SERVICE);
         }
         
+        if (panel.shouldSaveGalleryImage) {
+            upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
+            Log.testing(
+                "saving gallery image size: " +
+                panel.galleryImage.bitmap.width + "x" +
+                panel.galleryImage.bitmap.height);                
+            upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
+        }
+        
+        //todo: save the ordinary file here... depends on 
+        _ctx.getGameDirector().tutorialEvent("snapshotTaken");
+    }
+    
+    /**
+     * Handle the case that the panel is closed but no action is nseeded.
+     */
+    public function panelClosed () :void 
+    {
         _panel = null;
     }
     

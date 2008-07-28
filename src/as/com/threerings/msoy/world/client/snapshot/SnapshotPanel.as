@@ -77,6 +77,12 @@ public class SnapshotPanel extends FloatingPanel
         return _takeGalleryImage.selected;
     }
 
+    override public function close() :void
+    {
+        super.close();
+        _ctrl.panelClosed();
+    }
+
     protected function takeNewSnapshot (... ignored) :void
     {
         var occs :Boolean = _showOccs.selected;
@@ -154,7 +160,9 @@ public class SnapshotPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         super.buttonClicked(buttonId);
-        _ctrl.close(buttonId == OK_BUTTON, this);
+        if (buttonId == OK_BUTTON) {
+            _ctrl.doUpload(this);
+        }
     }
 
     protected var _sceneThumbnailPermitted :Boolean;
