@@ -10,6 +10,14 @@ import com.threerings.io.ObjectInputStream;
 
 public class AVRGameAgentObject extends AgentObject
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>scenes</code> field. */
+    public static const SCENES :String = "scenes";
+
+    /** The field name of the <code>gameOid</code> field. */
+    public static const GAME_OID :String = "gameOid";
+    // AUTO-GENERATED: FIELDS END
+
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
     public var scenes :DSet = new DSet();
     SceneInfo; // no-op reference to force link
