@@ -345,7 +345,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="msoy/index.html"/>
+        <arg value="frame/index.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -355,7 +355,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="msoy/index.html"/>
+        <arg value="frame/index.html"/>
       </java>
     </else></if>
   </target>
@@ -467,6 +467,16 @@
             <isset property="has.errors"/>
         </or></condition>
       </fail>
+
+      <!-- if we succeeded, gzip our generated HTML output -->
+      <apply failonerror="true" executable="gzip">
+        <arg value="-c"/>
+        <srcfile/>
+        <fileset dir="pages/@{page}" includes="*.cache.html"/>
+        <redirector>
+          <outputmapper type="glob" from="*.cache.html" to="pages/@{page}/*.cache.html.gz"/>
+        </redirector>
+      </apply>
 
       <!-- clear out some variables -->
       <var name="gwt.result" unset="true"/>
@@ -803,14 +813,15 @@
         <exclude name="**/web/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
-        <exclude name="**/MoneyService.java"/>
         <exclude name="**/GameServerService.java"/>
       </fileset>
     </service>
     <service header="lib/SOURCE_HEADER" classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/peer/client/*Service.java"/>
-      <fileset dir="${src.dir}" includes="**/swiftly/client/*Service.java"/>
-      <fileset dir="${src.dir}" includes="**/GameServerService.java"/>
+      <fileset dir="${src.dir}">
+        <include name="**/peer/client/*Service.java"/>
+        <include name="**/swiftly/client/*Service.java"/>
+        <include name="**/client/GameServerService.java"/>
+      </fileset>
     </service>
   </target>
 
