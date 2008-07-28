@@ -36,6 +36,7 @@ import client.shop.CShop;
 
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
+import client.util.DateUtil;
 import client.util.Link;
 import client.util.MsoyCallback;
 
@@ -193,12 +194,11 @@ public class MyWhirleds extends AbsolutePanel
                     add(date);
                     Date created = card.latestThread.firstPost.created;
                     Date now = new Date();
-                    if(created.getDate() == now.getDate()
-                            && created.getMonth() == now.getMonth()
-                            && created.getYear() == now.getYear()) {
+                    if (DateUtil.getDayOfMonth(created) == DateUtil.getDayOfMonth(now) &&
+                        DateUtil.getMonth(created) == DateUtil.getMonth(now) &&
+                        DateUtil.getYear(created) == DateUtil.getYear(now)) {
                         date.add(new InlineLabel(CWhirleds.msgs.myToday()));
-                    }
-                    else {
+                    } else {
                         date.add(new InlineLabel(DATE_FORMAT.format(created) + " "));
                     }
                     InlineLabel time = new InlineLabel(" " + TIME_FORMAT.format(created));

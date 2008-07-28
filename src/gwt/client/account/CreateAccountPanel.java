@@ -42,6 +42,7 @@ import client.shell.Session;
 import client.shell.TrackingCookie;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
+import client.util.DateUtil;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -217,8 +218,8 @@ public class CreateAccountPanel extends FlowPanel
             thirteenYearsAgo += today[ii] + " ";
         }
 
-        Date dob = DateFields.toDate(_dateOfBirth.getDate());
-        if (new Date(thirteenYearsAgo).compareTo(dob) < 0) {
+        Date dob = DateUtil.toDate(_dateOfBirth.getDate());
+        if (DateUtil.newDate(thirteenYearsAgo).compareTo(dob) < 0) {
             setStatus(CAccount.msgs.createNotThirteen());
             return;
         }

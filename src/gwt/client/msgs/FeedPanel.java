@@ -38,6 +38,7 @@ import client.shell.DynamicMessages;
 import client.shell.Page;
 
 import client.ui.TongueBox;
+import client.util.DateUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -257,9 +258,7 @@ public class FeedPanel extends TongueBox
         protected long startofDay (long timestamp)
         {
             Date date = new Date(timestamp);
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
+            DateUtil.zeroTime(date);
             return date.getTime();
         }
 

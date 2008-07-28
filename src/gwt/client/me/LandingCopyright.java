@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import client.shell.Page;
 import client.ui.MsoyUI;
+import client.util.DateUtil;
 import client.util.Link;
 
 /**
@@ -21,7 +22,7 @@ public class LandingCopyright extends FlowPanel
     {
         // copyright, about, terms & conditions, help
         setStyleName("LandingCopyright");
-        int year = 1900 + new Date().getYear();
+        int year = 1900 + DateUtil.getYear(new Date());
         add(MsoyUI.createHTML(CMe.msgs.landingCopyright(""+year), "inline"));
         add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         add(MsoyUI.createExternalAnchor(

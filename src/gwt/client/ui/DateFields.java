@@ -5,6 +5,8 @@ package client.ui;
 
 import java.util.Date;
 
+import client.util.DateUtil;
+
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -16,12 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class DateFields extends HorizontalPanel
     implements SourcesFocusEvents
 {
-    @SuppressWarnings("deprecation")
-    public static Date toDate (int[] datevec)
-    {
-        return new Date(datevec[0] - 1900, datevec[1], datevec[2]);
-    }
-
     public DateFields ()
     {
         setStyleName("dateFields");
@@ -48,7 +44,7 @@ public class DateFields extends HorizontalPanel
         divider.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 
         add(_year = new ListBox());
-        int start = new Date().getYear()+1900-MIN_AGE;
+        int start = DateUtil.getYear(new Date())+1900-MIN_AGE;
         for (int ii = 0; ii < 100-MIN_AGE; ii++) {
             _year.addItem(""+(start-ii));
         }

@@ -37,6 +37,7 @@ import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
+import client.util.DateUtil;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -307,7 +308,7 @@ public class ProfileBlurb extends Blurb
         if (_eshowAge.isChecked() && _profile.birthday != null) {
             // this is not totally accurate, but it's only shown when a user completes their edit,
             // otherwise we compute their age on the server and we do so accurately
-            long birthTime = DateFields.toDate(_profile.birthday).getTime();
+            long birthTime = DateUtil.toDate(_profile.birthday).getTime();
             _profile.age = (int)((System.currentTimeMillis() - birthTime) / YEAR_MILLIS);
         } else {
             _profile.age = 0;
