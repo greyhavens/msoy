@@ -224,7 +224,8 @@ public class AwardDelegate extends RatingDelegate
 
         // TEMP? Log scores.
         log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
-                 "payoutType", payoutType, "playerOids", playerOids, "scores", scores);
+                 "payoutType", payoutType,
+                 "playerIds", playerOidsToMemberIds(new ArrayIntSet(playerOids)), "scores", scores);
 
         int now = now();
 
