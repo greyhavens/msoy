@@ -8,10 +8,10 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.group.gwt.MyWhirledData;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.world.gwt.MyWhirledData;
 
 import client.item.StuffNaviBar;
 import client.msgs.FeedPanel;

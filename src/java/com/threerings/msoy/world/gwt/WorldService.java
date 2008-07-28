@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.group.gwt.MyWhirledData;
 
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;

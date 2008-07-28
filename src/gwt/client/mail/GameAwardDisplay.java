@@ -8,11 +8,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
 
-import client.games.GameDetailPanel;
-import client.shell.Args;
 import client.shell.Page;
 import client.ui.ThumbBox;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Displays game award mail payloads.
@@ -28,8 +27,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         table.setText(0, 1, CMail.msgs.awardTitle());
-        String args = Args.compose(new String[] {
-                "d", "" + _payload.gameId, GameDetailPanel.TROPHIES_TAB });
+        String args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
         table.setWidget(0, 2, Link.create(_payload.gameName, Page.GAMES, args));
 
         switch (_payload.awardType) {

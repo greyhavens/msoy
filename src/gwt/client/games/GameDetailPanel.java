@@ -20,12 +20,13 @@ import com.threerings.msoy.item.data.all.Game;
 
 import client.item.ItemRating;
 import client.msgs.CommentsPanel;
-import client.shell.Args;
 import client.shell.Page;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NaviUtil.GameDetails;
+import client.util.NaviUtil;
 
 /**
  * Displays detail information on a particular game.
@@ -33,20 +34,12 @@ import client.util.MsoyCallback;
 public class GameDetailPanel extends SmartTable
     implements TabListener
 {
-    public static final String INSTRUCTIONS_TAB = "i";
-    public static final String COMMENTS_TAB = "c";
-    public static final String TROPHIES_TAB = "t";
-    public static final String MYRANKINGS_TAB = "mr";
-    public static final String TOPRANKINGS_TAB = "tr";
-    public static final String METRICS_TAB = "m";
-    public static final String LOGS_TAB = "l";
-
     public GameDetailPanel ()
     {
         super("gameDetail", 0, 10);
     }
 
-    public void setGame (final int gameId, final String tab)
+    public void setGame (final int gameId, final GameDetails tab)
     {
         if (_gameId == gameId) {
             selectTab(tab);
@@ -96,30 +89,31 @@ public class GameDetailPanel extends SmartTable
         addWidget(_tabs, 3, null);
 
         // add the about/instructions tab
-        addTab(INSTRUCTIONS_TAB, CGames.msgs.tabInstructions(), new InstructionsPanel(detail));
+        addTab(GameDetails.INSTRUCTIONS,
+               CGames.msgs.tabInstructions(), new InstructionsPanel(detail));
 
         // add comments tab
         if (detail.listedItem != null) {
-            addTab(COMMENTS_TAB, CGames.msgs.tabComments(),
+            addTab(GameDetails.COMMENTS, CGames.msgs.tabComments(),
                    new CommentsPanel(detail.listedItem.getType(), detail.listedItem.catalogId));
         }
 
         // add trophies tab, passing in the potentially negative gameId
-        addTab(TROPHIES_TAB, CGames.msgs.tabTrophies(), new GameTrophyPanel(gameId));
+        addTab(GameDetails.TROPHIES, CGames.msgs.tabTrophies(), new GameTrophyPanel(gameId));
 
         // add top rankings tabs
         if (!CGames.isGuest()) {
-            addTab(MYRANKINGS_TAB, CGames.msgs.tabMyRankings(),
+            addTab(GameDetails.MYRANKINGS, CGames.msgs.tabMyRankings(),
                    new TopRankingPanel(detail.gameId, true));
         }
-        addTab(TOPRANKINGS_TAB, CGames.msgs.tabTopRankings(),
+        addTab(GameDetails.TOPRANKINGS, CGames.msgs.tabTopRankings(),
                new TopRankingPanel(detail.gameId, false));
 
         // if we're the owner of the game or an admin, add the metrics tab
         if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
             CGames.isAdmin()) {
-            addTab(METRICS_TAB, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
-            addTab(LOGS_TAB, CGames.msgs.tabLogs(), new GameLogsPanel(detail));
+            addTab(GameDetails.METRICS, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
+            addTab(GameDetails.LOGS, CGames.msgs.tabLogs(), new GameLogsPanel(detail));
         }
     }
 
@@ -127,13 +121,12 @@ public class GameDetailPanel extends SmartTable
     public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
     {
         // route tab selection through the URL
-        String tabCode = getTabCode(tabIndex);
-        if (!tabCode.equals(_seltab)) {
-            Link.go(Page.GAMES, Args.compose("d", ""+_gameId, tabCode));
-            return false;
-        } else {
+        GameDetails tabCode = getTabCode(tabIndex);
+        if (tabCode == _seltab) {
             return true;
         }
+        Link.go(Page.GAMES, NaviUtil.gameDetail(_gameId, tabCode));
+        return false;
     }
 
     // from interface TabListener
@@ -142,13 +135,13 @@ public class GameDetailPanel extends SmartTable
         // nada
     }
 
-    protected void addTab (String ident, String title, Widget tab)
+    protected void addTab (GameDetails ident, String title, Widget tab)
     {
         _tabs.add(tab, title);
         _tabmap.put(ident, _tabs.getWidgetCount() - 1);
     }
 
-    protected void selectTab (String tab)
+    protected void selectTab (GameDetails tab)
     {
         Integer tosel = _tabmap.get(tab);
         if (tosel == null) {
@@ -160,18 +153,18 @@ public class GameDetailPanel extends SmartTable
         }
     }
 
-    protected String getTabCode (int tabIndex)
+    protected GameDetails getTabCode (int tabIndex)
     {
-        for (Map.Entry<String, Integer> entry : _tabmap.entrySet()) {
+        for (Map.Entry<GameDetails, Integer> entry : _tabmap.entrySet()) {
             if (entry.getValue() == tabIndex) {
                 return entry.getKey();
             }
         }
-        return "";
+        return GameDetails.INSTRUCTIONS;
     }
 
     protected StyledTabPanel _tabs;
     protected int _gameId;
-    protected String _seltab;
-    protected HashMap<String, Integer> _tabmap = new HashMap<String, Integer>();
+    protected GameDetails _seltab;
+    protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 }

@@ -16,12 +16,11 @@ import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import client.games.GameDetailPanel;
-import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
+import client.util.NaviUtil;
 
 /**
  * Displays a person's game ratings.
@@ -81,8 +80,8 @@ public class RatingsBlurb extends Blurb
 
             ClickListener gameClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.GAMES, Args.compose("d", ""+entry.gameId,
-                                                            GameDetailPanel.MYRANKINGS_TAB));
+                    Link.go(Page.GAMES, NaviUtil.gameDetail(
+                                entry.gameId, NaviUtil.GameDetails.MYRANKINGS));
                 }
             };
             setWidget(0, 0, MediaUtil.createMediaView(

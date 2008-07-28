@@ -11,6 +11,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.util.NaviUtil.GameDetails;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's single player the game
@@ -41,7 +42,13 @@ public class index extends Page
             } else {
                 setContent(panel = new GameDetailPanel());
             }
-            panel.setGame(args.get(1, 0), args.get(2, ""));
+            GameDetails tab;
+            try {
+                tab = Enum.valueOf(GameDetails.class, args.get(2, ""));
+            } catch (Exception e) {
+                tab = GameDetails.INSTRUCTIONS;
+            }
+            panel.setGame(args.get(1, 0), tab);
 
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(args.get(1, 0)));

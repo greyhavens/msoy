@@ -30,8 +30,6 @@ import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
-import client.games.GameDetailPanel;
-
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
@@ -42,6 +40,7 @@ import client.util.DateUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.NaviUtil;
 
 public class FeedPanel extends TongueBox
 {
@@ -277,7 +276,8 @@ public class FeedPanel extends TongueBox
 
             case 102: // FRIEND_WON_TROPHY
                 return Link.createHtml(message.data[0], Page.GAMES,
-                    Args.compose("d", message.data[1], GameDetailPanel.TROPHIES_TAB));
+                                       NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
+                                                           NaviUtil.GameDetails.TROPHIES));
 
             case 103: // FRIEND_LISTED_ITEM
                 return CMsgs.mmsgs.descCombine(
@@ -307,8 +307,8 @@ public class FeedPanel extends TongueBox
                 }
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Link.go(Page.GAMES, Args.compose("d", message.data[1],
-                                                                GameDetailPanel.TROPHIES_TAB));
+                        Link.go(Page.GAMES, NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
+                                                                NaviUtil.GameDetails.TROPHIES));
                     }
                 };
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);

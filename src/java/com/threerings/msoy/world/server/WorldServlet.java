@@ -44,6 +44,7 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.gwt.MyWhirledData;
 import com.threerings.msoy.world.gwt.RoomInfo;
 import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
@@ -53,7 +54,6 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.xml.MsoyGameParser;
-import com.threerings.msoy.group.gwt.MyWhirledData;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
