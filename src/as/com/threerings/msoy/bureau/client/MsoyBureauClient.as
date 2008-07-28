@@ -18,18 +18,6 @@ public class MsoyBureauClient extends WhirledBureauClient
     public static function main (
         args :Array, userCodeLoader :UserCodeLoader, cleanup :Function) :void
     {
-        var enableWindowDirector :Boolean = false;
-        args = args.slice();
-        while (args.length > 0 && args[0].charAt(0) == "-") {
-            var arg :String = args.shift() as String;
-            if (arg.substr(1) == "enablewindowdirector") {
-                enableWindowDirector = true;
-
-            } else {
-                throw new Error("Unrecognized option " + arg);
-            }
-        }
-
         if (args.length != 4) {
             throw new Error("Expected exactly 4 arguments: (bureauId) (token) (server) (port)");
         }
@@ -41,7 +29,7 @@ public class MsoyBureauClient extends WhirledBureauClient
 
         // create the client and log on
         var client :MsoyBureauClient = new MsoyBureauClient(
-            token, bureauId, userCodeLoader, cleanup, enableWindowDirector);
+            token, bureauId, userCodeLoader, cleanup);
         client.setVersion(DeploymentConfig.version);
         client.setServer(server, [port]);
         client.logon();
@@ -49,23 +37,25 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     /** Creates a new client. */
     public function MsoyBureauClient (
-        token :String, bureauId :String, userCodeLoader :UserCodeLoader, cleanup :Function, 
-        enableWindowDirector :Boolean)
+        token :String, bureauId :String, userCodeLoader :UserCodeLoader, cleanup :Function)
     {
         super(token, bureauId, userCodeLoader, cleanup);
-        if (enableWindowDirector) {
-            _windowDirector = new WindowDirector(bureauId);
-            // TODO: implement thane world service on the server and uncomment this
-            var thaneWorldServiceProvided :Boolean = false;
-            if (thaneWorldServiceProvided) {
-                _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
-            }
-        }
     }
 
     /** Access this client's window director. */
     public function getWindowDirector () :WindowDirector
     {
+        var enableWindowDirector :Boolean = false;
+        var thaneWorldServiceProvided :Boolean = false;
+
+        if (enableWindowDirector && _windowDirector == null) {
+            _windowDirector = new WindowDirector(_bureauId);
+            // TODO: implement thane world service on the server and uncomment this
+            if (thaneWorldServiceProvided) {
+                _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
+            }
+        }
+
         return _windowDirector;
     }
 
