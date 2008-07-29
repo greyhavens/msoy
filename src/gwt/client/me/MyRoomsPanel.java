@@ -53,7 +53,7 @@ public class MyRoomsPanel extends VerticalPanel
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Page.WORLD, "s"+room.sceneId);
-            SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId);
+            SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId, true);
             sceneImage.addClickListener(onClick);
             setWidget(0, 0, sceneImage);
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
@@ -61,5 +61,5 @@ public class MyRoomsPanel extends VerticalPanel
         }
     }
 
-    protected static final int ROOM_COLUMNS = 1;
+    protected static final int ROOM_COLUMNS = 3;
 }

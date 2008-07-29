@@ -16,6 +16,11 @@ public class SceneThumbnail extends Image
 {
     public SceneThumbnail (int sceneId)
     {
+        this(sceneId, false);
+    }
+
+    public SceneThumbnail (int sceneId, final boolean halfSize)
+    {
         addStyleName("actionLabel");
         addLoadListener(new LoadListener() {
             public void onLoad (Widget sender) {}
@@ -23,14 +28,16 @@ public class SceneThumbnail extends Image
             public void onError (Widget sender)
             {
                 removeLoadListener(this);
-                setUrl(DEFAULT_SNAPSHOT);
+                setUrl(halfSize ? DEFAULT_HALFSIZE : DEFAULT_SNAPSHOT);
             }
         });
 
-        setUrl(SNAPSHOT_DIR + sceneId + ".jpg");
+        setUrl(SNAPSHOT_DIR + sceneId + (halfSize ? "_t" : "") + ".jpg");
     }
 
     protected static final String SNAPSHOT_DIR = DeploymentConfig.mediaURL + "/snapshot/";
     protected static final String DEFAULT_SNAPSHOT = DeploymentConfig.staticMediaURL +
         "snapshot/default.jpg";
+    protected static final String DEFAULT_HALFSIZE = DeploymentConfig.staticMediaURL +
+        "snapshot/default_t.jpg";
 }
